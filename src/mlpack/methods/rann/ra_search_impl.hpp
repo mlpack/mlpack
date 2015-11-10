@@ -540,6 +540,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Serialize(
   ar & CreateNVP(naive, "naive");
   ar & CreateNVP(singleMode, "singleMode");
 
+  ar & CreateNVP(tau, "tau");
+  ar & CreateNVP(alpha, "alpha");
+  ar & CreateNVP(sampleAtLeaves, "sampleAtLeaves");
+  ar & CreateNVP(firstLeafExact, "firstLeafExact");
+  ar & CreateNVP(singleSampleLimit, "singleSampleLimit");
+
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (naive)
@@ -556,6 +562,19 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Serialize(
     ar & CreateNVP(metric, "metric");
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      referenceTree = NULL;
+      oldFromNewReferences.clear();
+      treeOwner = false;
+    }
+  }
+  else
+  {
+    // Delete the current reference tree, if necessary and if we are loading.
     if (Archive::is_loading::value)
     {
       if (treeOwner && referenceTree)
