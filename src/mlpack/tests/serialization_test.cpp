@@ -30,6 +30,7 @@
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
+#include <mlpack/methods/rann/ra_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -1316,6 +1317,69 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
     BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], binaryNbc.Probabilities()[i],
         1e-5);
   }
+}
+
+BOOST_AUTO_TEST_CASE(RASearchTest)
+{
+  using neighbor::AllkRANN;
+  using neighbor::AllkNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 200);
+  arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
+
+  // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
+  // results we get (at least) should fall into the top 10 of the true nearest
+  // neighbors.
+  AllkRANN allkrann(dataset, false, false, 5, 0.95);
+
+  AllkRANN krannXml(otherDataset, false, false);
+  AllkRANN krannText(otherDataset, true, false);
+  AllkRANN krannBinary(otherDataset, true, true);
+
+  SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
+
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 100);
+
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+
+  AllkNN allknn(dataset); // Exact search.
+  allknn.Search(querySet, 10, neighbors, distances);
+  krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  krannText.Search(querySet, 5, textNeighbors, textDistances);
+  krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_cols, 100);
+
+  size_t xmlCorrect = 0;
+  size_t textCorrect = 0;
+  size_t binaryCorrect = 0;
+  for (size_t i = 0; i < xmlNeighbors.n_cols; ++i)
+  {
+    // See how many are in the top 10.
+    for (size_t j = 0; j < xmlNeighbors.n_rows; ++j)
+    {
+      for (size_t k = 0; k < neighbors.n_rows; ++k)
+      {
+        if (neighbors[i] == xmlNeighbors[i])
+          xmlCorrect++;
+        if (neighbors[i] == textNeighbors[i])
+          textCorrect++;
+        if (neighbors[i] == binaryNeighbors[i])
+          binaryCorrect++;
+      }
+    }
+  }
+
+  // We need 95% of these to be correct.
+  BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(textCorrect, 95 * 5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

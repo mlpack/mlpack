@@ -55,13 +55,19 @@ class RAQueryStat
   //! Modify the number of samples made.
   size_t& NumSamplesMade() { return numSamplesMade; }
 
+  //! Serialize the statistic.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(bound, "bound");
+    ar & data::CreateNVP(numSamplesMade, "numSamplesMade");
+  }
+
  private:
   //! The bound on the node's neighbor distances.
   double bound;
-
   //! The minimum number of samples made by any query in this node.
   size_t numSamplesMade;
-
 };
 
 } // namespace neighbor

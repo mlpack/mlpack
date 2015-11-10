@@ -290,6 +290,10 @@ class RASearch
   //! Returns a string representation of this object.
   std::string ToString() const;
 
+  //! Serialize the object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Permutations of reference points during tree building.
   std::vector<size_t> oldFromNewReferences;
