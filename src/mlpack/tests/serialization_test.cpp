@@ -1366,11 +1366,11 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
     {
       for (size_t k = 0; k < neighbors.n_rows; ++k)
       {
-        if (neighbors[i] == xmlNeighbors[i])
+        if (neighbors(k, i) == xmlNeighbors(j, i))
           xmlCorrect++;
-        if (neighbors[i] == textNeighbors[i])
+        if (neighbors(k, i) == textNeighbors(j, i))
           textCorrect++;
-        if (neighbors[i] == binaryNeighbors[i])
+        if (neighbors(k, i) == binaryNeighbors(j, i))
           binaryCorrect++;
       }
     }
