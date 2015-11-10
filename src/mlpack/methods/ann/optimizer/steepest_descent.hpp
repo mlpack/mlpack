@@ -38,8 +38,7 @@ class SteepestDescent
                   const double mom = 0) :
       function(function),
       lr(lr),
-      mom(mom),
-      momWeights(function.Weights())
+      mom(mom)
 
   {
     // Nothing to do here.

@@ -54,8 +54,7 @@ class RMSPROP
       function(function),
       lr(lr),
       alpha(alpha),
-      eps(eps),
-      meanSquaredGad(function.Weights())
+      eps(eps)
   {
     // Nothing to do here.
   }
