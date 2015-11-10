@@ -76,11 +76,11 @@ class DropoutLayer
     // The dropout mask will not be multiplied in the deterministic mode
     // (during testing).
     if (deterministic)
-    {
-      output = input;
-
-      if (rescale)
-        output *= scale;
+    {      
+      if (!rescale)
+        output = input;
+	  else
+		output = input * scale;
     }
     else
     {
@@ -162,6 +162,12 @@ class DropoutLayer
   double Ratio() const {return ratio; }
   //! Modify the probability of setting a value to zero.
   double& Ratio() {return ratio; }
+  
+  void Ratio(double r)
+  {
+	ratio = r;
+	scale = 1.0 / (1.0 - ratio);
+  }
 
   //! The value of the rescale parameter.
   bool Rescale() const {return rescale; }
