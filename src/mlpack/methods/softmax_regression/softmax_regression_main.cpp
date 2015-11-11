@@ -45,7 +45,7 @@ template<typename Model>
 void testPredictAcc(const std::string &testFile,
                     const std::string &testLabels,
                     size_t numClasses,
-                    Model &model);
+                    const Model &model);
 
 template<typename Model>
 std::unique_ptr<Model> trainSoftmax(const std::string &trainingFile,
@@ -127,7 +127,7 @@ template<typename Model>
 void testPredictAcc(const std::string &testFile,
                     const std::string &testLabelsFile,
                     size_t numClasses,
-                    Model &model)
+                    const Model &model)
 {
     using namespace mlpack;
     if(testFile.empty() && testLabelsFile.empty())
