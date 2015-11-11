@@ -74,6 +74,8 @@ class HoeffdingTree
    *      never forces a split); ignored in batch training mode.
    * @param checkInterval Number of samples required before each split; ignored
    *      in batch training mode.
+   * @param minSamples If the node has seen this many points or fewer, no split
+   *      will be allowed.
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
@@ -83,7 +85,8 @@ class HoeffdingTree
                 const bool batchTraining = true,
                 const double successProbability = 0.95,
                 const size_t maxSamples = 0,
-                const size_t checkInterval = 100);
+                const size_t checkInterval = 100,
+                const size_t minSamples = 100);
 
   /**
    * Construct the Hoeffding tree with the given parameters, but training on no
@@ -98,6 +101,8 @@ class HoeffdingTree
    *      bound before a split can happen.
    * @param maxSamples Maximum number of samples before a split is forced.
    * @param checkInterval Number of samples required before each split check.
+   * @param minSamples If the node has seen this many points or fewer, no split
+   *      will be allowed.
    * @param dimensionMappings Mappings from dimension indices to positions in
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
@@ -107,6 +112,7 @@ class HoeffdingTree
                 const double successProbability = 0.95,
                 const size_t maxSamples = 0,
                 const size_t checkInterval = 100,
+                const size_t minSamples = 100,
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
                     dimensionMappings = NULL);
 
@@ -264,6 +270,8 @@ class HoeffdingTree
   size_t maxSamples;
   //! The number of samples that should be seen before checking for a split.
   size_t checkInterval;
+  //! The minimum number of samples for splitting.
+  size_t minSamples;
   //! The dataset information.
   const data::DatasetInfo* datasetInfo;
   //! Whether or not we own the dataset information.

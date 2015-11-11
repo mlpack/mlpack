@@ -28,7 +28,8 @@ HoeffdingTree<
                  const bool batchTraining,
                  const double successProbability,
                  const size_t maxSamples,
-                 const size_t checkInterval) :
+                 const size_t checkInterval,
+                 const size_t minSamples) :
     dimensionMappings(new std::unordered_map<size_t,
         std::pair<size_t, size_t>>()),
     ownsMappings(true),
@@ -36,6 +37,7 @@ HoeffdingTree<
     numClasses(numClasses),
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
+    minSamples(minSamples),
     datasetInfo(&datasetInfo),
     ownsInfo(false),
     successProbability(successProbability),
@@ -77,6 +79,7 @@ HoeffdingTree<
                  const double successProbability,
                  const size_t maxSamples,
                  const size_t checkInterval,
+                 const size_t minSamples,
                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
                      dimensionMappingsIn) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
@@ -86,6 +89,7 @@ HoeffdingTree<
     numClasses(numClasses),
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
+    minSamples(minSamples),
     datasetInfo(&datasetInfo),
     ownsInfo(false),
     successProbability(successProbability),
@@ -144,6 +148,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     numSamples(other.numSamples),
     numClasses(other.numClasses),
     maxSamples(other.maxSamples),
+    minSamples(other.minSamples),
     checkInterval(other.checkInterval),
     datasetInfo(new data::DatasetInfo(*other.datasetInfo)),
     ownsInfo(true),
@@ -316,6 +321,10 @@ size_t HoeffdingTree<
 {
   // Do nothing if we've already split.
   if (splitDimension != size_t(-1))
+    return 0;
+
+  // If not enough points have been seen, we cannot split.
+  if (numSamples <= minSamples)
     return 0;
 
   // Check the fitness of each dimension.  Then we'll use a Hoeffding bound
@@ -524,7 +533,8 @@ void HoeffdingTree<
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
     children.push_back(HoeffdingTree(*datasetInfo, numClasses,
-        successProbability, maxSamples, checkInterval, dimensionMappings));
+        successProbability, maxSamples, checkInterval, minSamples,
+        dimensionMappings));
     children[i].MajorityClass() = childMajorities[i];
   }
 
