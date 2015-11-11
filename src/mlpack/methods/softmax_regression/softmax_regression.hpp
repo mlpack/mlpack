@@ -111,7 +111,7 @@ class SoftmaxRegression
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  void Predict(const arma::mat& testData, arma::vec& predictions);
+  void Predict(const arma::mat& testData, arma::vec& predictions) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
