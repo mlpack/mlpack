@@ -13,7 +13,6 @@ namespace nn {
  * http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
- * @return Suggestion rows and cols for the function "ColumnsToBlocks"
  * @pre 1 : The layout of the parameters should be same as following
  * //          vSize   1
  * //       |        |  |
@@ -40,45 +39,28 @@ namespace nn {
  * SparseAutoencoder<L_BFGS> encoder2(optimizer);
  *
  * arma::mat maximalInput; //store the features learned by sparse autoencoder
- * const auto Size = mlpack::nn::MaximalInputs(encoder2.Parameters(), maximalInput);
+ * mlpack::nn::MaximalInputs(encoder2.Parameters(), maximalInput);
  *
  * arma::mat outputs;
  * const bool scale = true;
- * //put the maximalInput of each col into rows * cols(Size.first * Size.second) blocks,
- * //rows * cols must same as maximalInput.n_cols.If you are training a bunch of images,
- * //this function could help you visualize your trained results
- * mlpack::nn::ColumnsToBlocks(maximalInput, outputs, Size.first, Size.second, scale);
+ *
+ * ColumnsToBlocks ctb(5,5);
+ * arma::mat output;
+ * ctb.Transform(maximalInput, output);
+ * //you can save the output as a pgm, this may help you visualize the training results
+ * output.save(fileName, arma::pgm_binary);
  *
  * @endcode
  */
-std::pair<arma::uword, arma::uword> MaximalInputs(const arma::mat &parameters, arma::mat &output);
+void MaximalInputs(const arma::mat &parameters, arma::mat &output);
 
 /**
- * Transform the output of "MaximalInputs" to blocks, if your training samples are images,
- * this function could help you visualize your training results
- * @param maximalInputs Parameters after maximize by "MaximalInputs", each col assiociate to one sample
- * @param output Maximal inputs regrouped to blocks
- * @param rows number of blocks per cols
- * @param cols number of blocks per rows
- * @param scale False, the output will not be scaled and vice versa
- * @param minRange minimum range of the output
- * @param maxRange maximum range of the output
- * @code
- * arma::mat maximalInput; //store the features learned by sparse autoencoder
- * const auto Size = mlpack::nn::MaximalInputs(encoder2.Parameters(), maximalInput);
- *
- * arma::mat outputs;
- * const bool scale = true;
- * //put the maximalInput of each col into rows * cols(Size.first * Size.second) blocks,
- * //rows * cols must same as maximalInput.n_cols.If you are training a bunch of images,
- * //this function could help you visualize your trained results
- * mlpack::nn::ColumnsToBlocks(maximalInput, outputs, Size.first, Size.second, scale);
- * @endcode
+ * Normalize the cols with its maximum value if it is not zero
+ * @param input the input data want to normalize
+ * @param output inputs after normalize
  */
-void ColumnsToBlocks(const arma::mat &maximalInputs,
-                     arma::mat &outputs, arma::uword rows, arma::uword cols,
-                     bool scale = false,
-                     double minRange = 0, double maxRange = 255);
+void NormalizeColByMax(const arma::mat &input,
+                       arma::mat &output);
 
 } // namespace nn
 } // namespace mlpack
