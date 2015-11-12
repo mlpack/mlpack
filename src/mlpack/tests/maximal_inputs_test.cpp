@@ -5,6 +5,7 @@
  * Test the MaximalInputs and ColumnsToBlocks functions.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/math/columns_to_blocks.hpp>
 #include <mlpack/methods/sparse_autoencoder/maximal_inputs.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -23,12 +24,12 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
   arma::mat input(5,5);
   input.submat(0, 0, 1, 3) = w1;
 
-  arma::mat maximalInputs;
-  const std::pair<arma::uword, arma::uword> size =
-          mlpack::nn::MaximalInputs(input, maximalInputs);
+  arma::mat maximalInputs;  
+  mlpack::nn::MaximalInputs(input, maximalInputs);
 
-  arma::mat output;
-  mlpack::nn::ColumnsToBlocks(maximalInputs, output, size.first, size.second);
+  arma::mat output;  
+  mlpack::math::ColumnsToBlocks ctb(1,2);
+  ctb.Transform(maximalInputs, output);
 
   arma::mat matlabResults;
   matlabResults<<-1<<-1<<-1<<-1<<-1<<-1<<-1<<arma::endr
