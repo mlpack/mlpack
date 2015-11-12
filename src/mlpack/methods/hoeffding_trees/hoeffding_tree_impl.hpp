@@ -157,10 +157,11 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     majorityClass(other.majorityClass),
     majorityProbability(other.majorityProbability),
     categoricalSplit(other.categoricalSplit),
-    numericSplit(other.numericSplit),
-    children(other.children)
+    numericSplit(other.numericSplit)
 {
-  // Nothing left to copy.
+  // Copy each of the children.
+  for (size_t i = 0; i < other.children.size(); ++i)
+    children.push_back(new HoeffdingTree(other.children[i]));
 }
 
 template<typename FitnessFunction,
@@ -241,7 +242,7 @@ void HoeffdingTree<
         // unfortunately, instead, we'll just extract the non-contiguous
         // submatrix.
         MatType childData = data.cols(indices[i].subvec(0, counts[i] - 1));
-        children[i].Train(childData, childLabels, true);
+        children[i]->Train(childData, childLabels, true);
       }
     }
   }
@@ -306,7 +307,7 @@ void HoeffdingTree<
   {
     // Already split.  Pass the training point to the relevant child.
     size_t direction = CalculateDirection(point);
-    children[direction].Train(point, label);
+    children[direction]->Train(point, label);
   }
 }
 
@@ -432,7 +433,7 @@ size_t HoeffdingTree<
   else
   {
     // Otherwise, pass to the right child and let them classify.
-    return children[CalculateDirection(point)].Classify(point);
+    return children[CalculateDirection(point)]->Classify(point);
   }
 }
 
@@ -459,7 +460,7 @@ void HoeffdingTree<
   else
   {
     // Pass to the right child and let them do the classification.
-    children[CalculateDirection(point)].Classify(point, prediction,
+    children[CalculateDirection(point)]->Classify(point, prediction,
         probability);
   }
 }
@@ -532,10 +533,10 @@ void HoeffdingTree<
   // We already know what the splitDimension will be.
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
-    children.push_back(HoeffdingTree(*datasetInfo, numClasses,
+    children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
         successProbability, maxSamples, checkInterval, minSamples,
         dimensionMappings));
-    children[i].MajorityClass() = childMajorities[i];
+    children[i]->MajorityClass() = childMajorities[i];
   }
 
   // Eliminate now-unnecessary split information.
@@ -643,13 +644,13 @@ void HoeffdingTree<
       numChildren = children.size();
     ar & CreateNVP(numChildren, "numChildren");
     if (Archive::is_loading::value) // If needed, allocate space.
-      children.resize(numChildren, HoeffdingTree(data::DatasetInfo(0), 0));
+      children.resize(numChildren, new HoeffdingTree(data::DatasetInfo(0), 0));
 
     for (size_t i = 0; i < numChildren; ++i)
     {
       std::ostringstream name;
       name << "child" << i;
-      ar & data::CreateNVP(children[i], name.str());
+      ar & data::CreateNVP(*children[i], name.str());
     }
 
     if (Archive::is_loading::value)

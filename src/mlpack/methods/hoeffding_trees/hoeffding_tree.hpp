@@ -175,9 +175,9 @@ class HoeffdingTree
   size_t NumChildren() const { return children.size(); }
 
   //! Get a child.
-  const HoeffdingTree& Child(const size_t i) const { return children[i]; }
+  const HoeffdingTree& Child(const size_t i) const { return *children[i]; }
   //! Modify a child.
-  HoeffdingTree& Child(const size_t i) { return children[i]; }
+  HoeffdingTree& Child(const size_t i) { return *children[i]; }
 
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
@@ -293,7 +293,7 @@ class HoeffdingTree
   //! If the split is numeric, this holds the splitting information.
   typename NumericSplitType<FitnessFunction>::SplitInfo numericSplit;
   //! If the split has occurred, these are the children.
-  std::vector<HoeffdingTree> children;
+  std::vector<HoeffdingTree*> children;
 };
 
 } // namespace tree
