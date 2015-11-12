@@ -78,9 +78,17 @@ class HoeffdingNumericSplit
   /**
    * Evaluate the fitness function given what has been calculated so far.  In
    * this case, if binning has not yet been performed, 0 will be returned (i.e.,
-   * no gain).
+   * no gain).  Because this split can only split one possible way,
+   * secondBestFitness (the fitness function for the second best possible split)
+   * will be set to 0.
+   *
+   * @param bestFitness Value of the fitness function for the best possible
+   *      split.
+   * @param secondBestFitness Value of the fitness function for the second best
+   *      possible split (always 0 for this split).
    */
-  double EvaluateFitnessFunction() const;
+  void EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness)
+      const;
 
   //! Return the number of children if this node splits on this feature.
   size_t NumChildren() const { return bins; }

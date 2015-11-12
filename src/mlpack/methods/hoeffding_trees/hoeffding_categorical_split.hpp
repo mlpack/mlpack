@@ -63,9 +63,16 @@ class HoeffdingCategoricalSplit
 
   /**
    * Given the points seen so far, evaluate the fitness function, returning the
-   * gain if a split was to be made.
+   * gain for the best possible split and the second best possible split.  In
+   * this splitting technique, we only split one possible way, so
+   * secondBestFitness will always be 0.
+   *
+   * @param bestFitness The fitness function result for this split.
+   * @param secondBestFitness This is always set to 0 (this split only splits
+   *      one way).
    */
-  double EvaluateFitnessFunction() const;
+  void EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness)
+      const;
 
   //! Return the number of children, if the node were to split.
   size_t NumChildren() const { return sufficientStatistics.n_cols; }

@@ -65,8 +65,16 @@ class BinaryNumericSplit
    * best possible gain of a binary split.  Note that this takes O(n) time,
    * where n is the number of points seen so far.  So this may not exactly be
    * fast...
+   *
+   * The best possible split will be stored in bestFitness, and the second best
+   * possible split will be stored in secondBestFitness.
+   *
+   * @param bestFitness Fitness function value for best possible split.
+   * @param secondBestFitness Fitness function value for second best possible
+   *      split.
    */
-  double EvaluateFitnessFunction();
+  void EvaluateFitnessFunction(double& bestFitness,
+                               double& secondBestFitness);
 
   // Return the number of children if this node were to split on this feature.
   size_t NumChildren() const { return 2; }

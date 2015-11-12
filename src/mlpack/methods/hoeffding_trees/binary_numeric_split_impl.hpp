@@ -38,8 +38,9 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Train(
 }
 
 template<typename FitnessFunction, typename ObservationType>
-double BinaryNumericSplit<FitnessFunction, ObservationType>::
-    EvaluateFitnessFunction()
+void BinaryNumericSplit<FitnessFunction, ObservationType>::
+    EvaluateFitnessFunction(double& bestFitness,
+                            double& secondBestFitness)
 {
   // Unfortunately, we have to iterate over the map.
   bestSplit = std::numeric_limits<ObservationType>::min();
@@ -49,7 +50,8 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
   counts.col(0).zeros();
   counts.col(1) = classCounts;
 
-  double bestValue = FitnessFunction::Evaluate(counts);
+  bestFitness = FitnessFunction::Evaluate(counts);
+  secondBestFitness = 0.0;
 
   // Initialize to the first observation, so we don't calculate gain on the
   // first iteration (it will be 0).
@@ -64,10 +66,14 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
       lastObservation = (*it).first;
 
       const double value = FitnessFunction::Evaluate(counts);
-      if (value > bestValue)
+      if (value > bestFitness)
       {
-        bestValue = value;
+        bestFitness = value;
         bestSplit = (*it).first;
+      }
+      else if (value > secondBestFitness)
+      {
+        secondBestFitness = value;
       }
     }
 
@@ -77,7 +83,6 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
   }
 
   isAccurate = true;
-  return bestValue;
 }
 
 template<typename FitnessFunction, typename ObservationType>
@@ -86,7 +91,10 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
     SplitInfo& splitInfo)
 {
   if (!isAccurate)
-    EvaluateFitnessFunction();
+  {
+    double bestGain, secondBestGain;
+    EvaluateFitnessFunction(bestGain, secondBestGain);
+  }
 
   // Make one child for each side of the split.
   childMajorities.set_size(2);

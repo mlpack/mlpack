@@ -84,13 +84,15 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
 }
 
 template<typename FitnessFunction, typename ObservationType>
-double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
-    EvaluateFitnessFunction() const
+void HoeffdingNumericSplit<FitnessFunction, ObservationType>::
+    EvaluateFitnessFunction(double& bestFitness,
+                            double& secondBestFitness) const
 {
+  secondBestFitness = 0.0; // We can only split one way.
   if (samplesSeen < observationsBeforeBinning)
-    return 0.0;
+    bestFitness = 0.0;
   else
-    return FitnessFunction::Evaluate(sufficientStatistics);
+    bestFitness = FitnessFunction::Evaluate(sufficientStatistics);
 }
 
 template<typename FitnessFunction, typename ObservationType>
