@@ -7,6 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
+#include <mlpack/methods/hoeffding_trees/information_gain.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -35,6 +36,8 @@ PARAM_STRING("numeric_split_strategy", "The splitting strategy to use for "
 PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
     "of as a stream.  This generally results in better trees but at the cost of"
     " memory usage and runtime.", "b");
+PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
+    "impurity for calculating Hoeffding bounds.", "i");
 
 // Helper function for once we have chosen a tree type.
 template<typename TreeType>
@@ -70,16 +73,32 @@ int main(int argc, char** argv)
   if (trainingFile.empty() && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
 
-  if (numericSplitStrategy == "domingos")
-    PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-        HoeffdingCategoricalSplit>>();
-  else if (numericSplitStrategy == "binary")
-    PerformActions<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
-        HoeffdingCategoricalSplit>>();
+  if (CLI::HasParam("info_gain"))
+  {
+    if (numericSplitStrategy == "domingos")
+      PerformActions<HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
+          HoeffdingCategoricalSplit>>();
+    else if (numericSplitStrategy == "binary")
+      PerformActions<HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
+          HoeffdingCategoricalSplit>>();
+    else
+      Log::Fatal << "Unrecognized numeric split strategy ("
+          << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
+          << endl;
+  }
   else
-    Log::Fatal << "Unrecognized numeric split strategy ("
-        << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
-        << endl;
+  {
+    if (numericSplitStrategy == "domingos")
+      PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
+          HoeffdingCategoricalSplit>>();
+    else if (numericSplitStrategy == "binary")
+      PerformActions<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
+          HoeffdingCategoricalSplit>>();
+    else
+      Log::Fatal << "Unrecognized numeric split strategy ("
+          << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
+          << endl;
+  }
 }
 
 template<typename TreeType>
