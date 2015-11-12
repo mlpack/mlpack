@@ -6,6 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
+#include <mlpack/methods/hoeffding_trees/information_gain.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
@@ -123,6 +124,107 @@ BOOST_AUTO_TEST_CASE(GiniImpurityRangeTest)
   BOOST_REQUIRE_CLOSE(GiniImpurity::Range(10), 0.9, 1e-5);
   BOOST_REQUIRE_CLOSE(GiniImpurity::Range(100), 0.99, 1e-5);
   BOOST_REQUIRE_CLOSE(GiniImpurity::Range(1000), 0.999, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
+{
+  // Make a simple test for Gini impurity with one class.  In this case it
+  // should always be 0.  We'll assemble the count matrix by hand.
+  arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
+
+  counts(0, 0) = 10; // 10 points in category 0 with class 0.
+  counts(0, 1) = 0; // 0 points in category 0 with class 1.
+  counts(1, 0) = 12; // 12 points in category 1 with class 0.
+  counts(1, 1) = 0; // 0 points in category 1 with class 1.
+
+  // Since the split gets us nothing, there should be no gain.
+  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(InformationGainImperfectSimpleTest)
+{
+  // Make a simple test where a split will give us perfect classification.
+  arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
+
+  counts(0, 0) = 10; // 10 points in category 0 with class 0.
+  counts(1, 0) = 0; // 0 points in category 0 with class 1.
+  counts(0, 1) = 0; // 0 points in category 1 with class 0.
+  counts(1, 1) = 10; // 10 points in category 1 with class 1.
+
+  // The impurity before the split should be 0.5 log2(0.5) + 0.5 log2(0.5) = -1.
+  // The impurity after the split should be 0.
+  // So the gain should be 1.
+  BOOST_REQUIRE_CLOSE(InformationGain::Evaluate(counts), 1.0, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(InformationGainBadSplitTest)
+{
+  // Make a simple test where a split gets us nothing.
+  arma::Mat<size_t> counts(2, 2);
+  counts(0, 0) = 10;
+  counts(0, 1) = 10;
+  counts(1, 0) = 5;
+  counts(1, 1) = 5;
+
+  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+}
+
+/**
+ * A hand-crafted more difficult test for the Gini impurity, where four
+ * categories and three classes are available.
+ */
+BOOST_AUTO_TEST_CASE(InformationGainThreeClassTest)
+{
+  arma::Mat<size_t> counts(3, 4);
+
+  counts(0, 0) = 0;
+  counts(1, 0) = 0;
+  counts(2, 0) = 10;
+
+  counts(0, 1) = 5;
+  counts(1, 1) = 5;
+  counts(2, 1) = 0;
+
+  counts(0, 2) = 4;
+  counts(1, 2) = 4;
+  counts(2, 2) = 4;
+
+  counts(0, 3) = 8;
+  counts(1, 3) = 1;
+  counts(2, 3) = 1;
+
+  // The Gini impurity of the whole thing is:
+  // (overall sum) -1.5516 +
+  // (category 0)  0.40476 * 0       -
+  // (category 1)  0.23810 * -1      -
+  // (category 2)  0.28571 * -1.5850 -
+  // (category 3)  0.23810 * -0.92193
+  //   = 0.64116649
+  BOOST_REQUIRE_CLOSE(InformationGain::Evaluate(counts), 0.64116649, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(InformationGainZeroTest)
+{
+  // When nothing has been seen, the information gain should be zero.
+  arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
+
+  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+}
+
+/**
+ * Test that the range of information gains is correct for a handful of class
+ * sizes.
+ */
+BOOST_AUTO_TEST_CASE(InformationGainRangeTest)
+{
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(1), 0, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(3), 1.5849625, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(4), 2, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(5), 2.32192809, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(10), 3.32192809, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(100), 6.64385619, 1e-5);
+  BOOST_REQUIRE_CLOSE(InformationGain::Range(1000), 9.96578428, 1e-5);
 }
 
 /**
