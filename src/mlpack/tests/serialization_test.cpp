@@ -720,12 +720,20 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
   BOOST_REQUIRE_EQUAL(split.Bins(), textSplit.Bins());
   BOOST_REQUIRE_EQUAL(split.Bins(), binarySplit.Bins());
 
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-      xmlSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-      textSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-      binarySplit.EvaluateFitnessFunction(), 1e-5);
+  double bestSplit, secondBestSplit;
+  double baseBestSplit, baseSecondBestSplit;
+  split.EvaluateFitnessFunction(baseBestSplit, baseSecondBestSplit);
+  xmlSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
+
+  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
+
+  binarySplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
   arma::Col<size_t> children, xmlChildren, textChildren, binaryChildren;
   NumericSplitInfo<double> splitInfo, xmlSplitInfo, textSplitInfo,
@@ -785,10 +793,24 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBeforeBinningTest)
   BOOST_REQUIRE_EQUAL(split.Bins(), textSplit.Bins());
   BOOST_REQUIRE_EQUAL(split.Bins(), binarySplit.Bins());
 
-  BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_SMALL(textSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_SMALL(xmlSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_SMALL(binarySplit.EvaluateFitnessFunction(), 1e-5);
+  double baseBestSplit, baseSecondBestSplit;
+  double bestSplit, secondBestSplit;
+  split.EvaluateFitnessFunction(baseBestSplit, baseSecondBestSplit);
+  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+
+  BOOST_REQUIRE_SMALL(baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(baseSecondBestSplit, 1e-5);
+
+  BOOST_REQUIRE_SMALL(bestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-5);
+
+  xmlSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_SMALL(bestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-5);
+
+  binarySplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_SMALL(bestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-5);
 }
 
 /**
@@ -814,12 +836,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
 
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-                      xmlSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-                      textSplit.EvaluateFitnessFunction(), 1e-5);
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
-                      binarySplit.EvaluateFitnessFunction(), 1e-5);
+  double bestSplit, secondBestSplit;
+  double baseBestSplit, baseSecondBestSplit;
+  split.EvaluateFitnessFunction(baseBestSplit, baseSecondBestSplit);
+  xmlSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
+
+  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
+
+  binarySplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
+  BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
   arma::Col<size_t> children, xmlChildren, textChildren, binaryChildren;
   CategoricalSplitInfo splitInfo(1); // I don't care about this.

@@ -279,7 +279,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitEasyFitnessCheck)
   for (size_t i = 0; i < 100; ++i)
     split.Train(4, 2);
 
-  BOOST_REQUIRE_GT(split.EvaluateFitnessFunction(), 0.0);
+  double bestGain, secondBestGain;
+  split.EvaluateFitnessFunction(bestGain, secondBestGain);
+  BOOST_REQUIRE_GT(bestGain, 0.0);
+  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
 }
 
 /**
@@ -291,7 +294,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitNoImprovementFitnessTest)
   HoeffdingCategoricalSplit<GiniImpurity> split(2, 2);
 
   // No training has yet happened, so a split would get us nothing.
-  BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+  double bestGain, secondBestGain;
+  split.EvaluateFitnessFunction(bestGain, secondBestGain);
+  BOOST_REQUIRE_SMALL(bestGain, 1e-10);
+  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
 
   split.Train(0, 0);
   split.Train(1, 0);
@@ -299,7 +305,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitNoImprovementFitnessTest)
   split.Train(1, 1);
 
   // Now, a split still gets us only 50% accuracy in each split bin.
-  BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+  split.EvaluateFitnessFunction(bestGain, secondBestGain);
+  BOOST_REQUIRE_SMALL(bestGain, 1e-10);
+  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
 }
 
 /**
@@ -567,7 +575,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitFitnessFunctionTest)
   for (size_t i = 0; i < 99; ++i)
   {
     split.Train(mlpack::math::Random(), mlpack::math::RandInt(5));
-    BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+    double bestGain, secondBestGain;
+    split.EvaluateFitnessFunction(bestGain, secondBestGain);
+    BOOST_REQUIRE_SMALL(bestGain, 1e-10);
+    BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
   }
 }
 
@@ -612,7 +623,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
 
   // Now the binning should be complete, and so the impurity should be
   // (0.5 * (1 - 0.5)) * 2 = 0.50 (it will be 0 in the two created children).
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.50, 0.03);
+  double bestGain, secondBestGain;
+  split.EvaluateFitnessFunction(bestGain, secondBestGain);
+  BOOST_REQUIRE_CLOSE(bestGain, 0.50, 0.03);
+  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
 
   // Make sure that if we do create children, that the correct number of
   // children is created, and that the bins end up in the right place.
@@ -647,7 +661,10 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
     // Now ensure the fitness function gives good gain.
     // The Gini impurity for the unsplit node is 2 * (0.5^2) = 0.5, and the Gini
     // impurity for the children is 0.
-    BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.5, 1e-5);
+    double bestGain, secondBestGain;
+    split.EvaluateFitnessFunction(bestGain, secondBestGain);
+    BOOST_REQUIRE_CLOSE(bestGain, 0.5, 1e-5);
+    BOOST_REQUIRE_GT(bestGain, secondBestGain);
   }
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
@@ -684,7 +701,10 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
     // The same as the previous test, but with four classes: 4 * (0.25 * 0.75) =
     // 0.75.  We can only split in one place, though, which will give one
     // perfect child, giving a gain of 0.75 - 3 * (1/3 * 2/3) = 0.25.
-    BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.25, 1e-5);
+    double bestGain, secondBestGain;
+    split.EvaluateFitnessFunction(bestGain, secondBestGain);
+    BOOST_REQUIRE_CLOSE(bestGain, 0.25, 1e-5);
+    BOOST_REQUIRE_GT(bestGain, secondBestGain);
   }
 
   // Now, when we ask it to split, ensure that the split value is reasonable.

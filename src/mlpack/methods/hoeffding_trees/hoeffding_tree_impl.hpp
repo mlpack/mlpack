@@ -336,32 +336,40 @@ size_t HoeffdingTree<
   const double epsilon = std::sqrt(rSquared *
       std::log(1.0 / (1.0 - successProbability)) / (2 * numSamples));
 
-  arma::vec gains(categoricalSplits.size() + numericSplits.size());
-  for (size_t i = 0; i < gains.n_elem; ++i)
-  {
-    size_t type = dimensionMappings->at(i).first;
-    size_t index = dimensionMappings->at(i).second;
-    if (type == data::Datatype::categorical)
-      gains[i] = categoricalSplits[index].EvaluateFitnessFunction();
-    else if (type == data::Datatype::numeric)
-      gains[i] = numericSplits[index].EvaluateFitnessFunction();
-  }
-
-  // Now find the largest and second-largest.
+  // Find the best and second best possible splits.
   double largest = -DBL_MAX;
   size_t largestIndex = 0;
   double secondLargest = -DBL_MAX;
-  for (size_t i = 0; i < gains.n_elem; ++i)
+  for (size_t i = 0; i < categoricalSplits.size() + numericSplits.size(); ++i)
   {
-    if (gains[i] > largest)
+    size_t type = dimensionMappings->at(i).first;
+    size_t index = dimensionMappings->at(i).second;
+
+    // Some split procedures can split multiple ways, but we only care about the
+    // best two splits that can be done in every network.
+    double bestGain;
+    double secondBestGain;
+    if (type == data::Datatype::categorical)
+      categoricalSplits[index].EvaluateFitnessFunction(bestGain,
+          secondBestGain);
+    else if (type == data::Datatype::numeric)
+      numericSplits[index].EvaluateFitnessFunction(bestGain, secondBestGain);
+
+    // See if these gains are better than the previous.
+    if (bestGain > largest)
     {
       secondLargest = largest;
-      largest = gains[i];
+      largest = bestGain;
       largestIndex = i;
     }
-    else if (gains[i] > secondLargest)
+    else if (bestGain > secondLargest)
     {
-      secondLargest = gains[i];
+      secondLargest = bestGain;
+    }
+
+    if (secondBestGain > secondLargest)
+    {
+      secondLargest = secondBestGain;
     }
   }
 
