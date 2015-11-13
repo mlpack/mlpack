@@ -347,8 +347,8 @@ size_t HoeffdingTree<
 
     // Some split procedures can split multiple ways, but we only care about the
     // best two splits that can be done in every network.
-    double bestGain;
-    double secondBestGain;
+    double bestGain = 0.0;
+    double secondBestGain = 0.0;
     if (type == data::Datatype::categorical)
       categoricalSplits[index].EvaluateFitnessFunction(bestGain,
           secondBestGain);
