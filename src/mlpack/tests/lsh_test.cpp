@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(LSHTrainTest)
   // model operates on the correct dimensionality and returns the correct number
   // of results.
   arma::mat referenceData = arma::randu<arma::mat>(3, 100);
-  arma;:mat newReferenceData = arma::randu<arma::mat>(10, 400);
+  arma::mat newReferenceData = arma::randu<arma::mat>(10, 400);
   arma::mat queryData = arma::randu<arma::mat>(10, 200);
 
   LSHSearch<> lsh(referenceData, 3, 2, 2.0, 11, 3);
