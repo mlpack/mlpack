@@ -77,6 +77,17 @@ class LSHSearch
   ~LSHSearch();
 
   /**
+   * Train the LSH model on the given dataset.  This means building new hash
+   * tables.
+   */
+  void Train(const arma::mat& referenceSet,
+             const size_t numProj,
+             const size_t numTables,
+             const double hashWidth = 0.0,
+             const size_t secondHashSize = 99901,
+             const size_t bucketSize = 500);
+
+  /**
    * Compute the nearest neighbors of the points in the given query set and
    * store the output in the given matrices.  The matrices will be set to the
    * size of n columns by k rows, where n is the number of points in the query
@@ -225,9 +236,9 @@ class LSHSearch
   bool ownsSet;
 
   //! The number of projections.
-  const size_t numProj;
+  size_t numProj;
   //! The number of hash tables.
-  const size_t numTables;
+  size_t numTables;
 
   //! The std::vector containing the projection matrix of each table.
   std::vector<arma::mat> projections; // should be [numProj x dims] x numTables
@@ -239,13 +250,13 @@ class LSHSearch
   double hashWidth;
 
   //! The big prime representing the size of the second hash.
-  const size_t secondHashSize;
+  size_t secondHashSize;
 
   //! The weights of the second hash.
   arma::vec secondHashWeights;
 
   //! The bucket size of the second hash.
-  const size_t bucketSize;
+  size_t bucketSize;
 
   //! The final hash table; should be (< secondHashSize) x bucketSize.
   arma::Mat<size_t> secondHashTable;
@@ -262,8 +273,8 @@ class LSHSearch
   size_t distanceEvaluations;
 }; // class LSHSearch
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "lsh_search_impl.hpp"

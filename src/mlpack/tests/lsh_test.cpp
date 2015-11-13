@@ -108,4 +108,28 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   }
 }
 
+BOOST_AUTO_TEST_CASE(LSHTrainTest)
+{
+  // This is a not very good test that simply checks that the re-trained LSH
+  // model operates on the correct dimensionality and returns the correct number
+  // of results.
+  arma::mat referenceData = arma::randu<arma::mat>(3, 100);
+  arma;:mat newReferenceData = arma::randu<arma::mat>(10, 400);
+  arma::mat queryData = arma::randu<arma::mat>(10, 200);
+
+  LSHSearch<> lsh(referenceData, 3, 2, 2.0, 11, 3);
+
+  lsh.Train(newReferenceData, 4, 3, 3.0, 12, 4);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  lsh.Search(queryData, 3, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -21,7 +21,7 @@ LSHSearch(const arma::mat& referenceSet,
           const double hashWidthIn,
           const size_t secondHashSize,
           const size_t bucketSize) :
-  referenceSet(&referenceSet),
+  referenceSet(NULL), // This will be set in Train().
   ownsSet(false),
   numProj(numProj),
   numTables(numTables),
@@ -30,6 +30,40 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
+  // Pass work to training function.
+  Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
+      bucketSize);
+}
+
+// Destructor.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::~LSHSearch()
+{
+  if (ownsSet)
+    delete referenceSet;
+}
+
+// Train on a new reference set.
+template<typename SortPolicy>
+void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
+                                  const size_t numProj,
+                                  const size_t numTables,
+                                  const double hashWidthIn,
+                                  const size_t secondHashSize,
+                                  const size_t bucketSize)
+{
+  // Set new reference set.
+  if (this->referenceSet && ownsSet)
+    delete this->referenceSet;
+  this->referenceSet = &referenceSet;
+
+  // Set new parameters.
+  this->numProj = numProj;
+  this->numTables = numTables;
+  this->hashWidth = hashWidthIn;
+  this->secondHashSize = secondHashSize;
+  this->bucketSize = bucketSize;
+
   if (hashWidth == 0.0) // The user has not provided any value.
   {
     // Compute a heuristic hash width from the data.
@@ -48,14 +82,6 @@ LSHSearch(const arma::mat& referenceSet,
   Log::Info << "Hash width chosen as: " << hashWidth << std::endl;
 
   BuildHash();
-}
-
-// Destructor.
-template<typename SortPolicy>
-LSHSearch<SortPolicy>::~LSHSearch()
-{
-  if (ownsSet)
-    delete referenceSet;
 }
 
 template<typename SortPolicy>
