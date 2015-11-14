@@ -98,7 +98,7 @@ class CNN
   void Predict(const InputDataType& input, OutputDataType& output)
   {
     deterministic = true;
-    ResetParameter(network);
+    ResetParameter<>(network);
 
     Forward(input, network);
     OutputPrediction(output, network);
@@ -118,7 +118,7 @@ class CNN
                   ErrorType& error)
   {
     deterministic = false;
-    ResetParameter(network);
+    ResetParameter<>(network);
 
     Forward(input, network);
     return OutputError(target, error, network);
@@ -140,8 +140,7 @@ class CNN
    */
   template<size_t I = 0, typename... Tp>
   typename std::enable_if<I == sizeof...(Tp), void>::type
-  ResetParameter(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */
-  }
+  ResetParameter(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
   template<size_t I = 0, typename... Tp>
   typename std::enable_if<I < sizeof...(Tp), void>::type
