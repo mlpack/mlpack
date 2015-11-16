@@ -58,7 +58,7 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(
 
 template<template<typename> class OptimizerType>
 void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
-                                               arma::vec& predictions)
+                                               arma::vec& predictions) const
 {
   // Calculate the probabilities for each test input.
   arma::mat hypothesis, probabilities;
