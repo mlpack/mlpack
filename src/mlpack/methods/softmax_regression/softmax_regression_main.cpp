@@ -6,8 +6,8 @@
 #include <set>
 
 // Define parameters for the executable.
-//PROGRAM_INFO("Softmax Regression", "This program performs softmax regression "
-//    "on the given dataset and able to store the learned parameters.");
+PROGRAM_INFO("Softmax Regression", "This program performs softmax regression "
+    "on the given dataset and able to store the learned parameters.");
 
 // Required options.
 PARAM_STRING("training_file", "A file containing the training set (the matrix "
@@ -38,20 +38,22 @@ PARAM_DOUBLE("lambda", "L2-regularization constant", "r", 0.0001);
 PARAM_FLAG("intercept", "Add intercept term, if not specify, "
            "the intercept term will not be added", "t");
 
-size_t calculateNumberOfClasses(size_t numClasses,
-                                arma::Row<size_t> const &trainLabels);
+using namespace std;
+
+size_t CalculateNumberOfClasses(const size_t numClasses,
+                                const arma::Row<size_t>& trainLabels);
 
 template<typename Model>
-void testPredictAcc(const std::string &testFile,
-                    const std::string &testLabels,
-                    size_t numClasses,
-                    const Model &model);
+void TestPredictAcc(const string& testFile,
+                    const string& testLabels,
+                    const size_t numClasses,
+                    const Model& model);
 
 template<typename Model>
-std::unique_ptr<Model> trainSoftmax(const std::string &trainingFile,
-                                    const std::string &labelFile,
-                                    const std::string &inputModelFile,
-                                    size_t maxIterations);
+std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
+                                    const string& labelFile,
+                                    const string& inputModelFile,
+                                    const size_t maxIterations);
 
 int main(int argc, char** argv)
 {
@@ -63,177 +65,164 @@ int main(int argc, char** argv)
   const std::string inputModelFile = CLI::GetParam<std::string>("input_model");
 
   // One of inputFile and modelFile must be specified.
-  if(inputModelFile.empty() && trainingFile.empty())
-  {
+  if (inputModelFile.empty() && trainingFile.empty())
     Log::Fatal << "One of --input_model or --training_file must be specified."
-               << std::endl;
-  }
+        << endl;
 
   const std::string labelFile = CLI::GetParam<std::string>("labels_file");
-  if(!trainingFile.empty() && labelFile.empty())
-  {
-    Log::Fatal << "--label_file must be specified with --training_file"
-               << std::endl;
-  }
+  if (!trainingFile.empty() && labelFile.empty())
+    Log::Fatal << "--labels_file must be specified with --training_file!"
+        << endl;
 
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   if (maxIterations < 0)
-  {
-    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-                  ")! Must be greater than or equal to 0." << std::endl;
-  }
+    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations
+        << ")! Must be greater than or equal to 0." << endl;
 
-  const std::string outputModelFile = CLI::GetParam<std::string>("output_model");
+  const string outputModelFile = CLI::GetParam<string>("output_model");
 
   // Make sure we have an output file if we're not doing the work in-place.
   if (outputModelFile.empty())
-  {
-    Log::Warn << "--output_model is not set; "
-              << "no results will be saved." << std::endl;
-  }  
+    Log::Warn << "--output_model is not set; no results will be saved." << endl;
 
 
   using SM = regression::SoftmaxRegression<>;
-  std::unique_ptr<SM> sm = trainSoftmax<SM>(trainingFile,
+  std::unique_ptr<SM> sm = TrainSoftmax<SM>(trainingFile,
                                             labelFile,
                                             inputModelFile,
                                             maxIterations);
 
-  testPredictAcc(CLI::GetParam<std::string>("test_data"),
-                 CLI::GetParam<std::string>("test_labels"),
+  TestPredictAcc(CLI::GetParam<string>("test_data"),
+                 CLI::GetParam<string>("test_labels"),
                  sm->NumClasses(), *sm);
 
-  if(!outputModelFile.empty())
+  if (!outputModelFile.empty())
   {
     data::Save(CLI::GetParam<std::string>("output_model"),
-               "softmax_regression_model", *sm, true);
+        "softmax_regression_model", *sm, true);
   }
 }
 
-size_t calculateNumberOfClasses(size_t numClasses,
-                                arma::Row<size_t> const &trainLabels)
+size_t CalculateNumberOfClasses(const size_t numClasses,
+                                const arma::Row<size_t>& trainLabels)
 {
-  if(numClasses == 0){
+  if (numClasses == 0)
+  {
     const std::set<size_t> unique_labels(std::begin(trainLabels),
                                          std::end(trainLabels));
-    numClasses = unique_labels.size();
+    return unique_labels.size();
+  }
+  else
+  {
+    return numClasses;
+  }
+}
+
+template<typename Model>
+void TestPredictAcc(const string& testFile,
+                    const string& testLabelsFile,
+                    size_t numClasses,
+                    const Model& model)
+{
+  using namespace mlpack;
+
+  // If there is no test set, there is nothing to test on.
+  if (testFile.empty() && testLabelsFile.empty())
+    return;
+
+  if ((!testFile.empty() && testLabelsFile.empty()) ||
+       (testFile.empty() && !testLabelsFile.empty()))
+  {
+    Log::Fatal << "--test_file must be specified with --test_labels and vice"
+        << " versa." << endl;
   }
 
-  return numClasses;
+  if (!testFile.empty() && !testLabelsFile.empty())
+  {
+    arma::mat testData;
+    arma::Row<size_t> testLabels;
+    testData.load(testFile, arma::auto_detect);
+    testData = testData.t();
+    testLabels.load(testLabelsFile, arma::auto_detect);
+
+    if (testData.n_cols!= testLabels.n_elem)
+    {
+      Log::Fatal << "Labels of --test_labels should same as the samples size "
+          << "of --test_data " << endl;
+    }
+
+    arma::vec predictLabels;
+    model.Predict(testData, predictLabels);
+    std::vector<size_t> bingoLabels(numClasses, 0);
+    std::vector<size_t> labelSize(numClasses, 0);
+    for (arma::uword i = 0; i != predictLabels.n_elem; ++i)
+    {
+      if (predictLabels(i) == testLabels(i))
+      {
+        ++bingoLabels[testLabels(i)];
+      }
+      ++labelSize[testLabels(i)];
+    }
+    size_t totalBingo = 0;
+    for(size_t i = 0; i != bingoLabels.size(); ++i)
+    {
+      Log::Info << "Accuracy of label " << i << " is "
+          << (bingoLabels[i] / static_cast<double>(labelSize[i])) << endl;
+      totalBingo += bingoLabels[i];
+    }
+    Log::Info << "Total accuracy is "
+        << (totalBingo) / static_cast<double>(predictLabels.n_elem)
+        << endl;
+  }
 }
 
 template<typename Model>
-void testPredictAcc(const std::string &testFile,
-                    const std::string &testLabelsFile,
-                    size_t numClasses,
-                    const Model &model)
+std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
+                                    const string& labelFile,
+                                    const string& inputModelFile,
+                                    const size_t maxIterations)
 {
-    using namespace mlpack;
-    if(testFile.empty() && testLabelsFile.empty())
-    {
-      return;
-    }
+  using namespace mlpack;
 
-    if((!testFile.empty() && testLabelsFile.empty()) ||
-        (testFile.empty() && !testLabelsFile.empty()))
-    {
-      Log::Fatal << "--test_file must be specified with --test_labels and vice versa"
-                 << std::endl;
-    }
+  using SRF = regression::SoftmaxRegressionFunction;
 
-    if(!testFile.empty() && !testLabelsFile.empty())
-    {
-      arma::mat testData;
-      arma::Row<size_t> testLabels;
-      testData.load(testFile, arma::auto_detect);
-      testData = testData.t();
-      testLabels.load(testLabelsFile, arma::auto_detect);
+  std::unique_ptr<Model> sm;
+  if (!inputModelFile.empty())
+  {
+    sm.reset(new Model(0, 0, false));
+    mlpack::data::Load(inputModelFile, "softmax_regression_model", *sm, true);
+  }
+  else
+  {
+    arma::mat trainData;
+    arma::Row<size_t> trainLabels;
+    trainData.load(trainingFile, arma::auto_detect);
+    trainData = trainData.t();
+    trainLabels.load(labelFile, arma::auto_detect);
 
-      if(testData.n_cols!= testLabels.n_elem)
-      {
-          Log::Fatal << "Labels of --test_labels should same as the samples size "
-                        "of --test_data " << std::endl;
-      }
+    //load functions of mlpack do not works on windows, it will complain
+    //"[FATAL] Unable to detect type of 'softmax_data.txt'; incorrect extension?"
+    //data::Load(inputFile, trainData, true);
+    //data::Load(labelFile, trainLabels, true);
 
-      arma::vec predictLabels;
-      model.Predict(testData, predictLabels);
-      std::vector<size_t> bingoLabels(numClasses, 0);
-      std::vector<size_t> labelSize(numClasses, 0);
-      for(arma::uword i = 0; i != predictLabels.n_elem; ++i)
-      {
-        if(predictLabels(i) == testLabels(i))
-        {
-          ++bingoLabels[testLabels(i)];
-        }
-        ++labelSize[testLabels(i)];
-      }
-      size_t totalBingo = 0;
-      for(size_t i = 0; i != bingoLabels.size(); ++i)
-      {
-        std::cout<<"Accuracy of label "<<i<<" is "
-                 <<(bingoLabels[i]/static_cast<double>(labelSize[i]))
-                 <<std::endl;
-        totalBingo += bingoLabels[i];
-      }
-      std::cout<<"\nTotal accuracy is "
-               <<(totalBingo)/static_cast<double>(predictLabels.n_elem)
-               <<std::endl;
-    }
-}
+    if(trainData.n_cols != trainLabels.n_elem)
+      Log::Fatal << "Samples of input_data should same as the size of "
+          << "input_label." << endl;
 
-template<typename Model>
-std::unique_ptr<Model> trainSoftmax(const std::string &trainingFile,
-                                    const std::string &labelFile,
-                                    const std::string &inputModelFile,
-                                    size_t maxIterations)
-{
-    using namespace mlpack;
+    //size_t numClasses = CLI::GetParam<int>("number_of_classes");
+    const size_t numClasses = CalculateNumberOfClasses(
+        (size_t) CLI::GetParam<int>("number_of_classes"), trainLabels);
 
-    using SRF = regression::SoftmaxRegressionFunction;
-    using SM = regression::SoftmaxRegression<>;
+    const bool intercept = !CLI::HasParam("intercept") ? false : true;
 
-    std::unique_ptr<Model> sm;
-    if(!inputModelFile.empty())
-    {
+    SRF smFunction(trainData, trainLabels, numClasses, intercept,
+        CLI::GetParam<double>("lambda"));
 
-      sm.reset(new Model(0, 0, false));
-      mlpack::data::Load(inputModelFile,
-                         "softmax_regression_model",
-                         *sm, true);
-    }
-    else
-    {
-      arma::mat trainData;
-      arma::Row<size_t> trainLabels;
-      trainData.load(trainingFile, arma::auto_detect);
-      trainData = trainData.t();
-      trainLabels.load(labelFile, arma::auto_detect);
+    const size_t numBasis = 5;
+    optimization::L_BFGS<SRF> optimizer(smFunction, numBasis, maxIterations);
+    sm.reset(new Model(optimizer));
+  }
 
-      //load functions of mlpack do not works on windows, it will complain
-      //"[FATAL] Unable to detect type of 'softmax_data.txt'; incorrect extension?"
-      //data::Load(inputFile, trainData, true);
-      //data::Load(labelFile, trainLabels, true);
-
-      if(trainData.n_cols != trainLabels.n_elem)
-      {
-        Log::Fatal << "Samples of input_data should same as the size "
-                      "of input_label " << std::endl;
-      }
-
-      //size_t numClasses = CLI::GetParam<int>("number_of_classes");
-      const size_t numClasses =
-                calculateNumberOfClasses(CLI::GetParam<int>("number_of_classes"),
-                                         trainLabels);
-
-      const bool intercept = !CLI::HasParam("intercept") ? false : true;
-
-      SRF smFunction(trainData, trainLabels, numClasses,
-                     intercept, CLI::GetParam<double>("lambda"));
-      const size_t numBasis = 5;
-      optimization::L_BFGS<SRF> optimizer(smFunction, numBasis, maxIterations);
-      sm.reset( new Model(optimizer));
-    }
-
-    return sm;
+  return sm;
 }
