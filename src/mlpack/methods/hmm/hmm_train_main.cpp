@@ -35,7 +35,7 @@ PARAM_STRING_REQ("type", "Type of HMM: discrete | gaussian | gmm.", "t");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
-    " (and label sequences).", "b");
+    "(and label sequences).", "b");
 PARAM_INT("states", "Number of hidden states in HMM (necessary, unless "
     "model_file is specified.", "n", 0);
 PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
