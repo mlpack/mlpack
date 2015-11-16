@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
       net(modules, classOutputLayer);
 
   // Train the network for 200 epochs.
-  Trainer<decltype(net)> trainer(net, 200, 1, 0.01);
+  Trainer<decltype(net)> trainer(net, 400, 1, 0.01);
   trainer.Train(input, labels, input, labels);
 
   // Ask the network to classify the trained input data.
