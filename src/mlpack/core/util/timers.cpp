@@ -4,6 +4,13 @@
  * @author Marcus Edel
  *
  * Implementation of timers.
+ *
+ * This file is part of mlpack 1.0.12.
+ *
+ * mlpack is free software; you may redstribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "timers.hpp"
 #include "cli.hpp"
@@ -28,12 +35,26 @@ inline void timersub(const timeval* tvp, const timeval* uvp, timeval* vvp)
 }
 #endif
 
+std::map<std::string, bool> Timer::timerState;
+
 /**
  * Start the given timer.
  */
 void Timer::Start(const std::string& name)
 {
+  if((timerState[name] == 1) && (name != "total_time"))
+  {
+    std::ostringstream oss;
+    oss << "Timer::Start(): timer '" << name
+	<< "' has already been " << "started";
+	
+    throw std::runtime_error(oss.str());
+  }
+  
+  timerState[name] = true;
+  
   CLI::GetSingleton().timer.StartTimer(name);
+  
 }
 
 /**
@@ -41,6 +62,17 @@ void Timer::Start(const std::string& name)
  */
 void Timer::Stop(const std::string& name)
 {
+  if((timerState[name] == 0) && (name != "total_time"))
+  {
+    std::ostringstream oss;
+    oss << "Timer::Stop(): timer '" << name
+	<< "' has already been " << "stopped";
+	
+    throw std::runtime_error(oss.str());
+  }
+  
+  timerState[name] = false;
+  
   CLI::GetSingleton().timer.StopTimer(name);
 }
 
@@ -59,7 +91,8 @@ std::map<std::string, timeval>& Timers::GetAllTimers()
 
 timeval Timers::GetTimer(const std::string& timerName)
 {
-  return timers[timerName];
+  std::string name(timerName);
+  return timers[name];
 }
 
 void Timers::PrintTimer(const std::string& timerName)
@@ -120,21 +153,21 @@ void Timers::PrintTimer(const std::string& timerName)
 void Timers::GetTime(timeval* tv)
 {
 #if defined(__MACH__) && defined(__APPLE__)
-
+  
   static mach_timebase_info_data_t info;
-
+  
   // If this is the first time we've run, get the timebase.
   // We can use denom == 0 to indicate that sTimebaseInfo is
   // uninitialised.
   if (info.denom == 0) {
     (void) mach_timebase_info(&info);
   }
-
+  
   // Hope that the multiplication doesn't overflow.
-  uint64_t nsecs = mach_absolute_time() * info.numer / info.denom;
+  uint64_t nsecs = mach_absolute_time() * info.numer / info.denom;  
   tv->tv_sec = nsecs / 1e9;
   tv->tv_usec = (nsecs / 1e3) - (tv->tv_sec * 1e6);
-
+  
 #elif defined(_POSIX_VERSION)
 #if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
 
@@ -150,25 +183,25 @@ void Timers::GetTime(timeval* tv)
 #else
   static const clockid_t id = ((clockid_t) - 1);
 #endif // CLOCK
-
+  
   struct timespec ts;
-
+  
   // Returns the current value tp for the specified clock_id.
   if (clock_gettime(id, &ts) != -1 && id != ((clockid_t) - 1))
   {
     tv->tv_sec = ts.tv_sec;
     tv->tv_usec = ts.tv_nsec / 1e3;
   }
-
+  
   // Fallback for the clock_gettime function.
   gettimeofday(tv, NULL);
-
+  
 #endif  // _POSIX_TIMERS
 #elif defined(_WIN32)
-
+   
   static double frequency = 0.0;
   static LARGE_INTEGER offset;
-
+  
   // If this is the first time we've run, get the frequency.
   // We use frequency == 0.0 to indicate that
   // QueryPerformanceFrequency is uninitialised.
@@ -186,20 +219,20 @@ void Timers::GetTime(timeval* tv)
       frequency = (double)pF.QuadPart / 1000000.0;
     }
   }
-
+  
   if (frequency != 0.0)
   {
     LARGE_INTEGER pC;
     // Get the current performance-counter value.
     QueryPerformanceCounter(&pC);
-
+    
     pC.QuadPart -= offset.QuadPart;
     double microseconds = (double)pC.QuadPart / frequency;
     pC.QuadPart = microseconds;
     tv->tv_sec = (long)pC.QuadPart / 1000000;
     tv->tv_usec = (long)(pC.QuadPart % 1000000);
   }
-
+  
 #endif
 }
 
@@ -210,18 +243,18 @@ void Timers::StartTimer(const std::string& timerName)
   tmp.tv_usec = 0;
 
   GetTime(&tmp);
-
+  
   // Check to see if the timer already exists.  If it does, we'll subtract the
-  // old value.
+  // old value.  
   if (timers.count(timerName) == 1)
   {
     timeval tmpDelta;
-
+    
     timersub(&tmp, &timers[timerName], &tmpDelta);
-
+    
     tmp = tmpDelta;
   }
-
+  
   timers[timerName] = tmp;
 }
 
@@ -247,7 +280,7 @@ void Timers::FileTimeToTimeVal(timeval* tv)
 void Timers::StopTimer(const std::string& timerName)
 {
   timeval delta, b, a = timers[timerName];
-
+  
   GetTime(&b);
 
   // Calculate the delta time.
