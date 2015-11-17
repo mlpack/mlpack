@@ -147,6 +147,7 @@
  *   - Janzen Brewer <jahabrewer@gmail.com>
  *   - Trung Dinh <dinhanhtrung@gmail.com>
  *   - Tham Ngap Wei <thamngapwei@gmail.com>
+ *   - Grzegorz Krajewski <krajekg@gmail.com>
  */
 
 // First, include all of the prerequisites.
