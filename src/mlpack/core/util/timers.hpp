@@ -91,9 +91,6 @@ class Timer
    * @param name Name of timer to return value of.
    */
   static timeval Get(const std::string& name);
-
- private:
-  static std::map<std::string, bool> timerState;
 };
 
 class Timers
@@ -141,7 +138,10 @@ class Timers
   void StopTimer(const std::string& timerName);
 
  private:
+  //! A map of all the timers that are being tracked.
   std::map<std::string, timeval> timers;
+  //! A map that contains whether or not each timer is currently running.
+  std::map<std::string, bool> timerState;
 
   void FileTimeToTimeVal(timeval* tv);
   void GetTime(timeval* tv);
