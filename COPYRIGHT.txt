@@ -40,6 +40,7 @@ Copyright: Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
 Copyright: Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
 Copyright: Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
 Copyright: Copyright 2015, Tham Ngap Wei <thamngapwei@gmail.com>
+Copyright: Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
 License: BSD-3-clause
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/BSD file.
