@@ -30,7 +30,8 @@ timeval Timer::Get(const char* name);
 Each timer is given a name, and is referenced by that name.  You can call \c
 Timer::Start() and \c Timer::Stop() multiple times for a particular timer name,
 and the result will be the sum of the runs of the timer.  Note that \c
-Timer::Stop() must be called before \c Timer::Start() is called again.
+Timer::Stop() must be called before \c Timer::Start() is called again,
+otherwise runtime_error exception will occur.
 
 A "total_time" timer is run by default for each MLPACK program.
 
