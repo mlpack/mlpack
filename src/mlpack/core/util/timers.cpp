@@ -33,6 +33,17 @@ inline void timersub(const timeval* tvp, const timeval* uvp, timeval* vvp)
  */
 void Timer::Start(const std::string& name)
 {
+    if((timerState[name] == 1) && (name != "total_time"))
+  {
+    std::ostringstream error;
+    error << "Timer::Start(): timer '" << name
+	      << "' has already been " << "started";
+	
+    throw std::runtime_error(error.str());
+  }
+  
+  timerState[name] = true;
+  
   CLI::GetSingleton().timer.StartTimer(name);
 }
 
@@ -41,6 +52,17 @@ void Timer::Start(const std::string& name)
  */
 void Timer::Stop(const std::string& name)
 {
+    if((timerState[name] == 0) && (name != "total_time"))
+  {
+    std::ostringstream error;
+    error << "Timer::Stop(): timer '" << name
+	<< "' has already been " << "stopped";
+	
+    throw std::runtime_error(error.str());
+  }
+  
+  timerState[name] = false;
+  
   CLI::GetSingleton().timer.StopTimer(name);
 }
 
