@@ -68,7 +68,8 @@ class Timer
    * both runs -- that is, MLPACK timers are additive for each time they are
    * run, and do not reset.
    *
-   * @note Runtime error exception will occur if a timer is started twice.
+   * @note A std::runtime_error exception will be thrown if a timer is started
+   * twice.
    *
    * @param name Name of timer to be started.
    */
@@ -77,7 +78,8 @@ class Timer
   /**
    * Stop the given timer.
    *
-   * @note Runtime error exception will occur if a timer is stopped twice.
+   * @note A std::runtime_error exception will be thrown if a timer is started
+   * twice.
    *
    * @param name Name of timer to be stopped.
    */
@@ -89,7 +91,7 @@ class Timer
    * @param name Name of timer to return value of.
    */
   static timeval Get(const std::string& name);
-    
+
  private:
   static std::map<std::string, bool> timerState;
 };
@@ -145,6 +147,6 @@ class Timers
   void GetTime(timeval* tv);
 };
 
-}; // namespace mlpack
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_UTILITIES_TIMERS_HPP
