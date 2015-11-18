@@ -38,7 +38,7 @@ PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
     " memory usage and runtime.", "b");
 PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
     "impurity for calculating Hoeffding bounds.", "i");
-PARAM_INT("passes", "Number of passes to take over the dataset.", "p", 1);
+PARAM_INT("passes", "Number of passes to take over the dataset.", "s", 1);
 
 // Helper function for once we have chosen a tree type.
 template<typename TreeType>
