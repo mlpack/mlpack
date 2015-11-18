@@ -571,7 +571,9 @@ template<typename Archive>
 void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(dimensionality, "dimensionality");
+  ar & data::CreateNVP(tolerance, "tolerance");
   ar & data::CreateNVP(transition, "transition");
+  ar & data::CreateNVP(initial, "initial");
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
