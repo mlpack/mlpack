@@ -18,8 +18,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "Either one input sequence can be specified (with --input_file), or, a "
     "file containing files in which input sequences can be found (when "
     "--input_file and --batch are used together).  In addition, labels can be "
-    "provided in the file specified by --label_file, and if --batch is used, "
-    "the file given to --label_file should contain a list of files of labels "
+    "provided in the file specified by --labels_file, and if --batch is used, "
+    "the file given to --labels_file should contain a list of files of labels "
     "corresponding to the sequences in the file given to --input_file."
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
@@ -43,7 +43,7 @@ PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
 PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
 PARAM_STRING("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_file", "File to save trained HMM to.", "o",
+PARAM_STRING("output_model_file", "File to save trained HMM to.", "o",
     "output_hmm.xml");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
@@ -152,8 +152,11 @@ struct Train
     }
 
     // Save the model.
-    const string modelFile = CLI::GetParam<string>("model_file");
-    SaveHMM(hmm, modelFile);
+    if (CLI::HasParam("output_model_file"))
+    {
+      const string modelFile = CLI::GetParam<string>("output_model_file");
+      SaveHMM(hmm, modelFile);
+    }
   }
 };
 
@@ -310,7 +313,7 @@ int main(int argc, char** argv)
           tolerance);
 
       // Issue a warning if the user didn't give labels.
-      if (!CLI::HasParam("label_file"))
+      if (!CLI::HasParam("labels_file"))
         Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
             << "going to produce good results!" << endl;
 
