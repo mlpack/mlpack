@@ -38,6 +38,7 @@ PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
     " memory usage and runtime.", "b");
 PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
     "impurity for calculating Hoeffding bounds.", "i");
+PARAM_INT("passes", "Number of passes to take over the dataset.", "p", 1);
 
 // Helper function for once we have chosen a tree type.
 template<typename TreeType>
@@ -72,6 +73,10 @@ int main(int argc, char** argv)
 
   if (trainingFile.empty() && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
+
+  if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
+    Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
+        << endl;
 
   if (CLI::HasParam("info_gain"))
   {
@@ -115,6 +120,7 @@ void PerformActions()
   const string predictionsFile = CLI::GetParam<string>("predictions_file");
   const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
   const bool batchTraining = CLI::HasParam("batch_mode");
+  const size_t passes = (size_t) CLI::GetParam<int>("passes");
 
   TreeType* tree = NULL;
   DatasetInfo datasetInfo;
@@ -155,7 +161,16 @@ void PerformActions()
 
       // Now create the decision tree.
       Timer::Start("tree_training");
-      tree->Train(trainingSet, labels, batchTraining);
+      if (passes > 1)
+      {
+        Log::Info << "Taking " << passes << " passes over the dataset." << endl;
+        for (size_t i = 0; i < passes; ++i)
+          tree->Train(trainingSet, labels, false);
+      }
+      else
+      {
+        tree->Train(trainingSet, labels, batchTraining);
+      }
       Timer::Stop("tree_training");
     }
   }
