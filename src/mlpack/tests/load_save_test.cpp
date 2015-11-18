@@ -1253,4 +1253,37 @@ BOOST_AUTO_TEST_CASE(HarderARFFTest)
   remove("test.arff");
 }
 
+/**
+ * If we pass a bad DatasetInfo, it should throw.
+ */
+BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation    \t test" << endl;
+  f << endl;
+  f << endl;
+  f << "@attribute @@@@flfl numeric" << endl;
+  f << endl;
+  f << "\% comment" << endl;
+  f << "@attribute \"hello world\" string" << endl;
+  f << "@attribute 12345 integer" << endl;
+  f << "@attribute real real" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric \% comment" << endl;
+  f << "\% comment" << endl;
+  f << "@data" << endl;
+  f << "1, one, 3, 4.5, 6" << endl;
+  f << "2, two, 4, 5.5, 7 \% comment" << endl;
+  f << "3, \"three five, six\", 5, 6.5, 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info(6);
+
+  BOOST_REQUIRE_THROW(data::LoadARFF("test.arff", dataset, info),
+      std::invalid_argument);
+
+  remove("test.arff");
+}
+
 BOOST_AUTO_TEST_SUITE_END();

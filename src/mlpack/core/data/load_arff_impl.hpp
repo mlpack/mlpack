@@ -93,7 +93,20 @@ void LoadARFF(const std::string& filename,
   if (ifs.eof())
     throw std::runtime_error("no @data section found");
 
-  info = DatasetInfo(dimensionality);
+  // Reset the DatasetInfo object, if needed.
+  if (info.Dimensionality() == 0)
+  {
+    info = DatasetInfo(dimensionality);
+  }
+  else if (info.Dimensionality() != dimensionality)
+  {
+    std::ostringstream oss;
+    oss << "data::LoadARFF(): given DatasetInfo has dimensionality "
+        << info.Dimensionality() << ", but data has dimensionality "
+        << dimensionality;
+    throw std::invalid_argument(oss.str());
+  }
+
   for (size_t i = 0; i < types.size(); ++i)
   {
     if (types[i])
