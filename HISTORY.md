@@ -33,6 +33,9 @@
 
   * Add serialization support for Perceptron and LogisticRegression.
 
+  * Refactor SoftmaxRegression to predict into an arma::Row<size_t> object, and
+    add a softmax_regression program.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
