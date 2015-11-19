@@ -58,7 +58,8 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(
 
 template<template<typename> class OptimizerType>
 void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
-                                               arma::vec& predictions) const
+                                               arma::Row<size_t>& predictions)
+    const
 {
   if (testData.n_rows != FeatureSize())
   {
@@ -95,16 +96,16 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
   double maxProbability = 0;
 
   // For each test input.
-  for(size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; i++)
   {
     // For each class.
-    for(size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; j++)
     {
       // If a higher class probability is encountered, change prediction.
-      if(probabilities(j, i) > maxProbability)
+      if (probabilities(j, i) > maxProbability)
       {
         maxProbability = probabilities(j, i);
-        predictions(i) = static_cast<double>(j);
+        predictions(i) = j;
       }
     }
 
@@ -118,7 +119,7 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
     const arma::Row<size_t>& labels)
 {
-  arma::vec predictions;
+  arma::Row<size_t> predictions;
 
   // Get predictions for the provided data.
   Predict(testData, predictions);
