@@ -184,11 +184,10 @@ void PerformActions()
   }
 
   // The tree is trained or loaded.  Now do any testing if we need.
-  DatasetInfo testInfo;
   if (!testFile.empty())
   {
     arma::mat testSet;
-    data::Load(testFile, testSet, testInfo, true);
+    data::Load(testFile, testSet, datasetInfo, true);
 
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
