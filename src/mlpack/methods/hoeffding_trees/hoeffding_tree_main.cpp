@@ -119,8 +119,10 @@ void PerformActions()
   const string testFile = CLI::GetParam<string>("test_file");
   const string predictionsFile = CLI::GetParam<string>("predictions_file");
   const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
-  const bool batchTraining = CLI::HasParam("batch_mode");
+  bool batchTraining = CLI::HasParam("batch_mode");
   const size_t passes = (size_t) CLI::GetParam<int>("passes");
+  if (passes > 1)
+    batchTraining = false; // We already warned about this earlier.
 
   TreeType* tree = NULL;
   DatasetInfo datasetInfo;
@@ -138,8 +140,14 @@ void PerformActions()
 
     // Now create the decision tree.
     Timer::Start("tree_training");
+    if (passes > 1)
+      Log::Info << "Taking " << passes << " passes over the dataset." << endl;
+
     tree = new TreeType(trainingSet, datasetInfo, labels, max(labels) + 1,
-        batchTraining, confidence, maxSamples);
+        batchTraining, confidence, maxSamples, 100, minSamples);
+
+    for (size_t i = 1; i < passes; ++i)
+      tree->Train(trainingSet, labels, false);
     Timer::Stop("tree_training");
   }
   else
