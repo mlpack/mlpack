@@ -141,6 +141,14 @@ class LSHSearch
               arma::mat& distances,
               const size_t numTablesToSearch = 0);
 
+  /**
+   * Serialize the LSH model.
+   *
+   * @param ar Archive to serialize to.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
   //! Returns a string representation of this object.
   std::string ToString() const;
 

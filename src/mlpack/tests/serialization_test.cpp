@@ -31,6 +31,7 @@
 #include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/rann/ra_search.hpp>
+#include <mlpack/methods/lsh/lsh_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -41,6 +42,7 @@ using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
+using namespace mlpack::neighbor;
 
 using namespace arma;
 using namespace boost;
@@ -1380,6 +1382,51 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
   BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
   BOOST_REQUIRE_GT(textCorrect, 95 * 5);
+}
+
+/**
+ * Test that an LSH model can be serialized and deserialized.
+ */
+BOOST_AUTO_TEST_CASE(LSHTest)
+{
+  // Since we still don't have good tests for LSH, basically what we're going to
+  // do is serialize an LSH model, and make sure we can deserialize it and that
+  // we still get results when we call Search().
+  arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+
+  LSHSearch<> lsh(referenceData, 5, 10); // Arbitrary chosen parameters.
+
+  LSHSearch<> xmlLsh;
+  arma::mat textData = arma::randu<arma::mat>(5, 50);
+  LSHSearch<> textLsh(textData, 4, 5);
+  LSHSearch<> binaryLsh(referenceData, 15, 2);
+
+  // Now serialize.
+  SerializeObjectAll(lsh, xmlLsh, textLsh, binaryLsh);
+
+  // Check what we can about the serialized objects.
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), xmlLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), textLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
+  for (size_t i = 0; i < lsh.NumProjections(); ++i)
+  {
+    CheckMatrices(lsh.Projection(i), xmlLsh.Projection(i),
+        textLsh.Projection(i), binaryLsh.Projection(i));
+  }
+
+  CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
+      textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
+  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
+      binaryLsh.Offsets());
+  CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
+      textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
+
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
+
+  CheckMatrices(lsh.SecondHashTable(), xmlLsh.SecondHashTable(),
+      textLsh.SecondHashTable(), binaryLsh.SecondHashTable());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

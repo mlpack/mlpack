@@ -498,6 +498,41 @@ void LSHSearch<SortPolicy>::BuildHash()
 }
 
 template<typename SortPolicy>
+template<typename Archive>
+void LSHSearch<SortPolicy>::Serialize(Archive& ar,
+                                      const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // If we are loading, we are going to own the reference set.
+  if (Archive::is_loading::value)
+  {
+    if (ownsSet)
+      delete referenceSet;
+    ownsSet = true;
+  }
+  ar & CreateNVP(referenceSet, "referenceSet");
+
+  ar & CreateNVP(numProj, "numProj");
+  ar & CreateNVP(numTables, "numTables");
+
+  // Delete existing projections, if necessary.
+  if (Archive::is_loading::value)
+    projections.clear();
+
+  ar & CreateNVP(projections, "projections");
+  ar & CreateNVP(offsets, "offsets");
+  ar & CreateNVP(hashWidth, "hashWidth");
+  ar & CreateNVP(secondHashSize, "secondHashSize");
+  ar & CreateNVP(secondHashWeights, "secondHashWeights");
+  ar & CreateNVP(bucketSize, "bucketSize");
+  ar & CreateNVP(secondHashTable, "secondHashTable");
+  ar & CreateNVP(bucketContentSize, "bucketContentSize");
+  ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+  ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
+}
+
+template<typename SortPolicy>
 std::string LSHSearch<SortPolicy>::ToString() const
 {
   std::ostringstream convert;
