@@ -149,6 +149,26 @@ class LSHSearch
   //! Modify the number of distance evaluations performed.
   size_t& DistanceEvaluations() { return distanceEvaluations; }
 
+  //! Return the reference dataset.
+  const arma::mat& ReferenceSet() const { return *referenceSet; }
+
+  //! Get the number of projections.
+  size_t NumProjections() const { return projections.size(); }
+  //! Get the projection matrix of the given table.
+  const arma::mat& Projection(const size_t i) const { return projections[i]; }
+
+  //! Get the offsets 'b' for each of the projections.  (One 'b' per column.)
+  const arma::mat& Offsets() const { return offsets; }
+
+  //! Get the weights of the second hash.
+  const arma::vec& SecondHashWeights() const { return secondHashWeights; }
+
+  //! Get the bucket size of the second hash.
+  size_t BucketSize() const { return bucketSize; }
+
+  //! Get the second hash table.
+  const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
+
  private:
   /**
    * This function builds a hash table with two levels of hashing as presented
