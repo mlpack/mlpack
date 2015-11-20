@@ -310,7 +310,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Query indices only need to be mapped if we are building the query tree
     // ourselves.
     if (!singleMode && !naive)
+    {
       distancePtr = new std::vector<std::vector<double>>;
+      neighborPtr = new std::vector<std::vector<size_t>>;
+    }
 
     // Reference indices only need to be mapped if we built the reference tree
     // ourselves.

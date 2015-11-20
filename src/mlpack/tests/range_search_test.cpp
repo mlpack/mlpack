@@ -1378,4 +1378,30 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   }
 }
 
+/**
+ * Make sure that the neighborPtr matrix isn't accidentally deleted.
+ * See issue #478.
+ */
+BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+
+  // Build the tree ourselves.
+  std::vector<size_t> oldFromNewReferences;
+  RangeSearch<>::Tree tree(dataset);
+  RangeSearch<> ra(&tree);
+
+  // Now make a query set.
+  arma::mat queryset = arma::randu<arma::mat>(5, 50);
+  vector<vector<double>> distances;
+  vector<vector<size_t>> neighbors;
+  ra.Search(queryset, math::Range(0.2, 0.5), neighbors, distances);
+
+  // These will (hopefully) fail is either the neighbors or the distances matrix
+  // has been accidentally deleted.
+  BOOST_REQUIRE_EQUAL(neighbors.size(), 50);
+  BOOST_REQUIRE_EQUAL(distances.size(), 50);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();

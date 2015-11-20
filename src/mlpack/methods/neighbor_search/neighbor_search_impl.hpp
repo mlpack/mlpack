@@ -344,10 +344,13 @@ Search(const MatType& querySet,
   if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive)
+    {
       distancePtr = new arma::mat; // Query indices need to be mapped.
+      neighborPtr = new arma::Mat<size_t>;
+    }
 
     if (treeOwner)
-      neighborPtr = new arma::Mat<size_t>; // All indices need mapping.
+      neighborPtr = new arma::Mat<size_t>; // Reference indices need mapping.
   }
 
   // Set the size of the neighbor and distance matrices.
