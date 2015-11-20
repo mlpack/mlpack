@@ -71,6 +71,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
   if (this->referenceSet && ownsSet)
     delete this->referenceSet;
   this->referenceSet = &referenceSet;
+  this->ownsSet = false;
 
   // Set new parameters.
   this->numProj = numProj;
