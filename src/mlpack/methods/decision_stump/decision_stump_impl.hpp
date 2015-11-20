@@ -28,7 +28,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
                                       const size_t classes,
                                       size_t inpBucketSize)
 {
-  numClass = classes;
+  numClasses = classes;
   bucketSize = inpBucketSize;
 
   arma::rowvec weightD;
@@ -117,7 +117,7 @@ void DecisionStump<MatType>::Classify(const MatType& test,
 }
 
 /**
- * Alternate constructor which copies parameters bucketSize and numClass
+ * Alternate constructor which copies parameters bucketSize and numClasses
  * from an already initiated decision stump, other. It appropriately
  * sets the Weight vector.
  *
@@ -134,7 +134,7 @@ DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
                                       const arma::Row<size_t>& labels,
                                       const arma::rowvec& weights)
 {
-  numClass = other.numClass;
+  numClasses = other.numClasses;
   bucketSize = other.bucketSize;
 
   // weightD = weights;
@@ -416,7 +416,7 @@ double DecisionStump<MatType>::CalculateEntropy(
   double entropy = 0.0;
   size_t j;
 
-  arma::Row<size_t> numElem(numClass);
+  arma::Row<size_t> numElem(numClasses);
   numElem.fill(0);
 
   // Variable to accumulate the weight in this subview_row.
@@ -432,7 +432,7 @@ double DecisionStump<MatType>::CalculateEntropy(
     }
       // numElem(labels(j))++;
 
-    for (j = 0; j < numClass; j++)
+    for (j = 0; j < numClasses; j++)
     {
       const double p1 = ((double) numElem(j) / accWeight);
 
@@ -447,7 +447,7 @@ double DecisionStump<MatType>::CalculateEntropy(
     for (j = 0; j < labels.n_elem; j++)
       numElem(labels(j))++;
 
-    for (j = 0; j < numClass; j++)
+    for (j = 0; j < numClasses; j++)
     {
       const double p1 = ((double) numElem(j) / labels.n_elem);
 

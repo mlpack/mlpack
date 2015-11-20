@@ -87,7 +87,7 @@ class DecisionStump
 
  private:
   //! Stores the number of classes.
-  size_t numClass;
+  size_t numClasses;
 
   //! Stores the value of the attribute on which to split.
   int splitAttribute;
