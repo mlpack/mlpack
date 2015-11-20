@@ -291,6 +291,10 @@ Search(const size_t k,
   distances.fill(SortPolicy::WorstDistance());
   resultingNeighbors.fill(referenceSet->n_cols);
 
+  // If the user asked for 0 nearest neighbors... uh... we're done.
+  if (k == 0)
+    return;
+
   size_t avgIndicesReturned = 0;
 
   Timer::Start("computing_neighbors");
