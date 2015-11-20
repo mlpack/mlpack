@@ -132,4 +132,27 @@ BOOST_AUTO_TEST_CASE(LSHTrainTest)
   BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
 }
 
+BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
+{
+  // If we create an empty LSH model and then call Search(), it should throw an
+  // exception.
+  LSHSearch<> lsh;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 50);
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  BOOST_REQUIRE_THROW(lsh.Search(dataset, 2, neighbors, distances),
+      std::invalid_argument);
+
+  // Now, train.
+  lsh.Train(dataset, 4, 3, 3.0, 12, 4);
+
+  lsh.Search(dataset, 3, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
