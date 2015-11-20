@@ -114,6 +114,18 @@ struct Train
           if (label.n_cols > 1)
             Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
+          // Check all of the labels.
+          for (size_t i = 0; i < label.n_rows; ++i)
+          {
+            if (label[i] >= hmm.Transition().n_cols)
+            {
+              Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
+                  << "states, but label on line " << i << " of '" << lineBuf
+                  << "' is " << label[i] << " (should be between 0 and "
+                  << (hmm.Transition().n_cols - 1) << ")!" << endl;
+            }
+          }
+
           labelSeq.push_back(label.col(0));
 
           f.getline(lineBuf, 1024, '\n');
@@ -138,6 +150,18 @@ struct Train
           Log::Fatal << "Label sequence " << labelSeq.size() << " does not have"
               << " the same number of points as observation sequence "
               << labelSeq.size() << "!" << endl;
+
+        // Check all of the labels.
+        for (size_t i = 0; i < label.n_rows; ++i)
+        {
+          if (label[i] >= hmm.Transition().n_cols)
+          {
+            Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
+                << "states, but label on line " << i << " of '" << labelsFile
+                << "' is " << label[i] << " (should be between 0 and "
+                << (hmm.Transition().n_cols - 1) << ")!" << endl;
+          }
+        }
 
         labelSeq.push_back(label.col(0));
       }
