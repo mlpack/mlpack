@@ -252,15 +252,32 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 {
   // Ensure the dimensionality of the query set is correct.
   if (querySet.n_rows != referenceSet->n_rows)
-    Log::Fatal << "LSHSearch::Search(): dimensionality of query set ("
+  {
+    std::ostringstream oss;
+    oss << "LSHSearch::Search(): dimensionality of query set ("
         << querySet.n_rows << ") is not equal to the dimensionality the model "
         << "was trained on (" << referenceSet->n_rows << ")!" << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+
+  if (k > referenceSet->n_cols)
+  {
+    std::ostringstream oss;
+    oss << "LSHSearch::Search(): requested " << k << " approximate nearest "
+        << "neighbors, but reference set has " << referenceSet->n_cols
+        << " points!" << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
 
   // Set the size of the neighbor and distance matrices.
   resultingNeighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);
   distances.fill(SortPolicy::WorstDistance());
   resultingNeighbors.fill(referenceSet->n_cols);
+
+  // If the user asked for 0 nearest neighbors... uh... we're done.
+  if (k == 0)
+    return;
 
   size_t avgIndicesReturned = 0;
 
@@ -306,10 +323,6 @@ Search(const size_t k,
   distances.set_size(k, referenceSet->n_cols);
   distances.fill(SortPolicy::WorstDistance());
   resultingNeighbors.fill(referenceSet->n_cols);
-
-  // If the user asked for 0 nearest neighbors... uh... we're done.
-  if (k == 0)
-    return;
 
   size_t avgIndicesReturned = 0;
 
@@ -398,6 +411,7 @@ void LSHSearch<SortPolicy>::BuildHash()
 
   // Step III: Create each hash table in the first level hash one by one and
   // putting them directly into the 'secondHashTable' for memory efficiency.
+  projections.clear(); // Reset projections vector.
   for (size_t i = 0; i < numTables; i++)
   {
     // Step IV: Obtain the 'numProj' projections for each table.
@@ -429,8 +443,7 @@ void LSHSearch<SortPolicy>::BuildHash()
 
     // Step VI: Putting the points in the 'secondHashTable' by hashing the key.
     // Now we hash every key, point ID to its corresponding bucket.
-    arma::rowvec secondHashVec = secondHashWeights.t()
-      * arma::floor(hashMat);
+    arma::rowvec secondHashVec = secondHashWeights.t() * arma::floor(hashMat);
 
     // This gives us the bucket for the corresponding point ID.
     for (size_t j = 0; j < secondHashVec.n_elem; j++)
