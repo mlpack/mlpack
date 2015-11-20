@@ -264,14 +264,23 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   {
     // Generate full sequence of observations for this state from the list of
     // emissions that are from this state.
-    arma::mat emissions(dimensionality, emissionList[state].size());
-    for (size_t i = 0; i < emissions.n_cols; i++)
+    if (emissionList[state].size() > 0)
     {
-      emissions.col(i) = dataSeq[emissionList[state][i].first].col(
-          emissionList[state][i].second);
-    }
+      arma::mat emissions(dimensionality, emissionList[state].size());
+      for (size_t i = 0; i < emissions.n_cols; i++)
+      {
+        emissions.col(i) = dataSeq[emissionList[state][i].first].col(
+            emissionList[state][i].second);
+      }
 
-    emission[state].Estimate(emissions);
+      emission[state].Estimate(emissions);
+    }
+    else
+    {
+      Log::Warn << "There are no observations in training data with hidden "
+          << "state " << state << "!  The corresponding emission distribution "
+          << "is likely to be meaningless." << std::endl;
+    }
   }
 }
 
