@@ -51,15 +51,17 @@ class DropoutLayer
  public:
 
   /**
-   * Create the BaseLayer object using the specified number of units.
+   * Create the DropoutLayer object using the specified ratio and rescale
+   * parameter.
    *
-   * @param outSize The number of output units.
+   * @param ratio The probability of setting a value to zero.
+   * @param rescale If true the input is rescaled when deterministic is False.
    */
   DropoutLayer(const double ratio = 0.5,
                const bool rescale = true) :
       ratio(ratio),
-      rescale(rescale),	  
-      scale(1.0 / (1.0 - ratio))
+      scale(1.0 / (1.0 - ratio)),
+      rescale(rescale)
   {
     // Nothing to do here.
   }
@@ -76,17 +78,20 @@ class DropoutLayer
     // The dropout mask will not be multiplied in the deterministic mode
     // (during testing).
     if (deterministic)
-    {      
+    {
       if (!rescale)
+      {
         output = input;
-	  else
-		output = input * scale;
+      }
+      else
+      {
+        output = input * scale;
+      }
     }
     else
     {
       // Scale with input / (1 - ratio) and set values to zero with probability
       // ratio.
-      scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
       mask.transform( [&](double val) { return (val > ratio); } );
       output = input % mask * scale;
@@ -106,16 +111,19 @@ class DropoutLayer
     // (during testing).
     if (deterministic)
     {
-      output = input;
-
-      if (rescale)
-        output *= scale;
+      if (!rescale)
+      {
+        output = input;
+      }
+      else
+      {
+        output = input * scale;
+      }
     }
     else
     {
       // Scale with input / (1 - ratio) and set values to zero with probability
       // ratio.
-      scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Cube<eT> >(input.n_rows, input.n_cols,
           input.n_slices);
       mask.transform( [&](double val) { return (val > ratio); } );
@@ -139,12 +147,12 @@ class DropoutLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
@@ -154,19 +162,18 @@ class DropoutLayer
   OutputDataType& Delta() { return delta; }
 
   //! The value of the deterministic parameter.
-  bool Deterministic() const {return deterministic; }
+  bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
-  bool& Deterministic() {return deterministic; }
+  bool& Deterministic() { return deterministic; }
 
   //! The probability of setting a value to zero.
-  double Ratio() const {return ratio; }
+  double Ratio() const { return ratio; }
+
   //! Modify the probability of setting a value to zero.
-  double& Ratio() {return ratio; }
-  
-  void Ratio(double r)
+  void Ratio(const double r)
   {
-	ratio = r;
-	scale = 1.0 / (1.0 - ratio);
+    ratio = r;
+    scale = 1.0 / (1.0 - ratio);
   }
 
   //! The value of the rescale parameter.
