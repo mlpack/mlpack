@@ -35,6 +35,21 @@ LSHSearch(const arma::mat& referenceSet,
       bucketSize);
 }
 
+// Empty constructor.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::LSHSearch() :
+    referenceSet(new arma::mat()), // empty dataset
+    ownsSet(true),
+    numProj(0),
+    numTables(0),
+    hashWidth(0),
+    secondHashSize(99901),
+    bucketSize(500),
+    distanceEvaluations(0)
+{
+  // Nothing to do.
+}
+
 // Destructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::~LSHSearch()

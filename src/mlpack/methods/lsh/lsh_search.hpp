@@ -72,6 +72,12 @@ class LSHSearch
             const size_t bucketSize = 500);
 
   /**
+   * Create an untrained LSH model.  Be sure to call Train() before calling
+   * Search(); otherwise, an exception will be thrown when Search() is called.
+   */
+  LSHSearch();
+
+  /**
    * Clean memory.
    */
   ~LSHSearch();
