@@ -27,7 +27,7 @@ double CosineDistance::Evaluate(const VecTypeA& a, const VecTypeB& b)
     return dot(a, b) / denominator;
 }
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

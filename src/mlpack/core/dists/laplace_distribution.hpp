@@ -156,7 +156,7 @@ class LaplaceDistribution
 
 };
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

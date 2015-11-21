@@ -430,5 +430,5 @@ void CosineTree::CalculateCentroid()
   centroid /= numColumns;
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack

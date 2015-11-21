@@ -190,8 +190,8 @@ class SparseAutoencoder
   double rho;
 };
 
-}; // namespace nn
-}; // namespace mlpack
+} // namespace nn
+} // namespace mlpack
 
 // Include implementation.
 #include "sparse_autoencoder_impl.hpp"

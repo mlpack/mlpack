@@ -89,7 +89,7 @@ inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
   return metric::LMetric<2, true>::Evaluate(a, b);
 }
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 #endif

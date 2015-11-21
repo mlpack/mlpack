@@ -75,7 +75,7 @@ class PellegMooreKMeansStatistic
   arma::vec centroid;
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

@@ -203,7 +203,7 @@ using BaseLayer2D = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

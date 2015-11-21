@@ -74,7 +74,7 @@ class LayerTraits<BinaryClassificationLayer>
   static const bool IsConnection = false;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

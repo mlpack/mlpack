@@ -87,7 +87,7 @@ class PolynomialKernel
   double offset;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

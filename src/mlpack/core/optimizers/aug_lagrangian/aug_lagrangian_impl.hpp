@@ -151,8 +151,8 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   return false;
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 

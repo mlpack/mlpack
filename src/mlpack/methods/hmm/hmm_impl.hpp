@@ -598,7 +598,7 @@ void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
   }
 }
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 #endif

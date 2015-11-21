@@ -471,8 +471,8 @@ std::string L_BFGS<FunctionType>::ToString() const
   return convert.str();
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 

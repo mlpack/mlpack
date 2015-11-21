@@ -121,8 +121,8 @@ class PSpectrumStringKernel
   size_t p;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation of templated Evaluate().
 #include "pspectrum_string_kernel_impl.hpp"

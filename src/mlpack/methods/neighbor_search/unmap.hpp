@@ -55,7 +55,7 @@ void Unmap(const arma::Mat<size_t>& neighbors,
            arma::mat& distancesOut,
            const bool squareRoot = false);
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

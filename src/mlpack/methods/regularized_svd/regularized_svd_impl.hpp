@@ -46,7 +46,7 @@ void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
   v = parameters.submat(0, 0, rank - 1, numUsers - 1);
 }
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 #endif

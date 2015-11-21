@@ -42,7 +42,7 @@ class RandomInitializer
   }
 };
 
-}; // namespace sparse_coding
-}; // namespace mlpack
+} // namespace sparse_coding
+} // namespace mlpack
 
 #endif

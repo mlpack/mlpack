@@ -375,8 +375,8 @@ class HMM
   double tolerance;
 };
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 // Include implementation.
 #include "hmm_impl.hpp"

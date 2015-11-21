@@ -172,7 +172,7 @@ class DiscreteDistribution
   arma::vec probabilities;
 };
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

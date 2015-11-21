@@ -70,5 +70,5 @@ Apply(const MatType& V,
   return residue;
 }
 
-}; // namespace amf
-}; // namespace mlpack
+} // namespace amf
+} // namespace mlpack

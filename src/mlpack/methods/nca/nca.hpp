@@ -102,8 +102,8 @@ class NCA
   OptimizerType<SoftmaxErrorFunction<MetricType> > optimizer;
 };
 
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 // Include the implementation.
 #include "nca_impl.hpp"

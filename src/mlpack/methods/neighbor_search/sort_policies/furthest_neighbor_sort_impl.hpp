@@ -60,7 +60,7 @@ inline double FurthestNeighborSort::BestPointToNodeDistance(
   return referenceNode->MaxDistance(point, pointToCenterDistance);
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

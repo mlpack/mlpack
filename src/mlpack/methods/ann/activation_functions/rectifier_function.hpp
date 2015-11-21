@@ -104,7 +104,7 @@ class RectifierFunction
   }
 }; // class RectifierFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

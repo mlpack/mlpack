@@ -124,7 +124,7 @@ std::string SGD<DecomposableFunctionType>::ToString() const
   return convert.str();
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

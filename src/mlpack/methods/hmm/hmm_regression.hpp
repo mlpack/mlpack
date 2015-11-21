@@ -326,8 +326,8 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
 
 };
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 // Include implementation.
 #include "hmm_regression_impl.hpp"

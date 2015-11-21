@@ -53,7 +53,7 @@ std::string NCA<MetricType, OptimizerType>::ToString() const
 }
 
 
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 #endif

@@ -75,7 +75,7 @@ std::string MahalanobisDistance<TakeRoot>::ToString() const
   return convert.str();
 }
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 #endif

@@ -144,8 +144,8 @@ class SGD
   bool shuffle;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation.
 #include "sgd_impl.hpp"

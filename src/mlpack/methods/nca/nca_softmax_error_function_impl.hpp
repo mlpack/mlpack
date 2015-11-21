@@ -279,7 +279,7 @@ std::string SoftmaxErrorFunction<MetricType>::ToString() const{
   return convert.str();
 }
 
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 #endif

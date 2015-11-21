@@ -116,8 +116,8 @@ void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
   }
 }
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 // Template specialization for the SGD optimizer.
 namespace mlpack {
@@ -177,5 +177,5 @@ double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
   return overallObjective;
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack

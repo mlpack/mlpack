@@ -874,7 +874,7 @@ std::string BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   return convert.str();
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

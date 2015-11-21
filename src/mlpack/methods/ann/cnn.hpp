@@ -413,7 +413,7 @@ class NetworkTraits<
   static const bool IsCNN = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

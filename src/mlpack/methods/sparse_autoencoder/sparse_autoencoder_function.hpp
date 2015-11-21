@@ -156,7 +156,7 @@ class SparseAutoencoderFunction
   double rho;
 };
 
-}; // namespace nn
-}; // namespace mlpack
+} // namespace nn
+} // namespace mlpack
 
 #endif

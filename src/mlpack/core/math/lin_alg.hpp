@@ -119,8 +119,8 @@ inline size_t SvecIndex(size_t i, size_t j, size_t n);
  */
 void SymKronId(const arma::mat& A, arma::mat& op);
 
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack
 
 // Partially include implementation
 #include "lin_alg_impl.hpp"

@@ -401,7 +401,7 @@ std::string CF<FactorizerType>::ToString() const
   return convert.str();
 }
 
-}; // namespace mlpack
-}; // namespace cf
+} // namespace mlpack
+} // namespace cf
 
 #endif

@@ -58,7 +58,7 @@ class ExponentialSchedule
   double lambda;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

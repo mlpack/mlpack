@@ -34,7 +34,7 @@ class SumSquaredErrorFunction
 
 }; // class SumSquaredErrorFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

@@ -806,7 +806,7 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
   neighbors(pos, queryIndex) = neighbor;
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP

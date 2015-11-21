@@ -89,7 +89,7 @@ std::string KernelPCA<KernelType, KernelRule>::ToString() const
   return convert.str();
 }
 
-}; // namespace mlpack
-}; // namespace kpca
+} // namespace mlpack
+} // namespace kpca
 
 #endif

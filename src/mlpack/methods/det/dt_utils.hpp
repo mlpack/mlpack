@@ -61,7 +61,7 @@ DTree* Trainer(arma::mat& dataset,
                const size_t minLeafSize = 5,
                const std::string unprunedTreeOutput = "");
 
-}; // namespace det
-}; // namespace mlpack
+} // namespace det
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_DET_DT_UTILS_HPP

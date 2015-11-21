@@ -254,8 +254,8 @@ class CF
 
 }; // class CF
 
-}; // namespace cf
-}; // namespace mlpack
+} // namespace cf
+} // namespace mlpack
 
 //Include implementation
 #include "cf_impl.hpp"

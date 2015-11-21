@@ -85,7 +85,7 @@ class IdentityFunction
 
 }; // class IdentityFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

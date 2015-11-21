@@ -107,8 +107,8 @@ class AugLagrangianFunction
   double sigma;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include basic implementation.
 #include "aug_lagrangian_function_impl.hpp"

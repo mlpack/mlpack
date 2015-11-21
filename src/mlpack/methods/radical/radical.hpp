@@ -137,7 +137,7 @@ void WhitenFeatureMajorMatrix(const arma::mat& matX,
                               arma::mat& matXWhitened,
                               arma::mat& matWhitening);
 
-}; // namespace radical
-}; // namespace mlpack
+} // namespace radical
+} // namespace mlpack
 
 #endif

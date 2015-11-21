@@ -45,7 +45,7 @@ class KMeansSelection
   }
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

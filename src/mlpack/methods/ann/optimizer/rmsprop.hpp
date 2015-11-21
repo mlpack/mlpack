@@ -157,7 +157,7 @@ class RMSPROP
   DataType gradient;
 }; // class RMSPROP
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

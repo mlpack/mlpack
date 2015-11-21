@@ -71,7 +71,7 @@ void SparseAutoencoder<OptimizerType>::GetNewFeatures(arma::mat& data,
       features);
 }
 
-}; // namespace nn
-}; // namespace mlpack
+} // namespace nn
+} // namespace mlpack
 
 #endif

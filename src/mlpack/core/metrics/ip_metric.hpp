@@ -67,8 +67,8 @@ class IPMetric
   bool kernelOwner;
 };
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 // Include implementation.
 #include "ip_metric_impl.hpp"

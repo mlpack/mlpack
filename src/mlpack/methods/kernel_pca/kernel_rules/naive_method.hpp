@@ -83,7 +83,7 @@ class NaiveKernelRule
   }
 };
 
-}; // namespace kpca
-}; // namespace mlpack
+} // namespace kpca
+} // namespace mlpack
 
 #endif

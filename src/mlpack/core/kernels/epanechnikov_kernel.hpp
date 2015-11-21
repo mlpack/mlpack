@@ -111,8 +111,8 @@ class KernelTraits<EpanechnikovKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation.
 #include "epanechnikov_kernel_impl.hpp"

@@ -185,7 +185,7 @@ void HMMRegression::StackData(const arma::mat& predictors,
   dataSeq.insert_rows(0, responses.t());
 }
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 #endif

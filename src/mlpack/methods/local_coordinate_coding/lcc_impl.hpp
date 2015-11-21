@@ -318,7 +318,7 @@ std::string LocalCoordinateCoding<DictionaryInitializer>::ToString() const
   return convert.str();
 }
 
-}; // namespace lcc
-}; // namespace mlpack
+} // namespace lcc
+} // namespace mlpack
 
 #endif

@@ -146,7 +146,7 @@ void PrefixedOutStream::PrefixIfNeeded()
   }
 }
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 #endif // MLPACK_CLI_PREFIXEDOUTSTREAM_IMPL_H

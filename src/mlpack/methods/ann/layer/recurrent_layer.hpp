@@ -234,7 +234,7 @@ class LayerTraits<RecurrentLayer<
   static const bool IsConnection = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

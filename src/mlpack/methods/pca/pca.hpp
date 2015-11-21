@@ -110,7 +110,7 @@ class PCA
 
 }; // class PCA
 
-}; // namespace pca
-}; // namespace mlpack
+} // namespace pca
+} // namespace mlpack
 
 #endif

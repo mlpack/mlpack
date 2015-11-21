@@ -32,7 +32,7 @@ typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> AllkNN;
  */
 typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> AllkFN;
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

@@ -256,8 +256,8 @@ class L_BFGS
                       const arma::mat& oldGradient);
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #include "lbfgs_impl.hpp"
 

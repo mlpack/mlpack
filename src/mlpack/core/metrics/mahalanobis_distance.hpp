@@ -108,8 +108,8 @@ class MahalanobisDistance
   arma::mat covariance;
 };
 
-}; // namespace distance
-}; // namespace mlpack
+} // namespace distance
+} // namespace mlpack
 
 #include "mahalanobis_distance_impl.hpp"
 

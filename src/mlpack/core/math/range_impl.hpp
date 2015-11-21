@@ -191,7 +191,7 @@ std::string Range::ToString() const
   convert << "[" << lo << ", " << hi << "]";
   return convert.str();
 }
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack
 
 #endif

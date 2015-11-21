@@ -60,7 +60,7 @@ inline double NearestNeighborSort::BestPointToNodeDistance(
   return referenceNode->MinDistance(point, pointToCenterDistance);
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

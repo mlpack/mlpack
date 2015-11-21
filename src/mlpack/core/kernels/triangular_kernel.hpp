@@ -112,7 +112,7 @@ class KernelTraits<TriangularKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

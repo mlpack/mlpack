@@ -83,8 +83,8 @@ class LRSDP
   AugLagrangian<LRSDPFunction<SDPType>> augLag;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation
 #include "lrsdp_impl.hpp"

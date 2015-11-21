@@ -149,8 +149,8 @@ class SoftmaxErrorFunction
   void Precalculate(const arma::mat& coordinates);
 };
 
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 // Include implementation.
 #include "nca_softmax_error_function_impl.hpp"

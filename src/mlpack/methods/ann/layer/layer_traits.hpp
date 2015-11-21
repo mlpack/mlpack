@@ -68,7 +68,7 @@ HAS_MEM_FUNC(RecurrentParameter, HasRecurrentParameterCheck);
 // can use with SFINAE to catch when a type has a SeqLen() function.
 HAS_MEM_FUNC(SeqLen, HasSeqLenCheck);
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

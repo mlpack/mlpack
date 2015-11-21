@@ -22,7 +22,7 @@ class FullConvolution { /* Nothing to do here */ };
  */
 class ValidConvolution { /* Nothing to do here */ };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

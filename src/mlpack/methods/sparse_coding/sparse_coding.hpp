@@ -203,8 +203,8 @@ class SparseCoding
   double lambda2;
 };
 
-}; // namespace sparse_coding
-}; // namespace mlpack
+} // namespace sparse_coding
+} // namespace mlpack
 
 // Include implementation.
 #include "sparse_coding_impl.hpp"

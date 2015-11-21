@@ -123,8 +123,8 @@ class KernelPCA
 
 }; // class KernelPCA
 
-}; // namespace kpca
-}; // namespace mlpack
+} // namespace kpca
+} // namespace mlpack
 
 // Include implementation.
 #include "kernel_pca_impl.hpp"

@@ -231,7 +231,7 @@ template <
 >
 using DropoutLayer2D = DropoutLayer<InputDataType, OutputDataType>;
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

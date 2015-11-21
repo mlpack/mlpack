@@ -25,7 +25,7 @@ namespace util {
  */
 std::string GetVersion();
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 #endif

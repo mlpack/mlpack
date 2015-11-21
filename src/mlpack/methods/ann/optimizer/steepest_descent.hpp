@@ -140,7 +140,7 @@ class SteepestDescent
   DataType gradient;
 }; // class SteepestDescent
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

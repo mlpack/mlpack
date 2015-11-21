@@ -169,7 +169,7 @@ class AdaDelta
   DataType meanSquaredGradientDx;
 }; // class AdaDelta
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

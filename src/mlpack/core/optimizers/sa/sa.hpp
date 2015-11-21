@@ -217,8 +217,8 @@ class SA
   void MoveControl(const size_t nMoves, arma::mat& accept);
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #include "sa_impl.hpp"
 

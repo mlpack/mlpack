@@ -115,8 +115,8 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
     const arma::mat& coordinates,
     arma::mat& gradient) const;
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation
 #include "lrsdp_function_impl.hpp"

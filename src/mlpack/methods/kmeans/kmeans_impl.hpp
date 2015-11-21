@@ -303,5 +303,5 @@ void KMeans<MetricType,
   ar & data::CreateNVP(emptyClusterAction, "emptyClusterAction");
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack

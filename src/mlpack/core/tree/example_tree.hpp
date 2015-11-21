@@ -229,7 +229,7 @@ class ExampleTree
   MetricType& metric;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

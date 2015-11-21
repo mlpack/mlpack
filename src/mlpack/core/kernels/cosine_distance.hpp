@@ -62,8 +62,8 @@ class KernelTraits<CosineDistance>
   static const bool UsesSquaredDistance = false;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation.
 #include "cosine_distance_impl.hpp"

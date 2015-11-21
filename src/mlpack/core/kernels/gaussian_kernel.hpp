@@ -176,7 +176,7 @@ class KernelTraits<GaussianKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

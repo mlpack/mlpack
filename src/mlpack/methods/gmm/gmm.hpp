@@ -353,8 +353,8 @@ class GMM
       const arma::vec& weights) const;
 };
 
-}; // namespace gmm
-}; // namespace mlpack
+} // namespace gmm
+} // namespace mlpack
 
 // Include implementation.
 #include "gmm_impl.hpp"

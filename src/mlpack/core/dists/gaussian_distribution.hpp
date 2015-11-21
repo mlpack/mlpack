@@ -191,7 +191,7 @@ inline void GaussianDistribution::LogProbability(const arma::mat& x,
 }
 
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

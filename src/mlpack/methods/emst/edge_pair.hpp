@@ -61,7 +61,7 @@ class EdgePair
 
 }; // class EdgePair
 
-}; // namespace emst
-}; // namespace mlpack
+} // namespace emst
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_EMST_EDGE_PAIR_HPP

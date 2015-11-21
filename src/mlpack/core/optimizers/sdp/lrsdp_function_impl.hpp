@@ -220,7 +220,7 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

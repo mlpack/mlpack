@@ -32,7 +32,7 @@ class OrderedSelection
   }
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

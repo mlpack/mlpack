@@ -150,8 +150,8 @@ class LocalCoordinateCoding
   double lambda;
 };
 
-}; // namespace lcc
-}; // namespace mlpack
+} // namespace lcc
+} // namespace mlpack
 
 // Include implementation.
 #include "lcc_impl.hpp"

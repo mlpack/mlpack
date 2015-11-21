@@ -88,8 +88,8 @@ class QUIC_SVD
   arma::mat basis;
 };
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 // Include implementation.
 #include "quic_svd_impl.hpp"

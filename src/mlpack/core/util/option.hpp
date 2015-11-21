@@ -93,8 +93,8 @@ class ProgramDoc
   std::string documentation;
 };
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 // For implementations of templated functions
 #include "option_impl.hpp"

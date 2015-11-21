@@ -148,7 +148,7 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
       variances[i] /= clusterCounts[i];
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

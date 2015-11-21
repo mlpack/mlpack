@@ -177,8 +177,8 @@ class PrefixedOutStream
   bool fatal;
 };
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 // Template definitions.
 #include "prefixedoutstream_impl.hpp"
