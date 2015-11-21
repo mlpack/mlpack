@@ -35,6 +35,21 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
 }
 
 /**
+ * Empty constructor.
+ */
+template<typename MatType>
+DecisionStump<MatType>::DecisionStump() :
+    classes(1),
+    bucketSize(0),
+    splitAttribute(0),
+    split(1),
+    binLabels(1)
+{
+  split[0] = DBL_MAX;
+  binLabels[0] = 0;
+}
+
+/**
  * Train on the given data and labels.
  */
 template<typename MatType>
@@ -154,6 +169,25 @@ DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
     bucketSize(other.bucketSize)
 {
   Train<true>(data, labels, weights);
+}
+
+/**
+ * Serialize the decision stump.
+ */
+template<typename MatType>
+template<typename Archive>
+void DecisionStump<MatType>::Serialize(Archive& ar,
+                                       const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // This is straightforward; just serialize all of the members of the class.
+  // None need special handling.
+  ar & CreateNVP(classes, "classes");
+  ar & CreateNVP(bucketSize, "bucketSize");
+  ar & CreateNVP(splitAttribute, "splitAttribute");
+  ar & CreateNVP(split, "split");
+  ar & CreateNVP(binLabels, "binLabels");
 }
 
 /**

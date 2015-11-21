@@ -60,6 +60,13 @@ class DecisionStump
                 const arma::rowvec& weights);
 
   /**
+   * Create a decision stump without training.  This stump will not be useful
+   * and will always return a class of 0 for anything that is to be classified,
+   * so it would be a prudent idea to call Train() after using this constructor.
+   */
+  DecisionStump();
+
+  /**
    * Train the decision stump on the given data.  This completely overwrites any
    * previous training data, so after training the stump may be completely
    * different.
@@ -98,6 +105,10 @@ class DecisionStump
   const arma::Col<size_t> BinLabels() const { return binLabels; }
   //! Modify the labels for each split bin (be careful!).
   arma::Col<size_t>& BinLabels() { return binLabels; }
+
+  //! Serialize the decision stump.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The number of classes (we must store this for boosting).
