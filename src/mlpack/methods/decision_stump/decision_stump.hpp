@@ -44,8 +44,8 @@ class DecisionStump
                 const size_t bucketSize);
 
   /**
-   * Alternate constructor which copies parameters bucketSize and numClass from
-   * an already initiated decision stump, other. It appropriately sets the
+   * Alternate constructor which copies the parameters bucketSize and classes
+   * from an already initiated decision stump, other. It appropriately sets the
    * weight vector.
    *
    * @param other The other initiated Decision Stump object from
@@ -129,7 +129,7 @@ class DecisionStump
    *
    * @param attribute A row from the training data, which might be a
    *     candidate for the splitting attribute.
-   * @param UseWeights Whether we need to run a weighted Decision Stump.
+   * @tparam UseWeights Whether we need to run a weighted Decision Stump.
    */
   template<bool UseWeights>
   double SetupSplitAttribute(const arma::rowvec& attribute,
@@ -140,7 +140,7 @@ class DecisionStump
    * After having decided the attribute on which to split, train on that
    * attribute.
    *
-   * @param attribute attribute is the attribute decided by the constructor
+   * @tparam attribute attribute is the attribute decided by the constructor
    *      on which we now train the decision stump.
    */
   void TrainOnAtt(const arma::rowvec& attribute,
@@ -155,8 +155,8 @@ class DecisionStump
   /**
    * Count the most frequently occurring element in subCols.
    *
-   * @param subCols The vector in which to find the most frequently
-   *     occurring element.
+   * @param subCols The vector in which to find the most frequently occurring
+   *      element.
    */
   template<typename VecType>
   double CountMostFreq(const VecType& subCols);
@@ -175,6 +175,8 @@ class DecisionStump
    * @param labels Corresponding labels of the attribute.
    * @param classes Number of classes.
    * @param weights Weights for this set of labels.
+   * @tparam UseWeights If true, the weights in the weight vector will be used
+   *      (otherwise they are ignored).
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
   double CalculateEntropy(const VecType& labels,
@@ -185,7 +187,9 @@ class DecisionStump
    *
    * @param data Dataset to train on.
    * @param labels Labels for dataset.
-   * @param UseWeights Whether we need to run a weighted Decision Stump.
+   * @param weights Weights for this set of labels.
+   * @tparam UseWeights If true, the weights in the weight vector will be used
+   *      (otherwise they are ignored).
    */
   template<bool UseWeights>
   void Train(const MatType& data,
