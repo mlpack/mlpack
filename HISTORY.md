@@ -21,7 +21,7 @@
 
   * Add softmax regression, contributed by Siddharth Agrawal and QiaoAn Chen.
 
-  * Changed NeighborSearch, RangeSearch, FastMKS, and RASearch API; these
+  * Changed NeighborSearch, RangeSearch, FastMKS, LSH, and RASearch API; these
     classes now take the query sets in the Search() method, instead of in the
     constructor.
 
@@ -35,6 +35,8 @@
 
   * Refactor SoftmaxRegression to predict into an arma::Row<size_t> object, and
     add a softmax_regression program.
+
+  * Refactor LSH to allow loading and saving of models.
 
 ### mlpack 1.0.11
 ###### 2014-12-11
