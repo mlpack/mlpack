@@ -1458,9 +1458,9 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
   SerializeObjectAll(ds, xmlDs, textDs, binaryDs);
 
   // Make sure that everything is the same about the new decision stumps.
-  BOOST_REQUIRE_EQUAL(ds.SplitAttribute(), xmlDs.SplitAttribute());
-  BOOST_REQUIRE_EQUAL(ds.SplitAttribute(), textDs.SplitAttribute());
-  BOOST_REQUIRE_EQUAL(ds.SplitAttribute(), binaryDs.SplitAttribute());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), xmlDs.SplitDimension());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), textDs.SplitDimension());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), binaryDs.SplitDimension());
 
   CheckMatrices(ds.Split(), xmlDs.Split(), textDs.Split(), binaryDs.Split());
   CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), textDs.BinLabels(),

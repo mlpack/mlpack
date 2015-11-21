@@ -17,7 +17,7 @@ namespace decision_stump {
  * decision tree, i.e., a decision stump. It uses entropy to decide splitting
  * ranges.
  *
- * The stump is parameterized by a splitting attribute (the dimension on which
+ * The stump is parameterized by a splitting dimension (the dimension on which
  * points are split), a vector of bin split values, and a vector of labels for
  * each bin.  Bin i is specified by the range [split[i], split[i + 1]).  The
  * last bin has range up to \infty (split[i + 1] does not exist in that case).
@@ -91,10 +91,10 @@ class DecisionStump
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
-  //! Access the splitting attribute.
-  size_t SplitAttribute() const { return splitAttribute; }
-  //! Modify the splitting attribute (be careful!).
-  size_t& SplitAttribute() { return splitAttribute; }
+  //! Access the splitting dimension.
+  size_t SplitDimension() const { return splitDimension; }
+  //! Modify the splitting dimension (be careful!).
+  size_t& SplitDimension() { return splitDimension; }
 
   //! Access the splitting values.
   const arma::vec& Split() const { return split; }
@@ -116,34 +116,35 @@ class DecisionStump
   //! The minimum number of points in a bucket.
   size_t bucketSize;
 
-  //! Stores the value of the attribute on which to split.
-  size_t splitAttribute;
+  //! Stores the value of the dimension on which to split.
+  size_t splitDimension;
   //! Stores the splitting values after training.
   arma::vec split;
   //! Stores the labels for each splitting bin.
   arma::Col<size_t> binLabels;
 
   /**
-   * Sets up attribute as if it were splitting on it and finds entropy when
-   * splitting on attribute.
+   * Sets up dimension as if it were splitting on it and finds entropy when
+   * splitting on dimension.
    *
-   * @param attribute A row from the training data, which might be a
-   *     candidate for the splitting attribute.
+   * @param dimension A row from the training data, which might be a
+   *     candidate for the splitting dimension.
    * @tparam UseWeights Whether we need to run a weighted Decision Stump.
    */
   template<bool UseWeights>
-  double SetupSplitAttribute(const arma::rowvec& attribute,
+  double SetupSplitDimension(const arma::rowvec& dimension,
                              const arma::Row<size_t>& labels,
                              const arma::rowvec& weightD);
 
   /**
-   * After having decided the attribute on which to split, train on that
-   * attribute.
+   * After having decided the dimension on which to split, train on that
+   * dimension.
    *
-   * @tparam attribute attribute is the attribute decided by the constructor
+   * @tparam dimension dimension is the dimension decided by the constructor
    *      on which we now train the decision stump.
    */
-  void TrainOnAtt(const arma::rowvec& attribute,
+  template<typename VecType>
+  void TrainOnDim(const VecType& dimension,
                   const arma::Row<size_t>& labels);
 
   /**
@@ -164,15 +165,15 @@ class DecisionStump
   /**
    * Returns 1 if all the values of featureRow are not same.
    *
-   * @param featureRow The attribute which is checked for identical values.
+   * @param featureRow The dimension which is checked for identical values.
    */
   template<typename VecType>
   int IsDistinct(const VecType& featureRow);
 
   /**
-   * Calculate the entropy of the given attribute.
+   * Calculate the entropy of the given dimension.
    *
-   * @param labels Corresponding labels of the attribute.
+   * @param labels Corresponding labels of the dimension.
    * @param classes Number of classes.
    * @param weights Weights for this set of labels.
    * @tparam UseWeights If true, the weights in the weight vector will be used

@@ -52,16 +52,16 @@ BOOST_AUTO_TEST_CASE(OneClass)
 /**
  * This tests whether the entropy is being correctly calculated by checking the
  * correct value of the splitting column value.  This test is for an
- * inpBucketSize of 4 and the correct value of the splitting attribute is 0.
+ * inpBucketSize of 4 and the correct value of the splitting dimension is 0.
  */
-BOOST_AUTO_TEST_CASE(CorrectAttributeChosen)
+BOOST_AUTO_TEST_CASE(CorrectDimensionChosen)
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 4;
 
   // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
   // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
-  // found on page 176 (and a description of the correct splitting attribute is
+  // found on page 176 (and a description of the correct splitting dimension is
   // given below that).
   mat trainingData;
   trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(CorrectAttributeChosen)
 
   // Only need to check the value of the splitting column, no need of
   // classification.
-  BOOST_CHECK_EQUAL(ds.SplitAttribute(), 0);
+  BOOST_CHECK_EQUAL(ds.SplitDimension(), 0);
 }
 
 /**
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   DecisionStump<> ds(dataset, labels, numClasses, inpBucketSize);
 
   // Make sure it split on the dimension that is most separable.
-  BOOST_CHECK_EQUAL(ds.SplitAttribute(), 1);
+  BOOST_CHECK_EQUAL(ds.SplitDimension(), 1);
 
   // Make sure every bin below -1 classifies as label 0, and every bin above 1
   // classifies as label 1 (What happens in [-1, 1] isn't that big a deal.).
