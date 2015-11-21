@@ -78,7 +78,8 @@ BOOST_AUTO_TEST_CASE(CorrectAttributeChosen)
 
   DecisionStump<> ds(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
 
-  // Only need to check the value of the splitting column, no need of classification.
+  // Only need to check the value of the splitting column, no need of
+  // classification.
   BOOST_CHECK_EQUAL(ds.SplitAttribute(), 0);
 }
 
