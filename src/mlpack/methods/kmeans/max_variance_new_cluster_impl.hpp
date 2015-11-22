@@ -65,7 +65,10 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Modify the variances, as necessary.
   variances[emptyCluster] = 0;
   // One has already been subtracted from clusterCounts[maxVarCluster].
-  variances[maxVarCluster] = (1.0 / (clusterCounts[maxVarCluster])) *
+  if (clusterCounts[maxVarCluster] <= 1)
+    variances[maxVarCluster] = 0;
+  else
+    variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
       ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] - maxDistance);
 
   // Output some debugging information.
