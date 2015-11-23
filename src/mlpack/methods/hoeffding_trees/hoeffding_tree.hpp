@@ -55,6 +55,11 @@ template<typename FitnessFunction = GiniImpurity,
 class HoeffdingTree
 {
  public:
+  //! Allow access to the numeric split type.
+  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  //! Allow access to the categorical split type.
+  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+
   /**
    * Construct the Hoeffding tree with the given parameters and given training
    * data.  The tree may be trained either in batch mode (which looks at all
