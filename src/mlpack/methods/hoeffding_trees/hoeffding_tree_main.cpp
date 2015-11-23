@@ -21,6 +21,8 @@ PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
 PARAM_INT("max_samples", "Maximum number of samples before splitting.", "n",
     5000);
+PARAM_INT("min_samples", "Minimum number of samples before splitting.", "I",
+    100);
 
 PARAM_STRING("input_model_file", "File to load trained tree from.", "m", "");
 PARAM_STRING("output_model_file", "File to save trained tree to.", "M", "");
