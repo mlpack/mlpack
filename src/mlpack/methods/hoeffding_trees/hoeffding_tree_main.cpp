@@ -28,6 +28,7 @@ PARAM_STRING("input_model_file", "File to load trained tree from.", "m", "");
 PARAM_STRING("output_model_file", "File to save trained tree to.", "M", "");
 
 PARAM_STRING("test_file", "File of testing data.", "T", "");
+PARAM_STRING("test_labels_file", "Labels of test data.", "L", "");
 PARAM_STRING("predictions_file", "File to output label predictions for test "
     "data into.", "p", "");
 PARAM_STRING("probabilities_file", "In addition to predicting labels, provide "
@@ -216,6 +217,29 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     }
   }
 
+  if (!trainingFile.empty())
+  {
+    // Get training error.
+    arma::mat trainingSet;
+    data::Load(trainingFile, trainingSet, datasetInfo, true);
+    arma::Row<size_t> predictions;
+    tree->Classify(trainingSet, predictions);
+
+    arma::Col<size_t> labelsIn;
+    data::Load(labelsFile, labelsIn, true, false);
+    arma::Row<size_t> labels = labelsIn.t();
+
+    size_t correct = 0;
+    for (size_t i = 0; i < labels.n_elem; ++i)
+      if (labels[i] == predictions[i])
+        ++correct;
+
+    Log::Info << correct << " out of " << labels.n_elem << " correct "
+        << "on training set (" << double(correct) / double(labels.n_elem) *
+        100.0 << ")." << endl;
+
+  }
+
   // The tree is trained or loaded.  Now do any testing if we need.
   if (!testFile.empty())
   {
@@ -228,6 +252,24 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     Timer::Start("tree_testing");
     tree->Classify(testSet, predictions, probabilities);
     Timer::Stop("tree_testing");
+
+    if (CLI::HasParam("test_labels_file"))
+    {
+      string testLabelsFile = CLI::GetParam<string>("test_labels_file");
+      arma::Col<size_t> testLabelsIn;
+      data::Load(testLabelsFile, testLabelsIn, true, false);
+      arma::Row<size_t> testLabels = testLabelsIn.t();
+
+      size_t correct = 0;
+      for (size_t i = 0; i < testLabels.n_elem; ++i)
+      {
+        if (predictions[i] == testLabels[i])
+          ++correct;
+      }
+      Log::Info << correct << " out of " << testLabels.n_elem << " correct "
+          << "on test set (" << double(correct) / double(testLabels.n_elem) *
+          100.0 << ")." << endl;
+    }
 
     if (!predictionsFile.empty())
       data::Save(predictionsFile, predictions);
