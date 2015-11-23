@@ -25,6 +25,18 @@ BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
 }
 
 template<typename FitnessFunction, typename ObservationType>
+BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
+    const size_t numClasses,
+    const BinaryNumericSplit& /* other */) :
+    classCounts(numClasses),
+    bestSplit(std::numeric_limits<ObservationType>::min()),
+    isAccurate(true)
+{
+  // Zero out class counts.
+  classCounts.zeros();
+}
+
+template<typename FitnessFunction, typename ObservationType>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::Train(
     ObservationType value,
     const size_t label)

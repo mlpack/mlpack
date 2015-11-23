@@ -55,6 +55,11 @@ template<typename FitnessFunction = GiniImpurity,
 class HoeffdingTree
 {
  public:
+  //! Allow access to the numeric split type.
+  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  //! Allow access to the categorical split type.
+  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+
   /**
    * Construct the Hoeffding tree with the given parameters and given training
    * data.  The tree may be trained either in batch mode (which looks at all
@@ -86,7 +91,11 @@ class HoeffdingTree
                 const double successProbability = 0.95,
                 const size_t maxSamples = 0,
                 const size_t checkInterval = 100,
-                const size_t minSamples = 100);
+                const size_t minSamples = 100,
+                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
+                    = CategoricalSplitType<FitnessFunction>(0, 0),
+                const NumericSplitType<FitnessFunction>& numericSplitIn =
+                    NumericSplitType<FitnessFunction>(0));
 
   /**
    * Construct the Hoeffding tree with the given parameters, but training on no
@@ -113,6 +122,10 @@ class HoeffdingTree
                 const size_t maxSamples = 0,
                 const size_t checkInterval = 100,
                 const size_t minSamples = 100,
+                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
+                    = CategoricalSplitType<FitnessFunction>(0, 0),
+                const NumericSplitType<FitnessFunction>& numericSplitIn =
+                    NumericSplitType<FitnessFunction>(0),
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
                     dimensionMappings = NULL);
 

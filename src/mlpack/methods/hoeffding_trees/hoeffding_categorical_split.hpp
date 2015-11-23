@@ -53,6 +53,16 @@ class HoeffdingCategoricalSplit
                             const size_t numClasses);
 
   /**
+   * Create the HoeffdingCategoricalSplit given a number of categories for this
+   * dimension and a number of classes and another HoeffdingCategoricalSplit to
+   * take parameters from.  In this particular case, there are no parameters to
+   * take, but this constructor is required by the HoeffdingTree class.
+   */
+  HoeffdingCategoricalSplit(const size_t numCategories,
+                            const size_t numClasses,
+                            const HoeffdingCategoricalSplit& other);
+
+  /**
    * Train on the given value with the given label.
    *
    * @param value Value to train on.

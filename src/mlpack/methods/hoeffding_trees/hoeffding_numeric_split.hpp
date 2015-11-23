@@ -65,6 +65,13 @@ class HoeffdingNumericSplit
                         const size_t observationsBeforeBinning = 100);
 
   /**
+   * Create the HoeffdingNumericSplit class, using the parameters from the given
+   * other split object.
+   */
+  HoeffdingNumericSplit(const size_t numClasses,
+                        const HoeffdingNumericSplit& other);
+
+  /**
    * Train the HoeffdingNumericSplit on the given observed value (remember that
    * this object only cares about the information for a single feature, not an
    * entire point).

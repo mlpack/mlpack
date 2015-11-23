@@ -40,9 +40,16 @@ PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
     "impurity for calculating Hoeffding bounds.", "i");
 PARAM_INT("passes", "Number of passes to take over the dataset.", "s", 1);
 
+PARAM_INT("bins", "If the 'domingos' split strategy is used, this specifies "
+    "the number of bins for each numeric split.", "B", 10);
+PARAM_INT("observations_before_binning", "If the 'domingos' split strategy is "
+    "used, this specifies the number of samples observed before binning is "
+    "performed.", "o", 100);
+
 // Helper function for once we have chosen a tree type.
 template<typename TreeType>
-void PerformActions();
+void PerformActions(const typename TreeType::NumericSplit& numericSplit =
+    typename TreeType::NumericSplit(0));
 
 int main(int argc, char** argv)
 {
@@ -81,39 +88,62 @@ int main(int argc, char** argv)
   if (CLI::HasParam("info_gain"))
   {
     if (numericSplitStrategy == "domingos")
+    {
+      const size_t bins = (size_t) CLI::GetParam<int>("bins");
+      const size_t observationsBeforeBinning = (size_t)
+          CLI::GetParam<int>("observations_before_binning");
+      HoeffdingDoubleNumericSplit<InformationGain> ns(0, bins,
+          observationsBeforeBinning);
       PerformActions<HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>();
+          HoeffdingCategoricalSplit>>(ns);
+    }
     else if (numericSplitStrategy == "binary")
+    {
       PerformActions<HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
           HoeffdingCategoricalSplit>>();
+    }
     else
+    {
       Log::Fatal << "Unrecognized numeric split strategy ("
           << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
           << endl;
+    }
   }
   else
   {
     if (numericSplitStrategy == "domingos")
+    {
+      const size_t bins = (size_t) CLI::GetParam<int>("bins");
+      const size_t observationsBeforeBinning = (size_t)
+          CLI::GetParam<int>("observations_before_binning");
+      HoeffdingDoubleNumericSplit<GiniImpurity> ns(0, bins,
+          observationsBeforeBinning);
       PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>();
+          HoeffdingCategoricalSplit>>(ns);
+    }
     else if (numericSplitStrategy == "binary")
+    {
       PerformActions<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
           HoeffdingCategoricalSplit>>();
+    }
     else
+    {
       Log::Fatal << "Unrecognized numeric split strategy ("
           << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
           << endl;
+    }
   }
 }
 
 template<typename TreeType>
-void PerformActions()
+void PerformActions(const typename TreeType::NumericSplit& numericSplit)
 {
   // Load necessary parameters.
   const string trainingFile = CLI::GetParam<string>("training_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const double confidence = CLI::GetParam<double>("confidence");
   const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
+  const size_t minSamples = (size_t) CLI::GetParam<size_t>("min_samples");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
@@ -144,7 +174,8 @@ void PerformActions()
       Log::Info << "Taking " << passes << " passes over the dataset." << endl;
 
     tree = new TreeType(trainingSet, datasetInfo, labels, max(labels) + 1,
-        batchTraining, confidence, maxSamples, 100, minSamples);
+        batchTraining, confidence, maxSamples, 100, minSamples,
+        typename TreeType::CategoricalSplit(0, 0), numericSplit);
 
     for (size_t i = 1; i < passes; ++i)
       tree->Train(trainingSet, labels, false);

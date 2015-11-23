@@ -29,6 +29,21 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
 }
 
 template<typename FitnessFunction, typename ObservationType>
+HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
+    const size_t numClasses,
+    const HoeffdingNumericSplit& other) :
+    observations(other.observationsBeforeBinning - 1),
+    labels(other.observationsBeforeBinning - 1),
+    bins(other.bins),
+    observationsBeforeBinning(other.observationsBeforeBinning),
+    samplesSeen(0),
+    sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
+{
+  observations.zeros();
+  labels.zeros();
+}
+
+template<typename FitnessFunction, typename ObservationType>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
     ObservationType value,
     const size_t label)
