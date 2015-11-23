@@ -374,8 +374,9 @@ size_t HoeffdingTree<
   }
 
   // Are these far enough apart to split?
-  if ((largest - secondLargest > epsilon) ||
-      ((numSamples > maxSamples) && (largest > 0.0)))
+  if ((largest > 0.0) &&
+      ((largest - secondLargest > epsilon) || (numSamples > maxSamples) ||
+       (epsilon <= 0.05)))
   {
     // Split!
     splitDimension = largestIndex;
