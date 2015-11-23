@@ -114,6 +114,7 @@ void PerformActions()
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const double confidence = CLI::GetParam<double>("confidence");
   const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
+  const size_t minSamples = (size_t) CLI::GetParam<size_t>("min_samples");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");

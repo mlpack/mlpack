@@ -86,7 +86,11 @@ class HoeffdingTree
                 const double successProbability = 0.95,
                 const size_t maxSamples = 0,
                 const size_t checkInterval = 100,
-                const size_t minSamples = 100);
+                const size_t minSamples = 100,
+                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
+                    = CategoricalSplitType<FitnessFunction>(0, 0),
+                const NumericSplitType<FitnessFunction>& numericSplitIn =
+                    NumericSplitType<FitnessFunction>(0));
 
   /**
    * Construct the Hoeffding tree with the given parameters, but training on no
@@ -113,6 +117,10 @@ class HoeffdingTree
                 const size_t maxSamples = 0,
                 const size_t checkInterval = 100,
                 const size_t minSamples = 100,
+                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
+                    = CategoricalSplitType<FitnessFunction>(0, 0),
+                const NumericSplitType<FitnessFunction>& numericSplitIn =
+                    NumericSplitType<FitnessFunction>(0),
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
                     dimensionMappings = NULL);
 

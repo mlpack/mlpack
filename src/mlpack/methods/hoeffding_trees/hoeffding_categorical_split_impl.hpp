@@ -23,6 +23,16 @@ HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
 }
 
 template<typename FitnessFunction>
+HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
+    const size_t numCategories,
+    const size_t numClasses,
+    const HoeffdingCategoricalSplit& /* other */) :
+    sufficientStatistics(numClasses, numCategories)
+{
+  sufficientStatistics.zeros();
+}
+
+template<typename FitnessFunction>
 template<typename eT>
 void HoeffdingCategoricalSplit<FitnessFunction>::Train(eT value,
                                                        const size_t label)

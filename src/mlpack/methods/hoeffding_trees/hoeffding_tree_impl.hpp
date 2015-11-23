@@ -29,7 +29,10 @@ HoeffdingTree<
                  const double successProbability,
                  const size_t maxSamples,
                  const size_t checkInterval,
-                 const size_t minSamples) :
+                 const size_t minSamples,
+                 const CategoricalSplitType<FitnessFunction>&
+                     categoricalSplitIn,
+                 const NumericSplitType<FitnessFunction>& numericSplitIn) :
     dimensionMappings(new std::unordered_map<size_t,
         std::pair<size_t, size_t>>()),
     ownsMappings(true),
@@ -51,13 +54,14 @@ HoeffdingTree<
     if (datasetInfo.Type(i) == data::Datatype::categorical)
     {
       categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-          datasetInfo.NumMappings(i), numClasses));
+          datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
       (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
           categoricalSplits.size() - 1);
     }
     else
     {
-      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
+      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+          numericSplitIn));
       (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
           numericSplits.size() - 1);
     }
@@ -80,6 +84,9 @@ HoeffdingTree<
                  const size_t maxSamples,
                  const size_t checkInterval,
                  const size_t minSamples,
+                 const CategoricalSplitType<FitnessFunction>&
+                     categoricalSplitIn,
+                 const NumericSplitType<FitnessFunction>& numericSplitIn,
                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
                      dimensionMappingsIn) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
@@ -105,13 +112,14 @@ HoeffdingTree<
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
         categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-            datasetInfo.NumMappings(i), numClasses));
+            datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
         (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
             categoricalSplits.size() - 1);
       }
       else
       {
-        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
+        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+            numericSplitIn));
         (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
             numericSplits.size() - 1);
       }
@@ -124,11 +132,12 @@ HoeffdingTree<
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
         categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-            datasetInfo.NumMappings(i), numClasses));
+            datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
       }
       else
       {
-        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
+        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+            numericSplitIn));
       }
     }
   }
@@ -541,9 +550,35 @@ void HoeffdingTree<
   // We already know what the splitDimension will be.
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
-    children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
-        successProbability, maxSamples, checkInterval, minSamples,
-        dimensionMappings));
+    // We need to also give our split objects to the new children, so that
+    // parameters for the splits can be passed down.  But if we have no
+    // categorical or numeric features, we can't pass anything but the
+    // defaults...
+    if (categoricalSplits.size() == 0)
+    {
+      // Pass a default categorical split.
+      children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
+          successProbability, maxSamples, checkInterval, minSamples,
+          CategoricalSplitType<FitnessFunction>(0, numClasses),
+          numericSplits[0], dimensionMappings));
+    }
+    else if (numericSplits.size() == 0)
+    {
+      // Pass a default numeric split.
+      children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
+          successProbability, maxSamples, checkInterval, minSamples,
+          categoricalSplits[0], NumericSplitType<FitnessFunction>(numClasses),
+          dimensionMappings));
+    }
+    else
+    {
+      // Pass both splits that we already have.
+      children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
+          successProbability, maxSamples, checkInterval, minSamples,
+          categoricalSplits[0], numericSplits[0], dimensionMappings));
+
+    }
+
     children[i]->MajorityClass() = childMajorities[i];
   }
 

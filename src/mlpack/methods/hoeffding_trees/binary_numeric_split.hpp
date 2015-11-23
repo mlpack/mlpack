@@ -53,6 +53,14 @@ class BinaryNumericSplit
   BinaryNumericSplit(const size_t numClasses);
 
   /**
+   * Create the BinaryNumericSplit object with the given number of classes,
+   * using information from the given other split for other parameters.  In this
+   * case, there are no other parameters, but this function is required by the
+   * HoeffdingTree class.
+   */
+  BinaryNumericSplit(const size_t numClasses, const BinaryNumericSplit& other);
+
+  /**
    * Train on the given value with the given label.
    *
    * @param value The value to train on.
