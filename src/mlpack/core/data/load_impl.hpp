@@ -61,7 +61,7 @@ bool Load(const std::string& filename,
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
-#ifdef  _WIN32
+#ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
 #else
   stream.open(filename.c_str(), std::fstream::in);
@@ -85,7 +85,7 @@ bool Load(const std::string& filename,
   if (extension == "csv" || extension == "tsv")
   {
     loadType = arma::diskio::guess_file_type(stream);
-    if (loadType == arma::csv_ascii) 
+    if (loadType == arma::csv_ascii)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
@@ -318,7 +318,16 @@ bool Load(const std::string& filename,
   }
 
   // Now load the given format.
-  std::ifstream ifs(filename);
+  std::ifstream ifs;
+#ifdef _WIN32 // Open non-text in binary mode on Windows.
+  if (f == format::binary)
+    ifs.open(filename, std::ifstream::in | std::ifstream::binary);
+  else
+    ifs.open(filename, std::ifstream::in);
+#else
+  ifs.open(filename, std::ifstream::in);
+#endif
+
   if (!ifs.is_open())
   {
     if (fatal)
