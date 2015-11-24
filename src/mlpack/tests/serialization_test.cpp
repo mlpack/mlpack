@@ -112,7 +112,7 @@ void TestAllArmadilloSerialization(MatType& x)
 {
   TestArmadilloSerialization<MatType, xml_iarchive, xml_oarchive>(x);
   TestArmadilloSerialization<MatType, text_iarchive, text_oarchive>(x);
-  //TestArmadilloSerialization<MatType, binary_iarchive, binary_oarchive>(x);
+  TestArmadilloSerialization<MatType, binary_iarchive, binary_oarchive>(x);
 }
 
 /**

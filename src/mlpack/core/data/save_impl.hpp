@@ -46,8 +46,11 @@ bool Save(const std::string& filename,
 
   // Catch errors opening the file.
   std::fstream stream;
+#ifdef  _WIN32
+  stream.open(filename.c_str(), std::fstream::out| std::fstream::binary);
+#else
   stream.open(filename.c_str(), std::fstream::out);
-
+#endif
   if (!stream.is_open())
   {
     Timer::Stop("saving_data");

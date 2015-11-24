@@ -61,8 +61,11 @@ bool Load(const std::string& filename,
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
+#ifdef  _WIN32
+  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+#else
   stream.open(filename.c_str(), std::fstream::in);
-
+#endif
   if (!stream.is_open())
   {
     Timer::Stop("loading_data");
