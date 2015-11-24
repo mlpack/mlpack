@@ -149,6 +149,7 @@
  *   - Trung Dinh <dinhanhtrung@gmail.com>
  *   - Tham Ngap Wei <thamngapwei@gmail.com>
  *   - Grzegorz Krajewski <krajekg@gmail.com>
+ *   - Joseph Mariadassou <joe.mariadassou@gmail.com>
  */
 
 // First, include all of the prerequisites.
