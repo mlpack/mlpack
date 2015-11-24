@@ -69,9 +69,8 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       else
       {
         vector<size_t> oldFromNewReferences;
-         RSType<tree::KDTree>::Tree* kdTree =
-            new  RSType<tree::KDTree>::Tree(move(referenceSet),
-            oldFromNewReferences, leafSize);
+        RSType<tree::KDTree>::Tree* kdTree = new RSType<tree::KDTree>::Tree(
+            move(referenceSet), oldFromNewReferences, leafSize);
         kdTreeRS = new RSType<tree::KDTree>(kdTree, singleMode);
 
         // Give the model ownership of the tree and the mappings.
@@ -106,8 +105,8 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       else
       {
         vector<size_t> oldFromNewReferences;
-         RSType<tree::BallTree>::Tree* ballTree =
-            new  RSType<tree::BallTree>::Tree(move(referenceSet),
+        RSType<tree::BallTree>::Tree* ballTree =
+            new RSType<tree::BallTree>::Tree(move(referenceSet),
             oldFromNewReferences, leafSize);
         ballTreeRS = new RSType<tree::BallTree>(ballTree, singleMode);
 
@@ -154,8 +153,8 @@ void RSModel::Search(arma::mat&& querySet,
         Timer::Start("tree_building");
         Log::Info << "Building query tree..." << endl;
         vector<size_t> oldFromNewQueries;
-         RSType<tree::KDTree>::Tree queryTree(move(querySet),
-            oldFromNewQueries, leafSize);
+        RSType<tree::KDTree>::Tree queryTree(move(querySet), oldFromNewQueries,
+            leafSize);
         Log::Info << "Tree built." << endl;
         Timer::Stop("tree_building");
 
@@ -198,7 +197,7 @@ void RSModel::Search(arma::mat&& querySet,
         Timer::Start("tree_building");
         Log::Info << "Building query tree..." << endl;
         vector<size_t> oldFromNewQueries;
-         RSType<tree::BallTree>::Tree queryTree(move(querySet),
+        RSType<tree::BallTree>::Tree queryTree(move(querySet),
             oldFromNewQueries, leafSize);
         Log::Info << "Tree built." << endl;
         Timer::Stop("tree_building");
