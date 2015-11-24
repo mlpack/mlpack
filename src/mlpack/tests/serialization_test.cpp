@@ -59,7 +59,7 @@ template<typename MatType,
 void TestArmadilloSerialization(MatType& x)
 {
   // First save it.
-  ofstream ofs("test",ios::binary);
+  ofstream ofs("test", ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -78,7 +78,7 @@ void TestArmadilloSerialization(MatType& x)
   // Now load it.
   MatType orig(x);
   success = true;
-  ifstream ifs("test",ios::binary);
+  ifstream ifs("test", ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -193,40 +193,38 @@ BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
 // The re-loaded copy is placed in 'newT'.
 template<typename T, typename IArchiveType, typename OArchiveType>
 void SerializeObject(T& t, T& newT)
-	{
-	ofstream ofs("test", ios::binary);
-	OArchiveType o(ofs);
+{
+  ofstream ofs("test", ios::binary);
+  OArchiveType o(ofs);
 
-	bool success = true;
-	try
-		{
-		o << data::CreateNVP(t, "t");
-		}
-	catch (archive_exception& e)
-		{
-		success = false;
-		}
-	ofs.close();
+  bool success = true;
+  try
+  {
+    o << data::CreateNVP(t, "t");
+  }
+  catch (archive_exception& e)
+  {
+    success = false;
+  }
+  ofs.close();
 
-	BOOST_REQUIRE_EQUAL(success, true);
+  BOOST_REQUIRE_EQUAL(success, true);
 
-	ifstream ifs("test", ios::binary);
-	IArchiveType i(ifs);
+  ifstream ifs("test", ios::binary);
+  IArchiveType i(ifs);
 
-	try
-		{
-		i >> data::CreateNVP(newT, "t");
-		}
-	catch (archive_exception& e)
-		{
-		success = false;
-		}
-	ifs.close();
+  try
+  {
+    i >> data::CreateNVP(newT, "t");
+  }
+  catch (archive_exception& e)
+  {
+    success = false;
+  }
+  ifs.close();
 
-	BOOST_REQUIRE_EQUAL(success, true);
-	}
-
-
+  BOOST_REQUIRE_EQUAL(success, true);
+}
 
 // Test mlpack serialization with all three archive types.
 template<typename T>
@@ -241,7 +239,7 @@ void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
 template<typename T, typename IArchiveType, typename OArchiveType>
 void SerializePointerObject(T* t, T*& newT)
 {
-  ofstream ofs("test",ios::binary);
+  ofstream ofs("test", ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -257,7 +255,7 @@ void SerializePointerObject(T* t, T*& newT)
 
   BOOST_REQUIRE_EQUAL(success, true);
 
-  ifstream ifs("test",ios::binary);
+  ifstream ifs("test", ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -1052,208 +1050,218 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
       srBinary.Parameters());
 }
 
+BOOST_AUTO_TEST_CASE(DETTest)
+{
+  using det::DTree;
 
-template<class T, class U>
-void TestStack(T& stack, U& Stack)
-	{
-	using det::DTree;
-	while (!stack.empty())
-		{
-		// Get the top node from the stack.
-		DTree* node = stack.top();
-		DTree* Node = Stack.top();
+  // Create a density estimation tree on a random dataset.
+  arma::mat dataset = arma::randu<arma::mat>(25, 5000);
 
-		stack.pop();
-		Stack.pop();
+  DTree tree(dataset);
 
-		// Check that all the members are the same.
-		BOOST_REQUIRE_EQUAL(node->Start(), Node->Start());
+  arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
+  DTree xmlTree, binaryTree, textTree(otherDataset);
 
-		BOOST_REQUIRE_EQUAL(node->End(), Node->End());
+  SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
-		BOOST_REQUIRE_EQUAL(node->SplitDim(), Node->SplitDim());
+  std::stack<DTree*> stack, xmlStack, binaryStack, textStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  binaryStack.push(&binaryTree);
+  textStack.push(&textTree);
 
-		if (std::abs(node->SplitValue()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->SplitValue(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->SplitValue(), Node->SplitValue(), 1e-5);
-			}
+  while (!stack.empty())
+  {
+    // Get the top node from the stack.
+    DTree* node = stack.top();
+    DTree* xmlNode = xmlStack.top();
+    DTree* binaryNode = binaryStack.top();
+    DTree* textNode = textStack.top();
 
-		if (std::abs(node->LogNegError()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->LogNegError(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->LogNegError(), Node->LogNegError(), 1e-5);
-			}
+    stack.pop();
+    xmlStack.pop();
+    binaryStack.pop();
+    textStack.pop();
 
-		if (std::abs(node->SubtreeLeavesLogNegError()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->SubtreeLeavesLogNegError(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
-				Node->SubtreeLeavesLogNegError(), 1e-5);
-			}
+    // Check that all the members are the same.
+    BOOST_REQUIRE_EQUAL(node->Start(), xmlNode->Start());
+    BOOST_REQUIRE_EQUAL(node->Start(), binaryNode->Start());
+    BOOST_REQUIRE_EQUAL(node->Start(), textNode->Start());
 
-		BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), Node->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->End(), xmlNode->End());
+    BOOST_REQUIRE_EQUAL(node->End(), binaryNode->End());
+    BOOST_REQUIRE_EQUAL(node->End(), textNode->End());
 
-		if (std::abs(node->Ratio()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->Ratio(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->Ratio(), Node->Ratio(), 1e-5);
-			}
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), xmlNode->SplitDim());
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), binaryNode->SplitDim());
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), textNode->SplitDim());
 
-		if (std::abs(node->LogVolume()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->LogVolume(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->LogVolume(), Node->LogVolume(), 1e-5);
-			}
+    if (std::abs(node->SplitValue()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->SplitValue(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), xmlNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), binaryNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), textNode->SplitValue(), 1e-5);
+    }
 
-		if (node->Left() == NULL)
-			{
-			BOOST_REQUIRE(Node->Left() == NULL);
-			}
-		else
-			{
-			BOOST_REQUIRE(Node->Left() != NULL);
+    if (std::abs(node->LogNegError()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->LogNegError(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), xmlNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), binaryNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), textNode->LogNegError(), 1e-5);
+    }
 
-			// Push children onto stack.
-			stack.push(node->Left());
-			Stack.push(Node->Left());
-			}
+    if (std::abs(node->SubtreeLeavesLogNegError()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->SubtreeLeavesLogNegError(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          xmlNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          binaryNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          textNode->SubtreeLeavesLogNegError(), 1e-5);
+    }
 
-		if (node->Right() == NULL)
-			{
-			BOOST_REQUIRE(Node->Right() == NULL);
-			}
-		else
-			{
-			BOOST_REQUIRE(Node->Right() != NULL);
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), xmlNode->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), binaryNode->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), textNode->SubtreeLeaves());
 
-			// Push children onto stack.
-			stack.push(node->Right());
-			Stack.push(Node->Right());
-			}
+    if (std::abs(node->Ratio()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->Ratio(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->Ratio(), xmlNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->Ratio(), binaryNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->Ratio(), textNode->Ratio(), 1e-5);
+    }
 
-		BOOST_REQUIRE_EQUAL(node->Root(), Node->Root());
+    if (std::abs(node->LogVolume()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->LogVolume(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), xmlNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), binaryNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), textNode->LogVolume(), 1e-5);
+    }
 
-		if (std::abs(node->AlphaUpper()) < 1e-5)
-			{
-			BOOST_REQUIRE_SMALL(Node->AlphaUpper(), 1e-5);
-			}
-		else
-			{
-			BOOST_REQUIRE_CLOSE(node->AlphaUpper(), Node->AlphaUpper(), 1e-5);
-			}
+    if (node->Left() == NULL)
+    {
+      BOOST_REQUIRE(xmlNode->Left() == NULL);
+      BOOST_REQUIRE(binaryNode->Left() == NULL);
+      BOOST_REQUIRE(textNode->Left() == NULL);
+    }
+    else
+    {
+      BOOST_REQUIRE(xmlNode->Left() != NULL);
+      BOOST_REQUIRE(binaryNode->Left() != NULL);
+      BOOST_REQUIRE(textNode->Left() != NULL);
 
-		BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, Node->MaxVals().n_elem);
-		for (size_t i = 0; i < node->MaxVals().n_elem; ++i)
-			{
-			if (std::abs(node->MaxVals()[i]) < 1e-5)
-				{
-				BOOST_REQUIRE_SMALL(Node->MaxVals()[i], 1e-5);
-				}
-			else
-				{
-				BOOST_REQUIRE_CLOSE(node->MaxVals()[i], Node->MaxVals()[i], 1e-5);
-				}
-			}
+      // Push children onto stack.
+      stack.push(node->Left());
+      xmlStack.push(xmlNode->Left());
+      binaryStack.push(binaryNode->Left());
+      textStack.push(textNode->Left());
+    }
 
-		BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, Node->MinVals().n_elem);
-		for (size_t i = 0; i < node->MinVals().n_elem; ++i)
-			{
-			if (std::abs(node->MinVals()[i]) < 1e-5)
-				{
-				BOOST_REQUIRE_SMALL(Node->MinVals()[i], 1e-5);
-				}
-			else
-				{
-				BOOST_REQUIRE_CLOSE(node->MinVals()[i], Node->MinVals()[i], 1e-5);
-				}
-			}
-		}
+    if (node->Right() == NULL)
+    {
+      BOOST_REQUIRE(xmlNode->Right() == NULL);
+      BOOST_REQUIRE(binaryNode->Right() == NULL);
+      BOOST_REQUIRE(textNode->Right() == NULL);
+    }
+    else
+    {
+      BOOST_REQUIRE(xmlNode->Right() != NULL);
+      BOOST_REQUIRE(binaryNode->Right() != NULL);
+      BOOST_REQUIRE(textNode->Right() != NULL);
 
-	}
-BOOST_AUTO_TEST_CASE(DETXmlTest)
-	{
-	using det::DTree;
+      // Push children onto stack.
+      stack.push(node->Right());
+      xmlStack.push(xmlNode->Right());
+      binaryStack.push(binaryNode->Right());
+      textStack.push(textNode->Right());
+    }
 
-	// Create a density estimation tree on a random dataset.
-	arma::mat dataset = arma::randu<arma::mat>(25, 5000);
+    BOOST_REQUIRE_EQUAL(node->Root(), xmlNode->Root());
+    BOOST_REQUIRE_EQUAL(node->Root(), binaryNode->Root());
+    BOOST_REQUIRE_EQUAL(node->Root(), textNode->Root());
 
-	DTree tree(dataset);
+    if (std::abs(node->AlphaUpper()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->AlphaUpper(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), xmlNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), binaryNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), textNode->AlphaUpper(), 1e-5);
+    }
 
-	arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-	DTree Tree;
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, xmlNode->MaxVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, binaryNode->MaxVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, textNode->MaxVals().n_elem);
+    for (size_t i = 0; i < node->MaxVals().n_elem; ++i)
+    {
+      if (std::abs(node->MaxVals()[i]) < 1e-5)
+      {
+        BOOST_REQUIRE_SMALL(xmlNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(binaryNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(textNode->MaxVals()[i], 1e-5);
+      }
+      else
+      {
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], xmlNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], binaryNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], textNode->MaxVals()[i], 1e-5);
+      }
+    }
 
-	SerializeObject<DTree, xml_iarchive,xml_oarchive>(tree, Tree);
-
-	std::stack<DTree*> stack, Stack;
-	stack.push(&tree);
-	Stack.push(&Tree);
-
-	TestStack(stack, Stack);
-		
-	}
-
-
-	BOOST_AUTO_TEST_CASE(DETTextTest)
-		{
-		using det::DTree;
-
-		// Create a density estimation tree on a random dataset.
-		arma::mat dataset = arma::randu<arma::mat>(25, 5000);
-
-		DTree tree(dataset);
-
-		arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-		DTree Tree;
-
-		SerializeObject<DTree, text_iarchive, text_oarchive>(tree, Tree);
-
-		std::stack<DTree*> stack, Stack;
-		stack.push(&tree);
-		Stack.push(&Tree);
-
-		TestStack(stack, Stack);
-
-		}
-		BOOST_AUTO_TEST_CASE(DETBInaryTest)
-			{
-			using det::DTree;
-
-			// Create a density estimation tree on a random dataset.
-			arma::mat dataset = arma::randu<arma::mat>(25, 5000);
-
-			DTree tree(dataset);
-
-			arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-			DTree Tree;
-
-			SerializeObject<DTree, binary_iarchive, binary_oarchive>(tree, Tree);
-
-			std::stack<DTree*> stack, Stack;
-			stack.push(&tree);
-			Stack.push(&Tree);
-			TestStack(stack, Stack);
-
-			}
-
-	
-
-
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, xmlNode->MinVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, binaryNode->MinVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, textNode->MinVals().n_elem);
+    for (size_t i = 0; i < node->MinVals().n_elem; ++i)
+    {
+      if (std::abs(node->MinVals()[i]) < 1e-5)
+      {
+        BOOST_REQUIRE_SMALL(xmlNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(binaryNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(textNode->MinVals()[i], 1e-5);
+      }
+      else
+      {
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], xmlNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], binaryNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], textNode->MinVals()[i], 1e-5);
+      }
+    }
+  }
+}
 
 BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
 {
