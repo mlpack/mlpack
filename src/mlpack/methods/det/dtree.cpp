@@ -15,9 +15,16 @@ using namespace det;
 DTree::DTree() :
     start(0),
     end(0),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(-DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -31,9 +38,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(totalPoints),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(LogNegativeError(totalPoints)),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -41,12 +55,18 @@ DTree::DTree(const arma::vec& maxVals,
 DTree::DTree(arma::mat& data) :
     start(0),
     end(data.n_cols),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
+    root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
+    bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 {
-  maxVals.set_size(data.n_rows);
-  minVals.set_size(data.n_rows);
-
   // Initialize to first column; values will be overwritten if necessary.
   maxVals = data.col(0);
   minVals = data.col(0);
@@ -64,9 +84,6 @@ DTree::DTree(arma::mat& data) :
   }
 
   logNegError = LogNegativeError(data.n_cols);
-
-  bucketTag = -1;
-  root = true;
 }
 
 
@@ -80,9 +97,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(end),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(logNegError),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(false),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -96,9 +120,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(end),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(LogNegativeError(totalPoints)),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(false),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
