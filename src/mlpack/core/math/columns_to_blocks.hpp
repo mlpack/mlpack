@@ -35,8 +35,41 @@ class ColumnsToBlocks
    * Constructor of ColumnsToBlocks
    * @param rows number of blocks per cols
    * @param cols number of blocks per rows
+   * @param blockHeight height of block
+   * @param blockWidth width of block
+   * @warning blockHeight * blockWidth must equal to maximalInputs.n_rows
+   * By default the blockHeight and blockWidth will equal to
+   * std::sqrt(maximalInputs.n_rows)
+   * @code
+   * arma::mat maximalInputs;
+   * maximalInputs<<-1.0000<<0.1429<<arma::endr
+   *              <<-0.7143<<0.4286<<arma::endr
+   *              <<-0.4286<<0.7143<<arma::endr
+   *              <<-0.1429<<1.0000<<arma::endr;
+   * arma::mat output;
+   * mlpack::math::ColumnsToBlocks ctb(1, 2);
+   * ctb.Transform(maximalInputs, output);
+   * //The cols of the maximalInputs output will reshape as a square which
+   * //surrounded by padding value -1(this value could be set by BufValue)
+   * //-1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+   * //-1.0000  -1.0000  -0.4286  -1.0000   0.1429   0.7143  -1.0000
+   * //-1.0000  -0.7143  -0.1429  -1.0000   0.4286   1.0000  -1.0000
+   * //-1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+   *
+   * ctb.BlockWidth(4);
+   * ctb.BlockHeight(1);
+   * ctb.Transform(maxinalInputs, output);
+   * //The cols of the maximalInputs output will reshape as a square which
+   * //surrounded by padding value -1(this value could be set by BufValue)
+   * //-1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000  -1.0000
+   * //-1.0000 -1.0000 -0.7143 -0.4286 -0.1429 -1.0000  0.1429  0.4286  0.7143  1.0000  -1.0000
+   * //-1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000  -1.0000
+   *
+   * @endcode
    */
-  ColumnsToBlocks(arma::uword rows, arma::uword cols);
+  ColumnsToBlocks(size_t rows, size_t cols,
+                  size_t blockHeight = 0,
+                  size_t blockWidth = 0);
 
   /**
    * Transform the columns of maximalInputs into blocks
@@ -47,18 +80,48 @@ class ColumnsToBlocks
   void Transform(const arma::mat &maximalInputs, arma::mat &output);
 
   /**
+   * Height of the block, please refer to the comments of
+   * constructor for details
+   */
+  void BlockHeight(size_t value) {
+    blockHeight = value;
+  }
+
+  /**
+   * Return block height
+   */
+  size_t BlockHeight() const {
+    return blockHeight;
+  }
+
+  /**
+   * Width of the blcok, , please refer to the comments of
+   * constructor for details
+   */
+  void BlockWidth(size_t value) {
+    blockWidth = value;
+  }
+
+  /**
+   * Return block width
+   */
+  size_t BlockWidth() const {
+    return blockWidth;
+  }
+
+  /**
    * Get the size of the buffer, this size determine the how many cells surround
    * each column of the maximalInputs.
    * @param value buffer size, default value is 1
    */
-  void BufSize(arma::uword value) {
+  void BufSize(size_t value) {
     bufSize = value;
   }
 
   /**
    * Return buffer size
    */
-  arma::uword BufSize() const {
+  size_t BufSize() const {
     return bufSize;
   }
 
@@ -77,14 +140,14 @@ class ColumnsToBlocks
    * set number of blocks per rows
    * @param value number of blocks per rows, default value is 0
    */
-  void Cols(arma::uword value) {
+  void Cols(size_t value) {
     cols = value;
   }
 
   /**
    * Return number of blocks per rows
    */
-  arma::uword Cols() const {
+  size_t Cols() const {
     return cols;
   }
 
@@ -122,14 +185,14 @@ class ColumnsToBlocks
    * @brief Set number of blocks per rows
    * @param cols number of blocks per rows, default value is 0
    */
-  void Rows(arma::uword value) {
+  void Rows(size_t value) {
     rows = value;
   }
 
   /**
    * Return number of blocks per rows
    */
-  arma::uword Rows() const {
+  size_t Rows() const {
     return rows;
   }
 
@@ -150,15 +213,17 @@ class ColumnsToBlocks
   }
 
  private:
-  bool IsPerfectSquare(arma::uword value) const;
+  bool IsPerfectSquare(size_t value) const;
 
-  arma::uword bufSize;
+  size_t blockHeight;
+  size_t blockWidth;
+  size_t bufSize;
   double bufValue;
-  arma::uword cols;
+  size_t cols;
   double maxRange;
   double minRange;
   bool scale;
-  arma::uword rows;
+  size_t rows;
 };
 
 } // namespace math
