@@ -13,9 +13,7 @@
 
 using namespace mlpack;
 
-BOOST_AUTO_TEST_SUITE(MaximalInputsTest);
-
-BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
+arma::mat CreateMaximalInput()
 {
   arma::mat w1(2, 4);
   w1<<0<<1<<2<<3<<arma::endr
@@ -24,12 +22,30 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
   arma::mat input(5,5);
   input.submat(0, 0, 1, 3) = w1;
 
-  arma::mat maximalInputs;  
+  arma::mat maximalInputs;
   mlpack::nn::MaximalInputs(input, maximalInputs);
 
+  return maximalInputs;
+}
+
+void TestResults(arma::mat const &actualResult, arma::mat const &expectResult)
+{
+  BOOST_REQUIRE(expectResult.n_rows == actualResult.n_rows &&
+                expectResult.n_cols == actualResult.n_cols);
+
+  for(size_t i = 0; i != expectResult.n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(expectResult[i], actualResult[i], 1e-2);
+  }
+}
+
+BOOST_AUTO_TEST_SUITE(MaximalInputsTest);
+
+BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
+{   
   arma::mat output;  
   mlpack::math::ColumnsToBlocks ctb(1,2);
-  ctb.Transform(maximalInputs, output);
+  ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
   matlabResults<<-1<<-1<<-1<<-1<<-1<<-1<<-1<<arma::endr
@@ -37,13 +53,26 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
                <<-1<<-0.71429<<-0.14286<<-1.00000<<0.42857<<1<<-1<<arma::endr
                <<-1<<-1<<-1<<-1<<-1<<-1<<-1;
 
-  BOOST_REQUIRE(matlabResults.n_rows == output.n_rows &&
-                matlabResults.n_cols == output.n_cols);
+  TestResults(output, matlabResults);
+}
 
-  for(arma::uword i = 0; i != matlabResults.n_elem; ++i)
-  {
-    BOOST_REQUIRE_CLOSE(matlabResults[i], output[i], 1e-2);
-  }
+BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
+{
+  arma::mat output;
+  mlpack::math::ColumnsToBlocks ctb(1,2);
+  ctb.BlockWidth(4);
+  ctb.BlockHeight(1);
+  ctb.BufValue(-3);
+  ctb.Transform(CreateMaximalInput(), output);
+
+  arma::mat matlabResults;
+  matlabResults<<-3<<-3<<-3<<-3<<-3
+               <<-3<<-3<<-3<<-3<<-3<<-3<<arma::endr
+               <<-3<<-1<<-0.71429<<-0.42857<<-0.14286
+               <<-3<<0.14286<<0.42857<<0.71429<<1<<-3<<arma::endr
+               <<-3<<-3<<-3<<-3<<-3<<-3<<-3<<-3<<-3<<-3<<-3<<arma::endr;
+
+  TestResults(output, matlabResults);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
