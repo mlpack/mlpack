@@ -92,6 +92,11 @@ namespace math {
  * // -1.0000 -0.1429 -1.0000  1.0000 -1.0000
  * // -1.0000 -1.0000 -1.0000 -1.0000 -1.0000
  * @endcode
+ *
+ * The ColumnsToBlocks class can also, depending on the parameters, scale the
+ * input to a given range (useful for exporting to PGM, for instance), and also
+ * set the buffer size and value.  See the Scale(), MinRange(), MaxRange(),
+ * BufSize(), and BufValue() methods for more details.
  */
 class ColumnsToBlocks
 {
@@ -106,6 +111,11 @@ class ColumnsToBlocks
    * blockWidth are not specified, then the square root of the number of rows of
    * the input matrix will be taken when Transform() is called and that will be
    * used as the block width and height.
+   *
+   * Note that the ColumnsToBlocks object can also scale the inputs to a given
+   * range; see Scale(), MinRange(), and MaxRange(), and the buffer (margin)
+   * size can also be set with BufSize(), and the value used for the buffer can
+   * be set with BufValue().
    *
    * @param rows Number of blocks in each column of the output matrix.
    * @param cols Number of blocks in each row of the output matrix.
@@ -194,10 +204,10 @@ class ColumnsToBlocks
   size_t bufSize;
   //! The value of the buffer around each block.
   double bufValue;
-  //! The maximum of the range to be scaled to (if scaling is enabled).
-  double maxRange;
   //! The minimum of the range to be scaled to (if scaling is enabled).
   double minRange;
+  //! The maximum of the range to be scaled to (if scaling is enabled).
+  double maxRange;
   //! Whether or not scaling is enabled.
   bool scale;
   //! The number of blocks in each row.
