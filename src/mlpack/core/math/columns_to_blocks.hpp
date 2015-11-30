@@ -1,3 +1,10 @@
+/**
+ * @file columns_to_blocks.hpp
+ * @author Tham Ngap Wei
+ *
+ * A helper class that could be useful for visualizing the output of
+ * MaximalInputs() and possibly other things.
+ */
 #ifndef __MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
 #define __MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
 
@@ -7,222 +14,195 @@ namespace mlpack {
 namespace math {
 
 /**
- * Transform the output of "MaximalInputs" to blocks, if your training samples are images,
- * this function could help you visualize your training results
- * @param maximalInputs Parameters after maximize by "MaximalInputs", each col assiociate to one sample
- * @param output Maximal inputs regrouped to blocks
- * @param scale False, the output will not be scaled and vice versa
- * @param minRange minimum range of the output
- * @param maxRange maximum range of the output
+ * Transform the columns of the given matrix into a block format.  This could be
+ * useful with the mlpack::nn::MaximalInputs() function, if your training
+ * samples are images.  Roughly speaking, given a matrix
+ *
+ * [[A]
+ *  [B]
+ *  [C]
+ *  [D]]
+ *
+ * then the ColumnsToBlocks class can transform this to something like
+ *
+ * [[m m m m m]
+ *  [m A m B m]
+ *  [m m m m m]
+ *  [m C m D m]
+ *  [m m m m m]]
+ *
+ * where A through D are vectors and may themselves be reshaped by
+ * ColumnsToBlocks.
+ *
+ * An example usage of the ColumnsToBlocks class with the output of
+ * MaximalInputs() is given below; this assumes that the images are square, and
+ * will return a matrix with a one-element margin, with each maximal input (that
+ * is, each column of the maximalInput matrix) as a square block in the output
+ * matrix.  5 rows and columns of blocks will be in the output matrix.
+ *
  * @code
- * arma::mat maximalInput; //store the features learned by sparse autoencoder
- * mlpack::nn::MaximalInputs(encoder2.Parameters(), maximalInput);
+ * // We assume we have a sparse autoencoder 'encoder'.
+ * arma::mat maximalInput; // Store the features learned by sparse autoencoder
+ * mlpack::nn::MaximalInputs(encoder.Parameters(), maximalInput);
  *
  * arma::mat outputs;
  * const bool scale = true;
  *
- * ColumnsToBlocks ctb(5,5);
+ * ColumnsToBlocks ctb(5, 5);
  * arma::mat output;
  * ctb.Transform(maximalInput, output);
- * //you can save the output as a pgm, this may help you visualize the training results
+ * // You can save the output as a pgm, this may help you visualize the training
+ * // results.
  * output.save(fileName, arma::pgm_binary);
+ * @endcode
+ *
+ * Another example of usage is given below, on a sample matrix.
+ *
+ * @code
+ * // This matrix has two columns.
+ * arma::mat input;
+ * input << -1.0000 << 0.1429 << arma::endr
+ *       << -0.7143 << 0.4286 << arma::endr
+ *       << -0.4286 << 0.7143 << arma::endr
+ *       << -0.1429 << 1.0000 << arma::endr;
+ *
+ * arma::mat output;
+ * ColumnsToBlocks ctb(1, 2);
+ * ctb.Transform(input, output);
+ *
+ * // The columns of the input will be reshaped as a square which is
+ * // surrounded by padding value -1 (this value could be changed with the
+ * // BufValue() method):
+ * // -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+ * // -1.0000  -1.0000  -0.4286  -1.0000   0.1429   0.7143  -1.0000
+ * // -1.0000  -0.7143  -0.1429  -1.0000   0.4286   1.0000  -1.0000
+ * // -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+ *
+ * // Now, let's change some parameters; let's have each input column output not
+ * // as a square, but as a 4x1 vector.
+ * ctb.BlockWidth(1);
+ * ctb.BlockHeight(4);
+ * ctb.Transform(input, output);
+ *
+ * // The output here will be similar, but each maximal input is 4x1:
+ * // -1.0000 -1.0000 -1.0000 -1.0000 -1.0000
+ * // -1.0000 -1.0000 -1.0000  0.1429 -1.0000
+ * // -1.0000 -0.7143 -1.0000  0.4286 -1.0000
+ * // -1.0000 -0.4286 -1.0000  0.7143 -1.0000
+ * // -1.0000 -0.1429 -1.0000  1.0000 -1.0000
+ * // -1.0000 -1.0000 -1.0000 -1.0000 -1.0000
  * @endcode
  */
 class ColumnsToBlocks
 {
  public:
   /**
-   * Constructor of ColumnsToBlocks
-   * @param rows number of blocks per cols
-   * @param cols number of blocks per rows
-   * @param blockHeight height of block
-   * @param blockWidth width of block
-   * @warning blockHeight * blockWidth must equal to maximalInputs.n_rows
-   * By default the blockHeight and blockWidth will equal to
-   * std::sqrt(maximalInputs.n_rows)
-   * @code
-   * arma::mat maximalInputs;
-   * maximalInputs<<-1.0000<<0.1429<<arma::endr
-   *              <<-0.7143<<0.4286<<arma::endr
-   *              <<-0.4286<<0.7143<<arma::endr
-   *              <<-0.1429<<1.0000<<arma::endr;
-   * arma::mat output;
-   * mlpack::math::ColumnsToBlocks ctb(1, 2);
-   * ctb.Transform(maximalInputs, output);
-   * //The cols of the maximalInputs output will reshape as a square which
-   * //surrounded by padding value -1(this value could be set by BufValue)
-   * //-1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
-   * //-1.0000  -1.0000  -0.4286  -1.0000   0.1429   0.7143  -1.0000
-   * //-1.0000  -0.7143  -0.1429  -1.0000   0.4286   1.0000  -1.0000
-   * //-1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+   * Constructor a ColumnsToBlocks object with the given parameters.  The rows
+   * and cols parameters control the number of blocks per row and column of the
+   * output matrix, respectively, and the blockHeight and blockWidth parameters
+   * control the size of the individual blocks.  If blockHeight and blockWidth
+   * are specified, then (blockHeight * blockWidth) must be equal to the number
+   * of rows in the input matrix when Transform() is called.  If blockHeight and
+   * blockWidth are not specified, then the square root of the number of rows of
+   * the input matrix will be taken when Transform() is called and that will be
+   * used as the block width and height.
    *
-   * ctb.BlockWidth(4);
-   * ctb.BlockHeight(1);
-   * ctb.Transform(maxinalInputs, output);
-   * //The cols of the maximalInputs output will reshape as a square which
-   * //surrounded by padding value -1(this value could be set by BufValue)
-   * //-1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000  -1.0000
-   * //-1.0000 -1.0000 -0.7143 -0.4286 -0.1429 -1.0000  0.1429  0.4286  0.7143  1.0000  -1.0000
-   * //-1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000 -1.0000  -1.0000
+   * @param rows Number of blocks in each column of the output matrix.
+   * @param cols Number of blocks in each row of the output matrix.
+   * @param blockHeight Height of each block.
+   * @param blockWidth Width of each block.
    *
-   * @endcode
+   * @warning blockHeight * blockWidth must be equal to maximalInputs.n_rows.
    */
-  ColumnsToBlocks(size_t rows, size_t cols,
+  ColumnsToBlocks(size_t rows,
+                  size_t cols,
                   size_t blockHeight = 0,
                   size_t blockWidth = 0);
 
   /**
-   * Transform the columns of maximalInputs into blocks
-   * @param maximalInputs input value intent to transform to block, the rows
-   * of this input must be a perfect square
-   * @param output input transformed to block
+   * Transform the columns of the input matrix into blocks.  If blockHeight and
+   * blockWidth were not specified in the constructor (and BlockHeight() and
+   * BlockWidth() were not called), then the number of rows in the input matrix
+   * must be a perfect square.
+   *
+   * @param input Input matrix to transform.
+   * @param output Matrix to store transformed output in.
    */
-  void Transform(const arma::mat &maximalInputs, arma::mat &output);
+  void Transform(const arma::mat& maximalInputs, arma::mat& output);
 
-  /**
-   * Height of the block, please refer to the comments of
-   * constructor for details
-   */
-  void BlockHeight(size_t value) {
-    blockHeight = value;
-  }
+  //! Set the height of each block; see the constructor for more details.
+  void BlockHeight(const size_t value) { blockHeight = value; }
+  //! Get the block height.
+  size_t BlockHeight() const { return blockHeight; }
 
-  /**
-   * Return block height
-   */
-  size_t BlockHeight() const {
-    return blockHeight;
-  }
+  //! Set the width of each block; see the constructor for more details.
+  void BlockWidth(size_t value) { blockWidth = value; }
+  //! Get the block width.
+  size_t BlockWidth() const { return blockWidth; }
 
-  /**
-   * Width of the blcok, , please refer to the comments of
-   * constructor for details
-   */
-  void BlockWidth(size_t value) {
-    blockWidth = value;
-  }
+  //! Modify the buffer size (the size of the margin around each column of the
+  //! input).  The default value is 1.
+  void BufSize(const size_t value) { bufSize = value; }
+  //! Get the buffer size.
+  size_t BufSize() const { return bufSize; }
 
-  /**
-   * Return block width
-   */
-  size_t BlockWidth() const {
-    return blockWidth;
-  }
+  //! Modify the value used for buffer cells; the default is -1.
+  void BufValue(const double value) { bufValue = value; }
+  //! Get the value used for buffer cells.
+  double BufValue() const { return bufValue; }
 
-  /**
-   * Get the size of the buffer, this size determine the how many cells surround
-   * each column of the maximalInputs.
-   * @param value buffer size, default value is 1
-   */
-  void BufSize(size_t value) {
-    bufSize = value;
-  }
+  //! Set the number of blocks per column.
+  void Cols(const size_t value) { cols = value; }
+  //! Return the number of blocks per column.
+  size_t Cols() const { return cols; }
 
-  /**
-   * Return buffer size
-   */
-  size_t BufSize() const {
-    return bufSize;
-  }
+  //! Set the number of blocks per row.
+  void Rows(const size_t value) { rows = value; }
+  //! Modify the number of blocks per row.
+  size_t Rows() const { return rows; }
 
-  /**
-   * Set the buffer value surround the cells
-   * @param value The value of the buffer, default value is -1
-   */
-  void BufValue(double value) {
-    bufValue = value;
-  }
-  double BufValue() const {
-    return bufValue;
-  }
+  //! Set the maximum of the range the input will be scaled to, if scaling is
+  //! enabled (see Scale()).
+  void MaxRange(const double value) { maxRange = value; }
+  //! Get the maximum of the range the input will be scaled to, if scaling is
+  //! enabled (see Scale()).
+  double MaxRange() const { return maxRange; }
 
-  /**
-   * set number of blocks per rows
-   * @param value number of blocks per rows, default value is 0
-   */
-  void Cols(size_t value) {
-    cols = value;
-  }
+  //! Set the minimum of the range the input will be scaled to, if scaling is
+  //! enabled (see Scale()).
+  void MinRange(const double value) { minRange = value; }
+  //! Get the minimum of the range the input will be scaled to, if scaling is
+  //! enabled (see Scale()).
+  double MinRange() const { return minRange; }
 
-  /**
-   * Return number of blocks per rows
-   */
-  size_t Cols() const {
-    return cols;
-  }
-
-  /**
-   * Set maximum range for scaling
-   * @param value maximum range, default value is 255
-   */
-  void MaxRange(double value) {
-    maxRange = value;
-  }
-
-  /**
-   * Return maximum range
-   */
-  double MaxRange() const {
-    return maxRange;
-  }
-
-  /**
-   * Set minimum range for scaling
-   * @param value minimum range, default value is 0
-   */
-  void MinRange(double value) {
-    minRange = value;
-  }
-
-  /**
-   * Return minimum range
-   */
-  double MinRange() const {
-    return minRange;
-  }
-
-  /**
-   * @brief Set number of blocks per rows
-   * @param cols number of blocks per rows, default value is 0
-   */
-  void Rows(size_t value) {
-    rows = value;
-  }
-
-  /**
-   * Return number of blocks per rows
-   */
-  size_t Rows() const {
-    return rows;
-  }
-
-  /**
-   * Disable or enable scale
-   * @param value True, scale the output range and vice versa.Default
-   * value is false
-   */
-  void Scale(bool value) {
-    scale = value;
-  }
-
-  /**
-   * Return scale value
-   */
-  bool Scale() const {
-    return scale;
-  }
+  //! Set whether or not scaling is enabled (see also MaxRange() and
+  //! MinRange()).
+  void Scale(const bool value) { scale = value; }
+  //! Get whether or not scaling is enabled (see also MaxRange() and
+  //! MinRange()).
+  bool Scale() const { return scale; }
 
  private:
+  //! Determine whether or not the number is a perfect square.
   bool IsPerfectSquare(size_t value) const;
 
+  //! The height of each block.
   size_t blockHeight;
+  //! The width of each block.
   size_t blockWidth;
+  //! The size of the buffer around each block.
   size_t bufSize;
+  //! The value of the buffer around each block.
   double bufValue;
+  //! The number of blocks in each column.
   size_t cols;
+  //! The maximum of the range to be scaled to (if scaling is enabled).
   double maxRange;
+  //! The minimum of the range to be scaled to (if scaling is enabled).
   double minRange;
+  //! Whether or not scaling is enabled.
   bool scale;
+  //! The number of blocks in each row.
   size_t rows;
 };
 
