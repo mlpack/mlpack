@@ -151,16 +151,6 @@ class ColumnsToBlocks
   //! Get the value used for buffer cells.
   double BufValue() const { return bufValue; }
 
-  //! Set the number of blocks per column.
-  void Cols(const size_t value) { cols = value; }
-  //! Return the number of blocks per column.
-  size_t Cols() const { return cols; }
-
-  //! Set the number of blocks per row.
-  void Rows(const size_t value) { rows = value; }
-  //! Modify the number of blocks per row.
-  size_t Rows() const { return rows; }
-
   //! Set the maximum of the range the input will be scaled to, if scaling is
   //! enabled (see Scale()).
   void MaxRange(const double value) { maxRange = value; }
@@ -182,6 +172,16 @@ class ColumnsToBlocks
   //! MinRange()).
   bool Scale() const { return scale; }
 
+  //! Set the number of blocks per row.
+  void Rows(const size_t value) { rows = value; }
+  //! Modify the number of blocks per row.
+  size_t Rows() const { return rows; }
+
+  //! Set the number of blocks per column.
+  void Cols(const size_t value) { cols = value; }
+  //! Return the number of blocks per column.
+  size_t Cols() const { return cols; }
+
  private:
   //! Determine whether or not the number is a perfect square.
   bool IsPerfectSquare(size_t value) const;
@@ -194,8 +194,6 @@ class ColumnsToBlocks
   size_t bufSize;
   //! The value of the buffer around each block.
   double bufValue;
-  //! The number of blocks in each column.
-  size_t cols;
   //! The maximum of the range to be scaled to (if scaling is enabled).
   double maxRange;
   //! The minimum of the range to be scaled to (if scaling is enabled).
@@ -204,6 +202,8 @@ class ColumnsToBlocks
   bool scale;
   //! The number of blocks in each row.
   size_t rows;
+  //! The number of blocks in each column.
+  size_t cols;
 };
 
 } // namespace math
