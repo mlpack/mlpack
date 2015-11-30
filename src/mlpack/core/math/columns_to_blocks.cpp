@@ -1,3 +1,9 @@
+/**
+ * @file columns_to_blocks.cpp
+ * @author Tham Ngap Wei
+ *
+ * Implementation of the ColumnsToBlocks class.
+ */
 #include "columns_to_blocks.hpp"
 
 namespace mlpack {
