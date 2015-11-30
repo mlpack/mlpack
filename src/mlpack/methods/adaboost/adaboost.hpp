@@ -100,8 +100,10 @@ class AdaBoost
   // Return the value of ztProduct.
   double GetztProduct() { return ztProduct; }
 
-  // The tolerance for change in rt and when to stop.
-  double tolerance;
+  //! Get the tolerance for stopping the optimization during training.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for stopping the optimization during training.
+  double& Tolerance() { return tolerance; }
 
   /**
    * Train AdaBoost on the given dataset.  This method takes an initialized
@@ -143,6 +145,8 @@ private:
 
   //! The number of classes in the model.
   size_t classes;
+  // The tolerance for change in rt and when to stop.
+  double tolerance;
 
   //! The vector of weak learners.
   std::vector<WeakLearner> wl;
