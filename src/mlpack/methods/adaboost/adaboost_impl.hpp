@@ -202,11 +202,11 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     const MatType& test,
     arma::Row<size_t>& predictedLabels)
 {
-  arma::Row<size_t> tempPredictedLabels(predictedLabels.n_cols);
+  arma::Row<size_t> tempPredictedLabels(test.n_cols);
   arma::mat cMatrix(classes, test.n_cols);
 
   cMatrix.zeros();
-  predictedLabels.zeros();
+  predictedLabels.zeros(test.n_cols);
 
   for (size_t i = 0; i < wl.size(); i++)
   {
