@@ -40,9 +40,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
       perceptronIter);
 
   // Define parameters for AdaBoost.
-  int iterations = 100;
+  size_t iterations = 100;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
 
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -80,16 +80,16 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
       perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 100;
+  size_t iterations = 100;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
@@ -116,16 +116,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 800;
-
+  size_t perceptronIter = 800;
   perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
       perceptronIter);
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  int countError = 0;
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -152,24 +151,24 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 800;
+  size_t perceptronIter = 800;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
       perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  int countError = 0;
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
@@ -195,16 +194,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 800;
-
+  size_t perceptronIter = 800;
   perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
       perceptronIter);
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  int countError = 0;
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -231,24 +229,24 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 800;
+  size_t perceptronIter = 800;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
       perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != perceptronPrediction(i))
+    if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  int countError = 0;
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -273,19 +271,17 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
     BOOST_FAIL("Cannot load labels for iris_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
-
-  // Define parameters for AdaBoost.
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
-
   decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  int iterations = 50;
-  double tolerance = 1e-10;
 
+  // Define parameters for AdaBoost.
+  size_t iterations = 50;
+  double tolerance = 1e-10;
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
-          labels.row(0), iterations, tolerance, ds);
-  int countError = 0;
+          labels.row(0), ds, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -314,29 +310,28 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   // no need to map the labels here
 
   // Define your own weak learner, decision stumps in this case.
-
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
-                                     numClasses, inpBucketSize);
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0), numClasses,
+      inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<arma::mat, decision_stump::DecisionStump<> > a(inputData,
-      labels.row(0), iterations, tolerance, ds);
-  int countError = 0;
+  AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
+      labels.row(0), ds, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -344,6 +339,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
 
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
+
 /**
  * This test case runs the AdaBoost.mh algorithm on the UCI Vertebral Column
  * dataset.  It checks if the error returned by running a single instance of the
@@ -368,12 +364,12 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
                                      numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
 
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
-      labels.row(0), iterations, tolerance, ds);
-  int countError = 0;
+      labels.row(0), ds, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -407,7 +403,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   decision_stump::DecisionStump<> ds(inputData, labels.row(0), numClasses,
       inpBucketSize);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
@@ -415,12 +411,12 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
-      labels.row(0), iterations, tolerance, ds);
+      labels.row(0), ds, iterations, tolerance);
 
-  int countError = 0;
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -452,12 +448,12 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
                                      numClasses, inpBucketSize);
 
   // Define parameters for Adaboost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
 
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
-           labels.row(0), iterations, tolerance, ds);
-  int countError = 0;
+           labels.row(0), ds, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -492,19 +488,19 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
 
-  int countWeakLearnerError = 0;
+  size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != dsPrediction(i))
+    if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  int iterations = 500;
+  size_t iterations = 500;
   double tolerance = 1e-23;
 
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
-           labels.row(0), iterations, tolerance, ds);
-  int countError = 0;
+           labels.row(0), ds, iterations, tolerance);
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != a.finalHypothesis(i))
       countError++;
@@ -531,7 +527,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 1000;
+  size_t perceptronIter = 1000;
 
   arma::mat testData;
 
@@ -549,15 +545,14 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   p.Classify(inputData, perceptronPrediction);
 
   // Define parameters for AdaBoost.
-  int iterations = 100;
+  size_t iterations = 100;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
-  int localError = 0;
-
+  size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
@@ -602,15 +597,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
                                      numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(
-           inputData, labels.row(0), iterations, tolerance, ds);
+           inputData, labels.row(0), ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
-  int localError = 0;
+  size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
@@ -638,15 +633,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 800;
+  size_t perceptronIter = 800;
 
   perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
       perceptronIter);
 
   // Define parameters for AdaBoost.
-  int iterations = 50;
+  size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", inputData))
@@ -660,7 +655,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   if (!data::Load("iris_test_labels.csv", inputData))
     BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
 
-  int localError = 0;
+  size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;

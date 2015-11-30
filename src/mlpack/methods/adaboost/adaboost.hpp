@@ -90,9 +90,9 @@ class AdaBoost
    */
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
-           const int iterations,
-           const double tol,
-           const WeakLearner& other);
+           const WeakLearner& other,
+           const size_t iterations = 100,
+           const double tolerance = 1e-6);
 
   // Stores the final classification of the labels.
   arma::Row<size_t> finalHypothesis;

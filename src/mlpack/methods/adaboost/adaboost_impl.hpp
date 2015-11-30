@@ -39,9 +39,9 @@ template<typename MatType, typename WeakLearner>
 AdaBoost<MatType, WeakLearner>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const int iterations,
-    const double tol,
-    const WeakLearner& other)
+    const WeakLearner& other,
+    const size_t iterations,
+    const double tol)
 {
   // Count the number of classes.
   classes = (arma::max(labels) - arma::min(labels)) + 1;
@@ -75,7 +75,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // Now, start the boosting rounds.
-  for (int i = 0; i < iterations; i++)
+  for (size_t i = 0; i < iterations; i++)
   {
     // Initialized to zero in every round.  rt is used for calculation of
     // alphat; it is the weighted error.

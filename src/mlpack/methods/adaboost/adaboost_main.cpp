@@ -119,16 +119,16 @@ int main(int argc, char *argv[])
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
-  int iterations = CLI::GetParam<int>("iterations");
+  size_t iterations = (size_t) CLI::GetParam<int>("iterations");
 
   // define your own weak learner, perceptron in this case.
   // defining the number of iterations of the perceptron.
-  int iter = 400;
+  size_t iter = 400;
 
   perceptron::Perceptron<> p(trainingData, labels.t(), max(labels) + 1, iter);
 
   Timer::Start("Training");
-  AdaBoost<> a(trainingData, labels.t(), iterations, tolerance, p);
+  AdaBoost<> a(trainingData, labels.t(), p, iterations, tolerance);
   Timer::Stop("Training");
 
   Row<size_t> predictedLabels(testingData.n_cols);
