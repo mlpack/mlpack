@@ -43,9 +43,25 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
     const size_t iterations,
     const double tol)
 {
+  Train(data, labels, other, iterations, tol);
+}
+
+// Train AdaBoost.
+template<typename MatType, typename WeakLearner>
+void AdaBoost<MatType, WeakLearner>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const WeakLearner& other,
+    const size_t iterations,
+    const double tolerance)
+{
+  // Clear information from previous runs.
+  wl.clear();
+  alpha.clear();
+
   // Count the number of classes.
   classes = (arma::max(labels) - arma::min(labels)) + 1;
-  tolerance = tol;
+  this->tolerance = tolerance;
 
   // crt is the cumulative rt value for terminating the optimization when rt is
   // changing by less than the tolerance.

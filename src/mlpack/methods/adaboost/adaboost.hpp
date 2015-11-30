@@ -104,6 +104,23 @@ class AdaBoost
   double tolerance;
 
   /**
+   * Train AdaBoost on the given dataset.  This method takes an initialized
+   * WeakLearner; the parameters for this weak learner will be used to train
+   * each of the weak learners during AdaBoost training.  Note that this will
+   * completely overwrite any model that has already been trained with this
+   * object.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each point in the dataset.
+   * @param learner Learner to use for training.
+   */
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const WeakLearner& learner,
+             const size_t iterations = 100,
+             const double tolerance = 1e-6);
+
+  /**
    * Classify the given test points.
    *
    * @param test Testing data.
