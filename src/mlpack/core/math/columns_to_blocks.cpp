@@ -21,13 +21,8 @@ ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
 
 bool ColumnsToBlocks::IsPerfectSquare(const size_t value) const
 {
-  if (value < 0)
-  {
-    return false;
-  }
-
-  const int root = std::round(std::sqrt(value));
-  return value == root * root;
+  const size_t root = (size_t) std::round(std::sqrt(value));
+  return (value == root * root);
 }
 
 void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
