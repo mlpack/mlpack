@@ -55,7 +55,7 @@ void ColumnsToBlocks::Transform(const arma::mat &maximalInputs, arma::mat &outpu
   output *= bufValue;
 
   size_t k = 0;
-  const size_t maxSize = std::min(rows * cols, maximalInputs.n_cols);
+  const size_t maxSize = std::min(rows * cols, (size_t) maximalInputs.n_cols);
   for(size_t i = 0; i != rows; ++i)
   {
     for(size_t j = 0; j != cols; ++j)
