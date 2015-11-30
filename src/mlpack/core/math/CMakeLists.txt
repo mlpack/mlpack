@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   clamp.hpp
+  columns_to_blocks.hpp
+  columns_to_blocks.cpp
   lin_alg.hpp
   lin_alg_impl.hpp
   lin_alg.cpp
