@@ -76,8 +76,7 @@ void AdaBoost<MatType, WeakLearner>::Train(
   MatType tempData(data);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
-  arma::mat sumFinalH(predictedLabels.n_cols, classes);
-  sumFinalH.fill(0.0);
+  arma::mat sumFinalH = arma::zeros<arma::mat>(predictedLabels.n_cols, classes);
 
   // Load the initial weights into a 2-D matrix.
   const double initWeight = 1.0 / double(data.n_cols * classes);
@@ -241,12 +240,7 @@ void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
     const arma::mat& D,
     arma::rowvec& weights)
 {
-  size_t i, j;
-  weights.fill(0.0);
-
-  for (i = 0; i < D.n_rows; i++)
-    for (j = 0; j < D.n_cols; j++)
-      weights(i) += D(i, j);
+  weights = arma::sum(D, 1).t();
 }
 
 } // namespace adaboost
