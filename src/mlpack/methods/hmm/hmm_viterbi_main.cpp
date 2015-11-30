@@ -63,7 +63,7 @@ struct Viterbi
 
     // Save output.
     const string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, sequence, true);
+    data::Save(outputFile, sequence, true, false);
   }
 };
 

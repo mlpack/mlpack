@@ -67,7 +67,7 @@ struct Generate
     // Do we want to save the hidden sequence?
     const string sequenceFile = CLI::GetParam<string>("state_file");
     if (sequenceFile != "")
-      data::Save(sequenceFile, sequence, true);
+      data::Save(sequenceFile, sequence, true, false);
   }
 };
 
