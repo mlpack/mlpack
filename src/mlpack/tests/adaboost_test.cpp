@@ -124,9 +124,13 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
