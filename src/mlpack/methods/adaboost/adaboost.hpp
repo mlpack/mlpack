@@ -132,17 +132,6 @@ class AdaBoost
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
 private:
-  /**
-   * This function helps in building the Weight Distribution matrix which is
-   * updated during every iteration. It calculates the "difficulty" in
-   * classifying a point by adding the weights for all instances, using D.
-   *
-   * @param D The 2 Dimensional weight matrix from which the weights are
-   *     to be calculated.
-   * @param weights The output weight vector.
-   */
-  void BuildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
-
   //! The number of classes in the model.
   size_t classes;
   // The tolerance for change in rt and when to stop.

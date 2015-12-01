@@ -101,7 +101,7 @@ void AdaBoost<MatType, WeakLearner>::Train(
     zt = 0.0;
 
     // Build the weight vectors.
-    BuildWeightMatrix(D, weights);
+    weights = arma::sum(D, 1).t();
 
     // Use the existing weak learner to train a new one with new weights.
     WeakLearner w(other, tempData, labels, weights);
@@ -224,23 +224,6 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     cMRow.max(max_index);
     predictedLabels(i) = max_index;
   }
-}
-
-/**
- * This function helps in building the Weight Distribution matrix which is
- * updated during every iteration. It calculates the "difficulty" in classifying
- * a point by adding the weights for all instances, using D.
- *
- * @param D The 2 Dimensional weight matrix from which the weights are
- *      to be calculated.
- * @param weights The output weight vector.
- */
-template <typename MatType, typename WeakLearner>
-void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
-    const arma::mat& D,
-    arma::rowvec& weights)
-{
-  weights = arma::sum(D, 1).t();
 }
 
 } // namespace adaboost
