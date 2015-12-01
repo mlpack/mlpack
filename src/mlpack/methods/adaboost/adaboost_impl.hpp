@@ -76,11 +76,11 @@ void AdaBoost<MatType, WeakLearner>::Train(
   MatType tempData(data);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
-  arma::mat sumFinalH = arma::zeros<arma::mat>(predictedLabels.n_cols, classes);
+  arma::mat sumFinalH = arma::zeros<arma::mat>(classes, predictedLabels.n_cols);
 
   // Load the initial weights into a 2-D matrix.
   const double initWeight = 1.0 / double(data.n_cols * classes);
-  arma::mat D(data.n_cols, classes);
+  arma::mat D(classes, data.n_cols);
   D.fill(initWeight);
 
   // Weights are stored in this row vector.
@@ -101,7 +101,7 @@ void AdaBoost<MatType, WeakLearner>::Train(
     zt = 0.0;
 
     // Build the weight vectors.
-    weights = arma::sum(D, 1).t();
+    weights = arma::sum(D);
 
     // Use the existing weak learner to train a new one with new weights.
     WeakLearner w(other, tempData, labels, weights);
@@ -111,19 +111,17 @@ void AdaBoost<MatType, WeakLearner>::Train(
     // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, calculate alpha(t) using ht.
-    for (size_t j = 0; j < D.n_rows; j++) // instead of D, ht
+    for (size_t j = 0; j < D.n_cols; j++) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
-        rt += arma::accu(D.row(j));
+        rt += arma::accu(D.col(j));
       else
-        rt -= arma::accu(D.row(j));
+        rt -= arma::accu(D.col(j));
     }
 
-    if (i > 0)
-    {
-      if (std::abs(rt - crt) < tolerance)
-        break;
-    }
+    if ((i > 0) && (std::abs(rt - crt) < tolerance))
+      break;
+
     crt = rt;
 
     // Our goal is to find alphat which mizimizes or approximately minimizes the
@@ -134,38 +132,39 @@ void AdaBoost<MatType, WeakLearner>::Train(
     wl.push_back(w);
 
     // Now start modifying the weights.
-    for (size_t j = 0; j < D.n_rows; j++)
+    for (size_t j = 0; j < D.n_cols; j++)
     {
-      double expo = exp(alphat);
+      const double expo = exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
-        for (size_t k = 0; k < D.n_cols; k++)
+        for (size_t k = 0; k < D.n_rows; k++)
         {
           // We calculate zt, the normalization constant.
-          zt += D(j, k) / expo; // * exp(-1 * alphat * yt(j,k) * ht(j,k));
-          D(j, k) = D(j, k) / expo;
+          D(k, j) /= expo;
+          zt += D(k, j); // * exp(-1 * alphat * yt(j,k) * ht(j,k));
+
 
           // Add to the final hypothesis matrix.
-          // sumFinalH(j, k) += (alphat * ht(j, k));
+          // sumFinalH(k, j) += (alphat * ht(k, j));
           if (k == labels(j))
-            sumFinalH(j, k) += (alphat); // * ht(j, k));
+            sumFinalH(k, j) += (alphat); // * ht(k, j));
           else
-            sumFinalH(j, k) -= (alphat);
+            sumFinalH(k, j) -= (alphat);
         }
       }
       else
       {
-        for (size_t k = 0; k < D.n_cols; k++)
+        for (size_t k = 0; k < D.n_rows; k++)
         {
-          // We calculate zt, the normalization constant
-          zt += D(j, k) * expo;
-          D(j, k) = D(j, k) * expo;
+          // We calculate zt, the normalization constant.
+          D(k, j) *= expo;
+          zt += D(k, j);
 
           // Add to the final hypothesis matrix.
           if (k == labels(j))
-            sumFinalH(j, k) += (alphat); // * ht(j,k));
+            sumFinalH(k, j) += alphat; // * ht(k, j));
           else
-            sumFinalH(j, k) -= (alphat);
+            sumFinalH(k, j) -= alphat;
         }
       }
     }
@@ -180,14 +179,13 @@ void AdaBoost<MatType, WeakLearner>::Train(
   // Iterations are over, now build a strong hypothesis from a weighted
   // combination of these weak hypotheses.
   arma::colvec tempSumFinalH;
-  arma::uword max_index;
-  arma::mat sfh = sumFinalH.t();
+  arma::uword maxIndex;
 
-  for (size_t i = 0;i < sfh.n_cols; i++)
+  for (size_t i = 0;i < sumFinalH.n_cols; i++)
   {
-    tempSumFinalH = sfh.col(i);
-    tempSumFinalH.max(max_index);
-    finalH(i) = max_index;
+    tempSumFinalH = sumFinalH.unsafe_col(i);
+    tempSumFinalH.max(maxIndex);
+    finalH(i) = maxIndex;
   }
 
   finalHypothesis = finalH;
@@ -205,7 +203,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
   arma::mat cMatrix(classes, test.n_cols);
 
   cMatrix.zeros();
-  predictedLabels.zeros(test.n_cols);
+  predictedLabels.set_size(test.n_cols);
 
   for (size_t i = 0; i < wl.size(); i++)
   {
@@ -216,13 +214,13 @@ void AdaBoost<MatType, WeakLearner>::Classify(
   }
 
   arma::colvec cMRow;
-  arma::uword max_index;
+  arma::uword maxIndex;
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {
-    cMRow = cMatrix.col(i);
-    cMRow.max(max_index);
-    predictedLabels(i) = max_index;
+    cMRow = cMatrix.unsafe_col(i);
+    cMRow.max(maxIndex);
+    predictedLabels(i) = maxIndex;
   }
 }
 
