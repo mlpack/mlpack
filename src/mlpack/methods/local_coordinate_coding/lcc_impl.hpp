@@ -307,16 +307,6 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
   double froNormResidual = norm(data - dictionary * codes, "fro");
   return std::pow(froNormResidual, 2.0) + lambda * weightedL1NormZ;
 }
-template<typename DictionaryInitializer>
-std::string LocalCoordinateCoding<DictionaryInitializer>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Local Coordinate Coding [" << this << "]" << std::endl;
-  convert << "  Number of Atoms: " << atoms << std::endl;
-  convert << "  Data: " << data.n_rows << "x" << data.n_cols << std::endl;
-  convert << "  Lambda: " << lambda << std::endl;
-  return convert.str();
-}
 
 } // namespace lcc
 } // namespace mlpack

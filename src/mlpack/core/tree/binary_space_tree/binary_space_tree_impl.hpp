@@ -838,42 +838,6 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   }
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         template<typename BoundMetricType> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-std::string BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                            SplitType>::
-    ToString() const
-{
-  std::ostringstream convert;
-  convert << "BinarySpaceTree [" << this << "]" << std::endl;
-  convert << "  First point: " << begin << std::endl;
-  convert << "  Number of descendants: " << count << std::endl;
-  convert << "  Bound: " << std::endl;
-  convert << mlpack::util::Indent(bound.ToString(), 2);
-  convert << "  Statistic: " << std::endl;
-  convert << mlpack::util::Indent(stat.ToString(), 2);
-
-  // How many levels should we print?  This will print the top two tree levels.
-  if (left != NULL && parent == NULL)
-  {
-    convert << " Left child:" << std::endl;
-    convert << mlpack::util::Indent(left->ToString(), 2);
-  }
-  if (right != NULL && parent == NULL)
-  {
-    convert << " Right child:" << std::endl;
-    convert << mlpack::util::Indent(right->ToString(), 2);
-  }
-  return convert.str();
-}
-
 } // namespace tree
 } // namespace mlpack
 

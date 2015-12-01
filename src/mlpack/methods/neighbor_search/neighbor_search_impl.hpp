@@ -689,30 +689,6 @@ Search(const size_t k,
   }
 }
 
-// Return a String of the Object.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class TraversalType>
-std::string NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-                           TraversalType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "NeighborSearch [" << this << "]" << std::endl;
-  convert << "  Reference set: " << referenceSet->n_rows << "x" ;
-  convert << referenceSet->n_cols << std::endl;
-  if (referenceTree)
-    convert << "  Reference tree: " << referenceTree << std::endl;
-  convert << "  Tree owner: " << treeOwner << std::endl;
-  convert << "  Naive: " << naive << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(),2);
-  return convert.str();
-}
-
 //! Serialize the NeighborSearch model.
 template<typename SortPolicy,
          typename MetricType,

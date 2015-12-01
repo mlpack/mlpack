@@ -11,24 +11,6 @@ using namespace mlpack;
 using namespace mlpack::distribution;
 
 /**
- * Returns a string representation of this object.
- */
-std::string RegressionDistribution::ToString() const
-{
-  std::ostringstream convert;
-  convert << "HMMRegression [" << this << "]" << std::endl;
-
-  // Secondary ostringstream so things can be indented right.
-  std::ostringstream data;
-  data << "Conditional mean function: " << std::endl << rf.ToString();
-  data << "Parameters: " << std::endl << rf.Parameters();
-  data << "Error distribution: " << std::endl << err.ToString();
-
-  convert << util::Indent(data.str());
-  return convert.str();
-}
-
-/**
  * Estimate parameters using provided observation weights
  *
  * @param observations List of observations.

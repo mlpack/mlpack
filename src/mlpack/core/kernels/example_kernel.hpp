@@ -105,18 +105,6 @@ class ExampleKernel
   void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
 
   /**
-   * Returns a string for the kernel object; in this case, with only the memory
-   * address for the kernel. If your kernel has any members, your ToString()
-   * method should include those as neccessary as well.
-   **/
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "ExampleKernel [" << this << "]" << std::endl;
-    return convert.str();
-  }
-
-  /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
    * for the two vectors.  In this case, because
    * our simple example kernel has no internal parameters, we can declare the

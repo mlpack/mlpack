@@ -87,15 +87,6 @@ class TriangularKernel
     ar & data::CreateNVP(bandwidth, "bandwidth");
   }
 
-  //! Return a string representation of the kernel.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "TriangularKernel [" << this << "]" << std::endl;
-    convert << "  Bandwidth: " << bandwidth << std::endl;
-    return convert.str();
-  }
-
  private:
   //! The bandwidth of the kernel.
   double bandwidth;

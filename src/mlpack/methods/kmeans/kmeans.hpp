@@ -168,9 +168,6 @@ class KMeans
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Serialize the k-means object.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);

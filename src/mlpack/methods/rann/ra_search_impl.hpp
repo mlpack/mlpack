@@ -481,51 +481,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
     ResetQueryTree(&queryNode->Child(i));
 }
 
-// Returns a string representation of the object.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-std::string RASearch<SortPolicy, MetricType, MatType, TreeType>::ToString()
-    const
-{
-  std::ostringstream convert;
-  convert << "RASearch [" << this << "]" << std::endl;
-  convert << "  referenceSet: " << referenceSet->n_rows << "x"
-      << referenceSet->n_cols << std::endl;
-
-  convert << "  naive: ";
-  if (naive)
-    convert << "true" << std::endl;
-  else
-    convert << "false" << std::endl;
-
-  convert << "  singleMode: ";
-  if (singleMode)
-    convert << "true" << std::endl;
-  else
-    convert << "false" << std::endl;
-
-  convert << "  tau: " << tau << std::endl;
-  convert << "  alpha: " << alpha << std::endl;
-  convert << "  sampleAtLeaves: ";
-  if (sampleAtLeaves)
-    convert << "true" << std::endl;
-  else
-    convert << "false" << std::endl;
-
-  convert << "  firstLeafExact: ";
-  if (firstLeafExact)
-    convert << "true" << std::endl;
-  else
-    convert << "false" << std::endl;
-  convert << "  singleSampleLimit: " << singleSampleLimit << std::endl;
-  convert << "  metric: " << std::endl << util::Indent(metric.ToString(), 2);
-  return convert.str();
-}
-
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,

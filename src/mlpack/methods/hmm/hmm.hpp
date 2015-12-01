@@ -317,11 +317,6 @@ class HMM
   double& Tolerance() { return tolerance; }
 
   /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
-  /**
    * Serialize the object.
    */
   template<typename Archive>

@@ -109,21 +109,6 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   return overallObjective;
 }
 
-// Convert the object to a string.
-template<typename DecomposableFunctionType>
-std::string SGD<DecomposableFunctionType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "SGD [" << this << "]" << std::endl;
-  convert << "  Function:" << std::endl;
-  convert << util::Indent(function.ToString(), 2);
-  convert << "  Step size: " << stepSize << std::endl;
-  convert << "  Maximum iterations: " << maxIterations << std::endl;
-  convert << "  Tolerance: " << tolerance << std::endl;
-  convert << "  Shuffle points: " << (shuffle ? "true" : "false") << std::endl;
-  return convert.str();
-}
-
 } // namespace optimization
 } // namespace mlpack
 

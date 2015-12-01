@@ -458,26 +458,6 @@ void HRectBound<MetricType>::Serialize(Archive& ar,
   ar & data::CreateNVP(minWidth, "minWidth");
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename MetricType>
-std::string HRectBound<MetricType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "HRectBound [" << this << "]" << std::endl;
-  convert << "  Power: " << MetricType::Power << std::endl;
-  convert << "  TakeRoot: " << (MetricType::TakeRoot ? "true" : "false")
-      << std::endl;
-  convert << "  Dimensionality: " << dim << std::endl;
-  convert << "  Bounds: " << std::endl;
-  for (size_t i = 0; i < dim; ++i)
-    convert << util::Indent(bounds[i].ToString()) << std::endl;
-  convert << "  Minimum width: " << minWidth << std::endl;
-
-  return convert.str();
-}
-
 } // namespace bound
 } // namespace mlpack
 

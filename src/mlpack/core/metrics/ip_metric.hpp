@@ -57,9 +57,6 @@ class IPMetric
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! The kernel we are using.
   KernelType* kernel;

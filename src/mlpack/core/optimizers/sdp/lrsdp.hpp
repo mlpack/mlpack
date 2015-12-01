@@ -72,9 +72,6 @@ class LRSDP
   //! Modify the augmented Lagrangian object.
   AugLagrangian<LRSDPFunction<SDPType>>& AugLag() { return augLag; }
 
-  //! Return a string representation of the object.
-  std::string ToString() const;
-
  private:
   //! Function to optimize, which the AugLagrangian object holds.
   LRSDPFunction<SDPType> function;
