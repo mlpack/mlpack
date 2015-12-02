@@ -62,6 +62,11 @@ timeval Timers::GetTimer(const std::string& timerName)
   return timers[timerName];
 }
 
+bool Timers::GetState(std::string timerName)
+{
+  return timerState[timerName];
+}
+
 void Timers::PrintTimer(const std::string& timerName)
 {
   timeval& t = timers[timerName];

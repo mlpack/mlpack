@@ -54,9 +54,16 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI()
 {
-  // Terminate the program timer.
-  Timer::Stop("total_time");
-
+  // Terminate the program timers.
+  std::map<std::string, timeval>::iterator it;
+  for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
+       ++it)
+  {
+    std::string i = (*it).first;
+    if(timer.GetState(i) == 1)
+      Timer::Stop(i);
+  }
+  
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
   if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
