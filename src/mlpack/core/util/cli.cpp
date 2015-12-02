@@ -60,10 +60,10 @@ CLI::~CLI()
        ++it)
   {
     std::string i = (*it).first;
-    if(timer.GetState(i) == 1)
+    if (timer.GetState(i) == 1)
       Timer::Stop(i);
   }
-  
+
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
   if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
