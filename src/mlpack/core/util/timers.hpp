@@ -137,6 +137,13 @@ class Timers
    */
   void StopTimer(const std::string& timerName);
 
+  /**
+   * Returns state of the given timer.
+   * 
+   * @param timerName The name of the timer in question.
+   */
+  bool GetState(std::string timerName);
+  
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, timeval> timers;
