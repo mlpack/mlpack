@@ -68,14 +68,17 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::
   // Initialize to the first observation, so we don't calculate gain on the
   // first iteration (it will be 0).
   ObservationType lastObservation = (*sortedElements.begin()).first;
+  size_t lastClass = classCounts.n_elem;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
       sortedElements.begin(); it != sortedElements.end(); ++it)
   {
-    // If this value is the same as the last, or if this is the first value,
-    // don't calculate the gain.
-    if ((*it).first != lastObservation)
+    // If this value is the same as the last, or if this is the first value, or
+    // we have the same class as the previous observation, don't calculate the
+    // gain---it can't be any better.  (See Fayyad and Irani, 1991.)
+    if (((*it).first != lastObservation) || ((*it).second != lastClass))
     {
       lastObservation = (*it).first;
+      lastClass = (*it).second;
 
       const double value = FitnessFunction::Evaluate(counts);
       if (value > bestFitness)
