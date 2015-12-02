@@ -30,8 +30,8 @@ arma::mat CreateMaximalInput()
 
 void TestResults(const arma::mat&actualResult, const arma::mat& expectResult)
 {
-  BOOST_REQUIRE_EQUAL(expectResult.n_rows == actualResult.n_rows);
-  BOOST_REQUIRE_EQUAL(expectResult.n_cols == actualResult.n_cols);
+  BOOST_REQUIRE_EQUAL(expectResult.n_rows, actualResult.n_rows);
+  BOOST_REQUIRE_EQUAL(expectResult.n_cols, actualResult.n_cols);
 
   for(size_t i = 0; i != expectResult.n_elem; ++i)
   {
