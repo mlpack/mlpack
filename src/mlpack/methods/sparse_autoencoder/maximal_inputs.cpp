@@ -1,3 +1,9 @@
+/**
+ * @file maximal_inputs.cpp
+ * @author Tham Ngap Wei
+ *
+ * Implementation of MaximalInputs().
+ */
 #include "maximal_inputs.hpp"
 
 namespace mlpack {
