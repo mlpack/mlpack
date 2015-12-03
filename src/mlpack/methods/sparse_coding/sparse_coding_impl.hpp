@@ -15,32 +15,61 @@ namespace mlpack {
 namespace sparse_coding {
 
 template<typename DictionaryInitializer>
-SparseCoding<DictionaryInitializer>::SparseCoding(const arma::mat& data,
-                                                  const size_t atoms,
-                                                  const double lambda1,
-                                                  const double lambda2) :
+SparseCoding<DictionaryInitializer>::SparseCoding(
+    const arma::mat& data,
+    const size_t atoms,
+    const double lambda1,
+    const double lambda2,
+    const size_t maxIterations,
+    const double objTolerance,
+    const double newtonTolerance) :
     atoms(atoms),
     data(data),
     codes(atoms, data.n_cols),
     lambda1(lambda1),
-    lambda2(lambda2)
+    lambda2(lambda2),
+    maxIterations(maxIterations),
+    objTolerance(objTolerance),
+    newtonTolerance(newtonTolerance)
+{
+  // Initialize the dictionary.
+  DictionaryInitializer::Initialize(data, atoms, dictionary);
+
+  Train(data);
+}
+
+template<typename DictionaryInitializer>
+SparseCoding<DictionaryInitializer>::SparseCoding(
+    const size_t atoms,
+    const double lambda1,
+    const double lambda2,
+    const size_t maxIterations,
+    const double objTolerance,
+    const double newtonTolerance) :
+    atoms(atoms),
+    data(data),
+    codes(atoms, data.n_cols),
+    lambda1(lambda1),
+    lambda2(lambda2),
+    maxIterations(maxIterations),
+    objTolerance(objTolerance),
+    newtonTolerance(newtonTolerance)
 {
   // Initialize the dictionary.
   DictionaryInitializer::Initialize(data, atoms, dictionary);
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations,
-                                                 const double objTolerance,
-                                                 const double newtonTolerance)
+void SparseCoding<DictionaryInitializer>::Train(const arma::mat& data)
 {
+  // Now, train.
   Timer::Start("sparse_coding");
 
   double lastObjVal = DBL_MAX;
 
   // Take the initial coding step, which has to happen before entering the main
   // optimization loop.
-  Log::Info << "Initial Coding Step." << std::endl;
+  Log::Info << "Initial coding step." << std::endl;
 
   OptimizeCode();
   arma::uvec adjacencies = find(codes);

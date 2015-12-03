@@ -114,7 +114,8 @@ int main(int argc, char* argv[])
   // If there is an initial dictionary, be sure we do not initialize one.
   if (initialDictionaryFile != "")
   {
-    SparseCoding<NothingInitializer> sc(matX, atoms, lambda1, lambda2);
+    SparseCoding<NothingInitializer> sc(atoms, lambda1, lambda2, maxIterations,
+        objTolerance, newtonTolerance);
 
     // Load initial dictionary directly into sparse coding object.
     data::Load(initialDictionaryFile, sc.Dictionary(), true);
@@ -135,7 +136,7 @@ int main(int argc, char* argv[])
     }
 
     // Run sparse coding.
-    sc.Encode(maxIterations, objTolerance, newtonTolerance);
+    sc.Train(matX);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
@@ -146,10 +147,11 @@ int main(int argc, char* argv[])
   else
   {
     // No initial dictionary.
-    SparseCoding<> sc(matX, atoms, lambda1, lambda2);
+    SparseCoding<> sc(atoms, lambda1, lambda2, maxIterations, objTolerance,
+        newtonTolerance);
 
     // Run sparse coding.
-    sc.Encode(maxIterations, objTolerance, newtonTolerance);
+    sc.Train(matX);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";

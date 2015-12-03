@@ -109,21 +109,15 @@ class SparseCoding
 {
  public:
   /**
-   * Set the parameters to SparseCoding. lambda2 defaults to 0.
+   * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
+   * constructor will train the model.  If that is not desired, call the other
+   * constructor that does not take a data matrix.  This constructor will also
+   * initialize the dictionary using the DictionaryInitializer before training.
    *
-   * @param data Data matrix
-   * @param atoms Number of atoms in dictionary
-   * @param lambda1 Regularization parameter for l1-norm penalty
-   * @param lambda2 Regularization parameter for l2-norm penalty
-   */
-  SparseCoding(const arma::mat& data,
-               const size_t atoms,
-               const double lambda1,
-               const double lambda2 = 0);
-
-  /**
-   * Run Sparse Coding with Dictionary Learning.
-   *
+   * @param data Data matrix.
+   * @param atoms Number of atoms in dictionary.
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
    *     the algorithm will run until convergence (or forever).
    * @param objTolerance Tolerance for objective function.  When an iteration of
@@ -132,9 +126,42 @@ class SparseCoding
    * @param newtonTolerance Tolerance for the Newton's method dictionary
    *     optimization step.
    */
-  void Encode(const size_t maxIterations = 0,
-              const double objTolerance = 0.01,
-              const double newtonTolerance = 1e-6);
+  SparseCoding(const arma::mat& data,
+               const size_t atoms,
+               const double lambda1,
+               const double lambda2 = 0,
+               const size_t maxIterations = 0,
+               const double objTolerance = 0.01,
+               const double newtonTolerance = 1e-6);
+
+  /**
+   * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
+   * constructor will not train the model, and a subsequent call to Train() will
+   * be required before the model can encode points with Code().  This
+   * constructor will initialize the dictionary, though.
+   *
+   * @param atoms Number of atoms in dictionary.
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
+   * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
+   *     the algorithm will run until convergence (or forever).
+   * @param objTolerance Tolerance for objective function.  When an iteration of
+   *     the algorithm produces an improvement smaller than this, the algorithm
+   *     will terminate.
+   * @param newtonTolerance Tolerance for the Newton's method dictionary
+   *     optimization step.
+   */
+  SparseCoding(const size_t atoms,
+               const double lambda1,
+               const double lambda2 = 0,
+               const size_t maxIterations = 0,
+               const double objTolerance = 0.01,
+               const double newtonTolerance = 1e-6);
+
+  /**
+   * Train the sparse coding model on the given dataset.
+   */
+  void Train(const arma::mat& data);
 
   /**
    * Sparse code each point via LARS.
@@ -201,6 +228,13 @@ class SparseCoding
 
   //! l2 regularization term.
   double lambda2;
+
+  //! Maximum number of iterations during training.
+  size_t maxIterations;
+  //! Tolerance for main objective.
+  double objTolerance;
+  //! Tolerance for Newton's method (dictionary training).
+  double newtonTolerance;
 };
 
 } // namespace sparse_coding
