@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   // Do LARS.
   LARS lars(useCholesky, lambda1, lambda2);
   vec beta;
-  lars.Regress(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
+  lars.Train(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
 
   const string betaFilename = CLI::GetParam<string>("output_file");
   beta.save(betaFilename, raw_ascii);
