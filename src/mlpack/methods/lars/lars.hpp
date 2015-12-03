@@ -163,6 +163,12 @@ class LARS
   //! Access the upper triangular cholesky factor.
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
+  /**
+   * Serialize the LARS model.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
   // Returns a string representation of this object.
   std::string ToString() const;
 
@@ -170,8 +176,8 @@ class LARS
   //! Gram matrix.
   arma::mat matGramInternal;
 
-  //! Reference to the Gram matrix we will use.
-  const arma::mat& matGram;
+  //! Pointer to the Gram matrix we will use.
+  const arma::mat* matGram;
 
   //! Upper triangular cholesky factor; initially 0x0 matrix.
   arma::mat matUtriCholFactor;
@@ -254,5 +260,8 @@ class LARS
 
 } // namespace regression
 } // namespace mlpack
+
+// Include implementation of Serialize().
+#include "lars_impl.hpp"
 
 #endif

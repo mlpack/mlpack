@@ -1,8 +1,9 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into the output library
 set(SOURCES
-   lars.hpp
-   lars.cpp
+  lars.hpp
+  lars_impl.hpp
+  lars.cpp
 )
 
 # add directory name to sources
