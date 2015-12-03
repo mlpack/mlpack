@@ -36,12 +36,21 @@ LARS::LARS(const bool useCholesky,
     tolerance(tolerance)
 { /* Nothing left to do */ }
 
-void LARS::Regress(const arma::mat& matX,
-                   const arma::vec& y,
-                   arma::vec& beta,
-                   const bool transposeData)
+void LARS::Train(const arma::mat& matX,
+                 const arma::vec& y,
+                 arma::vec& beta,
+                 const bool transposeData)
 {
   Timer::Start("lars_regression");
+
+  // Clear any previous solution information.
+  betaPath.clear();
+  lambdaPath.clear();
+  activeSet.clear();
+  isActive.clear();
+  ignoreSet.clear();
+  isIgnored.clear();
+  matUtriCholFactor.reset();
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
@@ -63,7 +72,7 @@ void LARS::Regress(const arma::mat& matX,
   // Initialize yHat and beta.
   beta = arma::zeros(dataRef.n_cols);
   arma::vec yHat = arma::zeros(dataRef.n_rows);
-  arma::vec yHatDirection = arma::vec(dataRef.n_rows);
+  arma::vec yHatDirection(dataRef.n_rows);
 
   bool lassocond = false;
 
@@ -93,7 +102,7 @@ void LARS::Regress(const arma::mat& matX,
 
   // Compute the Gram matrix.  If this is the elastic net problem, we will add
   // lambda2 * I_n to the matrix.
-  if (matGram.n_elem == 0)
+  if (matGram.n_elem != dataRef.n_cols * dataRef.n_cols)
   {
     // In this case, matGram should reference matGramInternal.
     matGramInternal = trans(dataRef) * dataRef;

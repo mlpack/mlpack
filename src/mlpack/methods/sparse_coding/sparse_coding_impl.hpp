@@ -111,7 +111,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
     // place the result directly into that; then we will not need to have an
     // extra copy.
     arma::vec code = codes.unsafe_col(i);
-    lars.Regress(dictionary, data.unsafe_col(i), code, false);
+    lars.Train(dictionary, data.unsafe_col(i), code, false);
   }
 }
 

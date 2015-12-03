@@ -123,7 +123,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
-    lars.Regress(dictPrime, data.unsafe_col(i), beta, false);
+    lars.Train(dictPrime, data.unsafe_col(i), beta, false);
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }

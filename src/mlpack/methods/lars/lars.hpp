@@ -131,10 +131,10 @@ class LARS
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
    */
-  void Regress(const arma::mat& data,
-               const arma::vec& responses,
-               arma::vec& beta,
-               const bool transposeData = true);
+  void Train(const arma::mat& data,
+             const arma::vec& responses,
+             arma::vec& beta,
+             const bool transposeData = true);
 
   /**
    * Predict y_i for each data point in the given data matrix, using the
