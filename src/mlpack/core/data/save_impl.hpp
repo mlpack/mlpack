@@ -214,9 +214,11 @@ bool Save(const std::string& filename,
   if (!ofs.is_open())
   {
     if (fatal)
-      Log::Fatal << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Fatal << "Unable to open file '" << filename << "' to save object '"
+          << name << "'." << std::endl;
     else
-      Log::Warn << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Warn << "Unable to open file '" << filename << "' to save object '"
+          << name << "'." << std::endl;
 
     return false;
   }
