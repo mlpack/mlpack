@@ -166,7 +166,7 @@ class SparseCoding
   /**
    * Sparse code each point via LARS.
    */
-  void OptimizeCode();
+  void OptimizeCode(const arma::mat& data, arma::mat& codes);
 
   /**
    * Learn dictionary via Newton method based on Lagrange dual.
@@ -175,12 +175,14 @@ class SparseCoding
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms).
    * @param newtonTolerance Tolerance of the Newton's method optimizer.
-   * @param maxIterations Maximum number of iterations to run the Newton's method.
-   *     If 0, the method will run until convergence (or forever).
+   * @param maxIterations Maximum number of iterations to run the Newton's
+   *     method. If 0, the method will run until convergence (or forever).
    * @return the norm of the gradient of the Lagrange dual with respect to
    *    the dual variables
    */
-  double OptimizeDictionary(const arma::uvec& adjacencies,
+  double OptimizeDictionary(const arma::mat& data,
+                            const arma::mat& codes,
+                            const arma::uvec& adjacencies,
                             const double newtonTolerance = 1e-6,
                             const size_t maxIterations = 50);
 
@@ -192,20 +194,12 @@ class SparseCoding
   /**
    * Compute the objective function.
    */
-  double Objective() const;
-
-  //! Access the data.
-  const arma::mat& Data() const { return data; }
+  double Objective(const arma::mat& data, const arma::mat& codes) const;
 
   //! Access the dictionary.
   const arma::mat& Dictionary() const { return dictionary; }
   //! Modify the dictionary.
   arma::mat& Dictionary() { return dictionary; }
-
-  //! Access the sparse codes.
-  const arma::mat& Codes() const { return codes; }
-  //! Modify the sparse codes.
-  arma::mat& Codes() { return codes; }
 
   // Returns a string representation of this object.
   std::string ToString() const;
@@ -214,18 +208,11 @@ class SparseCoding
   //! Number of atoms.
   size_t atoms;
 
-  //! Data matrix (columns are points).
-  const arma::mat& data;
-
   //! Dictionary (columns are atoms).
   arma::mat dictionary;
 
-  //! Sparse codes (columns are points).
-  arma::mat codes;
-
   //! l1 regularization term.
   double lambda1;
-
   //! l2 regularization term.
   double lambda2;
 

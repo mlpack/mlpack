@@ -24,17 +24,12 @@ SparseCoding<DictionaryInitializer>::SparseCoding(
     const double objTolerance,
     const double newtonTolerance) :
     atoms(atoms),
-    data(data),
-    codes(atoms, data.n_cols),
     lambda1(lambda1),
     lambda2(lambda2),
     maxIterations(maxIterations),
     objTolerance(objTolerance),
     newtonTolerance(newtonTolerance)
 {
-  // Initialize the dictionary.
-  DictionaryInitializer::Initialize(data, atoms, dictionary);
-
   Train(data);
 }
 
@@ -47,16 +42,13 @@ SparseCoding<DictionaryInitializer>::SparseCoding(
     const double objTolerance,
     const double newtonTolerance) :
     atoms(atoms),
-    data(data),
-    codes(atoms, data.n_cols),
     lambda1(lambda1),
     lambda2(lambda2),
     maxIterations(maxIterations),
     objTolerance(objTolerance),
     newtonTolerance(newtonTolerance)
 {
-  // Initialize the dictionary.
-  DictionaryInitializer::Initialize(data, atoms, dictionary);
+  // Nothing to do.
 }
 
 template<typename DictionaryInitializer>
@@ -65,18 +57,23 @@ void SparseCoding<DictionaryInitializer>::Train(const arma::mat& data)
   // Now, train.
   Timer::Start("sparse_coding");
 
+  // Initialize the dictionary.
+  DictionaryInitializer::Initialize(data, atoms, dictionary);
+
   double lastObjVal = DBL_MAX;
 
   // Take the initial coding step, which has to happen before entering the main
   // optimization loop.
   Log::Info << "Initial coding step." << std::endl;
 
-  OptimizeCode();
+  arma::mat codes(atoms, data.n_cols);
+  OptimizeCode(data, codes);
   arma::uvec adjacencies = find(codes);
 
   Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
       / ((double) (atoms * data.n_cols)) << "%." << std::endl;
-  Log::Info << "  Objective value: " << Objective() << "." << std::endl;
+  Log::Info << "  Objective value: " << Objective(data, codes) << "."
+      << std::endl;
 
   for (size_t t = 1; t != maxIterations; ++t)
   {
@@ -89,12 +86,13 @@ void SparseCoding<DictionaryInitializer>::Train(const arma::mat& data)
 
     // First step: optimize the dictionary.
     Log::Info << "Performing dictionary step... " << std::endl;
-    OptimizeDictionary(adjacencies, newtonTolerance);
-    Log::Info << "  Objective value: " << Objective() << "." << std::endl;
+    OptimizeDictionary(data, codes, adjacencies, newtonTolerance);
+    Log::Info << "  Objective value: " << Objective(data, codes) << "."
+        << std::endl;
 
     // Second step: perform the coding.
     Log::Info << "Performing coding step..." << std::endl;
-    OptimizeCode();
+    OptimizeCode(data, codes);
     // Get the indices of all the nonzero elements in the codes.
     adjacencies = find(codes);
     Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
@@ -102,7 +100,7 @@ void SparseCoding<DictionaryInitializer>::Train(const arma::mat& data)
 
     // Find the new objective value and improvement so we can check for
     // convergence.
-    double curObjVal = Objective();
+    double curObjVal = Objective(data, codes);
     double improvement = lastObjVal - curObjVal;
     Log::Info << "  Objective value: " << curObjVal << " (improvement "
         << std::scientific << improvement << ")." << std::endl;
@@ -121,12 +119,14 @@ void SparseCoding<DictionaryInitializer>::Train(const arma::mat& data)
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding<DictionaryInitializer>::OptimizeCode()
+void SparseCoding<DictionaryInitializer>::OptimizeCode(const arma::mat& data,
+                                                       arma::mat& codes)
 {
   // When using the Cholesky version of LARS, this is correct even if
   // lambda2 > 0.
   arma::mat matGram = trans(dictionary) * dictionary;
 
+  codes.set_size(atoms, data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Report progress.
@@ -147,6 +147,8 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
 // Dictionary step for optimization.
 template<typename DictionaryInitializer>
 double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
+    const arma::mat& data,
+    const arma::mat& codes,
     const arma::uvec& adjacencies,
     const double newtonTolerance,
     const size_t maxIterations)
@@ -346,7 +348,9 @@ void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 
 // Compute the objective function.
 template<typename DictionaryInitializer>
-double SparseCoding<DictionaryInitializer>::Objective() const
+double SparseCoding<DictionaryInitializer>::Objective(
+    const arma::mat& data,
+    const arma::mat& codes) const
 {
   double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
   double froNormResidual = arma::norm(data - (dictionary * codes), "fro");
@@ -368,8 +372,6 @@ std::string SparseCoding<DictionaryInitializer>::ToString() const
 {
   std::ostringstream convert;
   convert << "Sparse Coding  [" << this << "]" << std::endl;
-  convert << "  Data: " << data.n_rows << "x" ;
-  convert <<  data.n_cols << std::endl;
   convert << "  Atoms: " << atoms << std::endl;
   convert << "  Lambda 1: " << lambda1 << std::endl;
   convert << "  Lambda 2: " << lambda2 << std::endl;
