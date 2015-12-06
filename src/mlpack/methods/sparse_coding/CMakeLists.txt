@@ -5,6 +5,7 @@ set(SOURCES
   nothing_initializer.hpp
   random_initializer.hpp
   sparse_coding.hpp
+  sparse_coding.cpp
   sparse_coding_impl.hpp
 )
 

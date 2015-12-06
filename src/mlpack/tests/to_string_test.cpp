@@ -522,7 +522,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingString)
   c.randn();
   const size_t b=3;
   double a=0.1;
-  mlpack::sparse_coding::SparseCoding<> d(c,b,a);
+  mlpack::sparse_coding::SparseCoding d(c,b,a);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();

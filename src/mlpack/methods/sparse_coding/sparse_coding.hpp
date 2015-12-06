@@ -104,7 +104,6 @@ namespace sparse_coding {
  *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
  *     dictionary)' function.
  */
-template<typename DictionaryInitializer = DataDependentRandomInitializer>
 class SparseCoding
 {
  public:
@@ -126,13 +125,16 @@ class SparseCoding
    * @param newtonTolerance Tolerance for the Newton's method dictionary
    *     optimization step.
    */
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
   SparseCoding(const arma::mat& data,
                const size_t atoms,
                const double lambda1,
                const double lambda2 = 0,
                const size_t maxIterations = 0,
                const double objTolerance = 0.01,
-               const double newtonTolerance = 1e-6);
+               const double newtonTolerance = 1e-6,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
@@ -161,7 +163,10 @@ class SparseCoding
   /**
    * Train the sparse coding model on the given dataset.
    */
-  void Train(const arma::mat& data);
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
+  void Train(const arma::mat& data,
+             const DictionaryInitializer& initializer =
+                 DictionaryInitializer());
 
   /**
    * Sparse code each point via LARS.

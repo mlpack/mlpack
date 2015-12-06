@@ -112,11 +112,10 @@ int main(int argc, char* argv[])
   }
 
   // If there is an initial dictionary, be sure we do not initialize one.
+  SparseCoding sc(atoms, lambda1, lambda2, maxIterations, objTolerance,
+      newtonTolerance);
   if (initialDictionaryFile != "")
   {
-    SparseCoding<NothingInitializer> sc(atoms, lambda1, lambda2, maxIterations,
-        objTolerance, newtonTolerance);
-
     // Load initial dictionary directly into sparse coding object.
     data::Load(initialDictionaryFile, sc.Dictionary(), true);
 
@@ -136,27 +135,21 @@ int main(int argc, char* argv[])
     }
 
     // Run sparse coding.
-    sc.Train(matX);
-
-    // Save the results.
-    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
-    data::Save(dictionaryFile, sc.Dictionary());
-    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, sc.Codes());
+    sc.Train<NothingInitializer>(matX);
   }
   else
   {
-    // No initial dictionary.
-    SparseCoding<> sc(atoms, lambda1, lambda2, maxIterations, objTolerance,
-        newtonTolerance);
-
-    // Run sparse coding.
+    // Run sparse coding with the default initialization.
     sc.Train(matX);
-
-    // Save the results.
-    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
-    data::Save(dictionaryFile, sc.Dictionary());
-    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, sc.Codes());
   }
+
+  // Encode the input matrix.
+  arma::mat codes;
+  sc.OptimizeCode(matX, codes);
+
+  // Save the results.
+  Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
+  data::Save(dictionaryFile, sc.Dictionary());
+  Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
+  data::Save(codesFile, codes);
 }

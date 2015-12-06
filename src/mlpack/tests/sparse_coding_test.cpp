@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  SparseCoding<> sc(nAtoms, lambda1);
+  SparseCoding sc(nAtoms, lambda1);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.OptimizeCode(X, Z);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding<> sc(nAtoms, lambda1, lambda2);
+  SparseCoding sc(nAtoms, lambda1, lambda2);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.OptimizeCode(X, Z);
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding<> sc(nAtoms, lambda1);
+  SparseCoding sc(nAtoms, lambda1);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.OptimizeCode(X, Z);
