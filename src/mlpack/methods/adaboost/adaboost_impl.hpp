@@ -210,7 +210,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     wl[i].Classify(test, tempPredictedLabels);
 
     for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
-      cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
+      cMatrix(tempPredictedLabels(j), j) += alpha[i];
   }
 
   arma::colvec cMRow;
