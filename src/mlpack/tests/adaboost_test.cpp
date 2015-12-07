@@ -44,14 +44,17 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
 
-  int countError = 0;
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -90,13 +93,17 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   size_t iterations = 100;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
-  int countError = 0;
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
+  size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -135,7 +142,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -172,13 +179,17 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != a.finalHypothesis(i))
+    if(labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -206,14 +217,18 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -250,13 +265,17 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -285,14 +304,18 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   double tolerance = 1e-10;
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
           labels.row(0), ds, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -308,7 +331,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
     BOOST_FAIL("Cannot load test dataset iris.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt",labels))
+  if (!data::Load("iris_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for iris_labels.txt");
 
   // no need to map the labels here
@@ -325,7 +348,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
 
   size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != dsPrediction(i))
+    if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
@@ -335,13 +358,17 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
 
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
       labels.row(0), ds, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -373,14 +400,18 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
 
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
       labels.row(0), ds, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -420,13 +451,16 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   AdaBoost<arma::mat, decision_stump::DecisionStump<>> a(inputData,
       labels.row(0), ds, iterations, tolerance);
 
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -457,14 +491,18 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), ds, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
   double ztP = a.GetztProduct();
-  BOOST_REQUIRE(hammingLoss <= ztP);
+  BOOST_REQUIRE_LE(hammingLoss, ztP);
 }
 
 /**
@@ -504,13 +542,17 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), ds, iterations, tolerance);
+
+  arma::Row<size_t> predictedLabels;
+  a.Classify(inputData, predictedLabels);
+
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != a.finalHypothesis(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
 
 /**
@@ -562,8 +604,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
-
-  BOOST_REQUIRE(lError <= 0.30);
+  BOOST_REQUIRE_LE(lError, 0.30);
 }
 
 /**
@@ -578,7 +619,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
     BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
+  if (!data::Load("train_labels_nonlinsep.txt", labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner; in this test decision stumps are used.
@@ -592,7 +633,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   arma::Mat<size_t> trueTestLabels;
 
-  if (!data::Load("test_labels_nonlinsep.txt",trueTestLabels))
+  if (!data::Load("test_labels_nonlinsep.txt", trueTestLabels))
     BOOST_FAIL("Cannot load labels for test_labels_nonlinsep.txt");
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
@@ -615,8 +656,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
-
-  BOOST_REQUIRE(lError <= 0.30);
+  BOOST_REQUIRE_LE(lError, 0.30);
 }
 
 /**
@@ -632,7 +672,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     BOOST_FAIL("Cannot load test dataset iris_train.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv",labels))
+  if (!data::Load("iris_train_labels.csv", labels))
     BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
 
   // Define your own weak learner, perceptron in this case.
@@ -648,15 +688,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   AdaBoost<> a(inputData, labels.row(0), p, iterations, tolerance);
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", inputData))
+  if (!data::Load("iris_test.csv", testData))
     BOOST_FAIL("Cannot load test dataset iris_test.csv!");
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
 
   a.Classify(testData, predictedLabels);
 
-  arma::Row<size_t> trueTestLabels;
-  if (!data::Load("iris_test_labels.csv", inputData))
+  arma::Mat<size_t> trueTestLabels;
+  if (!data::Load("iris_test_labels.csv", trueTestLabels))
     BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   size_t localError = 0;
@@ -664,8 +704,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
   double lError = (double) localError / labels.n_cols;
-
-  BOOST_REQUIRE(lError <= 0.30);
+  BOOST_REQUIRE_LE(lError, 0.30);
 }
 
 /**
@@ -680,7 +719,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
     BOOST_FAIL("Cannot load test dataset iris_train.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv",labels))
+  if (!data::Load("iris_train_labels.csv", labels))
     BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
 
   size_t perceptronIter = 800;
@@ -695,7 +734,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   // Now load another dataset...
   if (!data::Load("vc2.txt", inputData))
     BOOST_FAIL("Cannot load test dataset vc2.txt!");
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   perceptron::Perceptron<> p2(inputData, labels.row(0), max(labels.row(0)) + 1,
@@ -709,7 +748,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
     BOOST_FAIL("Cannot load test dataset vc2_test.txt!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt",trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
     BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Define parameters for AdaBoost.
@@ -723,7 +762,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   double lError = (double) localError / trueTestLabels.n_cols;
 
-  BOOST_REQUIRE(lError <= 0.30);
+  BOOST_REQUIRE_LE(lError, 0.30);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
