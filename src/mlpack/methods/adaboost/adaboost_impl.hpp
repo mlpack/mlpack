@@ -35,23 +35,31 @@ namespace adaboost {
  * @param tol Tolerance for termination of Adaboost.MH.
  * @param other Weak Learner, which has been initialized already.
  */
-template<typename MatType, typename WeakLearner>
-AdaBoost<MatType, WeakLearner>::AdaBoost(
+template<typename MatType, typename WeakLearnerType>
+AdaBoost<MatType, WeakLearnerType>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const WeakLearner& other,
+    const WeakLearnerType& other,
     const size_t iterations,
     const double tol)
 {
   Train(data, labels, other, iterations, tol);
 }
 
+// Empty constructor.
+template<typename MatType, typename WeakLearnerType>
+AdaBoost<MatType, WeakLearnerType>::AdaBoost(const double tolerance) :
+    tolerance(tolerance)
+{
+  // Nothing to do.
+}
+
 // Train AdaBoost.
-template<typename MatType, typename WeakLearner>
-void AdaBoost<MatType, WeakLearner>::Train(
+template<typename MatType, typename WeakLearnerType>
+void AdaBoost<MatType, WeakLearnerType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const WeakLearner& other,
+    const WeakLearnerType& other,
     const size_t iterations,
     const double tolerance)
 {
@@ -104,7 +112,7 @@ void AdaBoost<MatType, WeakLearner>::Train(
     weights = arma::sum(D);
 
     // Use the existing weak learner to train a new one with new weights.
-    WeakLearner w(other, tempData, labels, weights);
+    WeakLearnerType w(other, tempData, labels, weights);
     w.Classify(tempData, predictedLabels);
 
     // Now from predictedLabels, build ht, the weak hypothesis
@@ -180,8 +188,8 @@ void AdaBoost<MatType, WeakLearner>::Train(
 /**
  * Classify the given test points.
  */
-template <typename MatType, typename WeakLearner>
-void AdaBoost<MatType, WeakLearner>::Classify(
+template<typename MatType, typename WeakLearnerType>
+void AdaBoost<MatType, WeakLearnerType>::Classify(
     const MatType& test,
     arma::Row<size_t>& predictedLabels)
 {
@@ -207,6 +215,33 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     cMRow = cMatrix.unsafe_col(i);
     cMRow.max(maxIndex);
     predictedLabels(i) = maxIndex;
+  }
+}
+
+/**
+ * Serialize the AdaBoost model.
+ */
+template<typename MatType, typename WeakLearnerType>
+template<typename Archive>
+void AdaBoost<MatType, WeakLearnerType>::Serialize(Archive& ar,
+                                               const unsigned int /* version */)
+{
+  ar & data::CreateNVP(classes, "classes");
+  ar & data::CreateNVP(tolerance, "tolerance");
+  ar & data::CreateNVP(ztProduct, "ztProduct");
+  ar & data::CreateNVP(alpha, "alpha");
+
+  // Now serialize each weak learner.
+  if (Archive::is_loading::value)
+  {
+    wl.clear();
+    wl.resize(alpha.size());
+  }
+  for (size_t i = 0; i < wl.size(); ++i)
+  {
+    std::ostringstream oss;
+    oss << "weakLearner" << i;
+    ar & data::CreateNVP(wl[i], oss.str());
   }
 }
 

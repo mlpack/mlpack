@@ -69,10 +69,10 @@ namespace adaboost {
  * perceptron::Perceptron<> and decision_stump::DecisionStump<>.
  *
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
- * @tparam WeakLearner Type of weak learner to use.
+ * @tparam WeakLearnerType Type of weak learner to use.
  */
 template<typename MatType = arma::mat,
-         typename WeakLearner = mlpack::perceptron::Perceptron<> >
+         typename WeakLearnerType = mlpack::perceptron::Perceptron<> >
 class AdaBoost
 {
  public:
@@ -90,21 +90,43 @@ class AdaBoost
    */
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
-           const WeakLearner& other,
+           const WeakLearnerType& other,
            const size_t iterations = 100,
            const double tolerance = 1e-6);
 
+  /**
+   * Create the AdaBoost object without training.  Be sure to call Train()
+   * before calling Classify()!
+   */
+  AdaBoost(const double tolerance = 1e-6);
+
   // Return the value of ztProduct.
-  double GetztProduct() { return ztProduct; }
+  double ZtProduct() { return ztProduct; }
 
   //! Get the tolerance for stopping the optimization during training.
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for stopping the optimization during training.
   double& Tolerance() { return tolerance; }
 
+  //! Get the number of classes this model is trained on.
+  size_t Classes() const { return classes; }
+
+  //! Get the number of weak learners in the model.
+  size_t WeakLearners() const { return alpha.size(); }
+
+  //! Get the weights for the given weak learner.
+  double Alpha(const size_t i) const { return alpha[i]; }
+  //! Modify the weight for the given weak learner (be careful!).
+  double& Alpha(const size_t i) { return alpha[i]; }
+
+  //! Get the given weak learner.
+  const WeakLearnerType& WeakLearner(const size_t i) const { return wl[i]; }
+  //! Modify the given weak learner (be careful!).
+  WeakLearnerType& WeakLearner(const size_t i) { return wl[i]; }
+
   /**
    * Train AdaBoost on the given dataset.  This method takes an initialized
-   * WeakLearner; the parameters for this weak learner will be used to train
+   * WeakLearnerType; the parameters for this weak learner will be used to train
    * each of the weak learners during AdaBoost training.  Note that this will
    * completely overwrite any model that has already been trained with this
    * object.
@@ -115,7 +137,7 @@ class AdaBoost
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
-             const WeakLearner& learner,
+             const WeakLearnerType& learner,
              const size_t iterations = 100,
              const double tolerance = 1e-6);
 
@@ -128,6 +150,12 @@ class AdaBoost
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
+  /**
+   * Serialize the AdaBoost model.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
 private:
   //! The number of classes in the model.
   size_t classes;
@@ -135,11 +163,11 @@ private:
   double tolerance;
 
   //! The vector of weak learners.
-  std::vector<WeakLearner> wl;
+  std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
 
-  // To check for the bound for the hammingLoss.
+  //! To check for the bound for the Hamming loss.
   double ztProduct;
 
 }; // class AdaBoost
