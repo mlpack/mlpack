@@ -175,20 +175,6 @@ void AdaBoost<MatType, WeakLearner>::Train(
     // Accumulate the value of zt for the Hamming loss bound.
     ztProduct *= zt;
   }
-
-  // Iterations are over, now build a strong hypothesis from a weighted
-  // combination of these weak hypotheses.
-  arma::colvec tempSumFinalH;
-  arma::uword maxIndex;
-
-  for (size_t i = 0;i < sumFinalH.n_cols; i++)
-  {
-    tempSumFinalH = sumFinalH.unsafe_col(i);
-    tempSumFinalH.max(maxIndex);
-    finalH(i) = maxIndex;
-  }
-
-  finalHypothesis = finalH;
 }
 
 /**
