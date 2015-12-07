@@ -41,8 +41,8 @@ class Perceptron
    * @param maxIterations Maximum number of iterations for the perceptron
    *      learning algorithm.
    */
-  Perceptron(const size_t numClasses,
-             const size_t dimensionality,
+  Perceptron(const size_t numClasses = 0,
+             const size_t dimensionality = 0,
              const size_t maxIterations = 1000);
 
   /**
