@@ -111,7 +111,15 @@ class SparseCoding
    * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
    * constructor will train the model.  If that is not desired, call the other
    * constructor that does not take a data matrix.  This constructor will also
-   * initialize the dictionary using the DictionaryInitializer before training.
+   * initialize the dictionary using the given DictionaryInitializer before
+   * training.
+   *
+   * If you want to initialize the dictionary to a custom matrix, consider
+   * either writing your own DictionaryInitializer class (with void
+   * Initialize(const arma::mat& data, arma::mat& dictionary) function), or call
+   * the constructor that does not take a data matrix, then call Dictionary() to
+   * set the dictionary matrix to a matrix of your choosing, and then call
+   * Train() with NothingInitializer (i.e. Train<NothingInitializer>(data)).
    *
    * @param data Data matrix.
    * @param atoms Number of atoms in dictionary.
