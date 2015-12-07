@@ -451,7 +451,7 @@ double DecisionStump<MatType>::CalculateEntropy(
   double entropy = 0.0;
   size_t j;
 
-  arma::Row<size_t> numElem(classes);
+  arma::rowvec numElem(classes);
   numElem.fill(0);
 
   // Variable to accumulate the weight in this subview_row.
