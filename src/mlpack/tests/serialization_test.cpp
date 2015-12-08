@@ -4,17 +4,11 @@
  *
  * Test serialization of mlpack objects.
  */
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include <mlpack/core/tree/ballbound.hpp>
@@ -54,69 +48,6 @@ using namespace boost::serialization;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
-
-// Test function for loading and saving Armadillo objects.
-template<typename MatType,
-         typename IArchiveType,
-         typename OArchiveType>
-void TestArmadilloSerialization(MatType& x)
-{
-  // First save it.
-  ofstream ofs("test", ios::binary);
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-
-  BOOST_REQUIRE_EQUAL(success, true);
-  ofs.close();
-
-  // Now load it.
-  MatType orig(x);
-  success = true;
-  ifstream ifs("test", ios::binary);
-  IArchiveType i(ifs);
-
-  try
-  {
-    i >> BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  BOOST_REQUIRE_EQUAL(x.n_rows, orig.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_cols, orig.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
-
-  for (size_t i = 0; i < x.n_cols; ++i)
-    for (size_t j = 0; j < x.n_rows; ++j)
-      if (double(orig(j, i)) == 0.0)
-        BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
-      else
-        BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
-
-  remove("test");
-}
-
-// Test all serialization strategies.
-template<typename MatType>
-void TestAllArmadilloSerialization(MatType& x)
-{
-  TestArmadilloSerialization<MatType, xml_iarchive, xml_oarchive>(x);
-  TestArmadilloSerialization<MatType, text_iarchive, text_oarchive>(x);
-  TestArmadilloSerialization<MatType, binary_iarchive, binary_oarchive>(x);
-}
 
 /**
  * Can we load and save an Armadillo matrix?
@@ -190,161 +121,6 @@ BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
 {
   arma::sp_mat m;
   TestAllArmadilloSerialization(m);
-}
-
-// Save and load an mlpack object.
-// The re-loaded copy is placed in 'newT'.
-template<typename T, typename IArchiveType, typename OArchiveType>
-void SerializeObject(T& t, T& newT)
-{
-  ofstream ofs("test", ios::binary);
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << data::CreateNVP(t, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ofs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  ifstream ifs("test", ios::binary);
-  IArchiveType i(ifs);
-
-  try
-  {
-    i >> data::CreateNVP(newT, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ifs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-}
-
-// Test mlpack serialization with all three archive types.
-template<typename T>
-void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
-{
-  SerializeObject<T, text_iarchive, text_oarchive>(t, textT);
-  SerializeObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
-  SerializeObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
-}
-
-// Save and load a non-default-constructible mlpack object.
-template<typename T, typename IArchiveType, typename OArchiveType>
-void SerializePointerObject(T* t, T*& newT)
-{
-  ofstream ofs("test", ios::binary);
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << data::CreateNVP(*t, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ofs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  ifstream ifs("test", ios::binary);
-  IArchiveType i(ifs);
-
-  try
-  {
-    newT = new T(i);
-  }
-  catch (std::exception& e)
-  {
-    success = false;
-  }
-  ifs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-}
-
-template<typename T>
-void SerializePointerObjectAll(T* t, T*& xmlT, T*& textT, T*& binaryT)
-{
-  SerializePointerObject<T, text_iarchive, text_oarchive>(t, textT);
-  SerializePointerObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
-  SerializePointerObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
-}
-
-// Utility function to check the equality of two Armadillo matrices.
-void CheckMatrices(const mat& x,
-                   const mat& xmlX,
-                   const mat& textX,
-                   const mat& binaryX)
-{
-  // First check dimensions.
-  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
-
-  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
-
-  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
-
-  // Now check elements.
-  for (size_t i = 0; i < x.n_elem; ++i)
-  {
-    const double val = x[i];
-    if (val == 0.0)
-    {
-      BOOST_REQUIRE_SMALL(xmlX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(textX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(binaryX[i], 1e-8);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(val, xmlX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, textX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, binaryX[i], 1e-8);
-    }
-  }
-}
-
-void CheckMatrices(const Mat<size_t>& x,
-                   const Mat<size_t>& xmlX,
-                   const Mat<size_t>& textX,
-                   const Mat<size_t>& binaryX)
-{
-  // First check dimensions.
-  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
-
-  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
-
-  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
-
-  // Now check elements.
-  for (size_t i = 0; i < x.n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(x[i], xmlX[i]);
-    BOOST_REQUIRE_EQUAL(x[i], textX[i]);
-    BOOST_REQUIRE_EQUAL(x[i], binaryX[i]);
-  }
 }
 
 // Now, test mlpack objects.

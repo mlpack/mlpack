@@ -57,6 +57,8 @@ add_executable(mlpack_test
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
+  serialization.hpp
+  serialization.cpp
   serialization_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
