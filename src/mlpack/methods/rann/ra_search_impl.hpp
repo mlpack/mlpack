@@ -20,7 +20,7 @@ namespace aux {
 //! Call the tree constructor that does mapping.
 template<typename TreeType>
 TreeType* BuildTree(
-    typename TreeType::Mat& dataset,
+    const typename TreeType::Mat& dataset,
     std::vector<size_t>& oldFromNew,
     typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
@@ -39,6 +39,30 @@ TreeType* BuildTree(
     >::type = 0)
 {
   return new TreeType(dataset);
+}
+
+//! Call the tree constructor that does mapping.
+template<typename TreeType>
+TreeType* BuildTree(
+    typename TreeType::Mat&& dataset,
+    std::vector<size_t>& oldFromNew,
+    typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset), oldFromNew);
+}
+
+//! Call the tree constructor that does not do mapping.
+template<typename TreeType>
+TreeType* BuildTree(
+    typename TreeType::Mat&& dataset,
+    const std::vector<size_t>& /* oldFromNew */,
+    const typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset));
 }
 
 } // namespace aux
@@ -65,6 +89,41 @@ RASearch(const MatType& referenceSetIn,
     referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
     treeOwner(!naive),
     setOwner(false),
+    naive(naive),
+    singleMode(!naive && singleMode), // No single mode if naive.
+    tau(tau),
+    alpha(alpha),
+    sampleAtLeaves(sampleAtLeaves),
+    firstLeafExact(firstLeafExact),
+    singleSampleLimit(singleSampleLimit),
+    metric(metric)
+{
+  // Nothing to do.
+}
+
+// Construct the object, taking ownership of the data matrix.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch(MatType&& referenceSetIn,
+         const bool naive,
+         const bool singleMode,
+         const double tau,
+         const double alpha,
+         const bool sampleAtLeaves,
+         const bool firstLeafExact,
+         const size_t singleSampleLimit,
+         const MetricType metric) :
+    referenceTree(naive ? NULL : aux::BuildTree<Tree>(
+        std::move(referenceSetIn), oldFromNewReferences)),
+    referenceSet(naive ? new MatType(std::move(referenceSetIn)) :
+        &referenceTree->Dataset()),
+    treeOwner(!naive),
+    setOwner(naive),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
     tau(tau),
@@ -108,9 +167,46 @@ RASearch(Tree* referenceTree,
 // Nothing else to initialize.
 {  }
 
+// Empty constructor.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RASearch<SortPolicy, MetricType, MatType, TreeType>::
+RASearch(const bool naive,
+         const bool singleMode,
+         const double tau,
+         const double alpha,
+         const bool sampleAtLeaves,
+         const bool firstLeafExact,
+         const size_t singleSampleLimit,
+         const MetricType metric) :
+    referenceTree(NULL),
+    referenceSet(new MatType()),
+    treeOwner(false),
+    setOwner(true),
+    naive(naive),
+    singleMode(singleMode),
+    tau(tau),
+    alpha(alpha),
+    sampleAtLeaves(sampleAtLeaves),
+    firstLeafExact(firstLeafExact),
+    singleSampleLimit(singleSampleLimit),
+    metric(metric)
+{
+  // Build the tree on the empty dataset, if necessary.
+  if (!naive)
+  {
+    referenceTree = aux::BuildTree<Tree>(*referenceSet, oldFromNewReferences);
+    treeOwner = true;
+  }
+}
+
 /**
- * The tree is the only member we may be responsible for deleting.  The others
- * will take care of themselves.
+ * The tree and the dataset are the only members we may be responsible for
+ * deleting.  The others will take care of themselves.
  */
 template<typename SortPolicy,
          typename MetricType,
@@ -125,6 +221,84 @@ RASearch<SortPolicy, MetricType, MatType, TreeType>::
     delete referenceTree;
   if (setOwner)
     delete referenceSet;
+}
+
+// Train on a new reference set.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
+    const MatType& referenceSet)
+{
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
+  // We may need to rebuild the tree.
+  if (!naive)
+  {
+    referenceTree = aux::BuildTree<Tree>(referenceSet, oldFromNewReferences);
+    treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && this->referenceSet)
+    delete this->referenceSet;
+
+  if (!naive)
+    this->referenceSet = &referenceTree->Dataset();
+  else
+    this->referenceSet = &referenceSet;
+  setOwner = false; // We don't own the set in either case.
+}
+
+// Train on a new reference set.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
+    MatType&& referenceSet)
+{
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
+  // We may need to rebuild the tree.
+  if (!naive)
+  {
+    referenceTree = aux::BuildTree<Tree>(std::move(referenceSet),
+        oldFromNewReferences);
+    treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && this->referenceSet)
+    delete this->referenceSet;
+
+  if (!naive)
+  {
+    this->referenceSet = &referenceTree->Dataset();
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    setOwner = true;
+  }
 }
 
 /**
@@ -143,6 +317,14 @@ Search(const MatType& querySet,
        arma::Mat<size_t>& neighbors,
        arma::mat& distances)
 {
+  if (k > referenceSet->n_cols)
+  {
+    std::stringstream ss;
+    ss << "requested value of k (" << k << ") is greater than the number of "
+        << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+
   Timer::Start("computing_neighbors");
 
   // This will hold mappings for query points, if necessary.

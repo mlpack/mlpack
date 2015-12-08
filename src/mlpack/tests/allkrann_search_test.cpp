@@ -553,4 +553,61 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
 }
 
+/**
+ * Test that the rvalue reference move constructor works.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+  arma::mat copy(dataset);
+
+  AllkRANN moveknn(std::move(copy));
+  AllkRANN allknn(dataset);
+
+  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_cols, 200);
+
+  arma::mat moveDistances, distances;
+  arma::Mat<size_t> moveNeighbors, neighbors;
+
+  moveknn.Search(1, moveNeighbors, moveDistances);
+  allknn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_cols, neighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_rows, distances.n_rows);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_cols, distances.n_cols);
+}
+
+/**
+ * Test that the dataset can be retrained with the move Train() function.
+ */
+BOOST_AUTO_TEST_CASE(MoveTrainTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+
+  // Do it in tree mode, and in naive mode.
+  AllkRANN knn;
+  knn.Train(std::move(dataset));
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+
+  dataset = arma::randu<arma::mat>(3, 300);
+  knn.Naive() = true;
+  knn.Train(std::move(dataset));
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 300);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 300);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
