@@ -142,6 +142,7 @@
  *   - Udit Saxena <saxena.udit@gmail.com>
  *   - Stephen Tu <tu.stephenl@gmail.com>
  *   - Jaskaran Singh <jaskaranvirdi@gmail.com>
+ *   - Shangtong Zhang <zhangshangtong.cpp@icloud.com>
  *   - Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
  *   - Vladimir Glazachev <glazachev.vladimir@gmail.com>
  *   - QiaoAn Chen <kazenoyumechen@gmail.com>
