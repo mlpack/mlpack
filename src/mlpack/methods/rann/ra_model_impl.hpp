@@ -17,6 +17,7 @@ template<typename SortPolicy>
 RAModel<SortPolicy>::RAModel(const int treeType, const bool randomBasis) :
     treeType(treeType),
     randomBasis(randomBasis),
+    leafSize(20),
     kdTreeRA(NULL),
     coverTreeRA(NULL),
     rTreeRA(NULL),
