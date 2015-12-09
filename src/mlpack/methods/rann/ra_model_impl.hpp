@@ -16,8 +16,8 @@ namespace neighbor {
 template<typename SortPolicy>
 RAModel<SortPolicy>::RAModel(const int treeType, const bool randomBasis) :
     treeType(treeType),
-    randomBasis(randomBasis),
     leafSize(20),
+    randomBasis(randomBasis),
     kdTreeRA(NULL),
     coverTreeRA(NULL),
     rTreeRA(NULL),
@@ -453,6 +453,7 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
     Log::Info << "single-tree rank-approximate " << TreeName() << " search...";
   else
     Log::Info << "brute-force (naive) rank-approximate search...";
+  Log::Info << std::endl;
 
   switch (treeType)
   {
@@ -514,6 +515,7 @@ void RAModel<SortPolicy>::Search(const size_t k,
     Log::Info << "single-tree rank-approximate " << TreeName() << " search...";
   else
     Log::Info << "brute-force (naive) rank-approximate search...";
+  Log::Info << std::endl;
 
   switch (treeType)
   {
