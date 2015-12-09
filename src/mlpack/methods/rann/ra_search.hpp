@@ -31,6 +31,10 @@
 namespace mlpack {
 namespace neighbor {
 
+// Forward declaration.
+template<typename SortPolicy>
+class RAModel;
+
 /**
  * The RASearch class: This class provides a generic manner to perform
  * rank-approximate search via random-sampling. If the 'naive' option is chosen,
@@ -444,6 +448,9 @@ class RASearch
 
   //! Instantiation of kernel.
   MetricType metric;
+
+  //! RAModel can modify internal members as necessary.
+  friend class RAModel<SortPolicy>;
 }; // class RASearch
 
 } // namespace neighbor

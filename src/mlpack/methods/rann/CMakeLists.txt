@@ -19,6 +19,10 @@ set(SOURCES
   # utilities
   ra_util.hpp
   ra_util.cpp
+
+  # model
+  ra_model.hpp
+  ra_model_impl.hpp
 )
 
 # add directory name to sources
