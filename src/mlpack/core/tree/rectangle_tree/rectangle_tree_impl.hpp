@@ -604,7 +604,25 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                             DescentType>::Descendant(const size_t index) const
 {
-  return (points[index]);
+  // I think this may be inefficient...
+  if (numChildren == 0)
+  {
+    return (points[index]);
+  }
+  else
+  {
+    size_t n = 0;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      const size_t nd = children[i]->NumDescendants();
+      if (index - n < nd)
+        return children[i]->Descendant(index - n);
+      n += nd;
+    }
+
+    // I don't think this is valid.
+    return children[numChildren - 1]->Descendant(index - n);
+  }
 }
 
 /**
