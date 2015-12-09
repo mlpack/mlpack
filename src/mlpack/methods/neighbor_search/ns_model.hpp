@@ -67,7 +67,7 @@ class NSModel
                                 TreeType,
                                 TreeType<metric::EuclideanDistance,
                                     NeighborSearchStat<SortPolicy>,
-                                    arma::mat>::template DualTreeTraverser;
+                                    arma::mat>::template DualTreeTraverser>;
 
   // Only one of these pointers will be non-NULL.
   NSType<tree::KDTree>* kdTreeNS;
