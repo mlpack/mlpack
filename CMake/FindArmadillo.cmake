@@ -323,7 +323,9 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     endif()
 
   endif("${ARMA_USE_WRAPPER}" STREQUAL "")
-
+else(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+  message(FATAL_ERROR "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp not "
+      "found!  Cannot determine what to link against.")
 endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 
 if (ARMA_NEED_LIBRARY)
