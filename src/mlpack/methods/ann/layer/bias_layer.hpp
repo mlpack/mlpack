@@ -62,6 +62,29 @@ class BiasLayer
   {
     weightInitRule.Initialize(weights, outSize, 1);
   }
+  
+  BiasLayer(BiasLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  BiasLayer& operator=(BiasLayer &&layer) noexcept
+  {
+    optimizer = layer.optimizer;
+    layer.optimizer = nullptr;
+    ownsOptimizer = layer.ownsOptimizer;
+    layer.ownsOptimizer = false;
+
+    outSize = layer.outSize;
+    bias = layer.bias;
+    weights.swap(layer.weights);
+    delta.swap(layer.delta);
+    gradient.swap(layer.gradient);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(layer.outputParameter);
+
+    return *this;
+  }
 
   /**
    * Delete the bias layer object and its optimizer.
@@ -191,7 +214,7 @@ class BiasLayer
 
  private:
   //! Locally-stored number of output units.
-  const size_t outSize;
+  size_t outSize;
 
   //! Locally-stored bias value.
   double bias;
