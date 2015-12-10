@@ -8,6 +8,7 @@
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
+#include <queue>
 
 using namespace std;
 using namespace mlpack;
@@ -237,8 +238,22 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     Log::Info << correct << " out of " << labels.n_elem << " correct "
         << "on training set (" << double(correct) / double(labels.n_elem) *
         100.0 << ")." << endl;
-
   }
+
+  // Get the number of nods in the tree.
+  std::queue<TreeType*> queue;
+  queue.push(tree);
+  size_t nodes = 0;
+  while (!queue.empty())
+  {
+    TreeType* node = queue.front();
+    queue.pop();
+    ++nodes;
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      queue.push(&node->Child(i));
+  }
+  Log::Info << nodes << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
   if (!testFile.empty())
