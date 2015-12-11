@@ -12,6 +12,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 using namespace arma;
 using namespace mlpack;
@@ -129,6 +130,57 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   double normGradient = sc.OptimizeDictionary(X, Z, adjacencies, 1e-15);
 
   BOOST_REQUIRE_SMALL(normGradient, tol);
+}
+
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  mat X = randu<mat>(100, 100);
+  size_t nAtoms = 25;
+
+  SparseCoding sc(nAtoms, 0.05, 0.1);
+  sc.Train(X);
+
+  mat Y = randu<mat>(100, 200);
+  mat codes;
+  sc.OptimizeCode(Y, codes);
+
+  SparseCoding scXml(50, 0.01), scText(nAtoms, 0.05), scBinary(0, 0.0);
+  SerializeObjectAll(sc, scXml, scText, scBinary);
+
+  CheckMatrices(sc.Dictionary(), scXml.Dictionary(), scText.Dictionary(),
+      scBinary.Dictionary());
+
+  mat xmlCodes, textCodes, binaryCodes;
+  scXml.OptimizeCode(Y, xmlCodes);
+  scText.OptimizeCode(Y, textCodes);
+  scBinary.OptimizeCode(Y, binaryCodes);
+
+  CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
+
+  // Check the parameters, too.
+  BOOST_REQUIRE_EQUAL(sc.Atoms(), scXml.Atoms());
+  BOOST_REQUIRE_EQUAL(sc.Atoms(), scText.Atoms());
+  BOOST_REQUIRE_EQUAL(sc.Atoms(), scBinary.Atoms());
+
+  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scXml.Lambda1(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scText.Lambda1(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scBinary.Lambda1(), 1e-5);
+
+  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scXml.Lambda2(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scText.Lambda2(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scBinary.Lambda2(), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scXml.MaxIterations());
+  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scBinary.MaxIterations());
+
+  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scXml.ObjTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scText.ObjTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scBinary.ObjTolerance(), 1e-5);
+
+  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scXml.NewtonTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scText.NewtonTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scBinary.NewtonTolerance(), 1e-5);
 }
 
 

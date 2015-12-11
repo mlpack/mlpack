@@ -214,6 +214,49 @@ class SparseCoding
   //! Modify the dictionary.
   arma::mat& Dictionary() { return dictionary; }
 
+  //! Access the number of atoms.
+  size_t Atoms() const { return atoms; }
+  //! Modify the number of atoms.
+  size_t& Atoms() { return atoms; }
+
+  //! Access the L1 regularization term.
+  double Lambda1() const { return lambda1; }
+  //! Modify the L1 regularization term.
+  double& Lambda1() { return lambda1; }
+
+  //! Access the L2 regularization term.
+  double Lambda2() const { return lambda2; }
+  //! Modify the L2 regularization term.
+  double& Lambda2() { return lambda2; }
+
+  //! Get the maximum number of iterations.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the objective tolerance.
+  double ObjTolerance() const { return objTolerance; }
+  //! Modify the objective tolerance.
+  double& ObjTolerance() { return objTolerance; }
+
+  //! Get the tolerance for Newton's method (dictionary optimization step).
+  double NewtonTolerance() const { return newtonTolerance; }
+  //! Modify the tolerance for Newton's method (dictionary optimization step).
+  double& NewtonTolerance() { return newtonTolerance; }
+
+  //! Serialize the sparse coding model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(atoms, "atoms");
+    ar & data::CreateNVP(dictionary, "dictionary");
+    ar & data::CreateNVP(lambda1, "lambda1");
+    ar & data::CreateNVP(lambda2, "lambda2");
+    ar & data::CreateNVP(maxIterations, "maxIterations");
+    ar & data::CreateNVP(objTolerance, "objTolerance");
+    ar & data::CreateNVP(newtonTolerance, "newtonTolerance");
+  }
+
   // Returns a string representation of this object.
   std::string ToString() const;
 
