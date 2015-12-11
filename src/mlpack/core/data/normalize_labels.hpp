@@ -24,9 +24,9 @@ namespace data {
  * @param labels Vector that unsigned labels will be stored in.
  * @param mapping Reverse mapping to convert new labels back to old labels.
  */
-template<typename eT>
-void NormalizeLabels(const arma::Col<eT>& labelsIn,
-                     arma::Col<size_t>& labels,
+template<typename eT, typename RowType>
+void NormalizeLabels(const RowType& labelsIn,
+                     arma::Row<size_t>& labels,
                      arma::Col<eT>& mapping);
 
 /**
@@ -38,9 +38,9 @@ void NormalizeLabels(const arma::Col<eT>& labelsIn,
  * @param labelsOut Vector to store new labels in.
  */
 template<typename eT>
-void RevertLabels(const arma::Col<size_t>& labels,
+void RevertLabels(const arma::Row<size_t>& labels,
                   const arma::Col<eT>& mapping,
-                  arma::Col<eT>& labelsOut);
+                  arma::Row<eT>& labelsOut);
 
 } // namespace data
 } // namespace mlpack
