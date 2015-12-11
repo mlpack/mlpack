@@ -103,6 +103,18 @@ void SparseCoding::Train(
   Timer::Stop("sparse_coding");
 }
 
+template<typename Archive>
+void SparseCoding::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar & data::CreateNVP(atoms, "atoms");
+  ar & data::CreateNVP(dictionary, "dictionary");
+  ar & data::CreateNVP(lambda1, "lambda1");
+  ar & data::CreateNVP(lambda2, "lambda2");
+  ar & data::CreateNVP(maxIterations, "maxIterations");
+  ar & data::CreateNVP(objTolerance, "objTolerance");
+  ar & data::CreateNVP(newtonTolerance, "newtonTolerance");
+}
+
 } // namespace sparse_coding
 } // namespace mlpack
 
