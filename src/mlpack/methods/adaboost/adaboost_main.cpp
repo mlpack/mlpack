@@ -161,13 +161,13 @@ class AdaBoostModel
       if (dsBoost)
         delete dsBoost;
 
-      DecisionStump<> ds;
+      DecisionStump<> ds(data, labels, max(labels) + 1);
       dsBoost = new AdaBoost<DecisionStump<>>(data, labels, ds, iterations,
           tolerance);
     }
     else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
     {
-      Perceptron<> p;
+      Perceptron<> p(data, labels, max(labels) + 1);
       pBoost = new AdaBoost<Perceptron<>>(data, labels, p, iterations,
           tolerance);
     }
@@ -307,14 +307,9 @@ int main(int argc, char *argv[])
 
     // Helpers for normalizing the labels.
     Row<size_t> labels;
-    vec mappings;
-
-    // Do the labels need to be transposed?
-    if (labelsIn.n_rows == 1)
-      labelsIn = labelsIn.t();
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn.row(0), labels, mappings);
+    data::NormalizeLabels(labelsIn.row(0), labels, m.Mappings());
 
     // Get other training parameters.
     const double tolerance = CLI::GetParam<double>("tolerance");
@@ -357,7 +352,7 @@ int main(int argc, char *argv[])
     data::RevertLabels(predictedLabels, m.Mappings(), results);
 
     if (CLI::HasParam("output_file"))
-      data::Save(CLI::GetParam<string>("output_file"), results, true, false);
+      data::Save(CLI::GetParam<string>("output_file"), results, true);
   }
 
   // Should we save the model, too?
