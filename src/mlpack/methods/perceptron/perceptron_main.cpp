@@ -170,12 +170,12 @@ int main(int argc, char** argv)
     }
 
     // Do the labels need to be transposed?
-    if (labelsIn.n_rows == 1)
+    if (labelsIn.n_cols == 1)
       labelsIn = labelsIn.t();
 
     // Normalize the labels.
-    Col<size_t> labels;
-    data::NormalizeLabels(labelsIn.unsafe_col(0), labels, mappings);
+    Row<size_t> labels;
+    data::NormalizeLabels(labelsIn.row(0), labels, mappings);
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
     // sure the dimensions are right, then continue training.
@@ -183,7 +183,7 @@ int main(int argc, char** argv)
     {
       // Create and train the classifier.
       Timer::Start("training");
-      p = new Perceptron<>(trainingData, labels.t(), max(labels) + 1,
+      p = new Perceptron<>(trainingData, labels, max(labels) + 1,
           maxIterations);
       Timer::Stop("training");
     }
@@ -235,11 +235,11 @@ int main(int argc, char** argv)
     Timer::Stop("testing");
 
     // Un-normalize labels to prepare output.
-    vec results;
-    data::RevertLabels(predictedLabels.t(), mappings, results);
+    rowvec results;
+    data::RevertLabels(predictedLabels, mappings, results);
 
-    // Save the predictedLabels, but we have to transpose them.
-    data::Save(outputFile, results, false /* non-fatal */, false);
+    // Save the predicted labels.
+    data::Save(outputFile, results, false /* non-fatal */);
   }
 
   // Lastly, do we need to save the output model?

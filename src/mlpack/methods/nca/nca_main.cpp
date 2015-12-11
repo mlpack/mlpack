@@ -180,10 +180,10 @@ int main(int argc, char* argv[])
   {
     data::Load(labelsFile, rawLabels, true);
 
-    if (rawLabels.n_rows == 1)
+    if (rawLabels.n_cols == 1)
       rawLabels = trans(rawLabels);
 
-    if (rawLabels.n_cols > 1)
+    if (rawLabels.n_rows > 1)
       Log::Fatal << "Labels must have only one column or row!" << endl;
   }
   else
@@ -196,8 +196,8 @@ int main(int argc, char* argv[])
 
   // Now, normalize the labels.
   arma::uvec mappings;
-  arma::Col<size_t> labels;
-  data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
+  arma::Row<size_t> labels;
+  data::NormalizeLabels(rawLabels.row(0), labels, mappings);
 
   arma::mat distance;
 
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
   // Now create the NCA object and run the optimization.
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labels);
+    NCA<LMetric<2> > nca(data, labels.t());
     nca.Optimizer().StepSize() = stepSize;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labels);
+    NCA<LMetric<2>, L_BFGS> nca(data, labels.t());
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;

@@ -29,8 +29,8 @@ PARAM_STRING_REQ("test_file", "A file containing the test set.", "T");
 
 PARAM_STRING("labels_file", "A file containing labels for the training set.",
     "l", "");
-PARAM_STRING("output", "The file in which the predicted labels for the test set"
-    " will be written.", "o", "output.csv");
+PARAM_STRING("output_file", "The file in which the predicted labels for the "
+    "test set will be written.", "o", "output.csv");
 PARAM_FLAG("incremental_variance", "The variance of each class will be "
     "calculated incrementally.", "I");
 
@@ -49,8 +49,7 @@ int main(int argc, char* argv[])
   data::Load(trainingDataFilename, trainingData, true);
 
   // Normalize labels.
-  Col<size_t> labels;
-  Row<size_t> labelst;
+  Row<size_t> labels;
   vec mappings;
 
   // Did the user pass in labels?
@@ -62,22 +61,21 @@ int main(int argc, char* argv[])
     data::Load(labelsFilename, rawLabels, true, false);
 
     // Do the labels need to be transposed?
-    if (rawLabels.n_rows == 1)
+    if (rawLabels.n_cols == 1)
       rawLabels = rawLabels.t();
 
-    data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
+    data::NormalizeLabels(rawLabels.row(0), labels, mappings);
   }
   else
   {
     // Use the last row of the training data as the labels.
     Log::Info << "Using last dimension of training data as training labels."
-        << std::endl;
-    vec rawLabels = trans(trainingData.row(trainingData.n_rows - 1));
-    data::NormalizeLabels(rawLabels, labels, mappings);
+        << endl;
+    data::NormalizeLabels(trainingData.row(trainingData.n_rows - 1), labels,
+        mappings);
     // Remove the label row.
     trainingData.shed_row(trainingData.n_rows - 1);
   }
-  labelst = labels.t();
 
   const string testingDataFilename = CLI::GetParam<std::string>("test_file");
   mat testingData;
@@ -92,7 +90,7 @@ int main(int argc, char* argv[])
 
   // Create and train the classifier.
   Timer::Start("training");
-  NaiveBayesClassifier<> nbc(trainingData, labelst, mappings.n_elem,
+  NaiveBayesClassifier<> nbc(trainingData, labels, mappings.n_elem,
       incrementalVariance);
   Timer::Stop("training");
 
@@ -103,10 +101,10 @@ int main(int argc, char* argv[])
   Timer::Stop("testing");
 
   // Un-normalize labels to prepare output.
-  vec rawResults;
-  data::RevertLabels(results.t(), mappings, rawResults);
+  rowvec rawResults;
+  data::RevertLabels(results, mappings, rawResults);
 
   // Output results.  Transpose: one result per line.
-  const string outputFilename = CLI::GetParam<string>("output");
+  const string outputFilename = CLI::GetParam<string>("output_file");
   data::Save(outputFilename, rawResults, true, false);
 }
