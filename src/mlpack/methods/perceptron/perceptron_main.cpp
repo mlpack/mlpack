@@ -21,15 +21,15 @@ PROGRAM_INFO("Perceptron",
     "network. The perceptron makes its predictions based on a linear predictor "
     "function combining a set of weights with the feature vector.  The "
     "perceptron learning rule is able to converge, given enough iterations "
-    "using the --max_iterations (-i) parameter, if the data supplied is "
+    "using the --max_iterations (-n) parameter, if the data supplied is "
     "linearly separable.  The perceptron is parameterized by a matrix of weight"
     " vectors that denote the numerical weights of the neural network."
     "\n\n"
-    "This program allows loading a perceptron from a model (-i) or training a "
+    "This program allows loading a perceptron from a model (-m) or training a "
     "perceptron given training data (-t), or both those things at once.  In "
     "addition, this program allows classification on a test dataset (-T) and "
     "will save the classification results to the given output file (-o).  The "
-    "perceptron model itself may be saved with a file specified using the -m "
+    "perceptron model itself may be saved with a file specified using the -M "
     "option."
     "\n\n"
     "The training data given with the -t option should have class labels as its"
@@ -52,7 +52,7 @@ PROGRAM_INFO("Perceptron",
     "\n\n"
     "Note that all of the options may be specified at once: predictions may be "
     "calculated right after training a model, and model training can occur even"
-    " if an existing perceptron model is passed with -i (--input_model).  "
+    " if an existing perceptron model is passed with -m (--input_model_file).  "
     "However, note that the number of classes and the dimensionality of all "
     "data must match.  So you cannot pass a perceptron model trained on 2 "
     "classes and then re-train with a 4-class dataset.  Similarly, attempting "
@@ -65,12 +65,13 @@ PARAM_STRING("training_file", "A file containing the training set.", "t", "");
 PARAM_STRING("labels_file", "A file containing labels for the training set.",
   "l", "");
 PARAM_INT("max_iterations","The maximum number of iterations the perceptron is "
-  "to be run", "M", 1000);
+  "to be run", "n", 1000);
 
 // Model loading/saving.
-PARAM_STRING("input_model", "File containing input perceptron model.", "i", "");
-PARAM_STRING("output_model", "File to save trained perceptron model to.", "m",
+PARAM_STRING("input_model_file", "File containing input perceptron model.", "m",
     "");
+PARAM_STRING("output_model_file", "File to save trained perceptron model to.",
+    "M", "");
 
 // Testing/classification parameters.
 PARAM_STRING("test_file", "A file containing the test set.", "T", "");
@@ -84,10 +85,10 @@ class PerceptronModel
 {
  private:
   Perceptron<>& p;
-  arma::vec& map;
+  Col<size_t>& map;
 
  public:
-  PerceptronModel(Perceptron<>& p, arma::vec& map) : p(p), map(map) { }
+  PerceptronModel(Perceptron<>& p, Col<size_t>& map) : p(p), map(map) { }
 
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -104,26 +105,27 @@ int main(int argc, char** argv)
   // First, get all parameters and validate them.
   const string trainingDataFile = CLI::GetParam<string>("training_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
-  const string inputModelFile = CLI::GetParam<string>("input_model");
+  const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string testDataFile = CLI::GetParam<string>("test_file");
-  const string outputModelFile = CLI::GetParam<string>("output_model");
+  const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string outputFile = CLI::GetParam<string>("output_file");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // We must either load a model or train a model.
   if (inputModelFile == "" && trainingDataFile == "")
-    Log::Fatal << "Either an input model must be specified with --input_model "
-        << "or training data must be given (--training_file)!" << endl;
+    Log::Fatal << "Either an input model must be specified with "
+        << "--input_model_file or training data must be given "
+        << "(--training_file)!" << endl;
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
   if (outputModelFile == "" && testDataFile == "")
     Log::Warn << "Output will not be saved!  (Neither --test_file nor "
-        << "--output_model are specified.)" << endl;
+        << "--output_model_file are specified.)" << endl;
 
   // Now, load our model, if there is one.
   Perceptron<>* p = NULL;
-  arma::vec mappings;
+  Col<size_t> mappings;
   if (inputModelFile != "")
   {
     Log::Info << "Loading saved perceptron from model file '" << inputModelFile
@@ -235,7 +237,7 @@ int main(int argc, char** argv)
     Timer::Stop("testing");
 
     // Un-normalize labels to prepare output.
-    rowvec results;
+    Row<size_t> results;
     data::RevertLabels(predictedLabels, mappings, results);
 
     // Save the predicted labels.

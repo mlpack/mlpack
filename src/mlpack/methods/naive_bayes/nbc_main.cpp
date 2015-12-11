@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
   // Normalize labels.
   Row<size_t> labels;
-  vec mappings;
+  Col<size_t> mappings;
 
   // Did the user pass in labels?
   const string labelsFilename = CLI::GetParam<string>("labels_file");
@@ -101,10 +101,10 @@ int main(int argc, char* argv[])
   Timer::Stop("testing");
 
   // Un-normalize labels to prepare output.
-  rowvec rawResults;
+  Row<size_t> rawResults;
   data::RevertLabels(results, mappings, rawResults);
 
-  // Output results.  Transpose: one result per line.
+  // Output results.
   const string outputFilename = CLI::GetParam<string>("output_file");
-  data::Save(outputFilename, rawResults, true, false);
+  data::Save(outputFilename, rawResults, true);
 }

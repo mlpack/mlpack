@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
       data::Load(labelsFilename, labelsIn, true);
 
       // Do the labels need to be transposed?
-      if (labelsIn.n_rows == 1)
+      if (labelsIn.n_cols == 1)
         labelsIn = labelsIn.t();
     }
     else
