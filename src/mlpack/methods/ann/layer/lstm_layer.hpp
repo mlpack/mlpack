@@ -83,6 +83,45 @@ class LSTMLayer
     }
   }
 
+  LSTMLayer(LSTMLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  LSTMLayer& operator=(LSTMLayer &&layer) noexcept
+  {
+    optimizer = layer.optimizer;
+    ownsOptimizer = layer.ownsOptimizer;
+    layer.optimizer = nullptr;
+    layer.ownsOptimizer = false;
+
+    outSize = layer.outSize;
+    peepholes = layer.peepholes;
+    seqLen = layer.seqLen;
+    offset = layer.offset;
+    delta.swap(layer.delta);
+    gradient.swap(layer.gradient);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(layer.outputParameter);
+    inGate.swap(layer.inGate);
+    inGateAct.swap(layer.inGateAct);
+    inGateError.swap(layer.inGateError);
+    outGate.swap(layer.outGate);
+    outGateAct.swap(layer.outGateAct);
+    outGateError.swap(layer.outGateError);
+    forgetGate.swap(layer.forgetGate);
+    forgetGateAct.swap(layer.forgetGateAct);
+    forgetGateError.swap(layer.forgetGateError);
+    state.swap(layer.state);
+    stateError.swap(layer.stateError);
+    cellAct.swap(layer.cellAct);
+    peepholeWeights.swap(layer.peepholeWeights);
+    peepholeDerivatives.swap(layer.peepholeDerivatives);
+    peepholeGradient.swap(layer.peepholeGradient);
+
+    return *this;
+  }
+
   /**
    * Delete the LSTMLayer object and its optimizer.
    */
@@ -309,10 +348,10 @@ class LSTMLayer
 
  private:
   //! Locally-stored number of output units.
-  const size_t outSize;
+  size_t outSize;
 
   //! Locally-stored peephole indication flag.
-  const bool peepholes;
+  bool peepholes;
 
   //! Locally-stored length of the the input sequence.
   size_t seqLen;
@@ -419,7 +458,7 @@ class LayerTraits<LSTMLayer<OptimizerType,
   static const bool IsConnection = false;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif

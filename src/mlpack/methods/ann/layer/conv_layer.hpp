@@ -88,6 +88,35 @@ class ConvLayer
     weightInitRule.Initialize(weights, wfilter, hfilter, inMaps * outMaps);
   }
 
+  ConvLayer(ConvLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  ConvLayer& operator=(ConvLayer &&layer) noexcept
+  {
+    optimizer = layer.optimizer;
+    ownsOptimizer = layer.ownsOptimizer;
+    layer.optimizer = nullptr;
+    layer.ownsOptimizer = false;
+
+    wfilter = layer.wfilter;
+    hfilter = layer.hfilter;
+    inMaps = layer.inMaps;
+    outMaps = layer.outMaps;
+    xStride = layer.xStride;
+    yStride = layer.yStride;
+    wPad = layer.wPad;
+    hPad = layer.hPad;
+    weights.swap(layer.weights);
+    delta.swap(layer.delta);
+    gradient.swap(layer.gradient);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(layer.outputParameter);
+
+    return *this;
+  }
+
   /**
    * Delete the convolution layer object and its optimizer.
    */
@@ -282,28 +311,28 @@ class ConvLayer
   }
 
   //! Locally-stored filter/kernel width.
-  const size_t wfilter;
+  size_t wfilter;
 
   //! Locally-stored filter/kernel height.
-  const size_t hfilter;
+  size_t hfilter;
 
   //! Locally-stored number of input maps.
-  const size_t inMaps;
+  size_t inMaps;
 
   //! Locally-stored number of output maps.
-  const size_t outMaps;
+  size_t outMaps;
 
   //! Locally-stored stride of the filter in x-direction.
-  const size_t xStride;
+  size_t xStride;
 
   //! Locally-stored stride of the filter in y-direction.
-  const size_t yStride;
+  size_t yStride;
 
   //! Locally-stored padding width.
-  const size_t wPad;
+  size_t wPad;
 
   //! Locally-stored padding height.
-  const size_t hPad;
+  size_t hPad;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -359,7 +388,7 @@ class LayerTraits<ConvLayer<OptimizerType,
   static const bool IsConnection = true;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
