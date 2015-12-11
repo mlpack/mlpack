@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<mat, DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<mat, DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<mat, DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<mat, DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -481,7 +481,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<mat, DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -530,7 +530,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   size_t iterations = 500;
   double tolerance = 1e-23;
 
-  AdaBoost<mat, DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -633,7 +633,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<mat, DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
+  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), ds, iterations,
       tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
@@ -822,7 +822,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
     labels[i] = 1;
 
   DecisionStump<> p(data, labels, 2, 800);
-  AdaBoost<mat, DecisionStump<>> ab(data, labels, p, 50, 1e-10);
+  AdaBoost<DecisionStump<>> ab(data, labels, p, 50, 1e-10);
 
   // Now create another dataset to train with.
   mat otherData = randu<mat>(5, 200);
@@ -835,9 +835,9 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
     otherLabels[i] = 2;
 
   DecisionStump<> p2(otherData, otherLabels, 3, 500);
-  AdaBoost<mat, DecisionStump<>> abText(otherData, otherLabels, p2, 50, 1e-10);
+  AdaBoost<DecisionStump<>> abText(otherData, otherLabels, p2, 50, 1e-10);
 
-  AdaBoost<mat, DecisionStump<>> abXml, abBinary;
+  AdaBoost<DecisionStump<>> abXml, abBinary;
 
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
