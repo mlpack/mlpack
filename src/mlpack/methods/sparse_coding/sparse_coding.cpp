@@ -27,7 +27,7 @@ SparseCoding::SparseCoding(
   // Nothing to do.
 }
 
-void SparseCoding::OptimizeCode(const arma::mat& data, arma::mat& codes)
+void SparseCoding::Encode(const arma::mat& data, arma::mat& codes)
 {
   // When using the Cholesky version of LARS, this is correct even if
   // lambda2 > 0.

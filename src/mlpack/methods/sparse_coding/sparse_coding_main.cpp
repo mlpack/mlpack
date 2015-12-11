@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
     }
 
     mat codes;
-    sc.OptimizeCode(matY, codes);
+    sc.Encode(matY, codes);
 
     if (CLI::HasParam("codes_file"))
       data::Save(CLI::GetParam<string>("codes_file"), codes);

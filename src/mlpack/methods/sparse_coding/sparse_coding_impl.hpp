@@ -52,7 +52,7 @@ void SparseCoding::Train(
   Log::Info << "Initial coding step." << std::endl;
 
   arma::mat codes(atoms, data.n_cols);
-  OptimizeCode(data, codes);
+  Encode(data, codes);
   arma::uvec adjacencies = find(codes);
 
   Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
@@ -77,7 +77,7 @@ void SparseCoding::Train(
 
     // Second step: perform the coding.
     Log::Info << "Performing coding step..." << std::endl;
-    OptimizeCode(data, codes);
+    Encode(data, codes);
     // Get the indices of all the nonzero elements in the codes.
     adjacencies = find(codes);
     Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))

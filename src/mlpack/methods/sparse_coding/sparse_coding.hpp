@@ -92,13 +92,16 @@ namespace sparse_coding {
  * algorithm from Honglak Lee's paper, but instead the LARS algorithm suggested
  * in that paper.
  *
- * Before the method is run, the dictionary is initialized using the
+ * When Train() is called, the dictionary is initialized using the
  * DictionaryInitializationPolicy class.  Possible choices include the
  * RandomInitializer, which provides an entirely random dictionary, the
  * DataDependentRandomInitializer, which provides a random dictionary based
  * loosely on characteristics of the dataset, and the NothingInitializer, which
  * does not initialize the dictionary -- instead, the user should set the
  * dictionary using the Dictionary() mutator method.
+ *
+ * Once a dictionary is trained with Train(), another matrix may be encoded with
+ * the Encode() function.
  *
  * @tparam DictionaryInitializationPolicy The class to use to initialize the
  *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
@@ -177,9 +180,13 @@ class SparseCoding
                  DictionaryInitializer());
 
   /**
-   * Sparse code each point via LARS.
+   * Sparse code each point in the given dataset via LARS, using the current
+   * dictionary and store the encoded data in the codes matrix.
+   *
+   * @param data Input data matrix to be encoded.
+   * @param codes Output codes matrix.
    */
-  void OptimizeCode(const arma::mat& data, arma::mat& codes);
+  void Encode(const arma::mat& data, arma::mat& codes);
 
   /**
    * Learn dictionary via Newton method based on Lagrange dual.

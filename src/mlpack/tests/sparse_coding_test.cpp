@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   SparseCoding sc(nAtoms, lambda1);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
-  sc.OptimizeCode(X, Z);
+  sc.Encode(X, Z);
 
   mat D = sc.Dictionary();
 
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   SparseCoding sc(nAtoms, lambda1, lambda2);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
-  sc.OptimizeCode(X, Z);
+  sc.Encode(X, Z);
 
   mat D = sc.Dictionary();
 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   SparseCoding sc(nAtoms, lambda1);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
-  sc.OptimizeCode(X, Z);
+  sc.Encode(X, Z);
 
   mat D = sc.Dictionary();
 
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   mat Y = randu<mat>(100, 200);
   mat codes;
-  sc.OptimizeCode(Y, codes);
+  sc.Encode(Y, codes);
 
   SparseCoding scXml(50, 0.01), scText(nAtoms, 0.05), scBinary(0, 0.0);
   SerializeObjectAll(sc, scXml, scText, scBinary);
@@ -151,9 +151,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       scBinary.Dictionary());
 
   mat xmlCodes, textCodes, binaryCodes;
-  scXml.OptimizeCode(Y, xmlCodes);
-  scText.OptimizeCode(Y, textCodes);
-  scBinary.OptimizeCode(Y, binaryCodes);
+  scXml.Encode(Y, xmlCodes);
+  scText.Encode(Y, textCodes);
+  scBinary.Encode(Y, binaryCodes);
 
   CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
 
