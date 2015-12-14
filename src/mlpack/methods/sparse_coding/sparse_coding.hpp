@@ -150,8 +150,7 @@ class SparseCoding
   /**
    * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
    * constructor will not train the model, and a subsequent call to Train() will
-   * be required before the model can encode points with Encode().  This
-   * constructor will initialize the dictionary, though.
+   * be required before the model can encode points with Encode().
    *
    * @param atoms Number of atoms in dictionary.
    * @param lambda1 Regularization parameter for l1-norm penalty.
