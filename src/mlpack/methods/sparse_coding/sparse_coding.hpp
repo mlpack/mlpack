@@ -255,7 +255,6 @@ class SparseCoding
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-
  private:
   //! Number of atoms.
   size_t atoms;
