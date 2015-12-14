@@ -41,7 +41,7 @@ class DecisionStump
   DecisionStump(const MatType& data,
                 const arma::Row<size_t>& labels,
                 const size_t classes,
-                const size_t bucketSize);
+                const size_t bucketSize = 10);
 
   /**
    * Alternate constructor which copies the parameters bucketSize and classes

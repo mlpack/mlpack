@@ -655,8 +655,8 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
  */
 BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
 {
-  arma::ivec labels("-1 1 1 -1 -1 -1 1 1");
-  arma::Col<size_t> newLabels;
+  arma::irowvec labels("-1 1 1 -1 -1 -1 1 1");
+  arma::Row<size_t> newLabels;
   arma::ivec mappings;
 
   data::NormalizeLabels(labels, newLabels, mappings);
@@ -673,7 +673,7 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
   BOOST_REQUIRE_EQUAL(newLabels[6], 1);
   BOOST_REQUIRE_EQUAL(newLabels[7], 1);
 
-  arma::ivec revertedLabels;
+  arma::irowvec revertedLabels;
 
   data::RevertLabels(newLabels, mappings, revertedLabels);
 
@@ -686,18 +686,18 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
  */
 BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 {
-  arma::vec randLabels(5000);
+  arma::rowvec randLabels(5000);
   for (size_t i = 0; i < 5000; ++i)
     randLabels[i] = math::RandInt(-50, 50);
   randLabels[0] = 0.65; // Hey, doubles work too!
 
-  arma::Col<size_t> newLabels;
+  arma::Row<size_t> newLabels;
   arma::vec mappings;
 
   data::NormalizeLabels(randLabels, newLabels, mappings);
 
   // Now map them back and ensure they are right.
-  arma::vec revertedLabels(5000);
+  arma::rowvec revertedLabels(5000);
   data::RevertLabels(newLabels, mappings, revertedLabels);
 
   for (size_t i = 0; i < 5000; ++i)

@@ -625,7 +625,6 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Build all the possible models.
-  std::cout << "build models\n";
   KNNModel models[8];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
@@ -639,12 +638,11 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  for (size_t j = 2; j + 1 > 0; --j)
+  for (size_t j = 0; j < 2; ++j)
   {
-    for (size_t i = 7; i + 1 > 0; --i)
+    for (size_t i = 0; i < 8; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
-      std::cout << "build model " << i << " " << j << ".\n";
       arma::mat referenceCopy(referenceData);
       if (j == 0)
         models[i].BuildModel(std::move(referenceCopy), 20, false, false);
@@ -652,7 +650,6 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
         models[i].BuildModel(std::move(referenceCopy), 20, false, true);
       if (j == 2)
         models[i].BuildModel(std::move(referenceCopy), 20, true, false);
-      std::cout << "built\n";
 
       // Set the search parameters.
       models[i].Tau() = 1.0;

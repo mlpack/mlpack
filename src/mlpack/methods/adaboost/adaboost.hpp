@@ -71,8 +71,8 @@ namespace adaboost {
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  * @tparam WeakLearnerType Type of weak learner to use.
  */
-template<typename MatType = arma::mat,
-         typename WeakLearnerType = mlpack::perceptron::Perceptron<> >
+template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>,
+         typename MatType = arma::mat>
 class AdaBoost
 {
  public:

@@ -35,8 +35,8 @@ namespace adaboost {
  * @param tol Tolerance for termination of Adaboost.MH.
  * @param other Weak Learner, which has been initialized already.
  */
-template<typename MatType, typename WeakLearnerType>
-AdaBoost<MatType, WeakLearnerType>::AdaBoost(
+template<typename WeakLearnerType, typename MatType>
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const WeakLearnerType& other,
@@ -47,16 +47,16 @@ AdaBoost<MatType, WeakLearnerType>::AdaBoost(
 }
 
 // Empty constructor.
-template<typename MatType, typename WeakLearnerType>
-AdaBoost<MatType, WeakLearnerType>::AdaBoost(const double tolerance) :
+template<typename WeakLearnerType, typename MatType>
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
     tolerance(tolerance)
 {
   // Nothing to do.
 }
 
 // Train AdaBoost.
-template<typename MatType, typename WeakLearnerType>
-void AdaBoost<MatType, WeakLearnerType>::Train(
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const WeakLearnerType& other,
@@ -188,8 +188,8 @@ void AdaBoost<MatType, WeakLearnerType>::Train(
 /**
  * Classify the given test points.
  */
-template<typename MatType, typename WeakLearnerType>
-void AdaBoost<MatType, WeakLearnerType>::Classify(
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
     const MatType& test,
     arma::Row<size_t>& predictedLabels)
 {
@@ -221,9 +221,9 @@ void AdaBoost<MatType, WeakLearnerType>::Classify(
 /**
  * Serialize the AdaBoost model.
  */
-template<typename MatType, typename WeakLearnerType>
+template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
-void AdaBoost<MatType, WeakLearnerType>::Serialize(Archive& ar,
+void AdaBoost<WeakLearnerType, MatType>::Serialize(Archive& ar,
                                                const unsigned int /* version */)
 {
   ar & data::CreateNVP(classes, "classes");

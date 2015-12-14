@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
       data::Load(labelsFilename, labelsIn, true);
 
       // Do the labels need to be transposed?
-      if (labelsIn.n_rows == 1)
+      if (labelsIn.n_cols == 1)
         labelsIn = labelsIn.t();
     }
     else
@@ -147,14 +147,14 @@ int main(int argc, char *argv[])
     }
 
     // Normalize the labels.
-    Col<size_t> labels;
-    data::NormalizeLabels(labelsIn.unsafe_col(0), labels, model.mappings);
+    Row<size_t> labels;
+    data::NormalizeLabels(labelsIn.row(0), labels, model.mappings);
 
     const size_t bucketSize = CLI::GetParam<int>("bucket_size");
     const size_t classes = labels.max() + 1;
 
     Timer::Start("training");
-    model.stump.Train(trainingData, labels.t(), classes, bucketSize);
+    model.stump.Train(trainingData, labels, classes, bucketSize);
     Timer::Stop("training");
   }
   else
@@ -184,13 +184,12 @@ int main(int argc, char *argv[])
     // Denormalize predicted labels, if we want to save them.
     if (CLI::HasParam("predictions_file"))
     {
-      Col<size_t> labelsTmp = predictedLabels.t();
-      Col<size_t> actualLabels;
-      data::RevertLabels(labelsTmp, model.mappings, actualLabels);
+      Row<size_t> actualLabels;
+      data::RevertLabels(predictedLabels, model.mappings, actualLabels);
 
       // Save the predicted labels in a transposed form as output.
       const string predictionsFile = CLI::GetParam<string>("predictions_file");
-      data::Save(predictionsFile, actualLabels, true, false);
+      data::Save(predictionsFile, actualLabels, true);
     }
   }
 
