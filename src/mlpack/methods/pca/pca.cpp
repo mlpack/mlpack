@@ -171,13 +171,3 @@ double PCA::Apply(arma::mat& data, const double varRetained) const
 
   return varSum;
 }
-
-// return a string of this object.
-std::string PCA::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Principal Component Analysis  [" << this << "]" << std::endl;
-  if (scaleData)
-    convert << "  Scaling Data: TRUE" << std::endl;
-  return convert.str();
-}

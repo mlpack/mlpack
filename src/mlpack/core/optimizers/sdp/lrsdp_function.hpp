@@ -84,9 +84,6 @@ class LRSDPFunction
   //! Modify the SDP object representing the problem.
   SDPType& SDP() { return sdp; }
 
-  //! Return string representation of object.
-  std::string ToString() const;
-
  private:
 
   //! SDP object representing the problem

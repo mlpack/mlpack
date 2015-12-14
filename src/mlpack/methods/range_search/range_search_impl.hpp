@@ -695,24 +695,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Serialize(
   }
 }
 
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Range Search  [" << this << "]" << std::endl;
-  if (treeOwner)
-    convert << "  Tree Owner: TRUE" << std::endl;
-  if (naive)
-    convert << "  Naive: TRUE" << std::endl;
-  convert << "  Metric: " << std::endl <<
-      mlpack::util::Indent(metric.ToString(),2);
-  return convert.str();
-}
-
 } // namespace range
 } // namespace mlpack
 

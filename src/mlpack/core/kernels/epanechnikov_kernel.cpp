@@ -63,14 +63,3 @@ double EpanechnikovKernel::GradientForSquaredDistance(const double
     return arma::datum::nan;
   }
 }
-
-// Return string of object.
-std::string EpanechnikovKernel::ToString() const
-{
-  std::ostringstream convert;
-  convert << "EpanechnikovKernel [" << this << "]" << std::endl;
-  convert << "  Bandwidth: " << bandwidth << std::endl;
-  convert << "  Inverse squared bandwidth: ";
-  convert << inverseBandwidthSquared << std::endl;
-  return convert.str();
-}

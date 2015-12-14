@@ -30,16 +30,6 @@ double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
   return augLag.Function().Evaluate(coordinates);
 }
 
-// Convert the object to a string.
-template <typename SDPType>
-std::string LRSDP<SDPType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LRSDP [" << this << "]" << std::endl;
-  convert << "  Optimizer: " << util::Indent(augLag.ToString(), 1) << std::endl;
-  return convert.str();
-}
-
 } // namespace optimization
 } // namespace mlpack
 

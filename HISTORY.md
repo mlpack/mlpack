@@ -38,6 +38,8 @@
 
   * Refactor LSH to allow loading and saving of models.
 
+  * ToString() is removed entirely.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.

@@ -83,9 +83,6 @@ class NCA
   OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer()
   { return optimizer; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! Dataset reference.
   const arma::mat& dataset;

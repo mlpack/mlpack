@@ -279,11 +279,6 @@ class DTree
   arma::vec& MinVals() { return minVals; }
 
   /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
-  /**
    * Serialize the density estimation tree.
    */
   template<typename Archive>

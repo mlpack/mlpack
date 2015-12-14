@@ -270,26 +270,6 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-std::string KMeans<MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "KMeans [" << this << "]" << std::endl;
-  convert << "  Max Iterations: " << maxIterations << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(), 2);
-  convert << std::endl;
-  return convert.str();
-}
-
-template<typename MetricType,
-         typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
 template<typename Archive>
 void KMeans<MetricType,
             InitialPartitionPolicy,

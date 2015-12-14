@@ -99,18 +99,6 @@ class DualTreeKMeansStatistic : public
 
   size_t NumTrueChildren() const { return trueChildren.size(); }
 
-  std::string ToString() const
-  {
-    std::ostringstream o;
-    o << "DualTreeKMeansStatistic [" << this << "]:\n";
-    o << "  Upper bound: " << upperBound << ".\n";
-    o << "  Lower bound: " << lowerBound << ".\n";
-    o << "  Pruned: " << pruned << ".\n";
-    o << "  Static pruned: " << staticPruned << ".\n";
-    o << "  Owner: " << owner << ".\n";
-    return o.str();
-  }
-
  private:
   double upperBound;
   double lowerBound;

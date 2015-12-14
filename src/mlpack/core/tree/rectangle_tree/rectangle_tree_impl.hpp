@@ -953,41 +953,6 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 }
 
 /**
- * Returns a string representation of this object.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType>
-std::string RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                          DescentType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "RectangleTree [" << this << "]" << std::endl;
-  convert << "  First point: " << begin << std::endl;
-  convert << "  Number of descendants: " << numChildren << std::endl;
-  convert << "  Number of points: " << count << std::endl;
-  convert << "  Bound: " << std::endl;
-  convert << mlpack::util::Indent(bound.ToString(), 2);
-  convert << "  Statistic: " << std::endl;
-  //convert << mlpack::util::Indent(stat.ToString(), 2);
-  convert << "  Max leaf size: " << maxLeafSize << std::endl;
-  convert << "  Min leaf size: " << minLeafSize << std::endl;
-  convert << "  Max num of children: " << maxNumChildren << std::endl;
-  convert << "  Min num of children: " << minNumChildren << std::endl;
-  convert << "  Parent address: " << parent << std::endl;
-
-  // How many levels should we print?  This will print the top 3 levels
-  // (counting the root).
-  if (parent == NULL || parent->Parent() == NULL)
-    for (int i = 0; i < numChildren; i++)
-      convert << children[i]->ToString();
-
-  return convert.str();
-}
-
-/**
  * Serialize the tree.
  */
 template<typename MetricType,

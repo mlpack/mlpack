@@ -101,8 +101,6 @@ class MahalanobisDistance
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  //! Return string representation of object.
-  std::string ToString() const;
  private:
   //! The covariance matrix associated with this distance.
   arma::mat covariance;

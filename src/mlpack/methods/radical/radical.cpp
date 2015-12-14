@@ -184,15 +184,3 @@ void mlpack::radical::WhitenFeatureMajorMatrix(const mat& matX,
   matWhitening = matU * diagmat(1 / sqrt(s)) * trans(matV);
   matXWhitened = matX * matWhitening;
 }
-
-// return a string of this object.
-std::string Radical::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Radical  [" << this << "]" << std::endl;
-  convert << "  StdDev of Noise: " << noiseStdDev << std::endl;
-  convert << "  Number of Replicates: " << replicates << std::endl;
-  convert << "  Number of Angles: " << angles << std::endl;
-  convert << "  M value: " << m << std::endl;
-  return convert.str();
-}
