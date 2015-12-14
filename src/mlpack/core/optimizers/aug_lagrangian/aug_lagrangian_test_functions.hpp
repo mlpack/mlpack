@@ -38,9 +38,6 @@ class AugLagrangianTestFunction
 
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   arma::mat initialPoint;
 };

@@ -284,9 +284,6 @@ class RangeSearch
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Return the reference set.
   const MatType& ReferenceSet() const { return *referenceSet; }
 

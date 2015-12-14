@@ -186,11 +186,6 @@ class FastMKS
   //! Modify whether or not single-tree search is used.
   bool& SingleMode() { return singleMode; }
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   //! The reference dataset.
   const MatType& referenceSet;

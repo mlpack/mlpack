@@ -145,9 +145,6 @@ class L_BFGS
   //! Modify the maximum line search step size.
   double& MaxStep() { return maxStep; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! Internal reference to the function we are optimizing.
   FunctionType& function;

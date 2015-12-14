@@ -171,11 +171,6 @@ class DualTreeBoruvka
    */
   void ComputeMST(arma::mat& results);
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   /**
    * Adds a single edge to the edge list

@@ -108,9 +108,6 @@ class SoftmaxErrorFunction
    */
   size_t NumFunctions() const { return dataset.n_cols; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! The dataset.
   const arma::mat& dataset;

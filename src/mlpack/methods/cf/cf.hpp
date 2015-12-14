@@ -215,11 +215,6 @@ class CF
   void Predict(const arma::Mat<size_t>& combinations,
                arma::vec& predictions) const;
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   //! Number of users for similarity.
   size_t numUsersForSimilarity;

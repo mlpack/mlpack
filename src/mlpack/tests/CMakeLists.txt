@@ -65,7 +65,6 @@ add_executable(mlpack_test
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   termination_policy_test.cpp
-  to_string_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   union_find_test.cpp

@@ -145,9 +145,6 @@ class LaplaceDistribution
     ar & data::CreateNVP(scale, "scale");
   }
 
-  //! Return a string representation of the object.
-  std::string ToString() const;
-
  private:
   //! Mean of the distribution.
   arma::vec mean;

@@ -1338,41 +1338,6 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
 }
 
 /**
- * Returns a string representation of this object.
- */
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-std::string CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    ToString() const
-{
-  std::ostringstream convert;
-  convert << "CoverTree [" << this << "]" << std::endl;
-  convert << "  dataset: " << dataset << std::endl;
-  convert << "  point: " << point << std::endl;
-  convert << "  scale: " << scale << std::endl;
-  convert << "  base: " << base << std::endl;
-  convert << "  parent distance : " << parentDistance << std::endl;
-  convert << "  furthest descendant distance: " << furthestDescendantDistance;
-  convert << std::endl;
-  convert << "  children:";
-
-  // How many levels should we print?  This will print the top two tree levels.
-  if (IsLeaf() == false && parent == NULL)
-    for (size_t i = 0; i < children.size(); i++)
-      convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
-  convert << std::endl;
-  convert << "  descendants: " << NumDescendants() << std::endl;
-
-  convert << "StatisticType: " << stat << std::endl;
-
-  return convert.str();
-}
-
-/**
  * Serialize to/from a boost::serialization archive.
  */
 template<

@@ -451,26 +451,6 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
   return function.Evaluate(iterate);
 }
 
-// Convert the object to a string.
-template<typename FunctionType>
-std::string L_BFGS<FunctionType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "L_BFGS [" << this << "]" << std::endl;
-  convert << "  Function:" << std::endl;
-  convert << util::Indent(function.ToString(), 2);
-  convert << "  Memory size: " << numBasis << std::endl;
-  convert << "  Cube size: " << s.n_rows << "x" << s.n_cols << "x"
-      << s.n_slices << std::endl;
-  convert << "  Maximum iterations: " << maxIterations << std::endl;
-  convert << "  Armijo condition constant: " << armijoConstant << std::endl;
-  convert << "  Wolfe parameter: " << wolfe << std::endl;
-  convert << "  Minimum gradient norm: " << minGradientNorm << std::endl;
-  convert << "  Minimum step for line search: " << minStep << std::endl;
-  convert << "  Maximum step for line search: " << maxStep << std::endl;
-  return convert.str();
-}
-
 } // namespace optimization
 } // namespace mlpack
 

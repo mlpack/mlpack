@@ -323,26 +323,6 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
     CleanupHelper(tree);
 }
 
-// convert the object to a string
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
-std::string DualTreeBoruvka<MetricType, MatType, TreeType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "DualTreeBoruvka [" << this << "]" << std::endl;
-  convert << "  Data: " << data.n_rows << "x" << data.n_cols <<std::endl;
-  convert << "  Total Distance: " << totalDist <<std::endl;
-  convert << "  Naive: " << naive << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << util::Indent(metric.ToString(), 2);
-  convert << std::endl;
-  return convert.str();
-}
-
 } // namespace emst
 } // namespace mlpack
 

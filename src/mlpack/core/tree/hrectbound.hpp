@@ -192,11 +192,6 @@ class HRectBound
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   //! The dimensionality of the bound.
   size_t dim;

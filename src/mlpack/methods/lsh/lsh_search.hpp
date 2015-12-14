@@ -149,9 +149,6 @@ class LSHSearch
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Return the number of distance evaluations performed.
   size_t DistanceEvaluations() const { return distanceEvaluations; }
   //! Modify the number of distance evaluations performed.

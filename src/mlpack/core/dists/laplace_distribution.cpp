@@ -75,17 +75,3 @@ void LaplaceDistribution::Estimate(const arma::mat& observations,
     scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);
   scale /= arma::accu(probabilities);
 }
-
-//! Returns a string representation of this object.
-std::string LaplaceDistribution::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LaplaceDistribution [" << this << "]" << std::endl;
-
-  std::ostringstream data;
-  data << "Mean: " << std::endl << mean.t();
-  data << "Scale: " << scale << "." << std::endl;
-
-  convert << util::Indent(data.str());
-  return convert.str();
-}

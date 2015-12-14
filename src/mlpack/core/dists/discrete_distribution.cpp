@@ -103,21 +103,3 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
   else
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
-
-/**
- * Returns a string representation of this object.
- */
-std::string DiscreteDistribution::ToString() const
-{
-  std::ostringstream convert;
-  convert << "DiscreteDistribution [" << this << "]" << std::endl;
-
-  // Secondary object so we can indent the probabilities.
-  std::ostringstream prob;
-  prob << "Probabilities:" << std::endl;
-  prob << probabilities;
-
-  convert << util::Indent(prob.str());
-  return convert.str();
-}
-

@@ -94,9 +94,6 @@ class AugLagrangianFunction
   //! Modify the Lagrangian function.
   LagrangianFunction& Function() { return function; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! Instantiation of the function to be optimized.
   LagrangianFunction& function;
