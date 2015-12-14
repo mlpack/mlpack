@@ -5,13 +5,7 @@
  * Implementation of the AllkRANN executable.  Allows some number of standard
  * options.
  */
-#include <time.h>
-
 #include <mlpack/core.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
 
 #include "ra_search.hpp"
 #include "ra_model.hpp"
