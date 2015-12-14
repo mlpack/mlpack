@@ -54,9 +54,7 @@ void SparseCoding::Encode(const arma::mat& data, arma::mat& codes)
 // Dictionary step for optimization.
 double SparseCoding::OptimizeDictionary(const arma::mat& data,
                                         const arma::mat& codes,
-                                        const arma::uvec& adjacencies,
-                                        const double newtonTolerance,
-                                        const size_t maxIterations)
+                                        const arma::uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);

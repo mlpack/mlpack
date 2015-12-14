@@ -71,7 +71,7 @@ void SparseCoding::Train(
 
     // First step: optimize the dictionary.
     Log::Info << "Performing dictionary step... " << std::endl;
-    OptimizeDictionary(data, codes, adjacencies, newtonTolerance);
+    OptimizeDictionary(data, codes, adjacencies);
     Log::Info << "  Objective value: " << Objective(data, codes) << "."
         << std::endl;
 

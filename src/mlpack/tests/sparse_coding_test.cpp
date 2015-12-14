@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(nAtoms, lambda1);
+  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, 1e-15);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.Encode(X, Z);
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   mat D = sc.Dictionary();
 
   uvec adjacencies = find(Z);
-  double normGradient = sc.OptimizeDictionary(X, Z, adjacencies, 1e-15);
+  double normGradient = sc.OptimizeDictionary(X, Z, adjacencies);
 
   BOOST_REQUIRE_SMALL(normGradient, tol);
 }

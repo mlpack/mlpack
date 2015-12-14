@@ -190,20 +190,17 @@ class SparseCoding
   /**
    * Learn dictionary via Newton method based on Lagrange dual.
    *
+   * @param data Data matrix.
+   * @param codes Matrix of codes.
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms).
-   * @param newtonTolerance Tolerance of the Newton's method optimizer.
-   * @param maxIterations Maximum number of iterations to run the Newton's
-   *     method. If 0, the method will run until convergence (or forever).
    * @return the norm of the gradient of the Lagrange dual with respect to
    *    the dual variables
    */
   double OptimizeDictionary(const arma::mat& data,
                             const arma::mat& codes,
-                            const arma::uvec& adjacencies,
-                            const double newtonTolerance = 1e-6,
-                            const size_t maxIterations = 50);
+                            const arma::uvec& adjacencies);
 
   /**
    * Project each atom of the dictionary back onto the unit ball, if necessary.
