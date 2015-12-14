@@ -38,16 +38,6 @@ class EmptyStatistic
     template<typename Archive>
     void Serialize(Archive& /* ar */, const unsigned int /* version */)
     { }
-
-    /**
-     * Returns a string representation of this object.
-     */
-    std::string ToString() const
-    {
-      std::stringstream convert;
-      convert << "EmptyStatistic [" << this << "]" << std::endl;
-      return convert.str();
-    }
 };
 
 } // namespace tree

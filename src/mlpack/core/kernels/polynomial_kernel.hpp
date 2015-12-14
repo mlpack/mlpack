@@ -70,16 +70,6 @@ class PolynomialKernel
     ar & data::CreateNVP(offset, "offset");
   }
 
-  //! Return a string representation of the kernel.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "PolynomialKernel [" << this << "]" << std::endl;
-    convert << "  Degree: " << degree << std::endl;
-    convert << "  Offset: " << offset << std::endl;
-    return convert.str();
-  }
-
  private:
   //! The degree of the polynomial.
   double degree;

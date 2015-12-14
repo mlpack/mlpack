@@ -269,15 +269,5 @@ double SparseCoding::Objective(const arma::mat& data, const arma::mat& codes)
   }
 }
 
-std::string SparseCoding::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Sparse Coding  [" << this << "]" << std::endl;
-  convert << "  Atoms: " << atoms << std::endl;
-  convert << "  Lambda 1: " << lambda1 << std::endl;
-  convert << "  Lambda 2: " << lambda2 << std::endl;
-  return convert.str();
-}
-
 } // namespace sparse_coding
 } // namespace mlpack

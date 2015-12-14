@@ -118,9 +118,6 @@ class AugLagrangian
   //! Modify the penalty parameter.
   double& Sigma() { return augfunc.Sigma(); }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! Function to be optimized.
   LagrangianFunction& function;

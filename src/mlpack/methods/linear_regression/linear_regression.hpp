@@ -119,9 +119,6 @@ class LinearRegression
     ar & data::CreateNVP(intercept, "intercept");
   }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   /**
    * The calculated B.

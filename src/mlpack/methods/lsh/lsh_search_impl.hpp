@@ -532,19 +532,6 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
 }
 
-template<typename SortPolicy>
-std::string LSHSearch<SortPolicy>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LSHSearch [" << this << "]" << std::endl;
-  convert << "  Reference set: " << referenceSet->n_rows << "x" ;
-  convert <<  referenceSet->n_cols << std::endl;
-  convert << "  Number of Projections: " << numProj << std::endl;
-  convert << "  Number of Tables: " << numTables << std::endl;
-  convert << "  Hash Width: " << hashWidth << std::endl;
-  return convert.str();
-}
-
 } // namespace neighbor
 } // namespace mlpack
 

@@ -691,19 +691,3 @@ void DTree::ComputeVariableImportance(arma::vec& importances) const
     nodes.push(curNode.Right());
   }
 }
-
-// Return string of object.
-std::string DTree::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Density Estimation Tree [" << this << "]" << std::endl;
-  convert << "  Start Node Index: " << start <<std::endl;
-  convert << "  End Node Index: " << end <<std::endl;
-  convert << "  Node Information:" << std::endl;
-  convert << "    Splitting Dimension: " << splitDim << std::endl;
-  convert << "    Splitting Value: " << splitValue << std::endl;
-  convert << "    Is Root: " << root << std::endl;
-  convert << "    # of points in Node to Total # of points" << ratio ;
-  convert << std::endl;
-  return convert.str();
-}

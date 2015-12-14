@@ -332,24 +332,6 @@ void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
   indices(pos, queryIndex) = neighbor;
 }
 
-// Return string of object.
-template<typename KernelType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-std::string FastMKS<KernelType, MatType, TreeType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "FastMKS [" << this << "]" << std::endl;
-  convert << "  Naive: " << naive << std::endl;
-  convert << "  Single: " << singleMode << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(),2);
-  convert << std::endl;
-  return convert.str();
-}
-
 } // namespace fastmks
 } // namespace mlpack
 

@@ -14,7 +14,6 @@ set(SOURCES
   option.hpp
   option.cpp
   option_impl.hpp
-  ostream_extra.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp

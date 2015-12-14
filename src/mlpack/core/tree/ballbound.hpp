@@ -183,11 +183,6 @@ class BallBound
   //! Serialize the bound.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
-
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
 };
 
 //! A specialization of BoundTraits for this bound type.

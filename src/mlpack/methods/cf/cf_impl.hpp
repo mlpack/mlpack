@@ -388,19 +388,6 @@ void CF<FactorizerType>::InsertNeighbor(const size_t queryIndex,
   recommendations(pos, queryIndex) = neighbor;
 }
 
-// Return string of object.
-template<typename FactorizerType>
-std::string CF<FactorizerType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Collaborative Filtering [" << this << "]" << std::endl;
-  //convert << "  Number of Recommendations: " << numRecs << std::endl;
-  //convert << "  Number of Users for Similarity: " << numUsersForSimilarity;
-  //convert << std::endl;
-  //convert << "  Data: " << data.n_rows << "x" << data.n_cols << std::endl;
-  return convert.str();
-}
-
 } // namespace mlpack
 } // namespace cf
 

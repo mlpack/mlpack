@@ -111,9 +111,6 @@ class KernelPCA
   //! Return whether or not the transformed data is centered.
   bool& CenterTransformedData() { return centerTransformedData; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! The instantiated kernel.
   KernelType kernel;

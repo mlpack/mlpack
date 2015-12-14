@@ -497,14 +497,3 @@ void LARS::CholeskyDelete(const size_t colToKill)
     matUtriCholFactor.shed_row(n);
   }
 }
-
-std::string LARS::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LARS [" << this << "]" << std::endl;
-  convert << "  Gram Matrix: " << matGram->n_rows << "x" << matGram->n_cols;
-  convert << std::endl;
-  convert << "  Tolerance: " << tolerance << std::endl;
-  return convert.str();
-}
-

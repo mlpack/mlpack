@@ -501,11 +501,6 @@ class CoverTree
 
  public:
   /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
-  /**
    * Serialize the tree.
    */
   template<typename Archive>

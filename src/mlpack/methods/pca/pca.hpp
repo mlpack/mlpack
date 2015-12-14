@@ -100,9 +100,6 @@ class PCA
   //! the data when PCA is performed.
   bool& ScaleData() { return scaleData; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! Whether or not the data will be scaled by standard deviation when PCA is
   //! performed.

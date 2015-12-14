@@ -409,9 +409,6 @@ class RASearch
   //! Modify the limit on the size of a node that can be approximation.
   size_t& SingleSampleLimit() { return singleSampleLimit; }
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Serialize the object.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);

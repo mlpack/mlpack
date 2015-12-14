@@ -248,9 +248,6 @@ class NeighborSearch
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Return the total number of base case evaluations performed during the last
   //! search.
   size_t BaseCases() const { return baseCases; }

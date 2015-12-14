@@ -327,11 +327,6 @@ class GMM
                 arma::Col<size_t>& labels) const;
 
   /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
-  /**
    * Serialize the GMM.
    */
   template<typename Archive>

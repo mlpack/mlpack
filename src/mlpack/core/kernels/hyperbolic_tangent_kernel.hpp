@@ -75,16 +75,6 @@ class HyperbolicTangentKernel
     ar & data::CreateNVP(offset, "offset");
   }
 
-  //! Convert object to string.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "HyperbolicTangentKernel [" << this << "]" << std::endl;
-    convert << "  Scale: " << scale << std::endl;
-    convert << "  Offset: " << offset << std::endl;
-    return convert.str();
-  }
-
  private:
   double scale;
   double offset;
