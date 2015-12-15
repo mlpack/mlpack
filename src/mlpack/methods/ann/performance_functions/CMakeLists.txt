@@ -4,6 +4,7 @@ set(SOURCES
   mse_function.hpp
   sse_function.hpp
   cee_function.hpp
+  sparse_function.hpp
 )
 
 # Add directory name to sources.
