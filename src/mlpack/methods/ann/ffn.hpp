@@ -37,12 +37,20 @@ class FFN
    *
    * @param network The network modules used to construct the network.
    * @param outputLayer The outputlayer used to evaluate the network.
-   */
-  FFN(const LayerTypes& network, OutputLayerType& outputLayer)
-    : network(network), outputLayer(outputLayer), trainError(0)
+   * @param performanceFunction Performance strategy used to claculate the error.
+   */  
+  template<typename Layer>
+  FFN(Layer &&network, OutputLayerType &outputLayer,
+      PerformanceFunction performanceFunction = PerformanceFunction())
+    : network(std::forward<Layer>(network)),
+      outputLayer(outputLayer),
+      performanceFunc(std::move(performanceFunction)),
+      trainError(0)
   {
-    // Nothing to do here.
-  }
+    static_assert(std::is_same<typename std::decay<Layer>::type,
+                  LayerTypes>::value,
+                  "The type of network must be LayerTypes");
+  }  
 
   /**
    * Run a single iteration of the feed forward algorithm, using the given
@@ -71,7 +79,7 @@ class FFN
   template <typename InputType, typename ErrorType>
   void FeedBackward(const InputType& /* unused */, const ErrorType& error)
   {
-    Backward(error, network);
+    Backward<>(error, network);
     UpdateGradients<>(network);
   }
 
@@ -119,7 +127,7 @@ class FFN
     deterministic = false;
     ResetParameter(network);
 
-    Forward(input, network);
+    Forward(input, network);    
     return OutputError(target, error, network);
   }
 
@@ -127,6 +135,16 @@ class FFN
   double Error() const
   {
     return trainError;
+  }
+
+  LayerTypes& Network()
+  {
+    return network;
+  }
+
+  LayerTypes const& Network() const
+  {
+    return network;
   }
 
  private:
@@ -188,7 +206,7 @@ class FFN
 
     std::get<I>(t).Forward(std::get<I>(t).InputParameter(),
                            std::get<I>(t).OutputParameter());
-
+    
     ForwardTail<I + 1, Tp...>(t);
   }
 
@@ -205,7 +223,7 @@ class FFN
   {
     std::get<I>(t).Forward(std::get<I - 1>(t).OutputParameter(),
                            std::get<I>(t).OutputParameter());
-
+    
     ForwardTail<I + 1, Tp...>(t);
   }
 
@@ -245,10 +263,9 @@ class FFN
     outputLayer.CalculateError(
         std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target, error);
 
-    // Masures the network's performance with the specified performance
+    // Measures the network's performance with the specified performance
     // function.
-    return PerformanceFunction::Error(
-        std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target);
+    return performanceFunc.Error(network, target, error);
   }
 
   /**
@@ -267,7 +284,7 @@ class FFN
   {
     std::get<sizeof...(Tp) - I>(t).Backward(
         std::get<sizeof...(Tp) - I>(t).OutputParameter(), error,
-        std::get<sizeof...(Tp) - I>(t).Delta());
+        std::get<sizeof...(Tp) - I>(t).Delta());    
 
     BackwardTail<I + 1, DataType, Tp...>(error, t);
   }
@@ -280,11 +297,11 @@ class FFN
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I < (sizeof...(Tp)), void>::type
   BackwardTail(const DataType& error, std::tuple<Tp...>& t)
-  {
+  {    
     std::get<sizeof...(Tp) - I>(t).Backward(
         std::get<sizeof...(Tp) - I>(t).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(t).Delta(),
-        std::get<sizeof...(Tp) - I>(t).Delta());
+        std::get<sizeof...(Tp) - I>(t).Delta());   
 
     BackwardTail<I + 1, DataType, Tp...>(error, t);
   }
@@ -297,19 +314,17 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
   typename std::enable_if<I == Max, void>::type
   UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& t)
-  {
+  {   
     Update(std::get<I>(t), std::get<I>(t).OutputParameter(),
-           std::get<I + 1>(t).Delta());
-
+           std::get<I + 1>(t).Delta());    
+		   
     UpdateGradients<I + 1, Max, Tp...>(t);
   }
 
@@ -318,7 +333,7 @@ class FFN
       HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Update(T& t, P& /* unused */, D& delta)
   {
-    t.Gradient(delta, t.Gradient());
+    t.Gradient(delta, t.Gradient());    
     t.Optimizer().Update();
   }
 
@@ -337,16 +352,14 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
   typename std::enable_if<I == Max, void>::type
   ApplyGradients(std::tuple<Tp...>& /* unused */)
   {
     /* Nothing to do here */
   }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
   typename std::enable_if<I < Max, void>::type
   ApplyGradients(std::tuple<Tp...>& t)
   {
@@ -390,6 +403,9 @@ class FFN
   //! The outputlayer used to evaluate the network
   OutputLayerType& outputLayer;
 
+  //! Performance strategy used to claculate the error.
+  PerformanceFunction performanceFunc;
+
   //! The current training error of the network.
   double trainError;
 
@@ -412,7 +428,7 @@ class NetworkTraits<
   static const bool IsCNN = false;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
