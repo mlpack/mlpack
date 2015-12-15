@@ -79,7 +79,7 @@ class LayerTraits<MulticlassClassificationLayer>
  */
 using ClassificationLayer = MulticlassClassificationLayer;
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

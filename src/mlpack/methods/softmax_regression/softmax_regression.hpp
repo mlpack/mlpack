@@ -111,7 +111,7 @@ class SoftmaxRegression
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  void Predict(const arma::mat& testData, arma::vec& predictions);
+  void Predict(const arma::mat& testData, arma::Row<size_t>& predictions) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -141,7 +141,7 @@ class SoftmaxRegression
    * @return Objective value of the final point.
    */
   double Train(const arma::mat &data, const arma::Row<size_t>& labels,
-               const size_t numClasses); 
+               const size_t numClasses);
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }
@@ -167,14 +167,14 @@ class SoftmaxRegression
                           parameters.n_cols; }
 
   /**
-   * Serialize the SoftmaxRegression model. 
+   * Serialize the SoftmaxRegression model.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
     using mlpack::data::CreateNVP;
 
-    ar & CreateNVP(parameters, "parameters");   
+    ar & CreateNVP(parameters, "parameters");
     ar & CreateNVP(numClasses, "numClasses");
     ar & CreateNVP(lambda, "lambda");
     ar & CreateNVP(fitIntercept, "fitIntercept");
@@ -182,7 +182,7 @@ class SoftmaxRegression
 
  private:
   //! Parameters after optimization.
-  arma::mat parameters;  
+  arma::mat parameters;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

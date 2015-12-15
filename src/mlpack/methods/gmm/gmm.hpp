@@ -324,12 +324,7 @@ class GMM
    * @param labels Object which will be filled with labels.
    */
   void Classify(const arma::mat& observations,
-                arma::Col<size_t>& labels) const;
-
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
+                arma::Row<size_t>& labels) const;
 
   /**
    * Serialize the GMM.
@@ -353,8 +348,8 @@ class GMM
       const arma::vec& weights) const;
 };
 
-}; // namespace gmm
-}; // namespace mlpack
+} // namespace gmm
+} // namespace mlpack
 
 // Include implementation.
 #include "gmm_impl.hpp"

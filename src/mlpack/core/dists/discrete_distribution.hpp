@@ -163,16 +163,11 @@ class DiscreteDistribution
     ar & data::CreateNVP(probabilities, "probabilities");
   }
 
-  /*
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   arma::vec probabilities;
 };
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

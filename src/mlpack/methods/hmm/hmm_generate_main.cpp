@@ -46,7 +46,7 @@ struct Generate
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     mat observations;
-    Col<size_t> sequence;
+    Row<size_t> sequence;
 
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");

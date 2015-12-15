@@ -161,16 +161,10 @@ class Range
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
-
-  /**
-   * Returns a string representation of an object.
-   */
-  inline std::string ToString() const;
-
 };
 
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack
 
 // Include inlined implementation.
 #include "range_impl.hpp"

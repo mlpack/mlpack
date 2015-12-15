@@ -54,8 +54,7 @@ class RMSPROP
       function(function),
       lr(lr),
       alpha(alpha),
-      eps(eps),
-      meanSquaredGad(function.Weights())
+      eps(eps)
   {
     // Nothing to do here.
   }
@@ -158,7 +157,7 @@ class RMSPROP
   DataType gradient;
 }; // class RMSPROP
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

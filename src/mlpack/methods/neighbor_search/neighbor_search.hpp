@@ -100,7 +100,7 @@ class NeighborSearch
    *
    * This method will not copy the data matrix, but will take ownership of it,
    * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the construct that takes a
+   * would rather a copy be made, consider using the constructor that takes a
    * const reference to the data instead.
    *
    * @param referenceSet Set of reference points.
@@ -128,10 +128,10 @@ class NeighborSearch
    * copies absolutely must be avoided.
    *
    * @note
-   * Because tree-building (at least with BinarySpaceTree) modifies the ordering
-   * of a matrix, be sure you pass the modified matrix to this object!  In
-   * addition, mapping the points of the matrix back to their original indices
-   * is not done when this constructor is used.
+   * Mapping the points of the matrix back to their original indices is not done
+   * when this constructor is used, so if the tree type you are using maps
+   * points (like BinarySpaceTree), then you will have to perform the re-mapping
+   * manually.
    * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
@@ -248,9 +248,6 @@ class NeighborSearch
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
   //! Return the total number of base case evaluations performed during the last
   //! search.
   size_t BaseCases() const { return baseCases; }
@@ -300,6 +297,10 @@ class NeighborSearch
   size_t baseCases;
   //! The total number of scores (applicable for non-naive search).
   size_t scores;
+
+  //! If this is true, the reference tree bounds need to be reset on a call to
+  //! Search() without a query set.
+  bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
   friend class NSModel<SortPolicy>;

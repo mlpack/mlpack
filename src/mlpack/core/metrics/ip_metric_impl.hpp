@@ -68,17 +68,6 @@ void IPMetric<KernelType>::Serialize(Archive& ar,
   ar & data::CreateNVP(kernel, "kernel");
 }
 
-// Convert object to string.
-template<typename KernelType>
-std::string IPMetric<KernelType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "IPMetric [" << this << "]" << std::endl;
-  convert << "  Kernel: " << std::endl;
-  convert << util::Indent(kernel->ToString(), 2);
-  return convert.str();
-}
-
 // A specialization for the linear kernel, which actually just turns out to be
 // the Euclidean distance.
 template<>
@@ -89,7 +78,7 @@ inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
   return metric::LMetric<2, true>::Evaluate(a, b);
 }
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 #endif

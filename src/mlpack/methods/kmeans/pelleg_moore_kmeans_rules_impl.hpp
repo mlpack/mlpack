@@ -172,7 +172,7 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Rescore(
   return oldScore;
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

@@ -57,9 +57,6 @@ class IPMetric
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! The kernel we are using.
   KernelType* kernel;
@@ -67,8 +64,8 @@ class IPMetric
   bool kernelOwner;
 };
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 // Include implementation.
 #include "ip_metric_impl.hpp"

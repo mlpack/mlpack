@@ -27,7 +27,7 @@ class CLIDeleter
 //! Declare the deleter.
 static CLIDeleter cliDeleter;
 
-}; // namespace io
-}; // namespace mlpack
+} // namespace io
+} // namespace mlpack
 
 #endif

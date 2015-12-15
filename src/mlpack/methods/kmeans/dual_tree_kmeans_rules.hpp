@@ -20,7 +20,7 @@ class DualTreeKMeansRules
  public:
   DualTreeKMeansRules(const arma::mat& centroids,
                       const arma::mat& dataset,
-                      arma::Col<size_t>& assignments,
+                      arma::Row<size_t>& assignments,
                       arma::vec& upperBounds,
                       arma::vec& lowerBounds,
                       MetricType& metric,
@@ -53,7 +53,7 @@ class DualTreeKMeansRules
  private:
   const arma::mat& centroids;
   const arma::mat& dataset;
-  arma::Col<size_t>& assignments;
+  arma::Row<size_t>& assignments;
   arma::vec& upperBounds;
   arma::vec& lowerBounds;
   MetricType& metric;

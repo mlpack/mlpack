@@ -64,9 +64,21 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 
   // Modify the variances, as necessary.
   variances[emptyCluster] = 0;
-  // One has already been subtracted from clusterCounts[maxVarCluster].
-  variances[maxVarCluster] = (1.0 / (clusterCounts[maxVarCluster])) *
+  // One has already been subtracted from clusterCounts[maxVarCluster].  If
+  // EmptyCluster() is called again, we can't pull another point from
+  // maxVarCluster (we'd be making an empty cluster), so force a call to
+  // Precalculate() if EmptyCluster() is called again by changing
+  // this->iteration.
+  if (clusterCounts[maxVarCluster] <= 1)
+  {
+    variances[maxVarCluster] = 0;
+    --this->iteration;
+  }
+  else
+  {
+    variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
       ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] - maxDistance);
+  }
 
   // Output some debugging information.
   Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
@@ -136,7 +148,7 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
       variances[i] /= clusterCounts[i];
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

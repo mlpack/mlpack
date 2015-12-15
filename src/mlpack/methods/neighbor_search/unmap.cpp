@@ -60,5 +60,5 @@ void Unmap(const arma::Mat<size_t>& neighbors,
     neighborsOut[j] = referenceMap[neighbors[j]];
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack

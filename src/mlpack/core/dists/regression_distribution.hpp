@@ -63,11 +63,6 @@ class RegressionDistribution
     ar & data::CreateNVP(err, "err");
   }
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
   //! Return regression function.
   const regression::LinearRegression& Rf() const { return rf; }
   //! Modify regression function.
@@ -124,7 +119,7 @@ class RegressionDistribution
 };
 
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

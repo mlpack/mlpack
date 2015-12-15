@@ -54,6 +54,9 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
                                    ExtraInfoType* x)
 {
   std::ifstream ifs(modelFile);
+  if (ifs.fail())
+    Log::Fatal << "Cannot open model file '" << modelFile << "' for loading!"
+        << std::endl;
   ArchiveType ar(ifs);
 
   // Read in the unsigned integer that denotes the type of the model.
@@ -67,14 +70,17 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
     case HMMType::DiscreteHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
           HMM<DiscreteDistribution>>(ar, x);
+      break;
 
     case HMMType::GaussianHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
           HMM<GaussianDistribution>>(ar, x);
+      break;
 
     case HMMType::GaussianMixtureModelHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
           HMM<gmm::GMM<>>>(ar, x);
+      break;
 
     default:
       Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
@@ -122,6 +128,9 @@ template<typename ArchiveType, typename HMMType>
 void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
 {
   std::ofstream ofs(modelFile);
+  if (ofs.fail())
+    Log::Fatal << "Cannot open model file '" << modelFile << "' for saving!"
+        << std::endl;
   ArchiveType ar(ofs);
 
   // Write out the unsigned integer that denotes the type of the model.

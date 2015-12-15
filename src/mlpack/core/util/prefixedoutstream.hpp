@@ -120,36 +120,6 @@ class PrefixedOutStream
   bool ignoreInput;
 
  private:
-  HAS_MEM_FUNC(ToString, HasToString)
-
-  //! This handles forwarding all primitive types transparently.
-  template<typename T>
-  void CallBaseLogic(const T& s,
-      typename boost::disable_if<
-          boost::is_class<T>
-      >::type* = 0);
-
-  //! Forward all objects that do not implement a ToString() method.
-  template<typename T>
-  void CallBaseLogic(const T& s,
-      typename boost::enable_if<
-          boost::is_class<T>
-      >::type* = 0,
-      typename boost::disable_if<
-          HasToString<T, std::string(T::*)() const>
-      >::type* = 0);
-
-  //! Call ToString() on all objects that implement ToString() before
-  //! forwarding.
-  template<typename T>
-  void CallBaseLogic(const T& s,
-      typename boost::enable_if<
-          boost::is_class<T>
-      >::type* = 0,
-      typename boost::enable_if<
-          HasToString<T, std::string(T::*)() const>
-      >::type* = 0);
-
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
    * just a good idea to reduce copy-pasta.
@@ -177,8 +147,8 @@ class PrefixedOutStream
   bool fatal;
 };
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 // Template definitions.
 #include "prefixedoutstream_impl.hpp"

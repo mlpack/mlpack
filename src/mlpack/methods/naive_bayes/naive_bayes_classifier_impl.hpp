@@ -185,11 +185,13 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
     arma::mat diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
     arma::mat rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::vec exponents(diffs.n_cols);
-    for (size_t j = 0; j < diffs.n_cols; ++j)
-      exponents(j) = std::exp(arma::accu(diffs.col(j) % rhs.unsafe_col(j)));
+    for (size_t j = 0; j < diffs.n_cols; ++j) // log(exp(value)) == value
+      exponents(j) = arma::accu(diffs.col(j) % rhs.unsafe_col(j));
 
-    testProbs.col(i) += log(pow(2 * M_PI, (double) data.n_rows / -2.0) *
-        pow(det(arma::diagmat(invVar.col(i))), -0.5) * exponents);
+    // Calculate probability as sum of logarithm to decrease floating point
+    // errors.
+    testProbs.col(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
+        log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
   }
 
   // Now calculate the label.
@@ -206,7 +208,17 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
   return;
 }
 
-}; // namespace naive_bayes
-}; // namespace mlpack
+template<typename MatType>
+template<typename Archive>
+void NaiveBayesClassifier<MatType>::Serialize(Archive& ar,
+                                              const unsigned int /* version */)
+{
+  ar & data::CreateNVP(means, "means");
+  ar & data::CreateNVP(variances, "variances");
+  ar & data::CreateNVP(probabilities, "probabilities");
+}
+
+} // namespace naive_bayes
+} // namespace mlpack
 
 #endif

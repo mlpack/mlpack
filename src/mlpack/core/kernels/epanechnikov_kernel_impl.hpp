@@ -79,7 +79,7 @@ void EpanechnikovKernel::Serialize(Archive& ar,
   ar & data::CreateNVP(inverseBandwidthSquared, "inverseBandwidthSquared");
 }
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

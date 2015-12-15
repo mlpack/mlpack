@@ -174,7 +174,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    */
   void Train(const std::vector<arma::mat>& predictors,
              const std::vector<arma::vec>& responses,
-             const std::vector<arma::Col<size_t> >& stateSeq);
+             const std::vector<arma::Row<size_t> >& stateSeq);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -231,7 +231,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    */
   double Predict(const arma::mat& predictors,
                  const arma::vec& responses,
-                 arma::Col<size_t>& stateSeq) const;
+                 arma::Row<size_t>& stateSeq) const;
 
   /**
    * Compute the log-likelihood of the given predictors and responses.
@@ -326,8 +326,8 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
 
 };
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 // Include implementation.
 #include "hmm_regression_impl.hpp"

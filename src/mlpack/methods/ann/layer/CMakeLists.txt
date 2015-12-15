@@ -9,6 +9,8 @@ set(SOURCES
   linear_layer.hpp
   conv_layer.hpp
   pooling_layer.hpp
+  recurrent_layer.hpp
+  lstm_layer.hpp
 )
 
 # Add directory name to sources.

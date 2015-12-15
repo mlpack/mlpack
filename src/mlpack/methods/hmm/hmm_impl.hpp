@@ -195,7 +195,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
  */
 template<typename Distribution>
 void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
-                              const std::vector<arma::Col<size_t> >& stateSeq)
+                              const std::vector<arma::Row<size_t> >& stateSeq)
 {
   // Simple error checking.
   if (dataSeq.size() != stateSeq.size())
@@ -264,14 +264,23 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   {
     // Generate full sequence of observations for this state from the list of
     // emissions that are from this state.
-    arma::mat emissions(dimensionality, emissionList[state].size());
-    for (size_t i = 0; i < emissions.n_cols; i++)
+    if (emissionList[state].size() > 0)
     {
-      emissions.col(i) = dataSeq[emissionList[state][i].first].col(
-          emissionList[state][i].second);
-    }
+      arma::mat emissions(dimensionality, emissionList[state].size());
+      for (size_t i = 0; i < emissions.n_cols; i++)
+      {
+        emissions.col(i) = dataSeq[emissionList[state][i].first].col(
+            emissionList[state][i].second);
+      }
 
-    emission[state].Estimate(emissions);
+      emission[state].Estimate(emissions);
+    }
+    else
+    {
+      Log::Warn << "There are no observations in training data with hidden "
+          << "state " << state << "!  The corresponding emission distribution "
+          << "is likely to be meaningless." << std::endl;
+    }
   }
 }
 
@@ -321,7 +330,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
 template<typename Distribution>
 void HMM<Distribution>::Generate(const size_t length,
                                  arma::mat& dataSequence,
-                                 arma::Col<size_t>& stateSequence,
+                                 arma::Row<size_t>& stateSequence,
                                  const size_t startState) const
 {
   // Set vectors to the right size.
@@ -369,7 +378,7 @@ void HMM<Distribution>::Generate(const size_t length,
  */
 template<typename Distribution>
 double HMM<Distribution>::Predict(const arma::mat& dataSeq,
-                                  arma::Col<size_t>& stateSeq) const
+                                  arma::Row<size_t>& stateSeq) const
 {
   // This is an implementation of the Viterbi algorithm for finding the most
   // probable sequence of states to produce the observed data sequence.  We
@@ -553,25 +562,15 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   }
 }
 
-template<typename Distribution>
-std::string HMM<Distribution>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "HMM [" << this << "]" << std::endl;
-  convert << "  Dimensionality: " << dimensionality <<std::endl;
-  convert << "  Tolerance: " << tolerance <<std::endl;
-  convert << "  Transition matrix: " << transition.n_rows << "x" ;
-  convert << transition.n_cols << std::endl;
-  return convert.str();
-}
-
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
 void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(dimensionality, "dimensionality");
+  ar & data::CreateNVP(tolerance, "tolerance");
   ar & data::CreateNVP(transition, "transition");
+  ar & data::CreateNVP(initial, "initial");
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
@@ -587,7 +586,7 @@ void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
   }
 }
 
-}; // namespace hmm
-}; // namespace mlpack
+} // namespace hmm
+} // namespace mlpack
 
 #endif

@@ -283,8 +283,8 @@ class SparseAutoencoderFunction
   OutputLayer outputLayerFunc;
 };
 
-}; // namespace nn
-}; // namespace mlpack
+} // namespace nn
+} // namespace mlpack
 
 #include "sparse_autoencoder_function_impl.hpp"
 

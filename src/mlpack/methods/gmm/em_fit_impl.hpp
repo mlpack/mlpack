@@ -208,7 +208,7 @@ InitialClustering(const arma::mat& observations,
                   arma::vec& weights)
 {
   // Assignments from clustering.
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   // Run clustering algorithm.
   clusterer.Cluster(observations, dists.size(), assignments);

@@ -30,7 +30,9 @@ RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
     metric(metric),
     sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
-    lastReferenceIndex(referenceSet.n_cols)
+    lastReferenceIndex(referenceSet.n_cols),
+    baseCases(0),
+    scores(0)
 {
   // Nothing to do.
 }
@@ -53,6 +55,7 @@ double RangeSearchRules<MetricType, TreeType>::BaseCase(
 
   const double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
       referenceSet.unsafe_col(referenceIndex));
+  ++baseCases;
 
   // Update last indices, so we don't accidentally perform a base case twice.
   lastQueryIndex = queryIndex;
@@ -107,6 +110,7 @@ double RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
   else
   {
     distances = referenceNode.RangeDistance(querySet.unsafe_col(queryIndex));
+    ++scores;
   }
 
   // If the ranges do not overlap, prune this node.
@@ -176,6 +180,7 @@ double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
   {
     // Just perform the calculation.
     distances = referenceNode.RangeDistance(&queryNode);
+    ++scores;
   }
 
   // If the ranges do not overlap, prune this node.
@@ -249,7 +254,7 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
   }
 }
 
-}; // namespace range
-}; // namespace mlpack
+} // namespace range
+} // namespace mlpack
 
 #endif

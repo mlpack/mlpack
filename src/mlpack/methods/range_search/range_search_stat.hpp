@@ -39,12 +39,19 @@ class RangeSearchStat
   //! Modify the last distance evaluation.
   double& LastDistance() { return lastDistance; }
 
+  //! Serialize the statistic.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(lastDistance, "lastDistance");
+  }
+
  private:
   //! The last distance evaluation.
   double lastDistance;
 };
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

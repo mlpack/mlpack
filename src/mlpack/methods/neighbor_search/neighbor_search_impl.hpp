@@ -55,7 +55,7 @@ TreeType* BuildTree(
 template<typename MatType, typename TreeType>
 TreeType* BuildTree(
     MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
+    std::vector<size_t>& /* oldFromNew */,
     typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
     >::type = 0)
@@ -85,7 +85,8 @@ NeighborSearch(const MatType& referenceSetIn,
     singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing to do.
 }
@@ -114,7 +115,8 @@ NeighborSearch(MatType&& referenceSetIn,
     singleMode(!naive && singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing to do.
 }
@@ -139,7 +141,8 @@ NeighborSearch(Tree* referenceTree,
     singleMode(singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing else to initialize.
 }
@@ -164,7 +167,8 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     singleMode(singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
@@ -340,10 +344,13 @@ Search(const MatType& querySet,
   if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive)
+    {
       distancePtr = new arma::mat; // Query indices need to be mapped.
+      neighborPtr = new arma::Mat<size_t>;
+    }
 
     if (treeOwner)
-      neighborPtr = new arma::Mat<size_t>; // All indices need mapping.
+      neighborPtr = new arma::Mat<size_t>; // Reference indices need mapping.
   }
 
   // Set the size of the neighbor and distance matrices.
@@ -619,6 +626,29 @@ Search(const size_t k,
   }
   else
   {
+    // The dual-tree monochromatic search case may require resetting the bounds
+    // in the tree.
+    if (treeNeedsReset)
+    {
+      std::stack<Tree*> nodes;
+      nodes.push(referenceTree);
+      while (!nodes.empty())
+      {
+        Tree* node = nodes.top();
+        nodes.pop();
+
+        // Reset bounds of this node.
+        node->Stat().FirstBound() = SortPolicy::WorstDistance();
+        node->Stat().SecondBound() = SortPolicy::WorstDistance();
+        node->Stat().Bound() = SortPolicy::WorstDistance();
+        node->Stat().LastDistance() = 0.0;
+
+        // Then add the children.
+        for (size_t i = 0; i < node->NumChildren(); ++i)
+          nodes.push(&node->Child(i));
+      }
+    }
+
     // Create the traverser.
     TraversalType<RuleType> traverser(rules);
 
@@ -629,6 +659,9 @@ Search(const size_t k,
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
+    // Next time we perform this search, we'll need to reset the tree.
+    treeNeedsReset = true;
   }
 
   Timer::Stop("computing_neighbors");
@@ -656,30 +689,6 @@ Search(const size_t k,
   }
 }
 
-// Return a String of the Object.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class TraversalType>
-std::string NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-                           TraversalType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "NeighborSearch [" << this << "]" << std::endl;
-  convert << "  Reference set: " << referenceSet->n_rows << "x" ;
-  convert << referenceSet->n_cols << std::endl;
-  if (referenceTree)
-    convert << "  Reference tree: " << referenceTree << std::endl;
-  convert << "  Tree owner: " << treeOwner << std::endl;
-  convert << "  Naive: " << naive << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(),2);
-  return convert.str();
-}
-
 //! Serialize the NeighborSearch model.
 template<typename SortPolicy,
          typename MetricType,
@@ -697,6 +706,7 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
   // Serialize preferences for search.
   ar & CreateNVP(naive, "naive");
   ar & CreateNVP(singleMode, "singleMode");
+  ar & CreateNVP(treeNeedsReset, "treeNeedsReset");
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -751,6 +761,13 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
       metric = referenceTree->Metric(); // Get the metric from the tree.
       setOwner = false;
     }
+  }
+
+  // Reset base cases and scores.
+  if (Archive::is_loading::value)
+  {
+    baseCases = 0;
+    scores = 0;
   }
 }
 

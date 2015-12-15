@@ -84,9 +84,6 @@ class LRSDPFunction
   //! Modify the SDP object representing the problem.
   SDPType& SDP() { return sdp; }
 
-  //! Return string representation of object.
-  std::string ToString() const;
-
  private:
 
   //! SDP object representing the problem
@@ -115,8 +112,8 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
     const arma::mat& coordinates,
     arma::mat& gradient) const;
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation
 #include "lrsdp_function_impl.hpp"

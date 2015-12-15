@@ -34,7 +34,7 @@ class KMeansSelection
    */
   const static arma::mat* Select(const arma::mat& data, const size_t m)
   {
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     arma::mat* centroids = new arma::mat;
 
     // Perform the K-Means clustering method.
@@ -45,7 +45,7 @@ class KMeansSelection
   }
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

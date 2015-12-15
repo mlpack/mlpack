@@ -110,8 +110,8 @@ public:
   size_t nm;
 }; // class SimpleResidueTermination
 
-}; // namespace amf
-}; // namespace mlpack
+} // namespace amf
+} // namespace mlpack
 
 
 #endif // _MLPACK_METHODS_AMF_SIMPLERESIDUETERMINATION_HPP_INCLUDED

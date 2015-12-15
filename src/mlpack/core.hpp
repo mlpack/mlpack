@@ -49,9 +49,10 @@
  *
  * A full list of executables is given below:
  *
- * allkfn, allknn, emst, gmm, hmm_train, hmm_loglik, hmm_viterbi, hmm_generate,
- * kernel_pca, kmeans, lars, linear_regression, local_coordinate_coding, mvu,
- * nbc, nca, pca, radical, sparse_coding
+ * allkfn, allknn, det, emst, gmm, hmm_train, hmm_loglik, hmm_viterbi,
+ * hmm_generate, kernel_pca, kmeans, lars, linear_regression,
+ * local_coordinate_coding, logistic_regression, lsh, mvu, nbc, nca, pca,
+ * radical, range_search, softmax_regression, sparse_coding
  *
  * @section tutorial Tutorials
  *
@@ -141,12 +142,16 @@
  *   - Udit Saxena <saxena.udit@gmail.com>
  *   - Stephen Tu <tu.stephenl@gmail.com>
  *   - Jaskaran Singh <jaskaranvirdi@gmail.com>
+ *   - Shangtong Zhang <zhangshangtong.cpp@icloud.com>
  *   - Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
  *   - Vladimir Glazachev <glazachev.vladimir@gmail.com>
  *   - QiaoAn Chen <kazenoyumechen@gmail.com>
  *   - Janzen Brewer <jahabrewer@gmail.com>
  *   - Trung Dinh <dinhanhtrung@gmail.com>
  *   - Tham Ngap Wei <thamngapwei@gmail.com>
+ *   - Grzegorz Krajewski <krajekg@gmail.com>
+ *   - Joseph Mariadassou <joe.mariadassou@gmail.com>
+ *   - Pavel Zhigulin <pashaworking@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -156,12 +161,12 @@
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/util/ostream_extra.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/random_basis.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/math/round.hpp>

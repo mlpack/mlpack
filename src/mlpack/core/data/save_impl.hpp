@@ -46,8 +46,11 @@ bool Save(const std::string& filename,
 
   // Catch errors opening the file.
   std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+#else
   stream.open(filename.c_str(), std::fstream::out);
-
+#endif
   if (!stream.is_open())
   {
     Timer::Stop("saving_data");
@@ -198,13 +201,24 @@ bool Save(const std::string& filename,
   }
 
   // Open the file to save to.
-  std::ofstream ofs(filename);
+  std::ofstream ofs;
+#ifdef _WIN32
+  if (f == format::binary) // Open non-text types in binary mode on Windows.
+    ofs.open(filename, std::ofstream::out | std::ofstream::binary);
+  else
+    ofs.open(filename, std::ofstream::out);
+#else
+  ofs.open(filename, std::ofstream::out);
+#endif
+
   if (!ofs.is_open())
   {
     if (fatal)
-      Log::Fatal << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Fatal << "Unable to open file '" << filename << "' to save object '"
+          << name << "'." << std::endl;
     else
-      Log::Warn << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Warn << "Unable to open file '" << filename << "' to save object '"
+          << name << "'." << std::endl;
 
     return false;
   }

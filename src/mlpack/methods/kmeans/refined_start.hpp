@@ -54,7 +54,7 @@ class RefinedStart
   template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments) const;
+               arma::Row<size_t>& assignments) const;
 
   //! Get the number of samplings that will be performed.
   size_t Samplings() const { return samplings; }

@@ -57,7 +57,7 @@ inline void KMeans<
     MatType>::
 Cluster(const MatType& data,
         const size_t clusters,
-        arma::Col<size_t>& assignments,
+        arma::Row<size_t>& assignments,
         const bool initialGuess)
 {
   arma::mat centroids(data.n_rows, clusters);
@@ -113,11 +113,11 @@ Cluster(const MatType& data,
     // The partitioner gives assignments, so we need to calculate centroids from
     // those assignments.  This is probably not the most efficient way to do
     // this, so maybe refactoring should be considered in the future.
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     partitioner.Cluster(data, clusters, assignments);
 
     // Calculate initial centroids.
-    arma::Col<size_t> counts;
+    arma::Row<size_t> counts;
     counts.zeros(clusters);
     centroids.zeros(data.n_rows, clusters);
     for (size_t i = 0; i < data.n_cols; ++i)
@@ -210,7 +210,7 @@ void KMeans<
     MatType>::
 Cluster(const MatType& data,
         const size_t clusters,
-        arma::Col<size_t>& assignments,
+        arma::Row<size_t>& assignments,
         arma::mat& centroids,
         const bool initialAssignmentGuess,
         const bool initialCentroidGuess)
@@ -224,7 +224,7 @@ Cluster(const MatType& data,
           << data.n_cols << ")!" << std::endl;
 
     // Calculate initial centroids.
-    arma::Col<size_t> counts;
+    arma::Row<size_t> counts;
     counts.zeros(clusters);
     centroids.zeros(data.n_rows, clusters);
     for (size_t i = 0; i < data.n_cols; ++i)
@@ -270,26 +270,6 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-std::string KMeans<MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "KMeans [" << this << "]" << std::endl;
-  convert << "  Max Iterations: " << maxIterations << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(), 2);
-  convert << std::endl;
-  return convert.str();
-}
-
-template<typename MetricType,
-         typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
 template<typename Archive>
 void KMeans<MetricType,
             InitialPartitionPolicy,
@@ -303,5 +283,5 @@ void KMeans<MetricType,
   ar & data::CreateNVP(emptyClusterAction, "emptyClusterAction");
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack

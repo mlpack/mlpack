@@ -135,7 +135,7 @@ GetNewFeatures(const arma::mat& data,
   ActivateFunction::fn(input, features);
 }
 
-}; // namespace nn
-}; // namespace mlpack
+} // namespace nn
+} // namespace mlpack
 
 #endif

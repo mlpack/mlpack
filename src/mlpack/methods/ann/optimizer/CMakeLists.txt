@@ -1,7 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  ada_delta.hpp
+  adam.hpp
   rmsprop.hpp
+  steepest_descent.hpp
 )
 
 # Add directory name to sources.

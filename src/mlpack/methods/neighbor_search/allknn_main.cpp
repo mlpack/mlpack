@@ -62,8 +62,8 @@ PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star'.",
-    "t", "kd");
+PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
+    "'ball'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
     if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file "
-          << "is specified" << endl;
+      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
+          << "specified." << endl;
   }
 
   // The user should give something to do...
@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
       !CLI::HasParam("k"))
     Log::Warn << "An output file for nearest neighbor search is given ("
         << "--neighbors_file or --distances_file), but nearest neighbor search "
-        << "is not being performed because k (--k) is not specified!" << endl;
+        << "is not being performed because k (--k) is not specified!  No "
+        << "results will be saved." << endl;
 
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
@@ -161,9 +162,11 @@ int main(int argc, char *argv[])
       tree = KNNModel::R_TREE;
     else if (treeType == "r-star")
       tree = KNNModel::R_STAR_TREE;
+    else if (treeType == "ball")
+      tree = KNNModel::BALL_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', and 'r-star'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', and 'ball'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -172,12 +175,10 @@ int main(int argc, char *argv[])
     data::Load(referenceFile, referenceSet, true);
 
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")." 
+        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
-
-    knn.BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
@@ -190,12 +191,9 @@ int main(int argc, char *argv[])
         << endl;
 
     // Adjust singleMode and naive if necessary.
-    if (CLI::HasParam("single_mode"))
-      knn.SingleMode() = CLI::HasParam("single_mode");
-    if (CLI::HasParam("naive"))
-      knn.Naive() = CLI::HasParam("naive");
-    if (CLI::HasParam("leaf_size"))
-      knn.LeafSize() = (size_t) CLI::GetParam<int>("leaf_size");
+    knn.SingleMode() = CLI::HasParam("single_mode");
+    knn.Naive() = CLI::HasParam("naive");
+    knn.LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -209,7 +207,7 @@ int main(int argc, char *argv[])
     {
       data::Load(queryFile, queryData, true);
       Log::Info << "Loaded query data from '" << queryFile << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

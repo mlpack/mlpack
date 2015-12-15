@@ -15,5 +15,5 @@ std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
 // Global normal distribution.
 std::normal_distribution<> randNormalDist(0.0, 1.0);
 
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack

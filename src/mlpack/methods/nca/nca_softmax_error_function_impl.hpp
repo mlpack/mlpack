@@ -17,7 +17,7 @@ namespace nca {
 template<typename MetricType>
 SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     const arma::mat& dataset,
-    const arma::Col<size_t>& labels,
+    const arma::Row<size_t>& labels,
     MetricType metric) :
     dataset(dataset),
     labels(labels),
@@ -267,19 +267,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   precalculated = true;
 }
 
-template<typename MetricType>
-std::string SoftmaxErrorFunction<MetricType>::ToString() const{
-  std::ostringstream convert;
-  convert << "Sofmax Error Function [" << this << "]" << std::endl;
-  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols
-      << std::endl;
-  convert << "  Labels: " << labels.n_elem << std::endl;
-  //convert << "Metric: " << metric << std::endl;
-  convert << "  Precalculated: " << precalculated << std::endl;
-  return convert.str();
-}
-
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 #endif

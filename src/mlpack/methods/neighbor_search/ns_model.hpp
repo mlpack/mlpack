@@ -46,7 +46,8 @@ class NSModel
     KD_TREE,
     COVER_TREE,
     R_TREE,
-    R_STAR_TREE
+    R_STAR_TREE,
+    BALL_TREE
   };
 
  private:
@@ -63,13 +64,17 @@ class NSModel
   using NSType = NeighborSearch<SortPolicy,
                                 metric::EuclideanDistance,
                                 arma::mat,
-                                TreeType>;
+                                TreeType,
+                                TreeType<metric::EuclideanDistance,
+                                    NeighborSearchStat<SortPolicy>,
+                                    arma::mat>::template DualTreeTraverser>;
 
   // Only one of these pointers will be non-NULL.
   NSType<tree::KDTree>* kdTreeNS;
   NSType<tree::StandardCoverTree>* coverTreeNS;
   NSType<tree::RTree>* rTreeNS;
   NSType<tree::RStarTree>* rStarTreeNS;
+  NSType<tree::BallTree>* ballTreeNS;
 
  public:
   /**
@@ -81,7 +86,7 @@ class NSModel
   //! Clean memory, if necessary.
   ~NSModel();
 
-  //! Serialize the kNN model.
+  //! Serialize the neighbor search model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
@@ -120,6 +125,8 @@ class NSModel
   void Search(const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
+
+  std::string TreeName() const;
 };
 
 } // namespace neighbor

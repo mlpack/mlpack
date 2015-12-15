@@ -171,7 +171,7 @@ class Adam
   DataType variance;
 }; // class Adam
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

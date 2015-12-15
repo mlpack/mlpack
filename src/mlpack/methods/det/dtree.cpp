@@ -15,9 +15,16 @@ using namespace det;
 DTree::DTree() :
     start(0),
     end(0),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(-DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -31,9 +38,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(totalPoints),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(LogNegativeError(totalPoints)),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -41,12 +55,18 @@ DTree::DTree(const arma::vec& maxVals,
 DTree::DTree(arma::mat& data) :
     start(0),
     end(data.n_cols),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
+    root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
+    bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 {
-  maxVals.set_size(data.n_rows);
-  minVals.set_size(data.n_rows);
-
   // Initialize to first column; values will be overwritten if necessary.
   maxVals = data.col(0);
   minVals = data.col(0);
@@ -64,9 +84,6 @@ DTree::DTree(arma::mat& data) :
   }
 
   logNegError = LogNegativeError(data.n_cols);
-
-  bucketTag = -1;
-  root = true;
 }
 
 
@@ -80,9 +97,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(end),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(logNegError),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(false),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -96,9 +120,16 @@ DTree::DTree(const arma::vec& maxVals,
     end(end),
     maxVals(maxVals),
     minVals(minVals),
+    splitDim(size_t(-1)),
+    splitValue(DBL_MAX),
     logNegError(LogNegativeError(totalPoints)),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
     root(false),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
     bucketTag(-1),
+    alphaUpper(0.0),
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
@@ -287,8 +318,8 @@ double DTree::Grow(arma::mat& data,
       logVolume += std::log(maxVals[i] - minVals[i]);
 
   // Check if node is large enough to split.
-  if ((size_t) (end - start) > maxLeafSize) {
-
+  if ((size_t) (end - start) > maxLeafSize)
+  {
     // Find the split.
     size_t dim;
     double splitValueTmp;
@@ -659,20 +690,4 @@ void DTree::ComputeVariableImportance(arma::vec& importances) const
     nodes.push(curNode.Left());
     nodes.push(curNode.Right());
   }
-}
-
-// Return string of object.
-std::string DTree::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Density Estimation Tree [" << this << "]" << std::endl;
-  convert << "  Start Node Index: " << start <<std::endl;
-  convert << "  End Node Index: " << end <<std::endl;
-  convert << "  Node Information:" << std::endl;
-  convert << "    Splitting Dimension: " << splitDim << std::endl;
-  convert << "    Splitting Value: " << splitValue << std::endl;
-  convert << "    Is Root: " << root << std::endl;
-  convert << "    # of points in Node to Total # of points" << ratio ;
-  convert << std::endl;
-  return convert.str();
 }

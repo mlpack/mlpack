@@ -39,6 +39,28 @@ TreeType* BuildTree(
   return new TreeType(dataset);
 }
 
+template<typename TreeType>
+TreeType* BuildTree(
+    typename TreeType::Mat&& dataset,
+    std::vector<size_t>& oldFromNew,
+    const typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset), oldFromNew);
+}
+
+template<typename TreeType>
+TreeType* BuildTree(
+    typename TreeType::Mat&& dataset,
+    const std::vector<size_t>& /* oldFromNew */,
+    const typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset));
+}
+
 template<typename MetricType,
          typename MatType,
          template<typename TreeMetricType,
@@ -51,11 +73,40 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const MetricType metric) :
     referenceTree(naive ? NULL : BuildTree<Tree>(
         const_cast<MatType&>(referenceSetIn), oldFromNewReferences)),
-    referenceSet(naive ? referenceSetIn : referenceTree->Dataset()),
+    referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
+    setOwner(false),
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
+{
+  // Nothing to do.
+}
+
+// Move constructor.
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    MatType&& referenceSet,
+    const bool naive,
+    const bool singleMode,
+    const MetricType metric) :
+    referenceTree(naive ? NULL : BuildTree<Tree>(std::move(referenceSet),
+        oldFromNewReferences)),
+    referenceSet(naive ? new MatType(std::move(referenceSet)) :
+        &referenceTree->Dataset()),
+    treeOwner(!naive),
+    setOwner(naive),
+    naive(naive),
+    singleMode(!naive && singleMode),
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // Nothing to do.
 }
@@ -70,13 +121,44 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const bool singleMode,
     const MetricType metric) :
     referenceTree(referenceTree),
-    referenceSet(referenceTree->Dataset()),
+    referenceSet(&referenceTree->Dataset()),
     treeOwner(false),
+    setOwner(false),
     naive(false),
     singleMode(singleMode),
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // Nothing else to initialize.
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    const bool naive,
+    const bool singleMode,
+    const MetricType metric) :
+    referenceTree(NULL),
+    referenceSet(new MatType()), // Empty matrix.
+    treeOwner(false),
+    setOwner(true),
+    naive(naive),
+    singleMode(singleMode),
+    metric(metric),
+    baseCases(0),
+    scores(0)
+{
+  // Build the tree on the empty dataset, if necessary.
+  if (!naive)
+  {
+    referenceTree = BuildTree<Tree>(const_cast<MatType&>(*referenceSet),
+        oldFromNewReferences);
+    treeOwner = true;
+  }
 }
 
 template<typename MetricType,
@@ -88,6 +170,106 @@ RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)
     delete referenceTree;
+  if (setOwner && referenceSet)
+    delete referenceSet;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Train(
+    const MatType& referenceSet)
+{
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
+  // Rebuild the tree, if necessary.
+  if (!naive)
+  {
+    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
+        oldFromNewReferences);
+    treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && this->referenceSet)
+    delete this->referenceSet;
+
+  if (!naive)
+    this->referenceSet = &referenceTree->Dataset();
+  else
+    this->referenceSet = &referenceSet;
+  setOwner = false;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Train(
+    MatType&& referenceSet)
+{
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
+  // We may need to rebuild the tree.
+  if (!naive)
+  {
+    referenceTree = BuildTree<Tree>(std::move(referenceSet),
+        oldFromNewReferences);
+    treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && this->referenceSet)
+    delete this->referenceSet;
+
+  if (!naive)
+  {
+    this->referenceSet = &referenceTree->Dataset();
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    setOwner = true;
+  }
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Train(
+  Tree* referenceTree)
+{
+  if (naive)
+    throw std::invalid_argument("cannot train on given reference tree when "
+        "naive search (without trees) is desired");
+
+  if (treeOwner && referenceTree)
+    delete this->referenceTree;
+  if (setOwner && referenceSet)
+    delete this->referenceSet;
+
+  this->referenceTree = referenceTree;
+  this->referenceSet = &referenceTree->Dataset();
+  treeOwner = false;
+  setOwner = false;
 }
 
 template<typename MetricType,
@@ -101,6 +283,15 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
+  if (querySet.n_rows != referenceSet->n_rows)
+  {
+    std::ostringstream oss;
+    oss << "RangeSearch::Search(): dimensionalities of query set ("
+        << querySet.n_rows << ") and reference set (" << referenceSet->n_rows
+        << ") do not match!";
+    throw std::invalid_argument(oss.str());
+  }
+
   Timer::Start("range_search/computing_neighbors");
 
   // This will hold mappings for query points, if necessary.
@@ -119,7 +310,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Query indices only need to be mapped if we are building the query tree
     // ourselves.
     if (!singleMode && !naive)
+    {
       distancePtr = new std::vector<std::vector<double>>;
+      neighborPtr = new std::vector<std::vector<size_t>>;
+    }
 
     // Reference indices only need to be mapped if we built the reference tree
     // ourselves.
@@ -136,26 +330,35 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, Tree> RuleType;
 
+  // Reset counts.
+  baseCases = 0;
+  scores = 0;
+
   if (naive)
   {
-    RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+    RuleType rules(*referenceSet, querySet, range, *neighborPtr, *distancePtr,
         metric);
 
     // The naive brute-force solution.
     for (size_t i = 0; i < querySet.n_cols; ++i)
-      for (size_t j = 0; j < referenceSet.n_cols; ++j)
+      for (size_t j = 0; j < referenceSet->n_cols; ++j)
         rules.BaseCase(i, j);
+
+    baseCases += (querySet.n_cols * referenceSet->n_cols);
   }
   else if (singleMode)
   {
     // Create the traverser.
-    RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+    RuleType rules(*referenceSet, querySet, range, *neighborPtr, *distancePtr,
         metric);
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
+
+    baseCases += rules.BaseCases();
+    scores += rules.Scores();
   }
   else // Dual-tree recursion.
   {
@@ -168,11 +371,14 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     Timer::Start("range_search/computing_neighbors");
 
     // Create the traverser.
-    RuleType rules(referenceSet, queryTree->Dataset(), range, *neighborPtr,
+    RuleType rules(*referenceSet, queryTree->Dataset(), range, *neighborPtr,
         *distancePtr, metric);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
+
+    baseCases += rules.BaseCases();
+    scores += rules.Scores();
 
     // Clean up tree memory.
     delete queryTree;
@@ -282,7 +488,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, Tree> RuleType;
-  RuleType rules(referenceSet, queryTree->Dataset(), range, *neighborPtr,
+  RuleType rules(*referenceSet, queryTree->Dataset(), range, *neighborPtr,
       distances, metric);
 
   // Create the traverser.
@@ -291,6 +497,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   traverser.Traverse(*queryTree, *referenceTree);
 
   Timer::Stop("range_search/computing_neighbors");
+
+  baseCases = rules.BaseCases();
+  scores = rules.Scores();
 
   // Do we need to map indices?
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
@@ -336,21 +545,24 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   // Resize each vector.
   neighborPtr->clear(); // Just in case there was anything in it.
-  neighborPtr->resize(referenceSet.n_cols);
+  neighborPtr->resize(referenceSet->n_cols);
   distancePtr->clear();
-  distancePtr->resize(referenceSet.n_cols);
+  distancePtr->resize(referenceSet->n_cols);
 
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, Tree> RuleType;
-  RuleType rules(referenceSet, referenceSet, range, *neighborPtr, *distancePtr,
-      metric, true /* don't return the query point in the results */);
+  RuleType rules(*referenceSet, *referenceSet, range, *neighborPtr,
+      *distancePtr, metric, true /* don't return the query in the results */);
 
   if (naive)
   {
     // The naive brute-force solution.
-    for (size_t i = 0; i < referenceSet.n_cols; ++i)
-      for (size_t j = 0; j < referenceSet.n_cols; ++j)
+    for (size_t i = 0; i < referenceSet->n_cols; ++i)
+      for (size_t j = 0; j < referenceSet->n_cols; ++j)
         rules.BaseCase(i, j);
+
+    baseCases = (referenceSet->n_cols * referenceSet->n_cols);
+    scores = 0;
   }
   else if (singleMode)
   {
@@ -358,8 +570,11 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
-    for (size_t i = 0; i < referenceSet.n_cols; ++i)
+    for (size_t i = 0; i < referenceSet->n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
+
+    baseCases = rules.BaseCases();
+    scores = rules.Scores();
   }
   else // Dual-tree recursion.
   {
@@ -367,6 +582,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*referenceTree, *referenceTree);
+
+    baseCases = rules.BaseCases();
+    scores = rules.Scores();
   }
 
   Timer::Stop("range_search/computing_neighbors");
@@ -375,9 +593,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.clear();
-    neighbors.resize(referenceSet.n_cols);
+    neighbors.resize(referenceSet->n_cols);
     distances.clear();
-    distances.resize(referenceSet.n_cols);
+    distances.resize(referenceSet->n_cols);
 
     for (size_t i = 0; i < distances.size(); i++)
     {
@@ -404,17 +622,77 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
+template<typename Archive>
+void RangeSearch<MetricType, MatType, TreeType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  std::ostringstream convert;
-  convert << "Range Search  [" << this << "]" << std::endl;
-  if (treeOwner)
-    convert << "  Tree Owner: TRUE" << std::endl;
+  using data::CreateNVP;
+
+  // Serialize preferences for search.
+  ar & CreateNVP(naive, "naive");
+  ar & CreateNVP(singleMode, "singleMode");
+
+  // Reset base cases and scores if we are loading.
+  if (Archive::is_loading::value)
+  {
+    baseCases = 0;
+    scores = 0;
+  }
+
+  // If we are doing naive search, we serialize the dataset.  Otherwise we
+  // serialize the tree.
   if (naive)
-    convert << "  Naive: TRUE" << std::endl;
-  convert << "  Metric: " << std::endl <<
-      mlpack::util::Indent(metric.ToString(),2);
-  return convert.str();
+  {
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      setOwner = true;
+    }
+
+    ar & CreateNVP(referenceSet, "referenceSet");
+    ar & CreateNVP(metric, "metric");
+
+    // If we are loading, set the tree to NULL and clean up memory if necessary.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      referenceTree = NULL;
+      oldFromNewReferences.clear();
+      treeOwner = false;
+    }
+  }
+  else
+  {
+    // Delete the current reference tree, if necessary and if we are loading.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      // After we load the tree, we will own it.
+      treeOwner = true;
+    }
+
+    ar & CreateNVP(referenceTree, "referenceTree");
+    ar & CreateNVP(oldFromNewReferences, "oldFromNewReferences");
+
+    // If we are loading, set the dataset accordingly and clean up memory if
+    // necessary.
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      referenceSet = &referenceTree->Dataset();
+      metric = referenceTree->Metric(); // Get the metric from the tree.
+      setOwner = false;
+    }
+  }
 }
 
 } // namespace range

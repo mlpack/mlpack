@@ -49,7 +49,7 @@ class NaiveBayesClassifier
    * Example use:
    * @code
    * extern arma::mat training_data, testing_data;
-   * extern arma::Col<size_t> labels;
+   * extern arma::Row<size_t> labels;
    * NaiveBayesClassifier nbc(training_data, labels, 5);
    * @endcode
    *
@@ -110,7 +110,7 @@ class NaiveBayesClassifier
    *
    * @code
    * arma::mat test_data; // each column is a test point
-   * arma::Col<size_t> results;
+   * arma::Row<size_t> results;
    * ...
    * nbc.Classify(test_data, &results);
    * @endcode
@@ -134,6 +134,10 @@ class NaiveBayesClassifier
   const arma::vec& Probabilities() const { return probabilities; }
   //! Modify the prior probabilities for each class.
   arma::vec& Probabilities() { return probabilities; }
+
+  //! Serialize the classifier.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Sample mean for each class.

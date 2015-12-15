@@ -53,17 +53,9 @@ class LinearKernel
   //! Serialize the kernel (it has no members... do nothing).
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
-
-  //! Return a string representation of the kernel.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "LinearKernel [" << this << "]" << std::endl;
-    return convert.str();
-  }
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

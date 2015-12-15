@@ -366,7 +366,7 @@ namespace util {
 // program being run.
 class ProgramDoc;
 
-}; // namespace util
+} // namespace util
 
 /**
  * Aids in the extensibility of CLI by focusing potential
@@ -767,7 +767,7 @@ class CLI
   CLI(const CLI& other);
 };
 
-}; // namespace mlpack
+} // namespace mlpack
 
 // Include the actual definitions of templated methods
 #include "cli_impl.hpp"

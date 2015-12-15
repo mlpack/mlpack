@@ -237,7 +237,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   if (CLI::HasParam("output_file") || CLI::HasParam("in_place"))
   {
     // We need to get the assignments.
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     kmeans.Cluster(dataset, clusters, assignments, centroids,
         false, initialCentroidGuess);
     Timer::Stop("clustering");
@@ -247,11 +247,11 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
     {
       // Add the column of assignments to the dataset; but we have to convert
       // them to type double first.
-      arma::vec converted(assignments.n_elem);
+      arma::rowvec converted(assignments.n_elem);
       for (size_t i = 0; i < assignments.n_elem; i++)
         converted(i) = (double) assignments(i);
 
-      dataset.insert_rows(dataset.n_rows, trans(converted));
+      dataset.insert_rows(dataset.n_rows, converted);
 
       // Save the dataset.
       data::Save(inputFile, dataset);
@@ -262,17 +262,16 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       {
         // Save only the labels.
         string outputFile = CLI::GetParam<string>("output_file");
-        arma::Mat<size_t> output = trans(assignments);
-        data::Save(outputFile, output);
+        data::Save(outputFile, assignments);
       }
       else
       {
         // Convert the assignments to doubles.
-        arma::vec converted(assignments.n_elem);
+        arma::rowvec converted(assignments.n_elem);
         for (size_t i = 0; i < assignments.n_elem; i++)
           converted(i) = (double) assignments(i);
 
-        dataset.insert_rows(dataset.n_rows, trans(converted));
+        dataset.insert_rows(dataset.n_rows, converted);
 
         // Now save, in the different file.
         string outputFile = CLI::GetParam<string>("output_file");

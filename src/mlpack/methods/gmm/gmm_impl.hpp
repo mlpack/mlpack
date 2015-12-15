@@ -346,7 +346,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
  */
 template<typename FittingType>
 void GMM<FittingType>::Classify(const arma::mat& observations,
-                                arma::Col<size_t>& labels) const
+                                arma::Row<size_t>& labels) const
 {
   // This is not the best way to do this!
 
@@ -392,35 +392,6 @@ double GMM<FittingType>::LogLikelihood(
   for (size_t j = 0; j < data.n_cols; j++)
     loglikelihood += log(accu(likelihoods.col(j)));
   return loglikelihood;
-}
-
-/**
-* Returns a string representation of this object.
-*/
-template<typename FittingType>
-std::string GMM<FittingType>::ToString() const
-{
-  std::ostringstream convert;
-  std::ostringstream data;
-  convert << "GMM [" << this << "]" << std::endl;
-  convert << "  Gaussians: " << gaussians << std::endl;
-  convert << "  Dimensionality: "<<dimensionality;
-  convert << std::endl;
-  // Secondary ostringstream so things can be indented properly.
-  for (size_t ind=0; ind < gaussians; ind++)
-  {
-    data << "Means of Gaussian " << ind << ": " << std::endl
-        << dists[ind].Mean();
-    data << std::endl;
-    data << "Covariances of Gaussian " << ind << ": " << std::endl ;
-    data << dists[ind].Covariance() << std::endl;
-    data << "Weight of Gaussian " << ind << ": " << std::endl ;
-    data << weights[ind] << std::endl;
-  }
-
-  convert << util::Indent(data.str());
-
-  return convert.str();
 }
 
 /**

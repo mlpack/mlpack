@@ -123,7 +123,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
-    lars.Regress(dictPrime, data.unsafe_col(i), beta, false);
+    lars.Train(dictPrime, data.unsafe_col(i), beta, false);
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }
@@ -307,18 +307,8 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
   double froNormResidual = norm(data - dictionary * codes, "fro");
   return std::pow(froNormResidual, 2.0) + lambda * weightedL1NormZ;
 }
-template<typename DictionaryInitializer>
-std::string LocalCoordinateCoding<DictionaryInitializer>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Local Coordinate Coding [" << this << "]" << std::endl;
-  convert << "  Number of Atoms: " << atoms << std::endl;
-  convert << "  Data: " << data.n_rows << "x" << data.n_cols << std::endl;
-  convert << "  Lambda: " << lambda << std::endl;
-  return convert.str();
-}
 
-}; // namespace lcc
-}; // namespace mlpack
+} // namespace lcc
+} // namespace mlpack
 
 #endif

@@ -210,7 +210,7 @@ class FFTConvolution
 
 };  // class FFTConvolution
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

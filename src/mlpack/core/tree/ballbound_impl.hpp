@@ -287,22 +287,7 @@ void BallBound<VecType, TMetricType>::Serialize(
   ar & data::CreateNVP(ownsMetric, "ownsMetric");
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename VecType, typename TMetricType>
-std::string BallBound<VecType, TMetricType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "BallBound [" << this << "]" << std::endl;
-  convert << "  Radius:  " << radius << std::endl;
-  convert << "  Center:" << std::endl << center;
-  convert << "  ownsMetric: " << ownsMetric << std::endl;
-  convert << "  Metric:" << std::endl << metric->ToString();
-  return convert.str();
-}
-
-}; // namespace bound
-}; // namespace mlpack
+} // namespace bound
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

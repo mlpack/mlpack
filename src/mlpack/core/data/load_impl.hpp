@@ -15,6 +15,7 @@
 #include <mlpack/core/util/timers.hpp>
 
 #include <boost/serialization/serialization.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -60,8 +61,11 @@ bool Load(const std::string& filename,
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+#else
   stream.open(filename.c_str(), std::fstream::in);
-
+#endif
   if (!stream.is_open())
   {
     Timer::Stop("loading_data");
@@ -81,7 +85,7 @@ bool Load(const std::string& filename,
   if (extension == "csv" || extension == "tsv")
   {
     loadType = arma::diskio::guess_file_type(stream);
-    if (loadType == arma::csv_ascii) 
+    if (loadType == arma::csv_ascii)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
@@ -91,8 +95,27 @@ bool Load(const std::string& filename,
     else if (loadType == arma::raw_ascii) // .csv file can be tsv.
     {
       if (extension == "csv")
-        Log::Warn << "'" << filename << "' is not a standard csv file."
-            << std::endl;
+      {
+        // We should issue a warning, but we don't want to issue the warning if
+        // there is only one column in the CSV (since there will be no commas
+        // anyway, and it will be detected as arma::raw_ascii).
+        const std::streampos pos = stream.tellg();
+        std::string line;
+        std::getline(stream, line, '\n');
+        boost::trim(line);
+
+        // Reset stream position.
+        stream.seekg(pos);
+
+        // If there are no spaces or whitespace in the line, then we shouldn't
+        // print the warning.
+        if ((line.find(' ') != std::string::npos) ||
+            (line.find('\t') != std::string::npos))
+        {
+          Log::Warn << "'" << filename << "' is not a standard csv file."
+              << std::endl;
+        }
+      }
       stringType = "raw ASCII formatted data";
     }
     else
@@ -295,13 +318,24 @@ bool Load(const std::string& filename,
   }
 
   // Now load the given format.
-  std::ifstream ifs(filename);
+  std::ifstream ifs;
+#ifdef _WIN32 // Open non-text in binary mode on Windows.
+  if (f == format::binary)
+    ifs.open(filename, std::ifstream::in | std::ifstream::binary);
+  else
+    ifs.open(filename, std::ifstream::in);
+#else
+  ifs.open(filename, std::ifstream::in);
+#endif
+
   if (!ifs.is_open())
   {
     if (fatal)
-      Log::Fatal << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Fatal << "Unable to open file '" << filename << "' to load object '"
+          << name << "'." << std::endl;
     else
-      Log::Warn << "Unable to open file '" << filename << "'." << std::endl;
+      Log::Warn << "Unable to open file '" << filename << "' to load object '"
+          << name << "'." << std::endl;
 
     return false;
   }

@@ -975,7 +975,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[8];
+  KNNModel models[10];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -984,6 +984,8 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
   models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
   models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+  models[8] = KNNModel(KNNModel::TreeTypes::BALL_TREE, true);
+  models[9] = KNNModel(KNNModel::TreeTypes::BALL_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -993,7 +995,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
     arma::mat baselineDistances;
     knn.Search(queryData, 3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 8; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1016,13 +1018,13 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
-      for (size_t i = 0; i < distances.n_elem; ++i)
+      for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
-        if (std::abs(baselineDistances[i]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        if (std::abs(baselineDistances[k]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
         else
-          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
       }
     }
   }
@@ -1037,7 +1039,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[8];
+  KNNModel models[10];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -1046,6 +1048,8 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
   models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
   models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+  models[8] = KNNModel(KNNModel::TreeTypes::BALL_TREE, true);
+  models[0] = KNNModel(KNNModel::TreeTypes::BALL_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1055,7 +1059,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
     arma::mat baselineDistances;
     knn.Search(3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 8; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
@@ -1077,16 +1081,65 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
-      for (size_t i = 0; i < distances.n_elem; ++i)
+      for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
-        if (std::abs(baselineDistances[i]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        if (std::abs(baselineDistances[k]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
         else
-          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
       }
     }
   }
+}
+
+/**
+ * If we search twice with the same reference tree, the bounds need to be reset
+ * before the second search.  This test ensures that that happens, by making
+ * sure the number of scores and base cases are equivalent for each search.
+ */
+BOOST_AUTO_TEST_CASE(DoubleReferenceSearchTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  AllkNN knn(std::move(dataset));
+
+  arma::mat distances, secondDistances;
+  arma::Mat<size_t> neighbors, secondNeighbors;
+  knn.Search(3, neighbors, distances);
+  size_t baseCases = knn.BaseCases();
+  size_t scores = knn.Scores();
+
+  knn.Search(3, secondNeighbors, secondDistances);
+
+  BOOST_REQUIRE_EQUAL(knn.BaseCases(), baseCases);
+  BOOST_REQUIRE_EQUAL(knn.Scores(), scores);
+}
+
+/**
+ * Make sure that the neighborPtr matrix isn't accidentally deleted.
+ * See issue #478.
+ */
+BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+
+  // Build the tree ourselves.
+  std::vector<size_t> oldFromNewReferences;
+  AllkNN::Tree tree(dataset);
+  AllkNN allknn(&tree);
+
+  // Now make a query set.
+  arma::mat queryset = arma::randu<arma::mat>(5, 50);
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  allknn.Search(queryset, 3, neighbors, distances);
+
+  // These will (hopefully) fail is either the neighbors or the distances matrix
+  // has been accidentally deleted.
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

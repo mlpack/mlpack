@@ -123,9 +123,6 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
-  //! Return a string representation of the object.
-  std::string ToString() const;
-
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
@@ -144,8 +141,8 @@ class SGD
   bool shuffle;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation.
 #include "sgd_impl.hpp"

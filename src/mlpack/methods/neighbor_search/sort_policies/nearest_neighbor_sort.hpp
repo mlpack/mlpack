@@ -152,8 +152,8 @@ class NearestNeighborSort
   }
 };
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation of templated functions.
 #include "nearest_neighbor_sort_impl.hpp"

@@ -17,11 +17,11 @@ template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::
 SoftmaxRegression(const size_t inputSize,
                   const size_t numClasses,
-                  const bool fitIntercept) :    
+                  const bool fitIntercept) :
     numClasses(numClasses),
     lambda(0.0001),
     fitIntercept(fitIntercept)
-{  
+{
    SoftmaxRegressionFunction::InitializeWeights(parameters,
                                                 inputSize, numClasses,
                                                 fitIntercept);
@@ -32,7 +32,7 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
                                                     const arma::Row<size_t>& labels,
                                                     const size_t numClasses,
                                                     const double lambda,
-                                                    const bool fitIntercept) :    
+                                                    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -48,7 +48,7 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(
     OptimizerType<SoftmaxRegressionFunction>& optimizer) :
-    parameters(optimizer.Function().GetInitialPoint()),    
+    parameters(optimizer.Function().GetInitialPoint()),
     numClasses(optimizer.Function().NumClasses()),
     lambda(optimizer.Function().Lambda()),
     fitIntercept(optimizer.Function().FitIntercept())
@@ -58,8 +58,17 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(
 
 template<template<typename> class OptimizerType>
 void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
-                                               arma::vec& predictions)
+                                               arma::Row<size_t>& predictions)
+    const
 {
+  if (testData.n_rows != FeatureSize())
+  {
+    std::ostringstream oss;
+    oss << "SoftmaxRegression::Predict(): test data has " << testData.n_rows
+        << " dimensions, but model has " << FeatureSize() << "dimensions";
+    throw std::invalid_argument(oss.str());
+  }
+
   // Calculate the probabilities for each test input.
   arma::mat hypothesis, probabilities;
   if (fitIntercept)
@@ -87,16 +96,16 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
   double maxProbability = 0;
 
   // For each test input.
-  for(size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; i++)
   {
     // For each class.
-    for(size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; j++)
     {
       // If a higher class probability is encountered, change prediction.
-      if(probabilities(j, i) > maxProbability)
+      if (probabilities(j, i) > maxProbability)
       {
         maxProbability = probabilities(j, i);
-        predictions(i) = static_cast<double>(j);
+        predictions(i) = j;
       }
     }
 
@@ -110,7 +119,7 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
     const arma::Row<size_t>& labels)
 {
-  arma::vec predictions;
+  arma::Row<size_t> predictions;
 
   // Get predictions for the provided data.
   Predict(testData, predictions);

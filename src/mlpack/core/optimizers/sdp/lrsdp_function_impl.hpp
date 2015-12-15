@@ -74,20 +74,6 @@ void LRSDPFunction<SDPType>::GradientConstraint(const size_t /* index */,
       << "optimizers!" << std::endl;
 }
 
-// Return a string representation of the object.
-template <typename SDPType>
-std::string LRSDPFunction<SDPType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LRSDPFunction [" << this << "]" << std::endl;
-  convert << "  Number of constraints: " << SDP().NumConstraints() << std::endl;
-  convert << "  Problem size: n=" << initialPoint.n_rows << ", r="
-      << initialPoint.n_cols << std::endl;
-  convert << "  Sparse Constraint b_i values: " << SDP().SparseB().t();
-  convert << "  Dense Constraint b_i values: " << SDP().DenseB().t();
-  return convert.str();
-}
-
 //! Utility function for calculating part of the objective when AugLagrangian is
 //! used with an LRSDPFunction.
 template <typename MatrixType>
@@ -220,7 +206,7 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

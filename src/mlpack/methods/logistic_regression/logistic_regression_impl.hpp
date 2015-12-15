@@ -148,16 +148,6 @@ void LogisticRegression<MatType>::Serialize(
   ar & data::CreateNVP(lambda, "lambda");
 }
 
-template<typename MatType>
-std::string LogisticRegression<MatType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Logistic Regression [" << this << "]" << std::endl;
-  convert << "  Parameters: " << parameters.n_rows << std::endl;
-  convert << "  Lambda: " << lambda << std::endl;
-  return convert.str();
-}
-
 } // namespace regression
 } // namespace mlpack
 

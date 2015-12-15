@@ -94,8 +94,8 @@ class RegularizedSVDFunction
   size_t numItems;
 };
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 namespace mlpack {
 namespace optimization {
@@ -109,7 +109,7 @@ namespace optimization {
   double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
       arma::mat& parameters);
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

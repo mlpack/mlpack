@@ -194,7 +194,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   return bestIndex;
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

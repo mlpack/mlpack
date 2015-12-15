@@ -119,7 +119,7 @@ class OivsInitialization
 }; // class OivsInitialization
 
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

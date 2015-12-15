@@ -34,7 +34,7 @@ class MeanSquaredErrorFunction
 
 }; // class MeanSquaredErrorFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

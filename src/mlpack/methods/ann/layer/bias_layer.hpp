@@ -251,7 +251,7 @@ template <
 using BiasLayer2D = BiasLayer<
     OptimizerType, WeightInitRule, InputDataType, OutputDataType>;
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

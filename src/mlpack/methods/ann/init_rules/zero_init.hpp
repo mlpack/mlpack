@@ -54,7 +54,7 @@ class ZeroInitialization
   }
 }; // class ZeroInitialization
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

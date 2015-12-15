@@ -156,8 +156,8 @@ class NeighborSearchRules
                       const double distance);
 };
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "neighbor_search_rules_impl.hpp"

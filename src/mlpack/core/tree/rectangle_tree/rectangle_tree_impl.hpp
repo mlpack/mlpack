@@ -604,7 +604,25 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                             DescentType>::Descendant(const size_t index) const
 {
-  return (points[index]);
+  // I think this may be inefficient...
+  if (numChildren == 0)
+  {
+    return (points[index]);
+  }
+  else
+  {
+    size_t n = 0;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      const size_t nd = children[i]->NumDescendants();
+      if (index - n < nd)
+        return children[i]->Descendant(index - n);
+      n += nd;
+    }
+
+    // I don't think this is valid.
+    return children[numChildren - 1]->Descendant(index - n);
+  }
 }
 
 /**
@@ -932,41 +950,6 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     sum2 += bound[i].Width();
 
   return sum != sum2;
-}
-
-/**
- * Returns a string representation of this object.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType>
-std::string RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                          DescentType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "RectangleTree [" << this << "]" << std::endl;
-  convert << "  First point: " << begin << std::endl;
-  convert << "  Number of descendants: " << numChildren << std::endl;
-  convert << "  Number of points: " << count << std::endl;
-  convert << "  Bound: " << std::endl;
-  convert << mlpack::util::Indent(bound.ToString(), 2);
-  convert << "  Statistic: " << std::endl;
-  //convert << mlpack::util::Indent(stat.ToString(), 2);
-  convert << "  Max leaf size: " << maxLeafSize << std::endl;
-  convert << "  Min leaf size: " << minLeafSize << std::endl;
-  convert << "  Max num of children: " << maxNumChildren << std::endl;
-  convert << "  Min num of children: " << minNumChildren << std::endl;
-  convert << "  Parent address: " << parent << std::endl;
-
-  // How many levels should we print?  This will print the top 3 levels
-  // (counting the root).
-  if (parent == NULL || parent->Parent() == NULL)
-    for (int i = 0; i < numChildren; i++)
-      convert << children[i]->ToString();
-
-  return convert.str();
 }
 
 /**

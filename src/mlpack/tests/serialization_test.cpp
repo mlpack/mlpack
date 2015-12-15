@@ -4,17 +4,11 @@
  *
  * Test serialization of mlpack objects.
  */
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include <mlpack/core/tree/ballbound.hpp>
@@ -29,6 +23,11 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/methods/det/dtree.hpp>
+#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
+#include <mlpack/methods/rann/ra_search.hpp>
+#include <mlpack/methods/lsh/lsh_search.hpp>
+#include <mlpack/methods/decision_stump/decision_stump.hpp>
+#include <mlpack/methods/lars/lars.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -38,6 +37,10 @@ using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::regression;
+using namespace mlpack::naive_bayes;
+using namespace mlpack::neighbor;
+using namespace mlpack::decision_stump;
+
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
@@ -45,69 +48,6 @@ using namespace boost::serialization;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
-
-// Test function for loading and saving Armadillo objects.
-template<typename MatType,
-         typename IArchiveType,
-         typename OArchiveType>
-void TestArmadilloSerialization(MatType& x)
-{
-  // First save it.
-  ofstream ofs("test");
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-
-  BOOST_REQUIRE_EQUAL(success, true);
-  ofs.close();
-
-  // Now load it.
-  MatType orig(x);
-  success = true;
-  ifstream ifs("test");
-  IArchiveType i(ifs);
-
-  try
-  {
-    i >> BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  BOOST_REQUIRE_EQUAL(x.n_rows, orig.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_cols, orig.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
-
-  for (size_t i = 0; i < x.n_cols; ++i)
-    for (size_t j = 0; j < x.n_rows; ++j)
-      if (double(orig(j, i)) == 0.0)
-        BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
-      else
-        BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
-
-  remove("test");
-}
-
-// Test all serialization strategies.
-template<typename MatType>
-void TestAllArmadilloSerialization(MatType& x)
-{
-  TestArmadilloSerialization<MatType, xml_iarchive, xml_oarchive>(x);
-  TestArmadilloSerialization<MatType, text_iarchive, text_oarchive>(x);
-  TestArmadilloSerialization<MatType, binary_iarchive, binary_oarchive>(x);
-}
 
 /**
  * Can we load and save an Armadillo matrix?
@@ -181,161 +121,6 @@ BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
 {
   arma::sp_mat m;
   TestAllArmadilloSerialization(m);
-}
-
-// Save and load an mlpack object.
-// The re-loaded copy is placed in 'newT'.
-template<typename T, typename IArchiveType, typename OArchiveType>
-void SerializeObject(T& t, T& newT)
-{
-  ofstream ofs("test");
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << data::CreateNVP(t, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ofs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  ifstream ifs("test");
-  IArchiveType i(ifs);
-
-  try
-  {
-    i >> data::CreateNVP(newT, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ifs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-}
-
-// Test mlpack serialization with all three archive types.
-template<typename T>
-void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
-{
-  SerializeObject<T, text_iarchive, text_oarchive>(t, textT);
-  SerializeObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
-  SerializeObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
-}
-
-// Save and load a non-default-constructible mlpack object.
-template<typename T, typename IArchiveType, typename OArchiveType>
-void SerializePointerObject(T* t, T*& newT)
-{
-  ofstream ofs("test");
-  OArchiveType o(ofs);
-
-  bool success = true;
-  try
-  {
-    o << data::CreateNVP(*t, "t");
-  }
-  catch (archive_exception& e)
-  {
-    success = false;
-  }
-  ofs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-
-  ifstream ifs("test");
-  IArchiveType i(ifs);
-
-  try
-  {
-    newT = new T(i);
-  }
-  catch (std::exception& e)
-  {
-    success = false;
-  }
-  ifs.close();
-
-  BOOST_REQUIRE_EQUAL(success, true);
-}
-
-template<typename T>
-void SerializePointerObjectAll(T* t, T*& xmlT, T*& textT, T*& binaryT)
-{
-  SerializePointerObject<T, text_iarchive, text_oarchive>(t, textT);
-  SerializePointerObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
-  SerializePointerObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
-}
-
-// Utility function to check the equality of two Armadillo matrices.
-void CheckMatrices(const mat& x,
-                   const mat& xmlX,
-                   const mat& textX,
-                   const mat& binaryX)
-{
-  // First check dimensions.
-  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
-
-  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
-
-  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
-
-  // Now check elements.
-  for (size_t i = 0; i < x.n_elem; ++i)
-  {
-    const double val = x[i];
-    if (val == 0.0)
-    {
-      BOOST_REQUIRE_SMALL(xmlX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(textX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(binaryX[i], 1e-8);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(val, xmlX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, textX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, binaryX[i], 1e-8);
-    }
-  }
-}
-
-void CheckMatrices(const Mat<size_t>& x,
-                   const Mat<size_t>& xmlX,
-                   const Mat<size_t>& textX,
-                   const Mat<size_t>& binaryX)
-{
-  // First check dimensions.
-  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
-
-  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
-
-  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
-  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
-
-  // Now check elements.
-  for (size_t i = 0; i < x.n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(x[i], xmlX[i]);
-    BOOST_REQUIRE_EQUAL(x[i], textX[i]);
-    BOOST_REQUIRE_EQUAL(x[i], binaryX[i]);
-  }
 }
 
 // Now, test mlpack objects.
@@ -1255,6 +1040,245 @@ BOOST_AUTO_TEST_CASE(DETTest)
       }
     }
   }
+}
+
+BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
+{
+  // Train NBC randomly.  Make sure the model is the same after serializing and
+  // re-loading.
+  arma::mat dataset;
+  dataset.randu(10, 500);
+  arma::Row<size_t> labels(500);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    if (dataset(0, i) > 0.5)
+      labels[i] = 0;
+    else
+      labels[i] = 1;
+  }
+
+  NaiveBayesClassifier<> nbc(dataset, labels, 2);
+
+  // Initialize some empty Naive Bayes classifiers.
+  NaiveBayesClassifier<> xmlNbc(0, 0), textNbc(0, 0), binaryNbc(0, 0);
+  SerializeObjectAll(nbc, xmlNbc, textNbc, binaryNbc);
+
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, xmlNbc.Means().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, textNbc.Means().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, binaryNbc.Means().n_elem);
+  for (size_t i = 0; i < nbc.Means().n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(nbc.Means()[i], xmlNbc.Means()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Means()[i], textNbc.Means()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Means()[i], binaryNbc.Means()[i], 1e-5);
+  }
+
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, xmlNbc.Variances().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, textNbc.Variances().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, binaryNbc.Variances().n_elem);
+  for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(nbc.Variances()[i], xmlNbc.Variances()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Variances()[i], textNbc.Variances()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Variances()[i], binaryNbc.Variances()[i], 1e-5);
+  }
+
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+      xmlNbc.Probabilities().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+      textNbc.Probabilities().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+      binaryNbc.Probabilities().n_elem);
+  for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], xmlNbc.Probabilities()[i],
+        1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], textNbc.Probabilities()[i],
+        1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], binaryNbc.Probabilities()[i],
+        1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RASearchTest)
+{
+  using neighbor::AllkRANN;
+  using neighbor::AllkNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 200);
+  arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
+
+  // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
+  // results we get (at least) should fall into the top 10 of the true nearest
+  // neighbors.
+  AllkRANN allkrann(dataset, false, false, 5, 0.95);
+
+  AllkRANN krannXml(otherDataset, false, false);
+  AllkRANN krannText(otherDataset, true, false);
+  AllkRANN krannBinary(otherDataset, true, true);
+
+  SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
+
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 100);
+
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+
+  AllkNN allknn(dataset); // Exact search.
+  allknn.Search(querySet, 10, neighbors, distances);
+  krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  krannText.Search(querySet, 5, textNeighbors, textDistances);
+  krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_cols, 100);
+
+  size_t xmlCorrect = 0;
+  size_t textCorrect = 0;
+  size_t binaryCorrect = 0;
+  for (size_t i = 0; i < xmlNeighbors.n_cols; ++i)
+  {
+    // See how many are in the top 10.
+    for (size_t j = 0; j < xmlNeighbors.n_rows; ++j)
+    {
+      for (size_t k = 0; k < neighbors.n_rows; ++k)
+      {
+        if (neighbors(k, i) == xmlNeighbors(j, i))
+          xmlCorrect++;
+        if (neighbors(k, i) == textNeighbors(j, i))
+          textCorrect++;
+        if (neighbors(k, i) == binaryNeighbors(j, i))
+          binaryCorrect++;
+      }
+    }
+  }
+
+  // We need 95% of these to be correct.
+  BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(textCorrect, 95 * 5);
+}
+
+/**
+ * Test that an LSH model can be serialized and deserialized.
+ */
+BOOST_AUTO_TEST_CASE(LSHTest)
+{
+  // Since we still don't have good tests for LSH, basically what we're going to
+  // do is serialize an LSH model, and make sure we can deserialize it and that
+  // we still get results when we call Search().
+  arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+
+  LSHSearch<> lsh(referenceData, 5, 10); // Arbitrary chosen parameters.
+
+  LSHSearch<> xmlLsh;
+  arma::mat textData = arma::randu<arma::mat>(5, 50);
+  LSHSearch<> textLsh(textData, 4, 5);
+  LSHSearch<> binaryLsh(referenceData, 15, 2);
+
+  // Now serialize.
+  SerializeObjectAll(lsh, xmlLsh, textLsh, binaryLsh);
+
+  // Check what we can about the serialized objects.
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), xmlLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), textLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
+  for (size_t i = 0; i < lsh.NumProjections(); ++i)
+  {
+    CheckMatrices(lsh.Projection(i), xmlLsh.Projection(i),
+        textLsh.Projection(i), binaryLsh.Projection(i));
+  }
+
+  CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
+      textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
+  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
+      binaryLsh.Offsets());
+  CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
+      textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
+
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
+
+  CheckMatrices(lsh.SecondHashTable(), xmlLsh.SecondHashTable(),
+      textLsh.SecondHashTable(), binaryLsh.SecondHashTable());
+}
+
+// Make sure serialization works for the decision stump.
+BOOST_AUTO_TEST_CASE(DecisionStumpTest)
+{
+  // Generate dataset.
+  arma::mat trainingData = arma::randu<arma::mat>(4, 100);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < 25; ++i)
+    labels[i] = 0;
+  for (size_t i = 25; i < 50; ++i)
+    labels[i] = 3;
+  for (size_t i = 50; i < 75; ++i)
+    labels[i] = 1;
+  for (size_t i = 75; i < 100; ++i)
+    labels[i] = 2;
+
+  DecisionStump<> ds(trainingData, labels, 4, 3);
+
+  arma::mat otherData = arma::randu<arma::mat>(3, 100);
+  arma::Row<size_t> otherLabels = arma::randu<arma::Row<size_t>>(100);
+  DecisionStump<> xmlDs(otherData, otherLabels, 2, 3);
+
+  DecisionStump<> textDs;
+  DecisionStump<> binaryDs(trainingData, labels, 4, 10);
+
+  SerializeObjectAll(ds, xmlDs, textDs, binaryDs);
+
+  // Make sure that everything is the same about the new decision stumps.
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), xmlDs.SplitDimension());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), textDs.SplitDimension());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), binaryDs.SplitDimension());
+
+  CheckMatrices(ds.Split(), xmlDs.Split(), textDs.Split(), binaryDs.Split());
+  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), textDs.BinLabels(),
+      binaryDs.BinLabels());
+}
+
+// Make sure serialization works for LARS.
+BOOST_AUTO_TEST_CASE(LARSTest)
+{
+  using namespace mlpack::regression;
+
+  // Create a dataset.
+  arma::mat X = arma::randn(75, 250);
+  arma::vec beta = arma::randn(75, 1);
+  arma::vec y = trans(X) * beta;
+
+  LARS lars(true, 0.1, 0.1);
+  arma::vec betaOpt;
+  lars.Train(X, y, betaOpt);
+
+  // Now, serialize.
+  LARS xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
+      textLars(false, 0.1, 0.1);
+
+  // Train textLars.
+  arma::mat textX = arma::randn(25, 150);
+  arma::vec textBeta = arma::randn(25, 1);
+  arma::vec textY = trans(textX) * textBeta;
+  arma::vec textBetaOpt;
+  textLars.Train(textX, textY, textBetaOpt);
+
+  SerializeObjectAll(lars, xmlLars, binaryLars, textLars);
+
+  // Now, check that predictions are the same.
+  arma::vec pred, xmlPred, textPred, binaryPred;
+  lars.Predict(X, pred);
+  xmlLars.Predict(X, xmlPred);
+  textLars.Predict(X, textPred);
+  binaryLars.Predict(X, binaryPred);
+
+  CheckMatrices(pred, xmlPred, textPred, binaryPred);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -153,14 +153,8 @@ class GaussianDistribution
     ar & CreateNVP(logDetCov, "logDetCov");
   }
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   void FactorCovariance();
-
 };
 
 /**
@@ -191,7 +185,7 @@ inline void GaussianDistribution::LogProbability(const arma::mat& x,
 }
 
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

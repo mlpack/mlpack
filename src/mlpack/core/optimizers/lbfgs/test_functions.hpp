@@ -152,8 +152,8 @@ class RosenbrockWoodFunction
   WoodFunction wf;
 };
 
-}; // namespace test
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace test
+} // namespace optimization
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP

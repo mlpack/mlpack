@@ -37,7 +37,7 @@ class MVU
   const arma::mat& data;
 };
 
-}; // namespace mvu
-}; // namespace mlpack
+} // namespace mvu
+} // namespace mlpack
 
 #endif

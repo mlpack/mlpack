@@ -145,9 +145,6 @@ class L_BFGS
   //! Modify the maximum line search step size.
   double& MaxStep() { return maxStep; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! Internal reference to the function we are optimizing.
   FunctionType& function;
@@ -256,8 +253,8 @@ class L_BFGS
                       const arma::mat& oldGradient);
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #include "lbfgs_impl.hpp"
 

@@ -82,7 +82,7 @@ void BuildVanillaNetwork(MatType& trainData,
   OutputLayerType classOutputLayer;
 
   auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-  						  hiddenLayer1, hiddenBiasLayer1, outputLayer);
+                          hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
   FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
       net(modules, classOutputLayer);
@@ -95,8 +95,8 @@ void BuildVanillaNetwork(MatType& trainData,
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-  	MatType predictionInput = testData.unsafe_col(i);
-  	MatType targetOutput = testLabels.unsafe_col(i);
+    MatType predictionInput = testData.unsafe_col(i);
+    MatType targetOutput = testLabels.unsafe_col(i);
 
     net.Predict(predictionInput, prediction);
 
@@ -212,7 +212,7 @@ void BuildDropoutNetwork(MatType& trainData,
   OutputLayerType classOutputLayer;
 
   auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, dropoutLayer0,
-      					  hiddenLayer1, outputLayer);
+                          hiddenLayer1, outputLayer);
 
   FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
       net(modules, classOutputLayer);
@@ -225,10 +225,10 @@ void BuildDropoutNetwork(MatType& trainData,
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-  	MatType input = testData.unsafe_col(i);
+    MatType input = testData.unsafe_col(i);
     net.Predict(input, prediction);
     if (arma::sum(arma::sum(arma::abs(
-    	prediction - testLabels.unsafe_col(i)))) == 0)
+      prediction - testLabels.unsafe_col(i)))) == 0)
       error++;
   }
 
@@ -388,7 +388,7 @@ void BuildNetworkOptimzer(MatType& trainData,
   OutputLayerType classOutputLayer;
 
   auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-  						  hiddenLayer1, hiddenBiasLayer1, outputLayer);
+                hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
   FFN<decltype(modules), OutputLayerType, PerformanceFunctionType>
       net(modules, classOutputLayer);
