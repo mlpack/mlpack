@@ -40,10 +40,13 @@ class RNN
    *
    * @param network The network modules used to construct the network.
    * @param outputLayer The outputlayer used to evaluate the network.
+   * @param performanceFunction Performance strategy used to claculate the error.
    */
-  RNN(const LayerTypes& network, OutputLayerType& outputLayer) :
+  RNN(const LayerTypes& network, OutputLayerType& outputLayer,
+      PerformanceFunction performanceFunction = PerformanceFunction()) :
       network(network),
       outputLayer(outputLayer),
+      performanceFunction(std::move(performanceFunction)),
       trainError(0),
       inputSize(0),
       outputSize(0)
@@ -544,8 +547,7 @@ class RNN
 
     // Masures the network's performance with the specified performance
     // function.
-    return PerformanceFunction::Error(
-        std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target);
+    return performanceFunction.Error(network, target, error);
   }
 
   /**
@@ -739,6 +741,9 @@ class RNN
   //! The outputlayer used to evaluate the network
   OutputLayerType& outputLayer;
 
+  //! Performance strategy used to claculate the error.
+  PerformanceFunction performanceFunction;
+
   //! The current training error of the network.
   double trainError;
 
@@ -779,7 +784,7 @@ class NetworkTraits<
   static const bool IsCNN = false;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
