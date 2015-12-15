@@ -59,7 +59,7 @@ class MaxVarianceNewCluster
   //! Cached variances for each cluster.
   arma::vec variances;
   //! Cached assignments for each point.
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   //! Called when we are on a new iteration.
   template<typename MetricType, typename MatType>

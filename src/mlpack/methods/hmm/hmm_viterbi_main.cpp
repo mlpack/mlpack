@@ -58,12 +58,12 @@ struct Viterbi
           << "does not match HMM Gaussian dimensionality ("
           << hmm.Emission()[0].Dimensionality() << ")!" << endl;
 
-    arma::Col<size_t> sequence;
+    arma::Row<size_t> sequence;
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
     const string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, sequence, true, false);
+    data::Save(outputFile, sequence, true);
   }
 };
 

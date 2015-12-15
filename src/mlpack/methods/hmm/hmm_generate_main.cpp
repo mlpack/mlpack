@@ -46,7 +46,7 @@ struct Generate
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     mat observations;
-    Col<size_t> sequence;
+    Row<size_t> sequence;
 
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
@@ -67,7 +67,7 @@ struct Generate
     // Do we want to save the hidden sequence?
     const string sequenceFile = CLI::GetParam<string>("state_file");
     if (sequenceFile != "")
-      data::Save(sequenceFile, sequence, true, false);
+      data::Save(sequenceFile, sequence, true);
   }
 };
 

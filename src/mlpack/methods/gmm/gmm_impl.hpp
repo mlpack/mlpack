@@ -346,7 +346,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
  */
 template<typename FittingType>
 void GMM<FittingType>::Classify(const arma::mat& observations,
-                                arma::Col<size_t>& labels) const
+                                arma::Row<size_t>& labels) const
 {
   // This is not the best way to do this!
 

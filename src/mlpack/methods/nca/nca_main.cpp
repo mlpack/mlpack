@@ -220,10 +220,9 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
-  arma::Col<size_t> tLabels = labels.t();
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, tLabels);
+    NCA<LMetric<2> > nca(data, labels);
     nca.Optimizer().StepSize() = stepSize;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
@@ -233,7 +232,7 @@ int main(int argc, char* argv[])
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, tLabels);
+    NCA<LMetric<2>, L_BFGS> nca(data, labels);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;

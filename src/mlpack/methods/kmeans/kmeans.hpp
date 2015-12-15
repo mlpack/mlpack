@@ -32,7 +32,7 @@ namespace kmeans /** K-Means clustering. */ {
  *
  * @code
  * extern arma::mat data; // Dataset we want to run K-Means on.
- * arma::Col<size_t> assignments; // Cluster assignments.
+ * arma::Row<size_t> assignments; // Cluster assignments.
  * arma::mat centroids; // Cluster centroids.
  *
  * KMeans<> k; // Default options.
@@ -48,10 +48,12 @@ namespace kmeans /** K-Means clustering. */ {
  *     metric::LMetric for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and 'void Cluster(const arma::mat&, const size_t,
- *     arma::Col<size_t>&)'.
+ *     arma::Row<size_t>&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
- *     implement a default constructor and 'void EmptyCluster(const arma::mat&,
- *     arma::Col<size_t&)'.
+ *     implement a default constructor and 'void EmptyCluster(const arma::mat&
+ *     data, const size_t emptyCluster, const arma::mat& oldCentroids,
+ *     arma::mat& newCentroids, arma::Col<size_t>& counts, MetricType& metric,
+ *     const size_t iteration)'.
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
  * @see RandomPartition, RefinedStart, AllowEmptyClusters,
@@ -99,7 +101,7 @@ class KMeans
    */
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments,
+               arma::Row<size_t>& assignments,
                const bool initialGuess = false);
 
   /**
@@ -142,7 +144,7 @@ class KMeans
    */
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments,
+               arma::Row<size_t>& assignments,
                arma::mat& centroids,
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);

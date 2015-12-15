@@ -324,7 +324,7 @@ class GMM
    * @param labels Object which will be filled with labels.
    */
   void Classify(const arma::mat& observations,
-                arma::Col<size_t>& labels) const;
+                arma::Row<size_t>& labels) const;
 
   /**
    * Serialize the GMM.

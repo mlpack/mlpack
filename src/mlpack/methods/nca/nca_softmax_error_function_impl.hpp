@@ -17,7 +17,7 @@ namespace nca {
 template<typename MetricType>
 SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     const arma::mat& dataset,
-    const arma::Col<size_t>& labels,
+    const arma::Row<size_t>& labels,
     MetricType metric) :
     dataset(dataset),
     labels(labels),

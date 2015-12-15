@@ -38,10 +38,10 @@ class RandomPartition
   template<typename MatType>
   inline static void Cluster(const MatType& data,
                              const size_t clusters,
-                             arma::Col<size_t>& assignments)
+                             arma::Row<size_t>& assignments)
   {
     // Implementation is so simple we'll put it here in the header file.
-    assignments = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
+    assignments = arma::shuffle(arma::linspace<arma::Row<size_t>>(0,
         (clusters - 1), data.n_cols));
   }
 

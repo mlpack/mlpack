@@ -83,7 +83,7 @@ struct Train
             << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
             << endl;
 
-    vector<arma::Col<size_t> > labelSeq; // May be empty.
+    vector<arma::Row<size_t>> labelSeq; // May be empty.
     if (labelsFile != "")
     {
       // Do we have multiple label files to load?
@@ -107,15 +107,15 @@ struct Train
           Mat<size_t> label;
           data::Load(lineBuf, label, true); // Fatal on failure.
 
-          // Ensure that matrix only has one column.
-          if (label.n_rows == 1)
+          // Ensure that matrix only has one row.
+          if (label.n_cols == 1)
             label = trans(label);
 
-          if (label.n_cols > 1)
+          if (label.n_rows > 1)
             Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
           // Check all of the labels.
-          for (size_t i = 0; i < label.n_rows; ++i)
+          for (size_t i = 0; i < label.n_cols; ++i)
           {
             if (label[i] >= hmm.Transition().n_cols)
             {
@@ -126,7 +126,7 @@ struct Train
             }
           }
 
-          labelSeq.push_back(label.col(0));
+          labelSeq.push_back(label.row(0));
 
           f.getline(lineBuf, 1024, '\n');
         }
@@ -138,11 +138,11 @@ struct Train
         Mat<size_t> label;
         data::Load(labelsFile, label, true);
 
-        // Ensure that matrix only has one column.
-        if (label.n_rows == 1)
+        // Ensure that matrix only has one row.
+        if (label.n_cols == 1)
           label = trans(label);
 
-        if (label.n_cols > 1)
+        if (label.n_rows > 1)
           Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
         // Verify the same number of observations as the data.
@@ -152,7 +152,7 @@ struct Train
               << labelSeq.size() << "!" << endl;
 
         // Check all of the labels.
-        for (size_t i = 0; i < label.n_rows; ++i)
+        for (size_t i = 0; i < label.n_cols; ++i)
         {
           if (label[i] >= hmm.Transition().n_cols)
           {
@@ -163,7 +163,7 @@ struct Train
           }
         }
 
-        labelSeq.push_back(label.col(0));
+        labelSeq.push_back(label.row(0));
       }
 
       // Now perform the training with labels.

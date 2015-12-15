@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
     "-3 -3;"
     "-5  1"));
 
-  arma::Col<size_t> classes;
+  arma::Row<size_t> classes;
 
   gmm.Classify(observations, classes);
 
