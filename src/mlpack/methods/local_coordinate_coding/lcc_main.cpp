@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
   // If there is an initial dictionary, be sure we do not initialize one.
   if (initialDictionaryFile != "")
   {
-    LocalCoordinateCoding<NothingInitializer> lcc(input, atoms, lambda);
+    LocalCoordinateCoding lcc(atoms, lambda, maxIterations, objTolerance);
 
     // Load initial dictionary directly into LCC object.
     data::Load(initialDictionaryFile, lcc.Dictionary(), true);
@@ -132,26 +132,32 @@ int main(int argc, char* argv[])
     }
 
     // Run LCC.
-    lcc.Encode(maxIterations, objTolerance);
+    lcc.Train<NothingInitializer>(input);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
     data::Save(dictionaryFile, lcc.Dictionary());
+
+    mat codes;
+    lcc.Encode(input, codes);
+
     Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, lcc.Codes());
+    data::Save(codesFile, codes);
   }
   else
   {
     // No initial dictionary.
-    LocalCoordinateCoding<> lcc(input, atoms, lambda);
-
-    // Run LCC.
-    lcc.Encode(maxIterations, objTolerance);
+    LocalCoordinateCoding lcc(input, atoms, lambda, maxIterations,
+        objTolerance);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
     data::Save(dictionaryFile, lcc.Dictionary());
+
+    mat codes;
+    lcc.Encode(input, codes);
+
     Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, lcc.Codes());
+    data::Save(codesFile, codes);
   }
 }

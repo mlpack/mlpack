@@ -1,101 +1,28 @@
 /**
- * @file lcc_impl.hpp
+ * @file lcc.cpp
  * @author Nishant Mehta
  *
- * Implementation of Local Coordinate Coding
+ * Implementation of Local Coordinate Coding.
  */
-#ifndef __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_IMPL_HPP
-#define __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_IMPL_HPP
-
-// In case it hasn't been included yet.
 #include "lcc.hpp"
 
 namespace mlpack {
 namespace lcc {
 
-template<typename DictionaryInitializer>
-LocalCoordinateCoding<DictionaryInitializer>::LocalCoordinateCoding(
-    const arma::mat& data,
+LocalCoordinateCoding::LocalCoordinateCoding(
     const size_t atoms,
-    const double lambda) :
-    atoms(atoms),
-    data(data),
-    codes(atoms, data.n_cols),
-    lambda(lambda)
-{
-  // Initialize the dictionary.
-  DictionaryInitializer::Initialize(data, atoms, dictionary);
-}
-
-template<typename DictionaryInitializer>
-void LocalCoordinateCoding<DictionaryInitializer>::Encode(
+    const double lambda,
     const size_t maxIterations,
-    const double objTolerance)
+    const double tolerance) :
+    atoms(atoms),
+    lambda(lambda),
+    maxIterations(maxIterations),
+    tolerance(tolerance)
 {
-  Timer::Start("local_coordinate_coding");
-
-  double lastObjVal = DBL_MAX;
-
-  // Take the initial coding step, which has to happen before entering the main
-  // loop.
-  Log::Info << "Initial Coding Step." << std::endl;
-
-  OptimizeCode();
-  arma::uvec adjacencies = find(codes);
-
-  Log::Info << "  Sparsity level: " << 100.0 * ((double)(adjacencies.n_elem)) /
-      ((double)(atoms * data.n_cols)) << "%.\n";
-  Log::Info << "  Objective value: " << Objective(adjacencies) << "."
-      << std::endl;
-
-  for (size_t t = 1; t != maxIterations; t++)
-  {
-    Log::Info << "Iteration " << t << " of " << maxIterations << "."
-        << std::endl;
-
-    // First step: optimize the dictionary.
-    Log::Info << "Performing dictionary step..." << std::endl;
-    OptimizeDictionary(adjacencies);
-    double dsObjVal = Objective(adjacencies);
-    Log::Info << "  Objective value: " << Objective(adjacencies) << "."
-        << std::endl;
-
-    // Second step: perform the coding.
-    Log::Info << "Performing coding step..." << std::endl;
-    OptimizeCode();
-    adjacencies = find(codes);
-    Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
-        / ((double)(atoms * data.n_cols)) << "%.\n";
-
-    // Terminate if the objective increased in the coding step.
-    double curObjVal = Objective(adjacencies);
-    if (curObjVal > dsObjVal)
-    {
-      Log::Warn << "Objective increased in coding step!  Terminating."
-          << std::endl;
-      break;
-    }
-
-    // Find the new objective value and improvement so we can check for
-    // convergence.
-    double improvement = lastObjVal - curObjVal;
-    Log::Info << "Objective value: " << curObjVal << " (improvement "
-        << std::scientific << improvement << ")." << std::endl;
-
-    if (improvement < objTolerance)
-    {
-      Log::Info << "Converged within tolerance " << objTolerance << ".\n";
-      break;
-    }
-
-    lastObjVal = curObjVal;
-  }
-
-  Timer::Stop("local_coordinate_coding");
+  // Nothing to do.
 }
 
-template<typename DictionaryInitializer>
-void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
+void LocalCoordinateCoding::Encode(const arma::mat& data, arma::mat& codes)
 {
   arma::mat invSqDists = 1.0 / (repmat(trans(sum(square(dictionary))), 1,
       data.n_cols) + repmat(sum(square(data)), atoms, 1) - 2 * trans(dictionary)
@@ -104,9 +31,10 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
   arma::mat dictGram = trans(dictionary) * dictionary;
   arma::mat dictGramTD(dictGram.n_rows, dictGram.n_cols);
 
+  codes.set_size(atoms, data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    // report progress
+    // Report progress.
     if ((i % 100) == 0)
     {
       Log::Debug << "Optimization at point " << i << "." << std::endl;
@@ -128,9 +56,9 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
   }
 }
 
-template<typename DictionaryInitializer>
-void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
-    arma::uvec adjacencies)
+void LocalCoordinateCoding::OptimizeDictionary(const arma::mat& data,
+                                               const arma::mat& codes,
+                                               const arma::uvec& adjacencies)
 {
   // Count number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
@@ -288,9 +216,9 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   }
 }
 
-template<typename DictionaryInitializer>
-double LocalCoordinateCoding<DictionaryInitializer>::Objective(
-    arma::uvec adjacencies) const
+double LocalCoordinateCoding::Objective(const arma::mat& data,
+                                        const arma::mat& codes,
+                                        const arma::uvec& adjacencies) const
 {
   double weightedL1NormZ = 0;
 
@@ -310,5 +238,3 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
 
 } // namespace lcc
 } // namespace mlpack
-
-#endif
