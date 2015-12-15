@@ -32,3 +32,4 @@ add_executable(hoeffding_tree
 target_link_libraries(hoeffding_tree
   mlpack
 )
+install(TARGETS hoeffding_tree RUNTIME DESTINATION bin)
