@@ -28,7 +28,23 @@ template<
 >
 class CrossEntropyErrorFunction
 {
-  public:
+ public:
+  /**
+   * Computes the cost of sparse autoencoder
+   *
+   * @param network Network type of FFN, CNN or RNN
+   * @param target Target data.
+   * @param error same as place holder
+   * @return sum of squared errors.
+   */
+  template<typename DataType, typename... Tp>
+  static double Error(const std::tuple<Tp...>& network,
+                      const DataType& target, const DataType &error)
+  {
+    return Error(std::get<sizeof...(Tp) - 1>(network).OutputParameter(),
+                 target, error);
+  }
+
   /**
    * Computes the cross-entropy error function.
    *
@@ -37,7 +53,7 @@ class CrossEntropyErrorFunction
    * @return cross-entropy error.
    */
   template<typename DataType>
-  static double Error(const DataType& input, const DataType& target)
+  static double Error(const DataType& input, const DataType& target, const DataType&)
   {
     if (LayerTraits<Layer>::IsBinary)
       return -arma::dot(arma::trunc_log(arma::abs(target - input)), target);
@@ -47,7 +63,7 @@ class CrossEntropyErrorFunction
 
 }; // class CrossEntropyErrorFunction
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
