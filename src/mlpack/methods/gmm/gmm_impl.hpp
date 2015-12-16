@@ -176,9 +176,9 @@ arma::vec GMM<FittingType>::Random() const
  * Fit the GMM to the given observations.
  */
 template<typename FittingType>
-double GMM<FittingType>::Estimate(const arma::mat& observations,
-                                  const size_t trials,
-                                  const bool useExistingModel)
+double GMM<FittingType>::Train(const arma::mat& observations,
+                               const size_t trials,
+                               const bool useExistingModel)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -212,8 +212,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
-    Log::Info << "GMM::Estimate(): Log-likelihood of trial 0 is "
-        << bestLikelihood << "." << std::endl;
+    Log::Info << "GMM::Train(): Log-likelihood of trial 0 is " << bestLikelihood        << "." << std::endl;
 
     // Now the temporary model.
     std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
@@ -235,8 +234,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       double newLikelihood = LogLikelihood(observations, distsTrial,
           weightsTrial);
 
-      Log::Info << "GMM::Estimate(): Log-likelihood of trial " << trial
-          << " is " << newLikelihood << "." << std::endl;
+      Log::Info << "GMM::Train(): Log-likelihood of trial " << trial << " is "
+          << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)
       {
@@ -250,7 +249,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   }
 
   // Report final log-likelihood and return it.
-  Log::Info << "GMM::Estimate(): log-likelihood of trained GMM is "
+  Log::Info << "GMM::Train(): log-likelihood of trained GMM is "
       << bestLikelihood << "." << std::endl;
   return bestLikelihood;
 }
@@ -260,10 +259,10 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
  * probability of being from this distribution.
  */
 template<typename FittingType>
-double GMM<FittingType>::Estimate(const arma::mat& observations,
-                                  const arma::vec& probabilities,
-                                  const size_t trials,
-                                  const bool useExistingModel)
+double GMM<FittingType>::Train(const arma::mat& observations,
+                               const arma::vec& probabilities,
+                               const size_t trials,
+                               const bool useExistingModel)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -297,7 +296,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
-    Log::Debug << "GMM::Estimate(): Log-likelihood of trial 0 is "
+    Log::Debug << "GMM::Train(): Log-likelihood of trial 0 is "
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
@@ -320,8 +319,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       double newLikelihood = LogLikelihood(observations, distsTrial,
           weightsTrial);
 
-      Log::Debug << "GMM::Estimate(): Log-likelihood of trial " << trial
-          << " is " << newLikelihood << "." << std::endl;
+      Log::Debug << "GMM::Train(): Log-likelihood of trial " << trial << " is "
+          << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)
       {
@@ -335,7 +334,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   }
 
   // Report final log-likelihood and return it.
-  Log::Info << "GMM::Estimate(): log-likelihood of trained GMM is "
+  Log::Info << "GMM::Train(): log-likelihood of trained GMM is "
       << bestLikelihood << "." << std::endl;
   return bestLikelihood;
 }

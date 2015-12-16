@@ -22,7 +22,7 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * functions to estimate the parameters of the GMM on a given dataset via the
  * given fitting mechanism, defined by the FittingType template parameter.  The
  * GMM can be trained using normal data, or data with probabilities of being
- * from this GMM (see GMM::Estimate() for more information).
+ * from this GMM (see GMM::Train() for more information).
  *
  * The FittingType template class must provide a way for the GMM to train on
  * data.  It must provide the following two functions:
@@ -274,9 +274,9 @@ class GMM
    *      model for the estimation.
    * @return The log-likelihood of the best fit.
    */
-  double Estimate(const arma::mat& observations,
-                  const size_t trials = 1,
-                  const bool useExistingModel = false);
+  double Train(const arma::mat& observations,
+               const size_t trials = 1,
+               const bool useExistingModel = false);
 
   /**
    * Estimate the probability distribution directly from the given observations,
@@ -302,10 +302,10 @@ class GMM
    *     model for the estimation.
    * @return The log-likelihood of the best fit.
    */
-  double Estimate(const arma::mat& observations,
-                  const arma::vec& probabilities,
-                  const size_t trials = 1,
-                  const bool useExistingModel = false);
+  double Train(const arma::mat& observations,
+               const arma::vec& probabilities,
+               const size_t trials = 1,
+               const bool useExistingModel = false);
 
   /**
    * Classify the given observations as being from an individual component in
@@ -335,7 +335,7 @@ class GMM
  private:
   /**
    * This function computes the loglikelihood of the given model.  This function
-   * is used by GMM::Estimate().
+   * is used by GMM::Train().
    *
    * @param dataPoints Observations to calculate the likelihood for.
    * @param means Means of the given mixture model.
