@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
-    RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
   if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
@@ -156,15 +156,15 @@ int main(int argc, char* argv[])
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
     {
-      Log::Info << "Normalizing data before coding..." << std::endl;
+      Log::Info << "Normalizing data before coding..." << endl;
       for (size_t i = 0; i < matX.n_cols; ++i)
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
     sc.Lambda1() = CLI::GetParam<double>("lambda1");
     sc.Lambda2() = CLI::GetParam<double>("lambda2");
-    sc.MaxIterations() = CLI::GetParam<int>("max_iterations");
-    sc.Atoms() = CLI::GetParam<int>("atoms");
+    sc.MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
+    sc.Atoms() = (size_t) CLI::GetParam<int>("atoms");
     sc.ObjTolerance() = CLI::GetParam<double>("objective_tolerance");
     sc.NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
 
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
     {
-      Log::Info << "Normalizing test data before coding..." << std::endl;
+      Log::Info << "Normalizing test data before coding..." << endl;
       for (size_t i = 0; i < matY.n_cols; ++i)
         matY.col(i) /= norm(matY.col(i), 2);
     }
