@@ -112,6 +112,10 @@ int main(int argc, char* argv[])
         << "--output_model_file (-M) are specified; no output will be saved."
         << endl;
 
+  if (CLI::HasParam("codes_file") && !CLI::HasParam("test_file"))
+    Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
+        << "specified with --test_file or -T) is given to encode!" << endl;
+
   if (!CLI::HasParam("training_file"))
   {
     if (CLI::HasParam("atoms"))
