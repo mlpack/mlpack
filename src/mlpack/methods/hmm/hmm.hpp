@@ -35,12 +35,12 @@ namespace hmm /** Hidden Markov Models. */ {
  *   double Probability(const DataType& observation) const;
  *
  *   // Estimate the distribution based on the given observations.
- *   void Estimate(const std::vector<DataType>& observations);
+ *   void Train(const std::vector<DataType>& observations);
  *
  *   // Estimate the distribution based on the given observations, given also
  *   // the probability of each observation coming from this distribution.
- *   void Estimate(const std::vector<DataType>& observations,
- *                 const std::vector<double>& probabilities);
+ *   void Train(const std::vector<DataType>& observations,
+ *              const std::vector<double>& probabilities);
  * };
  * @endcode
  *
@@ -71,7 +71,7 @@ namespace hmm /** Hidden Markov Models. */ {
  * Once initialized, the HMM can evaluate the probability of a certain sequence
  * (with LogLikelihood()), predict the most likely sequence of hidden states
  * (with Predict()), generate a sequence (with Generate()), or estimate the
- * probabilities of each state for a sequence of observations (with Estimate()).
+ * probabilities of each state for a sequence of observations (with Train()).
  *
  * @tparam Distribution Type of emission distribution for this HMM.
  */
