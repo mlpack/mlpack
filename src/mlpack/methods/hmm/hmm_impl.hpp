@@ -195,7 +195,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
  */
 template<typename Distribution>
 void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
-                              const std::vector<arma::Col<size_t> >& stateSeq)
+                              const std::vector<arma::Row<size_t> >& stateSeq)
 {
   // Simple error checking.
   if (dataSeq.size() != stateSeq.size())
@@ -330,7 +330,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
 template<typename Distribution>
 void HMM<Distribution>::Generate(const size_t length,
                                  arma::mat& dataSequence,
-                                 arma::Col<size_t>& stateSequence,
+                                 arma::Row<size_t>& stateSequence,
                                  const size_t startState) const
 {
   // Set vectors to the right size.
@@ -378,7 +378,7 @@ void HMM<Distribution>::Generate(const size_t length,
  */
 template<typename Distribution>
 double HMM<Distribution>::Predict(const arma::mat& dataSeq,
-                                  arma::Col<size_t>& stateSeq) const
+                                  arma::Row<size_t>& stateSeq) const
 {
   // This is an implementation of the Viterbi algorithm for finding the most
   // probable sequence of states to produce the observed data sequence.  We

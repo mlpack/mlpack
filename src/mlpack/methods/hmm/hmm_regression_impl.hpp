@@ -25,7 +25,7 @@ void HMMRegression::Train(const std::vector<arma::mat>& predictors,
 
 void HMMRegression::Train(const std::vector<arma::mat>& predictors,
                           const std::vector<arma::vec>& responses,
-                          const std::vector<arma::Col<size_t> >& stateSeq)
+                          const std::vector<arma::Row<size_t> >& stateSeq)
 {
   std::vector<arma::mat> dataSeq;
   StackData(predictors, responses, dataSeq);
@@ -69,7 +69,7 @@ double HMMRegression::Estimate(const arma::mat& predictors,
  */
 double HMMRegression::Predict(const arma::mat& predictors,
                               const arma::vec& responses,
-                              arma::Col<size_t>& stateSeq) const
+                              arma::Row<size_t>& stateSeq) const
 {
   arma::mat dataSeq;
   StackData(predictors, responses, dataSeq);

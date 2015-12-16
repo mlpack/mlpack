@@ -48,7 +48,7 @@ class SoftmaxErrorFunction
    * @param kernel Instantiated kernel (optional).
    */
   SoftmaxErrorFunction(const arma::mat& dataset,
-                       const arma::Col<size_t>& labels,
+                       const arma::Row<size_t>& labels,
                        MetricType metric = MetricType());
 
   /**
@@ -112,7 +112,7 @@ class SoftmaxErrorFunction
   //! The dataset.
   const arma::mat& dataset;
   //! Labels for each point in the dataset.
-  const arma::Col<size_t>& labels;
+  const arma::Row<size_t>& labels;
 
   //! The instantiated metric.
   MetricType metric;
