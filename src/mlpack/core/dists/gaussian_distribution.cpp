@@ -82,7 +82,7 @@ arma::vec GaussianDistribution::Random() const
  *
  * @param observations List of observations.
  */
-void GaussianDistribution::Estimate(const arma::mat& observations)
+void GaussianDistribution::Train(const arma::mat& observations)
 {
   if (observations.n_cols > 0)
   {
@@ -118,7 +118,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   // Ensure that the covariance is positive definite.
   if (det(covariance) <= 1e-50)
   {
-    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+    Log::Debug << "GaussianDistribution::Train(): Covariance matrix is not "
         << "positive definite. Adding perturbation." << std::endl;
 
     double perturbation = 1e-30;
@@ -137,8 +137,8 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
  * account the probability of each observation actually being from this
  * distribution.
  */
-void GaussianDistribution::Estimate(const arma::mat& observations,
-                                    const arma::vec& probabilities)
+void GaussianDistribution::Train(const arma::mat& observations,
+                                 const arma::vec& probabilities)
 {
   if (observations.n_cols > 0)
   {
@@ -188,7 +188,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   // Ensure that the covariance is positive definite.
   if (det(covariance) <= 1e-50)
   {
-    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+    Log::Debug << "GaussianDistribution::Train(): Covariance matrix is not "
         << "positive definite. Adding perturbation." << std::endl;
 
     double perturbation = 1e-30;

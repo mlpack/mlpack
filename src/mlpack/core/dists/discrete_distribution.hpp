@@ -134,7 +134,7 @@ class DiscreteDistribution
    *
    * @param observations List of observations.
    */
-  void Estimate(const arma::mat& observations);
+  void Train(const arma::mat& observations);
 
   /**
    * Estimate the probability distribution from the given observations, taking
@@ -145,8 +145,8 @@ class DiscreteDistribution
    * @param probabilities List of probabilities that each observation is
    *    actually from this distribution.
    */
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+  void Train(const arma::mat& observations,
+             const arma::vec& probabilities);
 
   //! Return the vector of probabilities.
   const arma::vec& Probabilities() const { return probabilities; }

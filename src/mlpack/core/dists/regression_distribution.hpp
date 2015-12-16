@@ -78,14 +78,14 @@ class RegressionDistribution
    *
    * @param observations List of observations.
    */
-  void Estimate(const arma::mat& observations);
+  void Train(const arma::mat& observations);
 
   /**
    * Estimate parameters using provided observation weights
    *
    * @param weights probability that given observation is from distribution
    */
-  void Estimate(const arma::mat& observations, const arma::vec& weights);
+  void Train(const arma::mat& observations, const arma::vec& weights);
 
   /**
   * Evaluate probability density function of given observation

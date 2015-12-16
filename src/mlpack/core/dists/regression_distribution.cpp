@@ -15,14 +15,14 @@ using namespace mlpack::distribution;
  *
  * @param observations List of observations.
  */
-void RegressionDistribution::Estimate(const arma::mat& observations)
+void RegressionDistribution::Train(const arma::mat& observations)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true);
   rf = lr;
   arma::vec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Estimate(observations.row(0) - fitted.t());
+  err.Train(observations.row(0) - fitted.t());
 }
 
 /**
@@ -30,15 +30,15 @@ void RegressionDistribution::Estimate(const arma::mat& observations)
  *
  * @param weights probability that given observation is from distribution
  */
-void RegressionDistribution::Estimate(const arma::mat& observations,
-                             const arma::vec& weights)
+void RegressionDistribution::Train(const arma::mat& observations,
+                                   const arma::vec& weights)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true, weights);
   rf = lr;
   arma::vec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Estimate(observations.row(0) - fitted.t(), weights);
+  err.Train(observations.row(0) - fitted.t(), weights);
 }
 
 /**

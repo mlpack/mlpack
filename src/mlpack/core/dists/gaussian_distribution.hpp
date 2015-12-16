@@ -105,15 +105,15 @@ class GaussianDistribution
    *
    * @param observations List of observations.
    */
-  void Estimate(const arma::mat& observations);
+  void Train(const arma::mat& observations);
 
   /**
    * Estimate the Gaussian distribution from the given observations, taking into
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+  void Train(const arma::mat& observations,
+             const arma::vec& probabilities);
 
   /**
    * Return the mean.
