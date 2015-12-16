@@ -150,7 +150,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
                   scales[t + 1];
           }
 
-          // Add to list of emission observations, for Distribution::Estimate().
+          // Add to list of emission observations, for Distribution::Train().
           emissionList.col(sumTime) = dataSeq[seq].col(t);
           emissionProb[j][sumTime] = stateProb(j, t);
         }
@@ -174,7 +174,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
     // Now estimate emission probabilities.
     for (size_t state = 0; state < transition.n_cols; state++)
-      emission[state].Estimate(emissionList, emissionProb[state]);
+      emission[state].Train(emissionList, emissionProb[state]);
 
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
         << std::endl;
@@ -273,7 +273,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
             emissionList[state][i].second);
       }
 
-      emission[state].Estimate(emissions);
+      emission[state].Train(emissions);
     }
     else
     {
