@@ -11,6 +11,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 using namespace arma;
 using namespace mlpack;
@@ -115,6 +116,49 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   grad = lambda * grad + (D * Z - X) * trans(Z);
 
   BOOST_REQUIRE_SMALL(norm(grad, "fro"), tol);
+}
+
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  mat X = randu<mat>(100, 100);
+  size_t nAtoms = 25;
+
+  LocalCoordinateCoding lcc(nAtoms, 0.05);
+  lcc.Train(X);
+
+  mat Y = randu<mat>(100, 200);
+  mat codes;
+  lcc.Encode(Y, codes);
+
+  LocalCoordinateCoding lccXml(50, 0.1), lccText(12, 0.0), lccBinary(0, 0.0);
+  SerializeObjectAll(lcc, lccXml, lccText, lccBinary);
+
+  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccText.Dictionary(),
+      lccBinary.Dictionary());
+
+  mat xmlCodes, textCodes, binaryCodes;
+  lccXml.Encode(Y, xmlCodes);
+  lccText.Encode(Y, textCodes);
+  lccBinary.Encode(Y, binaryCodes);
+
+  CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
+
+  // Check the parameters, too.
+  BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccXml.Atoms());
+  BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccText.Atoms());
+  BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccBinary.Atoms());
+
+  BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccXml.Tolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccText.Tolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccBinary.Tolerance(), 1e-5);
+
+  BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccXml.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccText.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccBinary.Lambda(), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccXml.MaxIterations());
+  BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccBinary.MaxIterations());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -189,6 +189,10 @@ class LocalCoordinateCoding
   //! Modify the objective tolerance.
   double& Tolerance() { return tolerance; }
 
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Number of atoms in dictionary.
   size_t atoms;
