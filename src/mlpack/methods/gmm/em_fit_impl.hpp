@@ -93,7 +93,8 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
           trans(condProb.col(i)));
 
       // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0.0) {
+      if (probRowSums[i] != 0.0)
+      {
         arma::mat covariance = (tmp * trans(tmpB)) / probRowSums[i];
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
