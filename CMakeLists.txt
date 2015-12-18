@@ -334,11 +334,11 @@ if (UNIX)
         WORKING_DIRECTORY
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
-          allkfn allknn allkrann cf decision_stump det emst fastmks gmm_train
-          gmm_probability gmm_generate hmm_generate hmm_loglik hmm_train
-          hmm_viterbi kernel_pca kmeans lars linear_regression
-          local_coordinate_coding logistic_regression lsh nbc nca nmf pca
-          perceptron radical range_search softmax_regression sparse_coding
+          adaboost allkfn allknn allkrann cf decision_stump det emst fastmks
+          gmm_train gmm_probability gmm_generate hmm_generate hmm_loglik
+          hmm_train hmm_viterbi kernel_pca kmeans lars linear_regression
+          local_coordinate_coding logistic_regression lsh mean_shift nbc nca nmf
+          pca perceptron radical range_search softmax_regression sparse_coding
         COMMENT "Generating man pages from built executables."
     )
 
