@@ -154,6 +154,11 @@ class GaussianDistribution
   }
 
  private:
+  /**
+   * This factors the covariance using arma::chol().  The function assumes that
+   * the given matrix is factorizable via the Cholesky decomposition.  If not, a
+   * std::runtime_error will be thrown.
+   */
   void FactorCovariance();
 };
 

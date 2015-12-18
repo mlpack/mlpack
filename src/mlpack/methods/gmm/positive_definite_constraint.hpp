@@ -25,19 +25,48 @@ class PositiveDefiniteConstraint
    */
   static void ApplyConstraint(arma::mat& covariance)
   {
-    // TODO: make this more efficient.
-    if (arma::det(covariance) <= 1e-50)
+    // Realistically, all we care about is that we can perform a Cholesky
+    // decomposition of the matrix, so that FactorCovariance() doesn't fail
+    // later.  Therefore, that's what we'll do to check for positive
+    // definiteness...
+    //
+    // Note that other techniques like checking the determinant *could* work,
+    // but floating-point errors mean that various decompositions may start to
+    // fail when the matrix gets close to being indefinite.  This is why we test
+    // with chol() and not something else, since that's what will be used later.
+    //
+    // We also need to make sure that the errors go to nowhere, so we have to
+    // call set_stream_err2()...
+    std::ostringstream oss;
+    std::ostream& originalStream = arma::get_stream_err2();
+    arma::set_stream_err2(oss); // Thus, errors won't be displayed.
+
+    arma::mat covLower;
+    #if (ARMA_VERSION_MAJOR < 4) || \
+        ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
+    if (!arma::chol(covLower, covariance))
+    #else
+    if (!arma::chol(covLower, covariance, "lower"))
+    #endif
     {
       Log::Debug << "Covariance matrix is not positive definite.  Adding "
           << "perturbation." << std::endl;
 
-      double perturbation = 1e-30;
-      while (arma::det(covariance) <= 1e-50)
+      double perturbation = 1e-15;
+      #if (ARMA_VERSION_MAJOR < 4) || \
+          ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MAJOR < 500))
+      while (!arma::chol(covLower, covariance))
+      #else
+      while (!arma::chol(covLower, covariance, "lower"))
+      #endif
       {
         covariance.diag() += perturbation;
         perturbation *= 10;
       }
     }
+
+    // Restore the original stream state.
+    arma::set_stream_err2(originalStream);
   }
 
   //! Serialize the constraint (which stores nothing, so, nothing to do).
