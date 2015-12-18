@@ -772,8 +772,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
 BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 {
   // We will use two GMMs; one with two components and one with three.
-  std::vector<GMM<> > gmms(2);
-  gmms[0] = GMM<>(2, 2);
+  std::vector<GMM> gmms(2);
+  gmms[0] = GMM(2, 2);
   gmms[0].Weights() = arma::vec("0.75 0.25");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   gmms[0].Component(1) = GaussianDistribution("7.10 5.01",
                                               "1.00 0.00; 0.00 1.01");
 
-  gmms[1] = GMM<>(3, 2);
+  gmms[1] = GMM(3, 2);
   gmms[1].Weights() = arma::vec("0.4 0.2 0.4");
 
   gmms[1].Component(0) = GaussianDistribution("-3.00 -6.12",
@@ -804,7 +804,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
                   "0.70 0.50");
 
   // Now build the model.
-  HMM<GMM<> > hmm(initial, trans, gmms);
+  HMM<GMM> hmm(initial, trans, gmms);
 
   // Make a sequence of observations.
   arma::mat observations(2, 1000);
@@ -842,7 +842,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   srand(time(NULL));
 
   // We will use two GMMs; one with two components and one with three.
-  std::vector<GMM<> > gmms(2, GMM<>(2, 2));
+  std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   }
 
   // Set up the GMM for training.
-  HMM<GMM<> > hmm(2, GMM<>(2, 2));
+  HMM<GMM> hmm(2, GMM(2, 2));
 
   // Train the HMM.
   hmm.Train(observations, states);
@@ -984,7 +984,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 {
   // Create a GMM HMM, save it, and load it.
-  HMM<GMM<> > hmm(3, GMM<>(4, 3));
+  HMM<GMM> hmm(3, GMM(4, 3));
 
   for(size_t j = 0; j < hmm.Emission().size(); ++j)
   {
@@ -1009,7 +1009,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   }
 
   // Load the HMM.
-  HMM<GMM<>> hmm2(3, GMM<>(4, 3));
+  HMM<GMM> hmm2(3, GMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);

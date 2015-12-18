@@ -16,169 +16,13 @@ namespace mlpack {
 namespace gmm {
 
 /**
- * Create a GMM with the given number of Gaussians, each of which have the
- * specified dimensionality.  The means and covariances will be set to 0.
- *
- * @param gaussians Number of Gaussians in this GMM.
- * @param dimensionality Dimensionality of each Gaussian.
- */
-template<typename FittingType>
-GMM<FittingType>::GMM(const size_t gaussians, const size_t dimensionality) :
-    gaussians(gaussians),
-    dimensionality(dimensionality),
-    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
-    weights(gaussians),
-    fitter(new FittingType()),
-    ownsFitter(true)
-{
-  // Set equal weights.  Technically this model is still valid, but only barely.
-  weights.fill(1.0 / gaussians);
-}
-
-/**
- * Create a GMM with the given number of Gaussians, each of which have the
- * specified dimensionality.  Also, pass in an initialized FittingType class;
- * this is useful in cases where the FittingType class needs to store some
- * state.
- *
- * @param gaussians Number of Gaussians in this GMM.
- * @param dimensionality Dimensionality of each Gaussian.
- * @param fitter Initialized fitting mechanism.
- */
-template<typename FittingType>
-GMM<FittingType>::GMM(const size_t gaussians,
-                      const size_t dimensionality,
-                      FittingType& fitter) :
-    gaussians(gaussians),
-    dimensionality(dimensionality),
-    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
-    weights(gaussians),
-    fitter(&fitter),
-    ownsFitter(false)
-{
-  // Set equal weights.  Technically this model is still valid, but only barely.
-  weights.fill(1.0 / gaussians);
-}
-
-
-// Copy constructor.
-template<typename FittingType>
-template<typename OtherFittingType>
-GMM<FittingType>::GMM(const GMM<OtherFittingType>& other) :
-    gaussians(other.gaussians),
-    dimensionality(other.dimensionality),
-    dists(other.dists),
-    weights(other.weights),
-    fitter(new FittingType()),
-    ownsFitter(true) { /* Nothing to do. */ }
-
-// Copy constructor for when the other GMM uses the same fitting type.
-template<typename FittingType>
-GMM<FittingType>::GMM(const GMM<FittingType>& other) :
-    gaussians(other.Gaussians()),
-    dimensionality(other.dimensionality),
-    dists(other.dists),
-    weights(other.weights),
-    fitter(new FittingType(*other.fitter)),
-    ownsFitter(true) { /* Nothing to do. */ }
-
-template<typename FittingType>
-GMM<FittingType>::~GMM()
-{
-  if (ownsFitter)
-    delete fitter;
-}
-
-template<typename FittingType>
-template<typename OtherFittingType>
-GMM<FittingType>& GMM<FittingType>::operator=(
-    const GMM<OtherFittingType>& other)
-{
-  gaussians = other.gaussians;
-  dimensionality = other.dimensionality;
-  dists = other.dists;
-  weights = other.weights;
-
-  return *this;
-}
-
-template<typename FittingType>
-GMM<FittingType>& GMM<FittingType>::operator=(const GMM<FittingType>& other)
-{
-  gaussians = other.gaussians;
-  dimensionality = other.dimensionality;
-  dists = other.dists;
-  weights = other.weights;
-
-  if (fitter && ownsFitter)
-    delete fitter;
-  fitter = new FittingType(*other.fitter);
-  ownsFitter = true;
-
-  return *this;
-}
-
-/**
- * Return the probability of the given observation being from this GMM.
- */
-template<typename FittingType>
-double GMM<FittingType>::Probability(const arma::vec& observation) const
-{
-  // Sum the probability for each Gaussian in our mixture (and we have to
-  // multiply by the prior for each Gaussian too).
-  double sum = 0;
-  for (size_t i = 0; i < gaussians; i++)
-    sum += weights[i] * dists[i].Probability(observation);
-
-  return sum;
-}
-
-/**
- * Return the probability of the given observation being from the given
- * component in the mixture.
- */
-template<typename FittingType>
-double GMM<FittingType>::Probability(const arma::vec& observation,
-                                     const size_t component) const
-{
-  // We are only considering one Gaussian component -- so we only need to call
-  // Probability() once.  We do consider the prior probability!
-  return weights[component] * dists[component].Probability(observation);
-}
-
-/**
- * Return a randomly generated observation according to the probability
- * distribution defined by this object.
- */
-template<typename FittingType>
-arma::vec GMM<FittingType>::Random() const
-{
-  // Determine which Gaussian it will be coming from.
-  double gaussRand = math::Random();
-  size_t gaussian = 0;
-
-  double sumProb = 0;
-  for (size_t g = 0; g < gaussians; g++)
-  {
-    sumProb += weights(g);
-    if (gaussRand <= sumProb)
-    {
-      gaussian = g;
-      break;
-    }
-  }
-
-  return trans(chol(dists[gaussian].Covariance())) *
-      arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
-}
-
-/**
  * Fit the GMM to the given observations.
  */
 template<typename FittingType>
-double GMM<FittingType>::Train(const arma::mat& observations,
-                               const size_t trials,
-                               const bool useExistingModel)
+double GMM::Train(const arma::mat& observations,
+                  const size_t trials,
+                  const bool useExistingModel,
+                  FittingType fitter)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -187,8 +31,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter->Estimate(observations, dists, weights,
-        useExistingModel);
+    fitter.Estimate(observations, dists, weights, useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
@@ -207,8 +50,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter->Estimate(observations, dists, weights,
-        useExistingModel);
+    fitter.Estimate(observations, dists, weights, useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
@@ -227,8 +69,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter->Estimate(observations, distsTrial, weightsTrial,
-          useExistingModel);
+      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -259,10 +100,11 @@ double GMM<FittingType>::Train(const arma::mat& observations,
  * probability of being from this distribution.
  */
 template<typename FittingType>
-double GMM<FittingType>::Train(const arma::mat& observations,
-                               const arma::vec& probabilities,
-                               const size_t trials,
-                               const bool useExistingModel)
+double GMM::Train(const arma::mat& observations,
+                  const arma::vec& probabilities,
+                  const size_t trials,
+                  const bool useExistingModel,
+                  FittingType fitter)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -271,7 +113,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter->Estimate(observations, probabilities, dists, weights,
+    fitter.Estimate(observations, probabilities, dists, weights,
         useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
@@ -291,7 +133,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter->Estimate(observations, probabilities, dists, weights,
+    fitter.Estimate(observations, probabilities, dists, weights,
         useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
@@ -312,8 +154,7 @@ double GMM<FittingType>::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter->Estimate(observations, distsTrial, weightsTrial,
-          useExistingModel);
+      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -340,65 +181,10 @@ double GMM<FittingType>::Train(const arma::mat& observations,
 }
 
 /**
- * Classify the given observations as being from an individual component in this
- * GMM.
- */
-template<typename FittingType>
-void GMM<FittingType>::Classify(const arma::mat& observations,
-                                arma::Row<size_t>& labels) const
-{
-  // This is not the best way to do this!
-
-  // We should not have to fill this with values, because each one should be
-  // overwritten.
-  labels.set_size(observations.n_cols);
-  for (size_t i = 0; i < observations.n_cols; ++i)
-  {
-    // Find maximum probability component.
-    double probability = 0;
-    for (size_t j = 0; j < gaussians; ++j)
-    {
-      double newProb = Probability(observations.unsafe_col(i), j);
-      if (newProb >= probability)
-      {
-        probability = newProb;
-        labels[i] = j;
-      }
-    }
-  }
-}
-
-/**
- * Get the log-likelihood of this data's fit to the model.
- */
-template<typename FittingType>
-double GMM<FittingType>::LogLikelihood(
-    const arma::mat& data,
-    const std::vector<distribution::GaussianDistribution>& distsL,
-    const arma::vec& weightsL) const
-{
-  double loglikelihood = 0;
-  arma::vec phis;
-  arma::mat likelihoods(gaussians, data.n_cols);
-
-  for (size_t i = 0; i < gaussians; i++)
-  {
-    distsL[i].Probability(data, phis);
-    likelihoods.row(i) = weightsL(i) * trans(phis);
-  }
-
-  // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
-    loglikelihood += log(accu(likelihoods.col(j)));
-  return loglikelihood;
-}
-
-/**
  * Serialize the object.
  */
-template<typename FittingType>
 template<typename Archive>
-void GMM<FittingType>::Serialize(Archive& ar, const unsigned int /* version */)
+void GMM::Serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
 
@@ -419,16 +205,6 @@ void GMM<FittingType>::Serialize(Archive& ar, const unsigned int /* version */)
   }
 
   ar & CreateNVP(weights, "weights");
-
-  if (Archive::is_loading::value)
-  {
-    if (fitter && ownsFitter)
-      delete fitter;
-
-    ownsFitter = true;
-  }
-
-  ar & CreateNVP(fitter, "fitter");
 }
 
 } // namespace gmm

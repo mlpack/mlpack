@@ -333,7 +333,7 @@ int main(int argc, char** argv)
             << "be greater than or equal to 1." << endl;
 
       // Create HMM object.
-      HMM<GMM<>> hmm(size_t(states), GMM<>(size_t(gaussians), dimensionality),
+      HMM<GMM> hmm(size_t(states), GMM(size_t(gaussians), dimensionality),
           tolerance);
 
       // Issue a warning if the user didn't give labels.
