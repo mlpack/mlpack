@@ -10,7 +10,6 @@ set(SOURCES
   positive_definite_constraint.hpp
   diagonal_constraint.hpp
   eigenvalue_ratio_constraint.hpp
-  gmm_util.hpp
 )
 
 # Add directory name to sources.
@@ -23,13 +22,27 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # main executable, gmm
-add_executable(gmm
-  gmm_main.cpp
+add_executable(gmm_train
+  gmm_train_main.cpp
 )
 
 # link dependencies of gmm
-target_link_libraries(gmm
+target_link_libraries(gmm_train
   mlpack
 )
 
-install(TARGETS gmm RUNTIME DESTINATION bin)
+add_executable(gmm_generate
+  gmm_generate_main.cpp
+)
+target_link_libraries(gmm_generate
+  mlpack
+)
+
+add_executable(gmm_probability
+  gmm_probability_main.cpp
+)
+target_link_libraries(gmm_probability
+  mlpack
+)
+
+install(TARGETS gmm_train gmm_generate gmm_probability RUNTIME DESTINATION bin)
