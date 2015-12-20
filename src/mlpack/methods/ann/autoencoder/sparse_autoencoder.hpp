@@ -67,7 +67,7 @@ class SparseAutoencoder
                     const double rho = 0.01) :
     range(std::sqrt(6) / std::sqrt(visibleSize + hiddenSize + 1)),
     encoder(std::make_tuple(
-              HiddenLayer(visibleSize, hiddenSize, {range, range},
+              HiddenLayer(visibleSize, hiddenSize, {-range, range},
                           lambda),
               BiasLayer(hiddenSize, sampleSize),
               HiddenActivate(),
@@ -86,7 +86,7 @@ class SparseAutoencoder
    */
   MatType const& DecoderWeights() const
   {
-    return std::get<3>(FFN.Network()).Weights();
+    return std::get<3>(encoder.Network()).Weights();
   }
 
   /**
@@ -95,7 +95,7 @@ class SparseAutoencoder
    */
   MatType const& DecoderBias() const
   {
-    return std::get<4>(FFN.Network()).Weights();
+    return std::get<4>(encoder.Network()).Weights();
   }
 
   /**
@@ -104,7 +104,7 @@ class SparseAutoencoder
    */
   MatType const& EncoderWeights() const
   {
-    return std::get<0>(FFN.Network()).Weights();
+    return std::get<0>(encoder.Network()).Weights();
   }
 
   /**
@@ -113,7 +113,7 @@ class SparseAutoencoder
    */
   MatType const& EncoderBias() const
   {
-    return std::get<1>(FFN.Network()).Weights();
+    return std::get<1>(encoder.Network()).Weights();
   }
 
   /**
