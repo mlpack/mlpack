@@ -189,32 +189,32 @@ class SparseOutputLayer
   }
 
   //! Get the weights.
-  OutputDataType& Weights() const { return weights; }
+  OutputDataType const& Weights() const { return weights; }
   //! Modify the weights.
   OutputDataType& Weights() { return weights; }
 
   //! Get the RhoCap.
-  OutputDataType& RhoCap() const { return rhoCap; }
+  OutputDataType const& RhoCap() const { return rhoCap; }
   //! Modify the RhoCap.
   OutputDataType& RhoCap() { return rhoCap; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType const& InputParameter() const {return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType const& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  OutputDataType const& Delta() const {return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const {return gradient; }
+  OutputDataType const& Gradient() const {return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
