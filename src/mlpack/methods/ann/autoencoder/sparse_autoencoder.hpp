@@ -24,8 +24,6 @@
 
 #include <mlpack/methods/ann/performance_functions/sparse_function.hpp>
 
-#include <memory>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -54,14 +52,14 @@ class SparseAutoencoder
    * size of the training data
    * @param hiddenSize Hidden size of the hidden layer, usually it should be
    * smaller than the visible size
-   * @param sampleSize The size of the training example
+   * @param batchSize The batch size used to train the network.
    * @param lambda L2-regularization parameter.
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
    */
   SparseAutoencoder(size_t visibleSize,
                     size_t hiddenSize,
-                    size_t sampleSize,
+                    size_t batchSize,
                     const double lambda = 0.0001,
                     const double beta = 3,
                     const double rho = 0.01) :
@@ -69,15 +67,39 @@ class SparseAutoencoder
     encoder(std::make_tuple(
               HiddenLayer(visibleSize, hiddenSize, {-range, range},
                           lambda),
-              BiasLayer(hiddenSize, sampleSize),
+              BiasLayer(hiddenSize, batchSize),
               HiddenActivate(),
               OutputLayer(hiddenSize, visibleSize, {-range, range},
                           lambda, beta, rho),
-              BiasLayer(visibleSize, sampleSize),
+              BiasLayer(visibleSize, batchSize),
               OutputActivate()),
             oneHotLayer,
             SparseErrorFunction<MatType>(lambda, beta, rho))
   {
+  }
+
+  /**
+   * Train the sparse autoencoder network
+   *
+   * @param input Data used to train the network
+   * @param maxEpochs The number of maximal trained iterations (0 means no
+   * limit).
+   * @param batchSize The batch size used to train the network.
+   * @param tolerance Train the network until it converges against
+   * the specified threshold.
+   * @param shuffle If true, the order of the training set is shuffled;
+   * otherwise, each data is visited in linear order.
+   */
+  void Train(MatType const &input,
+             const size_t maxEpochs = 0,
+             const double tolerance = 0.0001,
+             const bool shuffle = true)
+  {
+     Trainer<FFN, MatType> trainer(encoder, maxEpochs,
+                                   std::get<1>(encoder.Network()).BatchSize(),
+                                   tolerance,
+                                   shuffle);
+     trainer.Train(input, input, input, input);
   }
 
   /**
@@ -89,6 +111,11 @@ class SparseAutoencoder
     return std::get<3>(encoder.Network()).Weights();
   }
 
+  MatType& DecoderWeights()
+  {
+    return std::get<3>(encoder.Network()).Weights();
+  }
+
   /**
    * Get the bias of decoder
    * @return Bias of decoder
@@ -96,13 +123,18 @@ class SparseAutoencoder
   MatType const& DecoderBias() const
   {
     return std::get<4>(encoder.Network()).Weights();
-  }
+  }  
 
   /**
    * Get the weights of encoder
    * @return Weights of encoder
    */
   MatType const& EncoderWeights() const
+  {
+    return std::get<0>(encoder.Network()).Weights();
+  }
+
+  MatType& EncoderWeights()
   {
     return std::get<0>(encoder.Network()).Weights();
   }
@@ -128,66 +160,7 @@ class SparseAutoencoder
                                    arma::repmat(EncoderBias(),
                                                 1, input.n_cols);
     std::get<2>(encoder.Network()).fn(encodedInput, output);
-  }
-
-  /**
-   * Run a single iteration of the feed forward algorithm, using the given
-   * input and target vector, store the calculated error into the error
-   * parameter.
-   *
-   * @param input Input data used to evaluate the network.
-   * @param target Target data used to calculate the network error.
-   * @param error The calulated error of the output layer.
-   */
-  template <typename InputType, typename TargetType, typename ErrorType>
-  void FeedForward(const InputType& input,
-                   const TargetType& target,
-                   ErrorType& error)
-  {
-    encoder.FeedForward(input, target, error);
-  }
-
-  /**
-   * Run a single iteration of the feed backward algorithm, using the given
-   * error of the output layer.
-   *
-   * @param error The calulated error of the output layer.
-   */
-  template <typename InputType, typename ErrorType>
-  void FeedBackward(const InputType& /* unused */, const ErrorType& error)
-  {
-    encoder.FeedBackward(InputType(), error);
-  }
-
-  /**
-   * Update the weights using the layer defined optimizer.
-   */
-  void ApplyGradients()
-  {
-    encoder.ApplyGradients();
-  }
-
-  /**
-   * Evaluate the trained network using the given input and compare the output
-   * with the given target vector.
-   *
-   * @param input Input data used to evaluate the trained network.
-   * @param target Target data used to calculate the network error.
-   * @param error The calulated error of the output layer.
-   */
-  template <typename InputType, typename TargetType, typename ErrorType>
-  double Evaluate(const InputType& input,
-                  const TargetType& target,
-                  ErrorType& error)
-  {
-    return encoder.Evaluate(input, target, error);
-  }
-
-  //! Get the error of the network.
-  double Error() const
-  {
-    return encoder.Error();
-  }
+  }      
 
  private:  
   const double range;
