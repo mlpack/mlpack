@@ -1,11 +1,12 @@
 /**
- * @file sparse_autoencoder.hpp
- * @author Tham Ngap Wei
+ * @file one_hot_layer.hpp
+ * @author Shangtong Zhang
  *
- * Definition of the SparseAutoencoderFunction class, which implements a sparse autoencoder
+ * Definition of the OneHotLayer class, which implements a standard network
+ * layer.
  */
-#ifndef __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_FUNCTION_HPP
-#define __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_FUNCTION_HPP
+#ifndef __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_HPP
+#define __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -30,21 +31,22 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename HiddenActivate = BaseLayer<LogisticFunction>,
          typename OutputActivate = HiddenActivate,
-         typename Optimize = RMSPROP,
-         typename MatType = arma::mat>
-class SparseAutoencoderFunction
-{
-  using HiddenLayer =
-  SparseInputLayer<Optimize, RandomInitialization, MatType, MatType>;
+         typename MatType = arma::mat,
+         template<typename,typename> class Optimize = RMSPROP,
+         typename HiddenLayer = SparseInputLayer
+         <Optimize, RandomInitialization, MatType, MatType>,
+         typename OutputLayer = SparseOutputLayer
+         <Optimize, RandomInitialization, MatType, MatType>
+         >
+class SparseAutoencoder
+{  
   using BiasLayer =
   SparseBiasLayer<Optimize, ZeroInitialization, MatType, MatType>;
-  using OutputLayer =
-  SparseOutputLayer<Optimize, RandomInitialization, MatType, MatType>;
 
   using Network = std::tuple<HiddenLayer, BiasLayer, HiddenActivate,
   OutputLayer, BiasLayer, OutputActivate>;
 
-  using FFN = FFN<Network, OneHotLayer>;
+  using FFN = FFN<Network, OneHotLayer, SparseErrorFunction<MatType>>;
  public:
   /**
    * Construct sparse autoencoder function
@@ -57,12 +59,12 @@ class SparseAutoencoderFunction
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
    */
-  SparseAutoencoderFunction(size_t visibleSize,
-                            size_t hiddenSize,
-                            size_t sampleSize,
-                            const double lambda = 0.0001,
-                            const double beta = 3,
-                            const double rho = 0.01) :
+  SparseAutoencoder(size_t visibleSize,
+                    size_t hiddenSize,
+                    size_t sampleSize,
+                    const double lambda = 0.0001,
+                    const double beta = 3,
+                    const double rho = 0.01) :
     range(std::sqrt(6) / std::sqrt(visibleSize + hiddenSize + 1)),
     encoder(std::make_tuple(
               HiddenLayer(visibleSize, hiddenSize, {range, range},
@@ -125,7 +127,7 @@ class SparseAutoencoderFunction
     arma::mat const encodedInput = EncoderWeights() * input +
                                    arma::repmat(EncoderBias(),
                                                 1, input.n_cols);
-    HiddenActivate::fn(encodedInput, output);
+    std::get<2>(encoder.Network()).fn(encodedInput, output);
   }
 
   /**
@@ -193,5 +195,17 @@ class SparseAutoencoderFunction
   FFN encoder;
 };
 
+template<typename MatType = arma::mat,
+         template<typename,typename> class Optimize = RMSPROP>
+using LogisticSparseAutoencoder = SparseAutoencoder<
+    BaseLayer<LogisticFunction>,
+    BaseLayer<LogisticFunction>,
+    MatType,
+    Optimize,
+    SparseInputLayer<Optimize, RandomInitialization, MatType, MatType>,
+    SparseOutputLayer<Optimize, RandomInitialization, MatType, MatType>>;
+
 }; // namespace ann
 }; // namespace mlpack
+
+#endif
