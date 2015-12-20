@@ -1,8 +1,8 @@
 /**
- * @file sparse_bias_layer.hpp
- * @author Tham Ngap Wei
+ * @file bias_layer.hpp
+ * @author Marcus Edel
  *
- * Definition of the SparseBiasLayer class.
+ * Definition of the BiasLayer class.
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
@@ -17,8 +17,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * An implementation of a bias layer design for sparse autoencoder.
- * The BiasLayer class represents the bias part of sparse autoencoder.
- * 
+ * The BiasLayer class represents a single layer of a neural network.
+ *
+ * A convenient typedef is given:
+ *
+ *  - 2DBiasLayer
  *
  * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam WeightInitRule Rule used to initialize the weight matrix.
@@ -41,16 +44,16 @@ class SparseBiasLayer
    * parameter.
    *
    * @param outSize The number of output units.
-   * @param sampleSize The size of the training data(how many data for training)
+   * @param batchSize The batch size used to train the network.
    * @param bias The bias value.
    * @param WeightInitRule The weight initialization rule used to initialize the
    *        weight matrix.
    */
   SparseBiasLayer(const size_t outSize,
-                  const size_t sampleSize,
+                  const size_t batchSize,
                   WeightInitRule weightInitRule = WeightInitRule()) :
       outSize(outSize),
-      sampleSize(sampleSize),
+      batchSize(batchSize),
       optimizer(new OptimizerType<SparseBiasLayer<OptimizerType,
                                                   WeightInitRule,
                                                   InputDataType,
@@ -74,7 +77,7 @@ class SparseBiasLayer
     layer.ownsOptimizer = false;
 
     outSize = layer.outSize;   
-    sampleSize = layer.sampleSize;
+    batchSize = layer.batchSize;
     weights.swap(layer.weights);
     delta.swap(layer.delta);
     gradient.swap(layer.gradient);
@@ -133,7 +136,7 @@ class SparseBiasLayer
   void Gradient(const arma::Mat<eT>& d, InputDataType& g)
   {
     using inputDataType = std::decay<decltype(inputParameter[0])>::type;
-    g = arma::sum(d, 1) / static_cast<inputDataType>(sampleSize);    
+    g = arma::sum(d, 1) / static_cast<inputDataType>(batchSize);    
   }
 
   //! Get the optimizer.
@@ -153,28 +156,33 @@ class SparseBiasLayer
     return *optimizer;
   }
 
+  //! Get the batch size
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size
+  size_t& BatchSize() { return batchSize; }
+
   //! Get the weights.
-  InputDataType& Weights() const { return weights; }
+  InputDataType const& Weights() const { return weights; }
   //! Modify the weights.
   InputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType const& InputParameter() const {return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType const& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  OutputDataType const& Delta() const {return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  InputDataType& Gradient() const {return gradient; }
+  InputDataType const& Gradient() const {return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
 
@@ -182,8 +190,8 @@ class SparseBiasLayer
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Sample size of the training data
-  size_t sampleSize;
+  //! The batch size used to train the network.
+  size_t batchSize;
 
   //! Locally-stored weight object.
   InputDataType weights;
@@ -208,9 +216,9 @@ class SparseBiasLayer
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
-}; // class SparseBiasLayer
+}; // class BiasLayer
 
-//! Layer traits for the SparseBiasLayer.
+//! Layer traits for the bias layer.
 template<
   template<typename, typename> class OptimizerType,
   typename WeightInitRule,
