@@ -52,7 +52,7 @@ struct FactorizerTraits
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CF<> cf(data); // Default options.
+ * CF cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
