@@ -602,10 +602,7 @@ void CLI::PrintHelp(const std::string& param)
 
   for (size_t pass = 0; pass < 2; ++pass)
   {
-    if (pass == 0)
-      std::cout << "Required options:" << std::endl << std::endl;
-    else
-      std::cout << "Options: " << std::endl << std::endl;
+    bool printedHeader = false;
 
     // Print out the descriptions of everything else.
     for (iter = gmap.begin(); iter != gmap.end(); ++iter)
@@ -628,6 +625,15 @@ void CLI::PrintHelp(const std::string& param)
         continue; // Don't print this one.
       if ((pass == 1) && required)
         continue; // Don't print this one.
+
+      if (!printedHeader)
+      {
+        printedHeader = true;
+        if (pass == 0)
+          std::cout << "Required options:" << std::endl << std::endl;
+        else
+          std::cout << "Options: " << std::endl << std::endl;
+      }
 
       if (pass == 1) // Append default value to description.
       {
