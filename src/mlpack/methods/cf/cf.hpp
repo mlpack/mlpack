@@ -138,7 +138,7 @@ class CF
    * @param data Input dataset; coordinate list or dense matrix.
    * @param factorizer Instantiated factorizer.
    */
-  template<typename FactorizerType>
+  template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::mat& data,
              FactorizerType factorizer = FactorizerType());
 
@@ -150,7 +150,7 @@ class CF
    * @param data Sparse matrix data.
    * @param factorizer Instantiated factorizer.
    */
-  template<typename FactorizerType>
+  template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::sp_mat& data,
              FactorizerType factorizer = FactorizerType(),
              const typename boost::disable_if_c<
