@@ -72,14 +72,14 @@ PARAM_STRING("optimizer", "Optimizer to use for training ('lbfgs' or 'sgd').",
     "O", "lbfgs");
 PARAM_DOUBLE("tolerance", "Convergence tolerance for optimizer.", "e", 1e-10);
 PARAM_INT("max_iterations", "Maximum iterations for optimizer (0 indicates no "
-    "limit).", "M", 10000);
+    "limit).", "n", 10000);
 PARAM_DOUBLE("step_size", "Step size for SGD optimizer.", "s", 0.01);
 
 // Model loading/saving.
-PARAM_STRING("input_model", "File containing existing model (parameters).", "i",
-    "");
-PARAM_STRING("output_model", "File to save trained logistic regression model "
-    "to.", "m", "");
+PARAM_STRING("input_model_file", "File containing existing model (parameters).",
+    "m", "");
+PARAM_STRING("output_model_file", "File to save trained logistic regression "
+    "model to.", "M", "");
 
 // Testing.
 PARAM_STRING("test_file", "File containing test dataset.", "T", "");

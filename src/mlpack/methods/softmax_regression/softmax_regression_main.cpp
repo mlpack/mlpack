@@ -41,10 +41,10 @@ PARAM_STRING("labels_file", "A file containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row", "l", "");
 
 // Model loading/saving.
-PARAM_STRING("input_model", "File containing existing model (parameters).", "i",
-    "");
-PARAM_STRING("output_model", "File to save trained logistic regression model "
-    "to.", "m", "");
+PARAM_STRING("input_model_file", "File containing existing model (parameters).",
+    "m", "");
+PARAM_STRING("output_model_file", "File to save trained softmax regression "
+    "model to.", "M", "");
 
 // Testing.
 PARAM_STRING("test_data", "File containing test dataset.", "T", "");
@@ -53,12 +53,12 @@ PARAM_STRING("predictions_file", "File to save predictions for test dataset "
 PARAM_STRING("test_labels", "File containing test labels.", "L", "");
 
 // Softmax configuration options.
-PARAM_INT("max_iterations", "Maximum number of iterations before "
-          "terminates.", "M", 400);
+PARAM_INT("max_iterations", "Maximum number of iterations before termination.",
+    "n", 400);
 
-PARAM_INT("number_of_classes", "Number of classes for classification, "
-          "if you do not specify, it will measure it out automatic",
-          "n", 0);
+PARAM_INT("number_of_classes", "Number of classes for classification; if "
+    "unspecified (or 0), the number of classes found in the labels will be "
+    "used.", "c", 0);
 
 PARAM_DOUBLE("lambda", "L2-regularization constant", "r", 0.0001);
 
