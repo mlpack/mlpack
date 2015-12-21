@@ -71,8 +71,8 @@ class NaiveBayesClassifier
    * Train() before calling Classify(), otherwise the results may be
    * meaningless.
    */
-  NaiveBayesClassifier(const size_t dimensionality,
-                       const size_t classes);
+  NaiveBayesClassifier(const size_t dimensionality = 0,
+                       const size_t classes = 0);
 
   /**
    * Train the Naive Bayes classifier on the given dataset.  If the incremental
