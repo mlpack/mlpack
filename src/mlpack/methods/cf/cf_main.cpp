@@ -83,8 +83,7 @@ PARAM_DOUBLE("min_residue", "Residue required to terminate the factorization "
 
 PARAM_INT("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-template<typename Factorizer>
-void ComputeRecommendations(CF<Factorizer>& cf,
+void ComputeRecommendations(CF& cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -109,8 +108,7 @@ void ComputeRecommendations(CF<Factorizer>& cf,
   }
 }
 
-template<typename Factorizer>
-void ComputeRMSE(CF<Factorizer>& cf)
+void ComputeRMSE(CF& cf)
 {
   // Now, compute each test point.
   const string testFile = CLI::GetParam<string>("test_file");
@@ -146,7 +144,7 @@ void PerformAction(Factorizer&& factorizer,
 {
   // Parameters for generating the CF object.
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
-  CF<Factorizer> c(dataset, factorizer, neighborhood, rank);
+  CF c(dataset, factorizer, neighborhood, rank);
 
   if (CLI::HasParam("query_file") || CLI::HasParam("all_user_recommendations"))
   {
