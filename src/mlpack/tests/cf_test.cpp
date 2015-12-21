@@ -324,7 +324,8 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
 BOOST_AUTO_TEST_CASE(TrainTest)
 {
   // Generate random data.
-  arma::mat randomData = arma::randu<arma::mat>(100, 100);
+  arma::sp_mat randomData;
+  randomData.sprandu(100, 100, 0.3);
   CF c(randomData);
 
   // Now retrain with data we know about.
@@ -369,7 +370,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   CF::CleanData(dataset, cleanedData);
 
   // Now retrain.
-  c.Train(cleanedData);
+  c.Train(dataset);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
