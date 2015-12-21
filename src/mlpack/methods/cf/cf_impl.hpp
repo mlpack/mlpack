@@ -148,6 +148,21 @@ void CF::Train(const arma::sp_mat& data,
   Timer::Stop("cf_factorization");
 }
 
+//! Serialize the model.
+template<typename Archive>
+void CF::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  // This model is simple; just serialize all the members.  No special handling
+  // required.
+  using data::CreateNVP;
+
+  ar & CreateNVP(numUsersForSimilarity, "numUsersForSimilarity");
+  ar & CreateNVP(rank, "rank");
+  ar & CreateNVP(w, "w");
+  ar & CreateNVP(h, "h");
+  ar & CreateNVP(cleanedData, "cleanedData");
+}
+
 } // namespace mlpack
 } // namespace cf
 
