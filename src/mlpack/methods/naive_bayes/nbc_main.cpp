@@ -13,16 +13,23 @@
 
 PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "This program trains the Naive Bayes classifier on the given labeled "
-    "training set and then uses the trained classifier to classify the points "
-    "in the given test set."
+    "training set, or loads a model from the given model file, and then may use"
+    " that trained model to classify the points in a given test set."
     "\n\n"
     "Labels are expected to be the last row of the training set (--train_file),"
     " but labels can also be passed in separately as their own file "
-    "(--labels_file)."
+    "(--labels_file).  If training is not desired, a pre-existing model can be "
+    "loaded with the --input_model_file (-m) option."
     "\n\n"
     "The '--incremental_variance' option can be used to force the training to "
     "use an incremental algorithm for calculating variance.  This is slower, "
-    "but can help avoid loss of precision in some cases.");
+    "but can help avoid loss of precision in some cases."
+    "\n\n"
+    "If classifying a test set is desired, the test set should be in the file "
+    "specified with the --test_file (-T) option, and the classifications will "
+    "be saved to the file specified with the --output_file (-o) option.  If "
+    "saving a trained model is desired, the --output_model_file (-M) option "
+    "should be given.");
 
 // Model loading/saving.
 PARAM_STRING("input_model_file", "File containing input Naive Bayes model.",
