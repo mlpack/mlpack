@@ -15,15 +15,22 @@ using namespace std;
 PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "This program performs a number of functions related to Density Estimation "
     "Trees.  The optimal Density Estimation Tree (DET) can be trained on a set "
-    "of data (specified by --train_file) using cross-validation (with number of"
-    " folds specified by --folds).  In addition, the density of a set of test "
-    "points (specified by --test_file) can be estimated, and the importance of "
-    "each dimension can be computed.  If class labels are given for the "
-    "training points (with --labels_file), the class memberships of each leaf "
-    "in the DET can be calculated."
+    "of data (specified by --training_file or -t) using cross-validation (with "
+    "number of folds specified by --folds).  This trained density estimation "
+    "tree may then be saved to a model file with the --output_model_file (-M) "
+    "option."
     "\n\n"
-    "The created DET can be saved to a file, along with the density estimates "
-    "for the test set and the variable importances.");
+    "The variable importances of each dimension may be saved with the "
+    "--vi_file (-i) option, and the density estimates on each training point "
+    "may be saved to the file specified with the --training_set_estimates_file "
+    "(-e) option."
+    "\n\n"
+    "This program also can provide density estimates for a set of test points, "
+    "specified in the --test_file (-T) file.  The density estimation tree used "
+    "for this task will be the tree that was trained on the given training "
+    "points, or a tree stored in the file given with the --input_model_file "
+    "(-m) parameter.  The density estimates for the test points may be saved "
+    "into the file specified with the --test_set_estimates_file (-E) option.");
 
 // Input data files.
 PARAM_STRING("training_file", "The data set on which to build a density "
