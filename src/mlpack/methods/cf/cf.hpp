@@ -191,8 +191,6 @@ class CF
   const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
   const arma::mat& H() const { return h; }
-  //! Get the Rating Matrix.
-  const arma::mat& Rating() const { return rating; }
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
@@ -242,6 +240,12 @@ class CF
   void Predict(const arma::Mat<size_t>& combinations,
                arma::vec& predictions) const;
 
+  /**
+   * Serialize the CF model to the given archive.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
@@ -251,8 +255,6 @@ class CF
   arma::mat w;
   //! Item matrix.
   arma::mat h;
-  //! Rating matrix.
-  arma::mat rating;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
 
