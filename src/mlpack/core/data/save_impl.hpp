@@ -191,10 +191,11 @@ bool Save(const std::string& filename,
     {
       if (fatal)
         Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension?" << std::endl;
+            << " extension? (allowed: xml/bin/txt)" << std::endl;
       else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed.  Incorrect extension?" << std::endl;
+        Log::Warn << "Unable to detect type of '" << filename << "'; save "
+            << "failed.  Incorrect extension? (allowed: xml/bin/txt)"
+            << std::endl;
 
       return false;
     }
