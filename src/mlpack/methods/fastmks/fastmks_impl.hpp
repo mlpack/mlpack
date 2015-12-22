@@ -127,6 +127,52 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->referenceSet = &referenceSet;
+  this->setOwner = false;
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(referenceSet, metric);
+    treeOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet,
+                                                   KernelType& kernel)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->referenceSet = &referenceSet;
+  this->metric = metric::IPMetric<KernelType>(kernel);
+  this->setOwner = false;
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(referenceSet, metric);
+    treeOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
     const MatType& querySet,
     const size_t k,

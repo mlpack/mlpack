@@ -116,6 +116,24 @@ class FastMKS
   ~FastMKS();
 
   /**
+   * "Train" the FastMKS model on the given reference set (this will just build
+   * a tree, if the current search mode is not naive mode).
+   *
+   * @param referenceSet Set of reference points.
+   */
+  void Train(const MatType& referenceSet);
+
+  /**
+   * "Train" the FastMKS model on the given reference set and use the given
+   * kernel.  This will just build a tree and replace the metric, if the current
+   * search mode is not naive mode.
+   *
+   * @param referenceSet Set of reference points.
+   * @param kernel Kernel to use for search.
+   */
+  void Train(const MatType& referenceSet, KernelType& kernel);
+
+  /**
    * Search for the points in the reference set with maximum kernel evaluation
    * to each point in the given query set.  The resulting kernel evaluations are
    * stored in the kernels matrix, and the corresponding point indices are

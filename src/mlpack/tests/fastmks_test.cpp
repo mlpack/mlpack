@@ -213,4 +213,71 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
       std::invalid_argument);
 }
 
+// Make sure the simplest overload of Train() works.
+BOOST_AUTO_TEST_CASE(SimpleTrainTest)
+{
+  arma::mat referenceSet = arma::randu<arma::mat>(5, 100);
+
+  FastMKS<LinearKernel> f(referenceSet);
+  FastMKS<LinearKernel> f2;
+  f2.Train(referenceSet);
+
+  arma::Mat<size_t> indices, indices2;
+  arma::mat products, products2;
+
+  arma::mat querySet = arma::randu<arma::mat>(5, 20);
+
+  f.Search(querySet, 3, indices, products);
+  f2.Search(querySet, 3, indices2, products2);
+
+  BOOST_REQUIRE_EQUAL(indices.n_rows, indices2.n_rows);
+  BOOST_REQUIRE_EQUAL(products.n_rows, products2.n_rows);
+  BOOST_REQUIRE_EQUAL(indices.n_cols, indices2.n_cols);
+  BOOST_REQUIRE_EQUAL(products.n_cols, products2.n_cols);
+
+  for (size_t i = 0; i < products.n_elem; ++i)
+  {
+    if (std::abs(products[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(products2[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(products[i], products2[i], 1e-5);
+
+    BOOST_REQUIRE_EQUAL(indices[i], indices2[i]);
+  }
+}
+
+// Test the Train() overload that takes a kernel too.
+BOOST_AUTO_TEST_CASE(SimpleTrainKernelTest)
+{
+  arma::mat referenceSet = arma::randu<arma::mat>(5, 100);
+  GaussianKernel gk(2.0);
+
+  FastMKS<GaussianKernel> f(referenceSet, gk);
+  FastMKS<GaussianKernel> f2;
+  f2.Train(referenceSet, gk);
+
+  arma::Mat<size_t> indices, indices2;
+  arma::mat products, products2;
+
+  arma::mat querySet = arma::randu<arma::mat>(5, 20);
+
+  f.Search(querySet, 3, indices, products);
+  f2.Search(querySet, 3, indices2, products2);
+
+  BOOST_REQUIRE_EQUAL(indices.n_rows, indices2.n_rows);
+  BOOST_REQUIRE_EQUAL(products.n_rows, products2.n_rows);
+  BOOST_REQUIRE_EQUAL(indices.n_cols, indices2.n_cols);
+  BOOST_REQUIRE_EQUAL(products.n_cols, products2.n_cols);
+
+  for (size_t i = 0; i < products.n_elem; ++i)
+  {
+    if (std::abs(products[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(products2[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(products[i], products2[i], 1e-5);
+
+    BOOST_REQUIRE_EQUAL(indices[i], indices2[i]);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
