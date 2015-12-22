@@ -213,6 +213,10 @@ class FastMKS
   //! Modify whether or not single-tree search is used.
   bool& SingleMode() { return singleMode; }
 
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! The reference dataset.  We never own this; only the tree or a higher level
   //! does.

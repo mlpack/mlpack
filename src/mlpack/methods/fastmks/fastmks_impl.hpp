@@ -418,6 +418,63 @@ void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
   indices(pos, queryIndex) = neighbor;
 }
 
+//! Serialize the model.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+template<typename Archive>
+void FastMKS<KernelType, MatType, TreeType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // Serialize preferences for search.
+  ar & CreateNVP(naive, "naive");
+  ar & CreateNVP(singleMode, "singleMode");
+
+  // If we are doing naive search, serialize the dataset.  Otherwise we
+  // serialize the tree.
+  if (naive)
+  {
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      setOwner = true;
+    }
+
+    ar & CreateNVP(referenceSet, "referenceSet");
+    ar & CreateNVP(metric, "metric");
+  }
+  else
+  {
+    // Delete the current reference tree, if necessary.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      treeOwner = true;
+    }
+
+    ar & CreateNVP(referenceTree, "referenceTree");
+
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      referenceSet = &referenceTree->Dataset();
+      metric = metric::IPMetric<KernelType>(referenceTree->Metric().Kernel());
+      setOwner = false;
+    }
+  }
+}
+
 } // namespace fastmks
 } // namespace mlpack
 

@@ -11,6 +11,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::tree;
@@ -278,6 +279,32 @@ BOOST_AUTO_TEST_CASE(SimpleTrainKernelTest)
 
     BOOST_REQUIRE_EQUAL(indices[i], indices2[i]);
   }
+}
+
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 200);
+
+  FastMKS<LinearKernel> f(dataset);
+
+  FastMKS<LinearKernel> fXml, fText, fBinary;
+  arma::mat otherDataset = arma::randu<arma::mat>(3, 10);
+  fBinary.Train(otherDataset);
+
+  SerializeObjectAll(f, fXml, fText, fBinary);
+
+  arma::mat kernels, xmlKernels, textKernels, binaryKernels;
+  arma::Mat<size_t> indices, xmlIndices, textIndices, binaryIndices;
+
+  arma::mat querySet = arma::randu<arma::mat>(5, 100);
+
+  f.Search(querySet, 5, indices, kernels);
+  fXml.Search(querySet, 5, xmlIndices, xmlKernels);
+  fText.Search(querySet, 5, textIndices, textKernels);
+  fBinary.Search(querySet, 5, binaryIndices, binaryKernels);
+
+  CheckMatrices(indices, xmlIndices, textIndices, binaryIndices);
+  CheckMatrices(kernels, xmlKernels, textKernels, binaryKernels);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
