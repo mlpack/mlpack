@@ -21,9 +21,11 @@ using namespace std;
 // Document program.
 PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "filtering (CF) on the given dataset. Given a list of user, item and "
-    "preferences (--input_file) the program will perform a matrix decomposition"
-    " and then can perform a series of actions related to collaborative "
-    "filtering."
+    "preferences (--training_file) the program will perform a matrix "
+    "decomposition and then can perform a series of actions related to "
+    "collaborative filtering.  Alternately, the program can load an existing "
+    "saved CF model with the --input_model_file (-m) option and then use that "
+    "model to provide recommendations or predict values."
     "\n\n"
     "The input file should contain a 3-column matrix of ratings, where the "
     "first column is the user, the second column is the item, and the third "
@@ -48,7 +50,10 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "update rules\n"
     "'BatchSVD' -- SVD batch learning\n"
     "'SVDIncompleteIncremental' -- SVD incomplete incremental learning\n"
-    "'SVDCompleteIncremental' -- SVD complete incremental learning\n");
+    "'SVDCompleteIncremental' -- SVD complete incremental learning\n"
+    "\n"
+    "A trained model may be saved to a file with the --output_model_file (-M) "
+    "parameter.");
 
 // Parameters for training a model.
 PARAM_STRING("training_file", "Input dataset to perform CF on.", "t", "");
