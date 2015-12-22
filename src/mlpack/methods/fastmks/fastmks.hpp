@@ -213,6 +213,11 @@ class FastMKS
   //! Modify whether or not single-tree search is used.
   bool& SingleMode() { return singleMode; }
 
+  //! Get whether or not brute-force (naive) search is used.
+  bool Naive() const { return naive; }
+  //! Modify whether or not brute-force (naive) search is used.
+  bool& Naive() { return naive; }
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
