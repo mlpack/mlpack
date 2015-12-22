@@ -3,6 +3,9 @@
 set(SOURCES
   fastmks.hpp
   fastmks_impl.hpp
+  fastmks_model.hpp
+  fastmks_model_impl.hpp
+  fastmks_model.cpp
   fastmks_rules.hpp
   fastmks_rules_impl.hpp
 )
