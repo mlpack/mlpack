@@ -40,10 +40,10 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
 //! This is only called when something goes wrong.
 template<typename KernelType,
          typename FastMKSType>
-void BuildFastMKSModel(FastMKSType& f,
-                       KernelType& k,
-                       const arma::mat& referenceData,
-                       const double base)
+void BuildFastMKSModel(FastMKSType& /* f */,
+                       KernelType& /* k */,
+                       const arma::mat& /* referenceData */,
+                       const double /* base */)
 {
   throw std::invalid_argument("FastMKSModel::BuildModel(): given kernel type is"
       " not equal to kernel type of the model!");
