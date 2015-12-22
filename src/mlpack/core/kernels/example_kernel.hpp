@@ -102,7 +102,7 @@ class ExampleKernel
    * not need to do anything at all.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]

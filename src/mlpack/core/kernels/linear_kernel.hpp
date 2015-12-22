@@ -52,7 +52,7 @@ class LinearKernel
 
   //! Serialize the kernel (it has no members... do nothing).
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace kernel
