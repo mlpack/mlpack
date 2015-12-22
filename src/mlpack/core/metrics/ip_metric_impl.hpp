@@ -62,8 +62,10 @@ void IPMetric<KernelType>::Serialize(Archive& ar,
   // If we're loading, we need to allocate space for the kernel, and we will own
   // the kernel.
   if (Archive::is_loading::value)
+  {
     kernel = new KernelType();
-  kernelOwner = true;
+    kernelOwner = true;
+  }
 
   ar & data::CreateNVP(kernel, "kernel");
 }
