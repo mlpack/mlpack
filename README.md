@@ -59,8 +59,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo     >= 3.6.0
-      LibXml2       >= 2.6.0
-      Boost (program_options, math_c99, unit_test_framework)
+      Boost (program_options, math_c99, unit_test_framework, serialization)
       CMake         >= 2.8.5
 
 All of those should be available in your distribution's package manager.  If
