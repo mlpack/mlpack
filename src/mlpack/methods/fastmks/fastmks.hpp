@@ -187,8 +187,9 @@ class FastMKS
   bool& SingleMode() { return singleMode; }
 
  private:
-  //! The reference dataset.
-  const MatType& referenceSet;
+  //! The reference dataset.  We never own this; only the tree or a higher level
+  //! does.
+  const MatType* referenceSet;
   //! The tree built on the reference dataset.
   Tree* referenceTree;
   //! If true, this object created the tree and is responsible for it.

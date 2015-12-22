@@ -28,7 +28,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
     const MatType& referenceSet,
     const bool singleMode,
     const bool naive) :
-    referenceSet(referenceSet),
+    referenceSet(&referenceSet),
     referenceTree(NULL),
     treeOwner(true),
     singleMode(singleMode),
@@ -52,7 +52,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
                                                 KernelType& kernel,
                                                 const bool singleMode,
                                                 const bool naive) :
-    referenceSet(referenceSet),
+    referenceSet(&referenceSet),
     referenceTree(NULL),
     treeOwner(true),
     singleMode(singleMode),
@@ -76,7 +76,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
                                                 const bool singleMode) :
-    referenceSet(referenceTree->Dataset()),
+    referenceSet(&referenceTree->Dataset()),
     referenceTree(referenceTree),
     treeOwner(false),
     singleMode(singleMode),
@@ -124,10 +124,10 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Simple double loop.  Stupid, slow, but a good benchmark.
     for (size_t q = 0; q < querySet.n_cols; ++q)
     {
-      for (size_t r = 0; r < referenceSet.n_cols; ++r)
+      for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
         const double eval = metric.Kernel().Evaluate(querySet.col(q),
-                                                     referenceSet.col(r));
+                                                     referenceSet->col(r));
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;
@@ -154,7 +154,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
     typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(referenceSet, querySet, indices, kernels, metric.Kernel());
+    RuleType rules(*referenceSet, querySet, indices, kernels, metric.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -203,7 +203,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
   Timer::Start("computing_products");
   typedef FastMKSRules<KernelType, Tree> RuleType;
-  RuleType rules(referenceSet, queryTree->Dataset(), indices, kernels,
+  RuleType rules(*referenceSet, queryTree->Dataset(), indices, kernels,
       metric.Kernel());
 
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
@@ -228,23 +228,23 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 {
   // No remapping will be necessary because we are using the cover tree.
   Timer::Start("computing_products");
-  indices.set_size(k, referenceSet.n_cols);
-  kernels.set_size(k, referenceSet.n_cols);
+  indices.set_size(k, referenceSet->n_cols);
+  kernels.set_size(k, referenceSet->n_cols);
   kernels.fill(-DBL_MAX);
 
   // Naive implementation.
   if (naive)
   {
     // Simple double loop.  Stupid, slow, but a good benchmark.
-    for (size_t q = 0; q < referenceSet.n_cols; ++q)
+    for (size_t q = 0; q < referenceSet->n_cols; ++q)
     {
-      for (size_t r = 0; r < referenceSet.n_cols; ++r)
+      for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
         if (q == r)
           continue; // Don't return the point as its own candidate.
 
-        const double eval = metric.Kernel().Evaluate(referenceSet.col(q),
-                                                     referenceSet.col(r));
+        const double eval = metric.Kernel().Evaluate(referenceSet->col(q),
+                                                     referenceSet->col(r));
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;
@@ -268,12 +268,12 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
     typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(referenceSet, referenceSet, indices, kernels,
+    RuleType rules(*referenceSet, *referenceSet, indices, kernels,
         metric.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
-    for (size_t i = 0; i < referenceSet.n_cols; ++i)
+    for (size_t i = 0; i < referenceSet->n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
 
     // Save the number of pruned nodes.
