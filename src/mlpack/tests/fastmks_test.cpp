@@ -199,7 +199,18 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
       BOOST_REQUIRE_EQUAL(sparseIndices(j, i), denseIndices(j, i));
     }
   }
+}
 
+// Make sure the empty constructor works.
+BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
+{
+  FastMKS<LinearKernel> f;
+
+  arma::mat queryData = arma::randu<arma::mat>(5, 100);
+  arma::Mat<size_t> indices;
+  arma::mat products;
+  BOOST_REQUIRE_THROW(f.Search(queryData, 3, indices, products),
+      std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

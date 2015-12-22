@@ -61,12 +61,21 @@ class FastMKS
   typedef TreeType<metric::IPMetric<KernelType>, FastMKSStat, MatType> Tree;
 
   /**
+   * Create the FastMKS object with an empty reference set and default kernel.
+   * Make sure to call Train() before Search() is called!
+   *
+   * @param singleMode Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(const bool singleMode = false, const bool naive = false);
+
+  /**
    * Create the FastMKS object with the given reference set (this is the set
    * that is searched).  Optionally, specify whether or not single-tree search
    * or naive (brute-force) search should be used.
    *
    * @param referenceSet Set of reference data.
-   * @param single Whether or not to run single-tree search.
+   * @param singleMode Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
   FastMKS(const MatType& referenceSet,
@@ -194,6 +203,8 @@ class FastMKS
   Tree* referenceTree;
   //! If true, this object created the tree and is responsible for it.
   bool treeOwner;
+  //! If true, we own the dataset.  This happens in only a few situations.
+  bool setOwner;
 
   //! If true, single-tree search is used.
   bool singleMode;

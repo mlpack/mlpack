@@ -18,6 +18,27 @@
 namespace mlpack {
 namespace fastmks {
 
+// No data; create a model on an empty dataset.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(const bool singleMode,
+                                                const bool naive) :
+    referenceSet(new MatType()),
+    referenceTree(NULL),
+    treeOwner(true),
+    setOwner(true),
+    singleMode(singleMode),
+    naive(naive)
+{
+  Timer::Start("tree_building");
+  if (!naive)
+    referenceTree = new Tree(*referenceSet);
+  Timer::Stop("tree_building");
+}
+
 // No instantiated kernel.
 template<typename KernelType,
          typename MatType,
@@ -31,14 +52,13 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
     referenceSet(&referenceSet),
     referenceTree(NULL),
     treeOwner(true),
+    setOwner(false),
     singleMode(singleMode),
     naive(naive)
 {
   Timer::Start("tree_building");
-
   if (!naive)
     referenceTree = new Tree(referenceSet);
-
   Timer::Stop("tree_building");
 }
 
@@ -55,6 +75,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
     referenceSet(&referenceSet),
     referenceTree(NULL),
     treeOwner(true),
+    setOwner(false),
     singleMode(singleMode),
     naive(naive),
     metric(kernel)
@@ -79,6 +100,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
     referenceSet(&referenceTree->Dataset()),
     referenceTree(referenceTree),
     treeOwner(false),
+    setOwner(false),
     singleMode(singleMode),
     naive(false),
     metric(referenceTree->Metric())
@@ -96,6 +118,8 @@ FastMKS<KernelType, MatType, TreeType>::~FastMKS()
   // If we created the trees, we must delete them.
   if (treeOwner && referenceTree)
     delete referenceTree;
+  if (setOwner)
+    delete referenceSet;
 }
 
 template<typename KernelType,
@@ -109,6 +133,14 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     arma::Mat<size_t>& indices,
     arma::mat& kernels)
 {
+  if (k > referenceSet->n_cols)
+  {
+    std::stringstream ss;
+    ss << "requested value of k (" << k << ") is greater than the number of "
+        << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+
   Timer::Start("computing_products");
 
   // No remapping will be necessary because we are using the cover tree.
@@ -189,6 +221,14 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     arma::Mat<size_t>& indices,
     arma::mat& kernels)
 {
+  if (k > referenceSet->n_cols)
+  {
+    std::stringstream ss;
+    ss << "requested value of k (" << k << ") is greater than the number of "
+        << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+
   // If either naive mode or single mode is specified, this must fail.
   if (naive || singleMode)
   {
