@@ -636,7 +636,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelCosineTest)
 }
 
 // Test the Gaussian kernel mode of the FastMKSModel.
-BOOST_AUTO_TEST_CASE(FastMKSModelCosineTest)
+BOOST_AUTO_TEST_CASE(FastMKSModelGaussianTest)
 {
   GaussianKernel gk(1.5);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
@@ -647,9 +647,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelCosineTest)
   FastMKSModel mNaive(FastMKSModel::GAUSSIAN_KERNEL);
   FastMKSModel mSingle(FastMKSModel::GAUSSIAN_KERNEL);
 
-  m.BuildModel(referenceData, ck, false, false, 2.0);
-  mNaive.BuildModel(referenceData, ck, false, true, 2.0);
-  mSingle.BuildModel(referenceData, ck, true, false, 2.0);
+  m.BuildModel(referenceData, gk, false, false, 2.0);
+  mNaive.BuildModel(referenceData, gk, false, true, 2.0);
+  mSingle.BuildModel(referenceData, gk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelTriangularTest)
   TriangularKernel tk(2.0);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
 
-  FastMKS<TriangularKernel> f(referenceData, ck);
+  FastMKS<TriangularKernel> f(referenceData, tk);
 
   FastMKSModel m(FastMKSModel::TRIANGULAR_KERNEL);
   FastMKSModel mNaive(FastMKSModel::TRIANGULAR_KERNEL);
@@ -862,112 +862,6 @@ BOOST_AUTO_TEST_CASE(FastMKSModelTriangularTest)
   m.BuildModel(referenceData, tk, false, false, 2.0);
   mNaive.BuildModel(referenceData, tk, false, true, 2.0);
   mSingle.BuildModel(referenceData, tk, true, false, 2.0);
-
-  // Now search, first monochromatically.
-  arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
-  arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
-
-  f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
-
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mIndices.n_cols);
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mNaiveIndices.n_cols);
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mSingleIndices.n_cols);
-
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mIndices.n_rows);
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mNaiveIndices.n_rows);
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mSingleIndices.n_rows);
-
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mKernels.n_cols);
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mNaiveKernels.n_cols);
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mSingleKernels.n_cols);
-
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mKernels.n_rows);
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mNaiveKernels.n_rows);
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mSingleKernels.n_rows);
-
-  for (size_t i = 0; i < indices.n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(indices[i], mIndices[i]);
-    BOOST_REQUIRE_EQUAL(indices[i], mNaiveIndices[i]);
-    BOOST_REQUIRE_EQUAL(indices[i], mSingleIndices[i]);
-
-    if (std::abs(kernels[i]) < 1e-5)
-    {
-      BOOST_REQUIRE_SMALL(mKernels[i], 1e-5);
-      BOOST_REQUIRE_SMALL(mNaiveKernels[i], 1e-5);
-      BOOST_REQUIRE_SMALL(mSingleKernels[i], 1e-5);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(kernels[i], mKernels[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(kernels[i], mNaiveKernels[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(kernels[i], mSingleKernels[i], 1e-5);
-    }
-  }
-
-  // Now test with a different query set.
-  arma::mat querySet = arma::randu<arma::mat>(10, 50);
-
-  f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
-
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mIndices.n_cols);
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mNaiveIndices.n_cols);
-  BOOST_REQUIRE_EQUAL(indices.n_cols, mSingleIndices.n_cols);
-
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mIndices.n_rows);
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mNaiveIndices.n_rows);
-  BOOST_REQUIRE_EQUAL(indices.n_rows, mSingleIndices.n_rows);
-
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mKernels.n_cols);
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mNaiveKernels.n_cols);
-  BOOST_REQUIRE_EQUAL(kernels.n_cols, mSingleKernels.n_cols);
-
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mKernels.n_rows);
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mNaiveKernels.n_rows);
-  BOOST_REQUIRE_EQUAL(kernels.n_rows, mSingleKernels.n_rows);
-
-  for (size_t i = 0; i < indices.n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(indices[i], mIndices[i]);
-    BOOST_REQUIRE_EQUAL(indices[i], mNaiveIndices[i]);
-    BOOST_REQUIRE_EQUAL(indices[i], mSingleIndices[i]);
-
-    if (std::abs(kernels[i]) < 1e-5)
-    {
-      BOOST_REQUIRE_SMALL(mKernels[i], 1e-5);
-      BOOST_REQUIRE_SMALL(mNaiveKernels[i], 1e-5);
-      BOOST_REQUIRE_SMALL(mSingleKernels[i], 1e-5);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(kernels[i], mKernels[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(kernels[i], mNaiveKernels[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(kernels[i], mSingleKernels[i], 1e-5);
-    }
-  }
-}
-
-// Test the hyperbolic tangent kernel mode of the FastMKSModel.
-BOOST_AUTO_TEST_CASE(FastMKSModelHyptanTest)
-{
-  HyperbolicTangentKernel htk(1.0, 0.5);
-  arma::mat referenceData = arma::randu<arma::mat>(10, 100);
-
-  FastMKS<HyperbolicTangentKernel> f(referenceData, htk);
-
-  FastMKSModel m(FastMKSModel::HYPTAN_KERNEL);
-  FastMKSModel mNaive(FastMKSModel::HYPTAN_KERNEL);
-  FastMKSModel mSingle(FastMKSModel::HYPTAN_KERNEL);
-
-  m.BuildModel(referenceData, htk, false, false, 2.0);
-  mNaive.BuildModel(referenceData, htk, false, true, 2.0);
-  mSingle.BuildModel(referenceData, htk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
