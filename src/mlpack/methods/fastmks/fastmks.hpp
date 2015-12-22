@@ -134,6 +134,15 @@ class FastMKS
   void Train(const MatType& referenceSet, KernelType& kernel);
 
   /**
+   * Train the FastMKS model on the given reference tree.  This takes ownership
+   * of the tree, so you do not need to delete it!  This will throw an exception
+   * if the model is searching in naive mode (i.e. if Naive() == true).
+   *
+   * @param tree Tree to use as reference data.
+   */
+  void Train(Tree* referenceTree);
+
+  /**
    * Search for the points in the reference set with maximum kernel evaluation
    * to each point in the given query set.  The resulting kernel evaluations are
    * stored in the kernels matrix, and the corresponding point indices are
