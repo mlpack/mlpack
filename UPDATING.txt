@@ -1,0 +1,35 @@
+mlpack uses semantic versioning for its versioning conventions
+(http://semver.org).
+
+Because of the complexity and huge API of mlpack, it is worth elaborating on
+precisely when and how backwards compatibility will be broken.  This will, of
+course, happen, as mlpack developers settle on increasingly effective
+abstractions for machine learning algorithms.
+
+ * The command-line programs, bindings, and top-level classes for each machine
+   learning algorithm, as well as the code in core/, are considered the "public
+   API".  So, for instance, the mlpack_linear_regression program,
+   LinearRegression<>, and any bindings for LinearRegression<> are considered
+   the "public API"; additionally, core utilities like data::Load() and
+   data::Save() are considered "public".
+
+ * Support classes for machine learning algorithms are considered the "private
+   API".  An example might be the mlpack::kmeans::MaxVarianceNewCluster class.
+   This is a support class for mlpack::kmeans::KMeans<> and generally isn't used
+   by end users.
+
+Thus, with this relatively simple definition of "public API" and "private API",
+we can provide a simple versioning scheme based completely on the semantic
+versioning guidelines:
+
+----
+
+  Given a version number MAJOR.MINOR.PATCH, increment the:
+
+  MAJOR version when you make incompatible public API changes,
+  MINOR version when you add public API functionality in a backwards-compatible
+      manner or make incompatible private API changes, and
+  PATCH version when you make backwards-compatible bug fixes or documentation
+      updates.
+
+----
