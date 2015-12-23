@@ -8,14 +8,14 @@ further documentation, but this tutorial should be enough to get MLPACK built
 and installed.
 
 @section Download latest mlpack build
-Download latest mlpack build from here: <a href="http://www.mlpack.org/files/mlpack-1.0.10.tar.gz">mlpack-1.0.10</a>
+Download latest mlpack build from here: <a href="http://www.mlpack.org/files/mlpack-1.0.12.tar.gz">mlpack-1.0.12</a>
 
 @section builddir Creating Build Directory
 
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.10
+$ cd mlpack-1.0.12
 $ mkdir build
 @endcode
 
@@ -29,13 +29,14 @@ system and have headers present:
 
  - Armadillo >= 3.6.0 (with LAPACK support)
  - LibXML2 >= 2.6.0
- - Boost (math_c99, program_options, unit_test_framework, heap) >= 1.49
+ - Boost (math_c99, program_options, serialization, unit_test_framework, heap)
+      >= 1.49
 
 In Ubuntu and Debian, you can get all of these dependencies through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libxml2-dev libarmadillo-dev
+  libboost-test-dev libboost-serialization-dev libarmadillo-dev
 @endcode
 
 If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
