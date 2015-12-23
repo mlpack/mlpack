@@ -980,7 +980,7 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
 
   // The batch tree must be a bit better than the stream tree.  But not too
   // much, since the accuracy is already going to be very high.
-  BOOST_REQUIRE_GT(batchCorrect, streamCorrect + 25);
+  BOOST_REQUIRE_GT(batchCorrect, streamCorrect + 10);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
