@@ -559,7 +559,8 @@ BOOST_AUTO_TEST_CASE(NoConstraintTest)
 
 BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
 {
-  // Make sure matrices are made to be positive definite.
+  // Make sure matrices are made to be positive definite, or more specifically,
+  // that they can be Cholesky decomposed.
   for (size_t i = 0; i < 30; ++i)
   {
     const size_t elem = 5 + math::RandInt(50);
@@ -568,7 +569,8 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
 
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
-    BOOST_REQUIRE_GE((double) det(cov), 1e-50);
+    arma::mat c;
+    BOOST_REQUIRE(arma::chol(c, cov));
   }
 }
 
