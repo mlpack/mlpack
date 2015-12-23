@@ -41,38 +41,39 @@ A list of all the sections this tutorial contains.
  - \ref cli_det_tut
    - \ref cli_ex1_de_tut
    - \ref cli_ex2_de_test_tut
-   - \ref cli_ex3_de_p_tut
    - \ref cli_ex4_de_vi_tut
-   - \ref cli_ex5_de_lm
+   - \ref cli_ex6_de_save
+   - \ref cli_ex7_de_load
  - \ref dtree_det_tut
    - \ref dtree_pub_func_det_tut
  - \ref dtutils_det_tut
    - \ref dtutils_util_funcs
  - \ref further_doc_det_tut
 
-@section cli_det_tut Command-Line 'det'
-The command line arguments of this program can be viewed using the '-h' option:
+@section cli_det_tut Command-Line mlpack_det
+The command line arguments of this program can be viewed using the \c -h option:
 
 @code
-$ det -h
+$ mlpack_det -h
 Density Estimation With Density Estimation Trees
 
   This program performs a number of functions related to Density Estimation
   Trees.  The optimal Density Estimation Tree (DET) can be trained on a set of
-  data (specified by --train_file) using cross-validation (with number of folds
-  specified by --folds).  In addition, the density of a set of test points
-  (specified by --test_file) can be estimated, and the importance of each
-  dimension can be computed.  If class labels are given for the training points
-  (with --labels_file), the class memberships of each leaf in the DET can be
-  calculated.
+  data (specified by --training_file or -t) using cross-validation (with number
+  of folds specified by --folds).  This trained density estimation tree may then
+  be saved to a model file with the --output_model_file (-M) option.
 
-  The created DET can be saved to a file, along with the density estimates for
-  the test set and the variable importances.
+  The variable importances of each dimension may be saved with the --vi_file
+  (-i) option, and the density estimates on each training point may be saved to
+  the file specified with the --training_set_estimates_file (-e) option.
 
-Required options:
+  This program also can provide density estimates for a set of test points,
+  specified in the --test_file (-T) file.  The density estimation tree used for
+  this task will be the tree that was trained on the given training points, or a
+  tree stored in the file given with the --input_model_file (-m) parameter.  The
+  density estimates for the test points may be saved into the file specified
+  with the --test_set_estimates_file (-E) option.
 
-  --train_file (-t) [string]    The data set on which to build a density
-                                estimation tree.
 
 Options:
 
@@ -82,41 +83,33 @@ Options:
   --help (-h)                   Default help info.
   --info [string]               Get help on a specific module or option.
                                 Default value ''.
-  --labels_file (-l) [string]   The labels for the given training data to
-                                generate the class membership of each leaf (as
-                                an extra statistic)  Default value ''.
-  --leaf_class_table_file (-L) [string]
-                                The file in which to output the leaf class
-                                membership table.  Default value
-                                'leaf_class_membership.txt'.
-  --max_leaf_size (-M) [int]    The maximum size of a leaf in the unpruned,
+  --input_model_file (-m) [string]
+                                File containing already trained density
+                                estimation tree.  Default value ''.
+  --max_leaf_size (-L) [int]    The maximum size of a leaf in the unpruned,
                                 fully grown DET.  Default value 10.
-  --min_leaf_size (-N) [int]    The minimum size of a leaf in the unpruned,
+  --min_leaf_size (-l) [int]    The minimum size of a leaf in the unpruned,
                                 fully grown DET.  Default value 5.
-  --print_tree (-p)             Print the tree out on the command line (or in
-                                the file specified with --tree_file).
-  --print_vi (-I)               Print the variable importance of each feature
-                                out on the command line (or in the file
-                                specified with --vi_file).
+  --output_model_file (-M) [string]
+                                File to save trained density estimation tree to.
+                                 Default value ''.
   --test_file (-T) [string]     A set of test points to estimate the density of.
                                  Default value ''.
   --test_set_estimates_file (-E) [string]
                                 The file in which to output the estimates on the
                                 test set from the final optimally pruned tree.
                                 Default value ''.
+  --training_file (-t) [string]
+                                The data set on which to build a density
+                                estimation tree.  Default value ''.
   --training_set_estimates_file (-e) [string]
                                 The file in which to output the density
                                 estimates on the training set from the final
                                 optimally pruned tree.  Default value ''.
-  --tree_file (-r) [string]     The file in which to print the final optimally
-                                pruned tree.  Default value ''.
-  --unpruned_tree_estimates_file (-u) [string]
-                                The file in which to output the density
-                                estimates on the training set from the large
-                                unpruned tree.  Default value ''.
   --verbose (-v)                Display informational messages and the full list
                                 of parameters and timers at the end of
                                 execution.
+  --version (-V)                Display the version of mlpack.
   --vi_file (-i) [string]       The file to output the variable importance
                                 values for each feature.  Default value ''.
 
@@ -133,16 +126,16 @@ is loaded; internally, the data is column-major -- see \ref matrices "this page"
 for more information).
 
 @code
-$ det -t dataset.csv -v
+$ mlpack_det -t dataset.csv -v
 @endcode
 
-By default, det performs 10-fold cross-validation (using the
+By default, \c mlpack_det performs 10-fold cross-validation (using the
 \f$\alpha\f$-pruning regularization for decision trees). To perform LOOCV
 (leave-one-out cross-validation), which can provide better results but will take
 longer, use the following command:
 
 @code
-$ det -t dataset.csv -f 0 -v
+$ mlpack_det -t dataset.csv -f 0 -v
 @endcode
 
 To perform k-fold crossvalidation, use \c -f \c k (or \c --folds \c k). There
@@ -152,7 +145,7 @@ sizes. By default, they are 10 and 5 respectively; you can set them using the \c
 -M (\c --max_leaf_size) and the \c -N (\c --min_leaf_size) options.
 
 @code
-$ det -t dataset.csv -M 20 -N 10
+$ mlpack_det -t dataset.csv -M 20 -N 10
 @endcode
 
 In case you want to output the density estimates at the points in the training
@@ -163,7 +156,7 @@ training set.  Note that the logarithm of the density estimates are given, which
 allows smaller estimates to be saved.
 
 @code
-$ det -t dataset.csv -e density_estimates.txt -v
+$ mlpack_det -t dataset.csv -e density_estimates.txt -v
 @endcode
 
 @subsection cli_ex2_de_test_tut Estimation on a test set
@@ -177,57 +170,41 @@ that the logarithm of the density estimates are saved; this allows smaller
 values to be saved.
 
 @code
-$ det -t dataset.csv -T test_points.csv -E test_density_estimates.txt -v
-@endcode
-
-@subsection cli_ex3_de_p_tut Printing a trained DET
-
-A depth-first visualization of the DET can be obtained by using the \c -p (\c
---print_tree) flag.
-
-@code
-$ det -t dataset.csv -p -v
-@endcode
-
-To print this tree in a file, use the \c -r (\c --tree_file) option to specify
-the output file along with the \c -P (\c --print_tree) flag.
-
-@code
-$ det -t dataset.csv -p -r tree.txt -v
+$ mlpack_det -t dataset.csv -T test_points.csv -E test_density_estimates.txt -v
 @endcode
 
 @subsection cli_ex4_de_vi_tut Computing the variable importance
 
 The variable importance (with respect to density estimation) of the different
-features in the data set can be obtained by using the \c -I (\c --print_vi)
+features in the data set can be obtained by using the \c -i (\c --vi_file )
 option. This outputs the absolute (as opposed to relative) variable importance
-of the all the features.
+of the all the features into the specified file.
 
 @code
-$ det -t dataset.csv -I -v
+$ mlpack_det -t dataset.csv -i variable_importance.txt -v
 @endcode
 
-To print this in a file, use the \c -i (\c --vi_file) option.
+@subsection cli_ex6_de_save Saving trained DETs
+
+The \c mlpack_det program is capable of saving a trained DET to a file for later
+usage.  The \c --output_model_file or \c -M option allows specification of the
+file to save to.  In the example below, a DET trained on \c dataset.csv is saved
+to the file \c det.xml.
 
 @code
-$ det -t dataset.csv -I -i variable_importance.txt -v
+$ mlpack_det -t dataset.csv -M det.xml -v
 @endcode
 
-@subsection cli_ex5_de_lm Leaf Membership
+@subsection cli_ex7_de_load Loading trained DETs
 
-In case the dataset is labeled and you want to find the class membership
-of the leaves of the tree, there is an option to print the class membership into
-a file. The training data has to still be input in an unlabeled format, but an additional
-label file containing the corresponding labels of each point has to be input
-using the \c -l (\c --labels_file) option.  The file to output the class
-memberships into can be specified with \c -L (\c --leaf_class_table_file).  If
-\c -L is left unspecified, leaf_class_membership.txt is used by default.
+A saved DET can be used to perform any of the functionality in the examples
+above.  A saved DET is loaded with the \c --input_model_file or \c -m option.
+The example below loads a saved DET from \c det.xml and outputs density
+estimates on the dataset \c test_dataset.csv into the file \c estimates.csv.
 
 @code
-$ det -t dataset.csv -l labels.csv -v
-$ det -t dataset.csv -l labels.csv -L leaf_class_membership_file.txt -v
+$ mlpack_det -m det.xml -T test_dataset.csv -E estimates.csv -v
 @endcode
-
 
 @section dtree_det_tut The 'DTree' class
 
@@ -393,5 +370,5 @@ I_v(\tilde{t}) = \sum_{l \in \tilde{t}} \frac{1}{V(l)}.
 To use this form of regularization, use the \c -R flag.
 
 @code
-$ det -t dataset.csv -R -v
+$ mlpack_det -t dataset.csv -R -v
 @endcode

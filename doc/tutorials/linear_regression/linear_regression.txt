@@ -4,7 +4,7 @@
 @author James Cline
 @brief Tutorial for how to use the LinearRegression class.
 
-@page lrtutorial Linear/ridge regression tutorial (linear_regression)
+@page lrtutorial Linear/ridge regression tutorial (mlpack_linear_regression)
 
 @section intro_lrtut Introduction
 
@@ -54,11 +54,11 @@ A list of all the sections this tutorial contains.
    - \ref linreg_ex5_lrtut
  - \ref further_doc_lrtut
 
-@section cli_lrtut Command-Line 'linear_regression'
+@section cli_lrtut Command-Line 'mlpack_linear_regression'
 
 The simplest way to perform linear regression or ridge regression in \b mlpack
-is to use the linear_regression executable.  This program will perform linear
-regression and place the resultant coefficients into one file.
+is to use the \c mlpack_linear_regression executable.  This program will perform
+linear regression and place the resultant coefficients into one file.
 
 The output file holds a vector of coefficients in increasing order of dimension;
 that is, the offset term (\f$\beta_0\f$), the coefficient for dimension 1
@@ -66,41 +66,43 @@ that is, the offset term (\f$\beta_0\f$), the coefficient for dimension 1
 intercept.  This executable can also predict the \f$y\f$ values of a second
 dataset based on the computed coefficients.
 
-Below are several examples of simple usage (and the resultant output).  The '-v'
-option is used so that verbose output is given.  Further documentation on each
-individual option can be found by typing
+Below are several examples of simple usage (and the resultant output).  The
+\c option is used so that verbose output is given.  Further documentation on
+each individual option can be found by typing
 
 @code
-$ linear_regression --help
+$ mlpack_linear_regression --help
 @endcode
 
 @subsection cli_ex1_lrtut One file, generating the function coefficients
 
 @code
-$ linear_regression --input_file dataset.csv -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Saving CSV data to 'parameters.csv'.
+$ mlpack_linear_regression --training_file dataset.csv -v -M lr.xml
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 2 x 5.
 [INFO ]
 [INFO ] Execution parameters:
 [INFO ]   help: false
 [INFO ]   info: ""
-[INFO ]   input_file: dataset.csv
-[INFO ]   input_responses: ""
+[INFO ]   input_model_file: ""
 [INFO ]   lambda: 0
-[INFO ]   output_file: parameters.csv
+[INFO ]   output_model_file: lr.xml
 [INFO ]   output_predictions: predictions.csv
 [INFO ]   test_file: ""
+[INFO ]   training_file: dataset.csv
+[INFO ]   training_responses: ""
 [INFO ]   verbose: true
+[INFO ]   version: false
 [INFO ]
 [INFO ] Program timers:
-[INFO ]   load_regressors: 0.006461s
-[INFO ]   regression: 0.000347s
-[INFO ]   total_time: 0.026589s
+[INFO ]   load_regressors: 0.000263s
+[INFO ]   loading_data: 0.000220s
+[INFO ]   regression: 0.000392s
+[INFO ]   total_time: 0.001920s
 @endcode
 
 Convenient program timers are given for different parts of the calculation at
 the bottom of the output, as well as the parameters the simulation was run with.
-Now, if we look at the output file, which, unless specified, is parameters.csv:
+Now, if we look at the output model file, which is \c lr.xml,
 
 @code
 $ cat dataset.csv
@@ -110,43 +112,65 @@ $ cat dataset.csv
 3,3
 4,4
 
-$ cat parameters.csv
--0.0000000000e+00,1.0000000000e+00
+$ cat lr.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="12">
+<linearRegressionModel class_id="0" tracking_level="0" version="0">
+  <parameters class_id="1" tracking_level="0" version="0">
+    <n_rows>2</n_rows>
+    <n_cols>1</n_cols>
+    <n_elem>2</n_elem>
+    <vec_state>1</vec_state>
+    <item>-3.97205464519563669e-16</item>
+    <item>1.00000000000000022e+00</item>
+  </parameters>
+  <lambda>0.00000000000000000e+00</lambda>
+  <intercept>1</intercept>
+</linearRegressionModel>
+</boost_serialization>
 @endcode
 
-As you can see, the function for this input is \f$f(y)=0+1x_1\f$. Keep in mind
-that in this example, the regressors for the dataset are the second column.
-That is, the dataset is one dimensional, and the last column has the \f$y\f$
-values, or responses, for each row. You can specify these responses in a
-separate file if you want, using the \c --input_responses, or \c -r, option.
+As you can see, the function for this input is \f$f(y)=0+1x_1\f$.  We can see
+that the model we have trained catches this; in the \c <parameters> section of
+\c lr.xml, we can see that there are two elements, which are (approximately) 0
+and 1.  The first element corresponds to the intercept 0, and the second column
+corresponds to the coefficient 1 for the variable \f$x_1\f$.  Note that in this
+example, the regressors for the dataset are the second column.  That is, the
+dataset is one dimensional, and the last column has the \f$y\f$ values, or
+responses, for each row. You can specify these responses in a separate file if
+you want, using the \c --input_responses, or \c -r, option.
 
 @subsection cli_ex2_lrtut Compute model and predict at the same time
 
 @code
-$ linear_regression --input_file dataset.csv --test_file predict.csv -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Saving CSV data to 'parameters.csv'.
-[INFO ] Loading 'predict.csv' as CSV data.
+$ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv \
+> -v
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 2 x 5.
+[INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
 [INFO ]
 [INFO ] Execution parameters:
 [INFO ]   help: false
 [INFO ]   info: ""
-[INFO ]   input_file: dataset.csv
-[INFO ]   input_responses: ""
+[INFO ]   input_model_file: ""
 [INFO ]   lambda: 0
-[INFO ]   model_file: ""
-[INFO ]   output_file: parameters.csv
+[INFO ]   output_model_file: ""
 [INFO ]   output_predictions: predictions.csv
 [INFO ]   test_file: predict.csv
+[INFO ]   training_file: dataset.csv
+[INFO ]   training_responses: ""
 [INFO ]   verbose: true
+[INFO ]   version: false
 [INFO ]
 [INFO ] Program timers:
-[INFO ]   load_regressors: 0.000360s
-[INFO ]   load_test_points: 0.000090s
-[INFO ]   prediction: 0.000006s
-[INFO ]   regression: 0.000335s
-[INFO ]   total_time: 0.001522s
+[INFO ]   load_regressors: 0.000371s
+[INFO ]   load_test_points: 0.000229s
+[INFO ]   loading_data: 0.000491s
+[INFO ]   prediction: 0.000075s
+[INFO ]   regression: 0.000449s
+[INFO ]   saving_data: 0.000186s
+[INFO ]   total_time: 0.002731s
 
 $ cat dataset.csv
 0,0
@@ -154,9 +178,6 @@ $ cat dataset.csv
 2,2
 3,3
 4,4
-
-$ cat parameters.csv
--0.0000000000e+00,1.0000000000e+00
 
 $ cat predict.csv
 2
@@ -170,38 +191,55 @@ $ cat predictions.csv
 @endcode
 
 We used the same dataset, so we got the same parameters. The key thing to note
-about the predict.csv dataset is that it has the same dimensionality as the
-dataset used to create the model, one. Generally, if the model generating
-dataset has \f$d\f$ dimensions, so must the dataset we want to predict for.
+about the \c predict.csv dataset is that it has the same dimensionality as the
+dataset used to create the model, one.  If the model generating dataset has
+\f$d\f$ dimensions, so must the dataset we want to predict for.
 
 @subsection cli_ex3_lrtut Prediction using a precomputed model
 
 @code
-$ linear_regression --model_file parameters.csv --test_file predict.csv -v
-[INFO ] Loading 'parameters.csv' as CSV data.
-[INFO ] Loading 'predict.csv' as CSV data.
+$ linear_regression --input_model_file lr.xml --test_file predict.csv -v
+[INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
-[INFO ]
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   help: false
 [INFO ]   info: ""
-[INFO ]   input_file: ""
-[INFO ]   input_responses: ""
+[INFO ]   input_model_file: lr.xml
 [INFO ]   lambda: 0
-[INFO ]   model_file: parameters.csv
-[INFO ]   output_file: parameters.csv
+[INFO ]   output_model_file: ""
 [INFO ]   output_predictions: predictions.csv
 [INFO ]   test_file: predict.csv
+[INFO ]   training_file: ""
+[INFO ]   training_responses: ""
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   load_model: 0.009519s
-[INFO ]   load_test_points: 0.000067s
-[INFO ]   prediction: 0.000007s
-[INFO ]   total_time: 0.010081s
+[INFO ]   load_model: 0.000264s
+[INFO ]   load_test_points: 0.000186s
+[INFO ]   loading_data: 0.000157s
+[INFO ]   prediction: 0.000098s
+[INFO ]   saving_data: 0.000157s
+[INFO ]   total_time: 0.001688s
 
-$ cat parameters.csv
--0.0000000000e+00,1.0000000000e+00
+$ cat lr.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="12">
+<linearRegressionModel class_id="0" tracking_level="0" version="0">
+  <parameters class_id="1" tracking_level="0" version="0">
+    <n_rows>2</n_rows>
+    <n_cols>1</n_cols>
+    <n_elem>2</n_elem>
+    <vec_state>1</vec_state>
+    <item>-3.97205464519563669e-16</item>
+    <item>1.00000000000000022e+00</item>
+  </parameters>
+  <lambda>0.00000000000000000e+00</lambda>
+  <intercept>1</intercept>
+</linearRegressionModel>
+</boost_serialization>
 
 $ cat predict.csv
 2
@@ -238,28 +276,27 @@ greater than zero should be specified to perform ridge regression, using the
 \c --lambda (or \c -l) option.  An example is given below.
 
 @code
-$ linear_regression --input_file dataset.csv -v --lambda 0.5
-[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
-[INFO ] Saving CSV data to 'parameters.csv'.
+$ mlpack_linear_regression --training_file dataset.csv -v --lambda 0.5 -M lr.xml
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 2 x 5.
 [INFO ]
 [INFO ] Execution parameters:
 [INFO ]   help: false
 [INFO ]   info: ""
-[INFO ]   input_file: test_data_3_1000.csv
-[INFO ]   input_responses: ""
+[INFO ]   input_model_file: ""
 [INFO ]   lambda: 0.5
-[INFO ]   model_file: ""
-[INFO ]   output_file: parameters.csv
+[INFO ]   output_model_file: lr.xml
 [INFO ]   output_predictions: predictions.csv
 [INFO ]   test_file: ""
+[INFO ]   training_file: dataset.csv
+[INFO ]   training_responses: ""
 [INFO ]   verbose: true
+[INFO ]   version: false
 [INFO ]
 [INFO ] Program timers:
-[INFO ]   load_regressors: 0.005236s
-[INFO ]   loading_data: 0.005208s
-[INFO ]   regression: 0.013206s
-[INFO ]   saving_data: 0.000276s
-[INFO ]   total_time: 0.020019s
+[INFO ]   load_regressors: 0.000210s
+[INFO ]   loading_data: 0.000170s
+[INFO ]   regression: 0.000332s
+[INFO ]   total_time: 0.001835s
 @endcode
 
 Further documentation on options should be found by using the \c --help option.
@@ -294,7 +331,7 @@ arma::mat data; // The dataset itself.
 arma::vec responses; // The responses, one row for each row in data.
 
 // Regress.
-LinearRegression lr(data,responses);
+LinearRegression lr(data, responses);
 
 // Get the parameters, or coefficients.
 arma::vec parameters = lr.Parameters();
@@ -314,13 +351,14 @@ lr.Parameters() = parameters; // Set the model.
 
 @subsection linreg_ex3_lrtut Load a model from a file
 
-If you have a generated model in a file somewhere you would like to load and use,
-you can simply pass it to the LinearRegression initializer like so.
+If you have a generated model in a file somewhere you would like to load and
+use, you can use \c data::Load() to load it.
 
 @code
 std::string filename; // The path and name of your file.
 
-LinearRegression lr(filename); // Will load the model internally.
+LinearRegression lr;
+data::Load(filename, "lr_model", lr);
 @endcode
 
 @subsection linreg_ex4_lrtut Prediction
