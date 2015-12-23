@@ -720,7 +720,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSTrainTest)
 
   BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lr2.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 1e-3);
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 0.005);
 }
 
 /**
