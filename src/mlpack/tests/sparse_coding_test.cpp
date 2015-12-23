@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, 1e-15);
+  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, 1e-8);
   mat Z;
   DataDependentRandomInitializer::Initialize(X, 25, sc.Dictionary());
   sc.Encode(X, Z);
