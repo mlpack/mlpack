@@ -405,9 +405,9 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
   BOOST_REQUIRE_CLOSE(gmm.Weights()[1], gmm2.Weights()[sortedIndices[1]], 7.0);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0],
-      gmm2.Component(sortedIndices[0]).Mean()[0], 6.5);
+      gmm2.Component(sortedIndices[0]).Mean()[0], 7.5);
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1],
-      gmm2.Component(sortedIndices[0]).Mean()[1], 6.5);
+      gmm2.Component(sortedIndices[0]).Mean()[1], 7.5);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
       gmm2.Component(sortedIndices[0]).Covariance()(0, 0), 13.0);
@@ -419,9 +419,9 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
       gmm2.Component(sortedIndices[0]).Covariance()(1, 1), 13.0);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[0],
-      gmm2.Component(sortedIndices[1]).Mean()[0], 6.5);
+      gmm2.Component(sortedIndices[1]).Mean()[0], 7.5);
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[1],
-      gmm2.Component(sortedIndices[1]).Mean()[1], 6.5);
+      gmm2.Component(sortedIndices[1]).Mean()[1], 7.5);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(0, 0),
       gmm2.Component(sortedIndices[1]).Covariance()(0, 0), 13.0);
