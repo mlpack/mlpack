@@ -17,7 +17,7 @@ Among other applications, the EMST can be used to compute hierarchical clusterin
 of data.  A <em>single-linkage clustering</em> can be obtained from the EMST by deleting
 all edges longer than a given cluster length.  This technique is also referred to as a <em>Friends-of-Friends</em> clustering in the astronomy literature.
 
-MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> which uses
+mlpack includes an implementation of <b>Dual-Tree Boruvka</b> which uses
 \f$kd\f$-trees by default; this is the empirically and theoretically fastest
 EMST algorithm.  In addition, the implementation supports the use of different
 trees via templates.  For more details, see the following paper:

@@ -28,7 +28,7 @@ namespace kernel {
  *
  * The string kernel, when created, must be passed a reference to a series of
  * string datasets (std::vector<std::vector<std::string> >&).  This is because
- * MLPACK only supports datasets which are Armadillo matrices -- and a dataset
+ * mlpack only supports datasets which are Armadillo matrices -- and a dataset
  * of variable-length strings cannot be easily cast into an Armadillo matrix.
  *
  * Therefore, once the PSpectrumStringKernel is created with a reference to the

@@ -37,7 +37,7 @@ namespace metric {
  *
  * It is faster to compute that distance, so TakeRoot is by default off.
  * However, when TakeRoot is false, the distance given is not actually a true
- * metric -- it does not satisfy the triangle inequality.  Some MLPACK methods
+ * metric -- it does not satisfy the triangle inequality.  Some mlpack methods
  * do not require the triangle inequality to operate correctly (such as the
  * BinarySpaceTree), but setting TakeRoot = false in some cases will cause
  * incorrect results.

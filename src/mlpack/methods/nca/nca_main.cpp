@@ -55,7 +55,7 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "--wolfe, --tolerance (the optimization is terminated when the gradient "
     "norm is below this value), --max_line_search_trials, --min_step and "
     "--max_step (which both refer to the line search routine).  For more "
-    "details on the L-BFGS optimizer, consult either the MLPACK L-BFGS "
+    "details on the L-BFGS optimizer, consult either the mlpack L-BFGS "
     "documentation (in lbfgs.hpp) or the vast set of published literature on "
     "L-BFGS.\n"
     "\n"

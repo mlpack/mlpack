@@ -1,8 +1,8 @@
-/*! @page matrices Matrices in MLPACK
+/*! @page matrices Matrices in mlpack
 
 @section matintro Introduction
 
-MLPACK uses Armadillo matrices for matrix support.  Armadillo is a fast C++
+mlpack uses Armadillo matrices for matrix support.  Armadillo is a fast C++
 matrix library which makes use of advanced template techniques to provide the
 fastest possible matrix operations.
 
@@ -10,7 +10,7 @@ Documentation on Armadillo can be found on their website:
 
 http://arma.sourceforge.net/docs.html
 
-Nonetheless, there are a few further caveats for MLPACK Armadillo usage.
+Nonetheless, there are a few further caveats for mlpack Armadillo usage.
 
 @section format Column-wise Matrices
 
@@ -30,12 +30,12 @@ but for a column-wise matrix, it is
 
 @f$ C = X X^T @f$
 
-and this is very important to keep in mind!  If your MLPACK code is not working,
+and this is very important to keep in mind!  If your mlpack code is not working,
 this may be a factor in why.
 
 @section loading Loading Matrices
 
-MLPACK provides a data::Load() and data::Save() function, which should be used
+mlpack provides a data::Load() and data::Save() function, which should be used
 instead of Armadillo's loading and saving functions.
 
 Most machine learning data is stored in row-major format; a CSV, for example,

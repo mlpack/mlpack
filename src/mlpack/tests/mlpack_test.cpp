@@ -1,11 +1,11 @@
 /**
  * @file mlpack_test.cpp
  *
- * Simple file defining the name of the overall test for MLPACK, and set up
+ * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in
  * its own file.
  */
-#define BOOST_TEST_MODULE MLPACKTest
+#define BOOST_TEST_MODULE mlpackTest
 
 #include <mlpack/core/util/log.hpp>
 

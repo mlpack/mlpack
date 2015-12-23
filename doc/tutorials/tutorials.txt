@@ -2,14 +2,14 @@
 
 @file tutorials.txt
 @author Ryan Curtin
-@brief List of MLPACK tutorials.
+@brief List of mlpack tutorials.
 
 @page tutorials Tutorials
 
 @section introd_tut Introductory Tutorials
 
-These tutorials introduce the basic concepts of working with MLPACK, aimed at
-developers who want to use and contribute to MLPACK but are not sure where to
+These tutorials introduce the basic concepts of working with mlpack, aimed at
+developers who want to use and contribute to mlpack but are not sure where to
 start.
 
  - \ref build
@@ -20,8 +20,8 @@ start.
 
 @section method_tut Method-specific Tutorials
 
-These tutorials introduce the various methods MLPACK offers, aimed at users who
-simply want to use the methods MLPACK offers.  These tutorials start with simple
+These tutorials introduce the various methods mlpack offers, aimed at users who
+simply want to use the methods mlpack offers.  These tutorials start with simple
 examples and progress to complex, extensible uses.
 
  - \ref nstutorial

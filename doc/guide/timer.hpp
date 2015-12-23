@@ -1,8 +1,8 @@
-/*! @page timer MLPACK Timers
+/*! @page timer mlpack Timers
 
 @section timerintro Introduction
 
-MLPACK provides a simple timer interface for the timing of machine learning
+mlpack provides a simple timer interface for the timing of machine learning
 methods.  The results of any timers used during the program are displayed at
 output by the mlpack::CLI object, when --verbose is given:
 
@@ -33,7 +33,7 @@ and the result will be the sum of the runs of the timer.  Note that \c
 Timer::Stop() must be called before \c Timer::Start() is called again,
 otherwise a std::runtime_error exception will be thrown.
 
-A "total_time" timer is run by default for each MLPACK program.
+A "total_time" timer is run by default for each mlpack program.
 
 @section example Timer Example
 

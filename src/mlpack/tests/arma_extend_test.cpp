@@ -2,7 +2,7 @@
  * @file arma_extend_test.cpp
  * @author Ryan Curtin
  *
- * Test of the MLPACK extensions to Armadillo.
+ * Test of the mlpack extensions to Armadillo.
  */
 
 #include <mlpack/core.hpp>

@@ -142,7 +142,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     message(WARNING "This is a 64-bit system, but Armadillo was compiled "
         "without 64-bit index support.  Consider recompiling Armadillo with "
         "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "MLPACK will still work without ARMA_64BIT_WORD defined, but will not "
+        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
         "scale to matrices with more than 4 billion elements.")
   endif(ARMA_HAS_64BIT_WORD EQUAL 0)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)

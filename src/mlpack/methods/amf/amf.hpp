@@ -42,7 +42,7 @@ namespace amf /** Alternating Matrix Factorization **/ {
  * contains the initialization rule for the W and H matrix; the last contains
  * the update rule to be used during each iteration. This templatization allows
  * the user to try various update rules, initialization rules, and termination
- * policies (including ones not supplied with MLPACK) for factorization.  By
+ * policies (including ones not supplied with mlpack) for factorization.  By
  * default, the template parameters to AMF implement non-negative matrix
  * factorization with the multiplicative distance update.
  *
@@ -153,9 +153,10 @@ using SVDBatchFactorizer = amf::AMF<amf::SimpleResidueTermination,
                                     amf::SVDBatchLearning>;
 
 /**
- * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two matrices
- * W and H by incomplete incremental gradient descent. SVD incomplete incremental
- * learning is described in paper 'A Guide to singular Value Decomposition'
+ * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two
+ * matrices W and H by incomplete incremental gradient descent. SVD incomplete
+ * incremental learning is described in paper 'A Guide to singular Value
+ * Decomposition'
  * by Chih-Chao Ma.
  *
  * @see SVDIncompleteIncrementalLearning
@@ -182,9 +183,9 @@ using SVDCompleteIncrementalFactorizer = amf::AMF<
 #else // #ifdef MLPACK_USE_CXX11
 
 /**
- * SparseSVDBatchFactorizer factorizes given sparse matrix V into two matrices
- * W and H by gradient descent. SVD batch learning is described in paper 'A Guide to
- * singular Value Decomposition' by Chih-Chao Ma.
+ * SparseSVDBatchFactorizer factorizes given sparse matrix V into two matrices W
+ * and H by gradient descent. SVD batch learning is described in paper 'A Guide
+ * to singular Value Decomposition' by Chih-Chao Ma.
  *
  * @see SVDBatchLearning
  */
@@ -193,8 +194,8 @@ typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::SVDBatchLearning> SparseSVDBatchFactorizer;
 
 /**
- * SparseSVDBatchFactorizer factorizes given matrix V into two matrices
- * W and H by gradient descent. SVD batch learning is described in paper 'A Guide to
+ * SparseSVDBatchFactorizer factorizes given matrix V into two matrices W and H
+ * by gradient descent. SVD batch learning is described in paper 'A Guide to
  * singular Value Decomposition' by Chih-Chao Ma.
  *
  * @see SVDBatchLearning
@@ -204,8 +205,8 @@ typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::SVDBatchLearning> SVDBatchFactorizer;
 /**
  * SparseSVDIncompleteIncrementalFactorizer factorizes given sparse matrix V
- * into two matrices W and H by incomplete incremental gradient descent.
- * SVD incomplete incremental learning is described in paper 'A Guide to singular
+ * into two matrices W and H by incomplete incremental gradient descent.  SVD
+ * incomplete incremental learning is described in paper 'A Guide to singular
  * Value Decomposition' by Chih-Chao Ma.
  *
  * @see SVDIncompleteIncrementalLearning
@@ -216,10 +217,10 @@ typedef amf::AMF<amf::SimpleResidueTermination,
         SparseSVDIncompleteIncrementalFactorizer;
 
 /**
- * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two matrices
- * W and H by incomplete incremental gradient descent. SVD incomplete incremental
- * learning is described in paper 'A Guide to singular Value Decomposition'
- * by Chih-Chao Ma.
+ * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two
+ * matrices W and H by incomplete incremental gradient descent. SVD incomplete
+ * incremental learning is described in paper 'A Guide to singular Value
+ * Decomposition' by Chih-Chao Ma.
  *
  * @see SVDIncompleteIncrementalLearning
  */

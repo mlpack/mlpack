@@ -28,7 +28,7 @@ namespace distribution /** Probability distributions. */ {
  * (vec.n_rows == 1).  Any additional dimensions will simply be ignored.
  *
  * @note
- * This class, like every other class in MLPACK, uses arma::vec to represent
+ * This class, like every other class in mlpack, uses arma::vec to represent
  * observations.  While a discrete distribution only has positive integers
  * (size_t) as observations, these can be converted to doubles (which is what
  * arma::vec holds).  This distribution internally converts those doubles back

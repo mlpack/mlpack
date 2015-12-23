@@ -85,5 +85,5 @@ add_dependencies(mlpack mlpack_headers)
 add_custom_target(test
   ${CMAKE_BINARY_DIR}/bin/mlpack_test "--log_level=test_suite" # Set UTF runtime param
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
-  COMMENT "Running MLPACK test"
+  COMMENT "Running mlpack test"
   DEPENDS mlpack_test)

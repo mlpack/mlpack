@@ -55,7 +55,7 @@
 namespace mlpack {
 
 /**
- * The timer class provides a way for MLPACK methods to be timed.  The three
+ * The timer class provides a way for mlpack methods to be timed.  The three
  * methods contained in this class allow a named timer to be started and
  * stopped, and its value to be obtained.
  */
@@ -65,7 +65,7 @@ class Timer
   /**
    * Start the given timer.  If a timer is started, then stopped, then
    * re-started, then re-stopped, the final value of the timer is the length of
-   * both runs -- that is, MLPACK timers are additive for each time they are
+   * both runs -- that is, mlpack timers are additive for each time they are
    * run, and do not reset.
    *
    * @note A std::runtime_error exception will be thrown if a timer is started

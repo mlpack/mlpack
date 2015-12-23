@@ -28,7 +28,7 @@ namespace nca {
  * the squared Euclidean distance is not the only allowed metric for NCA.
  * However, that is probably the best way to use this class.
  *
- * In addition to the standard Evaluate() and Gradient() functions which MLPACK
+ * In addition to the standard Evaluate() and Gradient() functions which mlpack
  * optimizers use, overloads of Evaluate() and Gradient() are given which only
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see mlpack::optimization::SGD).

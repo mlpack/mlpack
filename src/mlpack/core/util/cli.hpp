@@ -395,7 +395,7 @@ struct ParamData
  * The CLI class is a subsystem by which parameters for machine learning methods
  * can be specified and accessed.  In conjunction with the macros PARAM_DOUBLE,
  * PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user
- * configurability of MLPACK methods very easy.  There are only three methods in
+ * configurability of mlpack methods very easy.  There are only three methods in
  * CLI that a user should need:  CLI::ParseCommandLine(), CLI::GetParam(), and
  * CLI::HasParam() (in addition to the PARAM_*() macros).
  *

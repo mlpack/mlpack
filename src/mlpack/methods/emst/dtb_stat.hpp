@@ -13,7 +13,7 @@ namespace mlpack {
 namespace emst {
 
 /**
- * A statistic for use with MLPACK trees, which stores the upper bound on
+ * A statistic for use with mlpack trees, which stores the upper bound on
  * distance to nearest neighbors and the component which this node belongs to.
  */
 class DTBStat

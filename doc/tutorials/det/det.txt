@@ -115,7 +115,7 @@ Options:
 
 For further information, including relevant papers, citations, and theory,
 consult the documentation found at http://www.mlpack.org or included with your
-distribution of MLPACK.
+distribution of mlpack.
 @endcode
 
 @subsection cli_ex1_de_tut Plain-vanilla density estimation

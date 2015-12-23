@@ -41,7 +41,7 @@ used to determine when the algorithm has converged; the second contains the
 initialization rule for the W and H matrix; the last contains the update rule
 to be used during each iteration. This templatization allows the user to try
 various update rules, initialization rules, and termination policies (including
-ones not supplied with MLPACK) for factorization.
+ones not supplied with mlpack) for factorization.
 
 The class provides the following method that performs factorization
 @code

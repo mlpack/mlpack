@@ -1,4 +1,4 @@
-# MLPACK test executable.
+# mlpack test executable.
 add_executable(mlpack_test
   mlpack_test.cpp
   activation_functions_test.cpp

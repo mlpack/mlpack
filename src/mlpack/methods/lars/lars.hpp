@@ -118,7 +118,7 @@ class LARS
        const double tolerance = 1e-16);
 
   /**
-   * Run LARS.  The input matrix (like all MLPACK matrices) should be
+   * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not

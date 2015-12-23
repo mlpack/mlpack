@@ -41,7 +41,7 @@ If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
 
     @article{mlpack2013,
-      title     = {{MLPACK}: A Scalable {C++} Machine Learning Library},
+      title     = {{mlpack}: A Scalable {C++} Machine Learning Library},
       author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
                    March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
                    Alexander G.},

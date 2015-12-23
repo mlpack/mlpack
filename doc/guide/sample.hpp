@@ -1,8 +1,8 @@
-/*! @page sample Simple Sample MLPACK Programs
+/*! @page sample Simple Sample mlpack Programs
 
 @section sampleintro Introduction
 
-On this page, several simple MLPACK examples are contained, in increasing order
+On this page, several simple mlpack examples are contained, in increasing order
 of complexity.
 
 @section covariance Covariance Computation
@@ -11,7 +11,7 @@ A simple program to compute the covariance of a data matrix ("data.csv"),
 assuming that the data is already centered, and save it to file.
 
 @code
-// Includes all relevant components of MLPACK.
+// Includes all relevant components of mlpack.
 #include <mlpack/core.hpp>
 
 // Convenience.
