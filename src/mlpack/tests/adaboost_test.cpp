@@ -431,6 +431,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
   DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ds.Classify(inputData, dsPrediction);
 
   size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -520,6 +521,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
   DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ds.Classify(inputData, dsPrediction);
 
   size_t countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
