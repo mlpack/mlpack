@@ -110,7 +110,7 @@ endif(ARMA_EXTRA_DEBUG)
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 
-find_package(Armadillo 3.6.0 REQUIRED)
+find_package(Armadillo 4.100.0 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should

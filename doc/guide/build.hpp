@@ -27,8 +27,7 @@ enough.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 3.6.0 (with LAPACK support)
- - LibXML2 >= 2.6.0
+ - Armadillo >= 4.100.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap)
       >= 1.49
 
