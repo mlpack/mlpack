@@ -1,4 +1,4 @@
-### mlpack 1.1.0
+### mlpack 2.0.0
 ###### ????-??-??
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
@@ -38,7 +38,15 @@
 
   * Refactor LSH to allow loading and saving of models.
 
-  * ToString() is removed entirely.
+  * ToString() is removed entirely (#487).
+
+  * Add --input_model_file and --output_model_file options to appropriate
+    machine learning algorithms.
+
+  * Rename all executables to start with an "mlpack" prefix (#229).
+
+  * Add HoeffdingTree and mlpack_hoeffding_tree, an implementation of the
+    streaming decision tree methodology from Domingos and Hulten in 2000.
 
 ### mlpack 1.0.11
 ###### 2014-12-11
