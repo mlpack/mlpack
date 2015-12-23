@@ -1652,32 +1652,6 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
         textTree.Child(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
         binaryTree.Child(i).SplitDimension());
-
-    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
-        xmlTree.Child(i).MajorityClass());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
-        textTree.Child(i).MajorityClass());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
-        binaryTree.Child(i).MajorityClass());
-  }
-
-  // Check that predictions are the same.
-  arma::Row<size_t> predictions, xmlPredictions, binaryPredictions,
-      textPredictions;
-  tree.Classify(dataset, predictions);
-  xmlTree.Classify(dataset, xmlPredictions);
-  binaryTree.Classify(dataset, binaryPredictions);
-  textTree.Classify(dataset, textPredictions);
-
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, xmlPredictions.n_elem);
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, textPredictions.n_elem);
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, binaryPredictions.n_elem);
-
-  for (size_t i = 0; i < predictions.n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(predictions[i], xmlPredictions[i]);
-    BOOST_REQUIRE_EQUAL(predictions[i], textPredictions[i]);
-    BOOST_REQUIRE_EQUAL(predictions[i], binaryPredictions[i]);
   }
 }
 
