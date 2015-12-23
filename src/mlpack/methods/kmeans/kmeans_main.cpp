@@ -38,15 +38,16 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "iteration, specified with the --algorithm (-a) option.  The standard O(kN)"
     " approach can be used ('naive').  Other options include the Pelleg-Moore "
     "tree-based algorithm ('pelleg-moore'), Elkan's triangle-inequality based "
-    "algorithm ('elkan'), and Hamerly's modification to Elkan's algorithm "
-    "('hamerly')."
+    "algorithm ('elkan'), Hamerly's modification to Elkan's algorithm "
+    "('hamerly'), the dual-tree k-means algorithm ('dualtree'), and the "
+    "dual-tree k-means algorithm using the cover tree ('dualtree-covertree')."
     "\n\n"
     "As of October 2014, the --overclustering option has been removed.  If you "
     "want this support back, let us know -- file a bug at "
     "https://github.com/mlpack/mlpack/ or get in touch through another means.");
 
 // Required options.
-PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
+PARAM_STRING_REQ("input_file", "Input dataset to perform clustering on.", "i");
 PARAM_INT_REQ("clusters", "Number of clusters to find (0 autodetects from "
     "initial centroids).", "c");
 
@@ -77,7 +78,8 @@ PARAM_DOUBLE("percentage", "Percentage of dataset to use for each refined start"
     " sampling (use when --refined_start is specified).", "p", 0.02);
 
 PARAM_STRING("algorithm", "Algorithm to use for the Lloyd iteration ('naive', "
-    "'pelleg-moore', 'elkan', 'hamerly', or 'dtnn').", "a", "naive");
+    "'pelleg-moore', 'elkan', 'hamerly', 'dualtree', or 'dualtree-covertree').",
+    "a", "naive");
 
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
@@ -162,7 +164,8 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
   else
     Log::Fatal << "Unknown algorithm: '" << algorithm << "'.  Supported options"
-        << " are 'naive', 'pelleg-moore', 'elkan', and 'hamerly'." << endl;
+        << " are 'naive', 'pelleg-moore', 'elkan', 'hamerly', 'dualtree', and "
+        << "'dualtree-covertree'." << endl;
 }
 
 // Given the template parameters, sanitize/load input and run k-means.
@@ -172,7 +175,7 @@ template<typename InitialPartitionPolicy,
 void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
-  const string inputFile = CLI::GetParam<string>("inputFile");
+  const string inputFile = CLI::GetParam<string>("input_file");
   int clusters = CLI::GetParam<int>("clusters");
   if (clusters < 0)
   {
