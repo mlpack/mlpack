@@ -570,7 +570,13 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     arma::mat c;
+    #if (ARMA_VERSION_MAJOR < 4) || \
+        ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
     BOOST_REQUIRE(arma::chol(c, cov));
+    #else
+    BOOST_REQUIRE(arma::chol(c, cov, "lower"));
+    #endif
+
   }
 }
 
