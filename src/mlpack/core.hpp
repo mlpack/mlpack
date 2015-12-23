@@ -65,6 +65,7 @@
  * - mlpack_hmm_loglik
  * - mlpack_hmm_viterbi
  * - mlpack_hmm_generate
+ * - mlpack_hoeffding_tree
  * - mlpack_kernel_pca
  * - mlpack_kmeans
  * - mlpack_lars
