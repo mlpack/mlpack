@@ -20,10 +20,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(range_search
+add_executable(mlpack_range_search
   range_search_main.cpp
 )
-target_link_libraries(range_search
+target_link_libraries(mlpack_range_search
   mlpack
 )
-install(TARGETS range_search RUNTIME DESTINATION bin)
+install(TARGETS mlpack_range_search RUNTIME DESTINATION bin)

@@ -16,12 +16,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-
-add_executable(adaboost
+add_executable(mlpack_adaboost
   adaboost_main.cpp
 )
-target_link_libraries(adaboost
+target_link_libraries(mlpack_adaboost
   mlpack
 )
-
-install(TARGETS adaboost RUNTIME DESTINATION bin)
+install(TARGETS mlpack_adaboost RUNTIME DESTINATION bin)

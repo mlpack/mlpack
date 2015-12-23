@@ -14,10 +14,10 @@ endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(lars
+add_executable(mlpack_lars
   lars_main.cpp
 )
-target_link_libraries(lars
+target_link_libraries(mlpack_lars
   mlpack
 )
-install(TARGETS lars RUNTIME DESTINATION bin)
+install(TARGETS mlpack_lars RUNTIME DESTINATION bin)

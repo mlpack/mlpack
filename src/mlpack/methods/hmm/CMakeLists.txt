@@ -18,33 +18,37 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(hmm_train
+add_executable(mlpack_hmm_train
   hmm_train_main.cpp
 )
-target_link_libraries(hmm_train
+target_link_libraries(mlpack_hmm_train
   mlpack
 )
 
-add_executable(hmm_loglik
+add_executable(mlpack_hmm_loglik
   hmm_loglik_main.cpp
 )
-target_link_libraries(hmm_loglik
+target_link_libraries(mlpack_hmm_loglik
   mlpack
 )
 
-add_executable(hmm_viterbi
+add_executable(mlpack_hmm_viterbi
   hmm_viterbi_main.cpp
 )
-target_link_libraries(hmm_viterbi
+target_link_libraries(mlpack_hmm_viterbi
   mlpack
 )
 
-add_executable(hmm_generate
+add_executable(mlpack_hmm_generate
   hmm_generate_main.cpp
 )
-target_link_libraries(hmm_generate
+target_link_libraries(mlpack_hmm_generate
   mlpack
 )
 
-install(TARGETS hmm_train hmm_loglik hmm_viterbi hmm_generate
+install(TARGETS
+    mlpack_hmm_train
+    mlpack_hmm_loglik
+    mlpack_hmm_viterbi
+    mlpack_hmm_generate
   RUNTIME DESTINATION bin)

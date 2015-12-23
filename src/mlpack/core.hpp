@@ -49,11 +49,38 @@
  *
  * A full list of executables is given below:
  *
- * adaboost, allkfn, allknn, allkrann, cf, decision_stump, det, emst, fastmks,
- * gmm_train, gmm_generate, gmm_probability, hmm_train, hmm_loglik, hmm_viterbi,
- * hmm_generate, kernel_pca, kmeans, lars, linear_regression,
- * local_coordinate_coding, logistic_regression, lsh, mean_shift, nbc, nca, pca,
- * perceptron, radical, range_search, softmax_regression, sparse_coding
+ * - mlpack_adaboost
+ * - mlpack_allkfn
+ * - mlpack_allknn
+ * - mlpack_allkrann
+ * - mlpack_cf
+ * - mlpack_decision_stump
+ * - mlpack_det
+ * - mlpack_emst
+ * - mlpack_fastmks
+ * - mlpack_gmm_train
+ * - mlpack_gmm_generate
+ * - mlpack_gmm_probability
+ * - mlpack_hmm_train
+ * - mlpack_hmm_loglik
+ * - mlpack_hmm_viterbi
+ * - mlpack_hmm_generate
+ * - mlpack_kernel_pca
+ * - mlpack_kmeans
+ * - mlpack_lars
+ * - mlpack_linear_regression
+ * - mlpack_local_coordinate_coding
+ * - mlpack_logistic_regression
+ * - mlpack_lsh
+ * - mlpack_mean_shift
+ * - mlpack_nbc
+ * - mlpack_nca
+ * - mlpack_pca
+ * - mlpack_perceptron
+ * - mlpack_radical
+ * - mlpack_range_search
+ * - mlpack_softmax_regression
+ * - mlpack_sparse_coding
  *
  * @section tutorial Tutorials
  *
