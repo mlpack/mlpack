@@ -31,8 +31,8 @@ target_link_libraries(mlpack
 )
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 1.0
-  SOVERSION 1
+  VERSION 2.0
+  SOVERSION 2
 )
 
 # Make sure the linker can find the needed library.
