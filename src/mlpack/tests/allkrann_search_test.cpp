@@ -616,7 +616,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
  */
 BOOST_AUTO_TEST_CASE(RAModelTest)
 {
-  // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+  // Ensure that we can build an RAModel<NearestNeighborSearch> and get correct
   // results.
   typedef RAModel<NearestNeighborSort> KNNModel;
 
@@ -626,19 +626,19 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
   // Build all the possible models.
   KNNModel models[8];
-  models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
-  models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
-  models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
-  models[3] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
-  models[4] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
-  models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
-  models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
-  models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+  models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
+  models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
+  models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
+  models[3] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
+  models[4] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
+  models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
+  models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+  models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
 
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j < 3; ++j)
   {
     for (size_t i = 0; i < 8; ++i)
     {
@@ -691,7 +691,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
       // assert that at most 5% of the queries fall out of this threshold
       // 5% of 100 queries is 5.
-      size_t maxNumQueriesFail = 6;
+      size_t maxNumQueriesFail = 12; // Looser bound due to multiple trials.
 
       BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
     }
