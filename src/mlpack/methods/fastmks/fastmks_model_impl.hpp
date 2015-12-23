@@ -49,9 +49,9 @@ void BuildFastMKSModel(FastMKSType& /* f */,
       " not equal to kernel type of the model!");
 }
 
-template<typename KernelType>
+template<typename TKernelType>
 void FastMKSModel::BuildModel(const arma::mat& referenceData,
-                              KernelType& kernel,
+                              TKernelType& kernel,
                               const bool singleMode,
                               const bool naive,
                               const double base)

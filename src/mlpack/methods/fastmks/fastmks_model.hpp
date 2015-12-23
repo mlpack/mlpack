@@ -44,9 +44,9 @@ class FastMKSModel
    * Build the model on the given reference set.  Make sure kernelType is equal
    * to the correct entry in KernelTypes for the given KernelType class!
    */
-  template<typename KernelType>
+  template<typename TKernelType>
   void BuildModel(const arma::mat& referenceData,
-                  KernelType& kernel,
+                  TKernelType& kernel,
                   const bool singleMode,
                   const bool naive,
                   const double base);
@@ -60,6 +60,11 @@ class FastMKSModel
   bool SingleMode() const;
   //! Set whether or not single-tree search is used.
   bool& SingleMode();
+
+  //! Get the kernel type.
+  int KernelType() const { return kernelType; }
+  //! Modify the kernel type.
+  int& KernelType() { return kernelType; }
 
   /**
    * Search with a different query set.
