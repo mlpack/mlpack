@@ -26,10 +26,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(hoeffding_tree
+add_executable(mlpack_hoeffding_tree
   hoeffding_tree_main.cpp
 )
-target_link_libraries(hoeffding_tree
+target_link_libraries(mlpack_hoeffding_tree
   mlpack
 )
-install(TARGETS hoeffding_tree RUNTIME DESTINATION bin)
+install(TARGETS mlpack_hoeffding_tree RUNTIME DESTINATION bin)
