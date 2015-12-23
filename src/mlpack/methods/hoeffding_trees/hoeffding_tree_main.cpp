@@ -15,6 +15,32 @@ using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::data;
 
+PROGRAM_INFO("Hoeffding trees",
+    "This program implements Hoeffding trees, a form of streaming decision tree"
+    " suited best for large (or streaming) datasets.  This program supports "
+    "both categorical and numeric data stored in the ARFF format.  Given an "
+    "input dataset, this program is able to train the tree with numerous "
+    "training options, and save the model to a file.  The program is also able "
+    "to use a trained model or a model from file in order to predict classes "
+    "for a given test set."
+    "\n\n"
+    "The training file and associated labels are specified with the "
+    "--training_file and --labels_file options, respectively.  The training "
+    "file must be in ARFF format.  The training may be performed in batch mode "
+    "(like a typical decision tree algorithm) by specifying the --batch_mode "
+    "option, but this may not be the best option for large datasets."
+    "\n\n"
+    "When a model is trained, it may be saved to a file with the "
+    "--output_model_file (-M) option.  A model may be loaded from file for "
+    "further training or testing with the --input_model_file (-m) option."
+    "\n\n"
+    "A test file may be specified with the --test_file (-T) option, and if "
+    "performance numbers are desired for that test set, labels may be specified"
+    " with the --test_labels_file (-L) option.  Predictions for each test point"
+    " will be stored in the file specified by --predictions_file (-p) and "
+    "probabilities for each predictions will be stored in the file specified by"
+    " the --probabilities_file (-P) option.");
+
 PARAM_STRING("training_file", "Training dataset file.", "t", "");
 PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
 
