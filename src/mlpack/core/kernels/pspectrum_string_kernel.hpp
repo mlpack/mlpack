@@ -95,20 +95,6 @@ class PSpectrumStringKernel
   //! Modify the value of p.
   size_t& P() { return p; }
 
-   /*
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const{
-    std::ostringstream convert;
-    convert << "PSpectrumStringKernel [" << this << "]" << std::endl;
-    convert << "  p used: " << p << std::endl;
-    convert << "  Dataset:" << datasets.size() << std::endl;
-    std::ostringstream convertb;
-    for (size_t ind=0; ind < datasets.size(); ind++)
-      convertb << datasets[ind].size();
-    convert << mlpack::util::Indent(convertb.str(),2);
-    return convert.str();
-  }
  private:
   //! The datasets.
   const std::vector<std::vector<std::string> >& datasets;
@@ -121,8 +107,8 @@ class PSpectrumStringKernel
   size_t p;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation of templated Evaluate().
 #include "pspectrum_string_kernel_impl.hpp"

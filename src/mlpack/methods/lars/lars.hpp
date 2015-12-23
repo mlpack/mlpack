@@ -131,10 +131,10 @@ class LARS
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
    */
-  void Regress(const arma::mat& data,
-               const arma::vec& responses,
-               arma::vec& beta,
-               const bool transposeData = true);
+  void Train(const arma::mat& data,
+             const arma::vec& responses,
+             arma::vec& beta,
+             const bool transposeData = true);
 
   /**
    * Predict y_i for each data point in the given data matrix, using the
@@ -163,15 +163,18 @@ class LARS
   //! Access the upper triangular cholesky factor.
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
+  /**
+   * Serialize the LARS model.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Gram matrix.
   arma::mat matGramInternal;
 
-  //! Reference to the Gram matrix we will use.
-  const arma::mat& matGram;
+  //! Pointer to the Gram matrix we will use.
+  const arma::mat* matGram;
 
   //! Upper triangular cholesky factor; initially 0x0 matrix.
   arma::mat matUtriCholFactor;
@@ -252,7 +255,10 @@ class LARS
   void CholeskyDelete(const size_t colToKill);
 };
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
+
+// Include implementation of Serialize().
+#include "lars_impl.hpp"
 
 #endif

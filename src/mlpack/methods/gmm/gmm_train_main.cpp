@@ -1,6 +1,6 @@
 /**
- * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file gmm_main.cpp
+ * @author Parikshit Ram
+ * @file gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
  */
@@ -8,7 +8,6 @@
 
 #include "gmm.hpp"
 #include "no_constraint.hpp"
-#include "gmm_util.hpp"
 
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
@@ -21,29 +20,32 @@ using namespace std;
 PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
     " using the EM algorithm to find the maximum likelihood estimate.  The "
-    "model is saved to an XML file, which contains information about each "
+    "model may be saved to file, which will contain information about each "
     "Gaussian."
     "\n\n"
     "If GMM training fails with an error indicating that a covariance matrix "
-    "could not be inverted, be sure that the 'no_force_positive' flag was not "
-    "specified.  Alternately, adding a small amount of Gaussian noise to the "
-    "entire dataset may help prevent Gaussians with zero variance in a "
-    "particular dimension, which is usually the cause of non-invertible "
-    "covariance matrices."
+    "could not be inverted, make sure that the --no_force_positive flag is not "
+    "specified.  Alternately, adding a small amount of Gaussian noise (using "
+    "the --noise parameter) to the entire dataset may help prevent Gaussians "
+    "with zero variance in a particular dimension, which is usually the cause "
+    "of non-invertible covariance matrices."
     "\n\n"
     "The 'no_force_positive' flag, if set, will avoid the checks after each "
     "iteration of the EM algorithm which ensure that the covariance matrices "
     "are positive definite.  Specifying the flag can cause faster runtime, "
     "but may also cause non-positive definite covariance matrices, which will "
-    "cause the program to crash.");
+    "cause the program to crash."
+    "\n\n"
+    "Optionally, multiple trials may be performed, by specifying the --trials "
+    "option.  The model with greatest log-likelihood will be taken.");
 
+// Parameters for training.
 PARAM_STRING_REQ("input_file", "File containing the data on which the model "
     "will be fit.", "i");
-PARAM_INT("gaussians", "Number of Gaussians in the GMM.", "g", 1);
-PARAM_STRING("output_file", "The file to write the trained GMM parameters "
-    "into.", "o", "gmm.xml");
+PARAM_INT_REQ("gaussians", "Number of Gaussians in the GMM.", "g");
+
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 10);
+PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 1);
 
 // Parameters for EM algorithm.
 PARAM_DOUBLE("tolerance", "Tolerance for convergence of EM.", "T", 1e-10);
@@ -65,6 +67,12 @@ PARAM_DOUBLE("percentage", "If using --refined_start, specify the percentage of"
     " the dataset used for each sampling (should be between 0.0 and 1.0).",
     "p", 0.02);
 
+// Parameters for model saving/loading.
+PARAM_STRING("input_model_file", "File containing initial input GMM model.",
+    "m", "");
+PARAM_STRING("output_model_file", "File to save trained GMM model to.", "M",
+    "");
+
 int main(int argc, char* argv[])
 {
   CLI::ParseCommandLine(argc, argv);
@@ -75,16 +83,19 @@ int main(int argc, char* argv[])
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  arma::mat dataPoints;
-  data::Load(CLI::GetParam<string>("input_file"), dataPoints,
-      true);
-
   const int gaussians = CLI::GetParam<int>("gaussians");
   if (gaussians <= 0)
   {
     Log::Fatal << "Invalid number of Gaussians (" << gaussians << "); must "
         "be greater than or equal to 1." << std::endl;
   }
+
+  if (!CLI::HasParam("output_model_file"))
+    Log::Warn << "--output_model_file is not specified, so no model will be "
+        << "saved!" << endl;
+
+  arma::mat dataPoints;
+  data::Load(CLI::GetParam<string>("input_file"), dataPoints, true);
 
   // Do we need to add noise to the dataset?
   if (CLI::HasParam("noise"))
@@ -95,6 +106,20 @@ int main(int argc, char* argv[])
     Log::Info << "Added zero-mean Gaussian noise with variance " << noise
         << " to dataset." << std::endl;
     Timer::Stop("noise_addition");
+  }
+
+  // Initialize GMM.
+  GMM gmm(size_t(gaussians), dataPoints.n_rows);
+
+  if (CLI::HasParam("input_model_file"))
+  {
+    data::Load(CLI::GetParam<string>("input_model_file"), "gmm", gmm, true);
+
+    if (gmm.Dimensionality() != dataPoints.n_rows)
+      Log::Fatal << "Given input data (with --input_file) has dimensionality "
+          << dataPoints.n_rows << ", but the initial model (given with "
+          << "--input_model_file) has dimensionality " << gmm.Dimensionality()
+          << "!" << endl;
   }
 
   // Gather parameters for EMFit object.
@@ -128,34 +153,21 @@ int main(int argc, char* argv[])
     // types.
     if (forcePositive)
     {
-      EMFit<KMeansType> em(maxIterations, tolerance, k);
-
-      GMM<EMFit<KMeansType> > gmm(size_t(gaussians), dataPoints.n_rows, em);
-
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
-      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      EMFit<KMeansType> em(maxIterations, tolerance, k);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
       Timer::Stop("em");
-
-      // Save results.
-      const string outputFile = CLI::GetParam<string>("output_file");
-      SaveGMM(gmm, outputFile);
     }
     else
     {
-      EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
-
-      GMM<EMFit<KMeansType, NoConstraint> > gmm(size_t(gaussians),
-          dataPoints.n_rows, em);
-
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
-      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
       Timer::Stop("em");
-
-      // Save results.
-      const string outputFile = CLI::GetParam<string>("output_file");
-      SaveGMM(gmm, outputFile);
     }
   }
   else
@@ -163,39 +175,26 @@ int main(int argc, char* argv[])
     // Depending on the value of forcePositive, we have to use different types.
     if (forcePositive)
     {
-      EMFit<> em(maxIterations, tolerance);
-
-      // Calculate mixture of Gaussians.
-      GMM<> gmm(size_t(gaussians), dataPoints.n_rows, em);
-
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
-      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      EMFit<> em(maxIterations, tolerance);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
       Timer::Stop("em");
-
-      // Save results.
-      const string outputFile = CLI::GetParam<string>("output_file");
-      SaveGMM(gmm, outputFile);
     }
     else
     {
-      // Use no constraints on the covariance matrix.
-      EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance);
-
-      // Calculate mixture of Gaussians.
-      GMM<EMFit<KMeans<>, NoConstraint> > gmm(size_t(gaussians),
-          dataPoints.n_rows, em);
-
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
-      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
       Timer::Stop("em");
-
-      // Save results.
-      const string outputFile = CLI::GetParam<string>("output_file");
-      SaveGMM(gmm, outputFile);
     }
   }
 
-  Log::Info << "Log-likelihood of estimate: " << likelihood << ".\n";
+  Log::Info << "Log-likelihood of estimate: " << likelihood << "." << endl;
+
+  if (CLI::HasParam("output_model_file"))
+    data::Save(CLI::GetParam<string>("output_model_file"), "gmm", gmm);
 }

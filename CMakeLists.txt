@@ -64,7 +64,7 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   add_definitions(-DDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
 else()
   add_definitions(-DARMA_NO_DEBUG)
@@ -334,10 +334,39 @@ if (UNIX)
         WORKING_DIRECTORY
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
-          allkfn allknn allkrann cf decision_stump det emst fastmks gmm
-          hmm_generate hmm_loglik hmm_train hmm_viterbi kernel_pca kmeans lars
-          linear_regression local_coordinate_coding logistic_regression lsh nbc
-          nca nmf pca perceptron radical range_search sparse_coding
+          mlpack_adaboost
+          mlpack_allkfn
+          mlpack_allknn
+          mlpack_allkrann
+          mlpack_cf
+          mlpack_decision_stump
+          mlpack_det
+          mlpack_emst
+          mlpack_fastmks
+          mlpack_gmm_train
+          mlpack_gmm_probability
+          mlpack_gmm_generate
+          mlpack_hmm_generate
+          mlpack_hmm_loglik
+          mlpack_hmm_train
+          mlpack_hmm_viterbi
+          mlpack_kernel_pca
+          mlpack_kmeans
+          mlpack_lars
+          mlpack_linear_regression
+          mlpack_local_coordinate_coding
+          mlpack_logistic_regression
+          mlpack_lsh
+          mlpack_mean_shift
+          mlpack_nbc
+          mlpack_nca
+          mlpack_nmf
+          mlpack_pca
+          mlpack_perceptron
+          mlpack_radical
+          mlpack_range_search
+          mlpack_softmax_regression
+          mlpack_sparse_coding
         COMMENT "Generating man pages from built executables."
     )
 

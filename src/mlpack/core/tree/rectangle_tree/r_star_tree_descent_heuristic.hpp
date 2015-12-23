@@ -39,8 +39,8 @@ class RStarTreeDescentHeuristic
                                   const TreeType* insertedNode);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "r_star_tree_descent_heuristic_impl.hpp"

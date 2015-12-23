@@ -5,8 +5,8 @@
  * This file provides the border modes that can be used to compute different
  * convolutions.
  */
-#ifndef __MLPACK_METHOS_ANN_CONVOLUTION_RULES_BORDER_MODES_HPP
-#define __MLPACK_METHOS_ANN_CONVOLUTION_RULES_BORDER_MODES_HPP
+#ifndef __MLPACK_METHODS_ANN_CONVOLUTION_RULES_BORDER_MODES_HPP
+#define __MLPACK_METHODS_ANN_CONVOLUTION_RULES_BORDER_MODES_HPP
 
 namespace mlpack {
 namespace ann {
@@ -22,7 +22,7 @@ class FullConvolution { /* Nothing to do here */ };
  */
 class ValidConvolution { /* Nothing to do here */ };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

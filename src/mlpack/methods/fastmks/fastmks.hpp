@@ -61,12 +61,21 @@ class FastMKS
   typedef TreeType<metric::IPMetric<KernelType>, FastMKSStat, MatType> Tree;
 
   /**
+   * Create the FastMKS object with an empty reference set and default kernel.
+   * Make sure to call Train() before Search() is called!
+   *
+   * @param singleMode Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(const bool singleMode = false, const bool naive = false);
+
+  /**
    * Create the FastMKS object with the given reference set (this is the set
    * that is searched).  Optionally, specify whether or not single-tree search
    * or naive (brute-force) search should be used.
    *
    * @param referenceSet Set of reference data.
-   * @param single Whether or not to run single-tree search.
+   * @param singleMode Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
   FastMKS(const MatType& referenceSet,
@@ -105,6 +114,33 @@ class FastMKS
 
   //! Destructor for the FastMKS object.
   ~FastMKS();
+
+  /**
+   * "Train" the FastMKS model on the given reference set (this will just build
+   * a tree, if the current search mode is not naive mode).
+   *
+   * @param referenceSet Set of reference points.
+   */
+  void Train(const MatType& referenceSet);
+
+  /**
+   * "Train" the FastMKS model on the given reference set and use the given
+   * kernel.  This will just build a tree and replace the metric, if the current
+   * search mode is not naive mode.
+   *
+   * @param referenceSet Set of reference points.
+   * @param kernel Kernel to use for search.
+   */
+  void Train(const MatType& referenceSet, KernelType& kernel);
+
+  /**
+   * Train the FastMKS model on the given reference tree.  This takes ownership
+   * of the tree, so you do not need to delete it!  This will throw an exception
+   * if the model is searching in naive mode (i.e. if Naive() == true).
+   *
+   * @param tree Tree to use as reference data.
+   */
+  void Train(Tree* referenceTree);
 
   /**
    * Search for the points in the reference set with maximum kernel evaluation
@@ -186,18 +222,25 @@ class FastMKS
   //! Modify whether or not single-tree search is used.
   bool& SingleMode() { return singleMode; }
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
+  //! Get whether or not brute-force (naive) search is used.
+  bool Naive() const { return naive; }
+  //! Modify whether or not brute-force (naive) search is used.
+  bool& Naive() { return naive; }
+
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! The reference dataset.
-  const MatType& referenceSet;
+  //! The reference dataset.  We never own this; only the tree or a higher level
+  //! does.
+  const MatType* referenceSet;
   //! The tree built on the reference dataset.
   Tree* referenceTree;
   //! If true, this object created the tree and is responsible for it.
   bool treeOwner;
+  //! If true, we own the dataset.  This happens in only a few situations.
+  bool setOwner;
 
   //! If true, single-tree search is used.
   bool singleMode;

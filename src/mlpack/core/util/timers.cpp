@@ -62,6 +62,11 @@ timeval Timers::GetTimer(const std::string& timerName)
   return timers[timerName];
 }
 
+bool Timers::GetState(std::string timerName)
+{
+  return timerState[timerName];
+}
+
 void Timers::PrintTimer(const std::string& timerName)
 {
   timeval& t = timers[timerName];
@@ -205,6 +210,16 @@ void Timers::GetTime(timeval* tv)
 
 void Timers::StartTimer(const std::string& timerName)
 {
+  if ((timerState[timerName] == 1) && (timerName != "total_time"))
+  {
+    std::ostringstream error;
+    error << "Timer::Start(): timer '" << timerName
+        << "' has already been started";
+    throw std::runtime_error(error.str());
+  }
+
+  timerState[timerName] = true;
+
   timeval tmp;
   tmp.tv_sec = 0;
   tmp.tv_usec = 0;
@@ -246,6 +261,16 @@ void Timers::FileTimeToTimeVal(timeval* tv)
 
 void Timers::StopTimer(const std::string& timerName)
 {
+  if ((timerState[timerName] == 0) && (timerName != "total_time"))
+  {
+    std::ostringstream error;
+    error << "Timer::Stop(): timer '" << timerName
+        << "' has already been stopped";
+    throw std::runtime_error(error.str());
+  }
+
+  timerState[timerName] = false;
+
   timeval delta, b, a = timers[timerName];
 
   GetTime(&b);

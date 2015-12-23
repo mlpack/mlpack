@@ -14,10 +14,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(nbc
+add_executable(mlpack_nbc
   nbc_main.cpp
 )
-target_link_libraries(nbc
+target_link_libraries(mlpack_nbc
   mlpack
 )
-install(TARGETS nbc RUNTIME DESTINATION bin)
+install(TARGETS mlpack_nbc RUNTIME DESTINATION bin)

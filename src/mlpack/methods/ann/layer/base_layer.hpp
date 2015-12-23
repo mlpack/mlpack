@@ -11,6 +11,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
+#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -23,6 +25,8 @@ namespace ann /** Artificial Neural Network. */ {
  *
  *  - SigmoidLayer
  *  - IdentityLayer
+ *  - ReLULayer
+ *  - TanHLayer
  *  - BaseLayer2D
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
@@ -166,6 +170,28 @@ using IdentityLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
+ * Standard rectified linear unit non-linearity layer.
+ */
+template <
+    class ActivationFunction = RectifierFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using ReLULayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard hyperbolic tangent layer.
+ */
+template <
+    class ActivationFunction = TanhFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using TanHLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
  * Standard Base-Layer2D using the logistic activation function.
  */
 template <
@@ -177,7 +203,7 @@ using BaseLayer2D = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

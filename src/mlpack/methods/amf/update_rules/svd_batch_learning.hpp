@@ -159,6 +159,19 @@ class SVDBatchLearning
     H += mH;
   }
 
+  //! Serialize the SVDBatch object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using data::CreateNVP;
+    ar & CreateNVP(u, "u");
+    ar & CreateNVP(kw, "kw");
+    ar & CreateNVP(kh, "kh");
+    ar & CreateNVP(momentum, "momentum");
+    ar & CreateNVP(mW, "mW");
+    ar & CreateNVP(mH, "mH");
+  }
+
  private:
   //! Step size of the algorithm.
   double u;

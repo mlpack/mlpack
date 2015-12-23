@@ -58,7 +58,7 @@ class NCA
    * @param metric Instantiated metric to use.
    */
   NCA(const arma::mat& dataset,
-      const arma::Col<size_t>& labels,
+      const arma::Row<size_t>& labels,
       MetricType metric = MetricType());
 
   /**
@@ -75,7 +75,7 @@ class NCA
   //! Get the dataset reference.
   const arma::mat& Dataset() const { return dataset; }
   //! Get the labels reference.
-  const arma::Col<size_t>& Labels() const { return labels; }
+  const arma::Row<size_t>& Labels() const { return labels; }
 
   //! Get the optimizer.
   const OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer() const
@@ -83,14 +83,11 @@ class NCA
   OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer()
   { return optimizer; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! Dataset reference.
   const arma::mat& dataset;
   //! Labels reference.
-  const arma::Col<size_t>& labels;
+  const arma::Row<size_t>& labels;
 
   //! Metric to be used.
   MetricType metric;
@@ -102,8 +99,8 @@ class NCA
   OptimizerType<SoftmaxErrorFunction<MetricType> > optimizer;
 };
 
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 // Include the implementation.
 #include "nca_impl.hpp"

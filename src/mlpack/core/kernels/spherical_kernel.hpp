@@ -107,15 +107,6 @@ class SphericalKernel
     ar & data::CreateNVP(bandwidthSquared, "bandwidthSquared");
   }
 
-  //! Return a string representation of the kernel.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "SphericalKernel [" << this << "]" << std::endl;
-    convert << "  Bandwidth: " << bandwidth << std::endl;
-    return convert.str();
-  }
-
  private:
   double bandwidth;
   double bandwidthSquared;
@@ -132,7 +123,7 @@ class KernelTraits<SphericalKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

@@ -27,7 +27,7 @@ namespace gmm {
  *
  *  - void Cluster(const arma::mat& observations,
  *                 const size_t clusters,
- *                 arma::Col<size_t>& assignments);
+ *                 arma::Row<size_t>& assignments);
  *
  * This method should create 'clusters' clusters, and return the assignment of
  * each point to a cluster.

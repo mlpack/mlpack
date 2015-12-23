@@ -62,7 +62,7 @@ BallBound<VecType, TMetricType>::BallBound(const BallBound& other) :
     ownsMetric(false)
 { /* Nothing to do. */ }
 
-//! For the same reason as the Copy Constructor. To prevent memory leaks.
+//! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>& BallBound<VecType, TMetricType>::operator=(
     const BallBound& other)
@@ -71,6 +71,21 @@ BallBound<VecType, TMetricType>& BallBound<VecType, TMetricType>::operator=(
   center = other.center;
   metric = other.metric;
   ownsMetric = false;
+}
+
+//! Move constructor.
+template<typename VecType, typename TMetricType>
+BallBound<VecType, TMetricType>::BallBound(BallBound&& other) :
+    radius(other.radius),
+    center(other.center),
+    metric(other.metric),
+    ownsMetric(other.ownsMetric)
+{
+  // Fix the other bound.
+  other.radius = 0.0;
+  other.center = VecType();
+  other.metric = NULL;
+  other.ownsMetric = false;
 }
 
 //! Destructor to release allocated memory.
@@ -272,22 +287,7 @@ void BallBound<VecType, TMetricType>::Serialize(
   ar & data::CreateNVP(ownsMetric, "ownsMetric");
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename VecType, typename TMetricType>
-std::string BallBound<VecType, TMetricType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "BallBound [" << this << "]" << std::endl;
-  convert << "  Radius:  " << radius << std::endl;
-  convert << "  Center:" << std::endl << center;
-  convert << "  ownsMetric: " << ownsMetric << std::endl;
-  convert << "  Metric:" << std::endl << metric->ToString();
-  return convert.str();
-}
-
-}; // namespace bound
-}; // namespace mlpack
+} // namespace bound
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

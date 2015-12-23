@@ -14,10 +14,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(pca
+add_executable(mlpack_pca
   pca_main.cpp
 )
-target_link_libraries(pca
+target_link_libraries(mlpack_pca
   mlpack
 )
-install(TARGETS pca RUNTIME DESTINATION bin)
+install(TARGETS mlpack_pca RUNTIME DESTINATION bin)

@@ -179,7 +179,7 @@ class NaiveConvolution
 
 };  // class NaiveConvolution
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

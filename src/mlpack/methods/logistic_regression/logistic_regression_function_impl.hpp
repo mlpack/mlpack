@@ -2,16 +2,21 @@
  * @file logistic_regression_function.cpp
  * @author Sumedh Ghaisas
  *
- * Implementation of hte LogisticRegressionFunction class.
+ * Implementation of the LogisticRegressionFunction class.
  */
+#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
+#define __MLPACK_METHODS_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
+
+// In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::regression;
+namespace mlpack {
+namespace regression {
 
-LogisticRegressionFunction::LogisticRegressionFunction(
-    const arma::mat& predictors,
-    const arma::vec& responses,
+template<typename MatType>
+LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
     const double lambda) :
     predictors(predictors),
     responses(responses),
@@ -27,10 +32,11 @@ LogisticRegressionFunction::LogisticRegressionFunction(
         << " " << predictors.n_cols << ")!" << std::endl;
 }
 
-LogisticRegressionFunction::LogisticRegressionFunction(
-    const arma::mat& predictors,
-    const arma::vec& responses,
-    const arma::mat& initialPoint,
+template<typename MatType>
+LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    const arma::vec& initialPoint,
     const double lambda) :
     initialPoint(initialPoint),
     predictors(predictors),
@@ -47,8 +53,9 @@ LogisticRegressionFunction::LogisticRegressionFunction(
  * Evaluate the logistic regression objective function given the estimated
  * parameters.
  */
-double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
-    const
+template<typename MatType>
+double LogisticRegressionFunction<MatType>::Evaluate(
+    const arma::mat& parameters) const
 {
   // The objective function is the log-likelihood function (w is the parameters
   // vector for the model; y is the responses; x is the predictors; sig() is the
@@ -91,8 +98,10 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
  * This is useful for optimizers that use a separable objective function, such
  * as SGD.
  */
-double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
-                                            const size_t i) const
+template<typename MatType>
+double LogisticRegressionFunction<MatType>::Evaluate(
+    const arma::mat& parameters,
+    const size_t i) const
 {
   // Calculate the regularization term.  We must divide by the number of points,
   // so that sum(Evaluate(parameters, [1:points])) == Evaluate(parameters).
@@ -112,20 +121,22 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
 }
 
 //! Evaluate the gradient of the logistic regression objective function.
-void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
-                                          arma::mat& gradient) const
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Gradient(
+    const arma::mat& parameters,
+    arma::mat& gradient) const
 {
   // Regularization term.
   arma::mat regularization;
   regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
 
-  const arma::vec sigmoids = 1 / (1 + arma::exp(-parameters(0, 0)
-      - predictors.t() * parameters.col(0).subvec(1, parameters.n_elem - 1)));
+  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+      - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
 
   gradient.set_size(parameters.n_elem);
   gradient[0] = -arma::accu(responses - sigmoids);
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors * (responses -
-      sigmoids) + regularization;
+      sigmoids).t() + regularization;
 }
 
 /**
@@ -133,9 +144,11 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
  * function with respect to individual points.  This is useful for optimizers
  * that use a separable objective function, such as SGD.
  */
-void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
-                                          const size_t i,
-                                          arma::mat& gradient) const
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Gradient(
+    const arma::mat& parameters,
+    const size_t i,
+    arma::mat& gradient) const
 {
   // Calculate the regularization term.
   arma::mat regularization;
@@ -151,3 +164,8 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors.col(i)
       * (responses[i] - sigmoid) + regularization;
 }
+
+} // namespace regression
+} // namespace mlpack
+
+#endif

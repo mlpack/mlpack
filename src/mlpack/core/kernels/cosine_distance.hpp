@@ -35,19 +35,9 @@ class CosineDistance
   template<typename VecTypeA, typename VecTypeB>
   static double Evaluate(const VecTypeA& a, const VecTypeB& b);
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "CosineDistance [" << this << "]" << std::endl;
-    return convert.str();
-  }
-
   //! Serialize the class (there's nothing to save).
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 //! Kernel traits for the cosine distance.
@@ -62,8 +52,8 @@ class KernelTraits<CosineDistance>
   static const bool UsesSquaredDistance = false;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation.
 #include "cosine_distance_impl.hpp"

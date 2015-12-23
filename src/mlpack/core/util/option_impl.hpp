@@ -47,7 +47,7 @@ Option<N>::Option(const std::string& identifier,
   CLI::AddFlag(identifier, description, alias);
 }
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 #endif

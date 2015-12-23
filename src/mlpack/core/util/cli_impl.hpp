@@ -109,6 +109,6 @@ T& CLI::GetParam(const std::string& identifier)
   return *boost::any_cast<T>(&gmap[key].value);
 }
 
-}; // namespace mlpack
+} // namespace mlpack
 
 #endif

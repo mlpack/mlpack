@@ -9,7 +9,7 @@
 @section intro_fmkstut Introduction
 
 The FastMKS algorithm (fast exact max-kernel search) is a recent algorithm
-proposed in the following paper:
+proposed in the following papers:
 
 @code
 @inproceedings{curtin2013fast,
@@ -19,6 +19,20 @@ proposed in the following paper:
       Mining (SDM '13)},
   year={2013},
   pages={1--9}
+}
+
+@article{curtin2014dual,
+  author = {Curtin, Ryan R. and Ram, Parikshit},
+  title = {Dual-tree fast exact max-kernel search},
+  journal = {Statistical Analysis and Data Mining},
+  volume = {7},
+  number = {4},
+  publisher = {Wiley Subscription Services, Inc., A Wiley Company},
+  issn = {1932-1872},
+  url = {http://dx.doi.org/10.1002/sam.11218},
+  doi = {10.1002/sam.11218},
+  pages = {229--253},
+  year = {2014},
 }
 @endcode
 
@@ -44,8 +58,8 @@ of tree that does not require an explicit representation to be used.  For more
 details, see the paper.
 
 At the time of this writing there is no other fast algorithm for exact
-max-kernel search.  Also, \b mlpack implements dual-tree FastMKS, while the
-paper referenced above only explains single-tree search.
+max-kernel search.  \b mlpack implements both single-tree and dual-tree fast
+max-kernel search.
 
 \b mlpack provides:
 
@@ -64,6 +78,8 @@ A list of all the sections this tutorial contains.
    - \ref cli_ex3_fmkstut
    - \ref cli_ex4_fmkstut
    - \ref cli_ex5_fmkstut
+   - \ref cli_ex6_fmkstut
+   - \ref cli_ex7_fmkstut
  - \ref fastmks_fmkstut
    - \ref fastmks_ex1_fmkstut
    - \ref fastmks_ex2_fmkstut
@@ -74,11 +90,11 @@ A list of all the sections this tutorial contains.
  - \ref objects_fmkstut
  - \ref further_doc_fmkstut
 
-@section cli_fmkstut Command-line FastMKS (fastmks)
+@section cli_fmkstut Command-line FastMKS (mlpack_fastmks)
 
-\b mlpack provides a command-line program, \c fastmks, which is used to perform
-FastMKS on a given query and reference dataset.  It supports numerous different
-types of kernels:
+\b mlpack provides a command-line program, \c mlpack_fastmks, which is used to
+perform FastMKS on a given query and reference dataset.  It supports numerous
+different types of kernels:
 
  - \ref mlpack::kernel::LinearKernel "linear kernel"
  - \ref mlpack::kernel::PolynomialKernel "polynomial kernel"
@@ -87,23 +103,22 @@ types of kernels:
  - \ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel"
  - \ref mlpack::kernel::TriangularKernel "triangular kernel"
  - \ref mlpack::kernel::HyperbolicTangentKernel "hyperbolic tangent kernel"
- - \ref mlpack::kernel::LaplacianKernel "Laplacian kernel"
 
 Note that when a shift-invariant kernel is used, the results will be the same as
 nearest neighbor search, so @ref nstutorial "allknn" may be a better option.  A
 shift-invariant kernel is a kernel that depends only on the distance between the
 two input points.  The \ref mlpack::kernel::GaussianKernel "Gaussian kernel",
-\ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", \ref
-mlpack::kernel::TriangularKernel "triangular kernel", and \ref
-mlpack::kernel::LaplacianKernel "Laplacian kernel" are instances of
+\ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", and \ref
+mlpack::kernel::TriangularKernel "triangular kernel" are instances of
 shift-invariant kernels.  The paper contains more details on this situation.
-The \c fastmks executable still provides these kernels as options, though.
+The \c mlpack_fastmks executable still provides these kernels as options,
+though.
 
-The following examples detail usage of the \c fastmks program.  Note that you
-can get documentation on all the possible parameters by typing:
+The following examples detail usage of the \c mlpack_fastmks program.  Note that
+you can get documentation on all the possible parameters by typing:
 
 @code
-$ fastmks --help
+$ mlpack_fastmks --help
 @endcode
 
 @subsection cli_ex1_fmkstut FastMKS with a linear kernel on one dataset
@@ -114,7 +129,7 @@ example below finds the 4 maximum kernels of each point in dataset.csv, using
 the default linear kernel.
 
 @code
-$ fastmks -r dataset.csv -k 4 -v -p products.csv -i indices.csv
+$ mlpack_fastmks -r dataset.csv -k 4 -v -p products.csv -i indices.csv
 @endcode
 
 When the operation completes, the values of the kernels are saved in
@@ -160,14 +175,15 @@ different query set, the \c -q (or \c --query_file) option is used, as in the
 example below.
 
 @code
-$ fastmks -q query_set.csv -r reference_set.csv -k 5 -i indices.csv -p products.csv
+$ mlpack_fastmks -q query_set.csv -r reference_set.csv -k 5 -i indices.csv \
+> -p products.csv
 @endcode
 
 @subsection cli_ex3_fmkstut FastMKS with a different kernel
 
-The \c fastmks program offers more than just the linear kernel.  Valid options
-are \c 'linear', \c 'polynomial', \c 'cosine', \c 'gaussian', \c 'epanechnikov',
-\c 'triangular', \c 'laplacian', and \c 'hyptan' (the hyperbolic tangent
+The \c mlpack_fastmks program offers more than just the linear kernel.  Valid
+options are \c 'linear', \c 'polynomial', \c 'cosine', \c 'gaussian',
+\c 'epanechnikov', \c 'triangular' and \c 'hyptan' (the hyperbolic tangent
 kernel).  Note that the hyperbolic tangent kernel is provably not a Mercer
 kernel but is positive semidefinite on most datasets and is commonly used as a
 kernel.  Note also that the Gaussian kernel and other shift-invariant kernels
@@ -177,7 +193,7 @@ The kernel to use is specified with the \c -K (or \c --kernel) option.  The
 example below uses the cosine similarity as a kernel.
 
 @code
-$ fastmks -r dataset.csv -k 5 -K cosine -i indices.csv -p products.csv -v
+$ mlpack_fastmks -r dataset.csv -k 5 -K cosine -i indices.csv -p products.csv -v
 @endcode
 
 @subsection cli_ex4_fmkstut Using single-tree search or naive search
@@ -189,20 +205,21 @@ linear scan (instead of in a tree).  Alternately, the \c -N (or \c --naive)
 option makes the program not build trees at all and instead use brute-force
 search to find the solutions.
 
-The example below uses single-tree search on two datasets.
+The example below uses single-tree search on two datasets with the linear
+kernel.
 
 @code
-$ fastmks -q query_set.csv -r reference_set.csv --single -k 5 -p products.csv \
-> -i indices.csv
+$ mlpack_fastmks -q query_set.csv -r reference_set.csv --single -k 5 \
+> -p products.csv -i indices.csv -K linear
 @endcode
 
 The example below uses naive search on one dataset.
 
 @code
-$ fastmks -r reference_set.csv -k 5 -N -p products.csv -i indices.csv
+$ mlpack_fastmks -r reference_set.csv -k 5 -N -p products.csv -i indices.csv
 @endcode
 
-@subsection cli_ex5_fmkstut Paramters for alternate kernels
+@subsection cli_ex5_fmkstut Parameters for alternate kernels
 
 Many of the alternate kernel choices have parameters which can be chosen; these
 are detailed in this section.
@@ -225,6 +242,42 @@ are detailed in this section.
    applicable to the \c 'hyptan' kernel.  See \ref
    mlpack::kernel::HyperbolicTangentKernel
    "the hyperbolic tangent kernel documentation" for more information.
+
+@subsection cli_ex6_fmkstut Saving a FastMKS model/tree
+
+The \c mlpack_fastmks program also supports saving a model built on a reference
+dataset (this model includes the tree, the kernel, and the search parameters).
+The \c --output_model_file or \c -M option allows one to save these parameters
+to disk for later usage.  An example is below:
+
+@code
+$ mlpack_fastmks -r reference_set.csv -K cosine -M fastmks_model.xml
+@endcode
+
+This example builds a tree on the dataset in \c reference_set.csv using the
+cosine similarity kernel, and saves the resulting model to \c fastmks_model.xml.
+This model may then be used in later calls to the \c mlpack_fastmks program.
+
+@subsection cli_ex7_fmkstut Loading a FastMKS model for further searches
+
+Supposing that a FastMKS model has been saved with the \c --output_model_file or
+\c -M parameter, that model can then be later loaded in subsequent calls to the
+\c mlpack_fastmks program, using the \c --input_model_file or \c -m option.  For
+instance, with a model saved in \c fastmks_model.xml and a query set in
+\c query_set.csv, we can find 3 max-kernel candidates, saving to \c indices.csv
+and \c kernels.csv:
+
+@code
+$ mlpack_fastmks -m fastmks_model.xml -k 3 -i indices.csv -p kernels.csv
+@endcode
+
+Loading a model as opposed to building a model is advantageous because the
+reference tree is already built.  So, among other situations, this could be
+useful in the setting where many different query sets (or many different values
+of k) will be used.
+
+Note that the kernel cannot be changed in a saved model without rebuilding the
+model entirely.
 
 @section fastmks_fmkstut The 'FastMKS' class
 
@@ -291,15 +344,16 @@ extern arma::mat referenceData;
 extern arma::mat queryData;
 
 // This will initialize the FastMKS object with the triangular kernel with
-// default options (bandwidth of 1).  The trees are built in the constructor.
-FastMKS<TriangularKernel> f(queryData, referenceData);
+// default options (bandwidth of 1).  The reference tree is built in the
+// constructor.
+FastMKS<TriangularKernel> f(referenceData);
 
 // The results will be stored in these matrices.
 arma::Mat<size_t> indices;
 arma::mat products;
 
-// Run FastMKS.
-f.Search(10, indices, products);
+// Run FastMKS.  The query tree is built during the call to Search().
+f.Search(queryData, 10, indices, products);
 @endcode
 
 @subsection fastmks_ex3_fmkstut FastMKS with an initialized kernel
@@ -324,21 +378,21 @@ extern arma::mat queryData;
 PolynomialKernel pk(3.0, 2.5);
 
 // Create the FastMKS object with the initialized kernel.
-FastMKS<PolynomialKernel> f(referenceData, queryData, pk);
+FastMKS<PolynomialKernel> f(referenceData, pk);
 
 // The results will be stored in these matrices.
 arma::Mat<size_t> indices;
 arma::mat products;
 
 // Run FastMKS.
-f.Search(10, indices, products);
+f.Search(queryData, 10, indices, products);
 @endcode
 
 The syntax for running FastMKS with one dataset and an initialized kernel is
 very similar:
 
 @code
-FastMKS<PolynomialKernel> f(referenceData, pk);
+f.Search(10, indices, products);
 @endcode
 
 @subsection fastmks_ex4_fmkstut FastMKS with an already-created tree
@@ -379,7 +433,7 @@ TreeType* tree = new TreeType(data, metric, 1.5);
 // Now initialize FastMKS with that statistic.  We don't need to specify the
 // TreeType template parameter since we are still using the default.  We don't
 // need to pass the kernel because that is contained in the tree.
-FastMKS<PolynomialKernel> f(data, tree);
+FastMKS<PolynomialKernel> f(tree);
 
 // The results will be stored in these matrices.
 arma::Mat<size_t> indices;
@@ -395,7 +449,7 @@ Be sure to build both trees using the same metric (or at least a metric with the
 exact same parameters).
 
 @code
-FastMKS<PolynomialKernel> f(referenceData, referenceTree, queryData, queryTree);
+f.Search(queryTree, 10, indices, products);
 @endcode
 
 @section writing_kernel_fmkstut Writing a custom kernel for FastMKS
@@ -445,7 +499,7 @@ extern arma::mat data;
 typedef CustomTree<FastMKSStat> TreeType;
 
 // The FastMKS constructor will create the tree.
-FastMKS<LinearKernel, TreeType> f(data);
+FastMKS<LinearKernel, arma::mat, TreeType> f(data);
 
 // These will hold the results.
 arma::Mat<size_t> indices;

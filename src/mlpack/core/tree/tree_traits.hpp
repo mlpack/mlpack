@@ -100,7 +100,7 @@ class TreeTraits
   static const bool BinaryTree = false;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

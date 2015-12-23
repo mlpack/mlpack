@@ -58,16 +58,6 @@ class PellegMooreKMeansStatistic
   //! Modify the node's centroid (be careful!).
   arma::vec& Centroid() { return centroid; }
 
-  //! Return the object as a string.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "KMeansStatistic [" << this << "]" << std::endl;
-    convert << "  Blacklist: " << blacklist.t();
-    convert << "  Centroid: " << centroid.t();
-    return convert.str();
-  }
-
  private:
   //! The cluster blacklist for the node.
   arma::uvec blacklist;
@@ -75,7 +65,7 @@ class PellegMooreKMeansStatistic
   arma::vec centroid;
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

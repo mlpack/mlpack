@@ -199,31 +199,7 @@ void SA<FunctionType, CoolingScheduleType>::MoveControl(const size_t nMoves,
   accept.zeros();
 }
 
-template<
-    typename FunctionType,
-    typename CoolingScheduleType
->
-std::string SA<FunctionType, CoolingScheduleType>::
-ToString() const
-{
-  std::ostringstream convert;
-  convert << "SA [" << this << "]" << std::endl;
-  convert << "  Function:" << std::endl;
-  convert << util::Indent(function.ToString(), 2);
-  convert << "  Cooling Schedule:" << std::endl;
-  convert << util::Indent(coolingSchedule.ToString(), 2);
-  convert << "  Temperature: " << temperature << std::endl;
-  convert << "  Initial moves: " << initMoves << std::endl;
-  convert << "  Sweeps per move control: " << moveCtrlSweep << std::endl;
-  convert << "  Tolerance: " << tolerance << std::endl;
-  convert << "  Maximum sweeps below tolerance: " << maxToleranceSweep
-      << std::endl;
-  convert << "  Move control gain: " << gain << std::endl;
-  convert << "  Maximum iterations: " << maxIterations << std::endl;
-  return convert.str();
-}
-
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

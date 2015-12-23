@@ -265,6 +265,12 @@ class BinarySpaceTree
   BinarySpaceTree(const BinarySpaceTree& other);
 
   /**
+   * Move constructor for a BinarySpaceTree; possess all the members of the
+   * given tree.
+   */
+  BinarySpaceTree(BinarySpaceTree&& other);
+
+  /**
    * Initialize the tree from a boost::serialization archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
@@ -486,11 +492,6 @@ class BinarySpaceTree
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
-
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
 };
 
 } // namespace tree

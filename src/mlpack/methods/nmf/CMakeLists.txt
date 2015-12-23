@@ -1,7 +1,7 @@
-add_executable(nmf
+add_executable(mlpack_nmf
   nmf_main.cpp
 )
-target_link_libraries(nmf
+target_link_libraries(mlpack_nmf
   mlpack
 )
-install(TARGETS nmf RUNTIME DESTINATION bin)
+install(TARGETS mlpack_nmf RUNTIME DESTINATION bin)

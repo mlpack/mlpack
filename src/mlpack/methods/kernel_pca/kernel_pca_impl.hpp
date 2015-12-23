@@ -76,20 +76,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-//! Returns a string representation of the object.
-template <typename KernelType, typename KernelRule>
-std::string KernelPCA<KernelType, KernelRule>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "KernelPCA [" << this << "]" << std::endl;
-  convert << "  Center Transformed: " << centerTransformedData <<std::endl;
-  convert << "  Kernel Type: " << std::endl;
-  convert <<  mlpack::util::Indent(kernel.ToString(),2);
-  convert << std::endl;
-  return convert.str();
-}
-
-}; // namespace mlpack
-}; // namespace kpca
+} // namespace mlpack
+} // namespace kpca
 
 #endif

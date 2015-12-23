@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
   // Cheap fake dataset.
   arma::mat data;
   data.randu(5, 5);
-  arma::Col<size_t> labels;
+  arma::Row<size_t> labels;
   labels.zeros(5);
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
-  arma::Col<size_t> labels = "   0    0    1    1 ";
+  arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
-  arma::Col<size_t> labels = "   0    0    1    1 ";
+  arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
                              "   1    0    1    0 ";
-  arma::Col<size_t> labels = "   0    0    1    1 ";
+  arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.
   NCA<SquaredEuclideanDistance> nca(data, labels);
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Col<size_t> labels = " 0    0    0    1    1    1   ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.
   NCA<SquaredEuclideanDistance, L_BFGS> nca(data, labels);

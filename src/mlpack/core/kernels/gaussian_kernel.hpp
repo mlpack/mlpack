@@ -147,15 +147,6 @@ class GaussianKernel
     ar & data::CreateNVP(gamma, "gamma");
   }
 
-  //! Convert object to string.
-  std::string ToString() const
-  {
-    std::ostringstream convert;
-    convert << "GaussianKernel [" << this << "]" << std::endl;
-    convert << "  Bandwidth: " << bandwidth << std::endl;
-    return convert.str();
-  }
-
  private:
   //! Kernel bandwidth.
   double bandwidth;
@@ -176,7 +167,7 @@ class KernelTraits<GaussianKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

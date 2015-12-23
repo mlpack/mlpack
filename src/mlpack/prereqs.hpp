@@ -58,6 +58,8 @@
 #else
   #include <boost/serialization/unordered_map.hpp>
 #endif
+// Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
+// any issue by setting BOOST_PFTO to nothing.
 #ifndef BOOST_PFTO
   #define BOOST_PFTO
 #endif

@@ -4,13 +4,13 @@
 Tutorials for mlpack can be found [here : mlpack tutorials](http://www.mlpack.org/tutorial.html).
 
 ### Method-specific tutorials
-* [NeighborSearch tutorial (allknn / allkfn)](http://www.mlpack.org/doxygen.php?doc=nstutorial.html)
-* [RangeSearch tutorial (range_search)](http://www.mlpack.org/doxygen.php?doc=rstutorial.html)
-* [LinearRegression tutorial](http://www.mlpack.org/doxygen.php?doc=lrtutorial.html)
-* [Density Estimation Trees tutorial (det)](http://www.mlpack.org/doxygen.php?doc=dettutorial.html)
-* [Euclidean Minimum Spanning Trees tutorial (emst)](http://www.mlpack.org/doxygen.php?doc=emst_tutorial.html)
-* [K-Means tutorial (kmeans)](http://www.mlpack.org/doxygen.php?doc=kmtutorial.html)
-* [FastMKS tutorial (fastmks)](http://www.mlpack.org/doxygen.php?doc=fmkstutorial.html)
+* [NeighborSearch tutorial (mlpack_allknn / mlpack_allkfn)](http://www.mlpack.org/doxygen.php?doc=nstutorial.html)
+* [RangeSearch tutorial (mlpack_range_search)](http://www.mlpack.org/doxygen.php?doc=rstutorial.html)
+* [LinearRegression tutorial (mlpack_linear_regression)](http://www.mlpack.org/doxygen.php?doc=lrtutorial.html)
+* [Density Estimation Trees tutorial (mlpack_det)](http://www.mlpack.org/doxygen.php?doc=dettutorial.html)
+* [Euclidean Minimum Spanning Trees tutorial (mlpack_emst)](http://www.mlpack.org/doxygen.php?doc=emst_tutorial.html)
+* [K-Means tutorial (mlpack_kmeans)](http://www.mlpack.org/doxygen.php?doc=kmtutorial.html)
+* [FastMKS tutorial (mlpack_fastmks)](http://www.mlpack.org/doxygen.php?doc=fmkstutorial.html)
 
 ### General mlpack tutorials
 * [Building mlpack from source](http://www.mlpack.org/doxygen.php?doc=build.html)

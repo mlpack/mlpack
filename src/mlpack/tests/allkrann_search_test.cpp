@@ -13,6 +13,7 @@
 #include "old_boost_test_definitions.hpp"
 
 #include <mlpack/methods/rann/ra_search.hpp>
+#include <mlpack/methods/rann/ra_model.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -525,5 +526,176 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
 }
 */
+
+/**
+ * Make sure that the neighborPtr matrix isn't accidentally deleted.
+ * See issue #478.
+ */
+BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+
+  // Build the tree ourselves.
+  std::vector<size_t> oldFromNewReferences;
+  RASearch<>::Tree tree(dataset);
+  RASearch<> allkrann(&tree);
+
+  // Now make a query set.
+  arma::mat queryset = arma::randu<arma::mat>(5, 50);
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  allkrann.Search(queryset, 3, neighbors, distances);
+
+  // These will (hopefully) fail is either the neighbors or the distances matrix
+  // has been accidentally deleted.
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+}
+
+/**
+ * Test that the rvalue reference move constructor works.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+  arma::mat copy(dataset);
+
+  AllkRANN moveknn(std::move(copy));
+  AllkRANN allknn(dataset);
+
+  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_cols, 200);
+
+  arma::mat moveDistances, distances;
+  arma::Mat<size_t> moveNeighbors, neighbors;
+
+  moveknn.Search(1, moveNeighbors, moveDistances);
+  allknn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_cols, neighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_rows, distances.n_rows);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_cols, distances.n_cols);
+}
+
+/**
+ * Test that the dataset can be retrained with the move Train() function.
+ */
+BOOST_AUTO_TEST_CASE(MoveTrainTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+
+  // Do it in tree mode, and in naive mode.
+  AllkRANN knn;
+  knn.Train(std::move(dataset));
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+
+  dataset = arma::randu<arma::mat>(3, 300);
+  knn.Naive() = true;
+  knn.Train(std::move(dataset));
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 300);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 300);
+}
+
+/**
+ * Make sure the RAModel class works.
+ */
+BOOST_AUTO_TEST_CASE(RAModelTest)
+{
+  // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+  // results.
+  typedef RAModel<NearestNeighborSort> KNNModel;
+
+  arma::mat queryData, referenceData;
+  data::Load("rann_test_r_3_900.csv", referenceData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
+
+  // Build all the possible models.
+  KNNModel models[8];
+  models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
+  models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
+  models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
+  models[3] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
+  models[4] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
+  models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
+  models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
+  models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+
+  arma::Mat<size_t> qrRanks;
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
+
+  for (size_t j = 0; j < 2; ++j)
+  {
+    for (size_t i = 0; i < 8; ++i)
+    {
+      // We only have std::move() constructors so make a copy of our data.
+      arma::mat referenceCopy(referenceData);
+      if (j == 0)
+        models[i].BuildModel(std::move(referenceCopy), 20, false, false);
+      if (j == 1)
+        models[i].BuildModel(std::move(referenceCopy), 20, false, true);
+      if (j == 2)
+        models[i].BuildModel(std::move(referenceCopy), 20, true, false);
+
+      // Set the search parameters.
+      models[i].Tau() = 1.0;
+      models[i].Alpha() = 0.95;
+      models[i].SampleAtLeaves() = false;
+      models[i].FirstLeafExact() = false;
+      models[i].SingleSampleLimit() = 5;
+
+      arma::Mat<size_t> neighbors;
+      arma::mat distances;
+
+      arma::Col<size_t> numSuccessRounds(queryData.n_cols);
+      numSuccessRounds.fill(0);
+
+      // 1% of 900 is 9, so the rank is expected to be less than 10.
+      size_t expectedRankErrorUB = 10;
+
+      size_t numRounds = 100;
+      for (size_t round = 0; round < numRounds; round++)
+      {
+        arma::mat queryCopy(queryData);
+        models[i].Search(std::move(queryCopy), 1, neighbors, distances);
+        for (size_t k = 0; k < queryData.n_cols; k++)
+          if (qrRanks(k, neighbors(0, k)) < expectedRankErrorUB)
+            numSuccessRounds[k]++;
+
+        neighbors.reset();
+        distances.reset();
+      }
+
+      // Find the 95%-tile threshold so that 95% of the queries should pass this
+      // threshold.
+      size_t threshold = floor(numRounds *
+          (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+      size_t numQueriesFail = 0;
+      for (size_t k = 0; k < queryData.n_cols; k++)
+        if (numSuccessRounds[k] < threshold)
+          numQueriesFail++;
+
+      // assert that at most 5% of the queries fall out of this threshold
+      // 5% of 100 queries is 5.
+      size_t maxNumQueriesFail = 6;
+
+      BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();

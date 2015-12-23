@@ -187,8 +187,8 @@ class SimpleToleranceTermination
   double c_index;
 }; // class SimpleToleranceTermination
 
-}; // namespace amf
-}; // namespace mlpack
+} // namespace amf
+} // namespace mlpack
 
 #endif // _MLPACK_METHODS_AMF_SIMPLE_TOLERANCE_TERMINATION_HPP_INCLUDED
 

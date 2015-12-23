@@ -81,7 +81,7 @@ class RandomInitialization
   const double upperBound;
 }; // class RandomInitialization
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

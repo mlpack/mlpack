@@ -19,7 +19,7 @@ namespace kmeans {
 template<typename MatType>
 void RefinedStart::Cluster(const MatType& data,
                            const size_t clusters,
-                           arma::Col<size_t>& assignments) const
+                           arma::Row<size_t>& assignments) const
 {
   math::RandomSeed(std::time(NULL));
 
@@ -31,7 +31,7 @@ void RefinedStart::Cluster(const MatType& data,
   arma::mat sampledCentroids(data.n_rows, samplings * clusters);
 
   // We will use these objects repeatedly for clustering.
-  arma::Col<size_t> sampledAssignments;
+  arma::Row<size_t> sampledAssignments;
   arma::mat centroids;
 
   for (size_t i = 0; i < samplings; ++i)
@@ -94,7 +94,7 @@ void RefinedStart::Cluster(const MatType& data,
   }
 }
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

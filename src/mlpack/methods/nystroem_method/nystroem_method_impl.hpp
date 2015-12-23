@@ -85,7 +85,7 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
   output = semiKernel * U * normalization * V;
 }
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

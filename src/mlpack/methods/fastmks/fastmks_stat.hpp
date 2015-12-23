@@ -93,6 +93,21 @@ class FastMKSStat
   //! evaluation.
   void*& LastKernelNode() { return lastKernelNode; }
 
+  //! Serialize the statistic.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(bound, "bound");
+    ar & data::CreateNVP(selfKernel, "selfKernel");
+
+    // Void out last kernel information on load.
+    if (Archive::is_loading::value)
+    {
+      lastKernel = 0.0;
+      lastKernelNode = NULL;
+    }
+  }
+
  private:
   //! The bound for pruning.
   double bound;
@@ -108,7 +123,7 @@ class FastMKSStat
   void* lastKernelNode;
 };
 
-}; // namespace fastmks
-}; // namespace mlpack
+} // namespace fastmks
+} // namespace mlpack
 
 #endif

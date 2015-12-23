@@ -106,7 +106,7 @@ class NguyenWidrowInitialization
 }; // class NguyenWidrowInitialization
 
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

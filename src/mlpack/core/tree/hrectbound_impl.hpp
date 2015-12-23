@@ -38,7 +38,7 @@ inline HRectBound<MetricType>::HRectBound(const size_t dimension) :
     minWidth(0)
 { /* Nothing to do. */ }
 
-/***
+/**
  * Copy constructor necessary to prevent memory leaks.
  */
 template<typename MetricType>
@@ -52,7 +52,7 @@ inline HRectBound<MetricType>::HRectBound(const HRectBound& other) :
     bounds[i] = other[i];
 }
 
-/***
+/**
  * Same as the copy constructor.
  */
 template<typename MetricType>
@@ -76,6 +76,21 @@ inline HRectBound<MetricType>& HRectBound<MetricType>::operator=(
   minWidth = other.MinWidth();
 
   return *this;
+}
+
+/**
+ * Move constructor: take possession of another bound's information.
+ */
+template<typename MetricType>
+inline HRectBound<MetricType>::HRectBound(HRectBound&& other) :
+    dim(other.dim),
+    bounds(other.bounds),
+    minWidth(other.minWidth)
+{
+  // Fix the other bound.
+  other.dim = 0;
+  other.bounds = NULL;
+  other.minWidth = 0.0;
 }
 
 /**
@@ -443,27 +458,7 @@ void HRectBound<MetricType>::Serialize(Archive& ar,
   ar & data::CreateNVP(minWidth, "minWidth");
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename MetricType>
-std::string HRectBound<MetricType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "HRectBound [" << this << "]" << std::endl;
-  convert << "  Power: " << MetricType::Power << std::endl;
-  convert << "  TakeRoot: " << (MetricType::TakeRoot ? "true" : "false")
-      << std::endl;
-  convert << "  Dimensionality: " << dim << std::endl;
-  convert << "  Bounds: " << std::endl;
-  for (size_t i = 0; i < dim; ++i)
-    convert << util::Indent(bounds[i].ToString()) << std::endl;
-  convert << "  Minimum width: " << minWidth << std::endl;
-
-  return convert.str();
-}
-
-}; // namespace bound
-}; // namespace mlpack
+} // namespace bound
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

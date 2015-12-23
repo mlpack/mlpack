@@ -13,7 +13,7 @@ LARS::LARS(const bool useCholesky,
            const double lambda1,
            const double lambda2,
            const double tolerance) :
-    matGram(matGramInternal),
+    matGram(&matGramInternal),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
@@ -27,7 +27,7 @@ LARS::LARS(const bool useCholesky,
            const double lambda1,
            const double lambda2,
            const double tolerance) :
-    matGram(gramMatrix),
+    matGram(&gramMatrix),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
@@ -36,12 +36,21 @@ LARS::LARS(const bool useCholesky,
     tolerance(tolerance)
 { /* Nothing left to do */ }
 
-void LARS::Regress(const arma::mat& matX,
-                   const arma::vec& y,
-                   arma::vec& beta,
-                   const bool transposeData)
+void LARS::Train(const arma::mat& matX,
+                 const arma::vec& y,
+                 arma::vec& beta,
+                 const bool transposeData)
 {
   Timer::Start("lars_regression");
+
+  // Clear any previous solution information.
+  betaPath.clear();
+  lambdaPath.clear();
+  activeSet.clear();
+  isActive.clear();
+  ignoreSet.clear();
+  isIgnored.clear();
+  matUtriCholFactor.reset();
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
@@ -63,7 +72,7 @@ void LARS::Regress(const arma::mat& matX,
   // Initialize yHat and beta.
   beta = arma::zeros(dataRef.n_cols);
   arma::vec yHat = arma::zeros(dataRef.n_rows);
-  arma::vec yHatDirection = arma::vec(dataRef.n_rows);
+  arma::vec yHatDirection(dataRef.n_rows);
 
   bool lassocond = false;
 
@@ -93,7 +102,7 @@ void LARS::Regress(const arma::mat& matX,
 
   // Compute the Gram matrix.  If this is the elastic net problem, we will add
   // lambda2 * I_n to the matrix.
-  if (matGram.n_elem == 0)
+  if (matGram->n_elem != dataRef.n_cols * dataRef.n_cols)
   {
     // In this case, matGram should reference matGramInternal.
     matGramInternal = trans(dataRef) * dataRef;
@@ -127,10 +136,10 @@ void LARS::Regress(const arma::mat& matX,
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
         // This is equivalent to the above 5 lines.
-        arma::vec newGramCol = matGram.elem(changeInd * dataRef.n_cols +
+        arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
             arma::conv_to<arma::uvec>::from(activeSet));
 
-        CholeskyInsert(matGram(changeInd, changeInd), newGramCol);
+        CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
 
       // Add variable to active set.
@@ -191,7 +200,7 @@ void LARS::Regress(const arma::mat& matX,
       arma::mat matGramActive = arma::mat(activeSet.size(), activeSet.size());
       for (size_t i = 0; i < activeSet.size(); i++)
         for (size_t j = 0; j < activeSet.size(); j++)
-          matGramActive(i, j) = matGram(activeSet[i], activeSet[j]);
+          matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
       arma::mat matS = s * arma::ones<arma::mat>(1, activeSet.size());
@@ -488,14 +497,3 @@ void LARS::CholeskyDelete(const size_t colToKill)
     matUtriCholFactor.shed_row(n);
   }
 }
-
-std::string LARS::ToString() const
-{
-  std::ostringstream convert;
-  convert << "LARS [" << this << "]" << std::endl;
-  convert << "  Gram Matrix: " << matGram.n_rows << "x" << matGram.n_cols;
-  convert << std::endl;
-  convert << "  Tolerance: " << tolerance << std::endl;
-  return convert.str();
-}
-

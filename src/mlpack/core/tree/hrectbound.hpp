@@ -28,7 +28,6 @@ struct IsLMetric
 };
 
 //! Specialization for IsLMetric when the argument is of type LMetric.
-template<>
 template<int Power, bool TakeRoot>
 struct IsLMetric<metric::LMetric<Power, TakeRoot>>
 {
@@ -69,6 +68,9 @@ class HRectBound
   HRectBound(const HRectBound& other);
   //! Same as copy constructor; necessary to prevent memory leaks.
   HRectBound& operator=(const HRectBound& other);
+
+  //! Move constructor: take possession of another bound's information.
+  HRectBound(HRectBound&& other);
 
   //! Destructor: clean up memory.
   ~HRectBound();
@@ -189,11 +191,6 @@ class HRectBound
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
-
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
 
  private:
   //! The dimensionality of the bound.

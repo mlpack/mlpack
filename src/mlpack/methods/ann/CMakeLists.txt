@@ -3,6 +3,7 @@
 set(SOURCES
   ffn.hpp
   cnn.hpp
+  rnn.hpp
   network_traits.hpp
 )
 

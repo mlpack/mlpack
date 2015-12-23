@@ -3,6 +3,8 @@ add_executable(mlpack_test
   mlpack_test.cpp
   activation_functions_test.cpp
   adaboost_test.cpp
+  ada_delta_test.cpp
+  adam_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
   allkrann_search_test.cpp
@@ -10,6 +12,7 @@ add_executable(mlpack_test
   aug_lagrangian_test.cpp
   cf_test.cpp
   cli_test.cpp
+  convolution_test.cpp
   convolutional_network_test.cpp
   cosine_tree_test.cpp
   decision_stump_test.cpp
@@ -21,6 +24,7 @@ add_executable(mlpack_test
   gmm_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  init_rules_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
@@ -37,6 +41,7 @@ add_executable(mlpack_test
   lsh_test.cpp
   math_test.cpp
   matrix_completion_test.cpp
+  maximal_inputs_test.cpp
   mean_shift_test.cpp
   metric_test.cpp
   nbc_test.cpp
@@ -49,16 +54,18 @@ add_executable(mlpack_test
   range_search_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
+  rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
+  serialization.hpp
+  serialization.cpp
   serialization_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   termination_policy_test.cpp
-  to_string_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   union_find_test.cpp

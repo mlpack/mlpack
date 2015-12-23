@@ -52,7 +52,7 @@ struct FactorizerTraits
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CF<> cf(data); // Default options.
+ * CF cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -72,14 +72,19 @@ struct FactorizerTraits
  *     the rating matrix (a W and H matrix).  This must implement the method
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
-template<
-    typename FactorizerType = amf::NMFALSFactorizer>
 class CF
 {
  public:
   /**
-   * Initialize the CF object using an instantiated factorizer. Store a
-   * reference to the data that we will be using. There are parameters that can
+   * Initialize the CF object without performing any factorization.  Be sure to
+   * call Train() before calling GetRecommendations() or any other functions!
+   */
+  CF(const size_t numUsersForSimilarity = 5,
+     const size_t rank = 0);
+
+  /**
+   * Initialize the CF object using an instantiated factorizer, immediately
+   * factorizing the given data to create a model. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
    * choose a rank.
@@ -93,14 +98,15 @@ class CF
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
    */
+  template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
 
   /**
-   * Initialize the CF object using an instantiated factorizer. Store a
-   * reference to the data that we will be using. There are parameters that can
+   * Initialize the CF object using an instantiated factorizer, immediately
+   * factorizing the given data to create a model. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
    * choose a rank. Data will be considered in the format of items vs. users and
@@ -116,13 +122,40 @@ class CF
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
    */
-  template<typename U = FactorizerType,
-           typename T = typename boost::disable_if_c<
-               FactorizerTraits<U>::UsesCoordinateList>::type*>
+  template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::sp_mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+     const size_t rank = 0,
+     const typename boost::disable_if_c<
+         FactorizerTraits<FactorizerType>::UsesCoordinateList>::type* = 0);
+
+  /**
+   * Train the CF model (i.e. factorize the input matrix) using the parameters
+   * that have already been set for the model (specifically, the rank
+   * parameter), and optionally, using the given FactorizerType.
+   *
+   * @param data Input dataset; coordinate list or dense matrix.
+   * @param factorizer Instantiated factorizer.
+   */
+  template<typename FactorizerType = amf::NMFALSFactorizer>
+  void Train(const arma::mat& data,
+             FactorizerType factorizer = FactorizerType());
+
+  /**
+   * Train the CF model (i.e. factorize the input matrix) using the parameters
+   * that have already been set for the model (specifically, the rank
+   * parameter), and optionally, using the given FactorizerType.
+   *
+   * @param data Sparse matrix data.
+   * @param factorizer Instantiated factorizer.
+   */
+  template<typename FactorizerType = amf::NMFALSFactorizer>
+  void Train(const arma::sp_mat& data,
+             FactorizerType factorizer = FactorizerType(),
+             const typename boost::disable_if_c<
+                 FactorizerTraits<FactorizerType>::UsesCoordinateList>::type*
+                 = 0);
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
@@ -154,18 +187,10 @@ class CF
     return rank;
   }
 
-  //! Sets factorizer for NMF
-  void Factorizer(const FactorizerType& f)
-  {
-    this->factorizer = f;
-  }
-
   //! Get the User Matrix.
   const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
   const arma::mat& H() const { return h; }
-  //! Get the Rating Matrix.
-  const arma::mat& Rating() const { return rating; }
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
@@ -216,23 +241,20 @@ class CF
                arma::vec& predictions) const;
 
   /**
-   * Returns a string representation of this object.
+   * Serialize the CF model to the given archive.
    */
-  std::string ToString() const;
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
   size_t rank;
-  //! Instantiated factorizer object.
-  FactorizerType factorizer;
   //! User matrix.
   arma::mat w;
   //! Item matrix.
   arma::mat h;
-  //! Rating matrix.
-  arma::mat rating;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
 
@@ -254,10 +276,10 @@ class CF
 
 }; // class CF
 
-}; // namespace cf
-}; // namespace mlpack
+} // namespace cf
+} // namespace mlpack
 
-//Include implementation
+// Include implementation of templated functions.
 #include "cf_impl.hpp"
 
 #endif

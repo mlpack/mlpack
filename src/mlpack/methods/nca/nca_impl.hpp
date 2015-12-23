@@ -16,7 +16,7 @@ namespace nca {
 // Just set the internal matrix reference.
 template<typename MetricType, template<typename> class OptimizerType>
 NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
-                                    const arma::Col<size_t>& labels,
+                                    const arma::Row<size_t>& labels,
                                     MetricType metric) :
     dataset(dataset),
     labels(labels),
@@ -40,20 +40,7 @@ void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
   Timer::Stop("nca_sgd_optimization");
 }
 
-template<typename MetricType, template<typename> class OptimizerType>
-std::string NCA<MetricType, OptimizerType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "NCA  [" << this << "]" << std::endl;
-  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols
-      << std::endl;
-  convert << "  Metric: " << std::endl <<
-      mlpack::util::Indent(metric.ToString(),2);
-  return convert.str();
-}
-
-
-}; // namespace nca
-}; // namespace mlpack
+} // namespace nca
+} // namespace mlpack
 
 #endif

@@ -69,7 +69,7 @@ double PSpectrumStringKernel::Evaluate(const VecType& a,
 
   return eval;
 }
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

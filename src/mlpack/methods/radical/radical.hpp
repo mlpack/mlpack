@@ -106,9 +106,6 @@ class Radical
   //! Modify the number of sweeps.
   size_t& Sweeps() { return sweeps; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! Standard deviation of the Gaussian noise added to the replicates of
   //! the data points during Radical2D.
@@ -137,7 +134,7 @@ void WhitenFeatureMajorMatrix(const arma::mat& matX,
                               arma::mat& matXWhitened,
                               arma::mat& matWhitening);
 
-}; // namespace radical
-}; // namespace mlpack
+} // namespace radical
+} // namespace mlpack
 
 #endif

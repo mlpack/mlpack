@@ -91,7 +91,7 @@ inline double RandNormal(const double mean, const double variance)
   return variance * randNormalDist(randGen) + mean;
 }
 
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack
 
 #endif // __MLPACK_CORE_MATH_MATH_LIB_HPP

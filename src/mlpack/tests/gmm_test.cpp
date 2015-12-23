@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE(GMMTest);
 BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
 {
   // Create a GMM.
-  GMM<> gmm(2, 2);
+  GMM gmm(2, 2);
   gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
   gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
   gmm.Weights() = "0.3 0.7";
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
 BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
 {
   // Create a GMM (same as the last test).
-  GMM<> gmm(2, 2);
+  GMM gmm(2, 2);
   gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
   gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
   gmm.Weights() = "0.3 0.7";
@@ -99,8 +99,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     data.row(1) += mean(1);
 
     // Now, train the model.
-    GMM<> gmm(1, 2);
-    gmm.Estimate(data, 10);
+    GMM gmm(1, 2);
+    gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
@@ -193,8 +193,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
     weights[i] = (double) counts[i] / data.n_cols;
 
   // Now train the model.
-  GMM<> gmm(gaussians, dims);
-  gmm.Estimate(data, 10);
+  GMM gmm(gaussians, dims);
+  gmm.Train(data, 10);
 
   arma::uvec sortRef = sort_index(weights);
   arma::uvec sortTry = sort_index(gmm.Weights());
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
 }
 
 /**
- * Train a single-gaussian mixture, but using the overload of Estimate() where
+ * Train a single-gaussian mixture, but using the overload of Train() where
  * probabilities of the observation are given.
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
@@ -236,8 +236,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
   probabilities.randu(20000); // Random probabilities.
 
   // Now train the model.
-  GMM<> g(1, 2);
-  g.Estimate(observations, probabilities, 10);
+  GMM g(1, 2);
+  g.Train(observations, probabilities, 10);
 
   // Check that it is trained correctly.  5% tolerance because of random error
   // present in observations.
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 }
 
 /**
- * Train a multi-Gaussian mixture, using the overload of Estimate() where
+ * Train a multi-Gaussian mixture, using the overload of Train() where
  * probabilities of the observation are given.
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
@@ -306,9 +306,9 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Now train the model.
-  GMM<> g(4, 3); // 3 dimensions, 4 components.
+  GMM g(4, 3); // 3 dimensions, 4 components.
 
-  g.Estimate(points, probabilities, 8);
+  g.Train(points, probabilities, 8);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 BOOST_AUTO_TEST_CASE(GMMRandomTest)
 {
   // Simple GMM distribution.
-  GMM<> gmm(2, 2);
+  GMM gmm(2, 2);
   gmm.Weights() = arma::vec("0.40 0.60");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -392,8 +392,8 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
     observations.col(i) = gmm.Random();
 
   // A new one which we'll train.
-  GMM<> gmm2(2, 2);
-  gmm2.Estimate(observations, 10);
+  GMM gmm2(2, 2);
+  gmm2.Train(observations, 10);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 BOOST_AUTO_TEST_CASE(GMMClassifyTest)
 {
   // First create a Gaussian with a few components.
-  GMM<> gmm(3, 2);
+  GMM gmm(3, 2);
   gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
   gmm.Component(1) = distribution::GaussianDistribution("1 3", "3 2; 2 3");
   gmm.Component(2) = distribution::GaussianDistribution("-2 -2",
@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
     "-3 -3;"
     "-5  1"));
 
-  arma::Col<size_t> classes;
+  arma::Row<size_t> classes;
 
   gmm.Classify(observations, classes);
 
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
 BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
 {
   // Create a GMM, save it, and load it.
-  GMM<> gmm(10, 4);
+  GMM gmm(10, 4);
   gmm.Weights().randu();
 
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
@@ -506,7 +506,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   }
 
   // Load the GMM.
-  GMM<> gmm2;
+  GMM gmm2;
   {
     std::ifstream ifs("test-gmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);
@@ -682,13 +682,13 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     weights[i] = (double) counts[i] / data.n_cols;
 
   // Now train the model.
-  GMM<> gmm(gaussians, dims);
-  gmm.Estimate(data, 10);
+  GMM gmm(gaussians, dims);
+  gmm.Train(data, 10);
 
-  GMM<> oldgmm(gmm);
+  GMM oldgmm(gmm);
 
   // Retrain the model with the existing model as the starting point.
-  gmm.Estimate(data, 1, true);
+  gmm.Train(data, 1, true);
 
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
@@ -710,7 +710,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   gmm = oldgmm;
 
   // Retrain the model with the existing model as the starting point.
-  gmm.Estimate(data, 10, true);
+  gmm.Train(data, 10, true);
 
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
@@ -728,13 +728,13 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     }
   }
 
-  // Do it again, but using the overload of Estimate() that takes probabilities
+  // Do it again, but using the overload of Train() that takes probabilities
   // into account.
   arma::vec probabilities(data.n_cols);
   probabilities.ones(); // Fill with ones.
 
   gmm = oldgmm;
-  gmm.Estimate(data, probabilities, 1, true);
+  gmm.Train(data, probabilities, 1, true);
 
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
@@ -754,7 +754,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
 
   // One more time, with multiple trials.
   gmm = oldgmm;
-  gmm.Estimate(data, probabilities, 10, true);
+  gmm.Train(data, probabilities, 10, true);
 
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)

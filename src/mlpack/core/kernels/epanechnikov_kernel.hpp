@@ -89,9 +89,6 @@ class EpanechnikovKernel
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int version);
 
-  //! Returns string representation of object.
-  std::string ToString() const;
-
  private:
   //! Bandwidth of the kernel.
   double bandwidth;
@@ -111,8 +108,8 @@ class KernelTraits<EpanechnikovKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation.
 #include "epanechnikov_kernel_impl.hpp"

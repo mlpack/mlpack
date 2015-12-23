@@ -139,8 +139,8 @@ class FastMKSRules
   TraversalInfoType traversalInfo;
 };
 
-}; // namespace fastmks
-}; // namespace mlpack
+} // namespace fastmks
+} // namespace mlpack
 
 // Include implementation.
 #include "fastmks_rules_impl.hpp"

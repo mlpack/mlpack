@@ -22,48 +22,61 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "dictionary step, which updates the dictionary D, and a sparse coding step,"
     " which updates the sparse coding matrix."
     "\n\n"
-    "To run this program, the input matrix X must be specified (with -i), along"
-    " with the number of atoms in the dictionary (-k).  An initial dictionary "
-    "may also be specified with the --initial_dictionary option.  The l1 and l2"
-    " norm regularization parameters may be specified with -l and -L, "
-    "respectively.  For example, to run sparse coding on the dataset in "
+    "Once a dictionary D is found, the sparse coding model may be used to "
+    "encode other matrices, and saved for future usage."
+    "\n\n"
+    "To run this program, either an input matrix or an already-saved sparse "
+    "coding model must be specified.  An input matrix may be specified with the"
+    " --training_file (-t) option, along with the number of atoms in the "
+    "dictionary (--atoms, or -k).  It is also possible to specify an initial "
+    "dictionary for the optimization, with the --initial_dictionary (-i) "
+    "option. An input model may be specified with the --input_model_file (-m) "
+    "option. There are also other training options available."
+    "\n\n"
+    "As an example, to build a sparse coding model on the dataset in "
     "data.csv using 200 atoms and an l1-regularization parameter of 0.1, saving"
-    " the dictionary into dict.csv and the codes into codes.csv, use "
+    " the model into model.xml, use "
     "\n\n"
-    "$ sparse_coding -i data.csv -k 200 -l 0.1 -d dict.csv -c codes.csv"
+    "$ sparse_coding -t data.csv -k 200 -l 0.1 -M model.xml"
     "\n\n"
-    "The maximum number of iterations may be specified with the -n option. "
-    "Optionally, the input data matrix X can be normalized before coding with "
-    "the -N option.");
+    "Then, this model could be used to encode a new matrix, otherdata.csv, and "
+    "save the output codes to codes.csv:"
+    "\n\n"
+    "$ sparse_coding -m model.xml -T otherdata.csv -c codes.csv");
 
-PARAM_STRING_REQ("input_file", "Filename of the input data.", "i");
-PARAM_INT_REQ("atoms", "Number of atoms in the dictionary.", "k");
+// Train the model.
+PARAM_STRING("training_file", "Filename of the training data (X).", "t", "");
+PARAM_INT("atoms", "Number of atoms in the dictionary.", "k", 0);
 
 PARAM_DOUBLE("lambda1", "Sparse coding l1-norm regularization parameter.", "l",
     0);
 PARAM_DOUBLE("lambda2", "Sparse coding l2-norm regularization parameter.", "L",
     0);
-
 PARAM_INT("max_iterations", "Maximum number of iterations for sparse coding (0 "
     "indicates no limit).", "n", 0);
-
 PARAM_STRING("initial_dictionary", "Filename for optional initial dictionary.",
-    "D", "");
-
-PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
-    "d", "dictionary.csv");
-PARAM_STRING("codes_file", "Filename to save the output sparse codes to.", "c",
-    "codes.csv");
-
+    "i", "");
 PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
     "before coding.", "N");
-
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-
 PARAM_DOUBLE("objective_tolerance", "Tolerance for convergence of the objective"
     " function.", "o", 0.01);
 PARAM_DOUBLE("newton_tolerance", "Tolerance for convergence of Newton method.",
     "w", 1e-6);
+
+// Load/save a model.
+PARAM_STRING("input_model_file", "File containing input sparse coding model.",
+    "m", "");
+PARAM_STRING("output_model_file", "File to save trained sparse coding model "
+    "to.", "M", "");
+
+PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
+    "d", "");
+PARAM_STRING("codes_file", "Filename to save the output sparse codes to.", "c",
+    "");
+
+PARAM_STRING("test_file", "File containing data matrix to be encoded by trained"
+    " model.", "T", "");
 
 using namespace arma;
 using namespace std;
@@ -78,83 +91,159 @@ int main(int argc, char* argv[])
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
-    RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) time(NULL));
 
-  const double lambda1 = CLI::GetParam<double>("lambda1");
-  const double lambda2 = CLI::GetParam<double>("lambda2");
+  // Check for parameter validity.
+  if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
+    Log::Fatal << "Cannot specify both --input_model_file (-m) and "
+        << "--initial_dictionary (-i)!" << endl;
 
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string dictionaryFile = CLI::GetParam<string>("dictionary_file");
-  const string codesFile = CLI::GetParam<string>("codes_file");
-  const string initialDictionaryFile =
-      CLI::GetParam<string>("initial_dictionary");
+  if (CLI::HasParam("training_file") && !CLI::HasParam("atoms"))
+    Log::Fatal << "If --training_file is specified, the number of atoms in the "
+        << "dictionary must be specified with --atoms (-k)!" << endl;
 
-  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
-  const size_t atoms = CLI::GetParam<int>("atoms");
+  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+    Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
+        << "be specified!" << endl;
 
-  const bool normalize = CLI::HasParam("normalize");
+  if (!CLI::HasParam("codes_file") && !CLI::HasParam("dictionary_file") &&
+      !CLI::HasParam("output_model_file"))
+    Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
+        << "--output_model_file (-M) are specified; no output will be saved."
+        << endl;
 
-  const double objTolerance = CLI::GetParam<double>("objective_tolerance");
-  const double newtonTolerance = CLI::GetParam<double>("newton_tolerance");
+  if (CLI::HasParam("codes_file") && !CLI::HasParam("test_file"))
+    Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
+        << "specified with --test_file or -T) is given to encode!" << endl;
 
-  mat matX;
-  data::Load(inputFile, matX, true);
-
-  Log::Info << "Loaded " << matX.n_cols << " points in " << matX.n_rows <<
-      " dimensions." << endl;
-
-  // Normalize each point if the user asked for it.
-  if (normalize)
+  if (!CLI::HasParam("training_file"))
   {
-    Log::Info << "Normalizing data before coding..." << std::endl;
-    for (size_t i = 0; i < matX.n_cols; ++i)
-      matX.col(i) /= norm(matX.col(i), 2);
+    if (CLI::HasParam("atoms"))
+      Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
+          << "specified." << endl;
+    if (CLI::HasParam("lambda1"))
+      Log::Warn << "--lambda1 (-l) ignored because --training_file (-t) is not "
+          << "specified." << endl;
+    if (CLI::HasParam("lambda2"))
+      Log::Warn << "--lambda2 (-L) ignored because --training_file (-t) is not "
+          << "specified." << endl;
+    if (CLI::HasParam("initial_dictionary"))
+      Log::Warn << "--initial_dictionary (-i) ignored because --training_file "
+          << "(-t) is not specified." << endl;
+    if (CLI::HasParam("max_iterations"))
+      Log::Warn << "--max_iterations (-n) ignored because --training_file (-t) "
+          << "is not specified." << endl;
+    if (CLI::HasParam("normalize"))
+      Log::Warn << "--normalize (-N) ignored because --training_file (-t) is "
+          << "not specified." << endl;
+    if (CLI::HasParam("objective_tolerance"))
+      Log::Warn << "--objective_tolerance (-o) ignored because --training_file "
+          << "(-t) is not specified." << endl;
+    if (CLI::HasParam("newton_tolerance"))
+      Log::Warn << "--newton_tolerance (-w) ignored because --training_file "
+          << "(-t) is not specified." << endl;
   }
 
-  // If there is an initial dictionary, be sure we do not initialize one.
-  if (initialDictionaryFile != "")
+  // Do we have an existing model?
+  SparseCoding sc(0, 0.0);
+  if (CLI::HasParam("input_model_file"))
   {
-    SparseCoding<NothingInitializer> sc(matX, atoms, lambda1, lambda2);
+    data::Load(CLI::GetParam<string>("input_model_file"), "sparse_coding_model",
+        sc, true);
+  }
 
-    // Load initial dictionary directly into sparse coding object.
-    data::Load(initialDictionaryFile, sc.Dictionary(), true);
+  if (CLI::HasParam("training_file"))
+  {
+    mat matX;
+    data::Load(CLI::GetParam<string>("training_file"), matX, true);
 
-    // Validate size of initial dictionary.
-    if (sc.Dictionary().n_cols != atoms)
+    // Normalize each point if the user asked for it.
+    if (CLI::HasParam("normalize"))
     {
-      Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_cols
-          << " atoms, but the number of atoms was specified to be " << atoms
-          << "!" << endl;
+      Log::Info << "Normalizing data before coding..." << endl;
+      for (size_t i = 0; i < matX.n_cols; ++i)
+        matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    if (sc.Dictionary().n_rows != matX.n_rows)
+    sc.Lambda1() = CLI::GetParam<double>("lambda1");
+    sc.Lambda2() = CLI::GetParam<double>("lambda2");
+    sc.MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
+    sc.Atoms() = (size_t) CLI::GetParam<int>("atoms");
+    sc.ObjTolerance() = CLI::GetParam<double>("objective_tolerance");
+    sc.NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
+
+    // Inform the user if we are overwriting their model.
+    if (CLI::HasParam("input_model_file"))
     {
-      Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_rows
-          << " dimensions, but the data has " << matX.n_rows << " dimensions!"
-          << endl;
+      Log::Info << "Using dictionary from existing model in '"
+          << CLI::GetParam<string>("input_model_file") << "' as initial "
+          << "dictionary for training." << endl;
+      sc.Train<NothingInitializer>(matX);
+    }
+    else if (CLI::HasParam("initial_dictionary"))
+    {
+      // Load initial dictionary directly into sparse coding object.
+      data::Load(CLI::GetParam<string>("initial_dictionary"), sc.Dictionary(),
+          true);
+
+      // Validate size of initial dictionary.
+      if (sc.Dictionary().n_cols != sc.Atoms())
+      {
+        Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_cols
+            << " atoms, but the number of atoms was specified to be "
+            << sc.Atoms() << "!" << endl;
+      }
+
+      if (sc.Dictionary().n_rows != matX.n_rows)
+      {
+        Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_rows
+            << " dimensions, but the data has " << matX.n_rows << " dimensions!"
+            << endl;
+      }
+
+      // Run sparse coding.
+      sc.Train<NothingInitializer>(matX);
+    }
+    else
+    {
+      // Run sparse coding with the default initialization.
+      sc.Train(matX);
+    }
+  }
+
+  // Now, de we have any matrix to encode?
+  if (CLI::HasParam("test_file"))
+  {
+    mat matY;
+    data::Load(CLI::GetParam<string>("test_file"), matY, true);
+
+    if (matY.n_rows != sc.Dictionary().n_rows)
+      Log::Fatal << "Model was trained with a dimensionality of "
+          << sc.Dictionary().n_rows << ", but data in test file '"
+          << CLI::GetParam<string>("test_file") << " has a dimensionality of "
+          << matY.n_rows << "!" << endl;
+
+    // Normalize each point if the user asked for it.
+    if (CLI::HasParam("normalize"))
+    {
+      Log::Info << "Normalizing test data before coding..." << endl;
+      for (size_t i = 0; i < matY.n_cols; ++i)
+        matY.col(i) /= norm(matY.col(i), 2);
     }
 
-    // Run sparse coding.
-    sc.Encode(maxIterations, objTolerance, newtonTolerance);
+    mat codes;
+    sc.Encode(matY, codes);
 
-    // Save the results.
-    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
-    data::Save(dictionaryFile, sc.Dictionary());
-    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, sc.Codes());
+    if (CLI::HasParam("codes_file"))
+      data::Save(CLI::GetParam<string>("codes_file"), codes);
   }
-  else
-  {
-    // No initial dictionary.
-    SparseCoding<> sc(matX, atoms, lambda1, lambda2);
 
-    // Run sparse coding.
-    sc.Encode(maxIterations, objTolerance, newtonTolerance);
+  // Did the user want to save the dictionary?
+  if (CLI::HasParam("dictionary_file"))
+    data::Save(CLI::GetParam<string>("dictionary_file"), sc.Dictionary());
 
-    // Save the results.
-    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
-    data::Save(dictionaryFile, sc.Dictionary());
-    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-    data::Save(codesFile, sc.Codes());
-  }
+  // Did the user want to save the model?
+  if (CLI::HasParam("output_model_file"))
+    data::Save(CLI::GetParam<string>("output_model_file"),
+        "sparse_coding_model", sc, false); // Non-fatal on failure.
 }

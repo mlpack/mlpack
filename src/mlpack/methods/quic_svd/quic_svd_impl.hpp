@@ -74,7 +74,7 @@ void QUIC_SVD::ExtractSVD(arma::mat& u,
   }
 }
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 #endif

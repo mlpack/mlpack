@@ -11,6 +11,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 BOOST_AUTO_TEST_SUITE(CFTest);
 
@@ -38,10 +39,10 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF<>::CleanData(dataset, cleanedData);
+  CF::CleanData(dataset, cleanedData);
 
   // Create a CF object.
-  CF<> c(cleanedData);
+  CF c(cleanedData);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -78,9 +79,9 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF<>::CleanData(dataset, cleanedData);
+  CF::CleanData(dataset, cleanedData);
 
-  CF<> c(cleanedData);
+  CF c(cleanedData);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -136,10 +137,10 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF<>::CleanData(dataset, cleanedData);
+  CF::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF<> c(cleanedData);
+  CF c(cleanedData);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -229,10 +230,10 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF<>::CleanData(dataset, cleanedData);
+  CF::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF<> c(cleanedData);
+  CF c(cleanedData);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -295,10 +296,10 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF<>::CleanData(dataset, cleanedData);
+  CF::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF<> c(cleanedData);
+  CF c(cleanedData);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -317,5 +318,225 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
     BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
   }
 }
+
+/**
+ * Make sure we can train an already-trained model and it works okay.
+ */
+BOOST_AUTO_TEST_CASE(TrainTest)
+{
+  // Generate random data.
+  arma::sp_mat randomData;
+  randomData.sprandu(100, 100, 0.3);
+  CF c(randomData);
+
+  // Now retrain with data we know about.
+  arma::mat dataset;
+  data::Load("GroupLens100k.csv", dataset);
+
+  // Save the columns we've removed.
+  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  size_t currentCol = 0;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (currentCol == 300)
+      break;
+
+    if (dataset(2, i) > 4.5) // 5-star rating.
+    {
+      // Make sure we don't have this user yet.  This is a slow way to do this
+      // but I don't particularly care here because it's in the tests.
+      bool found = false;
+      for (size_t j = 0; j < currentCol; ++j)
+      {
+        if (savedCols(0, j) == dataset(0, i))
+        {
+          found = true;
+          break;
+        }
+      }
+
+      // If this user doesn't already exist in savedCols, add them.  Otherwise
+      // ignore this point.
+      if (!found)
+      {
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
+        ++currentCol;
+      }
+    }
+  }
+
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF::CleanData(dataset, cleanedData);
+
+  // Now retrain.
+  c.Train(dataset);
+
+  // Get predictions for all user/item pairs we held back.
+  arma::Mat<size_t> combinations(2, savedCols.n_cols);
+  for (size_t i = 0; i < savedCols.n_cols; ++i)
+  {
+    combinations(0, i) = size_t(savedCols(0, i));
+    combinations(1, i) = size_t(savedCols(1, i));
+  }
+
+  arma::vec predictions;
+  c.Predict(combinations, predictions);
+
+  for (size_t i = 0; i < combinations.n_cols; ++i)
+  {
+    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
+    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+  }
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
+{
+  // Use default constructor.
+  CF c;
+
+  // Now retrain with data we know about.
+  arma::mat dataset;
+  data::Load("GroupLens100k.csv", dataset);
+
+  // Save the columns we've removed.
+  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  size_t currentCol = 0;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (currentCol == 300)
+      break;
+
+    if (dataset(2, i) > 4.5) // 5-star rating.
+    {
+      // Make sure we don't have this user yet.  This is a slow way to do this
+      // but I don't particularly care here because it's in the tests.
+      bool found = false;
+      for (size_t j = 0; j < currentCol; ++j)
+      {
+        if (savedCols(0, j) == dataset(0, i))
+        {
+          found = true;
+          break;
+        }
+      }
+
+      // If this user doesn't already exist in savedCols, add them.  Otherwise
+      // ignore this point.
+      if (!found)
+      {
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
+        ++currentCol;
+      }
+    }
+  }
+
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF::CleanData(dataset, cleanedData);
+
+  // Now retrain.
+  c.Train(cleanedData);
+
+  // Get predictions for all user/item pairs we held back.
+  arma::Mat<size_t> combinations(2, savedCols.n_cols);
+  for (size_t i = 0; i < savedCols.n_cols; ++i)
+  {
+    combinations(0, i) = size_t(savedCols(0, i));
+    combinations(1, i) = size_t(savedCols(1, i));
+  }
+
+  arma::vec predictions;
+  c.Predict(combinations, predictions);
+
+  for (size_t i = 0; i < combinations.n_cols; ++i)
+  {
+    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
+    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+  }
+}
+
+/**
+ * Ensure we can load and save the CF model.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Load a dataset to train on.
+  arma::mat dataset;
+  data::Load("GroupLens100k.csv", dataset);
+
+  arma::sp_mat cleanedData;
+  CF::CleanData(dataset, cleanedData);
+
+  CF c(cleanedData);
+
+  arma::sp_mat randomData;
+  randomData.sprandu(100, 100, 0.3);
+
+  CF cXml(randomData);
+  CF cBinary;
+  CF cText(cleanedData, amf::NMFALSFactorizer(), 5, 5);
+
+  SerializeObjectAll(c, cXml, cText, cBinary);
+
+  // Check the internals.
+  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cXml.NumUsersForSimilarity());
+  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(),
+      cBinary.NumUsersForSimilarity());
+  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cText.NumUsersForSimilarity());
+
+  BOOST_REQUIRE_EQUAL(c.Rank(), cXml.Rank());
+  BOOST_REQUIRE_EQUAL(c.Rank(), cBinary.Rank());
+  BOOST_REQUIRE_EQUAL(c.Rank(), cText.Rank());
+
+  CheckMatrices(c.W(), cXml.W(), cBinary.W(), cText.W());
+  CheckMatrices(c.H(), cXml.H(), cBinary.H(), cText.H());
+
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cXml.CleanedData().n_rows);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cBinary.CleanedData().n_rows);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cText.CleanedData().n_rows);
+
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cXml.CleanedData().n_cols);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cBinary.CleanedData().n_cols);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cText.CleanedData().n_cols);
+
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cXml.CleanedData().n_nonzero);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero,
+      cBinary.CleanedData().n_nonzero);
+  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
+
+  for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+        cXml.CleanedData().col_ptrs[i]);
+    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+        cBinary.CleanedData().col_ptrs[i]);
+    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+        cText.CleanedData().col_ptrs[i]);
+  }
+
+  for (size_t i = 0; i <= c.CleanedData().n_nonzero; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+        cXml.CleanedData().row_indices[i]);
+    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+        cBinary.CleanedData().row_indices[i]);
+    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+        cText.CleanedData().row_indices[i]);
+
+    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i], cXml.CleanedData().values[i],
+        1e-5);
+    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
+        cBinary.CleanedData().values[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
+        cText.CleanedData().values[i], 1e-5);
+  }
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -3,6 +3,7 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
+  cf.cpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
@@ -16,10 +17,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(cf
+add_executable(mlpack_cf
   cf_main.cpp
 )
-target_link_libraries(cf
+target_link_libraries(mlpack_cf
   mlpack
 )
-install(TARGETS cf RUNTIME DESTINATION bin)
+install(TARGETS mlpack_cf RUNTIME DESTINATION bin)

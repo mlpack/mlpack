@@ -148,8 +148,6 @@ class SA
   //! Modify move size of each parameter.
   arma::mat& MoveSize() { return moveSize; }
 
-  //! Return a string representation of this object.
-  std::string ToString() const;
  private:
   //! The function to be optimized.
   FunctionType& function;
@@ -217,8 +215,8 @@ class SA
   void MoveControl(const size_t nMoves, arma::mat& accept);
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #include "sa_impl.hpp"
 

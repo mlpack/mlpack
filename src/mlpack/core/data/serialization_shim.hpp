@@ -337,7 +337,7 @@ struct SecondNormalArrayShim
 
   //! A wrapper for make_array().
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & boost::serialization::make_array(t, len);
   }

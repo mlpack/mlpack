@@ -17,7 +17,7 @@ namespace util {
 //! depending on the indentation level.
 std::string Indent(std::string input, const size_t howManyTabs = 1);
 
-}; // namespace util
-}; // namespace mlpack
+} // namespace util
+} // namespace mlpack
 
 #endif

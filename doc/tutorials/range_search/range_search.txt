@@ -4,7 +4,7 @@
 @author Ryan Curtin
 @brief Tutorial for how to use the RangeSearch class.
 
-@page rstutorial RangeSearch tutorial (range_search)
+@page rstutorial RangeSearch tutorial (mlpack_range_search)
 
 @section intro_rstut Introduction
 
@@ -44,12 +44,12 @@ A list of all the sections this tutorial contains.
    - \ref tree_type_doc_rstut
  - \ref further_doc_rstut
 
-@section cli_rstut The 'range_search' command-line executable
+@section cli_rstut The 'mlpack_range_search' command-line executable
 
-\b mlpack provides an exectuable, range_search, which can be used to perform
-range searches quickly and simply from the command-line.  This program will
-perform the range search and place the resulting neighbor index list into one
-file and their corresponding distances into another file.  These files are
+\b mlpack provides an exectuable, \c mlpack_range_search, which can be used to
+perform range searches quickly and simply from the command-line.  This program
+will perform the range search and place the resulting neighbor index list into
+one file and their corresponding distances into another file.  These files are
 organized such that the first row corresponds to the neighbors (or distances) of
 the first query point, and the second row corresponds to the neighbors (or
 distances) of the second query point, and so forth.  The neighbors of a specific
@@ -72,34 +72,41 @@ $ range_search --help
 @subsection cli_ex1_rstut One dataset, points with distance <= 0.01
 
 @code
-$ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -M 0.01 -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'dataset.csv'.
+$ mlpack_range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv \
+> -U 0.076 -v
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'dataset.csv' (3x1000).
 [INFO ] Building reference tree...
-[INFO ] Trees built.
-[INFO ] Computing neighbors within range [0, 0.01].
-[INFO ] Number of pruned nodes during computation: 0.
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ]
+[INFO ] Tree built.
+[INFO ] Search for points in the range [0, 0.076] with dual-tree kd-tree
+search...
+[INFO ] Search complete.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
+[INFO ]   input_model_file: ""
 [INFO ]   leaf_size: 20
-[INFO ]   max: 2.5
+[INFO ]   max: 0.01
 [INFO ]   min: 0
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   output_model_file: ""
 [INFO ]   query_file: ""
+[INFO ]   random_basis: false
 [INFO ]   reference_file: dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   range_search/computing_neighbors: 1.564744s
-[INFO ]   total_time: 3.841249s
-[INFO ]   tree_building: 0.005112s
+[INFO ]   loading_data: 0.005201s
+[INFO ]   range_search/computing_neighbors: 0.017110s
+[INFO ]   total_time: 0.033313s
+[INFO ]   tree_building: 0.002500s
 @endcode
 
 Convenient program timers are given for different parts of the calculation at
@@ -108,72 +115,78 @@ Now, if we look at the output files:
 
 @code
 $ head neighbors_out.csv
-344, 862
+862
 703
 
-397, 277, 319, 443
-840, 827
-876, 732
-569, 222, 563
-437, 361, 97, 928
-961, 419, 547, 695
-113, 843, 634, 982, 689
+397, 277, 319
+840
+732
+
+361
+547, 695
+113, 982, 689
 
 $ head distances_out.csv
-0.0058751, 0.00358331
-0.00567406
+0.0598608
+0.0753264
 
-0.000432393, 0.00577239, 0.00221909, 0.00841252
-0.00501577, 0.00810424
-0.00898339, 0.0032354
-0.00945658, 0.00893871, 0.006213
-0.00979697, 0.00490745, 0.00833828, 0.00902167
-0.00957553, 0.00657434, 0.0028044, 0.00303588
-0.00199936, 0.00843088, 0.00968861, 0.00159429, 0.00539645
+0.0207941, 0.0759762, 0.0471072
+0.0708221
+0.0568806
+
+0.0700532
+0.0529565, 0.0550988
+0.0447142, 0.0399286, 0.0734605
 @endcode
 
-We can see that points 344 and 862 are within distance 0.01 of point 0.  We can
-also see that point 2 has no points within a distance of 0.01 -- that line is
+We can see that only point 862 is within distance 0.076 of point 0.  We can
+also see that point 2 has no points within a distance of 0.076 -- that line is
 empty.
 
 @subsection cli_ex2_rstut Query and reference dataset, range [1.0, 1.5]
 
 @code
 $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
-> neighbors_out.csv -d distances_out.csv -m 1.0 -M 1.5 -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'dataset.csv'.
+> neighbors_out.csv -d distances_out.csv -L 1.0 -U 1.5 -v
+[INFO ] Loading 'reference_dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'reference_dataset.csv' (3x1000).
 [INFO ] Building reference tree...
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded query data from 'dataset.csv'.
+[INFO ] Tree built.
+[INFO ] Loading 'query_dataset.csv' as CSV data.  Size is 3 x 50.
+[INFO ] Loaded query data from 'query_dataset.csv' (3x50).
+[INFO ] Search for points in the range [1, 1.5] with dual-tree kd-tree search...
 [INFO ] Building query tree...
 [INFO ] Tree built.
-[INFO ] Computing neighbors within range [1, 1.5].
-[INFO ] Number of pruned nodes during computation: 1110.
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ]
+[INFO ] Search complete.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
+[INFO ]   input_model_file: ""
 [INFO ]   leaf_size: 20
 [INFO ]   max: 1.5
 [INFO ]   min: 1
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
-[INFO ]   query_file: dataset.csv
-[INFO ]   reference_file: dataset.csv
+[INFO ]   output_model_file: ""
+[INFO ]   query_file: query_dataset.csv
+[INFO ]   random_basis: false
+[INFO ]   reference_file: reference_dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   range_search/computing_neighbors: 0.466848s
-[INFO ]   total_time: 0.725183s
-[INFO ]   tree_building: 0.004769s
+[INFO ]   loading_data: 0.006199s
+[INFO ]   range_search/computing_neighbors: 0.024427s
+[INFO ]   total_time: 0.045403s
+[INFO ]   tree_building: 0.003979s
 @endcode
 
-@subsection cli_ex3_rstut One dataset, range [4.1 4.2], leaf size of 15 points
+@subsection cli_ex3_rstut One dataset, range [0.7 0.8], leaf size of 15 points
 
 The \b mlpack implementation of range search is a dual-tree algorithm; when
 \f$kd\f$-trees are used, the leaf size of the tree can be changed.  Depending on
@@ -182,35 +195,41 @@ faster computation.  The leaf size is modifiable through the command-line
 interface, as shown below.
 
 @code
-$ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -m 4.1 \
-> -M 4.2 -l 15 -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'dataset.csv'.
+$ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -L 0.7 \
+> -U 0.8 -l 15 -v
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'dataset.csv' (3x1000).
 [INFO ] Building reference tree...
-[INFO ] Trees built.
-[INFO ] Computing neighbors within range [4.1, 4.2].
-[INFO ] Number of pruned nodes during computation: 1.
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ]
+[INFO ] Tree built.
+[INFO ] Search for points in the range [0.7, 0.8] with dual-tree kd-tree
+search...
+[INFO ] Search complete.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
-[INFO ]   leaf_size: 20
-[INFO ]   max: 4.2
-[INFO ]   min: 4.1
+[INFO ]   input_model_file: ""
+[INFO ]   leaf_size: 15
+[INFO ]   max: 0.8
+[INFO ]   min: 0.7
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   output_model_file: ""
 [INFO ]   query_file: ""
+[INFO ]   random_basis: false
 [INFO ]   reference_file: dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   range_search/computing_neighbors: 0.003857s
-[INFO ]   total_time: 0.056154s
-[INFO ]   tree_building: 0.004831s
+[INFO ]   loading_data: 0.006298s
+[INFO ]   range_search/computing_neighbors: 0.411041s
+[INFO ]   total_time: 0.539931s
+[INFO ]   tree_building: 0.004695s
 @endcode
 
 Further documentation on options should be found by using the --help option.
@@ -276,7 +295,7 @@ using namespace mlpack::range;
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
 
-RangeSearch<> a(referenceData, queryData);
+RangeSearch<> a(referenceData);
 
 // The vector-of-vector objects we will store output in.
 std::vector<std::vector<size_t> > resultingNeighbors;
@@ -285,7 +304,7 @@ std::vector<std::vector<double> > resultingDistances;
 // The range we will use.
 math::Range r(3.0, 4.0); // [3.0, 4.0].
 
-a.Search(r, resultingNeighbors, resultingDistances);
+a.Search(queryData, r, resultingNeighbors, resultingDistances);
 @endcode
 
 @subsection rs_ex3_rstut Naive (exhaustive) search for distance greater than 5.0 on one dataset
@@ -321,11 +340,11 @@ Similar to the \ref nstutorial "NeighborSearch class", the RangeSearch class is
 very extensible, having the following template arguments:
 
 @code
-template<
-  typename MetricType = mlpack::metric::EuclideanDistance,
-  typename TreeType = mlpack::tree::BinarySpaceTree<bound::HRectBound<2>,
-                                                    tree::EmptyStatistic>
->
+template<typename MetricType = metric::EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::KDTree>
 class RangeSearch;
 @endcode
 
@@ -366,9 +385,9 @@ use a ball bound instead of a rectangular bound:
 @code
 // Construct a RangeSearch object with ball bounds.
 RangeSearch<
-  metric::EuclideanDistance,
-  tree::BinarySpaceTree<bound::BallBound<2>,
-                        EmptyStatistic>
+    metric::EuclideanDistance,
+    tree::BinarySpaceTree<bound::BallBound<2>,
+                          EmptyStatistic>
 > rangeSearch(dataset);
 @endcode
 
@@ -384,7 +403,8 @@ need to specify that).
 
 @code
 // Construct a RangeSearch object that uses cover trees.
-RangeSearch<tree::CoverTree<> > rangeSearch(dataset);
+RangeSearch<metric::EuclideanDistance, tree::StandardCoverTree>
+    rangeSearch(dataset);
 @endcode
 
 @section further_doc_rstut Further documentation

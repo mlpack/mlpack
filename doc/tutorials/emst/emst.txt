@@ -52,20 +52,24 @@ A list of all the sections this tutorial contains.
 
 @section cli_emsttut Command-Line 'EMST'
 
-The emst executable in \b mlpack will compute the EMST of a given set of points and store the resulting edge list to a file.
+The \c mlpack_emst executable in \b mlpack will compute the EMST of a given set
+of points and store the resulting edge list to a file.
 
-The output file contains an edge list representation of the MST in an \f$n-1 \times 3 \f$ matrix, where the first and second columns are labels of points and the third column is the edge weight.  The edges are sorted in order of increasing weight.
+The output file contains an edge list representation of the MST in an
+\f$n-1 \times 3 \f$ matrix, where the first and second columns are labels of
+points and the third column is the edge weight.  The edges are sorted in order
+of increasing weight.
 
-Below are several examples of simple usage (and the resultant output).  The '-v'
-option is used so that verbose output is given.  Further documentation on each
-individual option can be found by typing
+Below are several examples of simple usage (and the resultant output).  The 
+\c -v option is used so that verbose output is given.  Further documentation on
+each individual option can be found by typing
 
 @code
-$ emst --help
+$ mlpack_emst --help
 @endcode
 
 @code
-$ emst --input_file=dataset.csv --output_file=edge_list.csv -v
+$ mlpack_emst --input_file=dataset.csv --output_file=edge_list.csv -v
 [INFO ] Reading in data.
 [INFO ] Loading 'dataset.csv' as CSV data.
 [INFO ] Data read, building tree.
@@ -111,9 +115,13 @@ $ cat edge_list.csv
 2.0000000000e+00,4.0000000000e+00,9.9700451353e+02
 @endcode
 
-The input points are labeled 0-5.  The output tells us that the MST connects point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2, and point 2 to point 4, with the corresponding edge weights given in the third column.  The total length of the MST is also given in the verbose output.
+The input points are labeled 0-5.  The output tells us that the MST connects
+point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2,
+and point 2 to point 4, with the corresponding edge weights given in the third
+column.  The total length of the MST is also given in the verbose output.
 
-Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$) algorithm for timing and comparison purposes.
+Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$)
+algorithm for timing and comparison purposes, using the \c --naive option.
 
 @section dtb_emsttut The 'DualTreeBoruvka' class
 

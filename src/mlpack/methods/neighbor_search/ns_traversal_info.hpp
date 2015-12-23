@@ -64,7 +64,7 @@ class NeighborSearchTraversalInfo
   double lastBaseCase;
 };
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

@@ -26,10 +26,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionEvaluate)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a LogisticRegressionFunction.
-  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+  LogisticRegressionFunction<> lrf(data, responses,
+      0.0 /* no regularization */);
 
   // These were hand-calculated using Octave.
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("1 1 1")), 7.0562141665, 1e-5);
@@ -53,11 +54,12 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRandomEvaluate)
   arma::mat data;
   data.randu(dimension, points);
   // Create random responses.
-  arma::vec responses(points);
+  arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
     responses[i] = math::RandInt(0, 2);
 
-  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+  LogisticRegressionFunction<> lrf(data, responses,
+      0.0 /* no regularization */);
 
   // Run a bunch of trials.
   for (size_t i = 0; i < trials; ++i)
@@ -95,13 +97,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationEvaluate)
   arma::mat data;
   data.randu(dimension, points);
   // Create random responses.
-  arma::vec responses(points);
+  arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
     responses[i] = math::RandInt(0, 2);
 
-  LogisticRegressionFunction lrfNoReg(data, responses, 0.0);
-  LogisticRegressionFunction lrfSmallReg(data, responses, 0.5);
-  LogisticRegressionFunction lrfBigReg(data, responses, 20.0);
+  LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
+  LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
+  LogisticRegressionFunction<> lrfBigReg(data, responses, 20.0);
 
   for (size_t i = 0; i < trials; ++i)
   {
@@ -130,10 +132,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionGradient)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a LogisticRegressionFunction.
-  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+  LogisticRegressionFunction<> lrf(data, responses,
+      0.0 /* no regularization */);
   arma::vec gradient;
 
   // If the model is at the optimum, then the gradient should be zero.
@@ -179,10 +182,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3;");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a LogisticRegressionFunction.
-  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+  LogisticRegressionFunction<> lrf(data, responses,
+      0.0 /* no regularization */);
 
   // These were hand-calculated using Octave.
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("1 1 1"), 0), 4.85873516e-2, 1e-5);
@@ -227,13 +231,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
   arma::mat data;
   data.randu(dimension, points);
   // Create random responses.
-  arma::vec responses(points);
+  arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
     responses[i] = math::RandInt(0, 2);
 
-  LogisticRegressionFunction lrfNoReg(data, responses, 0.0);
-  LogisticRegressionFunction lrfSmallReg(data, responses, 0.5);
-  LogisticRegressionFunction lrfBigReg(data, responses, 20.0);
+  LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
+  LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
+  LogisticRegressionFunction<> lrfBigReg(data, responses, 20.0);
 
   // Check that the number of functions is correct.
   BOOST_REQUIRE_EQUAL(lrfNoReg.NumFunctions(), points);
@@ -270,10 +274,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionSeparableGradient)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a LogisticRegressionFunction.
-  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+  LogisticRegressionFunction<> lrf(data, responses,
+      0.0 /* no regularization */);
   arma::vec gradient;
 
   // If the model is at the optimum, then the gradient should be zero.
@@ -350,13 +355,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationGradient)
   arma::mat data;
   data.randu(dimension, points);
   // Create random responses.
-  arma::vec responses(points);
+  arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
     responses[i] = math::RandInt(0, 2);
 
-  LogisticRegressionFunction lrfNoReg(data, responses, 0.0);
-  LogisticRegressionFunction lrfSmallReg(data, responses, 0.5);
-  LogisticRegressionFunction lrfBigReg(data, responses, 20.0);
+  LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
+  LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
+  LogisticRegressionFunction<> lrfBigReg(data, responses, 20.0);
 
   for (size_t i = 0; i < trials; ++i)
   {
@@ -412,13 +417,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableGradient)
   arma::mat data;
   data.randu(dimension, points);
   // Create random responses.
-  arma::vec responses(points);
+  arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
     responses[i] = math::RandInt(0, 2);
 
-  LogisticRegressionFunction lrfNoReg(data, responses, 0.0);
-  LogisticRegressionFunction lrfSmallReg(data, responses, 0.5);
-  LogisticRegressionFunction lrfBigReg(data, responses, 20.0);
+  LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
+  LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
+  LogisticRegressionFunction<> lrfBigReg(data, responses, 20.0);
 
   for (size_t i = 0; i < trials; ++i)
   {
@@ -471,7 +476,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSSimpleTest)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a logistic regression object using L-BFGS (that is the default).
   LogisticRegression<> lr(data, responses);
@@ -493,13 +498,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
-  LogisticRegressionFunction lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction> sgd(lrf, 0.005, 500000, 1e-10);
-  LogisticRegression<SGD> lr(sgd);
+  LogisticRegressionFunction<> lrf(data, responses, 0.001);
+  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -519,7 +524,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSRegularizationSimpleTest)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a logistic regression object using L-BFGS (that is the default).
   LogisticRegression<> lr(data, responses, 0.001);
@@ -542,13 +547,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create a logistic regression object using custom SGD with a much smaller
   // tolerance.
-  LogisticRegressionFunction lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction> sgd(lrf, 0.005, 500000, 1e-10);
-  LogisticRegression<SGD> lr(sgd);
+  LogisticRegressionFunction<> lrf(data, responses, 0.001);
+  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -571,13 +576,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
-  arma::vec responses(1000);
+  arma::Row<size_t> responses(1000);
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -617,7 +622,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
-  arma::vec responses(1000);
+  arma::Row<size_t> responses(1000);
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
@@ -630,7 +635,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<SGD> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data, responses, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -663,13 +668,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
-  arma::vec responses("1 1 0");
+  arma::Row<size_t> responses("1 1 0");
 
   // Create an optimizer and function.
-  LogisticRegressionFunction lrf(data, responses, 0.0005);
-  L_BFGS<LogisticRegressionFunction> lbfgsOpt(lrf);
+  LogisticRegressionFunction<> lrf(data, responses, 0.0005);
+  L_BFGS<LogisticRegressionFunction<>> lbfgsOpt(lrf);
   lbfgsOpt.MinGradientNorm() = 1e-50;
-  LogisticRegression<L_BFGS> lr(lbfgsOpt);
+  LogisticRegression<> lr(lbfgsOpt);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -681,10 +686,10 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 
   // Now do the same with SGD.
-  SGD<LogisticRegressionFunction> sgdOpt(lrf);
+  SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
   sgdOpt.StepSize() = 0.15;
   sgdOpt.Tolerance() = 1e-75;
-  LogisticRegression<SGD> lr2(sgdOpt);
+  LogisticRegression<> lr2(sgdOpt);
 
   // Test sigmoid function.
   sigmoids = 1 / (1 + arma::exp(-lr2.Parameters()[0]
@@ -694,6 +699,110 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
   BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.6);
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+}
+
+/**
+ * Test the Train() function and make sure it works the same as if we'd called
+ * the constructor by hand, with the L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSTrainTest)
+{
+  // Make a random dataset with random labels.
+  arma::mat dataset(5, 800);
+  dataset.randu();
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(dataset, labels, 0.3);
+  LogisticRegression<> lr2(dataset.n_rows, 0.3);
+  lr2.Train(dataset, labels);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lr2.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 1e-3);
+}
+
+/**
+ * Test the Train() function and make sure it works the same as if we'd called
+ * the constructor by hand, with the SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSGDTrainTest)
+{
+  // Make a random dataset with random labels.
+  arma::mat dataset(5, 800);
+  dataset.randu();
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegressionFunction<> lrf(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  sgd.Shuffle() = false;
+  LogisticRegression<> lr(sgd);
+  LogisticRegression<> lr2(dataset.n_rows, 0.3);
+
+  LogisticRegressionFunction<> lrf2(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd2(lrf2);
+  sgd2.Shuffle() = false;
+  lr2.Train(sgd2);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lr2.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 1e-5);
+}
+
+/**
+ * Test sparse and dense logistic regression and make sure they both work the
+ * same using the L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSparseLBFGSTest)
+{
+  // Create a random dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 800, 0.3);
+  arma::mat denseDataset(dataset);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(denseDataset, labels, 0.3);
+  LogisticRegression<arma::sp_mat> lrSparse(dataset, labels, 0.3);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-4);
+}
+
+/**
+ * Test sparse and dense logistic regression and make sure they both work the
+ * same using the SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
+{
+  // Create a random dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 800, 0.3);
+  arma::mat denseDataset(dataset);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(10, 0.3);
+  LogisticRegressionFunction<> lrf(denseDataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  sgd.Shuffle() = false;
+  lr.Train(sgd);
+
+  LogisticRegression<arma::sp_mat> lrSparse(10, 0.3);
+  LogisticRegressionFunction<arma::sp_mat> lrfSparse(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
+  sgdSparse.Shuffle() = false;
+  lrSparse.Train(sgdSparse);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

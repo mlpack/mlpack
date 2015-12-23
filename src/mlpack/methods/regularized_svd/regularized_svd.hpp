@@ -93,8 +93,8 @@ class RegularizedSVD
   double lambda;
 };
 
-}; // namespace svd
-}; // namespace mlpack
+} // namespace svd
+} // namespace mlpack
 
 namespace mlpack {
 namespace cf {
@@ -108,8 +108,8 @@ class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
   static const bool UsesCoordinateList = true;
 };
 
-}; // namespace cf
-}; // namespace mlpack
+} // namespace cf
+} // namespace mlpack
 
 // Include implementation.
 #include "regularized_svd_impl.hpp"

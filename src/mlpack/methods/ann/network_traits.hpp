@@ -38,8 +38,8 @@ class NetworkTraits
   static const bool IsCNN = false;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif
 

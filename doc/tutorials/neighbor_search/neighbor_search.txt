@@ -48,51 +48,60 @@ A list of all the sections this tutorial contains.
 @section cli_nstut Command-Line 'allknn'
 
 The simplest way to perform nearest-neighbors search in \b mlpack is to use the
-allknn executable.  This program will perform nearest-neighbors search and place
-the resultant neighbors into one file and the resultant distances into another.
-The output files are organized such that the first row corresponds to the
-nearest neighbors of the first query point, with the first column corresponding
-to the nearest neighbor, and so forth.
+\c mlpack_allknn executable.  This program will perform nearest-neighbors search
+and place the resultant neighbors into one file and the resultant distances into
+another.  The output files are organized such that the first row corresponds to
+the nearest neighbors of the first query point, with the first column
+corresponding to the nearest neighbor, and so forth.
 
-Below are several examples of simple usage (and the resultant output).  The '-v'
-option is used so that output is given.  Further documentation on each
+Below are several examples of simple usage (and the resultant output).  The
+\c -v option is used so that output is given.  Further documentation on each
 individual option can be found by typing
 
 @code
-$ allknn --help
+$ mlpack_allknn --help
 @endcode
 
 @subsection cli_ex1_nstut One dataset, 5 nearest neighbors
 
 @code
-$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'dataset.csv'.
+$ mlpack_allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'dataset.csv' (3 x 1000).
 [INFO ] Building reference tree...
-[INFO ] Trees built.
-[INFO ] Computing 5 nearest neighbors...
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Tree built.
+[INFO ] Searching for 5 nearest neighbors with dual-tree kd-tree search...
+[INFO ] 18412 node combinations were scored.
+[INFO ] 54543 base cases were calculated.
+[INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
-[INFO ]
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
+[INFO ]   input_model_file: ""
 [INFO ]   k: 5
 [INFO ]   leaf_size: 20
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   output_model_file: ""
 [INFO ]   query_file: ""
+[INFO ]   random_basis: false
 [INFO ]   reference_file: dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   computing_neighbors: 0.152495s
-[INFO ]   total_time: 0.201274s
-[INFO ]   tree_building: 0.005050s
+[INFO ]   computing_neighbors: 0.108968s
+[INFO ]   loading_data: 0.006495s
+[INFO ]   saving_data: 0.003843s
+[INFO ]   total_time: 0.126036s
+[INFO ]   tree_building: 0.003442s
 @endcode
 
 Convenient program timers are given for different parts of the calculation at
@@ -101,103 +110,120 @@ Now, if we look at the output files:
 
 @code
 $ head neighbors_out.csv
-14,5,13,16,27
-90,79,80,15,10
-39,84,10,123,1
-81,43,109,12,37
-15,1,79,90,10
-0,14,16,13,27
-90,79,11,1,15
-41,45,12,37,49
-11,81,13,6,15
-41,7,45,49,47
+862,344,224,43,885
+703,499,805,639,450
+867,472,972,380,601
+397,319,277,443,323
+840,827,865,38,438
+732,876,751,492,616
+563,222,569,985,940
+361,97,928,437,79
+547,695,419,961,716
+982,113,689,843,634
 
 $ head distances_out.csv
-7.09614421e-04,2.05940173e-03,4.05346068e-03,4.66175278e-03,1.09757665e-02
-8.92190948e-04,1.69442242e-03,2.82750475e-03,4.06590850e-03,7.54169243e-03
-5.91539406e-03,6.83482612e-03,8.02877800e-03,9.04907425e-03,1.61458442e-02
-7.15652913e-03,9.18228524e-03,1.00540941e-02,1.07541171e-02,1.28892864e-02
-5.37535983e-03,9.05721409e-03,9.89017184e-03,1.01457735e-02,1.14021593e-02
-2.05940173e-03,5.14437192e-03,9.97483954e-03,1.02463627e-02,1.44355783e-02
-4.27355419e-03,6.36750547e-03,6.72478577e-03,8.77323532e-03,1.04530549e-02
-1.99935847e-03,3.88240331e-03,4.19118273e-03,9.30693568e-03,1.21237481e-02
-2.15454276e-03,8.18895210e-03,1.18360450e-02,1.25135454e-02,1.27783327e-02
-8.43087996e-03,1.22946325e-02,1.60472209e-02,1.88661413e-02,1.89727686e-02
+5.986076164057e-02,7.664920518084e-02,1.116050961847e-01,1.155595474371e-01,1.169810085522e-01
+7.532635022982e-02,1.012564715841e-01,1.127846944644e-01,1.209584396720e-01,1.216543647014e-01
+7.659571546879e-02,1.014588981948e-01,1.025114621511e-01,1.128082429187e-01,1.131659758673e-01
+2.079405647909e-02,4.710724516732e-02,7.597622408419e-02,9.171977778898e-02,1.037033340864e-01
+7.082206779700e-02,9.002355499742e-02,1.044181406406e-01,1.093149568834e-01,1.139700558608e-01
+5.688056488896e-02,9.478072514474e-02,1.085637706630e-01,1.114177921451e-01,1.139370265105e-01
+7.882260880455e-02,9.454474078041e-02,9.724494179950e-02,1.023829575445e-01,1.066927013814e-01
+7.005321598247e-02,9.131417221561e-02,9.498248889074e-02,9.897964162308e-02,1.121202216165e-01
+5.295654132754e-02,5.509877761894e-02,8.108227366619e-02,9.785461174861e-02,1.043968140367e-01
+3.992859920333e-02,4.471418646159e-02,7.346053904990e-02,9.181982339584e-02,9.843075910782e-02
 @endcode
 
-So, the nearest neighbor to point 0 is point 14, with a distance of 7.096144e-4.
-The second nearest neighbor to point 0 is point 5, with a distance of
-2.059402e-3.  The third nearest neighbor to point 5 is point 16, with a distance
-of 9.9748395e-3.
+So, the nearest neighbor to point 0 is point 862, with a distance of
+5.986076164057e-02.  The second nearest neighbor to point 0 is point 344, with a
+distance of 7.664920518084e-02.  The third nearest neighbor to point 5 is point
+751, with a distance of 1.085637706630e-01.
 
 @subsection cli_ex2_nstut Query and reference dataset, 10 nearest neighbors
 
 @code
-$ allknn -q query_dataset.csv -r reference_dataset.csv -n neighbors_out.csv \
-> -d distances_out.csv -k 10 -v
-[INFO ] Loading 'reference_dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'reference_dataset.csv'.
+$ mlpack_allknn -q query_dataset.csv -r reference_dataset.csv \
+> -n neighbors_out.csv -d distances_out.csv -k 10 -v
+[INFO ] Loading 'reference_dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'reference_dataset.csv' (3 x 1000).
 [INFO ] Building reference tree...
-[INFO ] Loading 'query_dataset.csv' as CSV data.
-[INFO ] Query data loaded from 'query_dataset.csv'.
+[INFO ] Tree built.
+[INFO ] Loading 'query_dataset.csv' as CSV data.  Size is 3 x 50.
+[INFO ] Loaded query data from 'query_dataset.csv' (3x50).
+[INFO ] Searching for 10 nearest neighbors with dual-tree kd-tree search...
 [INFO ] Building query tree...
 [INFO ] Tree built.
-[INFO ] Computing 10 nearest neighbors...
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
-[INFO ]
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
+[INFO ]   input_model_file: ""
 [INFO ]   k: 10
 [INFO ]   leaf_size: 20
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   output_model_file: ""
 [INFO ]   query_file: query_dataset.csv
+[INFO ]   random_basis: false
 [INFO ]   reference_file: reference_dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   computing_neighbors: 0.000081s
-[INFO ]   total_time: 0.062828s
-[INFO ]   tree_building: 0.004949s
+[INFO ]   computing_neighbors: 0.022589s
+[INFO ]   loading_data: 0.003572s
+[INFO ]   saving_data: 0.000755s
+[INFO ]   total_time: 0.032197s
+[INFO ]   tree_building: 0.002590s
 @endcode
 
 @subsection cli_ex3_nstut One dataset, 3 nearest neighbors, leaf size of 15 points
 
 @code
 $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
-[INFO ] Loading 'dataset.csv' as CSV data.
-[INFO ] Loaded reference data from 'dataset.csv'.
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from 'dataset.csv' (3 x 1000).
 [INFO ] Building reference tree...
-[INFO ] Trees built.
-[INFO ] Computing 3 nearest neighbors...
-[INFO ] Neighbors computed.
-[INFO ] Re-mapping indices...
-[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Tree built.
+[INFO ] Searching for 3 nearest neighbors with dual-tree kd-tree search...
+[INFO ] 19692 node combinations were scored.
+[INFO ] 36263 base cases were calculated.
+[INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
-[INFO ]
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] 
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
 [INFO ]   info: ""
+[INFO ]   input_model_file: ""
 [INFO ]   k: 3
 [INFO ]   leaf_size: 15
 [INFO ]   naive: false
 [INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   output_model_file: ""
 [INFO ]   query_file: ""
+[INFO ]   random_basis: false
 [INFO ]   reference_file: dataset.csv
+[INFO ]   seed: 0
 [INFO ]   single_mode: false
+[INFO ]   tree_type: kd
 [INFO ]   verbose: true
-[INFO ]
+[INFO ]   version: false
+[INFO ] 
 [INFO ] Program timers:
-[INFO ]   computing_neighbors: 0.105119s
-[INFO ]   total_time: 0.145321s
-[INFO ]   tree_building: 0.005690s
+[INFO ]   computing_neighbors: 0.059020s
+[INFO ]   loading_data: 0.002791s
+[INFO ]   saving_data: 0.002369s
+[INFO ]   total_time: 0.069277s
+[INFO ]   tree_building: 0.002713s
 @endcode
 
 Further documentation on options should be found by using the --help option.
@@ -252,13 +278,13 @@ using namespace mlpack::neighbor;
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
 
-AllkNN a(referenceData, queryData);
+AllkNN a(referenceData);
 
 // The matrices we will store output in.
 arma::Mat<size_t> resultingNeighbors;
 arma::mat resultingDistances;
 
-a.Search(10, resultingNeighbors, resultingDistances);
+a.Search(queryData, 10, resultingNeighbors, resultingDistances);
 @endcode
 
 @subsection allknn_ex3_nstut Naive (exhaustive) search for 6 nearest neighbors on one dataset
@@ -356,8 +382,8 @@ class and use it seamlessly with NeighborSearch.
 @subsection tree_type_doc_nstut TreeType policy class
 
 The NeighborSearch class also allows a custom tree to be used.  The standard
-MLPACK tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its own
-right, and its documentation should be consulted for more information.
+\b mlpack tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its
+own right, and its documentation should be consulted for more information.
 Currently, the NeighborSearch tree requires a tree which only has left and right
 children, and no points in nodes (only in leaves), but this support is planned
 to be extended.
@@ -369,10 +395,10 @@ rectangular bound:
 @code
 // Construct a NeighborSearch object with ball bounds.
 NeighborSearch<
-  NearestNeighborSort,
-  metric::EuclideanDistance,
-  tree::BinarySpaceTree<bound::BallBound<2>,
-                        QueryStat<SortPolicy> >
+    NearestNeighborSort,
+    metric::EuclideanDistance,
+    tree::BinarySpaceTree<bound::BallBound<2>,
+                          QueryStat<SortPolicy> >
 > neighborSearch(dataset);
 @endcode
 

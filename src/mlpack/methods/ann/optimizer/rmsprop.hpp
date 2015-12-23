@@ -2,7 +2,7 @@
  * @file rmsprop.hpp
  * @author Marcus Edel
  *
- * Implmentation of the RmsProp optimizer. RmsProp is an optimizer that utilizes
+ * Implementation of the RmsProp optimizer. RmsProp is an optimizer that utilizes
  * the magnitude of recent gradients to normalize the gradients.
  */
 #ifndef __MLPACK_METHODS_ANN_OPTIMIZER_RMSPROP_HPP
@@ -44,7 +44,8 @@ class RMSPROP
    * @param function Function to be optimized (minimized).
    * @param lr The learning rate coefficient.
    * @param alpha Constant similar to that used in AdaDelta and Momentum methods.
-   * @param eps The eps coefficient to avoid division by zero.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
    */
   RMSPROP(DecomposableFunctionType& function,
           const double lr = 0.01,
@@ -53,8 +54,7 @@ class RMSPROP
       function(function),
       lr(lr),
       alpha(alpha),
-      eps(eps),
-      meanSquaredGad(function.Weights())
+      eps(eps)
   {
     // Nothing to do here.
   }
@@ -157,7 +157,7 @@ class RMSPROP
   DataType gradient;
 }; // class RMSPROP
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

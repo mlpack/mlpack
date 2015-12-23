@@ -18,8 +18,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "Either one input sequence can be specified (with --input_file), or, a "
     "file containing files in which input sequences can be found (when "
     "--input_file and --batch are used together).  In addition, labels can be "
-    "provided in the file specified by --label_file, and if --batch is used, "
-    "the file given to --label_file should contain a list of files of labels "
+    "provided in the file specified by --labels_file, and if --batch is used, "
+    "the file given to --labels_file should contain a list of files of labels "
     "corresponding to the sequences in the file given to --input_file."
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
@@ -35,7 +35,7 @@ PARAM_STRING_REQ("type", "Type of HMM: discrete | gaussian | gmm.", "t");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
-    " (and label sequences).", "b");
+    "(and label sequences).", "b");
 PARAM_INT("states", "Number of hidden states in HMM (necessary, unless "
     "model_file is specified.", "n", 0);
 PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
@@ -43,7 +43,7 @@ PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
 PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
 PARAM_STRING("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_file", "File to save trained HMM to.", "o",
+PARAM_STRING("output_model_file", "File to save trained HMM to.", "o",
     "output_hmm.xml");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
@@ -83,7 +83,7 @@ struct Train
             << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
             << endl;
 
-    vector<arma::Col<size_t> > labelSeq; // May be empty.
+    vector<arma::Row<size_t>> labelSeq; // May be empty.
     if (labelsFile != "")
     {
       // Do we have multiple label files to load?
@@ -107,14 +107,26 @@ struct Train
           Mat<size_t> label;
           data::Load(lineBuf, label, true); // Fatal on failure.
 
-          // Ensure that matrix only has one column.
-          if (label.n_rows == 1)
+          // Ensure that matrix only has one row.
+          if (label.n_cols == 1)
             label = trans(label);
 
-          if (label.n_cols > 1)
+          if (label.n_rows > 1)
             Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
-          labelSeq.push_back(label.col(0));
+          // Check all of the labels.
+          for (size_t i = 0; i < label.n_cols; ++i)
+          {
+            if (label[i] >= hmm.Transition().n_cols)
+            {
+              Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
+                  << "states, but label on line " << i << " of '" << lineBuf
+                  << "' is " << label[i] << " (should be between 0 and "
+                  << (hmm.Transition().n_cols - 1) << ")!" << endl;
+            }
+          }
+
+          labelSeq.push_back(label.row(0));
 
           f.getline(lineBuf, 1024, '\n');
         }
@@ -126,11 +138,11 @@ struct Train
         Mat<size_t> label;
         data::Load(labelsFile, label, true);
 
-        // Ensure that matrix only has one column.
-        if (label.n_rows == 1)
+        // Ensure that matrix only has one row.
+        if (label.n_cols == 1)
           label = trans(label);
 
-        if (label.n_cols > 1)
+        if (label.n_rows > 1)
           Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
         // Verify the same number of observations as the data.
@@ -139,7 +151,19 @@ struct Train
               << " the same number of points as observation sequence "
               << labelSeq.size() << "!" << endl;
 
-        labelSeq.push_back(label.col(0));
+        // Check all of the labels.
+        for (size_t i = 0; i < label.n_cols; ++i)
+        {
+          if (label[i] >= hmm.Transition().n_cols)
+          {
+            Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
+                << "states, but label on line " << i << " of '" << labelsFile
+                << "' is " << label[i] << " (should be between 0 and "
+                << (hmm.Transition().n_cols - 1) << ")!" << endl;
+          }
+        }
+
+        labelSeq.push_back(label.row(0));
       }
 
       // Now perform the training with labels.
@@ -152,8 +176,11 @@ struct Train
     }
 
     // Save the model.
-    const string modelFile = CLI::GetParam<string>("model_file");
-    SaveHMM(hmm, modelFile);
+    if (CLI::HasParam("output_model_file"))
+    {
+      const string modelFile = CLI::GetParam<string>("output_model_file");
+      SaveHMM(hmm, modelFile);
+    }
   }
 };
 
@@ -306,11 +333,11 @@ int main(int argc, char** argv)
             << "be greater than or equal to 1." << endl;
 
       // Create HMM object.
-      HMM<GMM<>> hmm(size_t(states), GMM<>(size_t(gaussians), dimensionality),
+      HMM<GMM> hmm(size_t(states), GMM(size_t(gaussians), dimensionality),
           tolerance);
 
       // Issue a warning if the user didn't give labels.
-      if (!CLI::HasParam("label_file"))
+      if (!CLI::HasParam("labels_file"))
         Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
             << "going to produce good results!" << endl;
 

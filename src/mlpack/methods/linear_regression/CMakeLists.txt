@@ -15,10 +15,10 @@ endforeach()
 # the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(linear_regression
+add_executable(mlpack_linear_regression
   linear_regression_main.cpp
 )
-target_link_libraries(linear_regression
+target_link_libraries(mlpack_linear_regression
   mlpack
 )
-install(TARGETS linear_regression RUNTIME DESTINATION bin)
+install(TARGETS mlpack_linear_regression RUNTIME DESTINATION bin)

@@ -182,16 +182,7 @@ void Range::Serialize(Archive& ar, const unsigned int /* version */)
   ar & data::CreateNVP(lo, "lo");
 }
 
-/**
- * Returns a string representation of an object.
- */
-std::string Range::ToString() const
-{
-  std::ostringstream convert;
-  convert << "[" << lo << ", " << hi << "]";
-  return convert.str();
-}
-}; // namespace math
-}; // namespace mlpack
+} // namespace math
+} // namespace mlpack
 
 #endif

@@ -20,11 +20,11 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
-add_executable(det
+add_executable(mlpack_det
   det_main.cpp
 )
 # link dependencies of executable
-target_link_libraries(det
+target_link_libraries(mlpack_det
   mlpack
 )
-install(TARGETS det RUNTIME DESTINATION bin)
+install(TARGETS mlpack_det RUNTIME DESTINATION bin)

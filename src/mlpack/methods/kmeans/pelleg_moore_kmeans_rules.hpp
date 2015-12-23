@@ -98,8 +98,8 @@ class PellegMooreKMeansRules
   size_t distanceCalculations;
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 // Include implementation.
 #include "pelleg_moore_kmeans_rules_impl.hpp"

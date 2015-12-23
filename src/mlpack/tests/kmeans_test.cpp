@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
 {
   KMeans<> kmeans;
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
@@ -98,9 +98,9 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
  */
 BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
 {
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   assignments.randu(30);
-  arma::Col<size_t> assignmentsOld = assignments;
+  arma::Row<size_t> assignmentsOld = assignments;
 
   arma::mat centroids;
   centroids.randu(30, 3); // This doesn't matter.
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
                  "1.0 0.8 0.7  5.1  5.2;");
 
   // Point 2 is the mis-clustered point we're looking for to be moved.
-  arma::Col<size_t> assignments("0 0 0 1 1");
+  arma::Row<size_t> assignments("0 0 0 1 1");
 
   arma::mat centroids(2, 3);
   centroids.col(0) = (1.0 / 3.0) * (data.col(0) + data.col(1) + data.col(2));
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
   arma::mat data;
   data.randu(2, 1000); // One thousand points.
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   // We'll ask for 18 clusters (arbitrary).
   RandomPartition::Cluster(data, 18, assignments);
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(RandomInitialAssignmentFailureTest)
   for (size_t run = 0; run < 15; ++run)
   {
     arma::mat centroids;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     KMeans<> kmeans;
     kmeans.Cluster(dataset, 2, assignments, centroids);
 
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(InitialAssignmentTest)
 
   // Now, if we specify initial assignments, the algorithm should converge (with
   // zero iterations, actually, because this is the solution).
-  arma::Col<size_t> assignments(10002);
+  arma::Row<size_t> assignments(10002);
   assignments.fill(0);
   assignments[10000] = 1;
   assignments[10001] = 1;
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(InitialCentroidTest)
   for (size_t i = 0; i < 2; ++i)
     dataset.col(10000 + i) += arma::vec("50 50");
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   arma::mat centroids(2, 2);
 
   centroids.col(0) = arma::vec("0 0");
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(InitialAssignmentOverrideTest)
   for (size_t i = 0; i < 2; ++i)
     dataset.col(10000 + i) += arma::vec("50 50");
 
-  arma::Col<size_t> assignments(10002);
+  arma::Row<size_t> assignments(10002);
   assignments.fill(0);
   assignments[10000] = 1;
   assignments[10001] = 1;
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
   // Now run the RefinedStart algorithm and make sure it doesn't deviate too
   // much from the actual solution.
   RefinedStart rs;
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   arma::mat resultingCentroids;
   rs.Cluster(data, 5, assignments);
 
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   data(1402, 10) = -3.5;
   data(1402, 11) = -3.0;
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
          NaiveKMeans, arma::sp_mat> kmeans; // Default options.
@@ -512,12 +512,12 @@ BOOST_AUTO_TEST_CASE(ElkanTest)
     // clusters.
     arma::mat naiveCentroids(centroids);
     KMeans<> km;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
          ElkanKMeans> elkan;
-    arma::Col<size_t> elkanAssignments;
+    arma::Row<size_t> elkanAssignments;
     arma::mat elkanCentroids(centroids);
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
 
@@ -546,12 +546,12 @@ BOOST_AUTO_TEST_CASE(HamerlyTest)
     // clusters.
     arma::mat naiveCentroids(centroids);
     KMeans<> km;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         HamerlyKMeans> hamerly;
-    arma::Col<size_t> hamerlyAssignments;
+    arma::Row<size_t> hamerlyAssignments;
     arma::mat hamerlyCentroids(centroids);
     hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
         true);
@@ -581,12 +581,12 @@ BOOST_AUTO_TEST_CASE(PellegMooreTest)
     // clusters.
     arma::mat naiveCentroids(centroids);
     KMeans<> km;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         PellegMooreKMeans> pellegMoore;
-    arma::Col<size_t> pmAssignments;
+    arma::Row<size_t> pmAssignments;
     arma::mat pmCentroids(centroids);
     pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
 
@@ -613,12 +613,12 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
 
     arma::mat naiveCentroids(centroids);
     KMeans<> km;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         DefaultDualTreeKMeans> dtnn;
-    arma::Col<size_t> dtnnAssignments;
+    arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
@@ -645,12 +645,12 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
     arma::mat naiveCentroids(centroids);
     KMeans<> km;
-    arma::Col<size_t> assignments;
+    arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         CoverTreeDualTreeKMeans> dtnn;
-    arma::Col<size_t> dtnnAssignments;
+    arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 

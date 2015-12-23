@@ -73,13 +73,13 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
 /**
  * Make sure we can estimate from observations correctly.
  */
-BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateTest)
+BOOST_AUTO_TEST_CASE(DiscreteDistributionTrainTest)
 {
   DiscreteDistribution d(4);
 
   arma::mat obs("0 0 1 1 2 2 2 3");
 
-  d.Estimate(obs);
+  d.Train(obs);
 
   BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.25, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.25, 1e-5);
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateTest)
 /**
  * Estimate from observations with probabilities.
  */
-BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateProbTest)
+BOOST_AUTO_TEST_CASE(DiscreteDistributionTrainProbTest)
 {
   DiscreteDistribution d(3);
 
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateProbTest)
 
   arma::vec prob("0.25 0.25 0.5 1.0");
 
-  d.Estimate(obs, prob);
+  d.Train(obs, prob);
 
   BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.25, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.25, 1e-5);
@@ -340,7 +340,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 /**
  * Make sure that we can properly estimate from given observations.
  */
-BOOST_AUTO_TEST_CASE(GaussianDistributionEstimateTest)
+BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 {
   arma::vec mean("1.0 3.0 0.0 2.5");
   arma::mat cov("3.0 0.0 1.0 4.0;"
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionEstimateTest)
   arma::vec actualMean = arma::mean(observations, 1);
   arma::mat actualCov = ccov(observations);
 
-  d.Estimate(observations);
+  d.Train(observations);
 
   // Check that everything is estimated right.
   for (size_t i = 0; i < 4; i++)

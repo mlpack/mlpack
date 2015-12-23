@@ -37,7 +37,7 @@ arma::vec DiscreteDistribution::Random() const
 /**
  * Estimate the probability distribution directly from the given observations.
  */
-void DiscreteDistribution::Estimate(const arma::mat& observations)
+void DiscreteDistribution::Train(const arma::mat& observations)
 {
   // Clear old probabilities.
   probabilities.zeros();
@@ -52,7 +52,7 @@ void DiscreteDistribution::Estimate(const arma::mat& observations)
     // Ensure that the observation is within the bounds.
     if (obs >= probabilities.n_elem)
     {
-      Log::Debug << "DiscreteDistribution::Estimate(): observation " << i
+      Log::Debug << "DiscreteDistribution::Train(): observation " << i
           << " (" << obs << ") is invalid; observation must be in [0, "
           << probabilities.n_elem << "] for this distribution." << std::endl;
     }
@@ -72,7 +72,7 @@ void DiscreteDistribution::Estimate(const arma::mat& observations)
  * Estimate the probability distribution from the given observations when also
  * given probabilities that each observation is from this distribution.
  */
-void DiscreteDistribution::Estimate(const arma::mat& observations,
+void DiscreteDistribution::Train(const arma::mat& observations,
                                     const arma::vec& probObs)
 {
   // Clear old probabilities.
@@ -88,7 +88,7 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
     // Ensure that the observation is within the bounds.
     if (obs >= probabilities.n_elem)
     {
-      Log::Debug << "DiscreteDistribution::Estimate(): observation " << i
+      Log::Debug << "DiscreteDistribution::Train(): observation " << i
           << " (" << obs << ") is invalid; observation must be in [0, "
           << probabilities.n_elem << "] for this distribution." << std::endl;
     }
@@ -103,21 +103,3 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
   else
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
-
-/**
- * Returns a string representation of this object.
- */
-std::string DiscreteDistribution::ToString() const
-{
-  std::ostringstream convert;
-  convert << "DiscreteDistribution [" << this << "]" << std::endl;
-
-  // Secondary object so we can indent the probabilities.
-  std::ostringstream prob;
-  prob << "Probabilities:" << std::endl;
-  prob << probabilities;
-
-  convert << util::Indent(prob.str());
-  return convert.str();
-}
-

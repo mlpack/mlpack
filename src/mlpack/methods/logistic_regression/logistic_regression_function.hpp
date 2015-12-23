@@ -19,16 +19,17 @@ namespace regression {
  * This is used by various mlpack optimizers to train a logistic regression
  * model.
  */
+template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
-  LogisticRegressionFunction(const arma::mat& predictors,
-                             const arma::vec& responses,
+  LogisticRegressionFunction(const MatType& predictors,
+                             const arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  LogisticRegressionFunction(const arma::mat& predictors,
-                             const arma::vec& responses,
-                             const arma::mat& initialPoint,
+  LogisticRegressionFunction(const MatType& predictors,
+                             const arma::Row<size_t>& responses,
+                             const arma::vec& initialPoint,
                              const double lambda = 0);
 
   //! Return the initial point for the optimization.
@@ -42,7 +43,7 @@ class LogisticRegressionFunction
   double& Lambda() { return lambda; }
 
   //! Return the matrix of predictors.
-  const arma::mat& Predictors() const { return predictors; }
+  const MatType& Predictors() const { return predictors; }
   //! Return the vector of responses.
   const arma::vec& Responses() const { return responses; }
 
@@ -108,14 +109,17 @@ class LogisticRegressionFunction
   //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
   //! The matrix of data points (predictors).
-  const arma::mat& predictors;
+  const MatType& predictors;
   //! The vector of responses to the input data points.
-  const arma::vec& responses;
+  const arma::Row<size_t>& responses;
   //! The regularization parameter for L2-regularization.
   double lambda;
 };
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
+
+// Include implementation.
+#include "logistic_regression_function_impl.hpp"
 
 #endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP

@@ -16,6 +16,9 @@
 namespace mlpack {
 namespace range /** Range-search routines. */ {
 
+//! Forward declaration.
+class RSModel;
+
 /**
  * The RangeSearch class is a template class for performing range searches.  It
  * is implemented in the style of a generalized tree-independent dual-tree
@@ -59,6 +62,30 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
+   * Initialize the RangeSearch object with the given reference dataset (this is
+   * the dataset which is searched), taking ownership of the matrix.
+   * Optionally, perform the computation in naive mode or single-tree mode.
+   * Additionally, an instantiated metric can be given, for cases where the
+   * distance metric holds data.
+   *
+   * This method will not copy the data matrix, but will take ownership of it,
+   * and depending on the type of tree used, may rearrange the points.  If you
+   * would rather a copy be made, consider using the constructor that takes a
+   * const reference to the data instead.
+   *
+   * @param referenceSet Set of reference points.
+   * @param naive If true, brute force naive search will be used (as opposed to
+   *      dual-tree search).  This overrides singleMode (if it is set to true).
+   * @param singleMode If true, single-tree search will be used (as opposed to
+   *      dual-tree search).
+   * @param metric An optional instance of the MetricType class.
+   */
+  RangeSearch(MatType&& referenceSet,
+              const bool naive = false,
+              const bool singleMode = false,
+              const MetricType metric = MetricType());
+
+  /**
    * Initialize the RangeSearch object with the given pre-constructed reference
    * tree (this is the tree built on the reference set, which is the set that is
    * searched).  Optionally, choose to use single-tree mode, which will not
@@ -87,10 +114,49 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
+   * Initialize the RangeSearch object without any reference data.  If the
+   * monochromatic Search() is called before a reference set is set with
+   * Train(), no results will be returned (since the reference set is empty).
+   *
+   * @param naive Whether to use naive search.
+   * @param singleMode Whether single-tree computation should be used (as
+   *      opposed to dual-tree computation).
+   * @param metric Instantiated metric.
+   */
+  RangeSearch(const bool naive = false,
+              const bool singleMode = false,
+              const MetricType metric = MetricType());
+
+  /**
    * Destroy the RangeSearch object.  If trees were created, they will be
    * deleted.
    */
   ~RangeSearch();
+
+  /**
+   * Set the reference set to a new reference set, and build a tree if
+   * necessary.  This method is called 'Train()' in order to match the rest of
+   * the mlpack abstractions, even though calling this "training" is maybe a bit
+   * of a stretch.
+   *
+   * @param referenceSet New set of reference data.
+   */
+  void Train(const MatType& referenceSet);
+
+  /**
+   * Set the reference set to a new reference set, taking ownership of the set.
+   * A tree is built if necessary.  This method is called 'Train()' in order to
+   * match the rest of the mlpack abstractions, even though calling this
+   * "training" is maybe a bit of a stretch.
+   *
+   * @param referenceSet New set of reference data.
+   */
+  void Train(MatType&& referenceSet);
+
+  /**
+   * Set the reference tree to a new reference tree.
+   */
+  void Train(Tree* referenceTree);
 
   /**
    * Search for all reference points in the given range for each point in the
@@ -199,8 +265,27 @@ class RangeSearch
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
-  //! Returns a string representation of this object.
-  std::string ToString() const;
+  //! Get whether single-tree search is being used.
+  bool SingleMode() const { return singleMode; }
+  //! Modify whether single-tree search is being used.
+  bool& SingleMode() { return singleMode; }
+
+  //! Get whether naive search is being used.
+  bool Naive() const { return naive; }
+  //! Modify whether naive search is being used.
+  bool& Naive() { return naive; }
+
+  //! Get the number of base cases during the last search.
+  size_t BaseCases() const { return baseCases; }
+  //! Get the number of scores during the last search.
+  size_t Scores() const { return scores; }
+
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
+  //! Return the reference set.
+  const MatType& ReferenceSet() const { return *referenceSet; }
 
   //! Return the reference tree (or NULL if in naive mode).
   Tree* ReferenceTree() { return referenceTree; }
@@ -210,11 +295,14 @@ class RangeSearch
   std::vector<size_t> oldFromNewReferences;
   //! Reference tree.
   Tree* referenceTree;
-  //! Reference set (data should be accessed using this).
-  const MatType& referenceSet;
+  //! Reference set (data should be accessed using this).  In some situations we
+  //! may be the owner of this.
+  const MatType* referenceSet;
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
+  //! If true, we own the reference set.
+  bool setOwner;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;
@@ -223,6 +311,14 @@ class RangeSearch
 
   //! Instantiated distance metric.
   MetricType metric;
+
+  //! The total number of base cases during the last search.
+  size_t baseCases;
+  //! The total number of scores during the last search.
+  size_t scores;
+
+  //! For access to mappings when building models.
+  friend RSModel;
 };
 
 } // namespace range

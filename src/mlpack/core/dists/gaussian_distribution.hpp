@@ -105,15 +105,15 @@ class GaussianDistribution
    *
    * @param observations List of observations.
    */
-  void Estimate(const arma::mat& observations);
+  void Train(const arma::mat& observations);
 
   /**
    * Estimate the Gaussian distribution from the given observations, taking into
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+  void Train(const arma::mat& observations,
+             const arma::vec& probabilities);
 
   /**
    * Return the mean.
@@ -153,14 +153,13 @@ class GaussianDistribution
     ar & CreateNVP(logDetCov, "logDetCov");
   }
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
+  /**
+   * This factors the covariance using arma::chol().  The function assumes that
+   * the given matrix is factorizable via the Cholesky decomposition.  If not, a
+   * std::runtime_error will be thrown.
+   */
   void FactorCovariance();
-
 };
 
 /**
@@ -191,7 +190,7 @@ inline void GaussianDistribution::LogProbability(const arma::mat& x,
 }
 
 
-}; // namespace distribution
-}; // namespace mlpack
+} // namespace distribution
+} // namespace mlpack
 
 #endif

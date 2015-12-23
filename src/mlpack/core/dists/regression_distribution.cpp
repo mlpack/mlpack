@@ -11,36 +11,18 @@ using namespace mlpack;
 using namespace mlpack::distribution;
 
 /**
- * Returns a string representation of this object.
- */
-std::string RegressionDistribution::ToString() const
-{
-  std::ostringstream convert;
-  convert << "HMMRegression [" << this << "]" << std::endl;
-
-  // Secondary ostringstream so things can be indented right.
-  std::ostringstream data;
-  data << "Conditional mean function: " << std::endl << rf.ToString();
-  data << "Parameters: " << std::endl << rf.Parameters();
-  data << "Error distribution: " << std::endl << err.ToString();
-
-  convert << util::Indent(data.str());
-  return convert.str();
-}
-
-/**
  * Estimate parameters using provided observation weights
  *
  * @param observations List of observations.
  */
-void RegressionDistribution::Estimate(const arma::mat& observations)
+void RegressionDistribution::Train(const arma::mat& observations)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true);
   rf = lr;
   arma::vec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Estimate(observations.row(0) - fitted.t());
+  err.Train(observations.row(0) - fitted.t());
 }
 
 /**
@@ -48,15 +30,15 @@ void RegressionDistribution::Estimate(const arma::mat& observations)
  *
  * @param weights probability that given observation is from distribution
  */
-void RegressionDistribution::Estimate(const arma::mat& observations,
-                             const arma::vec& weights)
+void RegressionDistribution::Train(const arma::mat& observations,
+                                   const arma::vec& weights)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true, weights);
   rf = lr;
   arma::vec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Estimate(observations.row(0) - fitted.t(), weights);
+  err.Train(observations.row(0) - fitted.t(), weights);
 }
 
 /**

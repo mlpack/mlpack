@@ -279,9 +279,39 @@ class DTree
   arma::vec& MinVals() { return minVals; }
 
   /**
-   * Returns a string representation of this object.
+   * Serialize the density estimation tree.
    */
-  std::string ToString() const;
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using data::CreateNVP;
+
+    ar & CreateNVP(start, "start");
+    ar & CreateNVP(end, "end");
+    ar & CreateNVP(maxVals, "maxVals");
+    ar & CreateNVP(minVals, "minVals");
+    ar & CreateNVP(splitDim, "splitDim");
+    ar & CreateNVP(splitValue, "splitValue");
+    ar & CreateNVP(logNegError, "logNegError");
+    ar & CreateNVP(subtreeLeavesLogNegError, "subtreeLeavesLogNegError");
+    ar & CreateNVP(subtreeLeaves, "subtreeLeaves");
+    ar & CreateNVP(root, "root");
+    ar & CreateNVP(ratio, "ratio");
+    ar & CreateNVP(logVolume, "logVolume");
+    ar & CreateNVP(bucketTag, "bucketTag");
+    ar & CreateNVP(alphaUpper, "alphaUpper");
+
+    if (Archive::is_loading::value)
+    {
+      if (left)
+        delete left;
+      if (right)
+        delete right;
+    }
+
+    ar & CreateNVP(left, "left");
+    ar & CreateNVP(right, "right");
+  }
 
  private:
 
@@ -307,7 +337,7 @@ class DTree
 
 };
 
-}; // namespace det
-}; // namespace mlpack
+} // namespace det
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_DET_DTREE_HPP

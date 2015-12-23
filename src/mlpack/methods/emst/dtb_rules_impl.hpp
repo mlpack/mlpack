@@ -229,8 +229,8 @@ inline double DTBRules<MetricType, TreeType>::CalculateBound(
   return queryNode.Stat().Bound();
 }
 
-}; // namespace emst
-}; // namespace mlpack
+} // namespace emst
+} // namespace mlpack
 
 
 

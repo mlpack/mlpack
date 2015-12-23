@@ -37,10 +37,10 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The main K-Means executable.
-add_executable(kmeans
+add_executable(mlpack_kmeans
   kmeans_main.cpp
 )
-target_link_libraries(kmeans
+target_link_libraries(mlpack_kmeans
   mlpack
 )
-install(TARGETS kmeans RUNTIME DESTINATION bin)
+install(TARGETS mlpack_kmeans RUNTIME DESTINATION bin)

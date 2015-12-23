@@ -95,7 +95,7 @@ class DualTreeKMeans
   //! Indicator of whether or not the point is pruned.
   std::vector<bool> prunedPoints;
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   std::vector<bool> visited; // Was the point visited this iteration?
 

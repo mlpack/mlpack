@@ -92,7 +92,7 @@ namespace sparse_coding {
  * algorithm from Honglak Lee's paper, but instead the LARS algorithm suggested
  * in that paper.
  *
- * Before the method is run, the dictionary is initialized using the
+ * When Train() is called, the dictionary is initialized using the
  * DictionaryInitializationPolicy class.  Possible choices include the
  * RandomInitializer, which provides an entirely random dictionary, the
  * DataDependentRandomInitializer, which provides a random dictionary based
@@ -100,30 +100,34 @@ namespace sparse_coding {
  * does not initialize the dictionary -- instead, the user should set the
  * dictionary using the Dictionary() mutator method.
  *
+ * Once a dictionary is trained with Train(), another matrix may be encoded with
+ * the Encode() function.
+ *
  * @tparam DictionaryInitializationPolicy The class to use to initialize the
  *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
  *     dictionary)' function.
  */
-template<typename DictionaryInitializer = DataDependentRandomInitializer>
 class SparseCoding
 {
  public:
   /**
-   * Set the parameters to SparseCoding. lambda2 defaults to 0.
+   * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
+   * constructor will train the model.  If that is not desired, call the other
+   * constructor that does not take a data matrix.  This constructor will also
+   * initialize the dictionary using the given DictionaryInitializer before
+   * training.
    *
-   * @param data Data matrix
-   * @param atoms Number of atoms in dictionary
-   * @param lambda1 Regularization parameter for l1-norm penalty
-   * @param lambda2 Regularization parameter for l2-norm penalty
-   */
-  SparseCoding(const arma::mat& data,
-               const size_t atoms,
-               const double lambda1,
-               const double lambda2 = 0);
-
-  /**
-   * Run Sparse Coding with Dictionary Learning.
+   * If you want to initialize the dictionary to a custom matrix, consider
+   * either writing your own DictionaryInitializer class (with void
+   * Initialize(const arma::mat& data, arma::mat& dictionary) function), or call
+   * the constructor that does not take a data matrix, then call Dictionary() to
+   * set the dictionary matrix to a matrix of your choosing, and then call
+   * Train() with NothingInitializer (i.e. Train<NothingInitializer>(data)).
    *
+   * @param data Data matrix.
+   * @param atoms Number of atoms in dictionary.
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
    *     the algorithm will run until convergence (or forever).
    * @param objTolerance Tolerance for objective function.  When an iteration of
@@ -132,30 +136,71 @@ class SparseCoding
    * @param newtonTolerance Tolerance for the Newton's method dictionary
    *     optimization step.
    */
-  void Encode(const size_t maxIterations = 0,
-              const double objTolerance = 0.01,
-              const double newtonTolerance = 1e-6);
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
+  SparseCoding(const arma::mat& data,
+               const size_t atoms,
+               const double lambda1,
+               const double lambda2 = 0,
+               const size_t maxIterations = 0,
+               const double objTolerance = 0.01,
+               const double newtonTolerance = 1e-6,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
-   * Sparse code each point via LARS.
+   * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
+   * constructor will not train the model, and a subsequent call to Train() will
+   * be required before the model can encode points with Encode().
+   *
+   * @param atoms Number of atoms in dictionary.
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
+   * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
+   *     the algorithm will run until convergence (or forever).
+   * @param objTolerance Tolerance for objective function.  When an iteration of
+   *     the algorithm produces an improvement smaller than this, the algorithm
+   *     will terminate.
+   * @param newtonTolerance Tolerance for the Newton's method dictionary
+   *     optimization step.
    */
-  void OptimizeCode();
+  SparseCoding(const size_t atoms,
+               const double lambda1,
+               const double lambda2 = 0,
+               const size_t maxIterations = 0,
+               const double objTolerance = 0.01,
+               const double newtonTolerance = 1e-6);
+
+  /**
+   * Train the sparse coding model on the given dataset.
+   */
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
+  void Train(const arma::mat& data,
+             const DictionaryInitializer& initializer =
+                 DictionaryInitializer());
+
+  /**
+   * Sparse code each point in the given dataset via LARS, using the current
+   * dictionary and store the encoded data in the codes matrix.
+   *
+   * @param data Input data matrix to be encoded.
+   * @param codes Output codes matrix.
+   */
+  void Encode(const arma::mat& data, arma::mat& codes);
 
   /**
    * Learn dictionary via Newton method based on Lagrange dual.
    *
+   * @param data Data matrix.
+   * @param codes Matrix of codes.
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms).
-   * @param newtonTolerance Tolerance of the Newton's method optimizer.
-   * @param maxIterations Maximum number of iterations to run the Newton's method.
-   *     If 0, the method will run until convergence (or forever).
    * @return the norm of the gradient of the Lagrange dual with respect to
    *    the dual variables
    */
-  double OptimizeDictionary(const arma::uvec& adjacencies,
-                            const double newtonTolerance = 1e-6,
-                            const size_t maxIterations = 50);
+  double OptimizeDictionary(const arma::mat& data,
+                            const arma::mat& codes,
+                            const arma::uvec& adjacencies);
 
   /**
    * Project each atom of the dictionary back onto the unit ball, if necessary.
@@ -165,46 +210,69 @@ class SparseCoding
   /**
    * Compute the objective function.
    */
-  double Objective() const;
-
-  //! Access the data.
-  const arma::mat& Data() const { return data; }
+  double Objective(const arma::mat& data, const arma::mat& codes) const;
 
   //! Access the dictionary.
   const arma::mat& Dictionary() const { return dictionary; }
   //! Modify the dictionary.
   arma::mat& Dictionary() { return dictionary; }
 
-  //! Access the sparse codes.
-  const arma::mat& Codes() const { return codes; }
-  //! Modify the sparse codes.
-  arma::mat& Codes() { return codes; }
+  //! Access the number of atoms.
+  size_t Atoms() const { return atoms; }
+  //! Modify the number of atoms.
+  size_t& Atoms() { return atoms; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
+  //! Access the L1 regularization term.
+  double Lambda1() const { return lambda1; }
+  //! Modify the L1 regularization term.
+  double& Lambda1() { return lambda1; }
+
+  //! Access the L2 regularization term.
+  double Lambda2() const { return lambda2; }
+  //! Modify the L2 regularization term.
+  double& Lambda2() { return lambda2; }
+
+  //! Get the maximum number of iterations.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the objective tolerance.
+  double ObjTolerance() const { return objTolerance; }
+  //! Modify the objective tolerance.
+  double& ObjTolerance() { return objTolerance; }
+
+  //! Get the tolerance for Newton's method (dictionary optimization step).
+  double NewtonTolerance() const { return newtonTolerance; }
+  //! Modify the tolerance for Newton's method (dictionary optimization step).
+  double& NewtonTolerance() { return newtonTolerance; }
+
+  //! Serialize the sparse coding model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Number of atoms.
   size_t atoms;
 
-  //! Data matrix (columns are points).
-  const arma::mat& data;
-
   //! Dictionary (columns are atoms).
   arma::mat dictionary;
 
-  //! Sparse codes (columns are points).
-  arma::mat codes;
-
   //! l1 regularization term.
   double lambda1;
-
   //! l2 regularization term.
   double lambda2;
+
+  //! Maximum number of iterations during training.
+  size_t maxIterations;
+  //! Tolerance for main objective.
+  double objTolerance;
+  //! Tolerance for Newton's method (dictionary training).
+  double newtonTolerance;
 };
 
-}; // namespace sparse_coding
-}; // namespace mlpack
+} // namespace sparse_coding
+} // namespace mlpack
 
 // Include implementation.
 #include "sparse_coding_impl.hpp"

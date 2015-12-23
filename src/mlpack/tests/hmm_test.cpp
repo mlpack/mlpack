@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   // We'll use the sequence [U U N U U] (U = umbrella, N = no umbrella) like on
   // p. 547.
   arma::mat observation = "0 0 1 0 0";
-  arma::Col<size_t> states;
+  arma::Row<size_t> states;
   hmm.Predict(observation, states);
 
   // Check each state.
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
 
   // GGCACTGAA.
   arma::mat observation("2 2 1 0 1 3 2 0 0");
-  arma::Col<size_t> states;
+  arma::Row<size_t> states;
   hmm.Predict(observation, states);
 
   // Most probable path is HHHLLLLLL.
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   size_t obsLen = 800;
 
   std::vector<arma::mat> observations(obsNum);
-  std::vector<arma::Col<size_t> > states(obsNum);
+  std::vector<arma::Row<size_t> > states(obsNum);
 
   for (size_t n = 0; n < obsNum; n++)
   {
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
 
   // Now generate a really, really long sequence.
   arma::mat dataSeq;
-  arma::Col<size_t> stateSeq;
+  arma::Row<size_t> stateSeq;
 
   hmm.Generate(100000, dataSeq, stateSeq);
 
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   int numSeq = 400;
   int numObs = 3000;
   std::vector<arma::mat> sequences(numSeq);
-  std::vector<arma::Col<size_t> > states(numSeq);
+  std::vector<arma::Row<size_t> > states(numSeq);
   for (int i = 0; i < numSeq; i++)
   {
     // Random starting state.
@@ -543,7 +543,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
 
   // Now, generate some sequences.
   arma::mat observations(2, 1000);
-  arma::Col<size_t> classes(1000);
+  arma::Row<size_t> classes(1000);
 
   // 1000-observations sequence.
   classes[0] = 0;
@@ -564,7 +564,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   }
 
   // Now predict the sequence.
-  arma::Col<size_t> predictedClasses;
+  arma::Row<size_t> predictedClasses;
   arma::mat stateProb;
 
   hmm.Predict(observations, predictedClasses);
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
 
   // Now generate observations.
   std::vector<arma::mat> observations(100);
-  std::vector<arma::Col<size_t> > states(100);
+  std::vector<arma::Row<size_t> > states(100);
 
   for (size_t obs = 0; obs < 100; obs++)
   {
@@ -727,7 +727,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
 
   // Now we will generate a long sequence.
   std::vector<arma::mat> observations(1);
-  std::vector<arma::Col<size_t> > states(1);
+  std::vector<arma::Row<size_t> > states(1);
 
   // Start in state 1 (no reason).
   hmm.Generate(10000, observations[0], states[0], 1);
@@ -772,8 +772,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
 BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 {
   // We will use two GMMs; one with two components and one with three.
-  std::vector<GMM<> > gmms(2);
-  gmms[0] = GMM<>(2, 2);
+  std::vector<GMM> gmms(2);
+  gmms[0] = GMM(2, 2);
   gmms[0].Weights() = arma::vec("0.75 0.25");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   gmms[0].Component(1) = GaussianDistribution("7.10 5.01",
                                               "1.00 0.00; 0.00 1.01");
 
-  gmms[1] = GMM<>(3, 2);
+  gmms[1] = GMM(3, 2);
   gmms[1].Weights() = arma::vec("0.4 0.2 0.4");
 
   gmms[1].Component(0) = GaussianDistribution("-3.00 -6.12",
@@ -804,11 +804,11 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
                   "0.70 0.50");
 
   // Now build the model.
-  HMM<GMM<> > hmm(initial, trans, gmms);
+  HMM<GMM> hmm(initial, trans, gmms);
 
   // Make a sequence of observations.
   arma::mat observations(2, 1000);
-  arma::Col<size_t> states(1000);
+  arma::Row<size_t> states(1000);
   states[0] = 0;
   observations.col(0) = gmms[0].Random();
 
@@ -825,7 +825,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   }
 
   // Run the prediction.
-  arma::Col<size_t> predictions;
+  arma::Row<size_t> predictions;
   hmm.Predict(observations, predictions);
 
   // Check that the predictions were correct.
@@ -842,7 +842,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   srand(time(NULL));
 
   // We will use two GMMs; one with two components and one with three.
-  std::vector<GMM<> > gmms(2, GMM<>(2, 2));
+  std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -867,7 +867,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 
   // Make a sequence of observations.
   std::vector<arma::mat> observations(5, arma::mat(2, 2500));
-  std::vector<arma::Col<size_t> > states(5, arma::Col<size_t>(2500));
+  std::vector<arma::Row<size_t> > states(5, arma::Row<size_t>(2500));
   for (size_t obs = 0; obs < 5; obs++)
   {
     states[obs][0] = 0;
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   }
 
   // Set up the GMM for training.
-  HMM<GMM<> > hmm(2, GMM<>(2, 2));
+  HMM<GMM> hmm(2, GMM(2, 2));
 
   // Train the HMM.
   hmm.Train(observations, states);
@@ -984,7 +984,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 {
   // Create a GMM HMM, save it, and load it.
-  HMM<GMM<> > hmm(3, GMM<>(4, 3));
+  HMM<GMM> hmm(3, GMM(4, 3));
 
   for(size_t j = 0; j < hmm.Emission().size(); ++j)
   {
@@ -1009,7 +1009,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   }
 
   // Load the HMM.
-  HMM<GMM<>> hmm2(3, GMM<>(4, 3));
+  HMM<GMM> hmm2(3, GMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);

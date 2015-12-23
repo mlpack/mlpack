@@ -5,6 +5,7 @@ set(SOURCES
   nothing_initializer.hpp
   random_initializer.hpp
   sparse_coding.hpp
+  sparse_coding.cpp
   sparse_coding_impl.hpp
 )
 
@@ -17,10 +18,10 @@ endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(sparse_coding
+add_executable(mlpack_sparse_coding
   sparse_coding_main.cpp
 )
-target_link_libraries(sparse_coding
+target_link_libraries(mlpack_sparse_coding
   mlpack
 )
-install(TARGETS sparse_coding RUNTIME DESTINATION bin)
+install(TARGETS mlpack_sparse_coding RUNTIME DESTINATION bin)

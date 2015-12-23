@@ -94,9 +94,6 @@ class AugLagrangianFunction
   //! Modify the Lagrangian function.
   LagrangianFunction& Function() { return function; }
 
-  // convert the obkect into a string
-  std::string ToString() const;
-
  private:
   //! Instantiation of the function to be optimized.
   LagrangianFunction& function;
@@ -107,8 +104,8 @@ class AugLagrangianFunction
   double sigma;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 // Include basic implementation.
 #include "aug_lagrangian_function_impl.hpp"

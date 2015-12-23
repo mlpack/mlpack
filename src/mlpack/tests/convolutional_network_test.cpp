@@ -71,7 +71,7 @@ void BuildVanillaNetwork()
 
   /*
    * Construct a convolutional neural network with a 28x28x1 input layer,
-   * 24x24x6 convolution layer, 12x12x6 pooling layer, 8x8x12 convolution layer
+   * 24x24x8 convolution layer, 12x12x8 pooling layer, 8x8x12 convolution layer
    * and a 4x4x12 pooling layer which is fully connected with the output layer.
    * The network structure looks like:
    *
@@ -91,6 +91,9 @@ void BuildVanillaNetwork()
   BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer0(8);
   BaseLayer2D<PerformanceFunction> baseLayer0;
   PoolingLayer<> poolingLayer0(2);
+
+
+
 
   ConvLayer<RMSPROP> convLayer1(8, 12, 5, 5);
   BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer1(12);
@@ -162,9 +165,10 @@ void BuildVanillaDropoutNetwork()
 
   /*
    * Construct a convolutional neural network with a 28x28x1 input layer,
-   * 24x24x6 convolution layer, 12x12x6 pooling layer, 8x8x12 convolution layer,
-   * 8x8x12 Dropout Layer and a 4x4x12 pooling layer which is fully connected
-   * with the output layer. The network structure looks like:
+   * 24x24x4 convolution layer, 24x24x4 dropout layer, 12x12x4 pooling layer,
+   * 8x8x8 convolution layer,8x8x8 Dropout Layer and a 4x4x12 pooling layer
+   * which is fully connected with the output layer. The network structure looks
+   * like:
    *
    * Input    Convolution  Dropout      Pooling     Convolution,     Output
    * Layer    Layer        Layer        Layer       Dropout,         Layer

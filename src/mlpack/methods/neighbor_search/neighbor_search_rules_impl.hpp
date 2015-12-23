@@ -444,7 +444,7 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
   neighbors(pos, queryIndex) = neighbor;
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP

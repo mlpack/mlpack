@@ -3,6 +3,9 @@
 set(SOURCES
   fastmks.hpp
   fastmks_impl.hpp
+  fastmks_model.hpp
+  fastmks_model_impl.hpp
+  fastmks_model.cpp
   fastmks_rules.hpp
   fastmks_rules_impl.hpp
 )
@@ -16,11 +19,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(fastmks
+add_executable(mlpack_fastmks
   fastmks_main.cpp
 )
-target_link_libraries(fastmks
+target_link_libraries(mlpack_fastmks
   mlpack
 )
-
-install(TARGETS fastmks RUNTIME DESTINATION bin)
+install(TARGETS mlpack_fastmks RUNTIME DESTINATION bin)

@@ -1,4 +1,4 @@
-/***
+/**
  * @file core.hpp
  *
  * Include all of the base components required to write MLPACK methods, and the
@@ -49,9 +49,38 @@
  *
  * A full list of executables is given below:
  *
- * allkfn, allknn, emst, gmm, hmm_train, hmm_loglik, hmm_viterbi, hmm_generate,
- * kernel_pca, kmeans, lars, linear_regression, local_coordinate_coding, mvu,
- * nbc, nca, pca, radical, sparse_coding
+ * - mlpack_adaboost
+ * - mlpack_allkfn
+ * - mlpack_allknn
+ * - mlpack_allkrann
+ * - mlpack_cf
+ * - mlpack_decision_stump
+ * - mlpack_det
+ * - mlpack_emst
+ * - mlpack_fastmks
+ * - mlpack_gmm_train
+ * - mlpack_gmm_generate
+ * - mlpack_gmm_probability
+ * - mlpack_hmm_train
+ * - mlpack_hmm_loglik
+ * - mlpack_hmm_viterbi
+ * - mlpack_hmm_generate
+ * - mlpack_kernel_pca
+ * - mlpack_kmeans
+ * - mlpack_lars
+ * - mlpack_linear_regression
+ * - mlpack_local_coordinate_coding
+ * - mlpack_logistic_regression
+ * - mlpack_lsh
+ * - mlpack_mean_shift
+ * - mlpack_nbc
+ * - mlpack_nca
+ * - mlpack_pca
+ * - mlpack_perceptron
+ * - mlpack_radical
+ * - mlpack_range_search
+ * - mlpack_softmax_regression
+ * - mlpack_sparse_coding
  *
  * @section tutorial Tutorials
  *
@@ -141,11 +170,16 @@
  *   - Udit Saxena <saxena.udit@gmail.com>
  *   - Stephen Tu <tu.stephenl@gmail.com>
  *   - Jaskaran Singh <jaskaranvirdi@gmail.com>
+ *   - Shangtong Zhang <zhangshangtong.cpp@icloud.com>
  *   - Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
  *   - Vladimir Glazachev <glazachev.vladimir@gmail.com>
  *   - QiaoAn Chen <kazenoyumechen@gmail.com>
  *   - Janzen Brewer <jahabrewer@gmail.com>
  *   - Trung Dinh <dinhanhtrung@gmail.com>
+ *   - Tham Ngap Wei <thamngapwei@gmail.com>
+ *   - Grzegorz Krajewski <krajekg@gmail.com>
+ *   - Joseph Mariadassou <joe.mariadassou@gmail.com>
+ *   - Pavel Zhigulin <pashaworking@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -155,12 +189,12 @@
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/util/ostream_extra.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/random_basis.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/math/round.hpp>

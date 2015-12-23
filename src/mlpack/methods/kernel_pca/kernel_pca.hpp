@@ -111,9 +111,6 @@ class KernelPCA
   //! Return whether or not the transformed data is centered.
   bool& CenterTransformedData() { return centerTransformedData; }
 
-  // Returns a string representation of this object.
-  std::string ToString() const;
-
  private:
   //! The instantiated kernel.
   KernelType kernel;
@@ -123,8 +120,8 @@ class KernelPCA
 
 }; // class KernelPCA
 
-}; // namespace kpca
-}; // namespace mlpack
+} // namespace kpca
+} // namespace mlpack
 
 // Include implementation.
 #include "kernel_pca_impl.hpp"

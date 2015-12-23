@@ -72,8 +72,8 @@ class NystroemMethod
   const size_t rank;
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 // Include implementation.
 #include "nystroem_method_impl.hpp"
