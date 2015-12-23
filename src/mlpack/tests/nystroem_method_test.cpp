@@ -77,7 +77,8 @@ BOOST_AUTO_TEST_CASE(Rank10Test)
   arma::svd(U, s, V, data);
 
   // Don't set completely to 0; the hope is that K is still positive definite.
-  s.subvec(10, s.n_elem - 1).fill(1e-10);
+  s.subvec(0, 9) += 1.0; // Make sure the first 10 singular vectors are large.
+  s.subvec(10, s.n_elem - 1).fill(1e-6);
   arma::mat dataMod = U * arma::diagmat(s) * V.t();
 
   // Add some noise.
