@@ -33,15 +33,15 @@ void CheckMatrices(const arma::mat& x,
     const double val = x[i];
     if (val == 0.0)
     {
-      BOOST_REQUIRE_SMALL(xmlX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(textX[i], 1e-8);
-      BOOST_REQUIRE_SMALL(binaryX[i], 1e-8);
+      BOOST_REQUIRE_SMALL(xmlX[i], 1e-6);
+      BOOST_REQUIRE_SMALL(textX[i], 1e-6);
+      BOOST_REQUIRE_SMALL(binaryX[i], 1e-6);
     }
     else
     {
-      BOOST_REQUIRE_CLOSE(val, xmlX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, textX[i], 1e-8);
-      BOOST_REQUIRE_CLOSE(val, binaryX[i], 1e-8);
+      BOOST_REQUIRE_CLOSE(val, xmlX[i], 1e-6);
+      BOOST_REQUIRE_CLOSE(val, textX[i], 1e-6);
+      BOOST_REQUIRE_CLOSE(val, binaryX[i], 1e-6);
     }
   }
 }
