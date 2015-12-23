@@ -736,8 +736,8 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Load test set to see if it trained on vc2 correctly.
   arma::mat testData;
-  if (!data::Load("vc2_test.txt", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.txt!");
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("vc2_test_labels.txt", trueTestLabels))
