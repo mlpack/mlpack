@@ -704,7 +704,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
     double bestGain, secondBestGain;
     split.EvaluateFitnessFunction(bestGain, secondBestGain);
     BOOST_REQUIRE_CLOSE(bestGain, 0.25, 1e-5);
-    BOOST_REQUIRE_GT(bestGain, secondBestGain);
+    BOOST_REQUIRE_GE(bestGain, secondBestGain);
   }
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
