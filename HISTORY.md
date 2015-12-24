@@ -1,5 +1,5 @@
 ### mlpack 2.0.0
-###### ????-??-??
+###### 2015-12-23
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
     open a bug or get in touch with us; it would not be hard for us to
