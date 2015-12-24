@@ -1,3 +1,9 @@
+/**
+ * @file softmax_regression_main.cpp
+ * @author Tham Ngap Wei
+ *
+ * Main executable for softmax regression.
+ */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
