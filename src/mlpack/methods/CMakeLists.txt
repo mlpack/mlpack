@@ -2,7 +2,6 @@
 set(DIRS
   adaboost
   amf
-  ann
   cf
   decision_stump
   det
@@ -19,13 +18,11 @@ set(DIRS
   local_coordinate_coding
   logistic_regression
   lsh
-#  mvu
   matrix_completion
   naive_bayes
   nca
   neighbor_search
   nmf
-#  lmf
   pca
   perceptron
   quic_svd
