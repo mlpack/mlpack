@@ -1,62 +1,15 @@
-#include "mex.h"
-
-#include <mlpack/core.hpp>
-
-#include <mlpack/methods/pca/pca.hpp>
-
-using namespace mlpack;
-using namespace mlpack::pca;
-using namespace std;
-
-void mexFunction(int nlhs, mxArray *plhs[],
-                 int nrhs, const mxArray *prhs[])
-{
-  // argument checks
-  if (nrhs != 3)
-  {
-    mexErrMsgTxt("Expecting three inputs.");
-  }
-
-  if (nlhs != 1)
-  {
-    mexErrMsgTxt("Output required.");
-  }
-
-  // loading the data
-  double * mexDataPoints = mxGetPr(prhs[0]);
-  size_t numPoints = mxGetN(prhs[0]);
-  size_t numDimensions = mxGetM(prhs[0]);
-  arma::mat dataset(numDimensions, numPoints);
-  for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
-    dataset(i) = mexDataPoints[i];
-
-  // Find out what dimension we want.
-  size_t newDimension = dataset.n_rows; // No reduction, by default.
-
-  if (mxGetScalar(prhs[1]) != 0.0)
-  {
-    // Validate the parameter.
-    newDimension = (size_t) mxGetScalar(prhs[1]);
-    if (newDimension > dataset.n_rows)
-    {
-      std::stringstream ss;
-      ss << "New dimensionality (" << newDimension
-          << ") cannot be greater than existing dimensionality ("
-          << dataset.n_rows << ")!";
-      mexErrMsgTxt(ss.str().c_str());
-    }
-  }
-
-  // Get the options for running PCA.
-  const bool scale = (mxGetScalar(prhs[2]) == 1.0);
-
-  // Perform PCA.
-  PCA p(scale);
-  p.Apply(dataset, newDimension);
-
-  // Now returning results to matlab
-  plhs[0] = mxCreateDoubleMatrix(dataset.n_rows, dataset.n_cols, mxREAL);
-  double * values = mxGetPr(plhs[0]);
-  for (int i = 0; i < dataset.n_rows * dataset.n_cols; ++i)
-    values[i] = dataset(i);
-}
+ *
+ * This file is part of mlpack 2.0.0.
+ *
+ * mlpack is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details (LICENSE.txt).
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * mlpack.  If not, see <http://www.gnu.org/licenses/>.
