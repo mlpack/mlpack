@@ -414,6 +414,70 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::SuccessProbability(const double successProbability)
+{
+  this->successProbability = successProbability;
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->SuccessProbability(successProbability);
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::MinSamples(const size_t minSamples)
+{
+  this->minSamples = minSamples;
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->MinSamples(minSamples);
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::MaxSamples(const size_t maxSamples)
+{
+  this->maxSamples = maxSamples;
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->MaxSamples(maxSamples);
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::CheckInterval(const size_t checkInterval)
+{
+  this->checkInterval = checkInterval;
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->CheckInterval(checkInterval);
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
 template<typename VecType>
 size_t HoeffdingTree<
     FitnessFunction,
