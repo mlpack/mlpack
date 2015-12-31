@@ -125,7 +125,7 @@ class RecurrentLayer
   template<typename eT>
   void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    output = input + (weights) * recurrentParameter;
+    output = input + weights * recurrentParameter;
   }
 
   /**
@@ -258,7 +258,7 @@ class LayerTraits<RecurrentLayer<
   static const bool IsConnection = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

@@ -108,7 +108,7 @@ class SoftmaxLayer
   OutputDataType outputParameter;
 }; // class SoftmaxLayer
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

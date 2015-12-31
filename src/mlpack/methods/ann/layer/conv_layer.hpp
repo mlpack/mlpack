@@ -388,7 +388,7 @@ class LayerTraits<ConvLayer<OptimizerType,
   static const bool IsConnection = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif
