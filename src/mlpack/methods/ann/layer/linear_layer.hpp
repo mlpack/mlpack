@@ -58,6 +58,29 @@ class LinearLayer
   {
     weightInitRule.Initialize(weights, outSize, inSize);
   }
+  
+  LinearLayer(LinearLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  LinearLayer& operator=(LinearLayer &&layer) noexcept
+  {
+    ownsOptimizer = layer.ownsOptimizer;
+    layer.ownsOptimizer = false;
+    optimizer = layer.optimizer;
+    layer.optimizer = nullptr;
+
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights.swap(layer.weights);
+    delta.swap(layer.delta);
+    gradient.swap(layer.gradient);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(layer.outputParameter);
+
+    return *this;
+  }
 
   /**
    * Delete the linear layer object and its optimizer.
@@ -262,10 +285,10 @@ class LinearLayer
   }
 
   //! Locally-stored number of input units.
-  const size_t inSize;
+  size_t inSize;
 
   //! Locally-stored number of output units.
-  const size_t outSize;
+  size_t outSize;
 
   //! Locally-stored weight object.
   OutputDataType weights;

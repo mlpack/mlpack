@@ -66,6 +66,25 @@ class DropoutLayer
     // Nothing to do here.
   }
 
+  DropoutLayer(DropoutLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  DropoutLayer& operator=(DropoutLayer &&layer) noexcept
+  {
+    delta.swap(layer.delta);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(outputParameter);
+    mask.swap(layer.mask);
+    ratio = layer.ratio;
+    scale = layer.scale;
+    deterministic = layer.deterministic;
+    rescale = layer.rescale;
+
+    return *this;
+  }
+
   /**
    * Ordinary feed forward pass of the dropout layer.
    *
@@ -231,7 +250,7 @@ template <
 >
 using DropoutLayer2D = DropoutLayer<InputDataType, OutputDataType>;
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif

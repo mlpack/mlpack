@@ -82,6 +82,30 @@ class RecurrentLayer
     weightInitRule.Initialize(weights, outSize, inSize);
   }
 
+  RecurrentLayer(RecurrentLayer &&layer) noexcept
+  {
+    *this = std::move(layer);
+  }
+
+  RecurrentLayer& operator=(RecurrentLayer &&layer) noexcept
+  {
+    optimizer = layer.optimizer;
+    ownsOptimizer = layer.ownsOptimizer;
+    layer.optimizer = nullptr;
+    layer.ownsOptimizer = false;
+
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights.swap(layer.weights);
+    delta.swap(layer.delta);
+    gradient.swap(layer.gradient);
+    inputParameter.swap(layer.inputParameter);
+    outputParameter.swap(layer.outputParameter);
+    recurrentParameter.swap(layer.recurrentParameter);
+
+    return *this;
+  }
+
   /**
    * Delete the RecurrentLayer object and its optimizer.
    */
@@ -183,10 +207,10 @@ class RecurrentLayer
 
  private:
   //! Locally-stored number of input units.
-  const size_t inSize;
+  size_t inSize;
 
   //! Locally-stored number of output units.
-  const size_t outSize;
+  size_t outSize;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -234,7 +258,7 @@ class LayerTraits<RecurrentLayer<
   static const bool IsConnection = true;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
