@@ -321,7 +321,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
 
   // Check the accuracy on the training set.
   if (!outputModelFile.empty())
-    data::Save(outputModelFile, "streamingDecisionTree", tree, true);
+    data::Save(outputModelFile, "streamingDecisionTree", *tree, true);
 
   // Clean up memory.
   delete tree;
