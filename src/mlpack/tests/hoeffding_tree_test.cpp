@@ -13,6 +13,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 #include <stack>
 
@@ -1091,6 +1092,63 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
 
     for (size_t i = 0; i < node->NumChildren(); ++i)
       stack.push(&node->Child(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 9000);
+  arma::Row<size_t> labels(9000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Batch training will give a tree with many labels.
+  HoeffdingTree<> deepTree(dataset, info, labels, 3, true);
+  // Streaming training will not.
+  HoeffdingTree<> shallowTree(dataset, info, labels, 3, false);
+
+  // Now serialize the shallow tree into the deep tree.
+  std::ostringstream oss;
+  {
+    boost::archive::binary_oarchive boa(oss);
+    boa << data::CreateNVP(shallowTree, "streamingDecisionTree");
+  }
+
+  std::istringstream iss(oss.str());
+  {
+    boost::archive::binary_iarchive bia(iss);
+    bia >> data::CreateNVP(deepTree, "streamingDecisionTree");
+  }
+
+  // Now do some classification and make sure the results are the same.
+  arma::Row<size_t> deepPredictions, shallowPredictions;
+  shallowTree.Classify(dataset, shallowPredictions);
+  deepTree.Classify(dataset, deepPredictions);
+
+  for (size_t i = 0; i < deepPredictions.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(shallowPredictions[i], deepPredictions[i]);
   }
 }
 

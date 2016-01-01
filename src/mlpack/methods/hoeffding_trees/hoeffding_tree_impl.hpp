@@ -183,6 +183,8 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     delete dimensionMappings;
   if (ownsInfo)
     delete datasetInfo;
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
 }
 
 //! Train on a set of points.
@@ -667,8 +669,12 @@ void HoeffdingTree<
   using data::CreateNVP;
 
   ar & CreateNVP(splitDimension, "splitDimension");
+
+  // Clear memory for the mappings if necessary.
+  if (Archive::is_loading::value && ownsMappings && dimensionMappings)
+    delete dimensionMappings;
+
   ar & CreateNVP(dimensionMappings, "dimensionMappings");
-  ar & CreateNVP(ownsMappings, "ownsMappings");
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
@@ -677,8 +683,17 @@ void HoeffdingTree<
   ar & CreateNVP(d, "datasetInfo");
   if (Archive::is_loading::value)
   {
+    if (datasetInfo && ownsInfo)
+      delete datasetInfo;
+
     datasetInfo = d;
     ownsInfo = true;
+    ownsMappings = true; // We also own the mappings we loaded.
+
+    // Clear the children.
+    for (size_t i = 0; i < children.size(); ++i)
+      delete children[i];
+    children.clear();
   }
 
   ar & CreateNVP(majorityClass, "majorityClass");
@@ -752,13 +767,22 @@ void HoeffdingTree<
       numChildren = children.size();
     ar & CreateNVP(numChildren, "numChildren");
     if (Archive::is_loading::value) // If needed, allocate space.
-      children.resize(numChildren, new HoeffdingTree(data::DatasetInfo(0), 0));
+    {
+      children.resize(numChildren, NULL);
+      for (size_t i = 0; i < numChildren; ++i)
+        children[i] = new HoeffdingTree(data::DatasetInfo(0), 0);
+    }
 
     for (size_t i = 0; i < numChildren; ++i)
     {
       std::ostringstream name;
       name << "child" << i;
       ar & data::CreateNVP(*children[i], name.str());
+
+      // The child doesn't actually own its own DatasetInfo.  We do.  The same
+      // applies for the dimension mappings.
+      children[i]->ownsInfo = false;
+      children[i]->ownsMappings = false;
     }
 
     if (Archive::is_loading::value)
