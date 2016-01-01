@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   for (size_t i = 0; i < moveDistances.n_elem; ++i)
   {
     BOOST_REQUIRE_EQUAL(moveNeighbors[i], neighbors[i]);
-    if (std::abs(distances[i] < 1e-5))
+    if (std::abs(distances[i]) < 1e-5)
       BOOST_REQUIRE_SMALL(moveDistances[i], 1e-5);
     else
       BOOST_REQUIRE_CLOSE(moveDistances[i], distances[i], 1e-5);
