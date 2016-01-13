@@ -10,6 +10,7 @@
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_IMPL_HPP
 
 #include "midpoint_split.hpp"
+#include <mlpack/core/tree/bounds.hpp>
 
 namespace mlpack {
 namespace tree {
