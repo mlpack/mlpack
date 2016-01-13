@@ -20,18 +20,26 @@ namespace mlpack {
 namespace gmm {
 
 /**
- * Given a covariance matrix, force the matrix to be positive definite.
+ * Given a covariance matrix, force the matrix to be positive definite.  Also
+ * force a minimum value on the diagonal, so that even if the matrix is
+ * invertible, it doesn't 
  */
 class PositiveDefiniteConstraint
 {
  public:
   /**
-   * Apply the positive definiteness constraint to the given covariance matrix.
+   * Apply the positive definiteness constraint to the given covariance matrix,
+   * and ensure each value on the diagonal is at least 1e-50.
    *
    * @param covariance Covariance matrix.
    */
   static void ApplyConstraint(arma::mat& covariance)
   {
+    // Make sure each diagonal element is at least 1e-50.
+    for (size_t i = 0; i < covariance.n_cols; ++i)
+      if (std::abs(covariance(i, i)) < 1e-50)
+        covariance(i, i) = 1e-50;
+
     // Realistically, all we care about is that we can perform a Cholesky
     // decomposition of the matrix, so that FactorCovariance() doesn't fail
     // later.  Therefore, that's what we'll do to check for positive
