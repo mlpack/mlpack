@@ -41,6 +41,11 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   arma::uword maxVarCluster = 0;
   variances.max(maxVarCluster);
 
+  // If the cluster with maximum variance has variance of 0, then we can't
+  // continue.  All the points are the same.
+  if (variances[maxVarCluster] == 0.0)
+    return 0;
+
   // Now, inside this cluster, find the point which is furthest away.
   size_t furthestPoint = data.n_cols;
   double maxDistance = -DBL_MAX;
