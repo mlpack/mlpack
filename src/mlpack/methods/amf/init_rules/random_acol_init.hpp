@@ -2,7 +2,7 @@
  * @file random_acol_init.hpp
  * @author Mohan Rajendran
  *
- * Intialization rule for Alternating Matrix Factorization.
+ * Initialization rule for Alternating Matrix Factorization.
  */
 #ifndef __MLPACK_METHODS_LMF_RANDOM_ACOL_INIT_HPP
 #define __MLPACK_METHODS_LMF_RANDOM_ACOL_INIT_HPP
