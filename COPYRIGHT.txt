@@ -1,49 +1,76 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: mlpack
 Upstream-Contact: Ryan Curtin <ryan@ratml.org>
-Source: http://www.mlpack.org/
+Source:
+  http://www.mlpack.org/
+  git://github.com/mlpack/mlpack.git
 
 Files: *
-Copyright: Copyright 2008-2015, Ryan Curtin <ryan@ratml.org>
-Copyright: Copyright 2008-2013, Bill March <march@gatech.edu>
-Copyright: Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
-Copyright: Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
-Copyright: Copyright 2008-2013, Parikshit Ram <p.ram@gatech.edu>
-Copyright: Copyright 2010-2012, James Cline <james.cline@gatech.edu>
-Copyright: Copyright 2010-2013, Sterling Peet <sterling.peet@gatech.edu>
-Copyright: Copyright 2011-2012, Matthew Amidon <mamidon@gatech.edu>
-Copyright: Copyright 2011-2012, Neil Slagle <npslagle@gmail.com>
-Copyright: Copyright 2011, Ajinkya Kale <kaleajinkya@gmail.com>
-Copyright: Copyright 2011, Vlad Grantcharov <vlad321@gatech.edu>
-Copyright: Copyright 2011, Noah Kauffman <notoriousnoah@gmail.com>
-Copyright: Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
-Copyright: Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
-Copyright: Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
-Copyright: Copyright 2013-2015, Marcus Edel <marcus.edel@fu-berlin.de>
-Copyright: Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
-Copyright: Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
-Copyright: Copyright 2014, Michael Fox <michaelfox99@gmail.com>
-Copyright: Copyright 2014, Ryan Birmingham <birm@gatech.edu>
-Copyright: Copyright 2014, Siddharth Agrawal <siddharth.950@gmail.com>
-Copyright: Copyright 2014, Saheb Motiani <saheb210692@gmail.com>
-Copyright: Copyright 2014, Yash Vadalia <yashdv@gmail.com>
-Copyright: Copyright 2014, Abhishek Laddha <laddhaabhishek11@gmail.com>
-Copyright: Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
-Copyright: Copyright 2014, Andrew Wells <andrewmw94@gmail.com>
-Copyright: Copyright 2014, Zhihao Lou <lzh1984@gmail.com>
-Copyright: Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
-Copyright: Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
-Copyright: Copyright 2014-2015, Jaskaran Singh <jaskaranvirdi@ymail.com>
-Copyright: Copyright 2015, Shangtong Zhang <zhangshangtong.cpp@icloud.com>
-Copyright: Copyright 2015, Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
-Copyright: Copyright 2015, Vladimir Glazachev <glazachev.vladimir@gmail.com>
-Copyright: Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
-Copyright: Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
-Copyright: Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
-Copyright: Copyright 2015, Tham Ngap Wei <thamngapwei@gmail.com>
-Copyright: Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
-Copyright: Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
-Copyright: Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
+Copyright:
+  Copyright 2008-2015, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2013, Bill March <march@gatech.edu>
+  Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
+  Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
+  Copyright 2008-2013, Parikshit Ram <p.ram@gatech.edu>
+  Copyright 2010-2012, James Cline <james.cline@gatech.edu>
+  Copyright 2010-2013, Sterling Peet <sterling.peet@gatech.edu>
+  Copyright 2011-2012, Matthew Amidon <mamidon@gatech.edu>
+  Copyright 2011-2012, Neil Slagle <npslagle@gmail.com>
+  Copyright 2011, Ajinkya Kale <kaleajinkya@gmail.com>
+  Copyright 2011, Vlad Grantcharov <vlad321@gatech.edu>
+  Copyright 2011, Noah Kauffman <notoriousnoah@gmail.com>
+  Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
+  Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
+  Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
+  Copyright 2013-2015, Marcus Edel <marcus.edel@fu-berlin.de>
+  Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
+  Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
+  Copyright 2014, Michael Fox <michaelfox99@gmail.com>
+  Copyright 2014, Ryan Birmingham <birm@gatech.edu>
+  Copyright 2014, Siddharth Agrawal <siddharth.950@gmail.com>
+  Copyright 2014, Saheb Motiani <saheb210692@gmail.com>
+  Copyright 2014, Yash Vadalia <yashdv@gmail.com>
+  Copyright 2014, Abhishek Laddha <laddhaabhishek11@gmail.com>
+  Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
+  Copyright 2014, Andrew Wells <andrewmw94@gmail.com>
+  Copyright 2014, Zhihao Lou <lzh1984@gmail.com>
+  Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
+  Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
+  Copyright 2014-2015, Jaskaran Singh <jaskaranvirdi@ymail.com>
+  Copyright 2015, Shangtong Zhang <zhangshangtong.cpp@icloud.com>
+  Copyright 2015, Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
+  Copyright 2015, Vladimir Glazachev <glazachev.vladimir@gmail.com>
+  Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
+  Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
+  Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
+  Copyright 2015, Tham Ngap Wei <thamngapwei@gmail.com>
+  Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
+  Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
+  Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
 License: BSD-3-clause
-  The text of the license is available on Debian systems in the
-  /usr/share/common-licenses/BSD file.
+  All rights reserved.
+  .
+  Redistribution and use of mlpack in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  .
+  1. Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+  .
+  2. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+  .
+  3. Neither the name of the copyright holder nor the names of its contributors
+  may be used to endorse or promote products derived from this software without
+  specific prior written permission.
+  .
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
