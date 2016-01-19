@@ -122,8 +122,8 @@ int main(int argc, char** argv)
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
   if (outputModelFile.empty() && !trainingFile.empty())
-    Log::Warn << "--output_model not given; trained model will not be saved."
-        << endl;
+    Log::Warn << "--output_model_file not given; trained model will not be "
+        << "saved." << endl;
 
   // Tolerance needs to be positive.
   if (tolerance < 0.0)
