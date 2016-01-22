@@ -459,6 +459,8 @@ bool Load(const std::string& filename,
   }
   else if (extension == "arff")
   {
+    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
+        << std::flush;
     try
     {
       LoadARFF(filename, matrix, info);
