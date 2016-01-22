@@ -101,8 +101,8 @@ int main(int argc, char** argv)
   const double tolerance = CLI::GetParam<double>("tolerance");
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const string inputModelFile = CLI::GetParam<string>("input_model");
-  const string outputModelFile = CLI::GetParam<string>("output_model");
+  const string inputModelFile = CLI::GetParam<string>("input_model_file");
+  const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
   const string outputFile = CLI::GetParam<string>("output_file");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
