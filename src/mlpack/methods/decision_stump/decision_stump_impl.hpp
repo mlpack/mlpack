@@ -79,9 +79,6 @@ void DecisionStump<MatType>::Train(const MatType& data,
                                    const arma::Row<size_t>& labels,
                                    const arma::rowvec& weights)
 {
-  this->classes = classes;
-  this->bucketSize = bucketSize;
-
   // If classLabels are not all identical, proceed with training.
   size_t bestDim = 0;
   double entropy;
