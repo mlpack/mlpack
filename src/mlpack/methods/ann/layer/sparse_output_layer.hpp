@@ -72,10 +72,13 @@ class SparseOutputLayer
   SparseOutputLayer& operator=(SparseOutputLayer &&layer) noexcept
   {
     ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
     optimizer = layer.optimizer;
+    layer.ownsOptimizer = false;    
     layer.optimizer = nullptr;
 
+    beta = layer.beta;
+    rho = layer.rho;
+    lambda = layer.lambda;
     inSize = layer.inSize;
     outSize = layer.outSize;
     weights.swap(layer.weights);
@@ -83,6 +86,7 @@ class SparseOutputLayer
     gradient.swap(layer.gradient);
     inputParameter.swap(layer.inputParameter);
     outputParameter.swap(layer.outputParameter);
+    rhoCap.swap(layer.rhoCap);
 
     return *this;
   }
