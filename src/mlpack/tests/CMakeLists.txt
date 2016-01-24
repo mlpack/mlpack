@@ -62,7 +62,8 @@ add_executable(mlpack_test
   serialization_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
-  #sparse_autoencoder_test.cpp  
+  #sparse_autoencoder_test.cpp
+  sparse_autoencoder_test_3.cpp 
   sparse_coding_test.cpp
   termination_policy_test.cpp
   tree_test.cpp
