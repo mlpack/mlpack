@@ -127,9 +127,7 @@ arma::mat initGradient(arma::mat const &input,
 BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
 {
   const size_t vSize = 5;
-  const size_t hSize = 3;
-  const size_t r = 2 * hSize + 1;
-  const size_t c = vSize + 1;
+  const size_t hSize = 3;  
 
   // Simple fake dataset.
   arma::mat data1("0.1 0.2 0.3 0.4 0.5;"
