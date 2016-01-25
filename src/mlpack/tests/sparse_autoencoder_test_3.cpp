@@ -1,12 +1,10 @@
 /**
- * @file sparse_autoencoder_test.cpp
+ * @file sparse_autoencoder_test_3.cpp
  * @author Tham Ngap Wei
  *
  * Test the SparseAutoencoder class.
  */
-
-#define BOOST_TEST_MODULE SparseAutoencoder
-
+ 
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
