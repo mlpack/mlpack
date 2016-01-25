@@ -33,7 +33,7 @@ using namespace mlpack;
 using namespace arma;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest);
+BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest3);
 
 using Network = std::tuple<SparseInputLayer<>, SparseBiasLayer<>,
                            BaseLayer<LogisticFunction>, SparseOutputLayer<>, SparseBiasLayer<>,
