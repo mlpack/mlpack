@@ -17,18 +17,31 @@
 namespace mlpack {
 namespace math {
 
+template<typename T>
+class RangeType;
+
+//! 3.0.0 TODO: break reverse-compatibility by changing RangeType to Range.
+typedef RangeType<double> Range;
+
 /**
  * Simple real-valued range.  It contains an upper and lower bound.
+ *
+ * Note that until mlpack 3.0.0, this class is named RangeType<> and for the
+ * specification where T is double, you can use math::Range.  As of mlpack
+ * 3.0.0, this class will be renamed math::Range<>.
+ *
+ * @tparam T type of element held by this range.
  */
-class Range
+template<typename T = double>
+class RangeType
 {
  private:
-  double lo; /// The lower bound.
-  double hi; /// The upper bound.
+  T lo; /// The lower bound.
+  T hi; /// The upper bound.
 
  public:
   /** Initialize to an empty set (where lo > hi). */
-  inline Range();
+  inline RangeType();
 
   /***
    * Initialize a range to enclose only the given point (lo = point, hi =
@@ -36,7 +49,7 @@ class Range
    *
    * @param point Point that this range will enclose.
    */
-  inline Range(const double point);
+  inline RangeType(const T point);
 
   /**
    * Initializes to specified range.
@@ -44,41 +57,41 @@ class Range
    * @param lo Lower bound of the range.
    * @param hi Upper bound of the range.
    */
-  inline Range(const double lo, const double hi);
+  inline RangeType(const T lo, const T hi);
 
   //! Get the lower bound.
-  inline double Lo() const { return lo; }
+  inline T Lo() const { return lo; }
   //! Modify the lower bound.
-  inline double& Lo() { return lo; }
+  inline T& Lo() { return lo; }
 
   //! Get the upper bound.
-  inline double Hi() const { return hi; }
+  inline T Hi() const { return hi; }
   //! Modify the upper bound.
-  inline double& Hi() { return hi; }
+  inline T& Hi() { return hi; }
 
   /**
    * Gets the span of the range (hi - lo).
    */
-  inline double Width() const;
+  inline T Width() const;
 
   /**
    * Gets the midpoint of this range.
    */
-  inline double Mid() const;
+  inline T Mid() const;
 
   /**
    * Expands this range to include another range.
    *
    * @param rhs Range to include.
    */
-  inline Range& operator|=(const Range& rhs);
+  inline RangeType& operator|=(const RangeType& rhs);
 
   /**
    * Expands this range to include another range.
    *
    * @param rhs Range to include.
    */
-  inline Range operator|(const Range& rhs) const;
+  inline RangeType operator|(const RangeType& rhs) const;
 
   /**
    * Shrinks this range to be the overlap with another range; this makes an
@@ -86,7 +99,7 @@ class Range
    *
    * @param rhs Other range.
    */
-  inline Range& operator&=(const Range& rhs);
+  inline RangeType& operator&=(const RangeType& rhs);
 
   /**
    * Shrinks this range to be the overlap with another range; this makes an
@@ -94,42 +107,43 @@ class Range
    *
    * @param rhs Other range.
    */
-  inline Range operator&(const Range& rhs) const;
+  inline RangeType operator&(const RangeType& rhs) const;
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  inline Range& operator*=(const double d);
+  inline RangeType& operator*=(const T d);
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  inline Range operator*(const double d) const;
+  inline RangeType operator*(const T d) const;
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  friend inline Range operator*(const double d, const Range& r); // Symmetric.
+  template<typename TT>
+  friend inline RangeType<TT> operator*(const TT d, const RangeType<TT>& r);
 
   /**
    * Compare with another range for strict equality.
    *
    * @param rhs Other range.
    */
-  inline bool operator==(const Range& rhs) const;
+  inline bool operator==(const RangeType& rhs) const;
 
   /**
    * Compare with another range for strict equality.
    *
    * @param rhs Other range.
    */
-  inline bool operator!=(const Range& rhs) const;
+  inline bool operator!=(const RangeType& rhs) const;
 
   /**
    * Compare with another range.  For Range objects x and y, x < y means that x
@@ -137,7 +151,7 @@ class Range
    *
    * @param rhs Other range.
    */
-  inline bool operator<(const Range& rhs) const;
+  inline bool operator<(const RangeType& rhs) const;
 
   /**
    * Compare with another range.  For Range objects x and y, x < y means that x
@@ -145,14 +159,14 @@ class Range
    *
    * @param rhs Other range.
    */
-  inline bool operator>(const Range& rhs) const;
+  inline bool operator>(const RangeType& rhs) const;
 
   /**
    * Determines if a point is contained within the range.
    *
    * @param d Point to check.
    */
-  inline bool Contains(const double d) const;
+  inline bool Contains(const T d) const;
 
   /**
    * Determines if another range overlaps with this one.
@@ -161,7 +175,7 @@ class Range
    *
    * @return true if ranges overlap at all.
    */
-  inline bool Contains(const Range& r) const;
+  inline bool Contains(const RangeType& r) const;
 
   /**
    * Serialize the range object.
