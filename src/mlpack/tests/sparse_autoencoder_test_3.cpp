@@ -144,19 +144,20 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
   initWeights(ffn1.Network(), [](arma::mat &v){
     return v.ones();
   });
-  ffn1.FeedForward(data1, data1, arma::mat());
+  arma::mat error;
+  ffn1.FeedForward(data1, data1, error);
 
   auto ffn2 = create_ffn(vSize, hSize, 5, 0, 0);
   initWeights(ffn2.Network(), [](arma::mat &v){
     return v.zeros();
   });
-  ffn2.FeedForward(data1, data1, arma::mat());
+  ffn2.FeedForward(data1, data1, error);
 
   auto ffn3 = create_ffn(vSize, hSize, 5, 0, 0);
   initWeights(ffn3.Network(), [](arma::mat &v){
     return -v.ones();
   });
-  ffn3.FeedForward(data1, data1, arma::mat());
+  ffn3.FeedForward(data1, data1, error);
 
   // Test using first dataset. Values were calculated using Octave.
   BOOST_REQUIRE_CLOSE(ffn1.Error(), 1.190472606540, 1e-5);
@@ -168,19 +169,19 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
   initWeights(ffn4.Network(), [](arma::mat &v){
     return v.ones();
   });
-  ffn4.FeedForward(data2, data2, arma::mat());
+  ffn4.FeedForward(data2, data2, error);
 
   auto ffn5 = create_ffn(vSize, hSize, 5, 0, 0);
   initWeights(ffn5.Network(), [](arma::mat &v){
     return v.zeros();
   });
-  ffn5.FeedForward(data2, data2, arma::mat());
+  ffn5.FeedForward(data2, data2, error);
 
   auto ffn6 = create_ffn(vSize, hSize, 5, 0, 0);
   initWeights(ffn6.Network(), [](arma::mat &v){
     return -v.ones();
   });
-  ffn6.FeedForward(data2, data2, arma::mat());
+  ffn6.FeedForward(data2, data2, error);
 
   // Test using second dataset. Values were calculated using Octave.
   BOOST_REQUIRE_CLOSE(ffn4.Error(), 1.197585812647, 1e-5);
@@ -232,7 +233,8 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
     auto ffn = create_ffn(vSize, hSize, points, 0, 0);
     auto &net = ffn.Network();
     initWeights(net, parameters);
-    ffn.FeedForward(data1, data1, arma::mat());
+    arma::mat error;
+    ffn.FeedForward(data1, data1, error);
     BOOST_REQUIRE_CLOSE(ffn.Error(), reconstructionError, 1e-5);
   }
 }
@@ -269,15 +271,16 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
     // 3 objects for comparing regularization costs.
     auto safNoReg = create_ffn(vSize, hSize, points, 0, 0);
     initWeights(safNoReg.Network(), parameters);
-    safNoReg.FeedForward(data, data, arma::mat());
+    arma::mat error;
+    safNoReg.FeedForward(data, data, error);
 
     auto safSmallReg = create_ffn(vSize, hSize, points, 0.5, 0);
     initWeights(safSmallReg.Network(), parameters);
-    safSmallReg.FeedForward(data, data, arma::mat());
+    safSmallReg.FeedForward(data, data, error);
 
     auto safBigReg = create_ffn(vSize, hSize, points, 20, 0);
     initWeights(safBigReg.Network(), parameters);
-    safBigReg.FeedForward(data, data, arma::mat());
+    safBigReg.FeedForward(data, data, error);
 
     BOOST_REQUIRE_CLOSE(safNoReg.Error() + smallRegTerm,
                         safSmallReg.Error(), 1e-5);
@@ -333,15 +336,16 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
     // 3 objects for comparing divergence costs.
     auto safNoDiv = create_ffn(vSize, hSize, points, 0, 0, rho);
     initWeights(safNoDiv.Network(), parameters);
-    safNoDiv.FeedForward(data, data, arma::mat());
+    arma::mat error;
+    safNoDiv.FeedForward(data, data, error);
 
     auto safSmallDiv = create_ffn(vSize, hSize, points, 0, 5, rho);
     initWeights(safSmallDiv.Network(), parameters);
-    safSmallDiv.FeedForward(data, data, arma::mat());
+    safSmallDiv.FeedForward(data, data, error);
 
     auto safBigDiv = create_ffn(vSize, hSize, points, 0, 20, rho);
     initWeights(safBigDiv.Network(), parameters);
-    safBigDiv.FeedForward(data, data, arma::mat());
+    safBigDiv.FeedForward(data, data, error);
 
     BOOST_REQUIRE_CLOSE(safNoDiv.Error() + smallDivTerm,
                         safSmallDiv.Error(), 1e-5);
