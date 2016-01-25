@@ -10,7 +10,7 @@ namespace ann /** Artificial Neural Network. */ {
  * The cost function design for sparse autoencoder
  */
 template<typename DataType = arma::mat>
-class SparseErrorCost
+class SparseErrorFunction
 {
  public:
   /**
@@ -21,18 +21,18 @@ class SparseErrorCost
    * @param beta KL divergence parameter
    * @param rho Sparsity parameter
    */
-  SparseErrorCost(const double lambda = 0.0001,
-                  const double beta = 3,
-                  const double rho = 0.01) :    
+  SparseErrorFunction(const double lambda = 0.0001,
+                      const double beta = 3,
+                      const double rho = 0.01) :    
     lambda(lambda), beta(beta), rho(rho)
   {}
 
-  SparseErrorCost(SparseErrorFunction &&layer) noexcept
+  SparseErrorFunction(SparseErrorFunction &&layer) noexcept
   {
     *this = std::move(layer);
   }  
 
-  SparseErrorCost& operator=(SparseErrorFunction &&layer) noexcept
+  SparseErrorFunction& operator=(SparseErrorFunction &&layer) noexcept
   {    
     lambda = layer.lambda;
     beta = layer.beta;
@@ -98,8 +98,8 @@ class SparseErrorCost
     const double weightDecay = 0.5 * lambda * wL2SquaredNorm;
     const double klDivergence =
         beta * arma::accu(rho * arma::trunc_log(rho / rhoCap) + (1 - rho) *
-                          arma::trunc_log((1 - rho) / (1 - rhoCap)));    
-
+                          arma::trunc_log((1 - rho) / (1 - rhoCap)));
+						  
     // The cost is the sum of the terms calculated above.
     return sumOfSquaresError + weightDecay + klDivergence;
   }
@@ -109,7 +109,7 @@ class SparseErrorCost
   double beta;
   double rho;
 
-}; // class SparseErrorCost
+}; // class SparseErrorFunction
 
 }; // namespace ann
 }; // namespace mlpack
