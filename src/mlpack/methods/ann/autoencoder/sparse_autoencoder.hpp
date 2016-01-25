@@ -44,7 +44,7 @@ class SparseAutoencoder
   using Network = std::tuple<HiddenLayer, BiasLayer, HiddenActivate,
   OutputLayer, BiasLayer, OutputActivate>;
 
-  using FFN = FFN<Network, OneHotLayer, SparseErrorFunction<MatType>>;
+  using FFNet = FFN<Network, OneHotLayer, SparseErrorFunction<MatType>>;
  public:
   /**
    * Construct sparse autoencoder function
@@ -95,10 +95,10 @@ class SparseAutoencoder
              const double tolerance = 0.0001,
              const bool shuffle = true)
   {
-     Trainer<FFN, MatType> trainer(encoder, maxEpochs,
-                                   std::get<1>(encoder.Network()).BatchSize(),
-                                   tolerance,
-                                   shuffle);
+     Trainer<FFNet, MatType> trainer(encoder, maxEpochs,
+                                     std::get<1>(encoder.Network()).BatchSize(),
+                                     tolerance,
+                                     shuffle);
      trainer.Train(input, input, input, input);
   }
 
@@ -165,7 +165,7 @@ class SparseAutoencoder
  private:  
   const double range;
   OneHotLayer oneHotLayer;
-  FFN encoder;
+  FFNet encoder;
 };
 
 template<typename MatType = arma::mat,
