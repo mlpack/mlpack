@@ -58,9 +58,9 @@ class SparseErrorFunction
    * @param error different between output and the input
    * @return sum of squared errors.
    */
-  template<typename DataType, typename... Tp>
-  double Error(const std::tuple<Tp...>& network,
-               const DataType& target, const DataType &error)
+  template<typename InType, typename Tp>
+  double Error(const Tp& network,
+               const InType& target, const InType &error)
   {
     return Error(std::get<0>(network).Weights(),
                  std::get<3>(network).Weights(),
@@ -78,10 +78,10 @@ class SparseErrorFunction
    * @param error different between output and the input
    * @return sum of squared errors.
    */
-  template<typename DataType>
-  double Error(const DataType& w1, const DataType& w2,
-               const DataType& rhoCap, const DataType& target,
-               const DataType& error)
+  template<typename InType>
+  double Error(const InType& w1, const InType& w2,
+               const InType& rhoCap, const InType& target,
+               const InType& error)
   {
     // Calculate squared L2-norms of w1 and w2.
     const double wL2SquaredNorm =
