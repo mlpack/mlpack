@@ -134,9 +134,8 @@ class SparseBiasLayer
    */
   template<typename eT>
   void Gradient(const arma::Mat<eT>& d, InputDataType& g)
-  {
-    using inputDataType = std::decay<decltype(inputParameter[0])>::type;
-    g = arma::sum(d, 1) / static_cast<inputDataType>(batchSize);    
+  {    
+    g = arma::sum(d, 1) / static_cast<typename InputDataType::value_type>(batchSize);
   }
 
   //! Get the optimizer.

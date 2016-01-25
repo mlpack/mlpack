@@ -144,10 +144,9 @@ class SparseOutputLayer
    */
   template<typename eT>
   void Gradient(const arma::Mat<eT>& d, arma::Mat<eT>& g)
-  {    
-    using inputDataType = std::decay<decltype(inputParameter[0])>::type;    
+  {        
     g = d * inputParameter.t() /
-        static_cast<inputDataType>(inputParameter.n_cols) +
+        static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
         lambda * weights;    
   }
 
