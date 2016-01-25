@@ -149,6 +149,16 @@ class FFN
   {
     return network;
   }
+  
+  OutputLayerType& OutputLayer()
+  {
+	return outputLayer;
+  }
+  
+  OutputLayerType const& OutputLayer() const
+  {
+	return outputLayer;
+  }
 
  private:
   /**
@@ -404,7 +414,7 @@ class FFN
   LayerTypes network;
 
   //! The outputlayer used to evaluate the network
-  OutputLayerType& outputLayer;
+  OutputLayerType outputLayer;
 
   //! Performance strategy used to claculate the error.
   PerformanceFunction performanceFunc;
