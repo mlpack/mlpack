@@ -8,25 +8,15 @@
 #define BOOST_TEST_MODULE SparseAutoencoder
 
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-#include <mlpack/methods/ann/layer/dropout_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/one_hot_layer.hpp>
 #include <mlpack/methods/ann/layer/softmax_layer.hpp>
-#include <mlpack/methods/ann/layer/conv_layer.hpp>
-#include <mlpack/methods/ann/layer/lstm_layer.hpp>
-#include <mlpack/methods/ann/layer/pooling_layer.hpp>
-#include <mlpack/methods/ann/layer/recurrent_layer.hpp>
 #include <mlpack/methods/ann/layer/sparse_input_layer.hpp>
 #include <mlpack/methods/ann/layer/sparse_output_layer.hpp>
 #include <mlpack/methods/ann/layer/sparse_bias_layer.hpp>
-#include <mlpack/methods/ann/layer/empty_layer.hpp>
 
 #include <mlpack/methods/ann/trainer/trainer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
