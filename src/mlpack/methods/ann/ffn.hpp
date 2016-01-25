@@ -39,17 +39,20 @@ class FFN
    * @param outputLayer The outputlayer used to evaluate the network.
    * @param performanceFunction Performance strategy used to claculate the error.
    */  
-  template<typename Layer>
-  FFN(Layer &&network, OutputLayerType &outputLayer,
+  template<typename Layer, typename OutLayer>
+  FFN(Layer &&network, OutLayer &&outputLayer,
       PerformanceFunction performanceFunction = PerformanceFunction())
     : network(std::forward<Layer>(network)),
-      outputLayer(outputLayer),
+      outputLayer(std::forward<OutLayer>(outputLayer)),
       performanceFunc(std::move(performanceFunction)),
       trainError(0)
   {
     static_assert(std::is_same<typename std::decay<Layer>::type,
                   LayerTypes>::value,
                   "The type of network must be LayerTypes");
+	static_assert(std::is_same<typename std::decay<OutLayer>::type,
+                  OutputLayerType>::value,
+                  "The type of outputLayer must be OutLayer");
   }  
 
   /**
