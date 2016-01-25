@@ -26,14 +26,8 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/autoencoder/sparse_autoencoder.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
-
-#include <algorithm>
-#include <tuple>
-#include <vector>
 
 using namespace mlpack;
 using namespace arma;
