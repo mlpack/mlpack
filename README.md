@@ -30,9 +30,9 @@ mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
 2. Citation details
 -------------------
