@@ -192,17 +192,17 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
       endif ()
     endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
 
-    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
       message(FATAL_ERROR "Cannot find LAPACK library, but ARMA_USE_LAPACK is "
           "set. Try specifying LAPACK libraries manually by setting the "
           "LAPACK_LIBRARY variable.")
-    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
 
-    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
       message(FATAL_ERROR "Cannot find BLAS library, but ARMA_USE_BLAS is set. "
           "Try specifying BLAS libraries manually by setting the BLAS_LIBRARY "
           "variable.")
-    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
 
     # Search for ARPACK (or replacement).
     if (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
