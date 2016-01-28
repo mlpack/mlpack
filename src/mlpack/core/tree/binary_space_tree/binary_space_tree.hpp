@@ -42,7 +42,8 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename BoundMetricType> class BoundType = bound::HRectBound,
+         template<typename BoundMetricType, typename...> class BoundType =
+            bound::HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
             class SplitType = MidpointSplit>
 class BinarySpaceTree

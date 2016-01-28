@@ -22,7 +22,7 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -49,7 +49,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -82,7 +82,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -121,7 +121,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -146,7 +146,7 @@ BinarySpaceTree(MatType&& data, const size_t maxLeafSize) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -179,7 +179,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -218,7 +218,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -246,7 +246,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -279,7 +279,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -322,7 +322,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -381,7 +381,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -416,7 +416,7 @@ BinarySpaceTree(BinarySpaceTree&& other) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
@@ -439,7 +439,7 @@ BinarySpaceTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -456,7 +456,7 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline bool BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -471,7 +471,7 @@ inline bool BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -492,7 +492,7 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -515,7 +515,7 @@ inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -528,7 +528,7 @@ inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -543,7 +543,7 @@ inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -563,7 +563,7 @@ inline BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -581,7 +581,7 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -596,7 +596,7 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -611,7 +611,7 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
@@ -623,7 +623,7 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -679,7 +679,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -738,7 +738,7 @@ SplitNode(std::vector<size_t>& oldFromNew,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -762,7 +762,7 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
