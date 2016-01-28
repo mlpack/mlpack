@@ -41,11 +41,11 @@ struct IsLMetric<metric::LMetric<Power, TakeRoot>>
  * with the LMetric class.  Be sure to use the same template parameters for
  * LMetric as you do for HRectBound -- otherwise odd results may occur.
  *
- * @tparam Power The metric to use; use 2 for Euclidean (L2).
- * @tparam TakeRoot Whether or not the root should be taken (see LMetric
- *     documentation).
+ * @tparam MetricType Type of metric to use; must be of type LMetric.
+ * @tparam ElemType Element type (double/float/int/etc.).
  */
-template<typename MetricType = metric::LMetric<2, true>>
+template<typename MetricType = metric::LMetric<2, true>,
+         typename ElemType = double>
 class HRectBound
 {
   // It is required that HRectBound have an LMetric as the given MetricType.
@@ -86,28 +86,29 @@ class HRectBound
 
   //! Get the range for a particular dimension.  No bounds checking.  Be
   //! careful: this may make MinWidth() invalid.
-  math::Range& operator[](const size_t i) { return bounds[i]; }
+  math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
-  const math::Range& operator[](const size_t i) const { return bounds[i]; }
+  const math::RangeType<ElemType>& operator[](const size_t i) const
+  { return bounds[i]; }
 
   //! Get the minimum width of the bound.
-  double MinWidth() const { return minWidth; }
+  ElemType MinWidth() const { return minWidth; }
   //! Modify the minimum width of the bound.
-  double& MinWidth() { return minWidth; }
+  ElemType& MinWidth() { return minWidth; }
 
   /**
    * Calculates the center of the range, placing it into the given vector.
    *
    * @param center Vector which the center will be written to.
    */
-  void Center(arma::vec& center) const;
+  void Center(arma::Col<ElemType>& center) const;
 
   /**
    * Calculate the volume of the hyperrectangle.
    *
    * @return Volume of the hyperrectangle.
    */
-  double Volume() const;
+  ElemType Volume() const;
 
   /**
    * Calculates minimum bound-to-point distance.
@@ -115,15 +116,15 @@ class HRectBound
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
-  double MinDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >* = 0) const;
+  ElemType MinDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound distance.
    *
    * @param other Bound to which the minimum distance is requested.
    */
-  double MinDistance(const HRectBound& other) const;
+  ElemType MinDistance(const HRectBound& other) const;
 
   /**
    * Calculates maximum bound-to-point squared distance.
@@ -131,15 +132,15 @@ class HRectBound
    * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
-  double MaxDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >* = 0) const;
+  ElemType MaxDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Computes maximum distance.
    *
    * @param other Bound to which the maximum distance is requested.
    */
-  double MaxDistance(const HRectBound& other) const;
+  ElemType MaxDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.
@@ -147,7 +148,7 @@ class HRectBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::Range RangeDistance(const HRectBound& other) const;
+  math::RangeType<ElemType> RangeDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
@@ -156,9 +157,9 @@ class HRectBound
    *     requested.
    */
   template<typename VecType>
-  math::Range RangeDistance(const VecType& point,
-                            typename boost::enable_if<IsVector<VecType> >* = 0)
-      const;
+  math::RangeType<ElemType> RangeDistance(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Expands this region to include new points.
@@ -184,7 +185,7 @@ class HRectBound
   /**
    * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
    */
-  double Diameter() const;
+  ElemType Diameter() const;
 
   /**
    * Serialize the bound object.
@@ -196,14 +197,14 @@ class HRectBound
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
-  math::Range* bounds;
+  math::RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
-  double minWidth;
+  ElemType minWidth;
 };
 
 // A specialization of BoundTraits for this class.
-template<typename MetricType>
-struct BoundTraits<HRectBound<MetricType>>
+template<typename MetricType, typename ElemType>
+struct BoundTraits<HRectBound<MetricType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
   const static bool HasTightBounds = true;
