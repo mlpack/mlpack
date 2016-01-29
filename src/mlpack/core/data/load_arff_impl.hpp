@@ -168,6 +168,14 @@ void LoadARFF(const std::string& filename,
     std::stringstream token;
     for (Tokenizer::iterator it = tok.begin(); it != tok.end(); ++it)
     {
+      // Check that we are not too many columns in.
+      if (col >= matrix.n_rows)
+      {
+        std::stringstream error;
+        error << "Too many columns in line " << (headerLines + row) << ".";
+        throw std::runtime_error(error.str());
+      }
+
       // What should this token be?
       if (info.Type(col) == Datatype::categorical)
       {
