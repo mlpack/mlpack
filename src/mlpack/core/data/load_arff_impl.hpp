@@ -10,6 +10,8 @@
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
 
+#include <boost/algorithm/string.hpp>
+
 namespace mlpack {
 namespace data {
 
@@ -181,11 +183,14 @@ void LoadARFF(const std::string& filename,
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.
             std::stringstream error;
-            if (token.str() == "?")
-              error << "missing values ('?') not supported ";
+            std::string tokenStr = token.str();
+            boost::trim(tokenStr);
+            if (tokenStr == "?")
+              error << "Missing values ('?') not supported, ";
             else
-              error << "parse error ";
-            error << "at line " << (headerLines + row) << " token " << col;
+              error << "Parse error ";
+            error << "at line " << (headerLines + row) << " token " << col
+                << ": \"" << tokenStr << "\".";
             throw std::runtime_error(error.str());
           }
         }
