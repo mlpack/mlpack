@@ -3,12 +3,12 @@
 # assumes ${ARMADILLO_INCLUDE_DIR} is set.  In addition, we must be careful to
 # avoid overwriting arma_config.hpp with the exact same information, because
 # this may trigger a new complete rebuild, which is undesired.
-if(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
       OLD_FILE_CONTENTS)
-else(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
   set(OLD_FILE_CONTENTS "")
-endif(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
 
 # If we are using Armadillo 5+, ARMA_64BIT_WORD is implicitly enabled.
 set(ARMA_HAS_64BIT_WORD 0) # This may be unnecessary.
@@ -74,8 +74,8 @@ ${ARMA_64BIT_WORD_DEFINE}
 if(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
   # We have a reason to write the new file.
   message(STATUS "Regenerating arma_config.hpp.")
-  file(REMOVE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-  file(WRITE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
+  file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+  file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
       "${NEW_FILE_CONTENTS}")
 endif(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
 
