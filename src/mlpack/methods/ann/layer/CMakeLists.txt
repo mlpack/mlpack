@@ -11,6 +11,9 @@ set(SOURCES
   pooling_layer.hpp
   recurrent_layer.hpp
   lstm_layer.hpp
+  sparse_bias_layer.hpp
+  sparse_input_layer.hpp
+  sparse_output_layer.hpp
 )
 
 # Add directory name to sources.
