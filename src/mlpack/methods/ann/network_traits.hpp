@@ -36,6 +36,11 @@ class NetworkTraits
    * This is true if the network is a convolutional neural network.
    */
   static const bool IsCNN = false;
+
+  /**
+   * This is true if the network is a sparse autoencoder.
+   */
+  static const bool IsSAE = false;
 };
 
 } // namespace ann
