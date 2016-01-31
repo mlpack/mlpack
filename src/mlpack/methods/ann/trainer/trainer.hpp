@@ -88,8 +88,10 @@ class Trainer
         if (shuffle)
           index = arma::shuffle(index);
 
-        Train(trainingData, trainingLabels);
-        Evaluate(validationData, validationLabels);
+        Train<InputType, OutputType, NetworkType>(
+            trainingData, trainingLabels);
+        Evaluate<InputType, OutputType, NetworkType>(
+            validationData, validationLabels);
 
         if (validationError <= tolerance)
           break;
@@ -132,8 +134,9 @@ class Trainer
      * @param data Data used to train the network.
      * @param target Labels used to train the network.
      */
-    template<typename InputType, typename OutputType>
-    void Train(InputType& data, OutputType& target)
+    template<typename InputType, typename OutputType, typename ModelType>
+    typename std::enable_if<!NetworkTraits<ModelType>::IsSAE, void>::type
+    Train(InputType& data, OutputType& target)
     {
       // Reset the training error.
       trainingError = 0;
@@ -157,13 +160,54 @@ class Trainer
     }
 
     /**
+     * Train the sparse autoencoder on the given dataset.
+     *
+     * @param data Data used to train the network.
+     */
+    template<typename InputType, typename OutputType, typename ModelType>
+    typename std::enable_if<NetworkTraits<ModelType>::IsSAE, void>::type
+    Train(InputType& data, OutputType& /* unused */)
+    {
+      // Reset the training error.
+      trainingError = 0;
+
+      arma::uvec indices(batchSize);
+
+      if (index.n_elem > batchSize)
+      {
+        for (size_t i = 0; i < index.n_elem; i += batchSize)
+        {
+          for (size_t j = 0; j < batchSize; j++)
+            indices(j) = index(j + i);
+
+          MatType input = data.rows(indices);
+          net.FeedForward(input, input, error);
+
+          trainingError += net.Error();
+          net.FeedBackward(input, error);
+          net.ApplyGradients();
+        }
+
+        trainingError /= (index.n_elem / batchSize);
+      }
+      else
+      {
+        net.FeedForward(data, data, error);
+        trainingError += net.Error();
+        net.FeedBackward(data, error);
+        net.ApplyGradients();
+      }
+    }
+
+    /**
      * Evaluate the network on the given dataset.
      *
      * @param data Data used to train the network.
      * @param target Labels used to train the network.
      */
-    template<typename InputType, typename OutputType>
-    void Evaluate(InputType& data, OutputType& target)
+    template<typename InputType, typename OutputType, typename ModelType>
+    typename std::enable_if<!NetworkTraits<ModelType>::IsSAE, void>::type
+    Evaluate(InputType& data, OutputType& target)
     {
       // Reset the validation error.
       validationError = 0;
@@ -177,6 +221,10 @@ class Trainer
       validationError /= ElementCount(data);
     }
 
+    template<typename InputType, typename OutputType, typename ModelType>
+    typename std::enable_if<NetworkTraits<ModelType>::IsSAE, void>::type
+    Evaluate(InputType& data, OutputType& target) { /* Nothing to do here */ }
+
     /*
      * Create a Col object which uses memory from an existing matrix object.
      * (This approach is currently not alias safe)
@@ -185,24 +233,7 @@ class Trainer
      * @param sliceNum Provide a Col object of the specified index.
      */
     template<typename eT>
-    typename std::enable_if<!NetworkTraits<NetworkType>::IsCNN,
-        arma::Mat<eT> >::type
-    Element(arma::Mat<eT>& input, const size_t colNum)
-    {
-      return arma::Mat<eT>(input.colptr(colNum), input.n_rows, 1, false, true);
-    }
-
-    /*
-     * Create a Mat object which uses memory from an existing matrix object.
-     * (This approach is currently not alias safe)
-     *
-     * @param data The reference data.
-     * @param sliceNum Provide a Mat object of the specified index.
-     */
-    template<typename eT>
-    typename std::enable_if<NetworkTraits<NetworkType>::IsCNN,
-        arma::Mat<eT> >::type
-    Element(arma::Mat<eT>& input, const size_t colNum)
+    arma::Mat<eT> Element(arma::Mat<eT>& input, const size_t colNum)
     {
       return arma::Mat<eT>(input.colptr(colNum), input.n_rows, 1, false, true);
     }
