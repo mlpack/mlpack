@@ -30,7 +30,7 @@ class CrossEntropyErrorFunction
 {
  public:
   /**
-   * Computes the cost of sparse autoencoder
+   * Computes the cross-entropy error function..
    *
    * @param network Network type of FFN, CNN or RNN
    * @param target Target data.
@@ -63,7 +63,7 @@ class CrossEntropyErrorFunction
 
 }; // class CrossEntropyErrorFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

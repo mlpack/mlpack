@@ -29,7 +29,8 @@ class SumSquaredErrorFunction
    */  
   template<typename DataType, typename... Tp>
   static double Error(const std::tuple<Tp...>& network,
-                      const DataType& target, const DataType &error)
+                      const DataType& target,
+                      const DataType &error)
   {
     return Error(std::get<sizeof...(Tp) - 1>(network).OutputParameter(),
                  target, error);
@@ -44,14 +45,15 @@ class SumSquaredErrorFunction
    */
   template<typename DataType>
   static double Error(const DataType& input,
-                      const DataType& target, const DataType&)
+                      const DataType& target,
+                      const DataType&)
   {
     return arma::sum(arma::square(target - input));
   }
 
 }; // class SumSquaredErrorFunction
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the SparseInputLayer. The SparseInputLayer class represents the
- * first layer of sparse autoencoder
+ * Implementation of the SparseInputLayer. The SparseInputLayer class represents
+ * the first layer of sparse autoencoder
  *
  * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam WeightInitRule Rule used to initialize the weight matrix.
@@ -45,6 +45,7 @@ class SparseInputLayer
    * @param outSize The number of output units.
    * @param WeightInitRule The weight initialization rule used to initialize the
    *        weight matrix.
+   * @param lambda L2-regularization parameter.
    */
   SparseInputLayer(const size_t inSize,
                    const size_t outSize,                   
@@ -54,10 +55,10 @@ class SparseInputLayer
     outSize(outSize),
     lambda(lambda),
     optimizer(new OptimizerType<SparseInputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
+                                                 WeightInitRule,
+                                                 InputDataType,
+                                                 OutputDataType>,
+                                                 OutputDataType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
@@ -72,7 +73,13 @@ class SparseInputLayer
   {
     ownsOptimizer = layer.ownsOptimizer;
     layer.ownsOptimizer = false;
-    optimizer = layer.optimizer;
+
+    optimizer = new OptimizerType<SparseInputLayer<OptimizerType,
+                                                   WeightInitRule,
+                                                   InputDataType,
+                                                   OutputDataType>,
+                                                   OutputDataType>(*this);
+
     layer.optimizer = nullptr;
 
     inSize = layer.inSize;
@@ -134,7 +141,7 @@ class SparseInputLayer
    */
   template<typename eT, typename GradientDataType>
   void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
-  {        
+  {
     g = d * inputParameter.t() /
         static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
         lambda * weights;
@@ -142,17 +149,17 @@ class SparseInputLayer
 
   //! Get the optimizer.
   OptimizerType<SparseInputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer() const
+                                 WeightInitRule,
+                                 InputDataType,
+                                 OutputDataType>, OutputDataType>& Optimizer() const
   {
     return *optimizer;
   }
   //! Modify the optimizer.
   OptimizerType<SparseInputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer()
+                                 WeightInitRule,
+                                 InputDataType,
+                                 OutputDataType>, OutputDataType>& Optimizer()
   {
     return *optimizer;
   }
@@ -178,7 +185,7 @@ class SparseInputLayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const {return gradient; }
+  OutputDataType& Gradient() const {return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
@@ -209,9 +216,9 @@ class SparseInputLayer
 
   //! Locally-stored pointer to the optimzer object.
   OptimizerType<SparseInputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>* optimizer;
+                                 WeightInitRule,
+                                 InputDataType,
+                                 OutputDataType>, OutputDataType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
@@ -223,7 +230,7 @@ template<
     typename WeightInitRule,
     typename InputDataType,
     typename OutputDataType
-    >
+>
 class LayerTraits<SparseInputLayer<
     OptimizerType, WeightInitRule, InputDataType, OutputDataType> >
 {
@@ -235,7 +242,7 @@ public:
   static const bool IsConnection = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

@@ -782,9 +782,10 @@ class NetworkTraits<
   static const bool IsFNN = false;
   static const bool IsRNN = true;
   static const bool IsCNN = false;
+  static const bool IsSAE = false;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

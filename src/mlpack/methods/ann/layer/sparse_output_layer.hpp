@@ -2,7 +2,7 @@
  * @file sparse_output_layer.hpp
  * @author Tham Ngap Wei
  *
- * This is the fourth layer of sparse autoencoder
+ * This is the fourth layer of sparse autoencoder.
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
@@ -16,8 +16,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the SparseOutputLayer class. The SparseOutputLayer class represents 
- * the fourth layer of the sparse autoencoder.
+ * Implementation of the SparseOutputLayer class. The SparseOutputLayer class
+ * represents  the fourth layer of the sparse autoencoder.
  *
  * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam WeightInitRule Rule used to initialize the weight matrix.
@@ -31,7 +31,7 @@ template <
     class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
-    >
+>
 class SparseOutputLayer
 {
  public:
@@ -73,7 +73,7 @@ class SparseOutputLayer
   {
     ownsOptimizer = layer.ownsOptimizer;
     optimizer = layer.optimizer;
-    layer.ownsOptimizer = false;    
+    layer.ownsOptimizer = false;
     layer.optimizer = nullptr;
 
     beta = layer.beta;
@@ -130,10 +130,12 @@ class SparseOutputLayer
                 arma::Mat<eT>& g)
   {
     const arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
-	// if the armadillo version high enough, find_nonfinite can prevents overflow value
-    //klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
+
+    // NOTE: if the armadillo version high enough, find_nonfinite can prevents
+    // overflow value:
+    // klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
     g = weights.t() * gy +
-        arma::repmat(klDivGrad, 1, input.n_cols);    
+        arma::repmat(klDivGrad, 1, input.n_cols);
   }
 
   /*
@@ -257,13 +259,13 @@ class SparseOutputLayer
 
   //! Locally-stored pointer to the optimzer object.
   OptimizerType<SparseOutputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>* optimizer;
+                                  WeightInitRule,
+                                  InputDataType,
+                                  OutputDataType>, OutputDataType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
-}; // class SparseLayer
+}; // class SparseOutputLayer
 
 //! Layer traits for the SparseOutputLayer.
 template<
@@ -283,7 +285,7 @@ public:
   static const bool IsConnection = true;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

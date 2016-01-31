@@ -129,10 +129,7 @@ class CNN
   }
 
   //! Get the error of the network.
-  double Error() const
-  {
-    return trainError;
-  }
+  double Error() const { return trainError; }
 
  private:
   /**
@@ -301,11 +298,19 @@ class CNN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I == Max, void>::type
   UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& t)
   {
@@ -339,14 +344,22 @@ class CNN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I == Max, void>::type
   ApplyGradients(std::tuple<Tp...>& /* unused */)
   {
     /* Nothing to do here */
   }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I < Max, void>::type
   ApplyGradients(std::tuple<Tp...>& t)
   {
@@ -413,9 +426,10 @@ class NetworkTraits<
   static const bool IsFNN = false;
   static const bool IsRNN = false;
   static const bool IsCNN = true;
+  static const bool IsSAE = false;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

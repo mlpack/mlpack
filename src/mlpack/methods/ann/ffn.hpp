@@ -12,6 +12,7 @@
 #include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
+#include <mlpack/methods/ann/performance_functions/sparse_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -49,10 +50,11 @@ class FFN
   {
     static_assert(std::is_same<typename std::decay<Layer>::type,
                   LayerTypes>::value,
-                  "The type of network must be LayerTypes");
-	static_assert(std::is_same<typename std::decay<OutLayer>::type,
+                  "The type of network must be LayerTypes.");
+
+    static_assert(std::is_same<typename std::decay<OutLayer>::type,
                   OutputLayerType>::value,
-                  "The type of outputLayer must be OutLayer");
+                  "The type of outputLayer must be OutputLayerType.");
   }  
 
   /**
@@ -70,7 +72,7 @@ class FFN
                    ErrorType& error)
   {
     deterministic = false;
-    trainError += Evaluate(input, target, error);
+    trainError = Evaluate(input, target, error);
   }
 
   /**
@@ -135,30 +137,17 @@ class FFN
   }
 
   //! Get the error of the network.
-  double Error() const
-  {
-    return trainError;
-  }
+  double Error() const { return trainError; }
 
-  LayerTypes& Network()
-  {
-    return network;
-  }
+  //! Get the constructed network object.
+  LayerTypes const& Model() const { return network; }
+  //! Modify the constructed network object.
+  LayerTypes& Model() { return network; }
 
-  LayerTypes const& Network() const
-  {
-    return network;
-  }
-  
-  OutputLayerType& OutputLayer()
-  {
-	return outputLayer;
-  }
-  
-  OutputLayerType const& OutputLayer() const
-  {
-	return outputLayer;
-  }
+  //! Get the output layer object.
+  OutputLayerType const& OutputLayer() const { return outputLayer; }
+  //! Modify the output layer object.
+  OutputLayerType& OutputLayer() { return outputLayer; }
 
  private:
   /**
@@ -327,17 +316,25 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I == Max, void>::type
   UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& t)
   {   
     Update(std::get<I>(t), std::get<I>(t).OutputParameter(),
            std::get<I + 1>(t).Delta());    
-		   
+
     UpdateGradients<I + 1, Max, Tp...>(t);
   }
 
@@ -346,7 +343,7 @@ class FFN
       HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Update(T& t, P& /* unused */, D& delta)
   {
-    t.Gradient(delta, t.Gradient());    
+    t.Gradient(delta, t.Gradient());
     t.Optimizer().Update();
   }
 
@@ -365,14 +362,22 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I == Max, void>::type
   ApplyGradients(std::tuple<Tp...>& /* unused */)
   {
     /* Nothing to do here */
   }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename... Tp>
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
   typename std::enable_if<I < Max, void>::type
   ApplyGradients(std::tuple<Tp...>& t)
   {
@@ -439,9 +444,25 @@ class NetworkTraits<
   static const bool IsFNN = true;
   static const bool IsRNN = false;
   static const bool IsCNN = false;
+  static const bool IsSAE = false;
 };
 
-}; // namespace ann
-}; // namespace mlpack
+//! Network traits for the FFN network.
+template <
+  typename LayerTypes,
+  typename OutputLayerType
+>
+class NetworkTraits<
+    FFN<LayerTypes, OutputLayerType, SparseErrorFunction<arma::mat> > >
+{
+ public:
+  static const bool IsFNN = false;
+  static const bool IsRNN = false;
+  static const bool IsCNN = false;
+  static const bool IsSAE = true;
+};
+
+} // namespace ann
+} // namespace mlpack
 
 #endif
