@@ -223,7 +223,7 @@ class Trainer
 
     template<typename InputType, typename OutputType, typename ModelType>
     typename std::enable_if<NetworkTraits<ModelType>::IsSAE, void>::type
-    Evaluate(InputType& data, OutputType& target) { /* Nothing to do here */ }
+    Evaluate(InputType& /* unused */, OutputType& /* unused */) { /* Nothing to do here */ }
 
     /*
      * Create a Col object which uses memory from an existing matrix object.
