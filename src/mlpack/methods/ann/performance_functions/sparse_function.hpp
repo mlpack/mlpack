@@ -1,5 +1,6 @@
 /**
  * @file sparse_function.hpp
+ * @author Siddharth Agrawal
  * @author Tham Ngap Wei
  *
  * Definition and implementation of the sparse performance function.
