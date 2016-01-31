@@ -1,281 +1,184 @@
 /**
- * @file sparse_autoencoder.hpp
- * @author Siddharth Agrawal
+ * @file one_hot_layer.hpp
+ * @author Shangtong Zhang
  *
- * An implementation of sparse autoencoders.
+ * Definition of the OneHotLayer class, which implements a standard network
+ * layer.
  */
-#ifndef __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
-#define __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
+#ifndef __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_HPP
+#define __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp>
+#include <mlpack/methods/ann/layer/one_hot_layer.hpp>
+#include <mlpack/methods/ann/layer/sparse_bias_layer.hpp>
+#include <mlpack/methods/ann/layer/sparse_input_layer.hpp>
+#include <mlpack/methods/ann/layer/sparse_output_layer.hpp>
+
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
+
+#include <mlpack/methods/ann/performance_functions/sparse_function.hpp>
 
 namespace mlpack {
-namespace nn {
+namespace ann /** Artificial Neural Network. */ {
 
-/**
- * A sparse autoencoder is a neural network whose aim to learn compressed
- * representations of the data, typically for dimensionality reduction, with a
- * constraint on the activity of the neurons in the network. Sparse autoencoders
- * can be stacked together to learn a hierarchy of features, which provide a
- * better representation of the data for classification. This is a method used
- * in the recently developed field of deep learning. More technical details
- * about the model can be found on the following webpage:
- *
- * http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial
- *
- * An example of how to use the interface is shown below:
- *
- * @code
- * arma::mat data; // Data matrix.
- * const size_t vSize = 64; // Size of visible layer, depends on the data.
- * const size_t hSize = 25; // Size of hidden layer, depends on requirements.
- *
- * // Train the model using default options.
- * SparseAutoencoder encoder1(data, vSize, hSize);
- *
- * const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
- * const size_t numIterations = 100; // Maximum number of iterations.
- *
- * // Use an instantiated optimizer for the training.
- * SparseAutoencoderFunction saf(data, vSize, hSize);
- * L_BFGS<SparseAutoencoderFunction> optimizer(saf, numBasis, numIterations);
- * SparseAutoencoder<L_BFGS> encoder2(optimizer);
- *
- * arma::mat features1, features2; // Matrices for storing new representations.
- *
- * // Get new representations from the trained models.
- * encoder1.GetNewFeatures(data, features1);
- * encoder2.GetNewFeatures(data, features2);
- * @endcode
- *
- * This implementation allows the use of arbitrary mlpack optimizers via the
- * OptimizerType template parameter.
- *
- * @tparam HiddenLayer The layer type of the hidden layer, this type must
- * provide functions "Forward(const InputType& input, OutputType& output)"
- * and "Backward(const DataType& input, const DataType& gy, DataType& g)"
- * the InputType, OutpuType, DataType must be able to accept arma::mat.
- *
- * @tparam OutputLayer The layer type of the output, this type must
- * provide functions "Forward(const InputType& input, OutputType& output)"
- * and "Backward(const DataType& input, const DataType& gy, DataType& g)"
- * the InputType, OutpuType, DataType must be able to accept arma::mat.
- *
- * @tparam OptimizerType The optimizer to use; by default this is L-BFGS.  Any
- *     mlpack optimizer can be used here.
- */
-template<
-  typename HiddenLayer = ann::SigmoidLayer<ann::LogisticFunction>,
-  typename OutputLayer = HiddenLayer,
-  template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
+template<typename HiddenActivate = BaseLayer<LogisticFunction>,
+         typename OutputActivate = HiddenActivate,
+         typename MatType = arma::mat,
+         template<typename,typename> class Optimize = RMSPROP,
+         typename HiddenLayer = SparseInputLayer
+         <Optimize, RandomInitialization, MatType, MatType>,
+         typename OutputLayer = SparseOutputLayer
+         <Optimize, RandomInitialization, MatType, MatType>
+         >
 class SparseAutoencoder
-{
- public:
-  using HidLayer = HiddenLayer;
-  using OutLayer = OutputLayer;
-  
-  SparseAutoencoder(SparseAutoencoder &&sae);
-  SparseAutoencoder& operator=(SparseAutoencoder &&sae);
- 
-  /**
-   * Initialize the sparse autoencoder without performing training. The
-   * Parameters(vector of w1,w2,b1,b2) will be initialize to zero.
-   * lambda will be 0.0001, beta is 3 and rho is 0.01. Be sure to use
-   * Train() before calling Predict(), otherwise the results may be
-   * meaningless.
-   *
-   * @param visibleSize Size of input vector expected at the visible layer.
-   * @param hiddenSize Size of input vector expected at the hidden layer.
-   */
-  SparseAutoencoder(size_t visibleSize, size_t hiddenSize);
+{  
+  using BiasLayer =
+  SparseBiasLayer<Optimize, ZeroInitialization, MatType, MatType>;
 
+  using Network = std::tuple<HiddenLayer, BiasLayer, HiddenActivate,
+  OutputLayer, BiasLayer, OutputActivate>;
+
+  using FFNet = FFN<Network, OneHotLayer, SparseErrorFunction<MatType>>;
+ public:
   /**
-   * Construct the sparse autoencoder model with the given training data. This
-   * will train the model. The parameters 'lambda', 'beta' and 'rho' can be set
-   * optionally. Changing these parameters will have an effect on regularization
-   * and sparsity of the model.
-   *
-   * @param data Input data with each column as one example.
-   * @param visibleSize Size of input vector expected at the visible layer.
-   * @param hiddenSize Size of input vector expected at the hidden layer.
+   * Construct sparse autoencoder function
+   * @param visibleSize Visible size of the input data, it is same as the feature
+   * size of the training data
+   * @param hiddenSize Hidden size of the hidden layer, usually it should be
+   * smaller than the visible size
+   * @param batchSize The batch size used to train the network.
    * @param lambda L2-regularization parameter.
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
    */
-  SparseAutoencoder(const arma::mat& data,
-                    size_t visibleSize,
+  SparseAutoencoder(size_t visibleSize,
                     size_t hiddenSize,
-                    double lambda = 0.0001,
-                    double beta = 3,
-                    double rho = 0.01);
+                    size_t batchSize,
+                    const double lambda = 0.0001,
+                    const double beta = 3,
+                    const double rho = 0.01) :
+    range(std::sqrt(6) / std::sqrt(visibleSize + hiddenSize + 1)),
+    encoder(std::make_tuple(
+              HiddenLayer(visibleSize, hiddenSize, {-range, range},
+                          lambda),
+              BiasLayer(hiddenSize, batchSize),
+              HiddenActivate(),
+              OutputLayer(hiddenSize, visibleSize, {-range, range},
+                          lambda, beta, rho),
+              BiasLayer(visibleSize, batchSize),
+              OutputActivate()),
+            oneHotLayer,
+            SparseErrorFunction<MatType>(lambda, beta, rho))
+  {
+  }
 
   /**
-   * Construct the sparse autoencoder model with the given training data. This
-   * will train the model. This overload takes an already instantiated optimizer
-   * and uses it to train the model. The optimizer should hold an instantiated
-   * SparseAutoencoderFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
+   * Train the sparse autoencoder network
    *
-   * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param input Data used to train the network
+   * @param maxEpochs The number of maximal trained iterations (0 means no
+   * limit).
+   * @param batchSize The batch size used to train the network.
+   * @param tolerance Train the network until it converges against
+   * the specified threshold.
+   * @param shuffle If true, the order of the training set is shuffled;
+   * otherwise, each data is visited in linear order.
    */
-  template<typename SparseAutoEncoderFunc>
-  explicit SparseAutoencoder(OptimizerType<SparseAutoEncoderFunc>& optimizer);
-
-  /**
-   * Train the sparse autoencoder with the given training data.
-   * @param data Input data with each column as one example.
-   * @param Size of input vector expected at the hidden layer.
-   * @return Objective value of the final point.
-   */
-  double Train(arma::mat const &data, size_t hiddenSize);
-
-  /**
-   * Train the sparse autoencoder model with the given optimizer.
-   * The optimizer should hold an instantiated
-   * SparseAutoencoderFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   *
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   * @return Objective value of the final point.
-   */
-  template<typename SparseAutoEncoderFunc>
-  double Train(OptimizerType<SparseAutoEncoderFunc>& optimizer);
-
-  /**
-   * Transforms the provided data into the representation learned by the sparse
-   * autoencoder. The function basically performs a feedforward computation
-   * using the learned weights, and returns the hidden layer activations.
-   *
-   * @param data Matrix of the provided data.
-   * @param features The hidden layer representation of the provided data.
-   */
-  void GetNewFeatures(const arma::mat& data, arma::mat& features) const;
-
-  /**
-   * Returns the elementwise sigmoid of the passed matrix, where the sigmoid
-   * function of a real number 'x' is [1 / (1 + exp(-x))].
-   *
-   * @param x Matrix of real values for which we require the sigmoid activation.
-   */
-  void Sigmoid(const arma::mat& x, arma::mat& output) const
+  void Train(MatType const &input,
+             const size_t maxEpochs = 0,
+             const double tolerance = 0.0001,
+             const bool shuffle = true)
   {
-    output = (1.0 / (1 + arma::exp(-x)));
-  }
-
-  //! Sets size of the visible layer.
-  void VisibleSize(size_t visible)
-  {
-    this->visibleSize = visible;
-  }
-
-  //! Gets size of the visible layer.
-  size_t VisibleSize() const
-  {
-    return visibleSize;
-  }
-
-  //! Sets size of the hidden layer.
-  void HiddenSize(size_t hidden)
-  {
-    this->m_ = hidden;
-  }
-
-  //! Gets the size of the hidden layer.
-  size_t HiddenSize() const
-  {
-    return hiddenSize;
-  }
-
-  //! Sets the L2-regularization parameter.
-  void Lambda(double l)
-  {
-    this->lambda = l;
-  }
-
-  //! Gets the L2-regularization parameter.
-  double Lambda() const
-  {
-    return lambda;
-  }
-
-  //! Sets the KL divergence parameter.
-  void Beta(double b)
-  {
-    this->beta = b;
-  }
-
-  //! Gets the KL divergence parameter.
-  double Beta() const
-  {
-    return beta;
-  }
-
-  //! Sets the sparsity parameter.
-  void Rho(double r)
-  {
-    this->rho = r;
-  }
-
-  //! For modification
-  arma::mat& Parameters()
-  {
-    return parameters;
-  }
-
-  //! For access
-  const arma::mat& Parameters() const
-  {
-    return parameters;
-  }
-
-  //! Gets the sparsity parameter.
-  double Rho() const
-  {
-    return rho;
+     Trainer<FFNet, MatType> trainer(encoder, maxEpochs,
+                                     std::get<1>(encoder.Network()).BatchSize(),
+                                     tolerance,
+                                     shuffle);
+     trainer.Train(input, input, input, input);
   }
 
   /**
-   * Serialize the SparseAutoencoder
+   * Get the weights of decoder
+   * @return Weights of decoder
    */
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  MatType const& DecoderWeights() const
   {
-    using mlpack::data::CreateNVP;
-
-    ar & CreateNVP(parameters, "parameters");
-    ar & CreateNVP(visibleSize, "visibleSize");
-    ar & CreateNVP(hiddenSize, "hiddenSize");
-    ar & CreateNVP(lambda, "lambda");
-    ar & CreateNVP(beta, "beta");
-    ar & CreateNVP(rho, "rho");
+    return std::get<3>(encoder.Network()).Weights();
   }
+
+  MatType& DecoderWeights()
+  {
+    return std::get<3>(encoder.Network()).Weights();
+  }
+
+  /**
+   * Get the bias of decoder
+   * @return Bias of decoder
+   */
+  MatType const& DecoderBias() const
+  {
+    return std::get<4>(encoder.Network()).Weights();
+  }  
+
+  /**
+   * Get the weights of encoder
+   * @return Weights of encoder
+   */
+  MatType const& EncoderWeights() const
+  {
+    return std::get<0>(encoder.Network()).Weights();
+  }
+
+  MatType& EncoderWeights()
+  {
+    return std::get<0>(encoder.Network()).Weights();
+  }
+
+  /**
+   * Get the bias of encoder
+   * @return bias of encoder
+   */
+  MatType const& EncoderBias() const
+  {
+    return std::get<1>(encoder.Network()).Weights();
+  }
+
+  /**
+   * Encode the input, in other words, extract the features
+   * of the input
+   * @param input input data
+   * @param output features extracted from input
+   */
+  void EncodeInput(MatType const &input, MatType &output) const
+  {
+    arma::mat const encodedInput = EncoderWeights() * input +
+                                   arma::repmat(EncoderBias(),
+                                                1, input.n_cols);
+    std::get<2>(encoder.Network()).fn(encodedInput, output);
+  }      
 
  private:  
-  using SAEF = SparseAutoencoderFunction<HiddenLayer, OutputLayer>;
-
-  //! Parameters after optimization.
-  arma::mat parameters;
-  //! Size of the visible layer.
-  size_t visibleSize;
-  //! Size of the hidden layer.
-  size_t hiddenSize;
-  //! L2-regularization parameter.
-  double lambda;
-  //! KL divergence parameter.
-  double beta;
-  //! Sparsity parameter.
-  double rho;
+  const double range;
+  OneHotLayer oneHotLayer;
+  FFNet encoder;
 };
 
-} // namespace nn
-} // namespace mlpack
+template<typename MatType = arma::mat,
+         template<typename,typename> class Optimize = RMSPROP>
+using LogisticSparseAutoencoder = SparseAutoencoder<
+    BaseLayer<LogisticFunction>,
+    BaseLayer<LogisticFunction>,
+    MatType,
+    Optimize,
+    SparseInputLayer<Optimize, RandomInitialization, MatType, MatType>,
+    SparseOutputLayer<Optimize, RandomInitialization, MatType, MatType>>;
 
-#include "sparse_autoencoder_impl.hpp"
+}; // namespace ann
+}; // namespace mlpack
 
 #endif
