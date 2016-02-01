@@ -1,5 +1,26 @@
+### mlpack 2.0.1
+###### 2016-02-??
+  * Fix CMake to properly detect when MKL is being used with Armadillo.
+
+  * Minor parameter handling fixes to mlpack_logistic_regression (#504, #505).
+
+  * Properly install arma_config.hpp.
+
+  * Memory handling fixes for Hoeffding tree code.
+
+  * Add functions that allow changing training-time parameters to HoeffdingTree
+    class.
+
+  * Fix infinite loop in sparse coding test.
+
+  * Documentation spelling fixes (#501).
+
+  * Properly handle covariances for Gaussians with large condition number
+    (#496), preventing GMMs from filling with NaNs during training (and also
+    HMMs that use GMMs).
+
 ### mlpack 2.0.0
-###### ????-??-??
+###### 2015-12-24
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
     open a bug or get in touch with us; it would not be hard for us to
@@ -47,6 +68,10 @@
 
   * Add HoeffdingTree and mlpack_hoeffding_tree, an implementation of the
     streaming decision tree methodology from Domingos and Hulten in 2000.
+
+### mlpack 1.0.12
+###### 2015-01-07
+  * Switch to 3-clause BSD license (from LGPL).
 
 ### mlpack 1.0.11
 ###### 2014-12-11
