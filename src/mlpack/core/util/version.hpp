@@ -18,8 +18,8 @@
 
 // The version of mlpack.  If this is a git repository, this will be a version
 // with higher number than the most recent release.
-#define __MLPACK_VERSION_MAJOR 1
-#define __MLPACK_VERSION_MINOR "x"
+#define __MLPACK_VERSION_MAJOR 2
+#define __MLPACK_VERSION_MINOR 0
 #define __MLPACK_VERSION_PATCH "x"
 
 // The name of the version (for use by --version).
