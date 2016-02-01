@@ -2,8 +2,8 @@
  * @file rmsprop.hpp
  * @author Marcus Edel
  *
- * Implementation of the RmsProp optimizer. RmsProp is an optimizer that utilizes
- * the magnitude of recent gradients to normalize the gradients.
+ * Implementation of the RmsProp optimizer. RmsProp is an optimizer that
+ * utilizes the magnitude of recent gradients to normalize the gradients.
  */
 #ifndef __MLPACK_METHODS_ANN_OPTIMIZER_RMSPROP_HPP
 #define __MLPACK_METHODS_ANN_OPTIMIZER_RMSPROP_HPP
