@@ -367,7 +367,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   // Make sure the initial weights are fine.  They should be equal (or close).
   for (size_t row = 0; row < hmm.Transition().n_rows; ++row)
-    BOOST_REQUIRE_SMALL(hmm.Initial()[row] - 1.0 / 3.0, 0.07);
+    BOOST_REQUIRE_SMALL(hmm.Initial()[row] - 1.0 / 3.0, 0.075);
 
   // We can't use % tolerance here because percent error increases as the actual
   // value gets very small.  So, instead, we just ensure that every value is no
@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   for (size_t row = 0; row < hmm.Transition().n_rows; row++)
     for (size_t col = 0; col < hmm.Transition().n_cols; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - transition(row, col),
-          0.02);
+          0.025);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
   {
@@ -748,9 +748,9 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   {
     // Check that the mean is the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(0) -
-        hmm2.Emission()[em].Mean()(0), 0.09);
+        hmm2.Emission()[em].Mean()(0), 0.1);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(1) -
-        hmm2.Emission()[em].Mean()(1), 0.09);
+        hmm2.Emission()[em].Mean()(1), 0.1);
 
     // Check that the covariances are the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(0, 0) -
