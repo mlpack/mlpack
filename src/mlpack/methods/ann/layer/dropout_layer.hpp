@@ -200,6 +200,21 @@ class DropoutLayer
   //! Modify the value of the rescale parameter.
   bool& Rescale() {return rescale; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(mask, "mask");
+    ar & CreateNVP(ratio, "ratio");
+    ar & CreateNVP(scale, "scale");
+    ar & CreateNVP(deterministic, "deterministic");
+    ar & CreateNVP(rescale, "rescale");
+  }
+
  private:
   //! Locally-stored delta object.
   OutputDataType delta;

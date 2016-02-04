@@ -43,6 +43,7 @@ template <
 class BaseLayer
 {
  public:
+  using ActivateFunction = ActivationFunction;
   /**
    * Create the BaseLayer object.
    */
@@ -147,6 +148,16 @@ class BaseLayer
   OutputDataType const& Delta() const {return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+  }
 
  private:
   //! Locally-stored delta object.

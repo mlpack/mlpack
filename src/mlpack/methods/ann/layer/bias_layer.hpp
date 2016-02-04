@@ -61,7 +61,7 @@ class BiasLayer
       ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outSize, 1);
-  }
+  }  
   
   BiasLayer(BiasLayer &&layer) noexcept
   {
@@ -187,6 +187,24 @@ class BiasLayer
     return *optimizer;
   }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(outSize, "outSize");
+    ar & CreateNVP(bias, "bias");
+    ar & CreateNVP(weights, "weights");
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(optimizer, "optimizer");    
+    ar & CreateNVP(ownsOptimizer, "ownsOptimizer");
+
+    optimizer->Function(*this);
+  }
+
   //! Get the weights.
   InputDataType& Weights() const { return weights; }
   //! Modify the weights.
@@ -213,6 +231,16 @@ class BiasLayer
   InputDataType& Gradient() { return gradient; }
 
  private:
+  /**
+   * This constructor is designed for boost::serialization
+   */
+  BiasLayer() :
+    outSize(1),
+    bias(1),
+    optimizer(nullptr),
+    ownsOptimizer(true)
+  {}
+
   //! Locally-stored number of output units.
   size_t outSize;
 

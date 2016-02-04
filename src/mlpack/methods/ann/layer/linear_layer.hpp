@@ -199,7 +199,30 @@ class LinearLayer
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(inSize, "inSize");
+    ar & CreateNVP(outSize, "outSize");
+    ar & CreateNVP(weights, "weights");
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(optimizer, "optimizer");
+    ar & CreateNVP(ownsOptimizer, "ownsOptimizer");
+
+    optimizer->Function(*this);
+  }
+
  private:
+  /**
+    * this default constructor is designed for boost::serialization
+    */
+   LinearLayer(){}
+
    /*
    * Calculate the gradient using the output delta (3rd order tensor) and the
    * input activation (3rd order tensor).
