@@ -1,6 +1,6 @@
 /**
- * @file bias_layer.hpp
- * @author Marcus Edel
+ * @file sparse_bias_layer.hpp
+ * @author Tham Ngap Wei
  *
  * Definition of the BiasLayer class.
  */
