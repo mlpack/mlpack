@@ -54,10 +54,10 @@ class SparseInputLayer
     outSize(outSize),
     lambda(lambda),
     optimizer(new OptimizerType<SparseInputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
+                                                 WeightInitRule,
+                                                 InputDataType,
+                                                 OutputDataType>,
+                                                 OutputDataType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
