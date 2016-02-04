@@ -6,9 +6,16 @@
 #  LAPACK_LIBRARY, where to find the LAPACK library.
 
 SET(LAPACK_NAMES ${LAPACK_NAMES} lapack)
+
+# Check ATLAS paths preferentially, using this necessary hack (I love CMake).
 FIND_LIBRARY(LAPACK_LIBRARY
   NAMES ${LAPACK_NAMES}
-  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
+  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/local/lib64/atlas /usr/local/lib/atlas
+  NO_DEFAULT_PATH)
+
+FIND_LIBRARY(LAPACK_LIBRARY
+  NAMES ${LAPACK_NAMES}
+  PATHS /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
   )
 
 IF (LAPACK_LIBRARY)
@@ -21,11 +28,11 @@ ENDIF (LAPACK_LIBRARY)
 
 IF (LAPACK_FOUND)
    IF (NOT LAPACK_FIND_QUIETLY)
-      MESSAGE(STATUS "Found a LAPACK library: ${LAPACK_LIBRARIES}")
+      MESSAGE(STATUS "Found LAPACK: ${LAPACK_LIBRARIES}")
    ENDIF (NOT LAPACK_FIND_QUIETLY)
 ELSE (LAPACK_FOUND)
    IF (LAPACK_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find a LAPACK library")
+      MESSAGE(FATAL_ERROR "Could not find LAPACK")
    ENDIF (LAPACK_FIND_REQUIRED)
 ENDIF (LAPACK_FOUND)
 
