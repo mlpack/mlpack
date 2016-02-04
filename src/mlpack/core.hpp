@@ -188,6 +188,8 @@
  *   - Grzegorz Krajewski <krajekg@gmail.com>
  *   - Joseph Mariadassou <joe.mariadassou@gmail.com>
  *   - Pavel Zhigulin <pashaworking@gmail.com>
+ *   - Andy Fang <AndyFang.DZ@gmail.com>
+ *   - Barak Pearlmutter <barak+git@pearlmutter.net>
  */
 
 // First, include all of the prerequisites.
