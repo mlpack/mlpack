@@ -45,11 +45,35 @@ class Adam
    *        stability).
    */
   Adam(DecomposableFunctionType& function,
-          const double lr = 0.001,
-          const double beta1 = 0.9,
-          const double beta2 = 0.999,
-          const double eps = 1e-8) :
-      function(function),
+       const double lr = 0.001,
+       const double beta1 = 0.9,
+       const double beta2 = 0.999,
+       const double eps = 1e-8) :
+      function(&function),
+      lr(lr),
+      beta1(beta1),
+      beta2(beta2),
+      eps(eps)
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * This constructor is designed for boost serialization
+   * Remember to assign the function to appropriate entity
+   * if you use this constructor to construct Adam
+   *
+   * @param lr The learning rate coefficient.
+   * @param beta1 The first moment coefficient.
+   * @param beta2 The second moment coefficient.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
+   */
+  Adam(const double lr = 0.001,
+       const double beta1 = 0.9,
+       const double beta2 = 0.999,
+       const double eps = 1e-8) :
+      function(nullptr),
       lr(lr),
       beta1(beta1),
       beta2(beta2),
@@ -102,6 +126,28 @@ class Adam
   //! Modify the gradient.
   DataType& Gradient() { return gradient; }
 
+  void Function(DecomposableFunctionType &func)
+  {
+    function = &func;
+  }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    //do not serialize function, the address of the function
+    //should be setup by the DecomposableFunction
+
+    ar & CreateNVP(lr, "lr");
+    ar & CreateNVP(beta1, "beta1");
+    ar & CreateNVP(beta2, "beta2");
+    ar & CreateNVP(eps, "eps");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(mean, "mean");
+    ar & CreateNVP(variance, "variance");
+  }
+
  private:
   /**
    * Optimize the given function using Adam.
@@ -147,19 +193,19 @@ class Adam
   }
 
   //! The instantiated function.
-  DecomposableFunctionType& function;
+  DecomposableFunctionType* function;
 
   //! The value used as learning rate.
-  const double lr;
+  double lr;
 
   //! The value used as first moment coefficient.
-  const double beta1;
+  double beta1;
 
   //! The value used as second moment coefficient.
-  const double beta2;
+  double beta2;
 
   //! The value used as eps.
-  const double eps;
+  double eps;
 
   //! The current gradient.
   DataType gradient;

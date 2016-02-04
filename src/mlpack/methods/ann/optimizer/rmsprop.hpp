@@ -2,8 +2,8 @@
  * @file rmsprop.hpp
  * @author Marcus Edel
  *
- * Implementation of the RmsProp optimizer. RmsProp is an optimizer that
- * utilizes the magnitude of recent gradients to normalize the gradients.
+ * Implementation of the RmsProp optimizer. RmsProp is an optimizer that utilizes
+ * the magnitude of recent gradients to normalize the gradients.
  */
 #ifndef __MLPACK_METHODS_ANN_OPTIMIZER_RMSPROP_HPP
 #define __MLPACK_METHODS_ANN_OPTIMIZER_RMSPROP_HPP
@@ -51,12 +51,32 @@ class RMSPROP
           const double lr = 0.01,
           const double alpha = 0.99,
           const double eps = 1e-8) :
-      function(function),
+      function(&function),
       lr(lr),
       alpha(alpha),
       eps(eps)
   {
     // Nothing to do here.
+  }  
+
+  /**
+   * This constructor is designed for boost serialization
+   * Remember to assign the function to appropriate entity
+   * if you use this constructor to construct RMSPROP
+   * @param lr The learning rate coefficient.
+   * @param alpha Constant similar to that used in AdaDelta and Momentum methods.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
+   */
+  RMSPROP(const double lr = 0.01,
+          const double alpha = 0.99,
+          const double eps = 1e-8) :
+    function(nullptr),
+    lr(lr),
+    alpha(alpha),
+    eps(eps)
+  {
+
   }
 
   /**
@@ -66,11 +86,11 @@ class RMSPROP
   {
     if (meanSquaredGad.n_elem == 0)
     {
-      meanSquaredGad = function.Weights();
+      meanSquaredGad = function->Weights();
       meanSquaredGad.zeros();
     }
 
-    Optimize(function.Weights(), gradient, meanSquaredGad);
+    Optimize(function->Weights(), gradient, meanSquaredGad);
   }
 
   /*
@@ -80,12 +100,12 @@ class RMSPROP
   {
     if (gradient.n_elem != 0)
     {
-      DataType outputGradient = function.Gradient();
+      DataType outputGradient = function->Gradient();
       gradient += outputGradient;
     }
     else
     {
-      gradient = function.Gradient();
+      gradient = function->Gradient();
     }
   }
 
@@ -101,6 +121,25 @@ class RMSPROP
   DataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   DataType& Gradient() { return gradient; }
+
+  void Function(DecomposableFunctionType &func)
+  {
+    function = &func;
+  }  
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    //do not serialize function, the address of the function
+    //should be setup by the DecomposableFunction    
+    ar & CreateNVP(lr, "lr");
+    ar & CreateNVP(alpha, "alpha");
+    ar & CreateNVP(eps, "eps");
+    ar & CreateNVP(meanSquaredGad, "meanSquaredGad");
+    ar & CreateNVP(gradient, "gradient");
+  }
 
  private:
   /**
@@ -139,16 +178,16 @@ class RMSPROP
   }
 
   //! The instantiated function.
-  DecomposableFunctionType& function;
+  DecomposableFunctionType* function;
 
   //! The value used as learning rate.
-  const double lr;
+  double lr;
 
   //! The value used as alpha
-  const double alpha;
+  double alpha;
 
   //! The value used as eps.
-  const double eps;
+  double eps;
 
   //! The current mean squared error of the gradients.
   DataType meanSquaredGad;
