@@ -55,10 +55,10 @@ class SparseOutputLayer
     beta(beta),
     rho(rho),
     optimizer(new OptimizerType<SparseOutputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
+                                                  WeightInitRule,
+                                                  InputDataType,
+                                                  OutputDataType>,
+                                                  OutputDataType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
