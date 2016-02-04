@@ -7,7 +7,7 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2015, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2016, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2013, Bill March <march@gatech.edu>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -22,7 +22,7 @@ Copyright:
   Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
   Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
   Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
-  Copyright 2013-2015, Marcus Edel <marcus.edel@fu-berlin.de>
+  Copyright 2013-2016, Marcus Edel <marcus.edel@fu-berlin.de>
   Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
   Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
   Copyright 2014, Michael Fox <michaelfox99@gmail.com>
@@ -43,10 +43,12 @@ Copyright:
   Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
   Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
   Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
-  Copyright 2015, Tham Ngap Wei <thamngapwei@gmail.com>
+  Copyright 2015-2016, Tham Ngap Wei <thamngapwei@gmail.com>
   Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
   Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
   Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
+  Copyright 2016, Andy Fang <AndyFang.DZ@gmail.com>
+  Copyright 2016, Barak Pearlmutter <barak+git@pearlmutter.net>
 License: BSD-3-clause
   All rights reserved.
   .
