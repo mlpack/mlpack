@@ -6,6 +6,13 @@
 #  BLAS_LIBRARY, where to find the BLAS library.
 
 SET(BLAS_NAMES ${BLAS_NAMES} blas)
+
+# Find the ATLAS version preferentially.
+FIND_LIBRARY(BLAS_LIBRARY
+  NAMES ${BLAS_NAMES}
+  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/local/lib64/atlas /usr/local/lib/atlas
+  NO_DEFAULT_PATH)
+
 FIND_LIBRARY(BLAS_LIBRARY
   NAMES ${BLAS_NAMES}
   PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
@@ -21,11 +28,11 @@ ENDIF (BLAS_LIBRARY)
 
 IF (BLAS_FOUND)
    IF (NOT BLAS_FIND_QUIETLY)
-      MESSAGE(STATUS "Found a BLAS library: ${BLAS_LIBRARIES}")
+      MESSAGE(STATUS "Found BLAS: ${BLAS_LIBRARIES}")
    ENDIF (NOT BLAS_FIND_QUIETLY)
 ELSE (BLAS_FOUND)
    IF (BLAS_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find a BLAS library")
+      MESSAGE(FATAL_ERROR "Could not find BLAS")
    ENDIF (BLAS_FIND_REQUIRED)
 ENDIF (BLAS_FOUND)
 
