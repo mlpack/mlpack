@@ -20,7 +20,7 @@
 // with higher number than the most recent release.
 #define __MLPACK_VERSION_MAJOR 2
 #define __MLPACK_VERSION_MINOR 0
-#define __MLPACK_VERSION_PATCH "x"
+#define __MLPACK_VERSION_PATCH 1
 
 // The name of the version (for use by --version).
 namespace mlpack {
