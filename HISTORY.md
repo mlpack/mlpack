@@ -1,5 +1,5 @@
 ### mlpack 2.0.1
-###### 2016-02-??
+###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.
 
   * Minor parameter handling fixes to mlpack_logistic_regression (#504, #505).
