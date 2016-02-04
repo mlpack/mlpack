@@ -19,6 +19,12 @@
     (#496), preventing GMMs from filling with NaNs during training (and also
     HMMs that use GMMs).
 
+  * CMake fixes for finding LAPACK and BLAS as Armadillo dependencies when ATLAS
+    is used.
+
+  * CMake fix for projects using mlpack's CMake configuration from elsewhere
+    (#512).
+
 ### mlpack 2.0.0
 ###### 2015-12-24
   * Removed overclustering support from k-means because it is not well-tested,
