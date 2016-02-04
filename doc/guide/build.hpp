@@ -9,14 +9,14 @@ and installed.
 
 @section Download latest mlpack build
 Download latest mlpack build from here: <a
-href="http://www.mlpack.org/files/mlpack-2.0.0.tar.gz">mlpack-2.0.0</a>
+href="http://www.mlpack.org/files/mlpack-2.0.1.tar.gz">mlpack-2.0.1</a>
 
 @section builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-2.0.0
+$ cd mlpack-2.0.1
 $ mkdir build
 @endcode
 

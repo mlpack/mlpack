@@ -5,7 +5,7 @@
  * This implements the cosine distance (or cosine similarity) between two
  * vectors, which is a measure of the angle between the two vectors.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.1.
  *
  * mlpack is free software; you may redstribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
