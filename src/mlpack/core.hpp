@@ -183,6 +183,7 @@
  *   - Pavel Zhigulin <pashaworking@gmail.com>
  *   - Andy Fang <AndyFang.DZ@gmail.com>
  *   - Barak Pearlmutter <barak+git@pearlmutter.net>
+ *   - Ivari Horm <ivari@risk.ee>
  */
 
 // First, include all of the prerequisites.
