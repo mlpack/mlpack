@@ -30,7 +30,7 @@ using namespace mlpack::ann;
 
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
-
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 /**
  * Train and evaluate a vanilla network with the specified structure.
  */
@@ -132,7 +132,7 @@ void CopyCtorTest(MatType& trainData,
 	BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 	BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
 	}
-
+#endif
 /**
 * Train and evaluate a vanilla network with the specified structure.
 */
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkMnistTest)
     (dataset, labels, dataset, labels, 10, 200, 0.6, 20);
 }
 
-
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 
 /**
 * Train the vanilla network on a larger dataset.
@@ -304,7 +304,8 @@ BOOST_AUTO_TEST_CASE(CopyCtorThyRoidTest)
 		(trainData, trainLabels, testData, testLabels, 4, 500, 0.1, 60);
 
 	}
-
+#endif
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 BOOST_AUTO_TEST_CASE(CopyCtorMnistTest)
 	{
 	// Load the dataset.
@@ -332,7 +333,7 @@ BOOST_AUTO_TEST_CASE(CopyCtorMnistTest)
 		MeanSquaredErrorFunction>
 		(dataset, labels, dataset, labels, 10, 200, 0.6, 20);
 	}
-
+#endif
 /**
  * Train and evaluate a Dropout network with the specified structure.
  */
@@ -410,6 +411,7 @@ void BuildDropoutNetwork(MatType& trainData,
   BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
 }
 
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 
 /**
 * Train and evaluate a Dropout network with the specified structure.
@@ -455,7 +457,7 @@ void CopyCtorDropoutTest(MatType& trainData,
 	BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
 	}
 
-
+#endif
 /**
  * Train the dropout network on a larger dataset.
  */

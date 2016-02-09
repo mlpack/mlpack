@@ -119,7 +119,7 @@ void BuildVanillaNetwork()
 	BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
 	}
 
-
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 /**
 * Train and evaluate a vanilla network with the specified structure.
 */
@@ -213,6 +213,7 @@ BOOST_AUTO_TEST_CASE(GetVanillaNetworkTest)
 
   BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
 }
+#endif 
 /**
  * Train the vanilla network on a larger dataset.
  */
