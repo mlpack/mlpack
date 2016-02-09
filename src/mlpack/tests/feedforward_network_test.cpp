@@ -40,6 +40,108 @@ template<
     typename PerformanceFunctionType,
     typename MatType = arma::mat
 >
+auto GetVanillaNetwork(
+	const size_t inputDataSize,
+	const size_t hiddenLayerSize,
+	const size_t outputLabelSize
+)
+	{
+	/*
+	* Construct a feed forward network with trainData.n_rows input nodes,
+	* hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+	* network structure looks like:
+	*
+	*  Input         Hidden        Output
+	*  Layer         Layer         Layer
+	* +-----+       +-----+       +-----+
+	* |     |       |     |       |     |
+	* |     +------>|     +------>|     |
+	* |     |     +>|     |     +>|     |
+	* +-----+     | +--+--+     | +-----+
+	*             |             |
+	*  Bias       |  Bias       |
+	*  Layer      |  Layer      |
+	* +-----+     | +-----+     |
+	* |     |     | |     |     |
+	* |     +-----+ |     +-----+
+	* |     |       |     |
+	* +-----+       +-----+
+	*/
+
+	LinearLayer<> inputLayer(inputDataSize, hiddenLayerSize);
+	BiasLayer<> inputBiasLayer(hiddenLayerSize);
+	BaseLayer<PerformanceFunction> inputBaseLayer;
+
+	LinearLayer<> hiddenLayer1(hiddenLayerSize, outputLabelSize);
+	BiasLayer<> hiddenBiasLayer1(outputLabelSize);
+	BaseLayer<PerformanceFunction> outputLayer;
+
+	OutputLayerType classOutputLayer;
+
+	auto modules = std::make_tuple(inputLayer, inputBiasLayer, inputBaseLayer,
+		hiddenLayer1, hiddenBiasLayer1, outputLayer);
+
+	return FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
+		(modules, classOutputLayer);
+
+	
+	}
+
+/**
+* Train and evaluate a vanilla network with the specified structure.
+*/
+template<
+	typename PerformanceFunction,
+	typename OutputLayerType,
+	typename PerformanceFunctionType,
+	typename MatType = arma::mat
+>
+void CopyCtorTest(MatType& trainData,
+	MatType& trainLabels,
+	MatType& testData,
+	MatType& testLabels,
+	const size_t hiddenLayerSize,
+	const size_t maxEpochs,
+	const double classificationErrorThreshold,
+	const double ValidationErrorThreshold)
+	{
+	
+	auto net = GetVanillaNetwork<PerformanceFunction,
+		OutputLayerType,
+		PerformanceFunctionType>(trainData.n_rows, hiddenLayerSize, trainLabels.n_rows);
+
+	Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01);
+	trainer.Train(trainData, trainLabels, testData, testLabels);
+
+	MatType prediction;
+	size_t error = 0;
+
+	for (size_t i = 0; i < testData.n_cols; i++)
+		{
+		MatType predictionInput = testData.unsafe_col(i);
+		MatType targetOutput = testLabels.unsafe_col(i);
+
+		net.Predict(predictionInput, prediction);
+
+		if (arma::sum(arma::sum(arma::abs(prediction - targetOutput))) == 0)
+			error++;
+		}
+
+	double classificationError = 1 - double(error) / testData.n_cols;
+
+	BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+	BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
+	}
+
+/**
+* Train and evaluate a vanilla network with the specified structure.
+*/
+template<
+	typename PerformanceFunction,
+	typename OutputLayerType,
+	typename PerformanceFunctionType,
+	typename MatType = arma::mat
+>
 void BuildVanillaNetwork(MatType& trainData,
                          MatType& trainLabels,
                          MatType& testData,
@@ -110,10 +212,11 @@ void BuildVanillaNetwork(MatType& trainData,
   BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
 }
 
+
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
+BOOST_AUTO_TEST_CASE(VanillaNetworkThyRoidTest)
 {
   // Load the dataset.
   arma::mat dataset;
@@ -139,6 +242,14 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                       MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 4, 500, 0.1, 60);
 
+	}
+
+BOOST_AUTO_TEST_CASE(VanillaNetworkMnistTest)
+	{
+	// Load the dataset.
+	arma::mat dataset;
+
+
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
@@ -160,6 +271,67 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                       MeanSquaredErrorFunction>
     (dataset, labels, dataset, labels, 10, 200, 0.6, 20);
 }
+
+
+
+/**
+* Train the vanilla network on a larger dataset.
+*/
+BOOST_AUTO_TEST_CASE(CopyCtorThyRoidTest)
+	{
+	// Load the dataset.
+	arma::mat dataset;
+	data::Load("thyroid_train.csv", dataset, true);
+
+	arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
+		dataset.n_cols - 1);
+	arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+		dataset.n_rows - 1, dataset.n_cols - 1);
+
+	data::Load("thyroid_test.csv", dataset, true);
+
+	arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
+		dataset.n_cols - 1);
+	arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
+		dataset.n_rows - 1, dataset.n_cols - 1);
+
+	// Vanilla neural net with logistic activation function.
+	// Because 92 percent of the patients are not hyperthyroid the neural
+	// network must be significant better than 92%.
+	CopyCtorTest<LogisticFunction,
+		BinaryClassificationLayer,
+		MeanSquaredErrorFunction>
+		(trainData, trainLabels, testData, testLabels, 4, 500, 0.1, 60);
+
+	}
+
+BOOST_AUTO_TEST_CASE(CopyCtorMnistTest)
+	{
+	// Load the dataset.
+	arma::mat dataset;
+
+
+	dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+	// Normalize each point since these are images.
+	for (size_t i = 0; i < dataset.n_cols; ++i)
+		dataset.col(i) /= norm(dataset.col(i), 2);
+
+	arma::mat labels = arma::zeros(1, dataset.n_cols);
+	labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+
+	// Vanilla neural net with logistic activation function.
+	CopyCtorTest<LogisticFunction,
+		BinaryClassificationLayer,
+		MeanSquaredErrorFunction>
+		(dataset, labels, dataset, labels, 30, 100, 0.6, 10);
+
+	// Vanilla neural net with tanh activation function.
+	CopyCtorTest<TanhFunction,
+		BinaryClassificationLayer,
+		MeanSquaredErrorFunction>
+		(dataset, labels, dataset, labels, 10, 200, 0.6, 20);
+	}
 
 /**
  * Train and evaluate a Dropout network with the specified structure.
@@ -238,10 +410,56 @@ void BuildDropoutNetwork(MatType& trainData,
   BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
 }
 
+
+/**
+* Train and evaluate a Dropout network with the specified structure.
+*/
+template<
+	typename PerformanceFunction,
+	typename OutputLayerType,
+	typename PerformanceFunctionType,
+	typename MatType = arma::mat
+>
+void CopyCtorDropoutTest(MatType& trainData,
+	MatType& trainLabels,
+	MatType& testData,
+	MatType& testLabels,
+	const size_t hiddenLayerSize,
+	const size_t maxEpochs,
+	const double classificationErrorThreshold,
+	const double ValidationErrorThreshold)
+	{
+	
+	auto net = GetVanillaNetwork<LogisticFunction,
+		BinaryClassificationLayer,
+		MeanSquaredErrorFunction>(trainData.n_rows, hiddenLayerSize, trainLabels.n_rows);
+
+	Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
+	trainer.Train(trainData, trainLabels, testData, testLabels);
+
+	MatType prediction;
+	size_t error = 0;
+
+	for (size_t i = 0; i < testData.n_cols; i++)
+		{
+		MatType input = testData.unsafe_col(i);
+		net.Predict(input, prediction);
+		if (arma::sum(arma::sum(arma::abs(
+			prediction - testLabels.unsafe_col(i)))) == 0)
+			error++;
+		}
+
+	double classificationError = 1 - double(error) / testData.n_cols;
+
+	BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+	BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
+	}
+
+
 /**
  * Train the dropout network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
+BOOST_AUTO_TEST_CASE(DropoutNetworkThyroidTest)
 {
   // Load the dataset.
   arma::mat dataset;
@@ -266,6 +484,47 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 4, 100, 0.1, 60);
+
+	}
+
+
+/**
+* Train the dropout network on a larger dataset.
+*/
+BOOST_AUTO_TEST_CASE(DropoutNetworkCtorTest)
+	{
+	// Load the dataset.
+	arma::mat dataset;
+	data::Load("thyroid_train.csv", dataset, true);
+
+	arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
+		dataset.n_cols - 1);
+	arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+		dataset.n_rows - 1, dataset.n_cols - 1);
+
+	data::Load("thyroid_test.csv", dataset, true);
+
+	arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
+		dataset.n_cols - 1);
+	arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
+		dataset.n_rows - 1, dataset.n_cols - 1);
+
+	// Vanilla neural net with logistic activation function.
+	// Because 92 percent of the patients are not hyperthyroid the neural
+	// network must be significant better than 92%.
+	CopyCtorDropoutTest<LogisticFunction,
+		BinaryClassificationLayer,
+		MeanSquaredErrorFunction>
+		(trainData, trainLabels, testData, testLabels, 4, 100, 0.1, 60);
+
+	}
+
+
+BOOST_AUTO_TEST_CASE(DropoutNetworkMnistTest)
+	{
+	// Load the dataset.
+	arma::mat dataset;
+
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 

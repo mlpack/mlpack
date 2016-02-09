@@ -401,7 +401,7 @@ class CNN
   LayerTypes network;
 
   //! The outputlayer used to evaluate the network
-  OutputLayerType& outputLayer;
+  OutputLayerType outputLayer;
 
   //! The class used to evaluate the performance of the network
   PerformanceFunction performanceFunction;
