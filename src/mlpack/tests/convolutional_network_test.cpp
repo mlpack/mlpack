@@ -40,7 +40,7 @@ template<
 	typename PerformanceFunction
 >
 void BuildVanillaNetwork()
-	{
+{
 	arma::mat X;
 	X.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -117,7 +117,7 @@ void BuildVanillaNetwork()
 	trainer.Train(input, Y, input, Y);
 
 	BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
-	}
+}
 
 #if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 /**

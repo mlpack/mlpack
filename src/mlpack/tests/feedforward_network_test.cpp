@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkMnistTest)
 * Train the vanilla network on a larger dataset.
 */
 BOOST_AUTO_TEST_CASE(CopyCtorThyRoidTest)
-	{
+{
 	// Load the dataset.
 	arma::mat dataset;
 	data::Load("thyroid_train.csv", dataset, true);
@@ -303,11 +303,11 @@ BOOST_AUTO_TEST_CASE(CopyCtorThyRoidTest)
 		MeanSquaredErrorFunction>
 		(trainData, trainLabels, testData, testLabels, 4, 500, 0.1, 60);
 
-	}
+}
 #endif
 #if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 BOOST_AUTO_TEST_CASE(CopyCtorMnistTest)
-	{
+{
 	// Load the dataset.
 	arma::mat dataset;
 
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(CopyCtorMnistTest)
 		BinaryClassificationLayer,
 		MeanSquaredErrorFunction>
 		(dataset, labels, dataset, labels, 10, 200, 0.6, 20);
-	}
+}
 #endif
 /**
  * Train and evaluate a Dropout network with the specified structure.
@@ -430,7 +430,7 @@ void CopyCtorDropoutTest(MatType& trainData,
 	const size_t maxEpochs,
 	const double classificationErrorThreshold,
 	const double ValidationErrorThreshold)
-	{
+{
 	
 	auto net = GetVanillaNetwork<LogisticFunction,
 		BinaryClassificationLayer,
@@ -455,7 +455,7 @@ void CopyCtorDropoutTest(MatType& trainData,
 
 	BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 	BOOST_REQUIRE_LE(trainer.ValidationError(), ValidationErrorThreshold);
-	}
+}
 
 #endif
 /**
@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkThyroidTest)
 * Train the dropout network on a larger dataset.
 */
 BOOST_AUTO_TEST_CASE(DropoutNetworkCtorTest)
-	{
+{
 	// Load the dataset.
 	arma::mat dataset;
 	data::Load("thyroid_train.csv", dataset, true);
@@ -519,11 +519,11 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkCtorTest)
 		MeanSquaredErrorFunction>
 		(trainData, trainLabels, testData, testLabels, 4, 100, 0.1, 60);
 
-	}
+}
 
 
 BOOST_AUTO_TEST_CASE(DropoutNetworkMnistTest)
-	{
+{
 	// Load the dataset.
 	arma::mat dataset;
 
