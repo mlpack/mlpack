@@ -42,7 +42,9 @@ A list of all the sections this tutorial contains.
  - \ref neighborsearch_nstut
    - \ref sort_policy_doc_nstut
    - \ref metric_type_doc_nstut
+   - \ref mat_type_doc_nstut
    - \ref tree_type_doc_nstut
+   - \ref traverser_type_doc_nstut
  - \ref further_doc_nstut
 
 @section cli_nstut Command-Line 'allknn'
@@ -319,14 +321,20 @@ arguments:
 template<
   typename SortPolicy = NearestNeighborSort,
   typename MetricType = mlpack::metric::EuclideanDistance,
-  typename TreeType = mlpack::tree::BinarySpaceTree<bound::HRectBound<2>,
-                                                    QueryStat<SortPolicy> >
+  typename MatType = arma::mat,
+  template<typename TreeMetricType,
+           typename TreeStatType,
+           typename TreeMatType> class TreeType = tree::KDTree,
+  template<typename RuleType> class TraversalType =
+      TreeType<MetricType, NeighborSearchStat<SortPolicy>,
+               MatType>::template DualTreeTraverser>
 >
 class NeighborSearch;
 @endcode
 
 By choosing different components for each of these template classes, a very
-arbitrary neighbor searching object can be constructed.
+arbitrary neighbor searching object can be constructed.  Note that each of these
+template parameters have defaults, so it is not necessary to specify each one.
 
 @subsection sort_policy_doc_nstut SortPolicy policy class
 
@@ -379,34 +387,70 @@ Mahalanobis distance (mlpack::metric::MahalanobisDistance), which must store
 state (the covariance matrix).  Therefore, you can write a non-static MetricType
 class and use it seamlessly with NeighborSearch.
 
+For more information on the MetricType policy, see the documentation
+\ref metrics "here".
+
+@subsection mat_type_doc_nstut MatType policy class
+
+The MatType template parameter specifies the type of data matrix used.  This
+type must implement the same operations as an Armadillo matrix, and so standard
+choices are @c arma::mat and @c arma::sp_mat.
+
 @subsection tree_type_doc_nstut TreeType policy class
 
-The NeighborSearch class also allows a custom tree to be used.  The standard
-\b mlpack tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its
-own right, and its documentation should be consulted for more information.
-Currently, the NeighborSearch tree requires a tree which only has left and right
-children, and no points in nodes (only in leaves), but this support is planned
-to be extended.
+The NeighborSearch class allows great extensibility in the selection of the type
+of tree used for search.  This type must follow the typical mlpack TreeType
+policy, documented \ref trees "here".
 
-A simple usage of the TreeType policy could be to use a different type of bound
-with the tree.  For instance, you could use a ball bound instead of a
-rectangular bound:
+Typical choices might include mlpack::tree::KDTree, mlpack::tree::BallTree,
+mlpack::tree::StandardCoverTree, mlpack::tree::RTree, or
+mlpack::tree::RStarTree.  It is easily possible to make your own tree type for
+use with NeighborSearch; consult the \ref trees "TreeType documentation" for
+more details.
+
+An example of using the NeighborSearch class with a ball tree is given below.
 
 @code
 // Construct a NeighborSearch object with ball bounds.
 NeighborSearch<
     NearestNeighborSort,
     metric::EuclideanDistance,
-    tree::BinarySpaceTree<bound::BallBound<2>,
-                          QueryStat<SortPolicy> >
+    arma::mat,
+    tree::BallTree
 > neighborSearch(dataset);
 @endcode
 
-It is important to note that the NeighborSearch class requires use of the
-QueryStat tree statistic to function properly.  Therefore, if you write a custom
-tree, be sure it can accept the QueryStat type.  See the
-mlpack::tree::BinarySpaceTree documentation for more information on tree
-statistics.
+@subsection traverser_type_doc_nstut TraverserType policy class
+
+The last template parameter the NeighborSearch class offers is the TraverserType
+class.  The TraverserType class holds the strategy used to traverse the trees in
+either single-tree or dual-tree search mode.  By default, it is set to use the
+default traverser of the given @c TreeType (which is the member @c
+TreeType::DualTreeTraverser).
+
+This class must implement the following two methods:
+
+@code
+// Instantiate with a given RuleType.
+TraverserType(RuleType& rule);
+
+// Traverse with two trees.
+void Traverse(TreeType& queryNode, TreeType& referenceNode);
+@endcode
+
+The RuleType class provides the following functions for use in the traverser:
+
+@code
+// Evaluate the base case between two points.
+double BaseCase(const size_t queryIndex, const size_t referenceIndex);
+
+// Score the two nodes to see if they can be pruned, returning DBL_MAX if they
+// can be pruned.
+double Score(TreeType& queryNode, TreeType& referenceNode);
+@endcode
+
+Note also that any traverser given must satisfy the definition of a pruning
+dual-tree traversal given in the paper "Tree-independent dual-tree algorithms".
 
 @section further_doc_nstut Further documentation
 

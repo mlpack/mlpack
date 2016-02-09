@@ -41,6 +41,7 @@ A list of all the sections this tutorial contains.
    - \ref rs_ex3_rstut
  - \ref rs_ext_rstut
    - \ref metric_type_doc_rstut
+   - \ref mat_type_doc_rstut
    - \ref tree_type_doc_rstut
  - \ref further_doc_rstut
 
@@ -372,40 +373,35 @@ Mahalanobis distance (mlpack::metric::MahalanobisDistance), which must store
 state (the covariance matrix).  Therefore, you can write a non-static MetricType
 class and use it seamlessly with RangeSearch.
 
+@subsection mat_type_doc_rstut MatType policy class
+
+The MatType template parameter specifies the type of data matrix used.  This
+type must implement the same operations as an Armadillo matrix, and so standard
+choices are @c arma::mat and @c arma::sp_mat.
+
 @subsection tree_type_doc_rstut TreeType policy class
 
-The RangeSearch class also allows a custom tree to be used.  The standard
-\b mlpack tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its
-own right, and its documentation should be consulted for more information.
+The RangeSearch class also allows a custom tree to be used.  The TreeType policy
+is also used elsewhere in mlpack and is documented more thoroughly
+\ref trees "here".
 
-A simple usage of the TreeType policy could be to use a different type of bound
-with the existing mlpack::tree::BinarySpaceTree class.  For instance, you could
-use a ball bound instead of a rectangular bound:
+Typical choices might include mlpack::tree::KDTree (the default),
+mlpack::tree::BallTree, mlpack::tree::RTree, mlpack::tree::RStarTree,
+or mlpack::tree::StandardCoverTree.  Below is an example that uses the
+RangeSearch class with an R-tree:
 
 @code
 // Construct a RangeSearch object with ball bounds.
 RangeSearch<
     metric::EuclideanDistance,
-    tree::BinarySpaceTree<bound::BallBound<2>,
-                          EmptyStatistic>
+    arma::mat,
+    tree::RTree
 > rangeSearch(dataset);
 @endcode
 
-Unlike the \ref nstutorial "NeighborSearch class", the RangeSearch class does
-not make use of tree statistics; therefore, the EmptyStatistic class should be
-used for the StatisticType parameter of the BinarySpaceTree (but this is not
-technically necessary -- RangeSearch simply makes no use of the tree statistic).
-
-It is also possible to use a completely different type of tree.  The example
-below shows the use of the RangeSearch class with the mlpack::tree::CoverTree
-class (which has the EmptyStatistic statistic type as a default, so we do not
-need to specify that).
-
-@code
-// Construct a RangeSearch object that uses cover trees.
-RangeSearch<metric::EuclideanDistance, tree::StandardCoverTree>
-    rangeSearch(dataset);
-@endcode
+For further information on trees, including how to write your own tree for use
+with RangeSearch and other mlpack methods, see the
+\ref trees "TreeType policy documentation".
 
 @section further_doc_rstut Further documentation
 

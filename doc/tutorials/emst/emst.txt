@@ -125,7 +125,8 @@ algorithm for timing and comparison purposes, using the \c --naive option.
 
 @section dtb_emsttut The 'DualTreeBoruvka' class
 
-The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka algorithm.
+The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka
+algorithm.
 
 The class has two constructors: the first takes the data set, constructs the
 tree (where the type of tree constructed is the TreeType template parameter),
