@@ -27,7 +27,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template<typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -53,51 +53,9 @@ class SparseOutputLayer
     outSize(outSize),
     lambda(lambda),
     beta(beta),
-    rho(rho),
-    optimizer(new OptimizerType<SparseOutputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
-    ownsOptimizer(true)
+    rho(rho)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
-  }
-
-  SparseOutputLayer(SparseOutputLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseOutputLayer& operator=(SparseOutputLayer &&layer) noexcept
-  {
-    ownsOptimizer = layer.ownsOptimizer;
-    optimizer = layer.optimizer;
-    layer.ownsOptimizer = false;
-    layer.optimizer = nullptr;
-
-    beta = layer.beta;
-    rho = layer.rho;
-    lambda = layer.lambda;
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-    rhoCap.swap(layer.rhoCap);
-
-    return *this;
-  }
-
-  /**
-   * Delete the linear layer object and its optimizer.
-   */
-  ~SparseOutputLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -152,23 +110,7 @@ class SparseOutputLayer
         lambda * weights;    
   }
 
-  //! Get the optimizer.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
-  }
-  
+
   //! Sets the KL divergence parameter.
   void Beta(const double b)
   {
@@ -258,18 +200,14 @@ class SparseOutputLayer
   OutputDataType outputParameter;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-                                  WeightInitRule,
-                                  InputDataType,
-                                  OutputDataType>, OutputDataType>* optimizer;
+  OptimizerType< OutputDataType> optimizer;
 
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
+ 
 }; // class SparseOutputLayer
 
 //! Layer traits for the SparseOutputLayer.
 template<
-    template<typename, typename> class OptimizerType,
+    template<typename> class OptimizerType,
     typename WeightInitRule,
     typename InputDataType,
     typename OutputDataType

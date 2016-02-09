@@ -67,7 +67,7 @@ template<
     typename HiddenActivate = BaseLayer<LogisticFunction>,
     typename OutputActivate = HiddenActivate,
     typename MatType = arma::mat,
-    template<typename, typename> class Optimizer = RMSPROP,
+    template<typename> class Optimizer = RMSPROP,
     typename HiddenLayer = SparseInputLayer<
         Optimizer, RandomInitialization, MatType, MatType>,
     typename OutputLayer = SparseOutputLayer<
@@ -296,7 +296,7 @@ class SparseAutoencoder
  */
 template<
     typename MatType = arma::mat,
-    template<typename, typename> class Optimizer = RMSPROP
+    template<typename> class Optimizer = RMSPROP
 >
 using LogisticSparseAutoencoder = SparseAutoencoder<
     BaseLayer<LogisticFunction>,

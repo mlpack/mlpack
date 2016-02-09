@@ -344,7 +344,7 @@ class FFN
   Update(T& t, P& /* unused */, D& delta)
   {
     t.Gradient(delta, t.Gradient());
-    t.Optimizer().Update();
+    t.UpdateOptimizer();
   }
 
   template<typename T, typename P, typename D>
@@ -392,8 +392,8 @@ class FFN
       HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Apply(T& t, P& /* unused */, D& /* unused */)
   {
-    t.Optimizer().Optimize();
-    t.Optimizer().Reset();
+    t.Optimize();
+    t.ResetOptimizer();
   }
 
   template<typename T, typename P, typename D>

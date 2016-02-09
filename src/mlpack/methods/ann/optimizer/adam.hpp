@@ -30,7 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  */
-template<typename DecomposableFunctionType, typename DataType>
+template< typename DataType>
 class Adam
 {
  public:
@@ -44,12 +44,11 @@ class Adam
    * @param eps The eps coefficient to avoid division by zero (numerical
    *        stability).
    */
-  Adam(DecomposableFunctionType& function,
+  Adam(
           const double lr = 0.001,
           const double beta1 = 0.9,
           const double beta2 = 0.999,
           const double eps = 1e-8) :
-      function(function),
       lr(lr),
       beta1(beta1),
       beta2(beta2),
@@ -61,31 +60,31 @@ class Adam
   /**
    * Optimize the given function using Adam.
    */
-  void Optimize()
+  void Optimize(DataType& weights)
   {
     if (mean.n_elem == 0)
     {
-      mean = function.Weights();
+	  mean = weights;
       mean.zeros();
 
       variance = mean;
     }
 
-    Optimize(function.Weights(), gradient, mean, variance);
+    Optimize(weights, gradient, mean, variance);
   }
 
   /*
    * Sum up all gradients and store the results in the gradients storage.
    */
-  void Update()
+  void Update(DataType const& function_gradients)
   {
     if (gradient.n_elem != 0)
     {
-      gradient += function.Gradient();
+      gradient += function_gradients;
     }
     else
     {
-      gradient = function.Gradient();
+      gradient = function_gradients;
     }
   }
 
@@ -146,8 +145,6 @@ class Adam
     weights -= lr * mean / (arma::sqrt(variance) + eps);
   }
 
-  //! The instantiated function.
-  DecomposableFunctionType& function;
 
   //! The value used as learning rate.
   const double lr;

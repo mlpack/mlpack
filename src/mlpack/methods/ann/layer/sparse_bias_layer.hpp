@@ -27,7 +27,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template<typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = ZeroInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -49,52 +49,12 @@ class SparseBiasLayer
                   const size_t batchSize,
                   WeightInitRule weightInitRule = WeightInitRule()) :
       outSize(outSize),
-      batchSize(batchSize),
-      optimizer(new OptimizerType<SparseBiasLayer<OptimizerType,
-                                                  WeightInitRule,
-                                                  InputDataType,
-                                                  OutputDataType>,
-                                                  InputDataType>(*this)),
-      ownsOptimizer(true)
+      batchSize(batchSize)
   {
     weightInitRule.Initialize(weights, outSize, 1);
   }
   
-  SparseBiasLayer(SparseBiasLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseBiasLayer& operator=(SparseBiasLayer &&layer) noexcept
-  {
-    optimizer = new OptimizerType<SparseBiasLayer<OptimizerType,
-                                                  WeightInitRule,
-                                                  InputDataType,
-                                                  OutputDataType>,
-                                                  InputDataType>(*this);
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.optimizer = nullptr;
-    layer.ownsOptimizer = false;
-
-    outSize = layer.outSize;
-    batchSize = layer.batchSize;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
-  /**
-   * Delete the bias layer object and its optimizer.
-   */
-  ~SparseBiasLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
-  }
+ 
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -138,22 +98,6 @@ class SparseBiasLayer
     g = arma::sum(d, 1) / static_cast<typename InputDataType::value_type>(batchSize);
   }
 
-  //! Get the optimizer.
-  OptimizerType<SparseBiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<SparseBiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer()
-  {
-    return *optimizer;
-  }
 
   //! Get the batch size
   size_t BatchSize() const { return batchSize; }
@@ -208,18 +152,13 @@ class SparseBiasLayer
   OutputDataType outputParameter;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType<SparseBiasLayer<OptimizerType,
-                                WeightInitRule,
-                                InputDataType,
-                                OutputDataType>, InputDataType>* optimizer;
+  OptimizerType< InputDataType> optimizer;
 
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class SparseBiasLayer
 
 //! Layer traits for the bias layer.
 template<
-  template<typename, typename> class OptimizerType,
+  template<typename> class OptimizerType,
   typename WeightInitRule,
   typename InputDataType,
   typename OutputDataType

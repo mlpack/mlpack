@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template<typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -48,48 +48,13 @@ class LinearLayer
               const size_t outSize,
               WeightInitRule weightInitRule = WeightInitRule()) :
       inSize(inSize),
-      outSize(outSize),
-      optimizer(new OptimizerType<LinearLayer<OptimizerType,
-                                              WeightInitRule,
-                                              InputDataType,
-                                              OutputDataType>,
-                                              OutputDataType>(*this)),
-      ownsOptimizer(true)
+      outSize(outSize)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
   }
   
-  LinearLayer(LinearLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
 
-  LinearLayer& operator=(LinearLayer &&layer) noexcept
-  {
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
-    optimizer = layer.optimizer;
-    layer.optimizer = nullptr;
 
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
-  /**
-   * Delete the linear layer object and its optimizer.
-   */
-  ~LinearLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -157,21 +122,17 @@ class LinearLayer
     GradientDelta(inputParameter, d, g);
   }
 
-  //! Get the optimizer.
-  OptimizerType<LinearLayer<OptimizerType,
-                            WeightInitRule,
-                            InputDataType,
-                            OutputDataType>, OutputDataType>& Optimizer() const
+  void UpdateOptimizer()
   {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<LinearLayer<OptimizerType,
-                            WeightInitRule,
-                            InputDataType,
-                            OutputDataType>, OutputDataType>& Optimizer()
+	  optimizer.Update(Gradient());
+	  }
+  void Optimize()
   {
-    return *optimizer;
+	  optimizer.Optimize(Weights());
+	  }
+  void ResetOptimizer()
+	  {
+	  optimizer.Reset();
   }
 
   //! Get the weights.
@@ -306,20 +267,17 @@ class LinearLayer
   OutputDataType outputParameter;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType<LinearLayer<OptimizerType,
-                            WeightInitRule,
-                            InputDataType,
-                            OutputDataType>, OutputDataType>* optimizer;
+  OptimizerType<OutputDataType>	  optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
+
 }; // class LinearLayer
 
 /**
  * Linear Mapping layer to map between 3rd order tensors and dense matrices.
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template< typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::cube,
     typename OutputDataType = arma::mat
@@ -329,7 +287,7 @@ using LinearMappingLayer = LinearLayer<
 
 //! Layer traits for the linear layer.
 template<
-    template<typename, typename> class OptimizerType,
+    template< typename> class OptimizerType,
     typename WeightInitRule,
     typename InputDataType,
     typename OutputDataType

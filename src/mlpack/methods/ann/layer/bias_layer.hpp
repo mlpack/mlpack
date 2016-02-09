@@ -31,7 +31,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template< typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -52,48 +52,11 @@ class BiasLayer
             const double bias = 1,
             WeightInitRule weightInitRule = WeightInitRule()) :
       outSize(outSize),
-      bias(bias),
-      optimizer(new OptimizerType<BiasLayer<OptimizerType,
-                                            WeightInitRule,
-                                            InputDataType,
-                                            OutputDataType>,
-                                            InputDataType>(*this)),
-      ownsOptimizer(true)
+      bias(bias)
   {
     weightInitRule.Initialize(weights, outSize, 1);
   }
   
-  BiasLayer(BiasLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  BiasLayer& operator=(BiasLayer &&layer) noexcept
-  {
-    optimizer = layer.optimizer;
-    layer.optimizer = nullptr;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
-
-    outSize = layer.outSize;
-    bias = layer.bias;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
-  /**
-   * Delete the bias layer object and its optimizer.
-   */
-  ~BiasLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -169,22 +132,17 @@ class BiasLayer
   {
     g = d * bias;
   }
-
-  //! Get the optimizer.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer() const
+  void UpdateOptimizer()
   {
-    return *optimizer;
+    optimizer.Update(Gradient());
   }
-  //! Modify the optimizer.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer()
+  void Optimize()
   {
-    return *optimizer;
+    optimizer.Optimize(Weights());
+  }
+  void ResetOptimizer()
+  {
+    optimizer.Reset();
   }
 
   //! Get the weights.
@@ -234,19 +192,14 @@ class BiasLayer
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>* optimizer;
+  //! Locally-stored optimzer object.
+  OptimizerType<OutputDataType>	  optimizer;
 
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
 template<
-  template<typename, typename> class OptimizerType,
+  template< typename> class OptimizerType,
   typename WeightInitRule,
   typename InputDataType,
   typename OutputDataType
@@ -266,7 +219,7 @@ class LayerTraits<BiasLayer<
  * Standard 2D-Bias-Layer.
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template< typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::cube
