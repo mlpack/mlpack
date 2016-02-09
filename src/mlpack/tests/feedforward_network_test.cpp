@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkThyroidTest)
 
 	}
 
-
+#if (__cplusplus >= 201402L) || (defined(_MSC_VER)  && _MSC_VER >= 1900)
 /**
 * Train the dropout network on a larger dataset.
 */
@@ -520,7 +520,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkCtorTest)
 		(trainData, trainLabels, testData, testLabels, 4, 100, 0.1, 60);
 
 }
-
+#endif
 
 BOOST_AUTO_TEST_CASE(DropoutNetworkMnistTest)
 {
