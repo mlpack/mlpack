@@ -50,12 +50,25 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
 
+/**
+ * Serialize a random cube.
+ */
 BOOST_AUTO_TEST_CASE(CubeSerializeXMLTest)
 {
   arma::cube m;
   m.randu(2, 50, 50);
   TestAllArmadilloSerialization(m);
 }
+
+/**
+ * Serialize an empty cube.
+ */
+BOOST_AUTO_TEST_CASE(EmptyCubeSerializeTest)
+{
+  arma::cube c;
+  TestAllArmadilloSerialization(c);
+}
+
 
 /**
  * Can we load and save an Armadillo matrix?
