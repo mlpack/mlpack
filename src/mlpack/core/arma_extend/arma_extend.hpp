@@ -20,6 +20,10 @@
 #define ARMA_EXTRA_MAT_PROTO mlpack/core/arma_extend/Mat_extra_bones.hpp
 #define ARMA_EXTRA_MAT_MEAT mlpack/core/arma_extend/Mat_extra_meat.hpp
 
+// Add boost serialization for Cube.
+#define ARMA_EXTRA_CUBE_PROTO mlpack/core/arma_extend/Cube_extra_bones.hpp
+#define ARMA_EXTRA_CUBE_MEAT mlpack/core/arma_extend/Cube_extra_meat.hpp
+
 // Make sure that U64 and S64 support is enabled.
 #ifndef ARMA_USE_U64S64
   #define ARMA_USE_U64S64
