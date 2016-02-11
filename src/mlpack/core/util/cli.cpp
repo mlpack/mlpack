@@ -13,7 +13,7 @@
 
 #include "cli.hpp"
 #include "log.hpp"
-
+#include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "option.hpp"
 
 using namespace mlpack;
