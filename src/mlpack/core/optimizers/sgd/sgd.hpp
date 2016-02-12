@@ -72,7 +72,12 @@ class SGD
 {
  public:
   /**
-   * Construct the SGD optimizer with the given function and parameters.
+   * Construct the SGD optimizer with the given function and parameters.  The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
