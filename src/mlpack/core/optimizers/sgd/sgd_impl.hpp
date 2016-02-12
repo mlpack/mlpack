@@ -35,10 +35,10 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   const size_t numFunctions = function.NumFunctions();
 
   // This is used only if shuffle is true.
-  arma::vec visitationOrder;
+  arma::Col<size_t> visitationOrder;
   if (shuffle)
-    visitationOrder = arma::shuffle(arma::linspace(0, (numFunctions - 1),
-        numFunctions));
+    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        (numFunctions - 1), numFunctions));
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
