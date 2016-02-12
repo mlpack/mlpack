@@ -1,6 +1,7 @@
 set(DIRS
   aug_lagrangian
   lbfgs
+  minibatch_sgd
   sa
   sdp
   sgd
