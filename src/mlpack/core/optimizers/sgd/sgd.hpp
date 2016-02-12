@@ -31,7 +31,7 @@ namespace optimization {
  * is chosen according to \f$ j \f$ (the iteration number).  The SGD class
  * supports either scanning through each of the \f$ n \f$ functions \f$ f_i(A)
  * \f$ linearly, or in a random sequence.  The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations -- or when a full sequence of
+ * \f$ reaches the maximum number of iterations---or when a full sequence of
  * updates through each of the \f$ n \f$ functions \f$ f_i(A) \f$ produces an
  * improvement within a certain tolerance \f$ \epsilon \f$.  That is,
  *
