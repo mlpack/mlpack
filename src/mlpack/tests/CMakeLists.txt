@@ -44,6 +44,7 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   mean_shift_test.cpp
   metric_test.cpp
+  minibatch_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp
