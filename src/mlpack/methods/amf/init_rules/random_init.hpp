@@ -2,7 +2,7 @@
  * @file random_init.hpp
  * @author Mohan Rajendran
  *
- * Initialization rule for alternating matrix forization (AMF). This simple
+ * Initialization rule for alternating matrix factorization (AMF). This simple
  * initialization is performed by assigning a random matrix to W and H.
  */
 #ifndef __MLPACK_METHODS_LMF_RANDOM_INIT_HPP
