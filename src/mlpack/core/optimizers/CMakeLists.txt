@@ -2,6 +2,7 @@ set(DIRS
   aug_lagrangian
   lbfgs
   minibatch_sgd
+  rmsprop
   sa
   sdp
   sgd
