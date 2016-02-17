@@ -177,10 +177,18 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   regularizationConstants.fill(0.0);
 
   Timer::Start("cross_validation");
-  // Go through each fold.
+  // Go through each fold.  On the Visual Studio compiler, we have to use
+  // intmax_t because size_t is not yet supported by their OpenMP
+  // implementation.
+#ifdef _WIN32
+  #pragma omp parallel for default(none) \
+      shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
+  for (intmax_t fold = 0; fold < (intmax_t) folds; fold++)
+#else
   #pragma omp parallel for default(none) \
       shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
   for (size_t fold = 0; fold < folds; fold++)
+#endif
   {
     // Break up data into train and test sets.
     size_t start = fold * testSize;
