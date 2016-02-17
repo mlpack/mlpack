@@ -14,19 +14,19 @@
 #endif
 
 // Next, standard includes.
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <float.h>
-#include <stdint.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <climits>
+#include <cfloat>
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 // For tgamma().
 #include <boost/math/special_functions/gamma.hpp>
