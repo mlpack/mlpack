@@ -148,9 +148,18 @@ DTree::~DTree()
 double DTree::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
-  return 2 * std::log((double) (end - start)) -
-         2 * std::log((double) totalPoints) -
-         arma::accu(arma::log(maxVals - minVals));
+  double err = 2 * std::log((double) (end - start)) -
+               2 * std::log((double) totalPoints);
+
+  arma::vec valDiffs = maxVals - minVals;
+  for (size_t i = 0; i < maxVals.n_elem; ++i)
+  {
+    // Ignore very small dimensions to prevent overflow.
+    if (valDiffs[i] > 1e-50)
+      err -= std::log(valDiffs[i]);
+  }
+
+  return err;
 }
 
 // This function finds the best split with respect to the L2-error, by trying
