@@ -73,9 +73,6 @@ class DropoutLayer
 
   DropoutLayer& operator=(DropoutLayer &&layer) noexcept
   {
-    delta.swap(layer.delta);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(outputParameter);
     mask.swap(layer.mask);
     ratio = layer.ratio;
     scale = layer.scale;

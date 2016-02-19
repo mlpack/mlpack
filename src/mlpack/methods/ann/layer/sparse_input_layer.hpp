@@ -10,8 +10,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 #include <type_traits>
 
@@ -22,16 +20,12 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the SparseInputLayer. The SparseInputLayer class represents
  * the first layer of sparse autoencoder
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
     >
@@ -43,25 +37,16 @@ class SparseInputLayer
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    * @param lambda L2-regularization parameter.
    */
   SparseInputLayer(const size_t inSize,
-                   const size_t outSize,                   
-                   WeightInitRule weightInitRule = WeightInitRule(),
+                   const size_t outSize,
                    const double lambda = 0.0001) :
     inSize(inSize),
     outSize(outSize),
-    lambda(lambda),
-    optimizer(new OptimizerType<SparseInputLayer<OptimizerType,
-                                                 WeightInitRule,
-                                                 InputDataType,
-                                                 OutputDataType>,
-                                                 OutputDataType>(*this)),
-    ownsOptimizer(true)
+    lambda(lambda)
   {
-    weightInitRule.Initialize(weights, outSize, inSize);
+    weights.set_size(outSize, inSize);
   }
 
   SparseInputLayer(SparseInputLayer &&layer) noexcept
@@ -71,36 +56,12 @@ class SparseInputLayer
 
   SparseInputLayer& operator=(SparseInputLayer &&layer) noexcept
   {
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
-
-    optimizer = new OptimizerType<SparseInputLayer<OptimizerType,
-                                                   WeightInitRule,
-                                                   InputDataType,
-                                                   OutputDataType>,
-                                                   OutputDataType>(*this);
-
-    layer.optimizer = nullptr;
-
     inSize = layer.inSize;
     outSize = layer.outSize;
     lambda = layer.lambda;
     weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
 
     return *this;
-  }
-
-  /**
-   * Delete the linear layer object and its optimizer.
-   */
-  ~SparseInputLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -145,23 +106,6 @@ class SparseInputLayer
     g = d * inputParameter.t() /
         static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
         lambda * weights;
-  }
-
-  //! Get the optimizer.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
   }
 
   //! Get the weights.
@@ -213,26 +157,12 @@ class SparseInputLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class SparseInputLayer
 
 //! Layer traits for the SparseInputLayer.
-template<
-    template<typename, typename> class OptimizerType,
-    typename WeightInitRule,
-    typename InputDataType,
-    typename OutputDataType
+template<typename InputDataType, typename OutputDataType
 >
-class LayerTraits<SparseInputLayer<
-    OptimizerType, WeightInitRule, InputDataType, OutputDataType> >
+class LayerTraits<SparseInputLayer<InputDataType, OutputDataType> >
 {
 public:
   static const bool IsBinary = false;

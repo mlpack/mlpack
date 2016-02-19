@@ -9,8 +9,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -19,16 +17,12 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the SparseOutputLayer class. The SparseOutputLayer class
  * represents  the fourth layer of the sparse autoencoder.
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
@@ -40,12 +34,9 @@ class SparseOutputLayer
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    */
   SparseOutputLayer(const size_t inSize,
                     const size_t outSize,
-                    WeightInitRule weightInitRule = WeightInitRule(),
                     const double lambda = 0.0001,
                     const double beta = 3,
                     const double rho = 0.01) :
@@ -53,15 +44,9 @@ class SparseOutputLayer
     outSize(outSize),
     lambda(lambda),
     beta(beta),
-    rho(rho),
-    optimizer(new OptimizerType<SparseOutputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
-    ownsOptimizer(true)
+    rho(rho)
   {
-    weightInitRule.Initialize(weights, outSize, inSize);
+    weights.set_size(outSize, inSize);
   }
 
   SparseOutputLayer(SparseOutputLayer &&layer) noexcept
@@ -71,33 +56,14 @@ class SparseOutputLayer
 
   SparseOutputLayer& operator=(SparseOutputLayer &&layer) noexcept
   {
-    ownsOptimizer = layer.ownsOptimizer;
-    optimizer = layer.optimizer;
-    layer.ownsOptimizer = false;
-    layer.optimizer = nullptr;
-
     beta = layer.beta;
     rho = layer.rho;
     lambda = layer.lambda;
     inSize = layer.inSize;
     outSize = layer.outSize;
     weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-    rhoCap.swap(layer.rhoCap);
 
     return *this;
-  }
-
-  /**
-   * Delete the linear layer object and its optimizer.
-   */
-  ~SparseOutputLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -129,7 +95,8 @@ class SparseOutputLayer
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g)
   {
-    const arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
+    const arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) /
+          (1 - rhoCap));
 
     // NOTE: if the armadillo version high enough, find_nonfinite can prevents
     // overflow value:
@@ -150,23 +117,6 @@ class SparseOutputLayer
     g = d * inputParameter.t() /
         static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
         lambda * weights;    
-  }
-
-  //! Get the optimizer.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-  WeightInitRule,
-  InputDataType,
-  OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
   }
   
   //! Sets the KL divergence parameter.
@@ -256,26 +206,12 @@ class SparseOutputLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<SparseOutputLayer<OptimizerType,
-                                  WeightInitRule,
-                                  InputDataType,
-                                  OutputDataType>, OutputDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class SparseOutputLayer
 
 //! Layer traits for the SparseOutputLayer.
-template<
-    template<typename, typename> class OptimizerType,
-    typename WeightInitRule,
-    typename InputDataType,
-    typename OutputDataType
+template<typename InputDataType, typename OutputDataType
     >
-class LayerTraits<SparseOutputLayer<
-    OptimizerType, WeightInitRule, InputDataType, OutputDataType> >
+class LayerTraits<SparseOutputLayer<InputDataType, OutputDataType> >
 {
 public:
   static const bool IsBinary = false;

@@ -9,8 +9,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -20,16 +18,12 @@ namespace ann /** Artificial Neural Network. */ {
  * similarly to feed-forward layers except that the input isn't stored in the
  * inputParameter, instead it's in stored in the recurrentParameter.
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
@@ -41,45 +35,26 @@ class RecurrentLayer
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    */
-  RecurrentLayer(const size_t inSize,
-                 const size_t outSize,
-                 WeightInitRule weightInitRule = WeightInitRule()) :
+  RecurrentLayer(const size_t inSize, const size_t outSize) :
       inSize(outSize),
       outSize(outSize),
-      optimizer(new OptimizerType<RecurrentLayer<OptimizerType,
-                                                 WeightInitRule,
-                                                 InputDataType,
-                                                 OutputDataType>,
-                                                 OutputDataType>(*this)),
-      recurrentParameter(arma::zeros<InputDataType>(inSize, 1)),
-      ownsOptimizer(true)
+      recurrentParameter(arma::zeros<InputDataType>(inSize, 1))
   {
-    weightInitRule.Initialize(weights, outSize, inSize);
+    weights.set_size(outSize, inSize);
   }
 
   /**
    * Create the RecurrentLayer object using the specified number of units.
    *
    * @param outSize The number of output units.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    */
-  RecurrentLayer(const size_t outSize,
-                 WeightInitRule weightInitRule = WeightInitRule()) :
+  RecurrentLayer(const size_t outSize) :
       inSize(outSize),
       outSize(outSize),
-      optimizer(new OptimizerType<RecurrentLayer<OptimizerType,
-                                                 WeightInitRule,
-                                                 InputDataType,
-                                                 OutputDataType>,
-                                                 OutputDataType>(*this)),
-      recurrentParameter(arma::zeros<InputDataType>(outSize, 1)),
-      ownsOptimizer(true)
+      recurrentParameter(arma::zeros<InputDataType>(outSize, 1))
   {
-    weightInitRule.Initialize(weights, outSize, inSize);
+    weights.set_size(outSize, inSize);
   }
 
   RecurrentLayer(RecurrentLayer &&layer) noexcept
@@ -89,30 +64,11 @@ class RecurrentLayer
 
   RecurrentLayer& operator=(RecurrentLayer &&layer) noexcept
   {
-    optimizer = layer.optimizer;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.optimizer = nullptr;
-    layer.ownsOptimizer = false;
-
     inSize = layer.inSize;
     outSize = layer.outSize;
     weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-    recurrentParameter.swap(layer.recurrentParameter);
 
     return *this;
-  }
-
-  /**
-   * Delete the RecurrentLayer object and its optimizer.
-   */
-  ~RecurrentLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -155,24 +111,6 @@ class RecurrentLayer
   void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
   {
     g = d * recurrentParameter.t();
-  }
-
-  //! Get the optimizer.
-  OptimizerType<RecurrentLayer<OptimizerType,
-                               WeightInitRule,
-                               InputDataType,
-                               OutputDataType>,
-                               OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<RecurrentLayer<OptimizerType,
-                               WeightInitRule,
-                               InputDataType,
-                               OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
   }
 
   //! Get the weights.
@@ -227,28 +165,14 @@ class RecurrentLayer
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<RecurrentLayer<OptimizerType,
-                               WeightInitRule,
-                               InputDataType,
-                               OutputDataType>, OutputDataType>* optimizer;
-
   //! Locally-stored recurrent parameter object.
   InputDataType recurrentParameter;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class RecurrentLayer
 
 //! Layer traits for the recurrent layer.
-template<
-    template<typename, typename> class OptimizerType,
-    typename WeightInitRule,
-    typename InputDataType,
-    typename OutputDataType
+template<typename InputDataType, typename OutputDataType
 >
-class LayerTraits<RecurrentLayer<
-    OptimizerType, WeightInitRule, InputDataType, OutputDataType> >
+class LayerTraits<RecurrentLayer<InputDataType, OutputDataType> >
 {
  public:
   static const bool IsBinary = false;

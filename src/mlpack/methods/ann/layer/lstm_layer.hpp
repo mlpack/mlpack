@@ -10,8 +10,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -23,27 +21,20 @@ namespace ann /** Artificial Neural Network. */ {
  * for the gates and cells and also of the type of the function used to
  * initialize and update the peephole weights.
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam GateActivationFunction Activation function used for the gates.
  * @tparam StateActivationFunction Activation function used for the state.
  * @tparam OutputActivationFunction Activation function used for the output.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam PeepholeDataType Type of the peephole data (weights, derivatives and
- *         gradients).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class GateActivationFunction = LogisticFunction,
     class StateActivationFunction = TanhFunction,
     class OutputActivationFunction = TanhFunction,
-    class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename PeepholeDataType = arma::cube
+    typename OutputDataType = arma::mat
 >
 class LSTMLayer
 {
@@ -57,29 +48,16 @@ class LSTMLayer
    * @param WeightInitRule The weight initialization rule used to initialize the
    *        weight matrix.
    */
-  LSTMLayer(const size_t outSize,
-            const bool peepholes = false,
-            WeightInitRule weightInitRule = WeightInitRule()) :
+  LSTMLayer(const size_t outSize, const bool peepholes = false) :
       outSize(outSize),
       peepholes(peepholes),
       seqLen(1),
-      offset(0),
-      optimizer(new OptimizerType<LSTMLayer<OptimizerType,
-                                            GateActivationFunction,
-                                            StateActivationFunction,
-                                            OutputActivationFunction,
-                                            WeightInitRule,
-                                            InputDataType,
-                                            OutputDataType,
-                                            PeepholeDataType>,
-                                            PeepholeDataType>(*this)),
-      ownsOptimizer(true)
+      offset(0)
   {
     if (peepholes)
     {
-      weightInitRule.Initialize(peepholeWeights, outSize, 1, 3);
-      peepholeDerivatives = PeepholeDataType(outSize, 1, 3);
-      peepholeGradient = PeepholeDataType(outSize, 1, 3);
+      peepholeWeights.set_size(outSize, 3);
+      peepholeDerivatives = arma::zeros<OutputDataType>(outSize, 3);
     }
   }
 
@@ -90,45 +68,12 @@ class LSTMLayer
 
   LSTMLayer& operator=(LSTMLayer &&layer) noexcept
   {
-    optimizer = layer.optimizer;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.optimizer = nullptr;
-    layer.ownsOptimizer = false;
-
     outSize = layer.outSize;
-    peepholes = layer.peepholes;
     seqLen = layer.seqLen;
-    offset = layer.offset;
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-    inGate.swap(layer.inGate);
-    inGateAct.swap(layer.inGateAct);
-    inGateError.swap(layer.inGateError);
-    outGate.swap(layer.outGate);
-    outGateAct.swap(layer.outGateAct);
-    outGateError.swap(layer.outGateError);
-    forgetGate.swap(layer.forgetGate);
-    forgetGateAct.swap(layer.forgetGateAct);
-    forgetGateError.swap(layer.forgetGateError);
-    state.swap(layer.state);
-    stateError.swap(layer.stateError);
-    cellAct.swap(layer.cellAct);
+
     peepholeWeights.swap(layer.peepholeWeights);
-    peepholeDerivatives.swap(layer.peepholeDerivatives);
-    peepholeGradient.swap(layer.peepholeGradient);
 
     return *this;
-  }
-
-  /**
-   * Delete the LSTMLayer object and its optimizer.
-   */
-  ~LSTMLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -165,8 +110,8 @@ class LSTMLayer
 
     if (peepholes && offset > 0)
     {
-      inGate.col(offset) += peepholeWeights.slice(0) % state.col(offset - 1);
-      forgetGate.col(offset) += peepholeWeights.slice(1) %
+      inGate.col(offset) += peepholeWeights.col(0) % state.col(offset - 1);
+      forgetGate.col(offset) += peepholeWeights.col(1) %
           state.col(offset - 1);
     }
 
@@ -187,7 +132,7 @@ class LSTMLayer
       state.col(offset) += forgetGateAct.col(offset) % state.col(offset - 1);
 
     if (peepholes)
-      outGate.col(offset) += peepholeWeights.slice(2) % state.col(offset);
+      outGate.col(offset) += peepholeWeights.col(2) % state.col(offset);
 
     arma::Col<eT> outGateActivation = outGateAct.unsafe_col(offset);
     GateActivationFunction::fn(outGate.unsafe_col(offset), outGateActivation);
@@ -212,7 +157,7 @@ class LSTMLayer
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g)
   {
-    size_t queryOffset = seqLen - offset - 1;
+    queryOffset = seqLen - offset - 1;
 
     arma::Col<eT> outGateDerivative;
     GateActivationFunction::deriv(outGateAct.unsafe_col(queryOffset),
@@ -237,16 +182,16 @@ class LSTMLayer
       if (peepholes)
       {
         stateError.col(queryOffset) += inGateError.col(queryOffset + 1) %
-            peepholeWeights.slice(0);
+            peepholeWeights.col(0);
         stateError.col(queryOffset) += forgetGateError.col(queryOffset + 1) %
-            peepholeWeights.slice(1);
+            peepholeWeights.col(1);
       }
     }
 
     if (peepholes)
     {
       stateError.col(queryOffset) += outGateError.col(queryOffset) %
-          peepholeWeights.slice(2);
+          peepholeWeights.col(2);
     }
 
     arma::Col<eT> cellDerivative;
@@ -273,14 +218,14 @@ class LSTMLayer
 
     if (peepholes)
     {
-      peepholeDerivatives.slice(2) += outGateError.col(queryOffset) %
+      peepholeDerivatives.col(2) += outGateError.col(queryOffset) %
           state.col(queryOffset);
 
       if (queryOffset > 0)
       {
-        peepholeDerivatives.slice(0) += inGateError.col(queryOffset) %
+        peepholeDerivatives.col(0) += inGateError.col(queryOffset) %
             state.col(queryOffset - 1);
-        peepholeDerivatives.slice(1) += forgetGateError.col(queryOffset) %
+        peepholeDerivatives.col(1) += forgetGateError.col(queryOffset) %
             state.col(queryOffset - 1);
       }
     }
@@ -294,32 +239,33 @@ class LSTMLayer
         outGateError.col(queryOffset);
 
     offset = (offset + 1) % seqLen;
+  }
 
+  template<typename eT, typename GradientDataType>
+  void Gradient(const arma::Mat<eT>& /* unused */, GradientDataType& /* unused */)
+  {
     if (peepholes && offset == 0)
     {
-      peepholeGradient.slice(0) = arma::trans((peepholeWeights.slice(0).t() *
-          (inGateError.col(queryOffset) % peepholeDerivatives.slice(0))) *
+      peepholeGradient.col(0) = arma::trans((peepholeWeights.col(0).t() *
+          (inGateError.col(queryOffset) % peepholeDerivatives.col(0))) *
           inGate.col(queryOffset).t());
 
-      peepholeGradient.slice(1) = arma::trans((peepholeWeights.slice(1).t() *
-          (forgetGateError.col(queryOffset) % peepholeDerivatives.slice(1))) *
+      peepholeGradient.col(1) = arma::trans((peepholeWeights.col(1).t() *
+          (forgetGateError.col(queryOffset) % peepholeDerivatives.col(1))) *
           forgetGate.col(queryOffset).t());
 
-      peepholeGradient.slice(2) = arma::trans((peepholeWeights.slice(2).t() *
-          (outGateError.col(queryOffset) % peepholeDerivatives.slice(2))) *
+      peepholeGradient.col(2) = arma::trans((peepholeWeights.col(2).t() *
+          (outGateError.col(queryOffset) % peepholeDerivatives.col(2))) *
           outGate.col(queryOffset).t());
 
-      optimizer->Update();
-      optimizer->Optimize();
-      optimizer->Reset();
       peepholeDerivatives.zeros();
-    }
+    }    
   }
 
   //! Get the peephole weights.
-  PeepholeDataType& Weights() const { return peepholeWeights; }
+  OutputDataType& Weights() const { return peepholeWeights; }
   //! Modify the peephole weights.
-  PeepholeDataType& Weights() { return peepholeWeights; }
+  OutputDataType& Weights() { return peepholeWeights; }
 
   //! Get the input parameter.
   InputDataType& InputParameter() const {return inputParameter; }
@@ -337,9 +283,9 @@ class LSTMLayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the peephole gradient.
-  PeepholeDataType& Gradient() const {return peepholeGradient; }
+  OutputDataType& Gradient() const { return peepholeGradient; }
   //! Modify the peephole gradient.
-  PeepholeDataType& Gradient() { return peepholeGradient; }
+  OutputDataType& Gradient() { return peepholeGradient; }
 
   //! Get the sequence length.
   size_t SeqLen() const { return seqLen; }
@@ -359,18 +305,8 @@ class LSTMLayer
   //! Locally-stored sequence offset.
   size_t offset;
 
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<LSTMLayer<OptimizerType,
-                          GateActivationFunction,
-                          StateActivationFunction,
-                          OutputActivationFunction,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType,
-                          PeepholeDataType>, PeepholeDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
+  //! Locally-stored query offset.
+  size_t queryOffset;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -421,34 +357,28 @@ class LSTMLayer
   InputDataType cellAct;
 
   //! Locally-stored peephole weight object.
-  PeepholeDataType peepholeWeights;
+  OutputDataType peepholeWeights;
 
   //! Locally-stored derivatives object.
-  PeepholeDataType peepholeDerivatives;
+  OutputDataType peepholeDerivatives;
 
   //! Locally-stored peephole gradient object.
-  PeepholeDataType peepholeGradient;
+  OutputDataType peepholeGradient;
 }; // class LSTMLayer
 
 //! Layer traits for the lstm layer.
 template<
-    template<typename, typename> class OptimizerType,
     class GateActivationFunction,
     class StateActivationFunction,
     class OutputActivationFunction,
-    class WeightInitRule,
     typename InputDataType,
-    typename OutputDataType,
-    typename PeepholeDataType
+    typename OutputDataType
 >
-class LayerTraits<LSTMLayer<OptimizerType,
-                            GateActivationFunction,
+class LayerTraits<LSTMLayer<GateActivationFunction,
                             StateActivationFunction,
                             OutputActivationFunction,
-                            WeightInitRule,
                             InputDataType,
-                            OutputDataType,
-                            PeepholeDataType> >
+                            OutputDataType> >
 {
  public:
   static const bool IsBinary = false;

@@ -9,8 +9,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -23,16 +21,12 @@ namespace ann /** Artificial Neural Network. */ {
  *
  *  - 2DBiasLayer
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
@@ -45,22 +39,12 @@ class BiasLayer
    *
    * @param outSize The number of output units.
    * @param bias The bias value.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    */
-  BiasLayer(const size_t outSize,
-            const double bias = 1,
-            WeightInitRule weightInitRule = WeightInitRule()) :
+  BiasLayer(const size_t outSize, const double bias = 1) :
       outSize(outSize),
-      bias(bias),
-      optimizer(new OptimizerType<BiasLayer<OptimizerType,
-                                            WeightInitRule,
-                                            InputDataType,
-                                            OutputDataType>,
-                                            InputDataType>(*this)),
-      ownsOptimizer(true)
+      bias(bias)
   {
-    weightInitRule.Initialize(weights, outSize, 1);
+    weights.set_size(outSize, 1);
   }
   
   BiasLayer(BiasLayer &&layer) noexcept
@@ -70,29 +54,11 @@ class BiasLayer
 
   BiasLayer& operator=(BiasLayer &&layer) noexcept
   {
-    optimizer = layer.optimizer;
-    layer.optimizer = nullptr;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
-
     outSize = layer.outSize;
     bias = layer.bias;
     weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
 
     return *this;
-  }
-
-  /**
-   * Delete the bias layer object and its optimizer.
-   */
-  ~BiasLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -170,23 +136,6 @@ class BiasLayer
     g = d * bias;
   }
 
-  //! Get the optimizer.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>& Optimizer()
-  {
-    return *optimizer;
-  }
-
   //! Get the weights.
   InputDataType& Weights() const { return weights; }
   //! Modify the weights.
@@ -233,26 +182,11 @@ class BiasLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<BiasLayer<OptimizerType,
-                          WeightInitRule,
-                          InputDataType,
-                          OutputDataType>, InputDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
-template<
-  template<typename, typename> class OptimizerType,
-  typename WeightInitRule,
-  typename InputDataType,
-  typename OutputDataType
->
-class LayerTraits<BiasLayer<
-    OptimizerType, WeightInitRule, InputDataType, OutputDataType> >
+template<typename InputDataType, typename OutputDataType>
+class LayerTraits<BiasLayer<InputDataType, OutputDataType> >
 {
  public:
   static const bool IsBinary = false;
@@ -266,13 +200,19 @@ class LayerTraits<BiasLayer<
  * Standard 2D-Bias-Layer.
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = NguyenWidrowInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::cube
 >
-using BiasLayer2D = BiasLayer<
-    OptimizerType, WeightInitRule, InputDataType, OutputDataType>;
+using BiasLayer2D = BiasLayer<InputDataType, OutputDataType>;
+
+/**
+ * Standard 2D-Bias-Layer.
+ */
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using AdditionLayer = BiasLayer<InputDataType, OutputDataType>;
 
 } // namespace ann
 } // namespace mlpack

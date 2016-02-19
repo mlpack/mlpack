@@ -13,6 +13,7 @@
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_tanh_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -27,6 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *  - ReLULayer
  *  - TanHLayer
+ *  - HardTanHLayer
  *  - BaseLayer2D
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
@@ -56,12 +58,8 @@ class BaseLayer
     *this = std::move(layer);
   }
 
-  BaseLayer& operator=(BaseLayer &&layer) noexcept
+  BaseLayer& operator=(BaseLayer &&/* unused */) noexcept
   {
-    delta.swap(layer.delta);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
     return *this;
   }
 
@@ -134,12 +132,12 @@ class BaseLayer
   }
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const {return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 

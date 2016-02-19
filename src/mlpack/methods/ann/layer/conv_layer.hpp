@@ -9,8 +9,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 
@@ -21,8 +19,6 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the ConvLayer class. The ConvLayer class represents a
  * single layer of a neural network.
  *
- * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam WeightInitRule Rule used to initialize the weight matrix.
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
@@ -32,8 +28,6 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = NguyenWidrowInitialization,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
@@ -55,8 +49,6 @@ class ConvLayer
    * @param yStride Stride of filter application in the y direction.
    * @param wPad Spatial padding width of the input.
    * @param hPad Spatial padding height of the input.
-   * @param WeightInitRule The weight initialization rule used to initialize the
-   *        weight matrix.
    */
   ConvLayer(const size_t inMaps,
             const size_t outMaps,
@@ -65,8 +57,7 @@ class ConvLayer
             const size_t xStride = 1,
             const size_t yStride = 1,
             const size_t wPad = 0,
-            const size_t hPad = 0,
-            WeightInitRule weightInitRule = WeightInitRule()) :
+            const size_t hPad = 0) :
       wfilter(wfilter),
       hfilter(hfilter),
       inMaps(inMaps),
@@ -74,18 +65,9 @@ class ConvLayer
       xStride(xStride),
       yStride(yStride),
       wPad(wPad),
-      hPad(hPad),
-      optimizer(new OptimizerType<ConvLayer<OptimizerType,
-                                            WeightInitRule,
-                                            ForwardConvolutionRule,
-                                            BackwardConvolutionRule,
-                                            GradientConvolutionRule,
-                                            InputDataType,
-                                            OutputDataType>,
-                                            OutputDataType>(*this)),
-      ownsOptimizer(true)
+      hPad(hPad)
   {
-    weightInitRule.Initialize(weights, wfilter, hfilter, inMaps * outMaps);
+    weights.set_size(wfilter, hfilter, inMaps * outMaps);
   }
 
   ConvLayer(ConvLayer &&layer) noexcept
@@ -95,11 +77,6 @@ class ConvLayer
 
   ConvLayer& operator=(ConvLayer &&layer) noexcept
   {
-    optimizer = layer.optimizer;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.optimizer = nullptr;
-    layer.ownsOptimizer = false;
-
     wfilter = layer.wfilter;
     hfilter = layer.hfilter;
     inMaps = layer.inMaps;
@@ -109,21 +86,8 @@ class ConvLayer
     wPad = layer.wPad;
     hPad = layer.hPad;
     weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
 
     return *this;
-  }
-
-  /**
-   * Delete the convolution layer object and its optimizer.
-   */
-  ~ConvLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
   }
 
   /**
@@ -213,29 +177,6 @@ class ConvLayer
           g.slice(s) += output.slice(i);
       }
     }
-  }
-
-  //! Get the optimizer.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
   }
 
   //! Get the weights.
@@ -348,33 +289,17 @@ class ConvLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored pointer to the optimzer object.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class ConvLayer
 
 //! Layer traits for the convolution layer.
 template<
-    template<typename, typename> class OptimizerType,
-    typename WeightInitRule,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
     typename InputDataType,
     typename OutputDataType
 >
-class LayerTraits<ConvLayer<OptimizerType,
-                            WeightInitRule,
-                            ForwardConvolutionRule,
+class LayerTraits<ConvLayer<ForwardConvolutionRule,
                             BackwardConvolutionRule,
                             GradientConvolutionRule,
                             InputDataType,
