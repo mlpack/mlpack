@@ -326,7 +326,7 @@ class CNN
   Update(T& t, P& /* unused */, D& delta)
   {
     t.Gradient(delta, t.Gradient());
-    t.Optimizer().Update();
+	t.UpdateOptimizer();
   }
 
   template<typename T, typename P, typename D>
@@ -374,8 +374,8 @@ class CNN
       HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Apply(T& t, P& /* unused */, D& /* unused */)
   {
-    t.Optimizer().Optimize();
-    t.Optimizer().Reset();
+    t.Optimize();
+    t.ResetOptimizer();
   }
 
   template<typename T, typename P, typename D>
@@ -401,7 +401,7 @@ class CNN
   LayerTypes network;
 
   //! The outputlayer used to evaluate the network
-  OutputLayerType& outputLayer;
+  OutputLayerType outputLayer;
 
   //! The class used to evaluate the performance of the network
   PerformanceFunction performanceFunction;

@@ -45,22 +45,6 @@ class PoolingLayer
     // Nothing to do here.
   }
 
-  PoolingLayer(PoolingLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  PoolingLayer& operator=(PoolingLayer &&layer) noexcept
-  {
-    kSize = layer.kSize;
-    delta.swap(layer.delta);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-    pooling = std::move(layer.pooling);
-
-    return *this;
-  }
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

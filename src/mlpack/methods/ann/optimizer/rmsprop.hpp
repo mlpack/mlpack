@@ -34,7 +34,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  */
-template<typename DecomposableFunctionType, typename DataType>
+template<typename DataType>
 class RMSPROP
 {
  public:
@@ -47,11 +47,9 @@ class RMSPROP
    * @param eps The eps coefficient to avoid division by zero (numerical
    *        stability).
    */
-  RMSPROP(DecomposableFunctionType& function,
-          const double lr = 0.01,
+  RMSPROP(const double lr = 0.01,
           const double alpha = 0.99,
           const double eps = 1e-8) :
-      function(function),
       lr(lr),
       alpha(alpha),
       eps(eps)
@@ -62,30 +60,30 @@ class RMSPROP
   /**
    * Optimize the given function using RmsProp.
    */
-  void Optimize()
+  void Optimize(DataType& weights) 
   {
     if (meanSquaredGad.n_elem == 0)
     {
-      meanSquaredGad = function.Weights();
+      meanSquaredGad = weights; 
       meanSquaredGad.zeros();
     }
 
-    Optimize(function.Weights(), gradient, meanSquaredGad);
+    Optimize(weights, gradient, meanSquaredGad);
   }
 
   /*
    * Sum up all gradients and store the results in the gradients storage.
    */
-  void Update()
+  void Update(DataType const& function_gradients)
   {
     if (gradient.n_elem != 0)
     {
-      DataType outputGradient = function.Gradient();
+      DataType outputGradient = function_gradients; // function.Gradient();
       gradient += outputGradient;
     }
     else
     {
-      gradient = function.Gradient();
+      gradient = function_gradients;
     }
   }
 
@@ -138,8 +136,6 @@ class RMSPROP
     weights -= lr * gradient / (arma::sqrt(meanSquaredGradient) + eps);
   }
 
-  //! The instantiated function.
-  DecomposableFunctionType& function;
 
   //! The value used as learning rate.
   const double lr;

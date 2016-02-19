@@ -32,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template<typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
@@ -74,57 +74,11 @@ class ConvLayer
       xStride(xStride),
       yStride(yStride),
       wPad(wPad),
-      hPad(hPad),
-      optimizer(new OptimizerType<ConvLayer<OptimizerType,
-                                            WeightInitRule,
-                                            ForwardConvolutionRule,
-                                            BackwardConvolutionRule,
-                                            GradientConvolutionRule,
-                                            InputDataType,
-                                            OutputDataType>,
-                                            OutputDataType>(*this)),
-      ownsOptimizer(true)
+      hPad(hPad)
   {
     weightInitRule.Initialize(weights, wfilter, hfilter, inMaps * outMaps);
   }
 
-  ConvLayer(ConvLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  ConvLayer& operator=(ConvLayer &&layer) noexcept
-  {
-    optimizer = layer.optimizer;
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.optimizer = nullptr;
-    layer.ownsOptimizer = false;
-
-    wfilter = layer.wfilter;
-    hfilter = layer.hfilter;
-    inMaps = layer.inMaps;
-    outMaps = layer.outMaps;
-    xStride = layer.xStride;
-    yStride = layer.yStride;
-    wPad = layer.wPad;
-    hPad = layer.hPad;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
-  /**
-   * Delete the convolution layer object and its optimizer.
-   */
-  ~ConvLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -215,27 +169,17 @@ class ConvLayer
     }
   }
 
-  //! Get the optimizer.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>& Optimizer() const
+ void UpdateOptimizer()
   {
-    return *optimizer;
+   optimizer.Update(Gradient());
+ }
+  void Optimize()
+  {
+    optimizer.Optimize(Weights());
   }
-  //! Modify the optimizer.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>& Optimizer()
+  void ResetOptimizer()
   {
-    return *optimizer;
+    optimizer.Reset();
   }
 
   //! Get the weights.
@@ -350,21 +294,12 @@ class ConvLayer
   OutputDataType outputParameter;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType<ConvLayer<OptimizerType,
-                          WeightInitRule,
-                          ForwardConvolutionRule,
-                          BackwardConvolutionRule,
-                          GradientConvolutionRule,
-                          InputDataType,
-                          OutputDataType>, OutputDataType>* optimizer;
-
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
+  OptimizerType<OutputDataType> optimizer;
 }; // class ConvLayer
 
 //! Layer traits for the convolution layer.
 template<
-    template<typename, typename> class OptimizerType,
+    template<typename> class OptimizerType,
     typename WeightInitRule,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,

@@ -30,7 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    template<typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -53,55 +53,14 @@ class SparseInputLayer
                    const double lambda = 0.0001) :
     inSize(inSize),
     outSize(outSize),
-    lambda(lambda),
-    optimizer(new OptimizerType<SparseInputLayer<OptimizerType,
-                                                 WeightInitRule,
-                                                 InputDataType,
-                                                 OutputDataType>,
-                                                 OutputDataType>(*this)),
-    ownsOptimizer(true)
+    lambda(lambda)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
   }
 
-  SparseInputLayer(SparseInputLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
+ 
 
-  SparseInputLayer& operator=(SparseInputLayer &&layer) noexcept
-  {
-    ownsOptimizer = layer.ownsOptimizer;
-    layer.ownsOptimizer = false;
-
-    optimizer = new OptimizerType<SparseInputLayer<OptimizerType,
-                                                   WeightInitRule,
-                                                   InputDataType,
-                                                   OutputDataType>,
-                                                   OutputDataType>(*this);
-
-    layer.optimizer = nullptr;
-
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    lambda = layer.lambda;
-    weights.swap(layer.weights);
-    delta.swap(layer.delta);
-    gradient.swap(layer.gradient);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
-  /**
-   * Delete the linear layer object and its optimizer.
-   */
-  ~SparseInputLayer()
-  {
-    if (ownsOptimizer)
-      delete optimizer;
-  }
+ 
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -147,22 +106,7 @@ class SparseInputLayer
         lambda * weights;
   }
 
-  //! Get the optimizer.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>& Optimizer() const
-  {
-    return *optimizer;
-  }
-  //! Modify the optimizer.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>& Optimizer()
-  {
-    return *optimizer;
-  }
+
 
   //! Get the weights.
   OutputDataType const& Weights() const { return weights; }
@@ -215,18 +159,13 @@ class SparseInputLayer
   OutputDataType outputParameter;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType<SparseInputLayer<OptimizerType,
-                                 WeightInitRule,
-                                 InputDataType,
-                                 OutputDataType>, OutputDataType>* optimizer;
+  OptimizerType< OutputDataType> optimizer;
 
-  //! Parameter that indicates if the class owns a optimizer object.
-  bool ownsOptimizer;
 }; // class SparseInputLayer
 
 //! Layer traits for the SparseInputLayer.
 template<
-    template<typename, typename> class OptimizerType,
+    template<typename> class OptimizerType,
     typename WeightInitRule,
     typename InputDataType,
     typename OutputDataType

@@ -36,20 +36,6 @@ class SoftmaxLayer
     // Nothing to do here.
   }
 
-  SoftmaxLayer(SoftmaxLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SoftmaxLayer& operator=(SoftmaxLayer &&layer) noexcept
-  {
-    delta.swap(layer.delta);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -88,7 +74,7 @@ class SoftmaxLayer
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  const OutputDataType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 

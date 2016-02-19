@@ -32,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  */
-template<typename DecomposableFunctionType, typename DataType>
+template< typename DataType>
 class AdaDelta
 {
  public:
@@ -45,10 +45,9 @@ class AdaDelta
    * @param eps The eps coefficient to avoid division by zero (numerical
    *        stability).
    */
-  AdaDelta(DecomposableFunctionType& function,
+  AdaDelta(
           const double rho = 0.95,
           const double eps = 1e-6) :
-      function(function),
       rho(rho),
       eps(eps)
   {
@@ -58,32 +57,32 @@ class AdaDelta
   /**
    * Optimize the given function using AdaDelta.
    */
-  void Optimize()
+  void Optimize(DataType & weights)
   {
     if (meanSquaredGradient.n_elem == 0)
     {
-      meanSquaredGradient = function.Weights();
+	meanSquaredGradient = weights;
       meanSquaredGradient.zeros();
 
       meanSquaredGradientDx = meanSquaredGradient;
     }
 
-    Optimize(function.Weights(), gradient, meanSquaredGradient,
+    Optimize(weights, gradient, meanSquaredGradient,
         meanSquaredGradientDx);
   }
 
   /*
    * Sum up all gradients and store the results in the gradients storage.
    */
-  void Update()
+  void Update(DataType const& function_Gradient)
   {
     if (gradient.n_elem != 0)
     {
-      gradient += function.Gradient();
+      gradient += function_Gradient;
     }
     else
     {
-      gradient = function.Gradient();
+      gradient = function_Gradient;
     }
   }
 
@@ -150,8 +149,6 @@ class AdaDelta
     weights -= dx;
   }
 
-  //! The instantiated function.
-  DecomposableFunctionType& function;
 
   //! The value used as interpolation parameter.
   const double rho;
