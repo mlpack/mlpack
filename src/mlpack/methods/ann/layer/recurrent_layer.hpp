@@ -205,7 +205,31 @@ class RecurrentLayer
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(inSize, "inSize");
+    ar & CreateNVP(outSize, "outSize");
+    ar & CreateNVP(weights, "weights");
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(optimizer, "optimizer");
+    ar & CreateNVP(recurrentParameter, "recurrentParameter");
+    ar & CreateNVP(ownsOptimizer, "ownsOptimizer");
+
+    optimizer->Function(*this);
+  }
+
  private:
+  /**
+   * This constructor is designed for boost::serialization
+   */
+  RecurrentLayer(){}
+
   //! Locally-stored number of input units.
   size_t inSize;
 

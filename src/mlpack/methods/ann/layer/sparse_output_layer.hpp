@@ -2,7 +2,7 @@
  * @file sparse_output_layer.hpp
  * @author Tham Ngap Wei
  *
- * This is the fourth layer of sparse autoencoder.
+ * This is the fourth layer of sparse autoencoder
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
@@ -16,8 +16,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the SparseOutputLayer class. The SparseOutputLayer class
- * represents  the fourth layer of the sparse autoencoder.
+ * Implementation of the SparseOutputLayer class. The SparseOutputLayer class represents 
+ * the fourth layer of the sparse autoencoder.
  *
  * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam WeightInitRule Rule used to initialize the weight matrix.
@@ -31,7 +31,7 @@ template <
     class WeightInitRule = RandomInitialization,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
->
+    >
 class SparseOutputLayer
 {
  public:
@@ -55,10 +55,10 @@ class SparseOutputLayer
     beta(beta),
     rho(rho),
     optimizer(new OptimizerType<SparseOutputLayer<OptimizerType,
-              WeightInitRule,
-              InputDataType,
-              OutputDataType>,
-              OutputDataType>(*this)),
+                                                  WeightInitRule,
+                                                  InputDataType,
+                                                  OutputDataType>,
+                                                  OutputDataType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outSize, inSize);
@@ -73,7 +73,7 @@ class SparseOutputLayer
   {
     ownsOptimizer = layer.ownsOptimizer;
     optimizer = layer.optimizer;
-    layer.ownsOptimizer = false;
+    layer.ownsOptimizer = false;    
     layer.optimizer = nullptr;
 
     beta = layer.beta;
@@ -130,12 +130,10 @@ class SparseOutputLayer
                 arma::Mat<eT>& g)
   {
     const arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
-
-    // NOTE: if the armadillo version high enough, find_nonfinite can prevents
-    // overflow value:
-    // klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
+	// if the armadillo version high enough, find_nonfinite can prevents overflow value
+    //klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
     g = weights.t() * gy +
-        arma::repmat(klDivGrad, 1, input.n_cols);
+        arma::repmat(klDivGrad, 1, input.n_cols);    
   }
 
   /*
@@ -223,7 +221,34 @@ class SparseOutputLayer
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(inSize, "inSize");
+    ar & CreateNVP(outSize, "outSize");
+    ar & CreateNVP(lambda, "lambda");
+    ar & CreateNVP(beta, "beta");
+    ar & CreateNVP(rho, "rho");
+    ar & CreateNVP(weights, "weights");
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(rhoCap, "rhoCap");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(optimizer, "optimizer");
+    ar & CreateNVP(ownsOptimizer, "ownsOptimizer");
+
+    optimizer->Function(*this);
+  }
+
  private:
+  /**
+   * Design for boost::serialization
+   */
+  SparseOutputLayer(){}
+
   //! Locally-stored number of input units.
   size_t inSize;
 
@@ -259,13 +284,13 @@ class SparseOutputLayer
 
   //! Locally-stored pointer to the optimzer object.
   OptimizerType<SparseOutputLayer<OptimizerType,
-                                  WeightInitRule,
-                                  InputDataType,
-                                  OutputDataType>, OutputDataType>* optimizer;
+  WeightInitRule,
+  InputDataType,
+  OutputDataType>, OutputDataType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
-}; // class SparseOutputLayer
+}; // class SparseLayer
 
 //! Layer traits for the SparseOutputLayer.
 template<
@@ -285,7 +310,7 @@ public:
   static const bool IsConnection = true;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 #endif

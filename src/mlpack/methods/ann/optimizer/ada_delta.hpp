@@ -48,7 +48,25 @@ class AdaDelta
   AdaDelta(DecomposableFunctionType& function,
           const double rho = 0.95,
           const double eps = 1e-6) :
-      function(function),
+      function(&function),
+      rho(rho),
+      eps(eps)
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * This constructor is designed for boost serialization
+   * Remember to assign the function to appropriate entity
+   * if you use this constructor to construct AdaDelta
+   * @param rho Constant interpolation parameter similar to that used in
+   *        Momentum methods.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
+   */
+  AdaDelta(const double rho = 0.95,
+           const double eps = 1e-6) :
+      function(nullptr),
       rho(rho),
       eps(eps)
   {
@@ -99,6 +117,25 @@ class AdaDelta
   DataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   DataType& Gradient() { return gradient; }
+
+  void Function(DecomposableFunctionType &func)
+  {
+    function = &func;
+  }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    //do not serialize function, the address of the function
+    //should be setup by the DecomposableFunction
+    ar & CreateNVP(rho, "rho");
+    ar & CreateNVP(eps, "eps");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(meanSquaredGradient, "meanSquaredGradient");
+    ar & CreateNVP(meanSquaredGradientDx, "meanSquaredGradientDx");
+  }
 
  private:
   /**
@@ -151,13 +188,13 @@ class AdaDelta
   }
 
   //! The instantiated function.
-  DecomposableFunctionType& function;
+  DecomposableFunctionType* function;
 
   //! The value used as interpolation parameter.
-  const double rho;
+  double rho;
 
   //! The value used as eps.
-  const double eps;
+  double eps;
 
   //! The current gradient.
   DataType gradient;

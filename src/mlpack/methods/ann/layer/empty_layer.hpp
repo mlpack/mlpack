@@ -5,8 +5,8 @@
  * Definition of the OneHotLayer class, which implements a standard network
  * layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -15,35 +15,24 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a one hot classification layer that can be used as
- * output layer.
+ * A layer do not do anything
  */
-class OneHotLayer
+class EmptyLayer
 {
  public:
   /**
    * Create the OneHotLayer object.
    */
-  OneHotLayer()
+  EmptyLayer()
   {
     // Nothing to do here.
   }
 
-  /*
-   * Calculate the error using the specified input activation and the target.
-   * The error is stored into the given error parameter.
-   *
-   * @param inputActivations Input data used for evaluating the network.
-   * @param target Target data used for evaluating the network.
-   * @param error The calculated error with respect to the input activation and
-   * the given target.
-   */
   template<typename DataType>
-  void CalculateError(const DataType& inputActivations,
-                      const DataType& target,
-                      DataType& error)
-  {
-    error = inputActivations - target;
+  void CalculateError(const DataType&,
+                      const DataType&,
+                      DataType&)
+  {    
   }
 
   /*
@@ -71,7 +60,7 @@ class OneHotLayer
 
 //! Layer traits for the one-hot class classification layer.
 template <>
-class LayerTraits<OneHotLayer>
+class LayerTraits<EmptyLayer>
 {
  public:
   static const bool IsBinary = true;
@@ -80,8 +69,8 @@ class LayerTraits<OneHotLayer>
   static const bool IsConnection = false;
 };
 
-} // namespace ann
-} // namespace mlpack
+}; // namespace ann
+}; // namespace mlpack
 
 
 #endif

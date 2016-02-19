@@ -2,7 +2,7 @@
  * @file sparse_bias_layer.hpp
  * @author Tham Ngap Wei
  *
- * Definition of the SparseBiasLayer class.
+ * Definition of the BiasLayer class.
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
@@ -18,6 +18,10 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * An implementation of a bias layer design for sparse autoencoder.
  * The BiasLayer class represents a single layer of a neural network.
+ *
+ * A convenient typedef is given:
+ *
+ *  - 2DBiasLayer
  *
  * @tparam OptimizerType Type of the optimizer used to update the weights.
  * @tparam WeightInitRule Rule used to initialize the weight matrix.
@@ -36,8 +40,8 @@ class SparseBiasLayer
 {
  public:
   /**
-   * Create the SparseBiasLayer object using the specified number of units and
-   * bias parameter.
+   * Create the BiasLayer object using the specified number of units and bias
+   * parameter.
    *
    * @param outSize The number of output units.
    * @param batchSize The batch size used to train the network.
@@ -67,16 +71,12 @@ class SparseBiasLayer
 
   SparseBiasLayer& operator=(SparseBiasLayer &&layer) noexcept
   {
-    optimizer = new OptimizerType<SparseBiasLayer<OptimizerType,
-                                                  WeightInitRule,
-                                                  InputDataType,
-                                                  OutputDataType>,
-                                                  InputDataType>(*this);
+    optimizer = layer.optimizer;    
     ownsOptimizer = layer.ownsOptimizer;
     layer.optimizer = nullptr;
     layer.ownsOptimizer = false;
 
-    outSize = layer.outSize;
+    outSize = layer.outSize;   
     batchSize = layer.batchSize;
     weights.swap(layer.weights);
     delta.swap(layer.delta);
@@ -185,7 +185,30 @@ class SparseBiasLayer
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(outSize, "outSize");
+    ar & CreateNVP(batchSize, "batchSize");
+    ar & CreateNVP(weights, "weights");
+    ar & CreateNVP(delta, "delta");
+    ar & CreateNVP(gradient, "gradient");
+    ar & CreateNVP(inputParameter, "inputParameter");
+    ar & CreateNVP(outputParameter, "outputParameter");
+    ar & CreateNVP(optimizer, "optimizer");
+    ar & CreateNVP(ownsOptimizer, "ownsOptimizer");
+
+    optimizer->Function(*this);
+  }
+
  private:
+  /**
+   * This default constructor is designed for boost::serialization
+   */
+  SparseBiasLayer(){}
+
   //! Locally-stored number of output units.
   size_t outSize;
 
@@ -209,13 +232,13 @@ class SparseBiasLayer
 
   //! Locally-stored pointer to the optimzer object.
   OptimizerType<SparseBiasLayer<OptimizerType,
-                                WeightInitRule,
-                                InputDataType,
-                                OutputDataType>, InputDataType>* optimizer;
+                          WeightInitRule,
+                          InputDataType,
+                          OutputDataType>, InputDataType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
-}; // class SparseBiasLayer
+}; // class BiasLayer
 
 //! Layer traits for the bias layer.
 template<

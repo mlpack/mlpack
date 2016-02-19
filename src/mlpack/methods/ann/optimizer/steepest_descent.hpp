@@ -36,7 +36,25 @@ class SteepestDescent
   SteepestDescent(DecomposableFunctionType& function,
                   const double lr = 0.5,
                   const double mom = 0) :
-      function(function),
+      function(&function),
+      lr(lr),
+      mom(mom)
+
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * This constructor is designed for boost serialization
+   * Remember to assign the function to appropriate entity
+   * if you use this constructor to construct SteepestDescent
+   *
+   * @param lr The learning rate coefficient.
+   * @param mom The momentum coefficient.
+   */
+  SteepestDescent(const double lr = 0.5,
+                  const double mom = 0) :
+      function(nullptr),
       lr(lr),
       mom(mom)
 
@@ -82,6 +100,24 @@ class SteepestDescent
     gradient.zeros();
   }
 
+  void Function(DecomposableFunctionType &func)
+  {
+    function = &func;
+  }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    //do not serialize function, the address of the function
+    //should be setup by the DecomposableFunction
+    ar & CreateNVP(lr, "lr");
+    ar & CreateNVP(mom, "mom");
+    ar & CreateNVP(momWeights, "momWeights");
+    ar & CreateNVP(gradient, "gradient");
+  }
+
  private:
   /** Optimize the given function using steepest descent.
    *
@@ -125,13 +161,13 @@ class SteepestDescent
   }
 
   //! The instantiated function.
-  DecomposableFunctionType& function;
+  DecomposableFunctionType* function;
 
   //! The value used as learning rate.
-  const double lr;
+  double lr;
 
   //! The value used as momentum.
-  const double mom;
+  double mom;
 
   //! Momentum matrix.
   DataType momWeights;
