@@ -68,6 +68,18 @@ HAS_MEM_FUNC(RecurrentParameter, HasRecurrentParameterCheck);
 // can use with SFINAE to catch when a type has a SeqLen() function.
 HAS_MEM_FUNC(SeqLen, HasSeqLenCheck);
 
+// This gives us a HasWeightsCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Weights() function.
+HAS_MEM_FUNC(Weights, HasWeightsCheck);
+
+// This gives us a HasLocationCheck<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a Location() function.
+HAS_MEM_FUNC(Location, HasLocationCheck);
+
+// This gives us a HasRewardCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Reward() function.
+HAS_MEM_FUNC(Reward, HasRewardCheck);
+
 } // namespace ann
 } // namespace mlpack
 
