@@ -1,10 +1,14 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  ffn.hpp
   cnn.hpp
+  cnn_impl.hpp
+  ffn.hpp
+  ffn_impl.hpp
+  network_util.hpp
+  network_util_impl.hpp
   rnn.hpp
-  network_traits.hpp
+  rnn_impl.hpp
 )
 
 # Add directory name to sources.
