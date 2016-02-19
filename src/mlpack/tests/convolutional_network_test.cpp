@@ -6,7 +6,6 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include <mlpack/methods/ann/layer/one_hot_layer.hpp>
@@ -16,19 +15,19 @@
 #include <mlpack/methods/ann/layer/bias_layer.hpp>
 #include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/dropout_layer.hpp>
 
+#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/cnn.hpp>
-#include <mlpack/methods/ann/trainer/trainer.hpp>
-#include <mlpack/methods/ann/optimizer/ada_delta.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
-#include <mlpack/methods/ann/init_rules/zero_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::optimization;
 
 
 BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
@@ -87,21 +86,18 @@ void BuildVanillaNetwork()
    * +---+        +---+        +---+        +---+        +---+    +---+
    */
 
-  ConvLayer<RMSPROP> convLayer0(1, 8, 5, 5);
-  BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer0(8);
-  BaseLayer2D<PerformanceFunction> baseLayer0;
+  ConvLayer<> convLayer0(1, 8, 5, 5);
+  BiasLayer2D<> biasLayer0(8);
+  BaseLayer2D<> baseLayer0;
   PoolingLayer<> poolingLayer0(2);
 
-
-
-
-  ConvLayer<RMSPROP> convLayer1(8, 12, 5, 5);
-  BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer1(12);
-  BaseLayer2D<PerformanceFunction> baseLayer1;
+  ConvLayer<> convLayer1(8, 12, 5, 5);
+  BiasLayer2D<> biasLayer1(12);
+  BaseLayer2D<> baseLayer1;
   PoolingLayer<> poolingLayer1(2);
 
-  LinearMappingLayer<RMSPROP> linearLayer0(192, 10);
-  BiasLayer<RMSPROP> biasLayer2(10);
+  LinearMappingLayer<> linearLayer0(192, 10);
+  BiasLayer<> biasLayer2(10);
   SoftmaxLayer<> softmaxLayer0;
 
   OneHotLayer outputLayer;
@@ -110,13 +106,30 @@ void BuildVanillaNetwork()
                           convLayer1, biasLayer1, baseLayer1, poolingLayer1,
                           linearLayer0, biasLayer2, softmaxLayer0);
 
-  CNN<decltype(modules), decltype(outputLayer)>
-      net(modules, outputLayer);
+  CNN<decltype(modules), decltype(outputLayer),
+      RandomInitialization, MeanSquaredErrorFunction> net(modules, outputLayer);
+  biasLayer0.Weights().zeros();
+  biasLayer1.Weights().zeros();
 
-  Trainer<decltype(net)> trainer(net, 50, 1, 0.7);
-  trainer.Train(input, Y, input, Y);
+  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8, 10 * input.n_slices, 0);
 
-  BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
+  net.Train(input, Y, opt);
+
+  arma::mat prediction;
+  net.Predict(input, prediction);
+
+  size_t error = 0;
+  for (size_t i = 0; i < nPoints; i++)
+  {
+    if (arma::sum(arma::sum(
+        arma::abs(prediction.col(i) - Y.col(i)))) == 0)
+    {
+      error++;
+    }
+  }
+
+  double classificationError = 1 - double(error) / nPoints;
+  BOOST_REQUIRE_LE(classificationError, 0.6);
 }
 
 /**
@@ -124,101 +137,7 @@ void BuildVanillaNetwork()
  */
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
-  BuildVanillaNetwork<LogisticFunction>();
-}
-
-/**
- * Train and evaluate a vanilla network with the specified structure.
- */
-template<
-    typename PerformanceFunction
->
-void BuildVanillaDropoutNetwork()
-{
-  arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
-
-  // Normalize each point since these are images.
-  arma::uword nPoints = X.n_cols;
-  for (arma::uword i = 0; i < nPoints; i++)
-  {
-    X.col(i) /= norm(X.col(i), 2);
-  }
-
-  // Build the target matrix.
-  arma::mat Y = arma::zeros<arma::mat>(10, nPoints);
-  for (size_t i = 0; i < nPoints; i++)
-  {
-    if (i < nPoints / 2)
-    {
-      Y.col(i)(5) = 1;
-    }
-    else
-    {
-      Y.col(i)(8) = 1;
-    }
-  }
-
-  arma::cube input = arma::cube(28, 28, nPoints);
-  for (size_t i = 0; i < nPoints; i++)
-    input.slice(i) = arma::mat(X.colptr(i), 28, 28);
-
-  /*
-   * Construct a convolutional neural network with a 28x28x1 input layer,
-   * 24x24x4 convolution layer, 24x24x4 dropout layer, 12x12x4 pooling layer,
-   * 8x8x8 convolution layer,8x8x8 Dropout Layer and a 4x4x12 pooling layer
-   * which is fully connected with the output layer. The network structure looks
-   * like:
-   *
-   * Input    Convolution  Dropout      Pooling     Convolution,     Output
-   * Layer    Layer        Layer        Layer       Dropout,         Layer
-   *                                                Pooling Layer
-   *          +---+        +---+        +---+
-   *          | +---+      | +---+      | +---+
-   * +---+    | | +---+    | | +---+    | | +---+                    +---+
-   * |   |    | | |   |    | | |   |    | | |   |                    |   |
-   * |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> ............--> |   |
-   * |   |      +-+   |      +-+   |      +-+   |                    |   |
-   * +---+        +---+        +---+        +---+                    +---+
-   */
-
-  ConvLayer<AdaDelta> convLayer0(1, 4, 5, 5);
-  BiasLayer2D<AdaDelta, ZeroInitialization> biasLayer0(4);
-  DropoutLayer2D<> dropoutLayer0;
-  BaseLayer2D<PerformanceFunction> baseLayer0;
-  PoolingLayer<> poolingLayer0(2);
-
-  ConvLayer<AdaDelta> convLayer1(4, 8, 5, 5);
-  BiasLayer2D<AdaDelta, ZeroInitialization> biasLayer1(8);
-  BaseLayer2D<PerformanceFunction> baseLayer1;
-  PoolingLayer<> poolingLayer1(2);
-
-  LinearMappingLayer<AdaDelta> linearLayer0(128, 10);
-  BiasLayer<AdaDelta> biasLayer2(10);
-  SoftmaxLayer<> softmaxLayer0;
-
-  OneHotLayer outputLayer;
-
-  auto modules = std::tie(convLayer0, biasLayer0, dropoutLayer0, baseLayer0,
-                          poolingLayer0, convLayer1, biasLayer1, baseLayer1,
-                          poolingLayer1, linearLayer0, biasLayer2,
-                          softmaxLayer0);
-
-  CNN<decltype(modules), decltype(outputLayer)>
-      net(modules, outputLayer);
-
-  Trainer<decltype(net)> trainer(net, 50, 1, 0.7);
-  trainer.Train(input, Y, input, Y);
-
-  BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
-}
-
-/**
- * Train the network on a larger dataset using dropout.
- */
-BOOST_AUTO_TEST_CASE(VanillaNetworkDropoutTest)
-{
-  BuildVanillaDropoutNetwork<RectifierFunction>();
+  BuildVanillaNetwork<LogisticFunction>();  
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -12,10 +12,9 @@
 #include <mlpack/methods/ann/layer/lstm_layer.hpp>
 #include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
 
-#include <mlpack/methods/ann/trainer/trainer.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
@@ -24,8 +23,8 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-
-
+using namespace mlpack::optimization;
+  
 BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
 // Be careful!  When writing new tests, always get the boolean value and store
@@ -91,11 +90,11 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
    *            .     .
    *            .......
    */
-  LinearLayer<SteepestDescent, RandomInitialization> linearLayer0(1, 4);
-  RecurrentLayer<SteepestDescent, RandomInitialization> recurrentLayer0(4);
+  LinearLayer<> linearLayer0(1, 4);
+  RecurrentLayer<> recurrentLayer0(4);
   BaseLayer<LogisticFunction> inputBaseLayer;
 
-  LinearLayer<SteepestDescent, RandomInitialization> hiddenLayer(4, 2);
+  LinearLayer<> hiddenLayer(4, 2);
   BaseLayer<LogisticFunction> hiddenBaseLayer;
 
   BinaryClassificationLayer classOutputLayer;
@@ -103,23 +102,27 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   auto modules = std::tie(linearLayer0, recurrentLayer0, inputBaseLayer,
                           hiddenLayer, hiddenBaseLayer);
 
-  RNN<decltype(modules), BinaryClassificationLayer, MeanSquaredErrorFunction>
-      net(modules, classOutputLayer);
+  RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
+      MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  // Train the network for 200 epochs.
-  Trainer<decltype(net)> trainer(net, 400, 1, 0.01);
-  trainer.Train(input, labels, input, labels);
+  SGD<decltype(net)> opt(net, 0.5, 400 * input.n_cols, -100);
 
-  // Ask the network to classify the trained input data.
-  arma::mat output;
-  for (size_t i = 0; i < input.n_cols; i++)
+  net.Train(input, labels, opt);
+
+  arma::mat prediction;
+  net.Predict(input, prediction);
+
+  size_t error = 0;
+  for (size_t i = 0; i < labels.n_cols; i++)
   {
-    arma::mat inputSeq = input.unsafe_col(i);
-    net.Predict(inputSeq, output);
-
-    bool b = arma::all((output == labels.unsafe_col(i)) == 1);
-    BOOST_REQUIRE_EQUAL(b, 1);
+    if (arma::sum(arma::sum(arma::abs(prediction.col(i) - labels.col(i)))) == 0)
+    {
+      error++;
+    }
   }
+
+  double classificationError = 1 - double(error) / labels.n_cols;
+  BOOST_REQUIRE_LE(classificationError, 0.2);
 }
 
 /**
@@ -332,11 +335,10 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
    *            .......
    */
   const size_t lstmSize = 4 * 10;
-  LinearLayer<SteepestDescent, RandomInitialization> linearLayer0(7, lstmSize);
-  RecurrentLayer<SteepestDescent, RandomInitialization> recurrentLayer0(10,
-      lstmSize);
+  LinearLayer<> linearLayer0(7, lstmSize);
+  RecurrentLayer<> recurrentLayer0(10, lstmSize);
 
-  LinearLayer<SteepestDescent, RandomInitialization> hiddenLayer(10, 7);
+  LinearLayer<>hiddenLayer(10, 7);
   BaseLayer<LogisticFunction> hiddenBaseLayer;
 
   BinaryClassificationLayer classOutputLayer;
@@ -344,11 +346,10 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   auto modules = std::tie(linearLayer0, recurrentLayer0, hiddenLayer0,
                           hiddenLayer, hiddenBaseLayer);
 
-  RNN<decltype(modules), BinaryClassificationLayer, MeanSquaredErrorFunction>
-      net(modules, classOutputLayer);
+  RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
+      MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  // Train the network for (100 * trainReberGrammarCount) epochs.
-  Trainer<decltype(net)> trainer(net, 1, 1, 0, false);
+  SGD<decltype(net)> opt(net, 0.5, 2, -200);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 15; i++)
@@ -357,7 +358,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
     {
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
-      trainer.Train(inputTemp, labelsTemp, inputTemp, labelsTemp);
+      net.Train(inputTemp, labelsTemp, opt);
     }
   }
 
@@ -403,7 +404,6 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   }
 
   error /= testReberGrammarCount;
-
   BOOST_REQUIRE_LE(error, 0.2);
 }
 
@@ -522,11 +522,10 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
    *            .......
    */
   const size_t lstmSize = 4 * 10;
-  LinearLayer<SteepestDescent, RandomInitialization> linearLayer0(10, lstmSize);
-  RecurrentLayer<SteepestDescent, RandomInitialization> recurrentLayer0(10,
-      lstmSize);
+  LinearLayer<> linearLayer0(10, lstmSize);
+  RecurrentLayer<> recurrentLayer0(10, lstmSize);
 
-  LinearLayer<SteepestDescent, RandomInitialization> hiddenLayer(10, 3);
+  LinearLayer<> hiddenLayer(10, 3);
   BaseLayer<LogisticFunction> hiddenBaseLayer;
 
   BinaryClassificationLayer classOutputLayer;
@@ -534,21 +533,20 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   auto modules = std::tie(linearLayer0, recurrentLayer0, hiddenLayer0,
                           hiddenLayer, hiddenBaseLayer);
 
-  RNN<decltype(modules), BinaryClassificationLayer, MeanSquaredErrorFunction>
-      net(modules, classOutputLayer);
+  RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
+      MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  // Train the network for (500 * trainDistractedSequenceCount) epochs.
-  Trainer<decltype(net)> trainer(net, 1, 1, 0, false);
+  SGD<decltype(net)> opt(net, 0.03, 2, -200);
 
   arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 15; i++)
+  for (size_t i = 0; i < 30; i++)
   {
     for (size_t j = 0; j < trainDistractedSequenceCount; j++)
     {
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
 
-      trainer.Train(inputTemp, labelsTemp, inputTemp, labelsTemp);
+      net.Train(inputTemp, labelsTemp, opt);
     }
   }
 
@@ -583,7 +581,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
 BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
 {
   LSTMLayer<> hiddenLayerLSTMPeephole(10, true);
-  DistractedSequenceRecallTestNetwork(hiddenLayerLSTMPeephole);
+  DistractedSequenceRecallTestNetwork(hiddenLayerLSTMPeephole);  
 }
 
 BOOST_AUTO_TEST_SUITE_END();
