@@ -114,8 +114,6 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 
   initializeRule.Initialize(parameter, NetworkSize(network), 1);
   NetworkWeights(parameter, network);
-
-  Log::Debug << parameter << std::endl;
 }
 
 template<typename LayerTypes,
