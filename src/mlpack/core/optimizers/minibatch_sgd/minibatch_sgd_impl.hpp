@@ -38,7 +38,6 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   size_t numBatches = numFunctions / batchSize;
   if (numFunctions % batchSize != 0)
     ++numBatches; // Capture last few.
-  std::cout << "numBatches " << numBatches << ".\n";
 
   // This is only used if shuffle is true.
   arma::Col<size_t> visitationOrder;
@@ -63,7 +62,7 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     if ((currentBatch % numBatches) == 0)
     {
       // Output current objective function.
-      std::cout << "Mini-batch SGD: iteration " << i << ", objective "
+      Log::Info << "Mini-batch SGD: iteration " << i << ", objective "
           << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -94,19 +93,40 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     const size_t offset = (shuffle) ? batchSize * visitationOrder[currentBatch]
         : batchSize * currentBatch;
     function.Gradient(iterate, offset, gradient);
-    for (size_t j = 1; j < batchSize; ++j)
+    if (visitationOrder[currentBatch] != numBatches - 1)
     {
-      arma::mat funcGradient;
-      function.Gradient(iterate, offset + j, funcGradient);
-      gradient += funcGradient;
+      for (size_t j = 1; j < batchSize; ++j)
+      {
+        arma::mat funcGradient;
+        function.Gradient(iterate, offset + j, funcGradient);
+        gradient += funcGradient;
+      }
+
+      // Now update the iterate.
+      iterate -= (stepSize / batchSize) * gradient;
+
+      // Add that to the overall objective function.
+      for (size_t j = 0; j < batchSize; ++j)
+        overallObjective += function.Evaluate(iterate, offset + j);
     }
+    else
+    {
+      // Handle last batch differently: it's not a full-size batch.
+      const size_t lastBatchSize = numFunctions - offset - 1;
+      for (size_t j = 1; j < lastBatchSize; ++j)
+      {
+        arma::mat funcGradient;
+        function.Gradient(iterate, offset + j, funcGradient);
+        gradient += funcGradient;
+      }
 
-    // Now update the iterate.
-    iterate -= (stepSize / batchSize) * gradient;
+      // Now update the iterate.
+      iterate -= (stepSize / lastBatchSize) * gradient;
 
-    // Add that to the overall objective function.
-    for (size_t j = 0; j < batchSize; ++j)
-      overallObjective += function.Evaluate(iterate, offset + j);
+      // Add that to the overall objective function.
+      for (size_t j = 0; j < lastBatchSize; ++j)
+        overallObjective += function.Evaluate(iterate, offset + j);
+    }
   }
 
   Log::Info << "Mini-batch SGD: maximum iterations (" << maxIterations << ") "
