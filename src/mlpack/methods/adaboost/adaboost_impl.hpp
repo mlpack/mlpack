@@ -73,7 +73,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
 
   // crt is the cumulative rt value for terminating the optimization when rt is
   // changing by less than the tolerance.
-  double rt, crt, alphat = 0.0, zt;
+  double rt, crt = 0.0, alphat = 0.0, zt;
 
   ztProduct = 1.0;
 
