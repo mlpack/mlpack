@@ -75,7 +75,7 @@ LayerWeights(T& layer,
              arma::mat& /* unused */)
 {
   layer.Weights() = arma::mat(weights.memptr() + offset,
-      layer.Weights().n_rows, layer.Weights().n_cols, false);
+      layer.Weights().n_rows, layer.Weights().n_cols, false, false);
 
   return layer.Weights().n_elem;
 }
@@ -90,7 +90,7 @@ LayerWeights(T& layer,
 {
   layer.Weights() = arma::cube(weights.memptr() + offset,
       layer.Weights().n_rows, layer.Weights().n_cols,
-      layer.Weights().n_slices, false);
+      layer.Weights().n_slices, false, false);
 
   return layer.Weights().n_elem;
 }
@@ -135,7 +135,7 @@ LayerGradients(T& layer,
                arma::mat& /* unused */)
 {
   layer.Gradient() = arma::mat(gradients.memptr() + offset,
-      layer.Weights().n_rows, layer.Weights().n_cols, false);
+      layer.Weights().n_rows, layer.Weights().n_cols, false, false);
 
   return layer.Weights().n_elem;
 }
@@ -150,7 +150,7 @@ LayerGradients(T& layer,
 {
   layer.Gradient() = arma::cube(gradients.memptr() + offset,
       layer.Weights().n_rows, layer.Weights().n_cols,
-      layer.Weights().n_slices, false);
+      layer.Weights().n_slices, false, false);
 
   return layer.Weights().n_elem;
 }
