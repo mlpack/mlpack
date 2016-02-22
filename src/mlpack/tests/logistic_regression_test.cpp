@@ -589,7 +589,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<L_BFGS>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -635,7 +636,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<SGD>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
