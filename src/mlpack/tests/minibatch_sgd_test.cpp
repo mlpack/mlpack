@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testData.col(i) = g1.Random();
     testResponses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     testData.col(i) = g2.Random();
     testResponses[i] = 1;
