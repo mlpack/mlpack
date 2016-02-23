@@ -104,13 +104,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   arma::Row<size_t> testResponses(1000);
   for (size_t i = 0; i < 500; ++i)
   {
-    data.col(i) = g1.Random();
-    responses[i] = 0;
+    testData.col(i) = g1.Random();
+    testResponses[i] = 0;
   }
   for (size_t i = 501; i < 1000; ++i)
   {
-    data.col(i) = g2.Random();
-    responses[i] = 1;
+    testData.col(i) = g2.Random();
+    testResponses[i] = 1;
   }
 
   // Now run mini-batch SGD with a couple of batch sizes.

@@ -50,16 +50,6 @@ class BaseLayer
   {
     // Nothing to do here.
   }
-  
-  BaseLayer(BaseLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  BaseLayer& operator=(BaseLayer &&/* unused */) noexcept
-  {
-    return *this;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -130,17 +120,17 @@ class BaseLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const {return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
