@@ -83,17 +83,17 @@ class SoftmaxLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  InputDataType& Delta() const {return delta; }
+  InputDataType& Delta() const { return delta; }
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
 
