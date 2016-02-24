@@ -28,7 +28,19 @@ void compareData(arma::mat const &inputData, arma::mat const &compareData,
     }
 }
 
-BOOST_AUTO_TEST_CASE(SplitDataSplitResult)
+void compareData(arma::cube const &inputData, arma::cube const &compareData,
+                 arma::Row<size_t> const &inputLabel)
+{
+    for(size_t i = 0; i != compareData.n_slices; ++i){
+        arma::mat const &lhsMat = inputData.slice(inputLabel(i));
+        arma::mat const &rhsMat = compareData.slice(i);
+        for(size_t j = 0; j != lhsMat.size(); ++j){
+            BOOST_REQUIRE_CLOSE(lhsMat(j), rhsMat(j), 1e-5);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(SplitDataSplitResultMat)
 {
     arma::mat trainData(2,10);
     trainData.randu();
@@ -40,6 +52,25 @@ BOOST_AUTO_TEST_CASE(SplitDataSplitResult)
     auto const value = util::TrainTestSplit(trainData, labels, 0.2);
     BOOST_REQUIRE(std::get<0>(value).n_cols == 8);
     BOOST_REQUIRE(std::get<1>(value).n_cols == 2);
+    BOOST_REQUIRE(std::get<2>(value).n_cols == 8);
+    BOOST_REQUIRE(std::get<3>(value).n_cols == 2);
+
+    compareData(trainData, std::get<0>(value), std::get<2>(value));
+    compareData(trainData, std::get<1>(value), std::get<3>(value));
+}
+
+BOOST_AUTO_TEST_CASE(SplitDataSplitResultCube)
+{
+    arma::cube trainData(2,2,10);
+    trainData.randu();
+    arma::Row<size_t> labels(trainData.n_slices);
+    for(size_t i = 0; i != labels.n_cols; ++i){
+        labels(i) = i;
+    }
+
+    auto const value = util::TrainTestSplit(trainData, labels, 0.2);
+    BOOST_REQUIRE(std::get<0>(value).n_slices == 8);
+    BOOST_REQUIRE(std::get<1>(value).n_slices == 2);
     BOOST_REQUIRE(std::get<2>(value).n_cols == 8);
     BOOST_REQUIRE(std::get<3>(value).n_cols == 2);
 
