@@ -54,8 +54,11 @@ class Backtrace
    * 
    * @param maxDepth Maximum depth of backtrace. Default 32 steps.
    */
+#ifdef HAS_BFD_DL
   Backtrace(int maxDepth = 32);
-  
+#else
+  Backtrace();
+#endif
   //! Returns string of backtrace.
   std::string ToString();
 
