@@ -445,10 +445,8 @@ template<typename MetricType,
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   ~BinarySpaceTree()
 {
-  if (left)
-    delete left;
-  if (right)
-    delete right;
+  delete left;
+  delete right;
 
   // If we're the root, delete the matrix.
   if (!parent)

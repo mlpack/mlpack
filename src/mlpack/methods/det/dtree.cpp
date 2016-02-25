@@ -136,11 +136,8 @@ DTree::DTree(const arma::vec& maxVals,
 
 DTree::~DTree()
 {
-  if (left != NULL)
-    delete left;
-
-  if (right != NULL)
-    delete right;
+  delete left;
+  delete right;
 }
 
 // This function computes the log-l2-negative-error of a given node from the
