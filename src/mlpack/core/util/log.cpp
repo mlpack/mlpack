@@ -7,10 +7,6 @@
 #include "log.hpp"
 #include "backtrace.hpp"
 
-#ifdef BACKTRACE_FOUND
-  #include BACKTRACE_HEADER
-#endif
-
 // Color code escape sequences -- but not on Windows.
 #ifndef _WIN32
   #define BASH_RED "\033[0;31m"
@@ -59,7 +55,7 @@ void Log::Assert(bool condition, const std::string& message)
 #endif
     Log::Debug << message << std::endl;
 
-    throw std::runtime_error("Log::Assert() failed:" + message);
+    throw std::runtime_error("Log::Assert() failed: " + message);
   }
 }
 #else
