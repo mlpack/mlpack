@@ -10,7 +10,11 @@
 
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"
-#include "backtrace.hpp"
+
+#ifdef HAS_BFD_DL
+  #include "backtrace.hpp"
+#endif
+
 #include <iostream>
 
 namespace mlpack {
@@ -67,6 +71,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
     // and the prefix and continue looking.
     size_t nl;
     size_t pos = 0;
+#ifdef HAS_BFD_DL
     if(fatal)
     {
       Backtrace bt;
@@ -84,7 +89,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
 	pos = nl + 1;
       }
     }
-     
+#endif     
     //The same logic like above, but this time for 'line'.
     pos = 0;
     while ((nl = line.find('\n', pos)) != std::string::npos)
