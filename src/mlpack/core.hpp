@@ -191,6 +191,7 @@
 
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
+#include <mlpack/core/util/backtrace.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/load.hpp>
