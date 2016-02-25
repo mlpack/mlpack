@@ -39,11 +39,14 @@ using namespace mlpack;
 Backtrace::Frames Backtrace::frame;
 std::vector<Backtrace::Frames> Backtrace::stack;
 
+#ifdef HAS_BFD_DL
 // Binary File Descriptor objects.
 bfd* abfd = 0;		// Descriptor datastructure.
 asymbol **syms = 0;	// Symbols datastructure.
 asection *text = 0;	// Strings datastructure.
+#endif
 
+#ifdef HAS_BFD_DL
 Backtrace::Backtrace(int maxDepth)
 {
   frame.address = NULL;
@@ -52,10 +55,15 @@ Backtrace::Backtrace(int maxDepth)
   frame.line = 0;
   
   stack.clear();
-#ifdef HAS_BFD_DL
+  
   GetAddress(maxDepth);
-#endif
 }
+#else
+Backtrace::Backtrace()
+{
+  // Dummy constructor
+}
+#endif
 
 #ifdef HAS_BFD_DL
 void Backtrace::GetAddress(int maxDepth)
