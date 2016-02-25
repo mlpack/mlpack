@@ -5,7 +5,10 @@
  * Implementation of the Log class.
  */
 #include "log.hpp"
-#include "backtrace.hpp"
+
+#ifdef HAS_BFD_DL
+  #include "backtrace.hpp"
+#endif
 
 // Color code escape sequences -- but not on Windows.
 #ifndef _WIN32
