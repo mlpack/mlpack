@@ -18,7 +18,7 @@
 #include <boost/program_options.hpp>
 
 #include "timers.hpp"
-#include "cli_deleter.hpp" // To make sure we can delete the singleton.
+
 #include "version.hpp"
 
 /**
