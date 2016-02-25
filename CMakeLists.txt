@@ -66,6 +66,17 @@ if(DEBUG)
   add_definitions(-DDEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
+  # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
+  find_package(Bfd)
+  find_package(LibDL)
+  if(LIBBFD_FOUND AND LIBDL_FOUND)
+    include_directories(${LIBBFD_INCLUDE_DIRS})
+    include_directories(${LIBDL_INCLUDE_DIRS})
+    add_definitions(-DHAS_BFD_DL)
+  else(LIBBFD_FOUND AND LIBDL_FOUND)
+    message(WARNING "No libBFD and/or libDL has been found!")
+  endif(LIBBFD_FOUND AND LIBDL_FOUND)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
@@ -79,16 +90,6 @@ if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
-
-# mlpack uses backtrace() facilities. On some systems (e.g., GNU/Linux), it
-# resides in libc itself and requires <execinfo.h>; on other (e.g., OpenBSD)
-# it's provided by a separate library.
-find_package(Backtrace)
-if(Backtrace_FOUND)
-  include_directories(${Backtrace_INCLUDE_DIRS})
-  add_definitions(-DBACKTRACE_FOUND)
-  add_definitions(-DBACKTRACE_HEADER="${Backtrace_HEADER}")
-endif(Backtrace_FOUND)
 
 # If the user asked for running test cases with verbose output, turn that on.
 if(TEST_VERBOSE)

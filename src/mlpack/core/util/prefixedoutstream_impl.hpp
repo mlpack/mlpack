@@ -10,6 +10,7 @@
 
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"
+#include "backtrace.hpp"
 #include <iostream>
 
 namespace mlpack {
@@ -61,11 +62,31 @@ void PrefixedOutStream::BaseLogic(const T& val)
       return;
     }
 
-    // Now, we need to check for newlines in this line.  If we find one, output
-    // up until the newline, then output the newline and the prefix and continue
-    // looking.
+    // Now, we need to check for newlines in retrieved backtrace.
+    // If we find one, output up until the newline, then output the newline
+    // and the prefix and continue looking.
     size_t nl;
     size_t pos = 0;
+    if(fatal)
+    {
+      Backtrace bt;
+      std::string btLine = bt.ToString();
+      while ((nl = btLine.find('\n', pos)) != std::string::npos)
+      {
+	PrefixIfNeeded();
+	
+	destination << btLine.substr(pos, nl - pos);
+	destination << std::endl;
+	newlined = true;
+	  
+	carriageReturned = true; // Regardless of whether or not we display it.
+    
+	pos = nl + 1;
+      }
+    }
+     
+    //The same logic like above, but this time for 'line'.
+    pos = 0;
     while ((nl = line.find('\n', pos)) != std::string::npos)
     {
       PrefixIfNeeded();
@@ -93,7 +114,10 @@ void PrefixedOutStream::BaseLogic(const T& val)
 
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
+  {
+    std::cout << std::endl;
     throw std::runtime_error("fatal error; see Log::Fatal output");
+  }
 }
 
 // This is an inline function (that is why it is here and not in .cc).
