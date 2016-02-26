@@ -46,20 +46,6 @@ class BiasLayer
   {
     weights.set_size(outSize, 1);
   }
-  
-  BiasLayer(BiasLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  BiasLayer& operator=(BiasLayer &&layer) noexcept
-  {
-    outSize = layer.outSize;
-    bias = layer.bias;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -142,22 +128,22 @@ class BiasLayer
   InputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  InputDataType& Gradient() const {return gradient; }
+  InputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
 

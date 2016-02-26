@@ -119,27 +119,27 @@ class RecurrentLayer
   OutputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the input parameter.
-  InputDataType& RecurrentParameter() const {return recurrentParameter; }
+  InputDataType& RecurrentParameter() const { return recurrentParameter; }
   //! Modify the input parameter.
   InputDataType& RecurrentParameter() { return recurrentParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const {return gradient; }
+  OutputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
