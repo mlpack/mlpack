@@ -69,27 +69,7 @@ class ConvLayer
   {
     weights.set_size(wfilter, hfilter, inMaps * outMaps);
   }
-
-  ConvLayer(ConvLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  ConvLayer& operator=(ConvLayer &&layer) noexcept
-  {
-    wfilter = layer.wfilter;
-    hfilter = layer.hfilter;
-    inMaps = layer.inMaps;
-    outMaps = layer.outMaps;
-    xStride = layer.xStride;
-    yStride = layer.yStride;
-    wPad = layer.wPad;
-    hPad = layer.hPad;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
-
+  
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
