@@ -141,19 +141,7 @@ class SparseOutputLayer
   double Rho() const
   {
     return rho;
-  }
-  
-  /**
-   * Serialize the layer
-   */
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {    
-	ar & data::CreateNVP(rhoCap, "rhoCap");		
-	ar & data::CreateNVP(lambda, "lambda");
-	ar & data::CreateNVP(beta, "beta");
-	ar & data::CreateNVP(weights, "weights");
-  }
+  }   
 
   //! Get the weights.
   OutputDataType const& Weights() const { return weights; }
@@ -184,6 +172,15 @@ class SparseOutputLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    	
+	ar & data::CreateNVP(weights, "weights");
+  }
 
  private:
   //! Locally-stored number of input units.
