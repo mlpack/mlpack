@@ -71,23 +71,23 @@ public:
     trainLabel.set_size(trainSize);
     testLabel.set_size(testSize);
 
-    std::vector<size_t> permutation(ExtractSize(input));
-    std::iota(std::begin(permutation), std::end(permutation), 0);
-
-    std::mt19937 gen(seed);
-    std::shuffle(std::begin(permutation), std::end(permutation), gen);
+    using Col = arma::Col<size_t>;
+    arma_rng::set_seed(seed);
+    Col const sequence = arma::linspace<Col>(0, ExtractSize(input) - 1,
+                                             ExtractSize(input));
+    arma::Col<size_t> const order = arma::shuffle(sequence);
 
     for(size_t i = 0; i != trainSize; ++i)
     {
-      ExtractData(input, trainData, permutation[i], i);
-      trainLabel(i) = inputLabel(permutation[i]);
+      ExtractData(input, trainData, order[i], i);
+      trainLabel(i) = inputLabel(order[i]);
     }
 
     for(size_t i = 0; i != testSize; ++i)
     {
       ExtractData(input, testData,
-                  permutation[i + trainSize], i);
-      testLabel(i) = inputLabel(permutation[i + trainSize]);
+                  order[i + trainSize], i);
+      testLabel(i) = inputLabel(order[i + trainSize]);
     }
   }
 
