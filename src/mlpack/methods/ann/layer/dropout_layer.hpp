@@ -196,6 +196,14 @@ class DropoutLayer
   bool Rescale() const {return rescale; }
   //! Modify the value of the rescale parameter.
   bool& Rescale() {return rescale; }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    				
+  }
 
  private:
   //! Locally-stored delta object.
