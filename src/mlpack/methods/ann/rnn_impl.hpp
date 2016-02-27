@@ -330,7 +330,8 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
-  ar & data::CreateNVP(network, "network");
+  ar & data::CreateNVP<0, std::tuple_size<LayerTypes>::value-1>
+      (network, "network");
 }
 
 } // namespace ann
