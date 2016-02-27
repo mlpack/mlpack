@@ -291,6 +291,14 @@ class LSTMLayer
   size_t SeqLen() const { return seqLen; }
   //! Modify the sequence length.
   size_t& SeqLen() { return seqLen; }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    			
+  }
 
  private:
   //! Locally-stored number of output units.
