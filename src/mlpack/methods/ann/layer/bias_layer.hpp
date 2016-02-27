@@ -146,6 +146,15 @@ class BiasLayer
   InputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    			
+	ar & data::CreateNVP(weights, "weights");
+  }
 
  private:
   //! Locally-stored number of output units.
