@@ -42,21 +42,7 @@ class SparseBiasLayer
       batchSize(batchSize)
   {
     weights.set_size(outSize, 1);
-  }
-  
-  SparseBiasLayer(SparseBiasLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseBiasLayer& operator=(SparseBiasLayer &&layer) noexcept
-  {
-    outSize = layer.outSize;
-    batchSize = layer.batchSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
