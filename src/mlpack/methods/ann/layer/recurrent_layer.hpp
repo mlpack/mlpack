@@ -55,21 +55,7 @@ class RecurrentLayer
       recurrentParameter(arma::zeros<InputDataType>(outSize, 1))
   {
     weights.set_size(outSize, inSize);
-  }
-
-  RecurrentLayer(RecurrentLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  RecurrentLayer& operator=(RecurrentLayer &&layer) noexcept
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  } 
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -142,6 +128,16 @@ class RecurrentLayer
   OutputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    		
+	ar & data::CreateNVP(recurrentParameter, "recurrentParameter");	
+	ar & data::CreateNVP(weights, "weights");
+  }
 
  private:
   //! Locally-stored number of input units.
