@@ -178,6 +178,15 @@ class ConvLayer
       }
     }
   }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    			
+	ar & data::CreateNVP(weights, "weights");
+  }
 
   //! Get the weights.
   OutputDataType& Weights() const { return weights; }
