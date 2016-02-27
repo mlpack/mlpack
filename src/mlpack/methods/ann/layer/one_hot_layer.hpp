@@ -62,6 +62,14 @@ class OneHotLayer
     inputActivations.max(maxIndex);
     output(maxIndex) = 1;
   }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    				
+  }
 }; // class OneHotLayer
 
 //! Layer traits for the one-hot class classification layer.
