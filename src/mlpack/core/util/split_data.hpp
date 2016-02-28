@@ -28,7 +28,7 @@ public:
    * @warning slice should not less than 1
    */
   TrainTestSplit(double testRatio,
-                 size_t slice = 1,
+                 size_t slice,
                  arma::arma_rng::seed_type seed = 0) :
     seed(seed),
     slice(slice),
@@ -69,8 +69,7 @@ public:
   {
     size_t const testSize =
         static_cast<size_t>(ExtractSize(input) * testRatio);
-    size_t const trainSize = ExtractSize(input) - testSize;
-
+    size_t const trainSize = ExtractSize(input) - testSize;        
     ResizeData(input, trainData, trainSize);
     ResizeData(input, testData, testSize);
     trainLabel.set_size(trainSize);
@@ -79,7 +78,7 @@ public:
     using Col = arma::Col<size_t>;
     arma_rng::set_seed(seed);
     Col const sequence = arma::linspace<Col>(0, ExtractSize(input) - 1,
-                                             ExtractSize(input));
+                                             ExtractSize(input));    
     arma::Col<size_t> const order = arma::shuffle(sequence);
 
     for(size_t i = 0; i != trainSize; ++i)
@@ -180,7 +179,7 @@ private:
   template<typename T>
   size_t ExtractSize(arma::Cube<T> const &input) const
   {
-    return input.n_slices;
+    return input.n_slices / slice;
   }
 
   template<typename T>
@@ -196,7 +195,7 @@ private:
                   arma::Cube<T> &output,
                   size_t dataSize) const
   {
-    output.set_size(input.n_rows, input.n_cols, dataSize);
+    output.set_size(input.n_rows, input.n_cols, dataSize * slice);
   }
 
   arma::arma_rng::seed_type seed;
