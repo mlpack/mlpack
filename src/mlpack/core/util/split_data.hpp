@@ -76,7 +76,7 @@ public:
     testLabel.set_size(testSize);
 
     using Col = arma::Col<size_t>;
-    arma_rng::set_seed(seed);
+    arma::arma_rng::set_seed(seed);
     Col const sequence = arma::linspace<Col>(0, ExtractSize(input) - 1,
                                              ExtractSize(input));    
     arma::Col<size_t> const order = arma::shuffle(sequence);
