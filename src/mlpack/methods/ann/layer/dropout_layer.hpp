@@ -64,23 +64,7 @@ class DropoutLayer
       rescale(rescale)
   {
     // Nothing to do here.
-  }
-
-  DropoutLayer(DropoutLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  DropoutLayer& operator=(DropoutLayer &&layer) noexcept
-  {
-    mask.swap(layer.mask);
-    ratio = layer.ratio;
-    scale = layer.scale;
-    deterministic = layer.deterministic;
-    rescale = layer.rescale;
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of the dropout layer.

@@ -55,21 +55,7 @@ class RecurrentLayer
       recurrentParameter(arma::zeros<InputDataType>(outSize, 1))
   {
     weights.set_size(outSize, inSize);
-  }
-
-  RecurrentLayer(RecurrentLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  RecurrentLayer& operator=(RecurrentLayer &&layer) noexcept
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
