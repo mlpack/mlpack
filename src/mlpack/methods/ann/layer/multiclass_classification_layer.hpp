@@ -61,6 +61,14 @@ class MulticlassClassificationLayer
   {
     output = inputActivations;
   }
+  
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {    			
+  }
 }; // class MulticlassClassificationLayer
 
 //! Layer traits for the multiclass classification layer.
