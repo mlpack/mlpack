@@ -67,7 +67,7 @@ class MulticlassClassificationLayer
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    				
+  {    			
   }
 }; // class MulticlassClassificationLayer
 

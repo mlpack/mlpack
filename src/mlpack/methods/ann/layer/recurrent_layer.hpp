@@ -55,7 +55,7 @@ class RecurrentLayer
       recurrentParameter(arma::zeros<InputDataType>(outSize, 1))
   {
     weights.set_size(outSize, inSize);
-  } 
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

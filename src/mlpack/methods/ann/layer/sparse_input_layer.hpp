@@ -47,22 +47,7 @@ class SparseInputLayer
     lambda(lambda)
   {
     weights.set_size(outSize, inSize);
-  }
-
-  SparseInputLayer(SparseInputLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseInputLayer& operator=(SparseInputLayer &&layer) noexcept
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    lambda = layer.lambda;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

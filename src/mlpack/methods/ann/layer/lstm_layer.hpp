@@ -59,22 +59,7 @@ class LSTMLayer
       peepholeWeights.set_size(outSize, 3);
       peepholeDerivatives = arma::zeros<OutputDataType>(outSize, 3);
     }
-  }
-
-  LSTMLayer(LSTMLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  LSTMLayer& operator=(LSTMLayer &&layer) noexcept
-  {
-    outSize = layer.outSize;
-    seqLen = layer.seqLen;
-
-    peepholeWeights.swap(layer.peepholeWeights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

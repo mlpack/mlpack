@@ -49,23 +49,6 @@ class SparseOutputLayer
     weights.set_size(outSize, inSize);
   }
 
-  SparseOutputLayer(SparseOutputLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseOutputLayer& operator=(SparseOutputLayer &&layer) noexcept
-  {
-    beta = layer.beta;
-    rho = layer.rho;
-    lambda = layer.lambda;
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -42,20 +42,6 @@ class LinearLayer
   {
     weights.set_size(outSize, inSize);
   }
-  
-  LinearLayer(LinearLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  LinearLayer& operator=(LinearLayer &&layer) noexcept
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
