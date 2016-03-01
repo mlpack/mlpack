@@ -67,31 +67,31 @@ void PrefixedOutStream::BaseLogic(const T& val)
     }
 
     // Now, we need to check for newlines in retrieved backtrace.
-    // If we find one, output up until the newline, then output the newline
-    // and the prefix and continue looking.
+    //If we find one, output up until the newline, then output the newline
+    //and the prefix and continue looking.
     size_t nl;
     size_t pos = 0;
 #ifdef HAS_BFD_DL
-    if(fatal)
-    {
-      Backtrace bt;
-      std::string btLine = bt.ToString();
-      while ((nl = btLine.find('\n', pos)) != std::string::npos)
+      if(fatal)
       {
-	PrefixIfNeeded();
-	
-	destination << btLine.substr(pos, nl - pos);
-	destination << std::endl;
-	newlined = true;
+	Backtrace bt;
+	std::string btLine = bt.ToString();
+	while ((nl = btLine.find('\n', pos)) != std::string::npos)
+	{
+	  PrefixIfNeeded();
 	  
-	carriageReturned = true; // Regardless of whether or not we display it.
-    
-	pos = nl + 1;
+	  destination << btLine.substr(pos, nl - pos);
+	  destination << std::endl;
+	  newlined = true;
+	    
+	  carriageReturned = true; // Regardless of whether or not we display it.
+      
+	  pos = nl + 1;
+	}
+	pos = 0;
       }
-    }
-#endif     
+#endif
     //The same logic like above, but this time for 'line'.
-    pos = 0;
     while ((nl = line.find('\n', pos)) != std::string::npos)
     {
       PrefixIfNeeded();
