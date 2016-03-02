@@ -133,26 +133,28 @@ class PoolingLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  InputDataType& OutputParameter() const { return outputParameter; }
+  InputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   InputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    			
+  {
+    ar & data::CreateNVP(kSize, "kSize");
+    ar & data::CreateNVP(pooling, "pooling");
   }
 
  private:

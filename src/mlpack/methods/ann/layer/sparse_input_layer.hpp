@@ -114,9 +114,19 @@ class SparseInputLayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(lambda, "lambda");
+  }
 
  private:
   //! Locally-stored number of input units.

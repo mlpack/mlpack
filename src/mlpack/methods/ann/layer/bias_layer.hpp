@@ -123,29 +123,39 @@ class BiasLayer
   }
 
   //! Get the weights.
-  InputDataType& Weights() const { return weights; }
+  InputDataType const& Weights() const { return weights; }
   //! Modify the weights.
   InputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  InputDataType& Gradient() const { return gradient; }
+  InputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & CreateNVP(bias, "bias");
+  }
 
  private:
   //! Locally-stored number of output units.

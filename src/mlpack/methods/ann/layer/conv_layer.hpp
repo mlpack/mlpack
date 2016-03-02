@@ -160,29 +160,46 @@ class ConvLayer
   }
 
   //! Get the weights.
-  OutputDataType& Weights() const { return weights; }
+  OutputDataType const& Weights() const { return weights; }
   //! Modify the weights.
   OutputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(wfilter, "wfilter");
+    ar & data::CreateNVP(hfilter, "hfilter");
+    ar & data::CreateNVP(inMaps, "inMaps");
+    ar & data::CreateNVP(outMaps, "outMaps");
+    ar & data::CreateNVP(xStride, "xStride");
+    ar & data::CreateNVP(yStride, "yStride");
+    ar & data::CreateNVP(wPad, "wPad");
+    ar & data::CreateNVP(hPad, "hPad");
+  }
 
  private:
   /*

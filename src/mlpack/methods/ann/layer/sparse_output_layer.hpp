@@ -155,6 +155,18 @@ class SparseOutputLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(lambda, "lambda");
+    ar & data::CreateNVP(beta, "beta");
+    ar & data::CreateNVP(rho, "rho");
+  }
 
  private:
   //! Locally-stored number of input units.
