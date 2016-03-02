@@ -151,4 +151,4 @@ void LogisticRegression<MatType>::Serialize(
 } // namespace regression
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
+#endif // MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP

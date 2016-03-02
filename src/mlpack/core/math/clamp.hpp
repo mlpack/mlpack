@@ -59,4 +59,4 @@ inline double ClampRange(double value,
 } // namespace math
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_MATH_CLAMP_HPP
+#endif // MLPACK_CORE_MATH_CLAMP_HPP

@@ -214,4 +214,4 @@ struct BoundTraits<HRectBound<MetricType>>
 
 #include "hrectbound_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_HRECTBOUND_HPP
+#endif // MLPACK_CORE_TREE_HRECTBOUND_HPP

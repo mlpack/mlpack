@@ -125,4 +125,4 @@ void SymKronId(const arma::mat& A, arma::mat& op);
 // Partially include implementation
 #include "lin_alg_impl.hpp"
 
-#endif // __MLPACK_CORE_MATH_LIN_ALG_HPP
+#endif // MLPACK_CORE_MATH_LIN_ALG_HPP

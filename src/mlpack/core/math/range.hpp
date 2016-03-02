@@ -183,4 +183,4 @@ class RangeType
 // Include inlined implementation.
 #include "range_impl.hpp"
 
-#endif // __MLPACK_CORE_MATH_RANGE_HPP
+#endif // MLPACK_CORE_MATH_RANGE_HPP

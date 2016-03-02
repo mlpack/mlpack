@@ -340,4 +340,4 @@ class DTree
 } // namespace det
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_DET_DTREE_HPP
+#endif // MLPACK_METHODS_DET_DTREE_HPP

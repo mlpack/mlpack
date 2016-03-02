@@ -165,4 +165,4 @@ class MeanShift
 // Include implementation.
 #include "mean_shift_impl.hpp"
 
-#endif // __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#endif // MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP

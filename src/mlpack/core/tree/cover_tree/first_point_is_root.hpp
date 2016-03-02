@@ -35,4 +35,4 @@ class FirstPointIsRoot
 } // namespace tree
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#endif // MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP

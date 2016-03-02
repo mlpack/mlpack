@@ -122,4 +122,4 @@ class LogisticRegressionFunction
 // Include implementation.
 #include "logistic_regression_function_impl.hpp"
 
-#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
+#endif // MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP

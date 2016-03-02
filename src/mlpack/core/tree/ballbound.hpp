@@ -198,4 +198,4 @@ struct BoundTraits<BallBound<VecType, TMetricType>>
 
 #include "ballbound_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_DBALLBOUND_HPP
+#endif // MLPACK_CORE_TREE_DBALLBOUND_HPP

@@ -258,5 +258,5 @@ class L_BFGS
 
 #include "lbfgs_impl.hpp"
 
-#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 

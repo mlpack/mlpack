@@ -156,4 +156,4 @@ class Timers
 
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_UTILITIES_TIMERS_HPP
+#endif // MLPACK_CORE_UTILITIES_TIMERS_HPP

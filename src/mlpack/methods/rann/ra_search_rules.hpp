@@ -269,4 +269,4 @@ class RASearchRules
 // Include implementation.
 #include "ra_search_rules_impl.hpp"
 
-#endif // __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
+#endif // MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP

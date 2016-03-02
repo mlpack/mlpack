@@ -454,5 +454,5 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
 } // namespace optimization
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 

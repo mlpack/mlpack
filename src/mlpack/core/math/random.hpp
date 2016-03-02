@@ -94,4 +94,4 @@ inline double RandNormal(const double mean, const double variance)
 } // namespace math
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_MATH_MATH_LIB_HPP
+#endif // MLPACK_CORE_MATH_MATH_LIB_HPP

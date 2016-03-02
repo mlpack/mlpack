@@ -96,4 +96,4 @@ class UnionFind
 } // namespace emst
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_EMST_UNION_FIND_HPP
+#endif // MLPACK_METHODS_EMST_UNION_FIND_HPP

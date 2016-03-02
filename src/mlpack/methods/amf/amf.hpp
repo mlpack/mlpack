@@ -263,5 +263,5 @@ typedef amf::AMF<amf::SimpleResidueTermination,
 // Include implementation.
 #include "amf_impl.hpp"
 
-#endif // __MLPACK_METHODS_AMF_AMF_HPP
+#endif // MLPACK_METHODS_AMF_AMF_HPP
 

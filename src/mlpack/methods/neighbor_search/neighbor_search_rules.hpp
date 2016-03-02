@@ -162,4 +162,4 @@ class NeighborSearchRules
 // Include implementation.
 #include "neighbor_search_rules_impl.hpp"
 
-#endif // __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP

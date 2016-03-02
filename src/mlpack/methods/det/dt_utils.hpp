@@ -64,4 +64,4 @@ DTree* Trainer(arma::mat& dataset,
 } // namespace det
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_DET_DT_UTILS_HPP
+#endif // MLPACK_METHODS_DET_DT_UTILS_HPP

@@ -290,4 +290,4 @@ void BallBound<VecType, TMetricType>::Serialize(
 } // namespace bound
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
+#endif // MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

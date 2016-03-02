@@ -338,4 +338,4 @@ DualTreeTraverser<RuleType>::Traverse(
 } // namespace tree
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
+#endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP

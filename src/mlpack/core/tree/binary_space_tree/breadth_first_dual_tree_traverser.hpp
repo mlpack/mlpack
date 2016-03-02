@@ -106,5 +106,5 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 // Include implementation.
 #include "breadth_first_dual_tree_traverser_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
+#endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
 

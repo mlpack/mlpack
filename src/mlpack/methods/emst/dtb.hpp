@@ -205,4 +205,4 @@ class DualTreeBoruvka
 
 #include "dtb_impl.hpp"
 
-#endif // __MLPACK_METHODS_EMST_DTB_HPP
+#endif // MLPACK_METHODS_EMST_DTB_HPP

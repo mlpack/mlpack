@@ -809,4 +809,4 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
 } // namespace neighbor
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP
+#endif // MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP

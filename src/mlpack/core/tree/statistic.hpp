@@ -43,4 +43,4 @@ class EmptyStatistic
 } // namespace tree
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_STATISTIC_HPP
+#endif // MLPACK_CORE_TREE_STATISTIC_HPP

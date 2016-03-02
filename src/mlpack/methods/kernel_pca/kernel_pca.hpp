@@ -126,4 +126,4 @@ class KernelPCA
 // Include implementation.
 #include "kernel_pca_impl.hpp"
 
-#endif // __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_HPP
+#endif // MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_HPP

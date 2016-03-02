@@ -88,4 +88,4 @@ class DTBStat
 } // namespace emst
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_EMST_DTB_STAT_HPP
+#endif // MLPACK_METHODS_EMST_DTB_STAT_HPP

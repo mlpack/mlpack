@@ -14,4 +14,4 @@
 #include "hrectbound.hpp"
 #include "ballbound.hpp"
 
-#endif // __MLPACK_CORE_TREE_BOUNDS_HPP
+#endif // MLPACK_CORE_TREE_BOUNDS_HPP
