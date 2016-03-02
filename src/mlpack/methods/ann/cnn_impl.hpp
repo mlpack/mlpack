@@ -46,8 +46,8 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   // Train the model.
   Timer::Start("cnn_optimization");
@@ -83,8 +83,8 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   Train(predictors, responses);
 }
@@ -112,8 +112,8 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 }
 
 template<typename LayerTypes,
