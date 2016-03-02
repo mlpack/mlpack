@@ -4,8 +4,8 @@
  *
  * Implementation of templatized load() function defined in load.hpp.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_IMPL_HPP
-#define __MLPACK_CORE_DATA_LOAD_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_IMPL_HPP
+#define MLPACK_CORE_DATA_LOAD_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "load.hpp"

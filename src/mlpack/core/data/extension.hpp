@@ -5,8 +5,8 @@
  * Given a filename, extract its extension.  This is used by data::Load() and
  * data::Save().
  */
-#ifndef __MLPACK_CORE_DATA_EXTENSION_HPP
-#define __MLPACK_CORE_DATA_EXTENSION_HPP
+#ifndef MLPACK_CORE_DATA_EXTENSION_HPP
+#define MLPACK_CORE_DATA_EXTENSION_HPP
 
 #include <mlpack/prereqs.hpp>
 

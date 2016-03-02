@@ -5,8 +5,8 @@
  * Density Estimation Tree class
  */
 
-#ifndef __MLPACK_METHODS_DET_DTREE_HPP
-#define __MLPACK_METHODS_DET_DTREE_HPP
+#ifndef MLPACK_METHODS_DET_DTREE_HPP
+#define MLPACK_METHODS_DET_DTREE_HPP
 
 #include <mlpack/core.hpp>
 

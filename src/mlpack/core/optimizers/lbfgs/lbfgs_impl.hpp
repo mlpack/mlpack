@@ -5,8 +5,8 @@
  *
  * The implementation of the L_BFGS optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 
 namespace mlpack {
 namespace optimization {

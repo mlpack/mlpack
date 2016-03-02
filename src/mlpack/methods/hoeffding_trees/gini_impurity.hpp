@@ -5,8 +5,8 @@
  * The GiniImpurity class, which is a fitness function (FitnessFunction) for
  * streaming decision trees.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
 
 #include <mlpack/core.hpp>
 

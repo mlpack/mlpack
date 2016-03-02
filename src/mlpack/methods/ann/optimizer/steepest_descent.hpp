@@ -7,8 +7,8 @@
  * nearest local minimum of a function which the assumtion that the gradient of
  * the function can be computed.
  */
-#ifndef __MLPACK_METHODS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
-#define __MLPACK_METHODS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
+#ifndef MLPACK_METHODS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
+#define MLPACK_METHODS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
 
 #include <mlpack/core.hpp>
 

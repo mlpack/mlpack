@@ -4,8 +4,8 @@
  *
  * Implementation of CoverTree class.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_IMPL_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_IMPL_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "cover_tree.hpp"

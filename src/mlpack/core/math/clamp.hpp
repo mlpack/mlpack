@@ -3,8 +3,8 @@
  *
  * Miscellaneous math clamping routines.
  */
-#ifndef __MLPACK_CORE_MATH_CLAMP_HPP
-#define __MLPACK_CORE_MATH_CLAMP_HPP
+#ifndef MLPACK_CORE_MATH_CLAMP_HPP
+#define MLPACK_CORE_MATH_CLAMP_HPP
 
 #include <stdlib.h>
 #include <math.h>

@@ -4,8 +4,8 @@
  *
  * Implementation of the IPMetric.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
-#define __MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
+#ifndef MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
+#define MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ip_metric_impl.hpp"

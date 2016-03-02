@@ -5,8 +5,8 @@
  * Statistic class for RangeSearch, which just holds the last visited node and
  * the corresponding base case result.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
 
 #include <mlpack/core.hpp>
 

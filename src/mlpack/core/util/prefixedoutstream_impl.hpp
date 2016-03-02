@@ -5,8 +5,8 @@
  *
  * Implementation of templated PrefixedOutStream member functions.
  */
-#ifndef __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
-#define __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
+#ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
+#define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
 
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"

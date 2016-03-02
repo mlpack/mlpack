@@ -5,8 +5,8 @@
  * Definition of the FastMKS class, which implements fast exact max-kernel
  * search.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/ip_metric.hpp>

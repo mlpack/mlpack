@@ -4,8 +4,8 @@
  *
  * Linear algebra utilities.
  */
-#ifndef __MLPACK_CORE_MATH_LIN_ALG_HPP
-#define __MLPACK_CORE_MATH_LIN_ALG_HPP
+#ifndef MLPACK_CORE_MATH_LIN_ALG_HPP
+#define MLPACK_CORE_MATH_LIN_ALG_HPP
 
 #include <mlpack/prereqs.hpp>
 

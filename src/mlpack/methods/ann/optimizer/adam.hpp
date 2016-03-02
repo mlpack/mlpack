@@ -6,8 +6,8 @@
  * order gradient-based optimization of stochastic objective functions, based on
  * adaptive estimates of lower-order moments.
  */
-#ifndef __MLPACK_METHODS_ANN_OPTIMIZER_ADAM_HPP
-#define __MLPACK_METHODS_ANN_OPTIMIZER_ADAM_HPP
+#ifndef MLPACK_METHODS_ANN_OPTIMIZER_ADAM_HPP
+#define MLPACK_METHODS_ANN_OPTIMIZER_ADAM_HPP
 
 #include <mlpack/core.hpp>
 

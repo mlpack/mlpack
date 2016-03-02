@@ -6,8 +6,8 @@
  * provides information about tree types.  If you create a tree class, you
  * should specialize this class with the characteristics of your tree.
  */
-#ifndef __MLPACK_CORE_TREE_TREE_TRAITS_HPP
-#define __MLPACK_CORE_TREE_TREE_TRAITS_HPP
+#ifndef MLPACK_CORE_TREE_TREE_TRAITS_HPP
+#define MLPACK_CORE_TREE_TREE_TRAITS_HPP
 
 namespace mlpack {
 namespace tree {

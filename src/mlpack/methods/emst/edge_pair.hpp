@@ -6,8 +6,8 @@
  * This file contains utilities necessary for all of the minimum spanning tree
  * algorithms.
  */
-#ifndef __MLPACK_METHODS_EMST_EDGE_PAIR_HPP
-#define __MLPACK_METHODS_EMST_EDGE_PAIR_HPP
+#ifndef MLPACK_METHODS_EMST_EDGE_PAIR_HPP
+#define MLPACK_METHODS_EMST_EDGE_PAIR_HPP
 
 #include <mlpack/core.hpp>
 

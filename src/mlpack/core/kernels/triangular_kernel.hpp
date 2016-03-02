@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the trivially simple triangular kernel.
  */
-#ifndef __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

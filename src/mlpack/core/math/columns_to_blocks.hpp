@@ -5,8 +5,8 @@
  * A helper class that could be useful for visualizing the output of
  * MaximalInputs() and possibly other things.
  */
-#ifndef __MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
-#define __MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
+#ifndef MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
+#define MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
 
 #include <mlpack/core.hpp>
 

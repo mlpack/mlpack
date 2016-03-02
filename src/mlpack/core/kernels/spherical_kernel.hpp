@@ -2,8 +2,8 @@
  * @file spherical_kernel.hpp
  * @author Neil Slagle
  */
-#ifndef __MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
 
 #include <boost/math/special_functions/gamma.hpp>
 #include <mlpack/core.hpp>

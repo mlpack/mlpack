@@ -5,8 +5,8 @@
  * A thin wrapper around nuclear norm minimization to solve
  * low rank matrix completion problems.
  */
-#ifndef __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
-#define __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
+#ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
+#define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include <mlpack/core/optimizers/sdp/sdp.hpp>
 #include <mlpack/core/optimizers/sdp/lrsdp.hpp>

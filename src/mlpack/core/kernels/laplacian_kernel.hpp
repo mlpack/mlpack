@@ -4,8 +4,8 @@
  *
  * Implementation of the Laplacian kernel (LaplacianKernel).
  */
-#ifndef __MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 

@@ -6,8 +6,8 @@
  * You should define your own statistic that looks like EmptyStatistic.
  */
 
-#ifndef __MLPACK_CORE_TREE_STATISTIC_HPP
-#define __MLPACK_CORE_TREE_STATISTIC_HPP
+#ifndef MLPACK_CORE_TREE_STATISTIC_HPP
+#define MLPACK_CORE_TREE_STATISTIC_HPP
 
 namespace mlpack {
 namespace tree {

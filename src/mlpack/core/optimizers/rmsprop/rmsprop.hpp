@@ -6,8 +6,8 @@
  * RMSprop optimizer. RmsProp is an optimizer that utilizes the magnitude of
  * recent gradients to normalize the gradients.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
-#define __MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
+#define MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
 
 #include <mlpack/core.hpp>
 

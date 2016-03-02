@@ -20,8 +20,8 @@
  * }
  * @endcode
  */
-#ifndef __MLPACK_METHODS_ADABOOST_ADABOOST_HPP
-#define __MLPACK_METHODS_ADABOOST_ADABOOST_HPP
+#ifndef MLPACK_METHODS_ADABOOST_ADABOOST_HPP
+#define MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>

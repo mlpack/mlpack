@@ -5,8 +5,8 @@
  * An implementation of information gain, which can be used in place of Gini
  * impurity.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_INFORMATION_GAIN_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_INFORMATION_GAIN_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_INFORMATION_GAIN_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_INFORMATION_GAIN_HPP
 
 namespace mlpack {
 namespace tree {

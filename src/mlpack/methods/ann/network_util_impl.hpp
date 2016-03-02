@@ -4,8 +4,8 @@
  *
  * Implementation of the network auxiliary functions.
  */
-#ifndef __MLPACK_METHODS_ANN_NETWORK_UTIL_IMPL_HPP
-#define __MLPACK_METHODS_ANN_NETWORK_UTIL_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_NETWORK_UTIL_IMPL_HPP
+#define MLPACK_METHODS_ANN_NETWORK_UTIL_IMPL_HPP
 
 #include "network_util_impl.hpp"
 

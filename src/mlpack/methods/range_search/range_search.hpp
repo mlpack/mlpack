@@ -5,8 +5,8 @@
  * Defines the RangeSearch class, which performs a generalized range search on
  * points.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

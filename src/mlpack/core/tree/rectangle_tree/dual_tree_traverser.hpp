@@ -6,8 +6,8 @@
   * with a given set of rules which indicate the branches to prune and the
   * order in which to recurse.  This is just here to make it compile.
   */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 

@@ -4,8 +4,8 @@
  *
  * The statistic used in trees with FastMKS.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>

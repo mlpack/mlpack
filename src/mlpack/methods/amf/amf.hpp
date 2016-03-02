@@ -10,8 +10,8 @@
  * known techniques such as incremental SVD, NMF, and batch-learning SVD can be
  * derived.
  */
-#ifndef __MLPACK_METHODS_AMF_AMF_HPP
-#define __MLPACK_METHODS_AMF_AMF_HPP
+#ifndef MLPACK_METHODS_AMF_AMF_HPP
+#define MLPACK_METHODS_AMF_AMF_HPP
 
 #include <mlpack/core.hpp>
 

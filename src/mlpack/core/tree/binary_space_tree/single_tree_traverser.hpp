@@ -6,8 +6,8 @@
  * given set of rules which indicate the branches which can be pruned and the
  * order in which to recurse.  This traverser is a depth-first traverser.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_SINGLE_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_SINGLE_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_SINGLE_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_SINGLE_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 

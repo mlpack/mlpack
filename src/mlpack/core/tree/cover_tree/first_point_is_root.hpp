@@ -5,8 +5,8 @@
  * A very simple policy for the cover tree; the first point in the dataset is
  * chosen as the root of the cover tree.
  */
-#ifndef __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
-#define __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#ifndef MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#define MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
 
 #include <mlpack/core.hpp>
 

@@ -4,8 +4,8 @@
  *
  * Update rules for the Non-negative Matrix Factorization.
  */
-#ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
-#define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
+#ifndef MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
+#define MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
 
 #include <mlpack/core.hpp>
 

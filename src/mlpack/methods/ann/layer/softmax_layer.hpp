@@ -4,8 +4,8 @@
  *
  * Definition of the SoftmaxLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

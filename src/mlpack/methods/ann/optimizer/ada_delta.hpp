@@ -6,8 +6,8 @@
  * dynamically adapts over time using only first order information.
  * Additionally, Adadelta requires no manual tuning of a learning rate.
  */
-#ifndef __MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
-#define __MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
+#ifndef MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
+#define MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
 
 #include <mlpack/core.hpp>
 

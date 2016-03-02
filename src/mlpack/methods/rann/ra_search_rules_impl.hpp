@@ -4,8 +4,8 @@
  *
  * Implementation of RASearchRules.
  */
-#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP
-#define __MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP
+#ifndef MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP
+#define MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ra_search_rules.hpp"

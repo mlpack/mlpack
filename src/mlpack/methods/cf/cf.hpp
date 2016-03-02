@@ -8,8 +8,8 @@
  * Defines the CF class to perform collaborative filtering on the specified data
  * set using alternating least squares (ALS).
  */
-#ifndef __MLPACK_METHODS_CF_CF_HPP
-#define __MLPACK_METHODS_CF_CF_HPP
+#ifndef MLPACK_METHODS_CF_CF_HPP
+#define MLPACK_METHODS_CF_CF_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>

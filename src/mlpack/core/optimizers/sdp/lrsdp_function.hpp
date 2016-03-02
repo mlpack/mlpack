@@ -5,8 +5,8 @@
  *
  * A class that represents the objective function which LRSDP optimizes.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>

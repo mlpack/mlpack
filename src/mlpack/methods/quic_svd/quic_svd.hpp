@@ -4,8 +4,8 @@
  *
  * An implementation of QUIC-SVD.
  */
-#ifndef __MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
-#define __MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
+#ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
+#define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>

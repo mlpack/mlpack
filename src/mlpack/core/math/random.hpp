@@ -3,8 +3,8 @@
  *
  * Miscellaneous math random-related routines.
  */
-#ifndef __MLPACK_CORE_MATH_RANDOM_HPP
-#define __MLPACK_CORE_MATH_RANDOM_HPP
+#ifndef MLPACK_CORE_MATH_RANDOM_HPP
+#define MLPACK_CORE_MATH_RANDOM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <random>

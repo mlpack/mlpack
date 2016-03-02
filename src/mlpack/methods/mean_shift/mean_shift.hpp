@@ -5,8 +5,8 @@
  * Mean Shift clustering
  */
 
-#ifndef __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
-#define __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#ifndef MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#define MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>

@@ -4,8 +4,8 @@
  *
  * Rules for range search, so that it can be done with arbitrary tree types.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
 
 #include "../neighbor_search/ns_traversal_info.hpp"
 

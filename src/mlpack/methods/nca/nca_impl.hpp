@@ -4,8 +4,8 @@
  *
  * Implementation of templated NCA class.
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_IMPL_HPP
-#define __MLPACK_METHODS_NCA_NCA_IMPL_HPP
+#ifndef MLPACK_METHODS_NCA_NCA_IMPL_HPP
+#define MLPACK_METHODS_NCA_NCA_IMPL_HPP
 
 // In case it was not already included.
 #include "nca.hpp"

@@ -12,7 +12,7 @@
 // name.
 std::string mlpack::util::GetVersion()
 {
-#ifndef __MLPACK_GIT_VERSION
+#ifndef MLPACK_GIT_VERSION
   std::stringstream o;
   o << "mlpack " << __MLPACK_VERSION_MAJOR << "." << __MLPACK_VERSION_MINOR
       << "." << __MLPACK_VERSION_PATCH;

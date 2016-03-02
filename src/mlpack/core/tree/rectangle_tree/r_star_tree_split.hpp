@@ -5,8 +5,8 @@
  * Defintion of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
  * at a leaf node and moving upwards if necessary.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
 
 #include <mlpack/core.hpp>
 

@@ -7,8 +7,8 @@
  * Calling unionfind.Union(x, y) unites the components indexed by x and y.
  * unionfind.Find(x) returns the index of the component containing point x.
  */
-#ifndef __MLPACK_METHODS_EMST_UNION_FIND_HPP
-#define __MLPACK_METHODS_EMST_UNION_FIND_HPP
+#ifndef MLPACK_METHODS_EMST_UNION_FIND_HPP
+#define MLPACK_METHODS_EMST_UNION_FIND_HPP
 
 #include <mlpack/core.hpp>
 

@@ -4,8 +4,8 @@
  *
  * Implementation of save functionality.
  */
-#ifndef __MLPACK_CORE_DATA_SAVE_IMPL_HPP
-#define __MLPACK_CORE_DATA_SAVE_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_SAVE_IMPL_HPP
+#define MLPACK_CORE_DATA_SAVE_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "save.hpp"

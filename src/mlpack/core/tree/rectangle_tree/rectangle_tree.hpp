@@ -5,8 +5,8 @@
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
  * and hilbert_r_tree).
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 
 #include <mlpack/core.hpp>
 

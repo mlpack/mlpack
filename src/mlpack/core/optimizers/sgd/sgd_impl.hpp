@@ -4,8 +4,8 @@
  *
  * Implementation of stochastic gradient descent.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 
 #include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
 // In case it hasn't been included yet.

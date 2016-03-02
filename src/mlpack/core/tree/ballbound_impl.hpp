@@ -6,8 +6,8 @@
  *
  * @experimental
  */
-#ifndef __MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
-#define __MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
+#define MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
 
 // In case it hasn't been included already.
 #include "ballbound.hpp"

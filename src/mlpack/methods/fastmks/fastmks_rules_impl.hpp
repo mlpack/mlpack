@@ -4,8 +4,8 @@
  *
  * Implementation of FastMKSRules for cover tree search.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "fastmks_rules.hpp"

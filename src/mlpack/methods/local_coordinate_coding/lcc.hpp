@@ -5,8 +5,8 @@
  * Definition of the LocalCoordinateCoding class, which performs the Local
  * Coordinate Coding algorithm.
  */
-#ifndef __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
-#define __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
+#ifndef MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
+#define MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/lars/lars.hpp>

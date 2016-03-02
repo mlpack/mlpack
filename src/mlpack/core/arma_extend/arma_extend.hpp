@@ -9,8 +9,8 @@
  * function as cov(trans(X)) but without the cost of computing trans(X)).  This
  * also gives sparse matrix support, if it is necessary.
  */
-#ifndef __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
-#define __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
+#ifndef MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
+#define MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 
 // Add batch constructor for sparse matrix (if version <= 3.810.0).
 #define ARMA_EXTRA_SPMAT_PROTO mlpack/core/arma_extend/SpMat_extra_bones.hpp

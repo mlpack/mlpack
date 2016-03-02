@@ -5,8 +5,8 @@
  * This is an example kernel.  If you are making your own kernel, follow the
  * outline specified in this file.
  */
-#ifndef __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 

@@ -10,8 +10,8 @@
  *  ACM Trans. Math. Softw. 7, 1 (March 1981), 17-41.
  *  http://portal.acm.org/citation.cfm?id=355934.355936
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
+#define MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core.hpp>
 

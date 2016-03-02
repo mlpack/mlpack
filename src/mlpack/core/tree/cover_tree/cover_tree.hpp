@@ -4,8 +4,8 @@
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 
 #include <mlpack/core.hpp>
 

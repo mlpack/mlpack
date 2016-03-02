@@ -17,8 +17,8 @@
  * }
  * @endcode
  */
-#ifndef __MLPACK_METHODS_EMST_DTB_HPP
-#define __MLPACK_METHODS_EMST_DTB_HPP
+#ifndef MLPACK_METHODS_EMST_DTB_HPP
+#define MLPACK_METHODS_EMST_DTB_HPP
 
 #include "dtb_stat.hpp"
 #include "edge_pair.hpp"

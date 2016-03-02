@@ -5,8 +5,8 @@
  * Implementation of the stochastic neighbor assignment probability error
  * function (the "softmax error").
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
-#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
+#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
+#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  *
  * Timers for MLPACK.
  */
-#ifndef __MLPACK_CORE_UTILITIES_TIMERS_HPP
-#define __MLPACK_CORE_UTILITIES_TIMERS_HPP
+#ifndef MLPACK_CORE_UTILITIES_TIMERS_HPP
+#define MLPACK_CORE_UTILITIES_TIMERS_HPP
 
 #include <map>
 #include <string>

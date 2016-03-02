@@ -6,8 +6,8 @@
  * is useful when the dataset contains categorical non-numeric features that
  * needs to be mapped to categorical numeric features.
  */
-#ifndef __MLPACK_CORE_DATA_DATASET_INFO_HPP
-#define __MLPACK_CORE_DATA_DATASET_INFO_HPP
+#ifndef MLPACK_CORE_DATA_DATASET_INFO_HPP
+#define MLPACK_CORE_DATA_DATASET_INFO_HPP
 
 #include <mlpack/core.hpp>
 #include <unordered_map>

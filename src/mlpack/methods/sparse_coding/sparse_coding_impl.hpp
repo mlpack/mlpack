@@ -5,8 +5,8 @@
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or
  * l1+l2 (Elastic Net) regularization.
  */
-#ifndef __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
-#define __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
+#ifndef MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
+#define MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "sparse_coding.hpp"

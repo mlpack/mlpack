@@ -6,8 +6,8 @@
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  */
-#ifndef __MLPACK_CORE_UTIL_CLI_HPP
-#define __MLPACK_CORE_UTIL_CLI_HPP
+#ifndef MLPACK_CORE_UTIL_CLI_HPP
+#define MLPACK_CORE_UTIL_CLI_HPP
 
 #include <list>
 #include <iostream>
