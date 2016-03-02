@@ -47,22 +47,7 @@ class SparseInputLayer
     lambda(lambda)
   {
     weights.set_size(outSize, inSize);
-  }
-
-  SparseInputLayer(SparseInputLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseInputLayer& operator=(SparseInputLayer &&layer) noexcept
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    lambda = layer.lambda;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -129,9 +114,19 @@ class SparseInputLayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(lambda, "lambda");
+  }
 
  private:
   //! Locally-stored number of input units.

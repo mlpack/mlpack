@@ -64,23 +64,7 @@ class DropoutLayer
       rescale(rescale)
   {
     // Nothing to do here.
-  }
-
-  DropoutLayer(DropoutLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  DropoutLayer& operator=(DropoutLayer &&layer) noexcept
-  {
-    mask.swap(layer.mask);
-    ratio = layer.ratio;
-    scale = layer.scale;
-    deterministic = layer.deterministic;
-    rescale = layer.rescale;
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -163,17 +147,17 @@ class DropoutLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the detla.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
@@ -196,6 +180,16 @@ class DropoutLayer
   bool Rescale() const {return rescale; }
   //! Modify the value of the rescale parameter.
   bool& Rescale() {return rescale; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(ratio, "ratio");
+    ar & data::CreateNVP(rescale, "rescale");
+  }
 
  private:
   //! Locally-stored delta object.

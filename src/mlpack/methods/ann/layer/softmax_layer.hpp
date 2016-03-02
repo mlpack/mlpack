@@ -34,21 +34,7 @@ class SoftmaxLayer
   SoftmaxLayer()
   {
     // Nothing to do here.
-  }
-
-  SoftmaxLayer(SoftmaxLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SoftmaxLayer& operator=(SoftmaxLayer &&layer) noexcept
-  {
-    delta.swap(layer.delta);
-    inputParameter.swap(layer.inputParameter);
-    outputParameter.swap(layer.outputParameter);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -83,19 +69,28 @@ class SoftmaxLayer
   }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  InputDataType& Delta() const { return delta; }
+  InputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+    /* Nothing to do here */
+  }
 
  private:
   //! Locally-stored delta object.

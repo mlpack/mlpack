@@ -69,27 +69,7 @@ class ConvLayer
   {
     weights.set_size(wfilter, hfilter, inMaps * outMaps);
   }
-
-  ConvLayer(ConvLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  ConvLayer& operator=(ConvLayer &&layer) noexcept
-  {
-    wfilter = layer.wfilter;
-    hfilter = layer.hfilter;
-    inMaps = layer.inMaps;
-    outMaps = layer.outMaps;
-    xStride = layer.xStride;
-    yStride = layer.yStride;
-    wPad = layer.wPad;
-    hPad = layer.hPad;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
-
+  
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -180,29 +160,46 @@ class ConvLayer
   }
 
   //! Get the weights.
-  OutputDataType& Weights() const { return weights; }
+  OutputDataType const& Weights() const { return weights; }
   //! Modify the weights.
   OutputDataType& Weights() { return weights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(wfilter, "wfilter");
+    ar & data::CreateNVP(hfilter, "hfilter");
+    ar & data::CreateNVP(inMaps, "inMaps");
+    ar & data::CreateNVP(outMaps, "outMaps");
+    ar & data::CreateNVP(xStride, "xStride");
+    ar & data::CreateNVP(yStride, "yStride");
+    ar & data::CreateNVP(wPad, "wPad");
+    ar & data::CreateNVP(hPad, "hPad");
+  }
 
  private:
   /*

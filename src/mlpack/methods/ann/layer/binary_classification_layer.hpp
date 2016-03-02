@@ -60,6 +60,15 @@ class BinaryClassificationLayer
     for (size_t i = 0; i < output.n_elem; i++)
       output(i) = output(i) > 0.5 ? 1 : 0;
   }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+    /* Nothing to do here */
+  }
 }; // class BinaryClassificationLayer
 
 //! Layer traits for the binary class classification layer.

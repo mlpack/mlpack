@@ -42,21 +42,7 @@ class SparseBiasLayer
       batchSize(batchSize)
   {
     weights.set_size(outSize, 1);
-  }
-  
-  SparseBiasLayer(SparseBiasLayer &&layer) noexcept
-  {
-    *this = std::move(layer);
-  }
-
-  SparseBiasLayer& operator=(SparseBiasLayer &&layer) noexcept
-  {
-    outSize = layer.outSize;
-    batchSize = layer.batchSize;
-    weights.swap(layer.weights);
-
-    return *this;
-  }
+  }  
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -130,6 +116,16 @@ class SparseBiasLayer
   InputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
+  
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(batchSize, "batchSize");
+  }
 
  private:
   //! Locally-stored number of output units.
