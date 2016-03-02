@@ -10,8 +10,6 @@
 // In case it hasn't been included yet.
 #include "rnn.hpp"
 
-#include <mlpack/core/util/tuple_serialize.hpp>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -329,9 +327,7 @@ void RNN<
 LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(parameter, "parameter");
-  ar & data::CreateNVP<0, std::tuple_size<LayerTypes>::value-1>
-      (network, "network");
+  ar & data::CreateNVP(parameter, "parameter");  
 }
 
 } // namespace ann
