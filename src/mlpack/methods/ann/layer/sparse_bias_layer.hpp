@@ -123,7 +123,7 @@ class SparseBiasLayer
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {    			
-	ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(weights, "weights");
   }
 
  private:

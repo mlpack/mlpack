@@ -248,27 +248,27 @@ class LSTMLayer
   }
 
   //! Get the peephole weights.
-  OutputDataType& Weights() const { return peepholeWeights; }
+  OutputDataType const& Weights() const { return peepholeWeights; }
   //! Modify the peephole weights.
   OutputDataType& Weights() { return peepholeWeights; }
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the peephole gradient.
-  OutputDataType& Gradient() const { return peepholeGradient; }
+  OutputDataType const& Gradient() const { return peepholeGradient; }
   //! Modify the peephole gradient.
   OutputDataType& Gradient() { return peepholeGradient; }
 
