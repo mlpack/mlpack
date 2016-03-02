@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace boost {
+namespace mlpack {
 namespace serialization {  
  
   template<
@@ -18,7 +18,7 @@ namespace serialization {
   Serialize(Archive& ar, std::tuple<Args...>& t, const unsigned int /* version */)
   {
     ar & data::CreateNVP(std::get<I>(t), "tuple" + std::to_string(I));
-	Serialize<I+1, Max>(ar, t, 0);
+    Serialize<I+1, Max>(ar, t, 0);
   }
   
   template<
