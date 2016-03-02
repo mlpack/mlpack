@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace mlpack {
+namespace boost {
 namespace serialization {  
  
   template<
@@ -15,10 +15,10 @@ namespace serialization {
       typename... Args
   >
   typename std::enable_if<I < Max, void>::type
-  Serialize(Archive& ar, std::tuple<Args...>& t, const unsigned int /* version */)
+  serialize(Archive& ar, std::tuple<Args...>& t, const unsigned int /* version */)
   {
     ar & data::CreateNVP(std::get<I>(t), "tuple" + std::to_string(I));
-    Serialize<I+1, Max>(ar, t, 0);
+    serialize<I+1, Max>(ar, t, 0);
   }
   
   template<
@@ -28,9 +28,15 @@ namespace serialization {
       typename... Args
   >
   typename std::enable_if<I == Max, void>::type 
-  Serialize(Archive&, std::tuple<Args...>&, const unsigned int /* version */)
+  serialize(Archive&, std::tuple<Args...>&, const unsigned int /* version */)
   {    
-  }       
+  }
+
+  template<typename Archive, typename... Args>
+  void serialize(Archive& ar, std::tuple<Args...>& t, const unsigned int /* version */)
+  {
+    serialize<0, std::tuple_size<std::tuple<Args...>>::value-1>(ar, t, 0);
+  }
 }
 }
 #endif
