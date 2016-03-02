@@ -59,13 +59,13 @@ public:
    *          testLabel);
    *@endcode
    */
-  template<typename T>
+  template<typename T, typename U>
   void Split(T const &input,
-             arma::Row<size_t> const &inputLabel,
+             arma::Row<U> const &inputLabel,
              T &trainData,
              T &testData,
-             arma::Row<size_t> &trainLabel,
-             arma::Row<size_t> &testLabel)
+             arma::Row<U> &trainLabel,
+             arma::Row<U> &testLabel)
   {
     size_t const testSize =
         static_cast<size_t>(ExtractSize(input) * testRatio);
@@ -103,16 +103,16 @@ public:
    *@return They are trainData, testData, trainLabel and
    *testLabel
    */
-  template<typename T>
+  template<typename T,typename U>
   std::tuple<T, T,
-  arma::Row<size_t>, arma::Row<size_t>>
+  arma::Row<U>, arma::Row<U>>
   Split(T const &input,
-        arma::Row<size_t> const &inputLabel)
+        arma::Row<U> const &inputLabel)
   {
     T trainData;
     T testData;
-    arma::Row<size_t> trainLabel;
-    arma::Row<size_t> testLabel;
+    arma::Row<U> trainLabel;
+    arma::Row<U> testLabel;
 
     Split(input, inputLabel, trainData, testData,
           trainLabel, testLabel);
