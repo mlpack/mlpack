@@ -157,7 +157,7 @@ class ConvLayer
           g.slice(s) += output.slice(i);
       }
     }
-  }  
+  }
 
   //! Get the weights.
   OutputDataType const& Weights() const { return weights; }
@@ -185,12 +185,20 @@ class ConvLayer
   OutputDataType& Gradient() { return gradient; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    			
+  {
     ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(wfilter, "wfilter");
+    ar & data::CreateNVP(hfilter, "hfilter");
+    ar & data::CreateNVP(inMaps, "inMaps");
+    ar & data::CreateNVP(outMaps, "outMaps");
+    ar & data::CreateNVP(xStride, "xStride");
+    ar & data::CreateNVP(yStride, "yStride");
+    ar & data::CreateNVP(wPad, "wPad");
+    ar & data::CreateNVP(hPad, "hPad");
   }
 
  private:

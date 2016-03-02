@@ -327,7 +327,7 @@ void RNN<
 LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(parameter, "parameter");  
+  ar & data::CreateNVP(parameter, "parameter");
 }
 
 } // namespace ann

@@ -62,11 +62,12 @@ class BinaryClassificationLayer
   }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {    				
+  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+    /* Nothing to do here */
   }
 }; // class BinaryClassificationLayer
 

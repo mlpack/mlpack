@@ -182,11 +182,13 @@ class DropoutLayer
   bool& Rescale() {return rescale; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    				
+  {
+    ar & data::CreateNVP(ratio, "ratio");
+    ar & data::CreateNVP(rescale, "rescale");
   }
 
  private:

@@ -278,11 +278,23 @@ class LSTMLayer
   size_t& SeqLen() { return seqLen; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    			
+  {
+    ar & data::CreateNVP(peepholes, "peepholes");
+
+    if (peepholes)
+    {
+      ar & data::CreateNVP(peepholeWeights, "peepholeWeights");
+
+      if (Archive::is_loading::value)
+      {
+        peepholeDerivatives = arma::zeros<OutputDataType>(
+            peepholeWeights.n_rows, 3);
+      }
+    }
   }
 
  private:

@@ -145,14 +145,16 @@ class PoolingLayer
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }   
+  OutputDataType& Delta() { return delta; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    				
+  {
+    ar & data::CreateNVP(kSize, "kSize");
+    ar & data::CreateNVP(pooling, "pooling");
   }
 
  private:

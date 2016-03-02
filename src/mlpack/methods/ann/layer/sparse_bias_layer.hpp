@@ -118,12 +118,13 @@ class SparseBiasLayer
   InputDataType& Gradient() { return gradient; }
   
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    			
+  {
     ar & data::CreateNVP(weights, "weights");
+    ar & data::CreateNVP(batchSize, "batchSize");
   }
 
  private:
