@@ -55,7 +55,7 @@ With debugging output--verbose, the following is shown:
 [DEBUG] Compiled with debugging symbols.
 [INFO ] Some test informational output.
 [WARN ] A warning!
-[FATAL] [bt]: (1) /absolute/path/to/file/example.cpp:main:6
+[FATAL] [bt]: (1) /absolute/path/to/file/example.cpp:6: function()
 [FATAL] Program has crashed.
 terminate called after throwing an instance of 'std::runtime_error'
   what():  fatal error; see Log::Fatal output
