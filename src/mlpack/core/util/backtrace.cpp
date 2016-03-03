@@ -177,8 +177,8 @@ std::string Backtrace::ToString()
     
       stackStr += "[bt]: (" + it.str() + ") "
 	       + frame.file + ":"
-	       + frame.function + ":"
-	       + lineOss.str() + "\n";
+	       + lineOss.str() + " "
+	       + frame.function + ":\n";
 	     
     lineOss.str("");
     it.str("");
