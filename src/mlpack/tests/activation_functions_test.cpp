@@ -12,6 +12,7 @@
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/leaky_relu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_tanh_function.hpp>
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -174,6 +175,58 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, const arma::colve
   }
 }
 
+/*
+ * Implementation of the HardTanH activation function test.
+ *
+ * @param input Input data used for evaluating the HardTanH activation function.
+ * @param target Target data used to evaluate the HardTanH activation.
+ *
+ */
+void CheckHardTanHActivationCorrect(const arma::colvec input, const arma::colvec target)
+{
+  HardTanHFunction<> htf;
+  // Test the activation function using a single value as input.
+  for (size_t i = 0; i < target.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(htf.fn(input.at(i)),
+        target.at(i), 1e-3);
+  }
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  htf.fn(input, activations);
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the HardTanH activation function derivative test.
+ *
+ * @param input Input data used for evaluating the HardTanH activation function.
+ * @param target Target data used to evaluate the HardTanH activation.
+ *
+ */
+
+void CheckHardTanHDerivativeCorrect(const arma::colvec input, const arma::colvec target)
+{
+  HardTanHFunction<> htf;
+  // Test the calculation of the derivatives using a single value as input.
+  for (size_t i = 0; i < target.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(htf.deriv(input.at(i)),
+        target.at(i), 1e-3);
+  }
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+  htf.deriv(input, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
 
 
 /**
@@ -264,10 +317,26 @@ BOOST_AUTO_TEST_CASE(LeakyReluFunctionTest)
                                          1 -0.03 2 0");
 
   const arma::colvec desiredDerivatives("0.03 1 1 0.03 \
-                                         1 0.03 1 0.03");
+                                         1 0.03 1 1");
 
   CheckLeakyReLUActivationCorrect(activationData, desiredActivations);
   CheckLeakyReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
+
+/**
+ * Basic test of the HardTanH function.
+ */
+BOOST_AUTO_TEST_CASE(HardTanHFunctionTest)
+{
+  const arma::colvec desiredActivations("-1 1 1 -1 \
+                                         1 -1 1 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 \
+                                         1 1 0 1");
+
+  CheckHardTanHActivationCorrect(activationData, desiredActivations);
+  CheckHardTanHDerivativeCorrect(desiredActivations, desiredDerivatives);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
