@@ -41,7 +41,7 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(mlpack rt)
 endif(UNIX AND NOT APPLE)
 
-# Backtrace for Ubuntu need those libs.
+# Backtrace for Linux need those libs.
 if(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
   target_link_libraries(mlpack ${LIBBFD_LIBRARIES})
   target_link_libraries(mlpack ${LIBDL_LIBRARIES})
