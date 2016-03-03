@@ -154,7 +154,7 @@ class BiasLayer
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & data::CreateNVP(weights, "weights");
-    ar & CreateNVP(bias, "bias");
+    ar & data::CreateNVP(bias, "bias");
   }
 
  private:
