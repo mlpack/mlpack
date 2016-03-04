@@ -4,7 +4,7 @@
 Tutorials for mlpack can be found [here : mlpack tutorials](http://www.mlpack.org/tutorial.html).
 
 ### Method-specific tutorials
-* [NeighborSearch tutorial (mlpack_knn / mlpack_allkfn)](http://www.mlpack.org/doxygen.php?doc=nstutorial.html)
+* [NeighborSearch tutorial (mlpack_knn / mlpack_kfn)](http://www.mlpack.org/doxygen.php?doc=nstutorial.html)
 * [RangeSearch tutorial (mlpack_range_search)](http://www.mlpack.org/doxygen.php?doc=rstutorial.html)
 * [LinearRegression tutorial (mlpack_linear_regression)](http://www.mlpack.org/doxygen.php?doc=lrtutorial.html)
 * [Density Estimation Trees tutorial (mlpack_det)](http://www.mlpack.org/doxygen.php?doc=dettutorial.html)
