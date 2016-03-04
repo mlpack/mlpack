@@ -50,7 +50,7 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkfn
+ * - mlpack_kfn
  * - mlpack_knn
  * - mlpack_allkrann
  * - mlpack_cf
