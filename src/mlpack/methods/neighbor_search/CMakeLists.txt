@@ -36,11 +36,11 @@ target_link_libraries(mlpack_knn
   mlpack
 )
 
-add_executable(mlpack_allkfn
+add_executable(mlpack_kfn
   allkfn_main.cpp
 )
-target_link_libraries(mlpack_allkfn
+target_link_libraries(mlpack_kfn
   mlpack
 )
 
-install(TARGETS mlpack_knn mlpack_allkfn RUNTIME DESTINATION bin)
+install(TARGETS mlpack_knn mlpack_kfn RUNTIME DESTINATION bin)
