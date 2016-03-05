@@ -191,7 +191,6 @@
 
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
-#include <mlpack/core/util/backtrace.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/load.hpp>
@@ -206,6 +205,10 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
+//mlpack::backtrace only for linux
+#ifdef HAS_BFD_DL
+  #include <mlpack/core/util/backtrace.hpp>
+#endif
 
 // Include kernel traits.
 #include <mlpack/core/kernels/kernel_traits.hpp>
