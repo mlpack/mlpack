@@ -42,10 +42,12 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 # Backtrace for Linux need those libs.
-if(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
-  target_link_libraries(mlpack ${LIBBFD_LIBRARIES})
-  target_link_libraries(mlpack ${LIBDL_LIBRARIES})
-endif(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
+if(SYSTEM_NAME STREQUAL "Linux")
+  if(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
+    target_link_libraries(mlpack ${LIBBFD_LIBRARIES})
+    target_link_libraries(mlpack ${LIBDL_LIBRARIES})
+  endif(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
+endif(SYSTEM_NAME STREQUAL "Linux")
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
