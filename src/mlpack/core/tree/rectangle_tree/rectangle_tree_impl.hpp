@@ -522,8 +522,11 @@ template<typename MetricType,
          typename MatType,
          typename SplitType,
          typename DescentType>
-inline double RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::FurthestPointDistance() const
+inline
+typename RectangleTree<MetricType, StatisticType, MatType, SplitType,
+    DescentType>::ElemType
+RectangleTree<MetricType, StatisticType, MatType, SplitType,
+    DescentType>::FurthestPointDistance() const
 {
   if (!IsLeaf())
     return 0.0;
@@ -544,8 +547,11 @@ template<typename MetricType,
          typename MatType,
          typename SplitType,
          typename DescentType>
-inline double RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::FurthestDescendantDistance() const
+inline
+typename RectangleTree<MetricType, StatisticType, MatType, SplitType,
+    DescentType>::ElemType
+RectangleTree<MetricType, StatisticType, MatType, SplitType,
+    DescentType>::FurthestDescendantDistance() const
 {
   // Return the distance from the centroid to a corner of the bound.
   return 0.5 * bound.Diameter();
@@ -840,7 +846,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     {
       if (bound[i].Lo() == point[i])
       {
-        double min = DBL_MAX;
+        ElemType min = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < count; j++)
         {
           if (localDataset->col(j)[i] < min)
@@ -859,7 +865,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
       }
       else if (bound[i].Hi() == point[i])
       {
-        double max = -1 * DBL_MAX;
+        ElemType max = std::numeric_limits<ElemType>::min();
         for (size_t j = 0; j < count; j++)
         {
           if (localDataset->col(j)[i] > max)
@@ -884,7 +890,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     {
       if (bound[i].Lo() == point[i])
       {
-        double min = DBL_MAX;
+        ElemType min = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < numChildren; j++)
         {
           if (children[j]->Bound()[i].Lo() < min)
@@ -899,7 +905,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
       }
       else if (bound[i].Hi() == point[i])
       {
-        double max = -DBL_MAX;
+        ElemType max = std::numeric_limits<ElemType>::min();
         for (size_t j = 0; j < numChildren; j++)
         {
           if (children[j]->Bound()[i].Hi() > max)
@@ -930,14 +936,14 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     ShrinkBoundForBound(const bound::HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
-  double sum = 0;
+  ElemType sum = 0;
 
   // I think it may be faster to just recalculate the whole thing.
   for (size_t i = 0; i < bound.Dim(); i++)
   {
     sum += bound[i].Width();
-    bound[i].Lo() = DBL_MAX;
-    bound[i].Hi() = -DBL_MAX;
+    bound[i].Lo() = std::numeric_limits<ElemType>::max();
+    bound[i].Hi() = std::numeric_limits<ElemType>::min();
   }
 
   for (size_t i = 0; i < numChildren; i++)
@@ -945,7 +951,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     bound |= children[i]->Bound();
   }
 
-  double sum2 = 0;
+  ElemType sum2 = 0;
   for (size_t i = 0; i < bound.Dim(); i++)
     sum2 += bound[i].Width();
 

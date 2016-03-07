@@ -91,7 +91,10 @@ template<typename MetricType = metric::LMetric<2, true>,
 class CoverTree
 {
  public:
+  //! So that other classes can access the matrix type.
   typedef MatType Mat;
+  //! The type held by the matrix type.
+  typedef typename MatType::elem_type ElemType;
 
   /**
    * Create the cover tree with the given dataset and given base.
@@ -104,7 +107,7 @@ class CoverTree
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(const MatType& dataset,
-            const double base = 2.0,
+            const ElemType base = 2.0,
             MetricType* metric = NULL);
 
   /**
@@ -118,7 +121,7 @@ class CoverTree
    */
   CoverTree(const MatType& dataset,
             MetricType& metric,
-            const double base = 2.0);
+            const ElemType base = 2.0);
 
   /**
    * Create the cover tree with the given dataset, taking ownership of the
@@ -128,7 +131,7 @@ class CoverTree
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(MatType&& dataset,
-            const double base = 2.0);
+            const ElemType base = 2.0);
 
   /**
    * Create the cover tree with the given dataset and the given instantiated
@@ -140,7 +143,7 @@ class CoverTree
    */
   CoverTree(MatType&& dataset,
             MetricType& metric,
-            const double base = 2.0);
+            const ElemType base = 2.0);
 
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
@@ -174,11 +177,11 @@ class CoverTree
    * @param usedSetSize The number of points used will be added to this number.
    */
   CoverTree(const MatType& dataset,
-            const double base,
+            const ElemType base,
             const size_t pointIndex,
             const int scale,
             CoverTree* parent,
-            const double parentDistance,
+            const ElemType parentDistance,
             arma::Col<size_t>& indices,
             arma::vec& distances,
             size_t nearSetSize,
@@ -203,12 +206,12 @@ class CoverTree
    * @param metric Instantiated metric (optional).
    */
   CoverTree(const MatType& dataset,
-            const double base,
+            const ElemType base,
             const size_t pointIndex,
             const int scale,
             CoverTree* parent,
-            const double parentDistance,
-            const double furthestDescendantDistance,
+            const ElemType parentDistance,
+            const ElemType furthestDescendantDistance,
             MetricType* metric = NULL);
 
   /**
@@ -282,9 +285,9 @@ class CoverTree
   int& Scale() { return scale; }
 
   //! Get the base.
-  double Base() const { return base; }
+  ElemType Base() const { return base; }
   //! Modify the base; don't do this, you'll break everything.
-  double& Base() { return base; }
+  ElemType& Base() { return base; }
 
   //! Get the statistic for this node.
   const StatisticType& Stat() const { return stat; }
@@ -292,48 +295,48 @@ class CoverTree
   StatisticType& Stat() { return stat; }
 
   //! Return the minimum distance to another node.
-  double MinDistance(const CoverTree* other) const;
+  ElemType MinDistance(const CoverTree* other) const;
 
   //! Return the minimum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  double MinDistance(const CoverTree* other, const double distance) const;
+  ElemType MinDistance(const CoverTree* other, const ElemType distance) const;
 
   //! Return the minimum distance to another point.
-  double MinDistance(const arma::vec& other) const;
+  ElemType MinDistance(const arma::vec& other) const;
 
   //! Return the minimum distance to another point given that the distance from
   //! the center to the point has already been calculated.
-  double MinDistance(const arma::vec& other, const double distance) const;
+  ElemType MinDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the maximum distance to another node.
-  double MaxDistance(const CoverTree* other) const;
+  ElemType MaxDistance(const CoverTree* other) const;
 
   //! Return the maximum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  double MaxDistance(const CoverTree* other, const double distance) const;
+  ElemType MaxDistance(const CoverTree* other, const ElemType distance) const;
 
   //! Return the maximum distance to another point.
-  double MaxDistance(const arma::vec& other) const;
+  ElemType MaxDistance(const arma::vec& other) const;
 
   //! Return the maximum distance to another point given that the distance from
   //! the center to the point has already been calculated.
-  double MaxDistance(const arma::vec& other, const double distance) const;
+  ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::Range RangeDistance(const CoverTree* other) const;
+  math::RangeType<ElemType> RangeDistance(const CoverTree* other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::Range RangeDistance(const CoverTree* other, const double distance)
-      const;
+  math::RangeType<ElemType> RangeDistance(const CoverTree* other,
+                                          const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
-  math::Range RangeDistance(const arma::vec& other) const;
+  math::RangeType<ElemType> RangeDistance(const arma::vec& other) const;
 
   //! Return the minimum and maximum distance to another point given that the
   //! point-to-point distance has already been calculated.
-  math::Range RangeDistance(const arma::vec& other, const double distance)
-      const;
+  math::RangeType<ElemType> RangeDistance(const arma::vec& other,
+                                          const ElemType distance) const;
 
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
@@ -344,23 +347,23 @@ class CoverTree
   CoverTree*& Parent() { return parent; }
 
   //! Get the distance to the parent.
-  double ParentDistance() const { return parentDistance; }
+  ElemType ParentDistance() const { return parentDistance; }
   //! Modify the distance to the parent.
-  double& ParentDistance() { return parentDistance; }
+  ElemType& ParentDistance() { return parentDistance; }
 
   //! Get the distance to the furthest point.  This is always 0 for cover trees.
-  double FurthestPointDistance() const { return 0.0; }
+  ElemType FurthestPointDistance() const { return 0.0; }
 
   //! Get the distance from the center of the node to the furthest descendant.
-  double FurthestDescendantDistance() const
+  ElemType FurthestDescendantDistance() const
   { return furthestDescendantDistance; }
   //! Modify the distance from the center of the node to the furthest
   //! descendant.
-  double& FurthestDescendantDistance() { return furthestDescendantDistance; }
+  ElemType& FurthestDescendantDistance() { return furthestDescendantDistance; }
 
   //! Get the minimum distance from the center to any bound edge (this is the
   //! same as furthestDescendantDistance).
-  double MinimumBoundDistance() const { return furthestDescendantDistance; }
+  ElemType MinimumBoundDistance() const { return furthestDescendantDistance; }
 
   //! Get the center of the node and store it in the given vector.
   void Center(arma::vec& center) const
@@ -381,7 +384,7 @@ class CoverTree
   //! Scale level of the node.
   int scale;
   //! The base used to construct the tree.
-  double base;
+  ElemType base;
   //! The instantiated statistic.
   StatisticType stat;
   //! The number of descendant points.
@@ -389,9 +392,9 @@ class CoverTree
   //! The parent node (NULL if this is the root of the tree).
   CoverTree* parent;
   //! Distance to the parent.
-  double parentDistance;
+  ElemType parentDistance;
   //! Distance to the furthest descendant.
-  double furthestDescendantDistance;
+  ElemType furthestDescendantDistance;
   //! Whether or not we need to destroy the metric in the destructor.
   bool localMetric;
   //! If true, we own the dataset and need to destroy it in the destructor.
@@ -439,7 +442,7 @@ class CoverTree
    */
   size_t SplitNearFar(arma::Col<size_t>& indices,
                       arma::vec& distances,
-                      const double bound,
+                      const ElemType bound,
                       const size_t pointSetSize);
 
   /**
@@ -477,7 +480,7 @@ class CoverTree
                      const size_t childUsedSetSize);
   size_t PruneFarSet(arma::Col<size_t>& indices,
                      arma::vec& distances,
-                     const double bound,
+                     const ElemType bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
 

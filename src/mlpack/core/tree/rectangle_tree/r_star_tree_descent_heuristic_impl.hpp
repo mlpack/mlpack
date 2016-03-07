@@ -18,9 +18,12 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
     const arma::vec& point)
 {
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
   bool tiedOne = false;
-  std::vector<double> originalScores(node->NumChildren());
-  double origMinScore = DBL_MAX;
+  std::vector<ElemType> originalScores(node->NumChildren());
+  ElemType origMinScore = std::numeric_limits<ElemType>::max();
 
   if (node->Children()[0]->IsLeaf())
   {
@@ -29,18 +32,18 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
 
     for (size_t i = 0; i < node->NumChildren(); i++)
     {
-      double sc = 0;
+      ElemType sc = 0;
       for (size_t j = 0; j < node->NumChildren(); j++)
       {
         if (j != i)
         {
-          double overlap = 1.0;
-          double newOverlap = 1.0;
+          ElemType overlap = 1.0;
+          ElemType newOverlap = 1.0;
           for (size_t k = 0; k < node->Bound().Dim(); k++)
           {
-            double newHigh = std::max(point[k],
+            ElemType newHigh = std::max(point[k],
                 node->Children()[i]->Bound()[k].Hi());
-            double newLow = std::min(point[k],
+            ElemType newLow = std::min(point[k],
                 node->Children()[i]->Bound()[k].Lo());
             overlap *= node->Children()[i]->Bound()[k].Hi() < node->Children()[j]->Bound()[k].Lo() || node->Children()[i]->Bound()[k].Lo() > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(node->Children()[i]->Bound()[k].Hi(), node->Children()[j]->Bound()[k].Hi()) - std::max(node->Children()[i]->Bound()[k].Lo(), node->Children()[j]->Bound()[k].Lo());
             newOverlap *= newHigh < node->Children()[j]->Bound()[k].Lo() || newLow > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(newHigh, node->Children()[j]->Bound()[k].Hi()) - std::max(newLow, node->Children()[j]->Bound()[k].Lo());
@@ -66,25 +69,25 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   }
 
   // We do this if it is not on the second level or if there was a tie.
-  std::vector<double> scores(node->NumChildren());
+  std::vector<ElemType> scores(node->NumChildren());
   if (tiedOne)
   {
     // If the first heuristic was tied, we need to eliminate garbage values.
     for (size_t i = 0; i < scores.size(); i++)
-      scores[i] = DBL_MAX;
+      scores[i] = std::numeric_limits<ElemType>::max();
   }
 
-  std::vector<int> vols(node->NumChildren());
-  double minScore = DBL_MAX;
-  int bestIndex = 0;
+  std::vector<ElemType> vols(node->NumChildren());
+  ElemType minScore = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
   bool tied = false;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
     if (!tiedOne || originalScores[i] == origMinScore)
     {
-      double v1 = 1.0;
-      double v2 = 1.0;
+      ElemType v1 = 1.0;
+      ElemType v2 = 1.0;
       for (size_t j = 0; j < node->Bound().Dim(); j++)
       {
         v1 *= node->Children()[i]->Bound()[j].Width();
@@ -111,7 +114,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   if (tied)
   {
     // We break ties by choosing the smallest bound.
-    double minVol = DBL_MAX;
+    ElemType minVol = std::numeric_limits<ElemType>::max();
     bestIndex = 0;
     for (size_t i = 0; i < scores.size(); i++)
     {
@@ -141,16 +144,19 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
     const TreeType* insertedNode)
 {
-  std::vector<double> scores(node->NumChildren());
-  std::vector<int> vols(node->NumChildren());
-  double minScore = DBL_MAX;
-  int bestIndex = 0;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  std::vector<ElemType> scores(node->NumChildren());
+  std::vector<ElemType> vols(node->NumChildren());
+  ElemType minScore = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
   bool tied = false;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    double v1 = 1.0;
-    double v2 = 1.0;
+    ElemType v1 = 1.0;
+    ElemType v2 = 1.0;
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();
@@ -176,7 +182,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   if (tied)
   {
     // We break ties by choosing the smallest bound.
-    double minVol = DBL_MAX;
+    ElemType minVol = std::numeric_limits<ElemType>::max();
     bestIndex = 0;
     for (size_t i = 0; i < scores.size(); i++)
     {

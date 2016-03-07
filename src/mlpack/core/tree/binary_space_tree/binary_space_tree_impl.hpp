@@ -495,8 +495,11 @@ template<typename MetricType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::FurthestPointDistance() const
+inline
+typename BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::ElemType
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::FurthestPointDistance() const
 {
   if (!IsLeaf())
     return 0.0;
@@ -518,8 +521,11 @@ template<typename MetricType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::FurthestDescendantDistance() const
+inline
+typename BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::ElemType
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::FurthestDescendantDistance() const
 {
   return furthestDescendantDistance;
 }
@@ -531,8 +537,11 @@ template<typename MetricType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline double BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::MinimumBoundDistance() const
+inline
+typename BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::ElemType
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::MinimumBoundDistance() const
 {
   return bound.MinWidth() / 2.0;
 }
@@ -669,8 +678,9 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const double leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const double rightParentDistance = MetricType::Evaluate(center, rightCenter);
+  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
+  const ElemType rightParentDistance = MetricType::Evaluate(center,
+      rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
@@ -727,8 +737,9 @@ SplitNode(std::vector<size_t>& oldFromNew,
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const double leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const double rightParentDistance = MetricType::Evaluate(center, rightCenter);
+  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
+  const ElemType rightParentDistance = MetricType::Evaluate(center,
+      rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
