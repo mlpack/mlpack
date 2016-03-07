@@ -121,16 +121,16 @@ BOOST_AUTO_TEST_CASE(FeedforwardTest)
   arma::mat input, labels;
   input << 0 << 1 << 1 << 0 << arma::endr
         << 1 << 0 << 1 << 0 << arma::endr;
-  labels << 0 << 0 << 1 << 1;
+  labels << 1 << 1 << 0 << 0;
 
   // Instantiate the first layer.
-  LinearLayer<> inputLayer(input.n_rows, 4);
-  BiasLayer<> biasLayer(4);
-  SigmoidLayer<> hiddenLayer0;
+  LinearLayer<> inputLayer(input.n_rows, 8);
+  BiasLayer<> biasLayer(8);
+  TanHLayer<> hiddenLayer0;
 
   // Instantiate the second layer.
-  LinearLayer<> hiddenLayer1(4, labels.n_rows);
-  SigmoidLayer<> outputLayer;
+  LinearLayer<> hiddenLayer1(8, labels.n_rows);
+  TanHLayer<> outputLayer;
 
   // Instantiate the output layer.
   BinaryClassificationLayer classOutputLayer;
@@ -141,16 +141,17 @@ BOOST_AUTO_TEST_CASE(FeedforwardTest)
   FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
       MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  RMSprop<decltype(net)> opt(net, 0.03, 0.88, 1e-15,
-      300 * input.n_cols, -10);
+  RMSprop<decltype(net)> opt(net, 0.03, 0.99, 1e-8, 300 * input.n_cols, -10);
 
   net.Train(input, labels, opt);
 
   arma::mat prediction;
   net.Predict(input, prediction);
 
-  const bool b = arma::accu(prediction - labels) == 0;
-  BOOST_REQUIRE_EQUAL(b, true);
+  BOOST_REQUIRE_EQUAL(prediction(0), 1);
+  BOOST_REQUIRE_EQUAL(prediction(1), 1);
+  BOOST_REQUIRE_EQUAL(prediction(2), 0);
+  BOOST_REQUIRE_EQUAL(prediction(3), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
