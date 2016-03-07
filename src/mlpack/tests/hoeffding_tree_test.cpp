@@ -903,8 +903,9 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
   for (size_t i = 0; i < 10000; ++i)
   {
     // One circle every 20000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 20000.0) + 0.5 * math::Random();
-    const double angle = (i % 20000) * (2 * M_PI) + math::Random();
+    const double magnitude = 2.0 + (double(i) / 20000.0) +
+        0.5 * mlpack::math::Random();
+    const double angle = (i % 20000) * (2 * M_PI) + mlpack::math::Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
