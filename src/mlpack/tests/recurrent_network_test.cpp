@@ -17,6 +17,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+ #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -105,7 +106,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
       MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  SGD<decltype(net)> opt(net, 0.5, 400 * input.n_cols, -100);
+  SGD<decltype(net)> opt(net, 0.5, 500 * input.n_cols, -100);
 
   net.Train(input, labels, opt);
 
@@ -533,13 +534,13 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   auto modules = std::tie(linearLayer0, recurrentLayer0, hiddenLayer0,
                           hiddenLayer, hiddenBaseLayer);
 
-  RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
+  RNN<decltype(modules), BinaryClassificationLayer, NguyenWidrowInitialization,
       MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  SGD<decltype(net)> opt(net, 0.05, 2, -200);
+  SGD<decltype(net)> opt(net, 0.04, 2, -200);
 
   arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 30; i++)
+  for (size_t i = 0; i < 40; i++)
   {
     for (size_t j = 0; j < trainDistractedSequenceCount; j++)
     {

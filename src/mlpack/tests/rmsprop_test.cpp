@@ -45,9 +45,9 @@ BOOST_AUTO_TEST_CASE(SimpleRMSpropTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-3);
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
@@ -141,8 +141,8 @@ BOOST_AUTO_TEST_CASE(FeedforwardTest)
   FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
       MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  RMSprop<decltype(net)> opt(net, 0.1, 0.88, 1e-15,
-      300 * input.n_cols, 1e-18);
+  RMSprop<decltype(net)> opt(net, 0.03, 0.88, 1e-15,
+      300 * input.n_cols, -10);
 
   net.Train(input, labels, opt);
 
