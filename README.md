@@ -8,7 +8,7 @@ learning researchers.
 
 **Download [current stable version (2.0.1)](http://www.mlpack.org/files/mlpack-2.0.1.tar.gz).**
 
-[![Build Status](http://big.mlpack.org:7780/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://www.mlpack.org:8088/job/mlpack%20-%20git%20commit%20test/)
+[![Build Status](http://big.mlpack.org:7780/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://www.mlpack.org:8088/job/mlpack%20-%20git%20commit%20test/) [![Build status](https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true)](https://ci.appveyor.com/project/mlpack/mlpack)
 
 0. Contents
 -----------
