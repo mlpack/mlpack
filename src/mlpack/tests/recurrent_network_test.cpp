@@ -536,7 +536,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
       MeanSquaredErrorFunction> net(modules, classOutputLayer);
 
-  SGD<decltype(net)> opt(net, 0.03, 2, -200);
+  SGD<decltype(net)> opt(net, 0.05, 2, -200);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 30; i++)
