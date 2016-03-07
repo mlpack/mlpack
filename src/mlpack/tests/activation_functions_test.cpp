@@ -135,13 +135,13 @@ void CheckHardTanHActivationCorrect(const arma::colvec input, const arma::colvec
   // Test the activation function using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(htf.fn(input.at(i)),
+    BOOST_REQUIRE_CLOSE(htf.Forward(input.at(i)),
         target.at(i), 1e-3);
   }
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  htf.fn(input, activations);
+  htf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -162,13 +162,15 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input, const arma::colvec
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(htf.deriv(input.at(i)),
+    BOOST_REQUIRE_CLOSE(htf.Backward(input.at(i), 1),
         target.at(i), 1e-3);
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
-  htf.deriv(input, derivatives);
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error(input.n_elem);
+  htf.Backward(input, (arma::colvec)error.ones(), derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);

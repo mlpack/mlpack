@@ -54,75 +54,16 @@ class HardTanHLayer
   }
 
   /**
-   * Computes the HardTanH function.
-   *
-   * @param x Input data.
-   * @return f(x).
+   * Ordinary feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward through f.
+   * 
+   * @param x Input data used for evaluating the specified function. This is for just one input value. 
+   * @return f(x) The activation value for the input. 
    */
-  double fn(const double x)
-  {
-    double val;
-    val = x;
-    if (x > maxValue)
-      val = maxValue;
-    else if (x < minValue)
-      val = minValue;
-    return val;
-  }
 
-  /**
-   * Computes the HardTanH function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-   
-  template<typename eT>
-  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  double Forward(const double x)
   {
-    arma::Mat<eT> t;
-    t = x;
-    y = t.transform( [&](eT val) { return std::min( std::max( val, minValue ), maxValue ); } );
-  }
-
-  /**
-   * Computes the HardTanH function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y = x;
-    for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
-  }
-
-  /**
-   * Computes the first derivative of the HardTanH function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double deriv(const double x)
-  {
-    return (x > maxValue || x < minValue) ? 0 : 1;
-  }
-
-  /**
-   * Computes the first derivative of the HardTanH function.
-   *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
-   */
-  template<typename InputType, typename OutputType>
-  void deriv(const InputType& x, OutputType& y)
-  {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = deriv(x(i));
+    return fn(x);
   }
 
   /**
@@ -137,6 +78,22 @@ class HardTanHLayer
   void Forward(const InputType& input, OutputType& output)
   {
     fn(input, output);
+  }
+
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards through f. Using the results from the feed
+   * forward pass.
+   *
+   * @param input The propagated input activation. This function is for just a single input. 
+   * @param gy The backpropagated error.
+   * @return The calculated gradient.
+   */
+
+  double Backward(const double input,
+                  const double gy)
+  {
+    return gy * deriv(input);
   }
 
   /**
@@ -210,14 +167,14 @@ class HardTanHLayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the Maximum value.
-  double const& getmaxValue() const { return maxValue; }
+  double const& MaxValue() const { return maxValue; }
   //! Modify the Maximum value.
-  double& setmaxValue() { return maxValue; }
+  double& MaxValue() { return maxValue; }
 
   //! Get the Minimum value.
-  double const& getminValue() const { return minValue; }
+  double const& MinValue() const { return minValue; }
   //! Modify the Minimum value.
-  double& setminValue() { return minValue; }
+  double& MinValue() { return minValue; }
 
   
   /**
@@ -230,6 +187,77 @@ class HardTanHLayer
   }
 
  private:
+
+
+  /**
+   * Computes the HardTanH function.
+   *
+   * @param x Input data.
+   * @return f(x).
+   */
+  double fn(const double x)
+  {
+    if (x > maxValue)
+      return maxValue;
+    else if (x < minValue)
+      return minValue;
+    return x;
+  }
+
+  /**
+   * Computes the HardTanH function using a dense matrix as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+   
+  template<typename eT>
+  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  {
+    y = x;
+    y = y.transform( [&](eT val) { return std::min( std::max( val, minValue ), maxValue ); } );
+  }
+
+  /**
+   * Computes the HardTanH function using a 3rd-order tensor as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template<typename eT>
+  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
+  {
+    y = x;
+    for (size_t s = 0; s < x.n_slices; s++)
+      fn(x.slice(s), y.slice(s));
+  }
+
+  /**
+   * Computes the first derivative of the HardTanH function.
+   *
+   * @param x Input data.
+   * @return f'(x)
+   */
+  double deriv(const double x)
+  {
+    return (x > maxValue || x < minValue) ? 0 : 1;
+  }
+
+  /**
+   * Computes the first derivative of the HardTanH function.
+   *
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template<typename InputType, typename OutputType>
+  void deriv(const InputType& x, OutputType& y)
+  {
+    y = x;
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = deriv(x(i));
+  }
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
