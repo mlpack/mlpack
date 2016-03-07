@@ -25,7 +25,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   if (node->Children()[0]->IsLeaf())
   {
     // If its children are leaf nodes, use minimum overlap to choose.
-    double bestIndex = 0;
+    size_t bestIndex = 0;
 
     for (size_t i = 0; i < node->NumChildren(); i++)
     {
