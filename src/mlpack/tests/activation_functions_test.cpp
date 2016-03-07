@@ -134,13 +134,13 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input, const arma::colve
   // Test the activation function using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(lrf.fn(input.at(i)),
+    BOOST_REQUIRE_CLOSE(lrf.Forward(input.at(i)),
         target.at(i), 1e-3);
   }
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  lrf.fn(input, activations);
+  lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -161,13 +161,15 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, const arma::colve
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(lrf.deriv(input.at(i)),
+    BOOST_REQUIRE_CLOSE(lrf.Backward(input.at(i), 1),
         target.at(i), 1e-3);
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
-  lrf.deriv(input, derivatives);
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error(input.n_elem);
+  lrf.Backward(input, (arma::colvec)error.ones(), derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);

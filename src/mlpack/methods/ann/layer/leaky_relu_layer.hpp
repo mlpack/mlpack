@@ -48,66 +48,16 @@ class LeakyReLULayer
   }
 
   /**
-   * Computes the leaky ReLU function where 0 <alpha< 1
-   *
-   * @param x Input data.
-   * @return f(x).
+   * Ordinary feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward through f.
+   * 
+   * @param x Input data used for evaluating the specified function. This is for just one input value. 
+   * @return f(x) The activation value for the input.  
    */
-  double fn(const double x)
-  {
-    return std::max(x, alpha * x);
-  }
 
-  /**
-   * Computes the Leaky ReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  double Forward(const double x)
   {
-    y = arma::max(x, alpha * x);
-  }
-
-  /**
-   * Computes the LeakyReLU function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y = x;
-    for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
-  }
-
-  /**
-   * Computes the first derivative of the LeakyReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double deriv(const double x)
-  {
-    return (x >= 0) ? 1 : alpha;
-  }
-
-  /**
-   * Computes the first derivative of the LeakyReLU function.
-   *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
-   */
-  template<typename InputType, typename OutputType>
-  void deriv(const InputType& x, OutputType& y)
-  {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = deriv(x(i));
+    return fn(x);
   }
 
   /**
@@ -122,6 +72,22 @@ class LeakyReLULayer
   void Forward(const InputType& input, OutputType& output)
   {
     fn(input, output);
+  }
+
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards through f. Using the results from the feed
+   * forward pass.
+   *
+   * @param input The propagated input activation. This function is for just a single input. 
+   * @param gy The backpropagated error.
+   * @return The calculated gradient.
+   */
+
+  double Backward(const double input,
+                  const double gy)
+  {
+    return gy * deriv(input);
   }
 
   /**
@@ -195,9 +161,9 @@ class LeakyReLULayer
   OutputDataType& Delta() { return delta; }
 
   //! Get the Leakyness Parameter.
-  double const& getalpha() const { return alpha; }
+  double const& Alpha() const { return alpha; }
   //! Modify the Leakyness Parameter.
-  double& setalpha() { return alpha; }
+  double& Alpha() { return alpha; }
 
   
   /**
@@ -210,6 +176,73 @@ class LeakyReLULayer
   }
 
  private:
+
+  /**
+   * Computes the leaky ReLU function where 0 <alpha< 1
+   *
+   * @param x Input data.
+   * @return f(x).
+   */
+  double fn(const double x)
+  {
+    return std::max(x, alpha * x);
+  }
+
+  /**
+   * Computes the Leaky ReLU function using a dense matrix as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template<typename eT>
+  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  {
+    y = arma::max(x, alpha * x);
+  }
+
+  /**
+   * Computes the LeakyReLU function using a 3rd-order tensor as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template<typename eT>
+  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
+  {
+    y = x;
+    for (size_t s = 0; s < x.n_slices; s++)
+      fn(x.slice(s), y.slice(s));
+  }
+
+  /**
+   * Computes the first derivative of the LeakyReLU function.
+   *
+   * @param x Input data.
+   * @return f'(x)
+   */
+  double deriv(const double x)
+  {
+    return (x >= 0) ? 1 : alpha;
+  }
+
+  /**
+   * Computes the first derivative of the LeakyReLU function.
+   *
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+
+  template<typename InputType, typename OutputType>
+  void deriv(const InputType& x, OutputType& y)
+  {
+    y = x;
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = deriv(x(i));
+  }
+
+
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
