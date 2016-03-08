@@ -18,7 +18,7 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
@@ -46,7 +46,7 @@ bool operator<(const QueueFrame<TreeType, TraversalInfoType>& a,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
@@ -86,7 +86,7 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>

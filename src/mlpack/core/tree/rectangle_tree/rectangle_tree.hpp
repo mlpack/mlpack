@@ -47,6 +47,11 @@ class RectangleTree
       "RectangleTree: MetricType must be metric::EuclideanDistance.");
 
  public:
+  //! So other classes can use TreeType::Mat.
+  typedef MatType Mat;
+  //! The element type held by the matrix type.
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * The X tree requires that the tree records it's "split history".  To make
    * this easy, we use the following structure.
@@ -94,13 +99,13 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  bound::HRectBound<metric::EuclideanDistance> bound;
+  bound::HRectBound<metric::EuclideanDistance, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! A struct to store the "split history" for X trees.
   SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
-  double parentDistance;
+  ElemType parentDistance;
   //! The dataset.
   const MatType* dataset;
   //! Whether or not we are responsible for deleting the dataset.  This is
@@ -112,9 +117,6 @@ class RectangleTree
   MatType* localDataset;
 
  public:
-  //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
-
   //! A single traverser for rectangle type trees.  See
   //! single_tree_traverser.hpp for implementation.
   template<typename RuleType>
@@ -377,7 +379,7 @@ class RectangleTree
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
-  double FurthestPointDistance() const;
+  ElemType FurthestPointDistance() const;
 
   /**
    * Return the furthest possible descendant distance.  This returns the maximum
@@ -386,19 +388,19 @@ class RectangleTree
    * furthest descendant distance may be less than what this method returns (but
    * it will never be greater than this).
    */
-  double FurthestDescendantDistance() const;
+  ElemType FurthestDescendantDistance() const;
 
   //! Return the minimum distance from the center to any edge of the bound.
   //! Currently, this returns 0, which doesn't break algorithms, but it isn't
   //! necessarily correct, either.
-  double MinimumBoundDistance() const { return bound.MinWidth() / 2.0; }
+  ElemType MinimumBoundDistance() const { return bound.MinWidth() / 2.0; }
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.
-  double ParentDistance() const { return parentDistance; }
+  ElemType ParentDistance() const { return parentDistance; }
   //! Modify the distance from the center of this node to the center of the
   //! parent node.
-  double& ParentDistance() { return parentDistance; }
+  ElemType& ParentDistance() { return parentDistance; }
 
   /**
    * Get the specified child.
@@ -451,27 +453,27 @@ class RectangleTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  double MinDistance(const RectangleTree* other) const
+  ElemType MinDistance(const RectangleTree* other) const
   {
     return bound.MinDistance(other->Bound());
   }
 
   //! Return the maximum distance to another node.
-  double MaxDistance(const RectangleTree* other) const
+  ElemType MaxDistance(const RectangleTree* other) const
   {
     return bound.MaxDistance(other->Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::Range RangeDistance(const RectangleTree* other) const
+  math::RangeType<ElemType> RangeDistance(const RectangleTree* other) const
   {
     return bound.RangeDistance(other->Bound());
   }
 
   //! Return the minimum distance to another point.
   template<typename VecType>
-  double MinDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+  ElemType MinDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
       const
   {
     return bound.MinDistance(point);
@@ -479,8 +481,8 @@ class RectangleTree
 
   //! Return the maximum distance to another point.
   template<typename VecType>
-  double MaxDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+  ElemType MaxDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
       const
   {
     return bound.MaxDistance(point);
@@ -488,7 +490,7 @@ class RectangleTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::Range RangeDistance(
+  math::RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {

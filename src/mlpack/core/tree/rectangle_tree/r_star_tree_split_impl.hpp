@@ -24,6 +24,9 @@ namespace tree {
 template<typename TreeType>
 void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -59,8 +62,8 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       return;
     }
 
-    std::vector<SortStruct> sorted(tree->Count());
-    arma::vec center;
+    std::vector<SortStruct<ElemType>> sorted(tree->Count());
+    arma::Col<ElemType> center;
     tree->Bound().Center(center); // Modifies centroid.
     for (size_t i = 0; i < sorted.size(); i++)
     {
@@ -69,7 +72,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       sorted[i].n = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), StructComp);
+    std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
     std::vector<int> pointIndices(p);
     for (size_t i = 0; i < p; i++)
     {
@@ -92,27 +95,27 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   int bestAreaIndexOnBestAxis = 0;
   bool tiedOnOverlap = false;
   int bestAxis = 0;
-  double bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = DBL_MAX;
 
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
-    double axisScore = 0.0;
+    ElemType axisScore = 0.0;
     // Since we only have points in the leaf nodes, we only need to sort once.
-    std::vector<SortStruct> sorted(tree->Count());
+    std::vector<SortStruct<ElemType>> sorted(tree->Count());
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].d = tree->LocalDataset().col(i)[j];
       sorted[i].n = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), StructComp);
+    std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
-    std::vector<double> areas(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
+    std::vector<ElemType> areas(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
         2);
-    std::vector<double> margins(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
+    std::vector<ElemType> margins(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
         2);
-    std::vector<double> overlapedAreas(tree->MaxLeafSize() -
+    std::vector<ElemType> overlapedAreas(tree->MaxLeafSize() -
         2 * tree->MinLeafSize() + 2);
 
     for (size_t i = 0; i < areas.size(); i++)
@@ -131,10 +134,10 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       size_t cutOff = tree->MinLeafSize() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<double> maxG1(tree->Bound().Dim());
-      std::vector<double> minG1(maxG1.size());
-      std::vector<double> maxG2(maxG1.size());
-      std::vector<double> minG2(maxG1.size());
+      std::vector<ElemType> maxG1(tree->Bound().Dim());
+      std::vector<ElemType> minG1(maxG1.size());
+      std::vector<ElemType> maxG2(maxG1.size());
+      std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
         minG1[k] = maxG1[k] = tree->LocalDataset().col(sorted[0].n)[k];
@@ -160,8 +163,8 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
         }
       }
 
-      double area1 = 1.0, area2 = 1.0;
-      double oArea = 1.0;
+      ElemType area1 = 1.0, area2 = 1.0;
+      ElemType oArea = 1.0;
       for (size_t k = 0; k < maxG1.size(); k++)
       {
         margins[i] += maxG1[k] - minG1[k] + maxG2[k] - minG2[k];
@@ -202,14 +205,14 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     }
   }
 
-  std::vector<SortStruct> sorted(tree->Count());
+  std::vector<SortStruct<ElemType>> sorted(tree->Count());
   for (size_t i = 0; i < sorted.size(); i++)
   {
     sorted[i].d = tree->LocalDataset().col(i)[bestAxis];
     sorted[i].n = i;
   }
 
-  std::sort(sorted.begin(), sorted.end(), StructComp);
+  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -269,6 +272,9 @@ template<typename TreeType>
 bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
                                       std::vector<bool>& relevels)
 {
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -353,27 +359,27 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   bool tiedOnOverlap = false;
   bool lowIsBest = true;
   int bestAxis = 0;
-  double bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = DBL_MAX;
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
-    double axisScore = 0.0;
+    ElemType axisScore = 0.0;
 
     // We'll do Bound().Lo() now and use Bound().Hi() later.
-    std::vector<SortStruct> sorted(tree->NumChildren());
+    std::vector<SortStruct<ElemType>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].d = tree->Children()[i]->Bound()[j].Lo();
       sorted[i].n = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), StructComp);
+    std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
-    std::vector<double> areas(tree->MaxNumChildren() -
+    std::vector<ElemType> areas(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
-    std::vector<double> margins(tree->MaxNumChildren() -
+    std::vector<ElemType> margins(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
-    std::vector<double> overlapedAreas(tree->MaxNumChildren() -
+    std::vector<ElemType> overlapedAreas(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
 
     for (size_t i = 0; i < areas.size(); i++)
@@ -392,10 +398,10 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
       size_t cutOff = tree->MinNumChildren() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<double> maxG1(tree->Bound().Dim());
-      std::vector<double> minG1(maxG1.size());
-      std::vector<double> maxG2(maxG1.size());
-      std::vector<double> minG2(maxG1.size());
+      std::vector<ElemType> maxG1(tree->Bound().Dim());
+      std::vector<ElemType> minG1(maxG1.size());
+      std::vector<ElemType> maxG2(maxG1.size());
+      std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
         minG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Lo();
@@ -424,8 +430,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
         }
       }
 
-      double area1 = 1.0, area2 = 1.0;
-      double oArea = 1.0;
+      ElemType area1 = 1.0, area2 = 1.0;
+      ElemType oArea = 1.0;
       for (size_t k = 0; k < maxG1.size(); k++)
       {
         margins[i] += maxG1[k] - minG1[k] + maxG2[k] - minG2[k];
@@ -444,8 +450,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     {
       bestAxisScore = axisScore;
       bestAxis = j;
-      double bestOverlapIndexOnBestAxis = 0;
-      double bestAreaIndexOnBestAxis = 0;
+      ElemType bestOverlapIndexOnBestAxis = 0;
+      ElemType bestAreaIndexOnBestAxis = 0;
       for (size_t i = 1; i < areas.size(); i++)
       {
         if (overlapedAreas[i] < overlapedAreas[bestOverlapIndexOnBestAxis])
@@ -468,24 +474,24 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   // Now we do the same thing using Bound().Hi() and choose the best of the two.
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
-    double axisScore = 0.0;
+    ElemType axisScore = 0.0;
 
     // We'll do Bound().Lo() now and use Bound().Hi() later.
-    std::vector<SortStruct> sorted(tree->NumChildren());
+    std::vector<SortStruct<ElemType>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].d = tree->Children()[i]->Bound()[j].Hi();
       sorted[i].n = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), StructComp);
+    std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
-    std::vector<double> areas(tree->MaxNumChildren() -
+    std::vector<ElemType> areas(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
-    std::vector<double> margins(tree->MaxNumChildren() -
+    std::vector<ElemType> margins(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
-    std::vector<double> overlapedAreas(tree->MaxNumChildren() -
+    std::vector<ElemType> overlapedAreas(tree->MaxNumChildren() -
         2 * tree->MinNumChildren() + 2);
 
     for (size_t i = 0; i < areas.size(); i++)
@@ -504,10 +510,10 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
       size_t cutOff = tree->MinNumChildren() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<double> maxG1(tree->Bound().Dim());
-      std::vector<double> minG1(maxG1.size());
-      std::vector<double> maxG2(maxG1.size());
-      std::vector<double> minG2(maxG1.size());
+      std::vector<ElemType> maxG1(tree->Bound().Dim());
+      std::vector<ElemType> minG1(maxG1.size());
+      std::vector<ElemType> maxG2(maxG1.size());
+      std::vector<ElemType> minG2(maxG1.size());
 
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
@@ -537,8 +543,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
         }
       }
 
-      double area1 = 1.0, area2 = 1.0;
-      double oArea = 1.0;
+      ElemType area1 = 1.0, area2 = 1.0;
+      ElemType oArea = 1.0;
 
       for (size_t k = 0; k < maxG1.size(); k++)
       {
@@ -559,8 +565,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
       bestAxisScore = axisScore;
       bestAxis = j;
       lowIsBest = false;
-      double bestOverlapIndexOnBestAxis = 0;
-      double bestAreaIndexOnBestAxis = 0;
+      ElemType bestOverlapIndexOnBestAxis = 0;
+      ElemType bestAreaIndexOnBestAxis = 0;
 
       for (size_t i = 1; i < areas.size(); i++)
       {
@@ -581,7 +587,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     }
   }
 
-  std::vector<SortStruct> sorted(tree->NumChildren());
+  std::vector<SortStruct<ElemType>> sorted(tree->NumChildren());
   if (lowIsBest)
   {
     for (size_t i = 0; i < sorted.size(); i++)
@@ -599,7 +605,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     }
   }
 
-  std::sort(sorted.begin(), sorted.end(), StructComp);
+  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());

@@ -17,14 +17,17 @@ template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
                                                        const arma::vec& point)
 {
-  double minScore = DBL_MAX;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  ElemType minScore = DBL_MAX;
   int bestIndex = 0;
-  double bestVol = 0.0;
+  ElemType bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    double v1 = 1.0;
-    double v2 = 1.0;
+    ElemType v1 = 1.0;
+    ElemType v2 = 1.0;
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();
@@ -58,14 +61,17 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
     const TreeType* insertedNode)
 {
-  double minScore = DBL_MAX;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  ElemType minScore = DBL_MAX;
   int bestIndex = 0;
-  double bestVol = 0.0;
+  ElemType bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    double v1 = 1.0;
-    double v2 = 1.0;
+    ElemType v1 = 1.0;
+    ElemType v2 = 1.0;
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();
