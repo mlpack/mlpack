@@ -450,8 +450,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     {
       bestAxisScore = axisScore;
       bestAxis = j;
-      ElemType bestOverlapIndexOnBestAxis = 0;
-      ElemType bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
       for (size_t i = 1; i < areas.size(); i++)
       {
         if (overlapedAreas[i] < overlapedAreas[bestOverlapIndexOnBestAxis])
@@ -565,8 +565,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
       bestAxisScore = axisScore;
       bestAxis = j;
       lowIsBest = false;
-      ElemType bestOverlapIndexOnBestAxis = 0;
-      ElemType bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
 
       for (size_t i = 1; i < areas.size(); i++)
       {
