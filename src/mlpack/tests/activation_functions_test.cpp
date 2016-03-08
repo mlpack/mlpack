@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
+#include <mlpack/methods/ann/layer/hard_tanh_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -120,6 +121,64 @@ void CheckInverseCorrect(const arma::colvec input)
   }
 }
 
+
+/*
+ * Implementation of the HardTanH activation function test. The function is implemented as a HardTanH Layer
+ * in file hard_tanh_layer.hpp
+ * @param input Input data used for evaluating the HardTanH activation function.
+ * @param target Target data used to evaluate the HardTanH activation.
+ *
+ */
+void CheckHardTanHActivationCorrect(const arma::colvec input, const arma::colvec target)
+{
+  HardTanHLayer<> htf;
+  // Test the activation function using a single value as input.
+  for (size_t i = 0; i < target.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(htf.Forward(input.at(i)),
+        target.at(i), 1e-3);
+  }
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  htf.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the HardTanH activation function derivative test. The derivative is implemented in HardTanH Layer
+ * in file hard_tanh_layer.hpp
+ * @param input Input data used for evaluating the HardTanH activation function.
+ * @param target Target data used to evaluate the HardTanH activation.
+ *
+ */
+
+void CheckHardTanHDerivativeCorrect(const arma::colvec input, const arma::colvec target)
+{
+  HardTanHLayer<> htf;
+  // Test the calculation of the derivatives using a single value as input.
+  for (size_t i = 0; i < target.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(htf.Backward(input.at(i), 1),
+        target.at(i), 1e-3);
+  }
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error(input.n_elem);
+  htf.Backward(input, (arma::colvec)error.ones(), derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
+
+
 /**
  * Basic test of the tanh function.
  */
@@ -198,5 +257,22 @@ BOOST_AUTO_TEST_CASE(RectifierFunctionTest)
   CheckDerivativeCorrect<RectifierFunction>(desiredActivations,
       desiredDerivatives);
 }
+
+/**
+ * Basic test of the HardTanH function.
+ */
+BOOST_AUTO_TEST_CASE(HardTanHFunctionTest)
+{
+  const arma::colvec desiredActivations("-1 1 1 -1 \
+                                         1 -1 1 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 \
+                                         1 1 0 1");
+
+  CheckHardTanHActivationCorrect(activationData, desiredActivations);
+  CheckHardTanHDerivativeCorrect(activationData, desiredDerivatives);
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END();
