@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
 // A test to ensure that the SingleTreeTraverser is working correctly by
 // comparing its results to the results of a naive search.
-/** This is known to not work: see #368.
+//* This is known to not work: see #368.
 BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 {
   arma::mat dataset;
@@ -588,23 +588,19 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RectangleTree<
-      XTreeSplit<RStarTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RStarTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef XTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType xTree(dataset, 20, 6, 5, 2, 0);
 
   // Nearest neighbor search with the X tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&xTree, dataset, true);
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat, XTree >
+      allknn1(&xTree, true);
 
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
   CheckSync(xTree);
-  //CheckContainment(xTree);
+  CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
 
@@ -621,7 +617,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
   }
 }
-*/
+
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.

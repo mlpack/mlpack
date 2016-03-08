@@ -63,7 +63,7 @@ void XTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->Bound().Center(center); // Modifies centroid.
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Bound().Metric().Evaluate(center,
+      sorted[i].d = tree->Metric().Evaluate(center,
           tree->LocalDataset().col(i));
        sorted[i].n = i;
     }
@@ -453,8 +453,10 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     {
       bestAxisScore = axisScore;
       bestAxis = j;
-      double bestOverlapIndexOnBestAxis = 0;
-      double bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
+      overlapBestOverlapAxis = overlapedAreas[bestOverlapIndexOnBestAxis];
+      areaBestOverlapAxis = areas[bestAreaIndexOnBestAxis];
       for (size_t i = 1; i < areas.size(); i++)
       {
         if (overlapedAreas[i] < overlapedAreas[bestOverlapIndexOnBestAxis])
@@ -584,8 +586,10 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
       bestAxisScore = axisScore;
       bestAxis = j;
       lowIsBest = false;
-      double bestOverlapIndexOnBestAxis = 0;
-      double bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
+      overlapBestOverlapAxis = overlapedAreas[bestOverlapIndexOnBestAxis];
+      areaBestOverlapAxis = areas[bestAreaIndexOnBestAxis];
       for (size_t i = 1; i < areas.size(); i++)
       {
         if (overlapedAreas[i] < overlapedAreas[bestOverlapIndexOnBestAxis])
@@ -822,7 +826,7 @@ template<typename TreeType>
 void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children().push_back(srcNode);
+  destTree->Children()[destTree->NumChildren()] = srcNode;
   destTree->NumChildren()++;
 }
 

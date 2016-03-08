@@ -71,12 +71,12 @@ using RStarTree = RectangleTree<MetricType,
  * X-tree
  * (not yet finished)
  */
-//template<typename MetricType, typename StatisticType, typename MatType>
-//using XTree = RectangleTree<MetricType,
-//                            StatisticType,
-//                            MatType,
-//                            XTreeSplit,
-//                            XTreeDescentHeuristic>;
+template<typename MetricType, typename StatisticType, typename MatType>
+using XTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            XTreeSplit,
+                            RStarTreeDescentHeuristic>;
 
 } // namespace tree
 } // namespace mlpack
