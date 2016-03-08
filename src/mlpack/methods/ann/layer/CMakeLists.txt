@@ -6,6 +6,7 @@ set(SOURCES
   base_layer.hpp
   bias_layer.hpp
   dropout_layer.hpp
+  hard_tanh_layer.hpp
   linear_layer.hpp
   conv_layer.hpp
   pooling_layer.hpp

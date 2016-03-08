@@ -2,9 +2,8 @@
  * @file hard_tanh_layer.hpp
  * @author Dhawal Arora
  *
- * Implementation of hard_tanh activation function. The function is mentioned below.
+ * Definition and implementation of the HardTanHLayer layer.
  */
-
 #ifndef __MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
 
@@ -32,38 +31,31 @@ namespace ann /** Artificial Neural Network. */ {
  *   \end{array}
  * \right.
  * @f}
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-
 class HardTanHLayer
 {
  public:
-
   /**
-   * Constructor. Default maxValue is set to 1 and default minValue is set to -1.
+   * Create the HardTanHLayer object using the specified parameters. The range
+   * of the linear region can be adjusted by specifying the maxValue and
+   * minValue. Default (maxValue = 1, minValue = -1).
    *
+   * @param maxValue Range of the linear region maximum value.
+   * @param minValue Range of the linear region minimum value.
    */
-
-  HardTanHLayer(const double maxValue = 1.00, const double minValue = -1.00) : maxValue(maxValue), minValue(minValue)
+  HardTanHLayer(const double maxValue = 1, const double minValue = -1) :
+      maxValue(maxValue), minValue(minValue)
   {
      // Nothing to do here.
-  }
-
-  /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   * 
-   * @param x Input data used for evaluating the specified function. This is for just one input value. 
-   * @return f(x) The activation value for the input. 
-   */
-
-  double Forward(const double x)
-  {
-    return fn(x);
   }
 
   /**
@@ -73,27 +65,10 @@ class HardTanHLayer
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  
   template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output)
   {
-    fn(input, output);
-  }
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation. This function is for just a single input. 
-   * @param gy The backpropagated error.
-   * @return The calculated gradient.
-   */
-
-  double Backward(const double input,
-                  const double gy)
-  {
-    return gy * deriv(input);
+    Fn(input, output);
   }
 
   /**
@@ -111,7 +86,7 @@ class HardTanHLayer
                 DataType& g)
   {
     DataType derivative;
-    deriv(input, derivative);
+    Deriv(input, derivative);
     g = gy % derivative;
   }
 
@@ -147,7 +122,7 @@ class HardTanHLayer
     }
 
     arma::Cube<eT> derivative;
-    deriv(input, derivative);
+    Deriv(input, derivative);
     g = mappedError % derivative;
   }
 
@@ -166,36 +141,34 @@ class HardTanHLayer
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the Maximum value.
+  //! Get the maximum value.
   double const& MaxValue() const { return maxValue; }
-  //! Modify the Maximum value.
+  //! Modify the maximum value.
   double& MaxValue() { return maxValue; }
 
-  //! Get the Minimum value.
+  //! Get the minimum value.
   double const& MinValue() const { return minValue; }
-  //! Modify the Minimum value.
+  //! Modify the minimum value.
   double& MinValue() { return minValue; }
 
-  
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    /* Nothing to do here */
+    ar & data::CreateNVP(maxValue, "maxValue");
+    ar & data::CreateNVP(minValue, "minValue");
   }
 
  private:
-
-
   /**
    * Computes the HardTanH function.
    *
    * @param x Input data.
    * @return f(x).
    */
-  double fn(const double x)
+  double Fn(const double x)
   {
     if (x > maxValue)
       return maxValue;
@@ -212,10 +185,11 @@ class HardTanHLayer
    */
    
   template<typename eT>
-  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
     y = x;
-    y = y.transform( [&](eT val) { return std::min( std::max( val, minValue ), maxValue ); } );
+    y.transform( [&](eT val) { return std::min(
+        std::max( val, minValue ), maxValue ); } );
   }
 
   /**
@@ -225,11 +199,11 @@ class HardTanHLayer
    * @param y The resulting output activation.
    */
   template<typename eT>
-  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
+  void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
   {
     y = x;
     for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
+      Fn(x.slice(s), y.slice(s));
   }
 
   /**
@@ -238,7 +212,7 @@ class HardTanHLayer
    * @param x Input data.
    * @return f'(x)
    */
-  double deriv(const double x)
+  double Deriv(const double x)
   {
     return (x > maxValue || x < minValue) ? 0 : 1;
   }
@@ -250,12 +224,12 @@ class HardTanHLayer
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
-  void deriv(const InputType& x, OutputType& y)
+  void Deriv(const InputType& x, OutputType& y)
   {
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = deriv(x(i));
+      y(i) = Deriv(x(i));
   }
 
   //! Locally-stored delta object.
@@ -272,8 +246,6 @@ class HardTanHLayer
 
   //! Minimum value for the HardTanH function.
   double minValue;
-
-
 }; // class HardTanHLayer
 
 } // namespace ann
