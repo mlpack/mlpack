@@ -2,9 +2,9 @@
  * @file leaky_relu_layer.hpp
  * @author Dhawal Arora
  *
- * Implementation of Leaky_ReLU activation function by 
- * Maas, Andrew L, Hannun, Awni Y, and Ng, An-drew Y. Rectifier nonlinearities improve neural net-
- * work acoustic models. In ICML, volume 30, 2013.
+ * Definition and implementation of LeakyReLULayer layer first introduced 
+ * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng, 
+ * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
@@ -26,38 +26,29 @@ namespace ann /** Artificial Neural Network. */ {
  *   \end{array}
  * \right.
  * @f}
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-
 class LeakyReLULayer
 {
  public:
-
   /**
-   * Constructor. Default value for alpha is set to 0.03
+   * Create the LeakyReLULayer object using the specified parameters. 
+   * The non zero gradient can be adjusted by specifying tha parameter 
+   * alpha in the range 0 to 1. Default (alpha = 0.03) 
    *
+   * @param alpha Non zero gradient
    */
-
-  LeakyReLULayer(const double a = 0.03) : alpha(a)
+  LeakyReLULayer(const double alpha = 0.03) : alpha(alpha)
   {
      // Nothing to do here.
-  }
-
-  /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   * 
-   * @param x Input data used for evaluating the specified function. This is for just one input value. 
-   * @return f(x) The activation value for the input.  
-   */
-
-  double Forward(const double x)
-  {
-    return fn(x);
   }
 
   /**
@@ -66,28 +57,11 @@ class LeakyReLULayer
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
-   */
-  
+   */  
   template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output)
   {
-    fn(input, output);
-  }
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation. This function is for just a single input. 
-   * @param gy The backpropagated error.
-   * @return The calculated gradient.
-   */
-
-  double Backward(const double input,
-                  const double gy)
-  {
-    return gy * deriv(input);
+    Fn(input, output);
   }
 
   /**
@@ -105,7 +79,7 @@ class LeakyReLULayer
                 DataType& g)
   {
     DataType derivative;
-    deriv(input, derivative);
+    Deriv(input, derivative);
     g = gy % derivative;
   }
 
@@ -141,7 +115,7 @@ class LeakyReLULayer
     }
 
     arma::Cube<eT> derivative;
-    deriv(input, derivative);
+    Deriv(input, derivative);
     g = mappedError % derivative;
   }
 
@@ -160,30 +134,28 @@ class LeakyReLULayer
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the Leakyness Parameter.
+  //! Get the non zero gradient
   double const& Alpha() const { return alpha; }
-  //! Modify the Leakyness Parameter.
+  //! Modify the non zero gradient
   double& Alpha() { return alpha; }
 
-  
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    /* Nothing to do here */
+    ar & data::CreateNVP(alpha, "alpha");
   }
 
  private:
-
   /**
-   * Computes the leaky ReLU function where 0 <alpha< 1
+   * Computes the LeakReLU function
    *
    * @param x Input data.
    * @return f(x).
    */
-  double fn(const double x)
+  double Fn(const double x)
   {
     return std::max(x, alpha * x);
   }
@@ -195,7 +167,7 @@ class LeakyReLULayer
    * @param y The resulting output activation.
    */
   template<typename eT>
-  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
     y = arma::max(x, alpha * x);
   }
@@ -207,7 +179,7 @@ class LeakyReLULayer
    * @param y The resulting output activation.
    */
   template<typename eT>
-  void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
+  void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
   {
     y = x;
     for (size_t s = 0; s < x.n_slices; s++)
@@ -220,7 +192,7 @@ class LeakyReLULayer
    * @param x Input data.
    * @return f'(x)
    */
-  double deriv(const double x)
+  double Deriv(const double x)
   {
     return (x >= 0) ? 1 : alpha;
   }
@@ -233,12 +205,12 @@ class LeakyReLULayer
    */
 
   template<typename InputType, typename OutputType>
-  void deriv(const InputType& x, OutputType& y)
+  void Deriv(const InputType& x, OutputType& y)
   {
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = deriv(x(i));
+      y(i) = Deriv(x(i));
   }
 
 

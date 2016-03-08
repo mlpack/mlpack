@@ -1,6 +1,7 @@
 /**
  * @file activation_functions_test.cpp
  * @author Marcus Edel
+ * @author Dhawal Arora
  *
  * Tests for the various activation functions.
  */
@@ -122,21 +123,16 @@ void CheckInverseCorrect(const arma::colvec input)
 }
 
 /*
- * Implementation of the LeakyReLU activation function test. The function is implemented as 
- * LeakyReLU layer in the file leaky_relu_layer.hpp
+ * Implementation of the LeakyReLU activation function test. The function is  
+ * implemented as LeakyReLU layer in the file leaky_relu_layer.hpp
+ * 
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
- *
  */
-void CheckLeakyReLUActivationCorrect(const arma::colvec input, const arma::colvec target)
+void CheckLeakyReLUActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
 {
   LeakyReLULayer<> lrf;
-  // Test the activation function using a single value as input.
-  for (size_t i = 0; i < target.n_elem; i++)
-  {
-    BOOST_REQUIRE_CLOSE(lrf.Forward(input.at(i)),
-        target.at(i), 1e-3);
-  }
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
@@ -148,25 +144,22 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input, const arma::colve
 }
 
 /*
- * Implementation of the LeakyReLU activation function derivative test. The derivative function is implemented as 
- * LeakyReLU layer in the file leaky_relu_layer.hpp
+ * Implementation of the LeakyReLU activation function derivative test. 
+ * The derivative function is implemented as LeakyReLU layer in the file 
+ * leaky_relu_layer.hpp
+ *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
- *
  */
 
-void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, const arma::colvec target)
+void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, 
+                                     const arma::colvec target)
 {
   LeakyReLULayer<> lrf;
-  // Test the calculation of the derivatives using a single value as input.
-  for (size_t i = 0; i < target.n_elem; i++)
-  {
-    BOOST_REQUIRE_CLOSE(lrf.Backward(input.at(i), 1),
-        target.at(i), 1e-3);
-  }
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
+
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error(input.n_elem);
   lrf.Backward(input, (arma::colvec)error.ones(), derivatives);
@@ -259,7 +252,7 @@ BOOST_AUTO_TEST_CASE(RectifierFunctionTest)
 /**
  * Basic test of the LeakyReLU function.
  */
-BOOST_AUTO_TEST_CASE(LeakyReluFunctionTest)
+BOOST_AUTO_TEST_CASE(LeakyReLUFunctionTest)
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
                                          1 -0.03 2 0");
