@@ -50,17 +50,20 @@ class XTreeSplit
   /**
    * Class to allow for faster sorting.
    */
+  template<typename ElemType>
   class sortStruct
   {
    public:
-    double d;
+    ElemType d;
     int n;
   };
 
   /**
    * Comparator for sorting with sortStruct.
    */
-  static bool structComp(const sortStruct& s1, const sortStruct& s2)
+  template<typename ElemType>
+  static bool structComp(const sortStruct<ElemType>& s1, 
+                         const sortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;
   }
