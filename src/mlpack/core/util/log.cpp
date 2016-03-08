@@ -8,7 +8,7 @@
   #include <cstddef>
   #include <cxxabi.h>
 #endif
-
+#include "cli.hpp"
 #include "log.hpp"
 
 #ifdef BACKTRACE_FOUND
@@ -47,7 +47,8 @@ PrefixedOutStream Log::Warn = PrefixedOutStream(std::cout,
     BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
 PrefixedOutStream Log::Fatal = PrefixedOutStream(std::cerr,
     BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
-
+//! Declare the deleter.
+static mlpack::util::CLIDeleter cliDeleter;
 std::ostream& Log::cout = std::cout;
 
 // Only do anything for Assert() if in debugging mode.
