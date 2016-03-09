@@ -328,6 +328,12 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+
+  // If we are loading, we need to initialize the weights.
+  if (Archive::is_loading::value)
+  {
+    NetworkWeights(parameter, network);
+  }
 }
 
 } // namespace ann
