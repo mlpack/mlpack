@@ -4,15 +4,10 @@
  *
  * Implementation of the Log class.
  */
-#ifndef _WIN32
-  #include <cstddef>
-  #include <cxxabi.h>
-#endif
-
 #include "log.hpp"
 
-#ifdef BACKTRACE_FOUND
-  #include BACKTRACE_HEADER
+#ifdef HAS_BFD_DL
+  #include "backtrace.hpp"
 #endif
 
 // Color code escape sequences -- but not on Windows.
@@ -56,76 +51,14 @@ void Log::Assert(bool condition, const std::string& message)
 {
   if (!condition)
   {
-#ifdef BACKTRACE_FOUND
-    void* array[25];
-    size_t size = backtrace(array, sizeof(array) / sizeof(void*));
-    char** messages = backtrace_symbols(array, size);
-
-    // Skip first stack frame (points here).
-    for (size_t i = 1; i < size && messages != NULL; ++i)
-    {
-      char *mangledName = 0, *offsetBegin = 0, *offsetEnd = 0;
-
-      // Find parentheses and +address offset surrounding mangled name.
-      for (char *p = messages[i]; *p; ++p)
-      {
-        if (*p == '(')
-        {
-          mangledName = p;
-        }
-        else if (*p == '+')
-        {
-          offsetBegin = p;
-        }
-        else if (*p == ')')
-        {
-          offsetEnd = p;
-          break;
-        }
-      }
-
-      // If the line could be processed, attempt to demangle the symbol.
-      if (mangledName && offsetBegin && offsetEnd &&
-          mangledName < offsetBegin)
-      {
-        *mangledName++ = '\0';
-        *offsetBegin++ = '\0';
-        *offsetEnd++ = '\0';
-
-        int status;
-        char* realName = abi::__cxa_demangle(mangledName, 0, 0, &status);
-
-        // If demangling is successful, output the demangled function name.
-        if (status == 0)
-        {
-          Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
-                    << realName << "+" << offsetBegin << offsetEnd
-                    << std::endl;
-
-        }
-        // Otherwise, output the mangled function name.
-        else
-        {
-          Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
-                    << mangledName << "+" << offsetBegin << offsetEnd
-                    << std::endl;
-        }
-        free(realName);
-      }
-      // Otherwise, print the whole line.
-      else
-      {
-          Log::Debug << "[bt]: (" << i << ") " << messages[i] << std::endl;
-      }
-    }
+#ifdef HAS_BFD_DL
+    Backtrace bt;
+  
+    Log::Debug << bt.ToString();
 #endif
     Log::Debug << message << std::endl;
 
-#ifdef BACKTRACE_FOUND
-    free(messages);
-#endif
-
-    throw std::runtime_error("Log::Assert() failed:" + message);
+    throw std::runtime_error("Log::Assert() failed: " + message);
   }
 }
 #else

@@ -3,6 +3,8 @@
 set(SOURCES
   arma_config.hpp
   arma_config_check.hpp
+  backtrace.hpp
+  backtrace.cpp
   cli.hpp
   cli.cpp
   cli_deleter.hpp

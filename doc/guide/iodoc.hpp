@@ -23,7 +23,8 @@ Output to Log::Debug does not show (and has no performance penalty) when mlpack
 is compiled without debugging symbols.  Output to Log::Info is only shown when
 the program is run with the --verbose (or -v) flag.  Log::Warn is always shown,
 and Log::Fatal will throw a std::runtime_error exception, when a newline is sent
-to it.
+to it only. If mlpack was compiled with debugging symbols, Log::Fatal will
+always throw a std::runtime_error exception and print backtrace.
 
 Here is a simple example, and its output:
 
@@ -48,13 +49,28 @@ int main(int argc, char** argv)
 }
 @endcode
 
-With debugging output and --verbose, the following is shown:
+With debugging output--verbose, the following is shown:
 
 @code
-$ ./main --verbose
 [DEBUG] Compiled with debugging symbols.
 [INFO ] Some test informational output.
 [WARN ] A warning!
+[FATAL] [bt]: (1) /absolute/path/to/file/example.cpp:6: function()
+[FATAL] Program has crashed.
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  fatal error; see Log::Fatal output
+Aborted
+@endcode
+
+With debugging output, compilation flags -g -rdynamic and --verbose,
+the following is shown:
+
+@code
+[DEBUG] Compiled with debugging symbols.
+[INFO ] Some test informational output.
+[WARN ] A warning!
+[FATAL] Cannot give backtrace because program was compiled without: -g -rdynamic
+[FATAL] For a backtrace, recompile with: -g -rdynamic.
 [FATAL] Program has crashed.
 terminate called after throwing an instance of 'std::runtime_error'
   what():  fatal error; see Log::Fatal output
