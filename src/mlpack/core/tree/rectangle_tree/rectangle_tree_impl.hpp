@@ -865,7 +865,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
       }
       else if (bound[i].Hi() == point[i])
       {
-        ElemType max = std::numeric_limits<ElemType>::min();
+        ElemType max = std::numeric_limits<ElemType>::lowest();
         for (size_t j = 0; j < count; j++)
         {
           if (localDataset->col(j)[i] > max)
@@ -905,7 +905,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
       }
       else if (bound[i].Hi() == point[i])
       {
-        ElemType max = std::numeric_limits<ElemType>::min();
+        ElemType max = std::numeric_limits<ElemType>::lowest();
         for (size_t j = 0; j < numChildren; j++)
         {
           if (children[j]->Bound()[i].Hi() > max)
@@ -943,7 +943,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   {
     sum += bound[i].Width();
     bound[i].Lo() = std::numeric_limits<ElemType>::max();
-    bound[i].Hi() = std::numeric_limits<ElemType>::min();
+    bound[i].Hi() = std::numeric_limits<ElemType>::lowest();
   }
 
   for (size_t i = 0; i < numChildren; i++)
