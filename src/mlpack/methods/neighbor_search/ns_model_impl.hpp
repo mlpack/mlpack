@@ -28,6 +28,7 @@ NSModel<SortPolicy>::NSModel(int treeType, bool randomBasis) :
     coverTreeNS(NULL),
     rTreeNS(NULL),
     rStarTreeNS(NULL),
+    xTreeNS(NULL),
     ballTreeNS(NULL)
 {
   // Nothing to do.
@@ -45,6 +46,8 @@ NSModel<SortPolicy>::~NSModel()
     delete rTreeNS;
   if (rStarTreeNS)
     delete rStarTreeNS;
+  if (xTreeNS)
+    delete xTreeNS;
   if (ballTreeNS)
     delete ballTreeNS;
 }
@@ -70,6 +73,8 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
       delete rTreeNS;
     if (rStarTreeNS)
       delete rStarTreeNS;
+    if (xTreeNS)
+      delete xTreeNS;
     if (ballTreeNS)
       delete ballTreeNS;
 
@@ -78,6 +83,8 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
     coverTreeNS = NULL;
     rTreeNS = NULL;
     rStarTreeNS = NULL;
+    xTreeNS = NULL;
+    ballTreeNS = NULL;
   }
 
   // We'll only need to serialize one of the kNN objects, based on the type.
@@ -96,6 +103,9 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
     case R_STAR_TREE:
       ar & data::CreateNVP(rStarTreeNS, name);
       break;
+    case X_TREE:
+      ar & data::CreateNVP(xTreeNS, name);
+      break;
     case BALL_TREE:
       ar & data::CreateNVP(ballTreeNS, name);
       break;
@@ -113,6 +123,8 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
     return rTreeNS->ReferenceSet();
   else if (rStarTreeNS)
     return rStarTreeNS->ReferenceSet();
+  else if (xTreeNS)
+    return xTreeNS->ReferenceSet();
   else if (ballTreeNS)
     return ballTreeNS->ReferenceSet();
 
@@ -131,6 +143,8 @@ bool NSModel<SortPolicy>::SingleMode() const
     return rTreeNS->SingleMode();
   else if (rStarTreeNS)
     return rStarTreeNS->SingleMode();
+  else if (xTreeNS)
+    return xTreeNS->SingleMode();
   else if (ballTreeNS)
     return ballTreeNS->SingleMode();
 
@@ -148,6 +162,8 @@ bool& NSModel<SortPolicy>::SingleMode()
     return rTreeNS->SingleMode();
   else if (rStarTreeNS)
     return rStarTreeNS->SingleMode();
+  else if (xTreeNS)
+    return xTreeNS->SingleMode();
   else if (ballTreeNS)
     return ballTreeNS->SingleMode();
 
@@ -165,6 +181,8 @@ bool NSModel<SortPolicy>::Naive() const
     return rTreeNS->Naive();
   else if (rStarTreeNS)
     return rStarTreeNS->Naive();
+  else if (xTreeNS)
+    return xTreeNS->Naive();
   else if (ballTreeNS)
     return ballTreeNS->Naive();
 
@@ -182,6 +200,8 @@ bool& NSModel<SortPolicy>::Naive()
     return rTreeNS->Naive();
   else if (rStarTreeNS)
     return rStarTreeNS->Naive();
+  else if (xTreeNS)
+    return xTreeNS->Naive();
   else if (ballTreeNS)
     return ballTreeNS->Naive();
 
@@ -236,6 +256,8 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     delete rTreeNS;
   if (rStarTreeNS)
     delete rStarTreeNS;
+  if (xTreeNS)
+    delete xTreeNS;
   if (ballTreeNS)
     delete ballTreeNS;
 
@@ -285,6 +307,11 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case R_STAR_TREE:
       // If necessary, build the R* tree.
       rStarTreeNS = new NSType<tree::RStarTree>(std::move(referenceSet), naive,
+          singleMode);
+      break;
+    case X_TREE:
+      // If necessary, build the X tree.
+      xTreeNS = new NSType<tree::XTree>(std::move(referenceSet), naive,
           singleMode);
       break;
     case BALL_TREE:
@@ -381,6 +408,10 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
       // No mapping necessary.
       rStarTreeNS->Search(querySet, k, neighbors, distances);
       break;
+    case X_TREE:
+      // No mapping necessary.
+      xTreeNS->Search(querySet, k, neighbors, distances);
+      break;
     case BALL_TREE:
       if (!ballTreeNS->Naive() && !ballTreeNS->SingleMode())
       {
@@ -444,6 +475,9 @@ void NSModel<SortPolicy>::Search(const size_t k,
     case R_STAR_TREE:
       rStarTreeNS->Search(k, neighbors, distances);
       break;
+    case X_TREE:
+      xTreeNS->Search(k, neighbors, distances);
+      break;
     case BALL_TREE:
       ballTreeNS->Search(k, neighbors, distances);
       break;
@@ -464,6 +498,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R tree";
     case R_STAR_TREE:
       return "R* tree";
+    case X_TREE:
+      return "X tree";
     case BALL_TREE:
       return "ball tree";
     default:

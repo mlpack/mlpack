@@ -28,6 +28,7 @@ class RSModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
+    X_TREE,
     BALL_TREE
   };
 
@@ -55,6 +56,8 @@ class RSModel
   RSType<tree::RTree>* rTreeRS;
   //! R* tree based range search object (NULL if not in use).
   RSType<tree::RStarTree>* rStarTreeRS;
+  //! X tree based range search object (NULL if not in use).
+  RSType<tree::XTree>* xTreeRS;
   //! Ball tree based range search object (NULL if not in use).
   RSType<tree::BallTree>* ballTreeRS;
 
