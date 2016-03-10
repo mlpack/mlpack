@@ -95,7 +95,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   int bestAreaIndexOnBestAxis = 0;
   bool tiedOnOverlap = false;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
 
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
@@ -359,7 +359,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   bool tiedOnOverlap = false;
   bool lowIsBest = true;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
     ElemType axisScore = 0.0;

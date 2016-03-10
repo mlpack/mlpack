@@ -106,7 +106,7 @@ void XTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   int bestAreaIndexOnBestAxis = 0;
   bool tiedOnOverlap = false;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
     ElemType axisScore = 0.0;
@@ -358,7 +358,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   }
 
   bool minOverlapSplitUsesHi = false;
-  ElemType bestScoreMinOverlapSplit = DBL_MAX;
+  ElemType bestScoreMinOverlapSplit = std::numeric_limits<ElemType>::max();
   ElemType areaOfBestMinOverlapSplit = 0;
   int bestIndexMinOverlapSplit = 0;
 
@@ -367,7 +367,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   bool tiedOnOverlap = false;
   bool lowIsBest = true;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
   ElemType overlapBestOverlapAxis = 0;
   ElemType areaBestOverlapAxis = 0;
   ElemType overlapBestAreaAxis = 0;

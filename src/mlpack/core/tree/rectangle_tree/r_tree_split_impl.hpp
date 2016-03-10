@@ -270,7 +270,7 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
       std::min(numAssignedOne, numAssignedTwo)))
   {
     int bestIndex = 0;
-    ElemType bestScore = DBL_MAX;
+    ElemType bestScore = std::numeric_limits<ElemType>::max();
     int bestRect = 1;
 
     // Calculate the increase in volume for assigning this point to each
@@ -414,7 +414,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
       std::min(numAssignTreeOne, numAssignTreeTwo)))
   {
     int bestIndex = 0;
-    ElemType bestScore = DBL_MAX;
+    ElemType bestScore = std::numeric_limits<ElemType>::max();
     int bestRect = 0;
 
     // Calculate the increase in volume for assigning this node to each of the
