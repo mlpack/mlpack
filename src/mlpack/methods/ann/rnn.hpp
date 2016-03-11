@@ -185,7 +185,7 @@ class RNN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
-                  const bool deterministic = false);
+                  const bool deterministic = true);
 
   /**
    * Evaluate the gradient of the recurrent neural network with the given

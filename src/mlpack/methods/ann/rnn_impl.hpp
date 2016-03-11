@@ -281,6 +281,8 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
             const size_t i,
             arma::mat& gradient)
 {
+  Evaluate(parameter, i, false);
+
   gradient.zeros();
   arma::mat currentGradient = arma::mat(gradient.n_rows, gradient.n_cols);
   NetworkGradients(currentGradient, network);
