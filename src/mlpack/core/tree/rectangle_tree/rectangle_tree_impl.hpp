@@ -29,6 +29,7 @@ RectangleTree(const MatType& data,
               const size_t maxNumChildren,
               const size_t minNumChildren,
               const size_t firstDataIndex) :
+    normalNodeMaxNumChildren(maxNumChildren),
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -68,6 +69,7 @@ RectangleTree(MatType&& data,
               const size_t maxNumChildren,
               const size_t minNumChildren,
               const size_t firstDataIndex) :
+    normalNodeMaxNumChildren(maxNumChildren),
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -103,8 +105,9 @@ template<typename MetricType,
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
-        parentNode) :
-    maxNumChildren(parentNode->MaxNumChildren()),
+        parentNode,const size_t numMaxChildren) :
+    normalNodeMaxNumChildren(parentNode->NormalNodeMaxNumChildren()),
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
     children(maxNumChildren + 1),
@@ -138,6 +141,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     const RectangleTree& other,
     const bool deepCopy) :
+    normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
     maxNumChildren(other.MaxNumChildren()),
     minNumChildren(other.MinNumChildren()),
     numChildren(other.NumChildren()),
@@ -800,6 +804,14 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     {
       // If there are multiple children, we can't do anything to the root.
       RectangleTree* child = children[0];
+
+      // Required for the X tree.
+      if(child->NumChildren() > maxNumChildren)
+      {
+        maxNumChildren = child->MaxNumChildren();
+        children.resize(maxNumChildren+1);
+      }
+
       for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->Children()[i];
         children[i]->Parent() = this;
@@ -815,7 +827,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
       }
 
       count = child->Count();
-      maxNumChildren = child->MaxNumChildren(); // Required for the X tree.
       child->SoftDelete();
       return;
     }

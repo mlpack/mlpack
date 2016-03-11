@@ -218,8 +218,8 @@ void XTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent(),tree->NormalNodeMaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(),tree->NormalNodeMaxNumChildren());
 
   // The leaf nodes should never have any overlap introduced by the above method
   // since a split axis is chosen and then points are assigned based on their
@@ -657,8 +657,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent(),tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(),tree->MaxNumChildren());
 
   // Now as per the X-tree paper, we ensure that this split was good enough.
   bool useMinOverlapSplit = false;
@@ -743,11 +743,14 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() *= 2;
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() * 2;
         tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
+        {
           tree->Parent()->Children()[i] = tree->Children()[i];
+          tree->Child(i).Parent() = tree->Parent();
+        }
 
         delete treeOne;
         delete treeTwo;

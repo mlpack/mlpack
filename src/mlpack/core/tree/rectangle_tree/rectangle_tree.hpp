@@ -76,6 +76,9 @@ class RectangleTree
   } SplitHistoryStruct;
 
  private:
+  //! The max number of child nodes a non-leaf normal node can have. 
+  //! (used in x-trees)
+  size_t normalNodeMaxNumChildren;
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
   //! The minimum number of child nodes a non-leaf node can have.
@@ -173,8 +176,10 @@ class RectangleTree
    * firstDataIndex) from the parent.
    *
    * @param parentNode The parent of the node that is being constructed.
+   * @param numMaxChildren The max number of child nodes (used in x-trees).
    */
-  explicit RectangleTree(RectangleTree* parentNode);
+  explicit RectangleTree(RectangleTree* parentNode,
+                const size_t numMaxChildren = 0);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
@@ -328,6 +333,11 @@ class RectangleTree
   size_t MinLeafSize() const { return minLeafSize; }
   //! Modify the minimum leaf size.
   size_t& MinLeafSize() { return minLeafSize; }
+
+  //! Return the maximum number of a normal node's children (used in x-trees).
+  size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
+  //! Modify the maximum number of a normal node's children (used in x-trees).
+  size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
 
   //! Return the maximum number of children (in a non-leaf node).
   size_t MaxNumChildren() const { return maxNumChildren; }
