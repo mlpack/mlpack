@@ -47,8 +47,8 @@ class NSModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
-    X_TREE,
-    BALL_TREE
+    BALL_TREE,
+    X_TREE
   };
 
  private:
