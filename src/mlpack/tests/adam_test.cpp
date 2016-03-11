@@ -2,26 +2,33 @@
  * @file adam_test.cpp
  * @author Marcus Edel
  *
- * Tests the Adam optimizer on a couple test models.
+ * Tests the Adam optimizer.
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
+#include <mlpack/core/optimizers/adam/adam.hpp>
+#include <mlpack/core/optimizers/sgd/test_function.hpp>
+
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+#include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-
+#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
+#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
 #include <mlpack/methods/ann/layer/bias_layer.hpp>
 #include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/one_hot_layer.hpp>
-
-#include <mlpack/methods/ann/trainer/trainer.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/optimizer/adam.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+
+using namespace arma;
+using namespace mlpack::optimization;
+using namespace mlpack::optimization::test;
+
+using namespace mlpack::distribution;
+using namespace mlpack::regression;
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -29,86 +36,124 @@ using namespace mlpack::ann;
 BOOST_AUTO_TEST_SUITE(AdamTest);
 
 /**
- * Train and evaluate a vanilla network with the specified structure. Using the
- * iris data, the data set contains 3 classes. One class is linearly separable
- * from the other 2. The other two aren't linearly separable from each other.
+ * Tests the Adam optimizer using a simple test function.
  */
 BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
 {
-  const size_t hiddenLayerSize = 10;
-  const size_t maxEpochs = 100;
+  SGDTestFunction f;
+  Adam<SGDTestFunction> optimizer(f, 1e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9, true);
 
-  // Load the dataset.
-  arma::mat dataset, labels, labelsIdx;
-  data::Load("iris_train.csv", dataset, true);
-  data::Load("iris_train_labels.csv", labelsIdx, true);
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(coordinates);
 
-  // Create target matrix.
-  labels = arma::zeros<arma::mat>(labelsIdx.max() + 1, labelsIdx.n_cols);
-  for (size_t i = 0; i < labelsIdx.n_cols; i++)
-    labels(labelsIdx(0, i), i) = 1;
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+}
 
-  // Construct a feed forward network using the specified parameters.
-  RandomInitialization randInit(0.5, 0.5);
+/**
+ * Run Adam on logistic regression and make sure the results are acceptable.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
-  LinearLayer<Adam, RandomInitialization> inputLayer(dataset.n_rows,
-      hiddenLayerSize, randInit);
-  BiasLayer<Adam, RandomInitialization> inputBiasLayer(hiddenLayerSize,
-      1, randInit);
-  BaseLayer<LogisticFunction> inputBaseLayer;
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
 
-  LinearLayer<Adam, RandomInitialization> hiddenLayer1(hiddenLayerSize,
-      labels.n_rows, randInit);
-  BiasLayer<Adam, RandomInitialization> hiddenBiasLayer1(labels.n_rows,
-      1, randInit);
-  BaseLayer<LogisticFunction> outputLayer;
+  // Shuffle the dataset.
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
+      data.n_cols - 1, data.n_cols));
+  arma::mat shuffledData(3, 1000);
+  arma::Row<size_t> shuffledResponses(1000);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    shuffledData.col(i) = data.col(indices[i]);
+    shuffledResponses[i] = responses[indices[i]];
+  }
 
-  OneHotLayer classOutputLayer;
+  // Create a test set.
+  arma::mat testData(3, 1000);
+  arma::Row<size_t> testResponses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    testData.col(i) = g1.Random();
+    testResponses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    testData.col(i) = g2.Random();
+    testResponses[i] = 1;
+  }
 
-  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-                          hiddenLayer1, hiddenBiasLayer1, outputLayer);
+  LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
-  FFN<decltype(modules), OneHotLayer, MeanSquaredErrorFunction>
-      net(modules, classOutputLayer);
+  LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
+  Adam<LogisticRegressionFunction<> > adam(lrf);
+  lr.Train(adam);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+}
+
+/**
+ * Run Adam on a feedforward neural network and make sure the results are
+ * acceptable.
+ */
+BOOST_AUTO_TEST_CASE(FeedforwardTest)
+{
+  // Test on a non-linearly separable dataset (XOR).
+  arma::mat input, labels;
+  input << 0 << 1 << 1 << 0 << arma::endr
+        << 1 << 0 << 1 << 0 << arma::endr;
+  labels << 1 << 1 << 0 << 0;
+
+  // Instantiate the first layer.
+  LinearLayer<> inputLayer(input.n_rows, 8);
+  BiasLayer<> biasLayer(8);
+  TanHLayer<> hiddenLayer0;
+
+  // Instantiate the second layer.
+  LinearLayer<> hiddenLayer1(8, labels.n_rows);
+  TanHLayer<> outputLayer;
+
+  // Instantiate the output layer.
+  BinaryClassificationLayer classOutputLayer;
+
+  // Instantiate the feedforward network.
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
+      outputLayer);
+  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
+      MeanSquaredErrorFunction> net(modules, classOutputLayer);
+  
+  Adam<decltype(net)> opt(net, 0.03, 0.9, 0.999, 1e-8, 300 * input.n_cols, -10);
+
+  net.Train(input, labels, opt);
 
   arma::mat prediction;
-  size_t error = 0;
+  net.Predict(input, prediction);
 
-  // Evaluate the feed forward network.
-  for (size_t i = 0; i < dataset.n_cols; i++)
-  {
-    arma::mat input = dataset.unsafe_col(i);
-    net.Predict(input, prediction);
-
-    if (arma::sum(arma::sum(arma::abs(
-      prediction - labels.unsafe_col(i)))) == 0)
-      error++;
-  }
-
-  // Check if the selected model isn't already optimized.
-  double classificationError = 1 - double(error) / dataset.n_cols;
-
-  BOOST_REQUIRE_GE(classificationError, 0.09);
-
-  // Train the feed forward network.
-  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01, false);
-  trainer.Train(dataset, labels, dataset, labels);
-
-  // Evaluate the feed forward network.
-  error = 0;
-  for (size_t i = 0; i < dataset.n_cols; i++)
-  {
-    arma::mat input = dataset.unsafe_col(i);
-    net.Predict(input, prediction);
-
-    if (arma::sum(arma::sum(arma::abs(
-      prediction - labels.unsafe_col(i)))) == 0)
-      error++;
-  }
-
-  classificationError = 1 - double(error) / dataset.n_cols;
-
-  BOOST_REQUIRE_LE(classificationError, 0.09); 
+  BOOST_REQUIRE_EQUAL(prediction(0), 1);
+  BOOST_REQUIRE_EQUAL(prediction(1), 1);
+  BOOST_REQUIRE_EQUAL(prediction(2), 0);
+  BOOST_REQUIRE_EQUAL(prediction(3), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
