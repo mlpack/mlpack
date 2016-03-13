@@ -249,9 +249,11 @@ template<typename LayerTypes,
 void FFN<
 LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Gradient(const arma::mat& /* unused */,
-            const size_t /* unused */,
+            const size_t i,
             arma::mat& gradient)
 {
+  Evaluate(parameter, i, false);
+
   NetworkGradients(gradient, network);
 
   Backward<>(error, network);
