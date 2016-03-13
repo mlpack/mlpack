@@ -184,6 +184,7 @@
  *   - Andy Fang <AndyFang.DZ@gmail.com>
  *   - Barak Pearlmutter <barak+git@pearlmutter.net>
  *   - Ivari Horm <ivari@risk.ee>
+ *   - Dhawal Arora <d.p.arora1@gmail.com>
  */
 
 // First, include all of the prerequisites.
