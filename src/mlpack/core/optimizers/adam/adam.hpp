@@ -77,7 +77,7 @@ class Adam
    *        function is visited in linear order.
    */
   Adam(DecomposableFunctionType& function,
-      const double stepSize = 0.01,
+      const double stepSize = 0.001,
       const double beta1 = 0.9,
       const double beta2 = 0.999,
       const double eps = 1e-8,

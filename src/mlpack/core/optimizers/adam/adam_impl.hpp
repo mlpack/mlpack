@@ -105,8 +105,11 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(iterate, currentFunction, gradient);
 
     // And update the iterate.
-    mean += (1 - beta1) * (gradient - mean);
-    variance += (1 - beta2) * (gradient % gradient - variance);
+    mean *= beta1;
+    mean += (1 - beta1) * gradient;
+
+    variance *= beta2;
+    variance += (1 - beta2) * (gradient % gradient);
 
     double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
     double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
