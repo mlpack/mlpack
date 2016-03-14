@@ -1,24 +1,14 @@
 /**
  * @file adam_test.cpp
- * @author Marcus Edel
+ * @author Vasanth Kalingeri
  *
  * Tests the Adam optimizer.
  */
 #include <mlpack/core.hpp>
 
-
 #include <mlpack/core/optimizers/adam/adam.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
-
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -31,7 +21,6 @@ using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(AdamTest);
 
@@ -112,48 +101,4 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
 
-/**
- * Run Adam on a feedforward neural network and make sure the results are
- * acceptable.
- */
-BOOST_AUTO_TEST_CASE(FeedforwardTest)
-{
-  // Test on a non-linearly separable dataset (XOR).
-  arma::mat input, labels;
-  input << 0 << 1 << 1 << 0 << arma::endr
-        << 1 << 0 << 1 << 0 << arma::endr;
-  labels << 1 << 1 << 0 << 0;
-
-  // Instantiate the first layer.
-  LinearLayer<> inputLayer(input.n_rows, 8);
-  BiasLayer<> biasLayer(8);
-  TanHLayer<> hiddenLayer0;
-
-  // Instantiate the second layer.
-  LinearLayer<> hiddenLayer1(8, labels.n_rows);
-  TanHLayer<> outputLayer;
-
-  // Instantiate the output layer.
-  BinaryClassificationLayer classOutputLayer;
-
-  // Instantiate the feedforward network.
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
-      outputLayer);
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-      MeanSquaredErrorFunction> net(modules, classOutputLayer);
-  
-  Adam<decltype(net)> opt(net, 0.03, 0.9, 0.999, 1e-8, 300 * input.n_cols, -10);
-
-  net.Train(input, labels, opt);
-
-  arma::mat prediction;
-  net.Predict(input, prediction);
-
-  BOOST_REQUIRE_EQUAL(prediction(0), 1);
-  BOOST_REQUIRE_EQUAL(prediction(1), 1);
-  BOOST_REQUIRE_EQUAL(prediction(2), 0);
-  BOOST_REQUIRE_EQUAL(prediction(3), 0);
-}
-
 BOOST_AUTO_TEST_SUITE_END();
-
