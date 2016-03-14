@@ -14,12 +14,6 @@
 
 using namespace mlpack;
 
-inline std::chrono::microseconds getTimeDuration(const std::chrono::high_resolution_clock::time_point start,
-                                                  const std::chrono::high_resolution_clock::time_point end)
-{
-  return std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-}
-
 /**
  * Start the given timer.
  */
@@ -166,5 +160,6 @@ void Timers::StopTimer(const std::string& timerName)
   std::chrono::high_resolution_clock::time_point currTime = GetTime();
 
   // Calculate the delta time.
-  timers[timerName] += getTimeDuration(timerStartTime[timerName], currTime);
+  timers[timerName] += std::chrono::duration_cast<std::chrono::microseconds>(
+      currTime - timerStartTime[timerName])
 }

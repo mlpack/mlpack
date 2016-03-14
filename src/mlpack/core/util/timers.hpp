@@ -110,18 +110,19 @@ class Timers
 
   /**
    * Returns state of the given timer.
-   * 
+   *
    * @param timerName The name of the timer in question.
    */
   bool GetState(std::string timerName);
-  
+
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
   //! A map that contains whether or not each timer is currently running.
   std::map<std::string, bool> timerState;
   //! A map for the starting values of the timers.
-  std::map<std::string, std::chrono::high_resolution_clock::time_point> timerStartTime;
+  std::map<std::string, std::chrono::high_resolution_clock::time_point>
+      timerStartTime;
 
   std::chrono::high_resolution_clock::time_point GetTime();
 };
