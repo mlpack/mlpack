@@ -61,19 +61,24 @@ bool Timers::GetState(std::string timerName)
 
 void Timers::PrintTimer(const std::string& timerName)
 {
-  std::chrono::microseconds totalDuration = timers[timerName];
-  // Converting microseconds to seconds
-  std::chrono::seconds totalDurationSec = std::chrono::duration_cast<std::chrono::seconds>(totalDuration);
-  std::chrono::microseconds totalDurationMicroSec = std::chrono::duration_cast<std::chrono::microseconds>(totalDuration % std::chrono::seconds(1));
-  Log::Info << totalDurationSec.count() << "." << std::setw(6) << std::setfill('0')
-      << totalDurationMicroSec.count() << "s";
+  // To make things shorter.
+  using std::chrono;
+
+  microseconds totalDuration = timers[timerName];
+  // Convert microseconds to seconds.
+  seconds totalDurationSec = duration_cast<seconds>(totalDuration);
+  microseconds totalDurationMicroSec =
+      duration_cast<microseconds>(totalDuration % seconds(1));
+  Log::Info << totalDurationSec.count() << "." << std::setw(6)
+      << std::setfill('0') << totalDurationMicroSec.count() << "s";
 
   // Also output convenient day/hr/min/sec.
-  // The following line is a custom duration for a day
-  std::chrono::duration<int, std::ratio<60*60*24,1> > days = std::chrono::duration_cast<std::chrono::duration<int, std::ratio<60*60*24,1> > >(totalDuration); // Integer division rounds down.
-  std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(totalDuration % std::chrono::duration<int, std::ratio<60*60*24,1> >(1));
-  std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(totalDuration % std::chrono::hours(1));
-  std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(totalDuration % std::chrono::minutes(1));
+  // The following line is a custom duration for a day.
+  typedef duration<int, std::ratio<60 * 60 * 24, 1>> days;
+  days days = duration_cast<days>(totalDuration);
+  hours hours = duration_cast<hours>(totalDuration % days(1));
+  minutes minutes = duration_cast<minutes>(totalDuration % hours(1));
+  seconds seconds = duration_cast<seconds>(totalDuration % minutes(1));
   // No output if it didn't even take a minute.
   if (!(days.count() == 0 && hours.count() == 0 && minutes.count() == 0))
   {
@@ -107,8 +112,8 @@ void Timers::PrintTimer(const std::string& timerName)
     {
       if (output)
         Log::Info << ", ";
-      Log::Info << seconds.count() << "." << std::setw(1) << (totalDurationMicroSec.count() / 100000) <<
-          "secs";
+      Log::Info << seconds.count() << "." << std::setw(1)
+          << (totalDurationMicroSec.count() / 100000) << " secs";
       output = true;
     }
 
