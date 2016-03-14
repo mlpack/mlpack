@@ -61,52 +61,53 @@ bool Timers::GetState(std::string timerName)
 
 void Timers::PrintTimer(const std::string& timerName)
 {
-  long long int totalDuration = timers[timerName].count();
+  std::chrono::microseconds totalDuration = timers[timerName];
   // Converting microseconds to seconds
-  long long int totalDurationSec = totalDuration / 1e6;
-  long long int totalDurationMicroSec = totalDuration % 1000000;
-  Log::Info << totalDurationSec << "." << std::setw(6) << std::setfill('0')
-      << totalDurationMicroSec << "s";
+  std::chrono::seconds totalDurationSec = std::chrono::duration_cast<std::chrono::seconds>(totalDuration);
+  std::chrono::microseconds totalDurationMicroSec = std::chrono::duration_cast<std::chrono::microseconds>(totalDuration % std::chrono::seconds(1));
+  Log::Info << totalDurationSec.count() << "." << std::setw(6) << std::setfill('0')
+      << totalDurationMicroSec.count() << "s";
 
   // Also output convenient day/hr/min/sec.
-  int days = totalDurationSec / 86400; // Integer division rounds down.
-  int hours = (totalDurationSec % 86400) / 3600;
-  int minutes = (totalDurationSec % 3600) / 60;
-  int seconds = (totalDurationSec % 60);
+  // The following line is a custom duration for a day
+  std::chrono::duration<int, std::ratio<60*60*24,1> > days = std::chrono::duration_cast<std::chrono::duration<int, std::ratio<60*60*24,1> > >(totalDuration); // Integer division rounds down.
+  std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(totalDuration % std::chrono::duration<int, std::ratio<60*60*24,1> >(1));
+  std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(totalDuration % std::chrono::hours(1));
+  std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(totalDuration % std::chrono::minutes(1));
   // No output if it didn't even take a minute.
-  if (!(days == 0 && hours == 0 && minutes == 0))
+  if (!(days.count() == 0 && hours.count() == 0 && minutes.count() == 0))
   {
     bool output = false; // Denotes if we have output anything yet.
     Log::Info << " (";
 
     // Only output units if they have nonzero values (yes, a bit tedious).
-    if (days > 0)
+    if (days.count() > 0)
     {
-      Log::Info << days << " days";
+      Log::Info << days.count() << " days";
       output = true;
     }
 
-    if (hours > 0)
+    if (hours.count() > 0)
     {
       if (output)
         Log::Info << ", ";
-      Log::Info << hours << " hrs";
+      Log::Info << hours.count() << " hrs";
       output = true;
     }
 
-    if (minutes > 0)
+    if (minutes.count() > 0)
     {
       if (output)
         Log::Info << ", ";
-      Log::Info << minutes << " mins";
+      Log::Info << minutes.count() << " mins";
       output = true;
     }
 
-    if (seconds > 0)
+    if (seconds.count() > 0)
     {
       if (output)
         Log::Info << ", ";
-      Log::Info << seconds << "." << std::setw(1) << (totalDurationMicroSec / 100000) <<
+      Log::Info << seconds.count() << "." << std::setw(1) << (totalDurationMicroSec.count() / 100000) <<
           "secs";
       output = true;
     }
@@ -137,9 +138,9 @@ void Timers::StartTimer(const std::string& timerName)
   std::chrono::high_resolution_clock::time_point currTime = GetTime();
 
   // If the timer is added first time
-  if(timers.count(timerName) == 0)
+  if (timers.count(timerName) == 0)
   {
-    timers[timerName] = (std::chrono::microseconds)0;  
+    timers[timerName] = (std::chrono::microseconds)0;
   }
 
   timerStartTime[timerName] = currTime;

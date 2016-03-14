@@ -15,11 +15,11 @@
 #if defined(_WIN32)
  // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
-   #if SIZEOF_UNSIGNED_LONG == 8
-     typedef unsigned long uint64_t;
-   #else
-     typedef unsigned long long  uint64_t;
-   #endif  // SIZEOF_UNSIGNED_LONG
+    #if SIZEOF_UNSIGNED_LONG == 8
+      typedef unsigned long uint64_t;
+    #else
+      typedef unsigned long long  uint64_t;
+    #endif  // SIZEOF_UNSIGNED_LONG
   #endif  // HAVE_UINT64_T
 #endif
 
@@ -123,7 +123,6 @@ class Timers
   //! A map for the starting values of the timers.
   std::map<std::string, std::chrono::high_resolution_clock::time_point> timerStartTime;
 
-  void FileTimeToTimeVal(timeval* tv);
   std::chrono::high_resolution_clock::time_point GetTime();
 };
 
