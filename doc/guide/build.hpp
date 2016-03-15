@@ -35,7 +35,7 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev libarmadillo-dev
+  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
 @endcode
 
 If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
@@ -46,7 +46,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
 
 @code
 # yum install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel
+  armadillo-devel binutils-devel
 @endcode
 
 On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
