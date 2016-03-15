@@ -149,6 +149,9 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
         "scale to matrices with more than 4 billion elements.")
   endif(ARMA_HAS_64BIT_WORD EQUAL 0)
+else(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  # Adding the ARMA_32BIT_WORD preprocessor for 32 bit machines for clean build
+  add_definitions(-DARMA_32BIT_WORD)  
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 # On Windows, Armadillo should be using LAPACK and BLAS but we still need to
