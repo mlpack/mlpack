@@ -40,16 +40,19 @@ class RStarTreeSplit
   /**
    * Class to allow for faster sorting.
    */
+  template<typename ElemType>
   struct SortStruct
   {
-    double d;
+    ElemType d;
     int n;
   };
 
   /**
    * Comparator for sorting with SortStruct.
    */
-  static bool StructComp(const SortStruct& s1, const SortStruct& s2)
+  template<typename ElemType>
+  static bool StructComp(const SortStruct<ElemType>& s1,
+                         const SortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;
   }

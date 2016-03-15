@@ -185,7 +185,7 @@ class RNN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
-                  const bool deterministic = false);
+                  const bool deterministic = true);
 
   /**
    * Evaluate the gradient of the recurrent neural network with the given
@@ -377,19 +377,28 @@ class RNN
   /**
    * Save the network layer activations.
    */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I == Max, void>::type
   SaveActivations(std::tuple<Tp...>& /* unused */)
   {
+    Save(I, std::get<I>(network), std::get<I>(network).InputParameter());
     LinkRecurrent(network);
   }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I < Max, void>::type
   SaveActivations(std::tuple<Tp...>& network)
   {
     Save(I, std::get<I>(network), std::get<I>(network).InputParameter());
-    SaveActivations<I + 1, Tp...>(network);
+    SaveActivations<I + 1, Max, Tp...>(network);
   }
 
   /**
@@ -427,19 +436,28 @@ class RNN
   /**
    * Load the network layer activations.
    */
-  template<size_t I = 0, typename DataType, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LoadActivations(DataType& input, std::tuple<Tp...>& network)
-  {
-    std::get<0>(network).InputParameter() = input;
-  }
-
-  template<size_t I = 0, typename DataType, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename DataType, typename... Tp
+  >
+  typename std::enable_if<I == Max, void>::type
   LoadActivations(DataType& input, std::tuple<Tp...>& network)
   {
     Load(I, std::get<I>(network), std::get<I>(network).InputParameter());
-    LoadActivations<I + 1, DataType, Tp...>(input, network);
+    std::get<0>(network).InputParameter() = input;
+  }
+
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename DataType, typename... Tp
+  >
+  typename std::enable_if<I < Max, void>::type
+  LoadActivations(DataType& input, std::tuple<Tp...>& network)
+  {
+    Load(I, std::get<I>(network), std::get<I>(network).InputParameter());
+    LoadActivations<I + 1, Max, DataType, Tp...>(input, network);
   }
 
   /**
@@ -494,12 +512,28 @@ class RNN
   /**
    * Link the calculated activation with the correct layer.
    */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LinkParameter(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */ }
+  template<
+      size_t I = 1,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I == Max, void>::type
+  LinkParameter(std::tuple<Tp ...>& /* unused */)
+  {
+    if (!LayerTraits<typename std::remove_reference<
+        decltype(std::get<I>(network))>::type>::IsBiasLayer)
+    {
+      std::get<I>(network).InputParameter() = std::get<I - 1>(
+          network).OutputParameter();
+    }
+  }
 
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
+  template<
+      size_t I = 1,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I < Max, void>::type
   LinkParameter(std::tuple<Tp...>& network)
   {
     if (!LayerTraits<typename std::remove_reference<
@@ -509,23 +543,31 @@ class RNN
           network).OutputParameter();
     }
 
-    LinkParameter<I + 1, Tp...>(network);
+    LinkParameter<I + 1, Max, Tp...>(network);
   }
 
   /**
    * Link the calculated activation with the correct recurrent layer.
    */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == (sizeof...(Tp) - 1), void>::type
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I == Max, void>::type
   LinkRecurrent(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
+  template<
+      size_t I = 0,
+      size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp
+  >
+  typename std::enable_if<I < Max, void>::type
   LinkRecurrent(std::tuple<Tp...>& network)
   {
     UpdateRecurrent(std::get<I>(network), std::get<I>(network).InputParameter(),
         std::get<I + 1>(network).OutputParameter());
-    LinkRecurrent<I + 1, Tp...>(network);
+    LinkRecurrent<I + 1, Max, Tp...>(network);
   }
 
   /**
@@ -571,8 +613,7 @@ class RNN
    * layer modules.
    */
   template<size_t I = 1, typename DataType, typename... Tp>
-  typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
-  Backward(DataType& error, std::tuple<Tp ...>& network)
+  void Backward(DataType& error, std::tuple<Tp ...>& network)
   {
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(), error,

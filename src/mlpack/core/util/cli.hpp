@@ -721,15 +721,6 @@ class CLI
    */
   static std::string AliasReverseLookup(const std::string& value);
 
-#ifdef _WIN32
-  /**
-   * Converts a FILETIME structure to an equivalent timeval structure.
-   * Only necessary on windows platforms.
-   * @param tv Valid timeval structure.
-   */
-  void FileTimeToTimeVal(timeval* tv);
-#endif
-
   /**
    * Checks that all required parameters have been specified on the command
    * line.  If any have not been specified, an error message is printed and the

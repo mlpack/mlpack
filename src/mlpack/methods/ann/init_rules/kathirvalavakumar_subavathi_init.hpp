@@ -24,8 +24,8 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-
-#include "random_init.hpp"
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -61,7 +61,7 @@ class KathirvalavakumarSubavathiInitialization
   KathirvalavakumarSubavathiInitialization(const arma::Mat<eT>& data,
                                            const double s) : s(s)
   {
-    dataSum = arma::sum(data + data);
+    dataSum = arma::sum(data % data);
   }
 
   /**
@@ -77,7 +77,6 @@ class KathirvalavakumarSubavathiInitialization
   {
     arma::Row<eT> b = s * arma::sqrt(3 / (rows * dataSum));
     const double theta = b.min();
-
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W, rows, cols);
   }
@@ -104,7 +103,7 @@ class KathirvalavakumarSubavathiInitialization
 
  private:
   //! Parameter that defines the sum of elements in each column.
-  arma::colvec dataSum;
+  arma::rowvec dataSum;
 
   //! Parameter that defines the active region.
   const double s;

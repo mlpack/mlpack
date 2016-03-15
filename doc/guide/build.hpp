@@ -8,14 +8,15 @@ further documentation, but this tutorial should be enough to get mlpack built
 and installed.
 
 @section Download latest mlpack build
-Download latest mlpack build from here: <a href="http://www.mlpack.org/files/mlpack-1.0.12.tar.gz">mlpack-1.0.12</a>
+Download latest mlpack build from here:
+<a href="http://www.mlpack.org/files/mlpack-2.0.1.tar.gz">mlpack-2.0.1</a>
 
 @section builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.12
+$ cd mlpack-2.0.1
 $ mkdir build
 @endcode
 
@@ -35,7 +36,7 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev libarmadillo-dev
+  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
 @endcode
 
 If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
@@ -46,7 +47,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
 
 @code
 # yum install boost-devel boost-test boost-program-options boost-math
-  libxml2-devel armadillo-devel
+  armadillo-devel binutils-devel
 @endcode
 
 On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
@@ -115,7 +116,7 @@ http://mlpack.org/
 
 Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
 
-@section install Installing mlpack 
+@section install Installing mlpack
 
 If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
 /usr/bin/, once it has built, make sure you have root privileges (or write

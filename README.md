@@ -8,7 +8,7 @@ learning researchers.
 
 **Download [current stable version (2.0.1)](http://www.mlpack.org/files/mlpack-2.0.1.tar.gz).**
 
-[![Build Status](http://big.mlpack.org:7780/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://www.mlpack.org:8088/job/mlpack%20-%20git%20commit%20test/)
+[![Build Status](http://big.mlpack.org:7780/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://www.mlpack.org:8088/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a>
 
 0. Contents
 -----------
@@ -30,9 +30,9 @@ mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
 2. Citation details
 -------------------
@@ -122,7 +122,7 @@ This will build all library components as well as 'mlpack_test'.
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
-    $ make pca allknn allkfn
+    $ make mlpack_pca mlpack_allknn mlpack_allkfn
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue; the mlpack developers will quickly help you figure it out:
@@ -142,9 +142,9 @@ You can now run the executables by name; you can link against mlpack with
 and the mlpack headers are found in
     `/usr/local/include/mlpack/`.
 
-If running the programs (i.e. `$ allknn -h`) gives an error of the form
+If running the programs (i.e. `$ mlpack_allknn -h`) gives an error of the form
 
-    error while loading shared libraries: libmlpack.so.1: cannot open shared object file: No such file or directory
+    error while loading shared libraries: libmlpack.so.2: cannot open shared object file: No such file or directory
 
 then be sure that the runtime linker is searching the directory where
 `libmlpack.so` was installed (probably `/usr/local/lib/` unless you set it
@@ -164,7 +164,7 @@ them from there, or you can install the library and (depending on system
 settings) they should be added to your PATH and you can call them directly.  The
 documentation below assumes the executables are in your PATH.
 
-We consider the 'allknn' program, which finds the k nearest neighbors in a
+Consider the 'mlpack_allknn' program, which finds the k nearest neighbors in a
 reference dataset of all the points in a query set.  That is, we have a query
 and a reference dataset. For each point in the query dataset, we wish to know
 the k points in the reference dataset which are closest to the given query
@@ -177,16 +177,17 @@ nearest points to that point.
 Each mlpack program has extensive help documentation which details what the
 method does, what each of the parameters are, and how to use them:
 
-    $ allknn --help
+    $ mlpack_allknn --help
 
-Running allknn on one dataset (that is, the query and reference datasets are the
-same) and finding the 5 nearest neighbors is very simple:
+Running `mlpack_allknn` on one dataset (that is, the query and reference
+datasets are the same) and finding the 5 nearest neighbors is very simple:
 
-    $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+    $ mlpack_allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 
 The `-v (--verbose)` flag is optional; it gives informational output.  It is not
-unique to allknn but is available in all mlpack programs.  Verbose output also
-gives timing output at the end of the program, which can be very useful.
+unique to `mlpack_allknn` but is available in all mlpack programs.  Verbose
+output also gives timing output at the end of the program, which can be very
+useful.
 
 6. Further documentation
 ------------------------

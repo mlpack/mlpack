@@ -5,6 +5,10 @@
   * Add MiniBatchSGD optimizer (src/mlpack/core/optimizers/minibatch_sgd/) and
     allow its use in mlpack_logistic_regression and mlpack_nca programs.
 
+  * Add better backtrace support from Grzegorz Krajewski for Log::Fatal messages
+    when compiled with debugging and profiling symbols.  This requires libbfd
+    and libdl to be present during compilation.
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.

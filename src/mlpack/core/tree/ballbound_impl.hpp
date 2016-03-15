@@ -20,7 +20,7 @@ namespace bound {
 //! Empty Constructor.
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>::BallBound() :
-    radius(-DBL_MAX),
+    radius(std::numeric_limits<ElemType>::lowest()),
     metric(new TMetricType()),
     ownsMetric(true)
 { /* Nothing to do. */ }
@@ -32,7 +32,7 @@ BallBound<VecType, TMetricType>::BallBound() :
  */
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>::BallBound(const size_t dimension) :
-    radius(-DBL_MAX),
+    radius(std::numeric_limits<ElemType>::lowest()),
     center(dimension),
     metric(new TMetricType()),
     ownsMetric(true)
@@ -45,8 +45,8 @@ BallBound<VecType, TMetricType>::BallBound(const size_t dimension) :
  * @param center Center of ball bound.
  */
 template<typename VecType, typename TMetricType>
-BallBound<VecType, TMetricType>::BallBound(const double radius,
-    const VecType& center) :
+BallBound<VecType, TMetricType>::BallBound(const ElemType radius,
+                                           const VecType& center) :
     radius(radius),
     center(center),
     metric(new TMetricType()),
@@ -98,7 +98,8 @@ BallBound<VecType, TMetricType>::~BallBound()
 
 //! Get the range in a certain dimension.
 template<typename VecType, typename TMetricType>
-math::Range BallBound<VecType, TMetricType>::operator[](const size_t i) const
+math::RangeType<typename BallBound<VecType, TMetricType>::ElemType>
+BallBound<VecType, TMetricType>::operator[](const size_t i) const
 {
   if (radius < 0)
     return math::Range();
@@ -123,12 +124,13 @@ bool BallBound<VecType, TMetricType>::Contains(const VecType& point) const
  */
 template<typename VecType, typename TMetricType>
 template<typename OtherVecType>
-double BallBound<VecType, TMetricType>::MinDistance(
+typename BallBound<VecType, TMetricType>::ElemType
+BallBound<VecType, TMetricType>::MinDistance(
     const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
+    typename boost::enable_if<IsVector<OtherVecType>>* /* junk */) const
 {
   if (radius < 0)
-    return DBL_MAX;
+    return std::numeric_limits<ElemType>::max();
   else
     return math::ClampNonNegative(metric->Evaluate(point, center) - radius);
 }
@@ -137,13 +139,15 @@ double BallBound<VecType, TMetricType>::MinDistance(
  * Calculates minimum bound-to-bound squared distance.
  */
 template<typename VecType, typename TMetricType>
-double BallBound<VecType, TMetricType>::MinDistance(const BallBound& other) const
+typename BallBound<VecType, TMetricType>::ElemType
+BallBound<VecType, TMetricType>::MinDistance(const BallBound& other)
+    const
 {
   if (radius < 0)
-    return DBL_MAX;
+    return std::numeric_limits<ElemType>::max();
   else
   {
-    const double delta = metric->Evaluate(center, other.center) - radius -
+    const ElemType delta = metric->Evaluate(center, other.center) - radius -
         other.radius;
     return math::ClampNonNegative(delta);
   }
@@ -154,12 +158,13 @@ double BallBound<VecType, TMetricType>::MinDistance(const BallBound& other) cons
  */
 template<typename VecType, typename TMetricType>
 template<typename OtherVecType>
-double BallBound<VecType, TMetricType>::MaxDistance(
+typename BallBound<VecType, TMetricType>::ElemType
+BallBound<VecType, TMetricType>::MaxDistance(
     const OtherVecType& point,
     typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
   if (radius < 0)
-    return DBL_MAX;
+    return std::numeric_limits<ElemType>::max();
   else
     return metric->Evaluate(point, center) + radius;
 }
@@ -168,11 +173,12 @@ double BallBound<VecType, TMetricType>::MaxDistance(
  * Computes maximum distance.
  */
 template<typename VecType, typename TMetricType>
-double BallBound<VecType, TMetricType>::MaxDistance(const BallBound& other)
+typename BallBound<VecType, TMetricType>::ElemType
+BallBound<VecType, TMetricType>::MaxDistance(const BallBound& other)
     const
 {
   if (radius < 0)
-    return DBL_MAX;
+    return std::numeric_limits<ElemType>::max();
   else
     return metric->Evaluate(other.center, center) + radius + other.radius;
 }
@@ -184,30 +190,34 @@ double BallBound<VecType, TMetricType>::MaxDistance(const BallBound& other)
  */
 template<typename VecType, typename TMetricType>
 template<typename OtherVecType>
-math::Range BallBound<VecType, TMetricType>::RangeDistance(
+math::RangeType<typename BallBound<VecType, TMetricType>::ElemType>
+BallBound<VecType, TMetricType>::RangeDistance(
     const OtherVecType& point,
     typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
   if (radius < 0)
-    return math::Range(DBL_MAX, DBL_MAX);
+    return math::Range(std::numeric_limits<ElemType>::max(),
+                       std::numeric_limits<ElemType>::max());
   else
   {
-    const double dist = metric->Evaluate(center, point);
+    const ElemType dist = metric->Evaluate(center, point);
     return math::Range(math::ClampNonNegative(dist - radius),
                                               dist + radius);
   }
 }
 
 template<typename VecType, typename TMetricType>
-math::Range BallBound<VecType, TMetricType>::RangeDistance(
+math::RangeType<typename BallBound<VecType, TMetricType>::ElemType>
+BallBound<VecType, TMetricType>::RangeDistance(
     const BallBound& other) const
 {
   if (radius < 0)
-    return math::Range(DBL_MAX, DBL_MAX);
+    return math::Range(std::numeric_limits<ElemType>::max(),
+                       std::numeric_limits<ElemType>::max());
   else
   {
-    const double dist = metric->Evaluate(center, other.center);
-    const double sumradius = radius + other.radius;
+    const ElemType dist = metric->Evaluate(center, other.center);
+    const ElemType sumradius = radius + other.radius;
     return math::Range(math::ClampNonNegative(dist - sumradius),
                                               dist + sumradius);
   }
@@ -250,14 +260,14 @@ BallBound<VecType, TMetricType>::operator|=(const MatType& data)
   // Now iteratively add points.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    const double dist = metric->Evaluate(center, (VecType) data.col(i));
+    const ElemType dist = metric->Evaluate(center, (VecType) data.col(i));
 
     // See if the new point lies outside the bound.
     if (dist > radius)
     {
       // Move towards the new point and increase the radius just enough to
       // accommodate the new point.
-      arma::vec diff = data.col(i) - center;
+      const VecType diff = data.col(i) - center;
       center += ((dist - radius) / (2 * dist)) * diff;
       radius = 0.5 * (dist + radius);
     }

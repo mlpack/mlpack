@@ -48,8 +48,8 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   // Train the model.
   Timer::Start("rnn_optimization");
@@ -87,8 +87,8 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   Train(predictors, responses);
 }
@@ -118,8 +118,8 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 }
 
 template<typename LayerTypes,
@@ -281,6 +281,8 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
             const size_t i,
             arma::mat& gradient)
 {
+  Evaluate(parameter, i, false);
+
   gradient.zeros();
   arma::mat currentGradient = arma::mat(gradient.n_rows, gradient.n_cols);
   NetworkGradients(currentGradient, network);
@@ -328,6 +330,12 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+
+  // If we are loading, we need to initialize the weights.
+  if (Archive::is_loading::value)
+  {
+    NetworkWeights(parameter, network);
+  }
 }
 
 } // namespace ann

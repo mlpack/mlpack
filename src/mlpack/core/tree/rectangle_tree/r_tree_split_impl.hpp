@@ -162,13 +162,13 @@ void RTreeSplit::GetPointSeeds(const TreeType& tree, int& iRet, int& jRet)
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
   // that would create the most voluminous hyperrectangle.
-  double worstPairScore = -1.0;
+  typename TreeType::ElemType worstPairScore = -1.0;
   for (size_t i = 0; i < tree.Count(); i++)
   {
     for (size_t j = i + 1; j < tree.Count(); j++)
     {
-      const double score = arma::prod(arma::abs(tree.LocalDataset().col(i) -
-          tree.LocalDataset().col(j)));
+      const typename TreeType::ElemType score = arma::prod(arma::abs(
+          tree.LocalDataset().col(i) - tree.LocalDataset().col(j)));
 
       if (score > worstPairScore)
       {
@@ -187,18 +187,21 @@ void RTreeSplit::GetPointSeeds(const TreeType& tree, int& iRet, int& jRet)
 template<typename TreeType>
 void RTreeSplit::GetBoundSeeds(const TreeType& tree, int& iRet, int& jRet)
 {
-  double worstPairScore = -1.0;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  ElemType worstPairScore = -1.0;
   for (size_t i = 0; i < tree.NumChildren(); i++)
   {
     for (size_t j = i + 1; j < tree.NumChildren(); j++)
     {
-      double score = 1.0;
+      ElemType score = 1.0;
       for (size_t k = 0; k < tree.Bound().Dim(); k++)
       {
-        const double hiMax = std::max(tree.Children()[i]->Bound()[k].Hi(),
-                                      tree.Children()[j]->Bound()[k].Hi());
-        const double loMin = std::min(tree.Children()[i]->Bound()[k].Lo(),
-                                      tree.Children()[j]->Bound()[k].Lo());
+        const ElemType hiMax = std::max(tree.Children()[i]->Bound()[k].Hi(),
+                                        tree.Children()[j]->Bound()[k].Hi());
+        const ElemType loMin = std::min(tree.Children()[i]->Bound()[k].Lo(),
+                                        tree.Children()[j]->Bound()[k].Lo());
         score *= (hiMax - loMin);
       }
 
@@ -219,6 +222,9 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
                                      const int intI,
                                      const int intJ)
 {
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
   size_t end = oldTree->Count();
 
   assert(end > 1); // If this isn't true, the tree is really weird.
@@ -264,15 +270,15 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
       std::min(numAssignedOne, numAssignedTwo)))
   {
     int bestIndex = 0;
-    double bestScore = DBL_MAX;
+    ElemType bestScore = DBL_MAX;
     int bestRect = 1;
 
     // Calculate the increase in volume for assigning this point to each
     // rectangle.
 
     // First, calculate the starting volume.
-    double volOne = 1.0;
-    double volTwo = 1.0;
+    ElemType volOne = 1.0;
+    ElemType volTwo = 1.0;
     for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
     {
       volOne *= treeOne->Bound()[i].Width();
@@ -283,11 +289,11 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
     // minimizes the increase in volume.
     for (size_t index = 0; index < end; index++)
     {
-      double newVolOne = 1.0;
-      double newVolTwo = 1.0;
+      ElemType newVolOne = 1.0;
+      ElemType newVolTwo = 1.0;
       for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
-        double c = oldTree->LocalDataset().col(index)[i];
+        ElemType c = oldTree->LocalDataset().col(index)[i];
         newVolOne *= treeOne->Bound()[i].Contains(c) ?
             treeOne->Bound()[i].Width() : (c < treeOne->Bound()[i].Lo() ?
             (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
@@ -357,6 +363,8 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
                                     const int intI,
                                     const int intJ)
 {
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
 
   size_t end = oldTree->NumChildren();
   assert(end > 1); // If this isn't true, the tree is really weird.
@@ -406,13 +414,13 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
       std::min(numAssignTreeOne, numAssignTreeTwo)))
   {
     int bestIndex = 0;
-    double bestScore = DBL_MAX;
+    ElemType bestScore = DBL_MAX;
     int bestRect = 0;
 
     // Calculate the increase in volume for assigning this node to each of the
     // new rectangles.
-    double volOne = 1.0;
-    double volTwo = 1.0;
+    ElemType volOne = 1.0;
+    ElemType volTwo = 1.0;
     for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
     {
       volOne *= treeOne->Bound()[i].Width();
@@ -421,13 +429,14 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
 
     for (size_t index = 0; index < end; index++)
     {
-      double newVolOne = 1.0;
-      double newVolTwo = 1.0;
+      ElemType newVolOne = 1.0;
+      ElemType newVolTwo = 1.0;
       for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
         // For each of the new rectangles, find the width in this dimension if
         // we add the rectangle at index to the new rectangle.
-        const math::Range& range = oldTree->Children()[index]->Bound()[i];
+        const math::RangeType<ElemType>& range =
+            oldTree->Children()[index]->Bound()[i];
         newVolOne *= treeOne->Bound()[i].Contains(range) ?
             treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
             range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ?

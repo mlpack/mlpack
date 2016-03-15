@@ -46,8 +46,8 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -83,8 +83,8 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 
   Train(predictors, responses);
 }
@@ -112,8 +112,8 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
                 OutputLayerType>::value,
                 "The type of outputLayer must be OutputLayerType.");
 
-  initializeRule.Initialize(parameter, NetworkSize(network), 1);
-  NetworkWeights(parameter, network);
+  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
+  NetworkWeights(parameter, this->network);
 }
 
 template<typename LayerTypes,
@@ -249,9 +249,11 @@ template<typename LayerTypes,
 void FFN<
 LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Gradient(const arma::mat& /* unused */,
-            const size_t /* unused */,
+            const size_t i,
             arma::mat& gradient)
 {
+  Evaluate(parameter, i, false);
+
   NetworkGradients(gradient, network);
 
   Backward<>(error, network);
@@ -269,6 +271,12 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+
+  // If we are loading, we need to initialize the weights.
+  if (Archive::is_loading::value)
+  {
+    NetworkWeights(parameter, network);
+  }
 }
 
 } // namespace ann

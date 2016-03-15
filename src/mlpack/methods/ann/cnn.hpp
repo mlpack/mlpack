@@ -182,7 +182,7 @@ class CNN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
-                  const bool deterministic = false);
+                  const bool deterministic = true);
 
   /**
    * Evaluate the gradient of the convolutional neural network with the given
