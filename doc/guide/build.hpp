@@ -46,7 +46,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
 
 @code
 # yum install boost-devel boost-test boost-program-options boost-math
-  libxml2-devel armadillo-devel
+  armadillo-devel
 @endcode
 
 On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
@@ -115,7 +115,7 @@ http://mlpack.org/
 
 Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
 
-@section install Installing mlpack 
+@section install Installing mlpack
 
 If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
 /usr/bin/, once it has built, make sure you have root privileges (or write
