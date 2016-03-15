@@ -11,7 +11,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <sstream>
 
 #ifdef HAS_BFD_DL
@@ -19,6 +18,10 @@
   #include <signal.h>
   #include <unistd.h>
   #include <cxxabi.h>
+
+  // Some versions of libbfd require PACKAGE and PACKAGE_VERSION to be set in
+  // order for the include to not fail.  For more information:
+  // https://github.com/mlpack/mlpack/issues/574
   #ifndef PACKAGE
     #define PACKAGE
     #ifndef PACKAGE_VERSION
@@ -71,9 +74,9 @@ Backtrace::Backtrace(int maxDepth)
   frame.function = "0";
   frame.file = "0";
   frame.line = 0;
-  
+
   stack.clear();
-  
+
   GetAddress(maxDepth);
 }
 #else
@@ -90,18 +93,18 @@ void Backtrace::GetAddress(int maxDepth)
   int stackDepth = backtrace(trace, maxDepth);
 
   // Skip first stack frame (points to Backtrace::Backtrace).
-  for (int i = 1; i < stackDepth; i++) 
+  for (int i = 1; i < stackDepth; i++)
   {
     Dl_info addressHandler;
-    
+
     //No backtrace will be printed if no compile flags: -g -rdynamic
     if(TRACE_CONDITION_1)
     {
       return ;
     }
-    
+
     frame.address = addressHandler.dli_saddr;
-    
+
     DecodeAddress((long)frame.address);
   }
 }
@@ -120,28 +123,28 @@ void Backtrace::DecodeAddress(long addr)
       return;
     }
     ename[l] = 0;
-    
+
     bfd_init();
-    
+
     abfd = bfd_openr(ename, 0);
     if (!abfd)
     {
       perror("bfd_openr failed: ");
       return;
     }
- 
+
     bfd_check_format(abfd,bfd_object);
- 
+
     unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
     syms = (asymbol **) malloc(storage_needed);
-  
+
     text = bfd_get_section_by_name(abfd, ".text");
    }
-   
+
   long offset = addr - text->vma;
-  
+
   if (offset > 0)
-  {	
+  {
     if(FIND_LINE)
     {
       DemangleFunction();
@@ -155,7 +158,7 @@ void Backtrace::DemangleFunction()
 {
   int status;
   char* tmp = abi::__cxa_demangle(frame.function, 0, 0, &status);
-  
+
   // If demangling is successful, reallocate 'frame.function' pointer to
   // demangled name. Else if 'status != 0', leave 'frame.function as it is.
   if (status == 0)
@@ -170,10 +173,10 @@ void Backtrace::DemangleFunction() { }
 #endif
 
 std::string Backtrace::ToString()
-{  
+{
   std::string stackStr;
-  
-#ifdef HAS_BFD_DL  
+
+#ifdef HAS_BFD_DL
   std::ostringstream lineOss;
   std::ostringstream it;
 
@@ -182,22 +185,22 @@ std::string Backtrace::ToString()
     stackStr = "Cannot give backtrace because program was compiled";
     stackStr += " without: -g -rdynamic\nFor a backtrace,";
     stackStr += " recompile with: -g -rdynamic.\n";
-    
+
     return stackStr;
   }
-  
+
   for(unsigned int i = 0; i < stack.size(); i++)
   {
     frame = stack[i];
-    
+
     lineOss << frame.line;
     it << i + 1;
-    
+
       stackStr += "[bt]: (" + it.str() + ") "
 	       + frame.file + ":"
 	       + lineOss.str() + " "
 	       + frame.function + ":\n";
-	     
+
     lineOss.str("");
     it.str("");
   }
