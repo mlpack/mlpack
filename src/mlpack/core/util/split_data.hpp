@@ -22,21 +22,14 @@ public:
   /**
    * @brief TrainTestSplit
    * @param testRatio the ratio of test data
-   * @param slice indicate how many slice(depth) per image,
-   * this parameter only work on arma::Cube<T>
    * @param seed seed of the random device
    * @warning slice should not less than 1
    */
-  TrainTestSplit(double testRatio,
-                 size_t slice,
+  TrainTestSplit(double testRatio,                
                  arma::arma_rng::seed_type seed = 0) :
-    seed(seed),
-    slice(slice),
+    seed(seed),    
     testRatio(testRatio)
-  {
-    if(slice < 1){
-      throw std::out_of_range("The range of slice should not less than 1");
-    }
+  {    
   }
 
   /**
@@ -60,37 +53,36 @@ public:
    *@endcode
    */
   template<typename T, typename U>
-  void Split(T const &input,
+  void Split(arma::Mat<T> const &input,
              arma::Row<U> const &inputLabel,
-             T &trainData,
-             T &testData,
+             arma::Mat<T> &trainData,
+             arma::Mat<T> &testData,
              arma::Row<U> &trainLabel,
              arma::Row<U> &testLabel)
   {
     size_t const testSize =
-        static_cast<size_t>(ExtractSize(input) * testRatio);
-    size_t const trainSize = ExtractSize(input) - testSize;        
-    ResizeData(input, trainData, trainSize);
-    ResizeData(input, testData, testSize);
+        static_cast<size_t>(input.n_cols * testRatio);
+    size_t const trainSize = input.n_cols - testSize;
+    trainData.set_size(input.n_rows, trainSize);
+    testData.set_size(input.n_rows, testSize);
     trainLabel.set_size(trainSize);
     testLabel.set_size(testSize);
 
     using Col = arma::Col<size_t>;
     arma::arma_rng::set_seed(seed);
-    Col const sequence = arma::linspace<Col>(0, ExtractSize(input) - 1,
-                                             ExtractSize(input));    
+    Col const sequence = arma::linspace<Col>(0, input.n_cols - 1,
+                                             input.n_cols);
     arma::Col<size_t> const order = arma::shuffle(sequence);
 
     for(size_t i = 0; i != trainSize; ++i)
-    {
-      ExtractData(input, trainData, order[i], i);
+    {      
+      trainData.col(i) = input.col(order[i]);
       trainLabel(i) = inputLabel(order[i]);
     }
 
     for(size_t i = 0; i != testSize; ++i)
     {
-      ExtractData(input, testData,
-                  order[i + trainSize], i);
+      testData.col(i) = input.col(order[i + trainSize]);
       testLabel(i) = inputLabel(order[i + trainSize]);
     }
   }
@@ -104,13 +96,13 @@ public:
    *testLabel
    */
   template<typename T,typename U>
-  std::tuple<T, T,
+  std::tuple<arma::Mat<T>, arma::Mat<T>,
   arma::Row<U>, arma::Row<U>>
-  Split(T const &input,
+  Split(arma::Mat<T> const &input,
         arma::Row<U> const &inputLabel)
   {
-    T trainData;
-    T testData;
+    arma::Mat<T> trainData;
+    arma::Mat<T> testData;
     arma::Row<U> trainLabel;
     arma::Row<U> testLabel;
 
@@ -151,53 +143,7 @@ public:
     return testRatio;
   }
 
-
-private:
-  template<typename T>
-  void ExtractData(arma::Mat<T> const &input, arma::Mat<T> &output,
-                   size_t inputIndex, size_t outputIndex) const
-  {
-    output.col(outputIndex) = input.col(inputIndex);
-  }
-
-  template<typename T>
-  void ExtractData(arma::Cube<T> const &input, arma::Cube<T> &output,
-                   size_t inputIndex, size_t outputIndex) const
-  {
-    outputIndex *= slice;
-    inputIndex *= slice;
-    output.slices(outputIndex, outputIndex + slice - 1) =
-        input.slices(inputIndex, inputIndex + slice - 1);
-  }
-
-  template<typename T>
-  size_t ExtractSize(arma::Mat<T> const &input) const
-  {
-    return input.n_cols;
-  }
-
-  template<typename T>
-  size_t ExtractSize(arma::Cube<T> const &input) const
-  {
-    return input.n_slices / slice;
-  }
-
-  template<typename T>
-  void ResizeData(arma::Mat<T> const &input,
-                  arma::Mat<T> &output,
-                  size_t dataSize) const
-  {
-    output.set_size(input.n_rows, dataSize);
-  }
-
-  template<typename T>
-  void ResizeData(arma::Cube<T> const &input,
-                  arma::Cube<T> &output,
-                  size_t dataSize) const
-  {
-    output.set_size(input.n_rows, input.n_cols, dataSize * slice);
-  }
-
+private:  
   arma::arma_rng::seed_type seed;
   size_t slice;
   double testRatio;
