@@ -61,7 +61,7 @@ class KathirvalavakumarSubavathiInitialization
   KathirvalavakumarSubavathiInitialization(const arma::Mat<eT>& data,
                                            const double s) : s(s)
   {
-    dataSum = arma::sum(data);
+    dataSum = arma::sum(data % data);
   }
 
   /**
