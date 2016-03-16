@@ -4,8 +4,10 @@ set(SOURCES
   layer_traits.hpp
   binary_classification_layer.hpp
   base_layer.hpp
+  empty_layer.hpp
   bias_layer.hpp
   dropout_layer.hpp
+  dropconnect_layer.hpp
   hard_tanh_layer.hpp
   leaky_relu_layer.hpp
   linear_layer.hpp
