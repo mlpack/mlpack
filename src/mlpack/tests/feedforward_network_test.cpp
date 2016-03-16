@@ -290,144 +290,150 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 /**
  * Train and evaluate a DropConnect network(with a baselayer) with the specified structure.
  */
- template<
-            typename PerformanceFunction,
-            typename OutputLayerType,
-            typename PerformanceFunctionType,
-            typename MatType = arma::mat
-    >
-    void BuildDropConnectNetwork(MatType& trainData,
-                                 MatType& trainLabels,
-                                 MatType& testData,
-                                 MatType& testLabels,
-                                 const size_t hiddenLayerSize,
-                                 const size_t maxEpochs,
-                                 const double classificationErrorThreshold) {
-      /*
-       * Construct a feed forward network with trainData.n_rows input nodes,
-       * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-       * network struct that looks like:
-       *
-       * Input         Hidden       DropConnect     Output
-       *  Layer         Layer         Layer        Layer
-       * +-----+       +-----+       +-----+       +-----+
-       * |     |       |     |       |     |       |     |
-       * |     +------>|     +------>|     +------>|     |
-       * |     |     +>|     |       |     |       |     |
-       * +-----+     | +--+--+       +-----+       +-----+
-       *             |
-       *  Bias       |
-       *  Layer      |
-       * +-----+     |
-       * |     |     |
-       * |     +-----+
-       * |     |
-       * +-----+
-       *
-       *
-       */
-      LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-      BiasLayer<> biasLayer(hiddenLayerSize);
-      BaseLayer<PerformanceFunction> hiddenLayer0;
+template<
+    typename PerformanceFunction,
+    typename OutputLayerType,
+    typename PerformanceFunctionType,
+    typename MatType = arma::mat
+>
+void BuildDropConnectNetwork(MatType& trainData,
+                             MatType& trainLabels,
+                             MatType& testData,
+                             MatType& testLabels,
+                             const size_t hiddenLayerSize,
+                             const size_t maxEpochs,
+                             const double classificationErrorThreshold) 
+{
+/*
+*  Construct a feed forward network with trainData.n_rows input nodes,
+*  hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+*  network struct that looks like:
+*
+*  Input         Hidden       DropConnect     Output
+*  Layer         Layer         Layer        Layer
+* +-----+       +-----+       +-----+       +-----+
+* |     |       |     |       |     |       |     |
+* |     +------>|     +------>|     +------>|     |
+* |     |     +>|     |       |     |       |     |
+* +-----+     | +--+--+       +-----+       +-----+
+*             |
+*  Bias       |
+*  Layer      |
+* +-----+     |
+* |     |     |
+* |     +-----+
+* |     |
+* +-----+
+*
+*
+*/
+LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+BiasLayer<> biasLayer(hiddenLayerSize);
+BaseLayer<PerformanceFunction> hiddenLayer0;
 
-      LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-      DropConnectLayer<decltype(hiddenLayer1)> dropConnectLayer0(hiddenLayer1);
+LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+DropConnectLayer<decltype(hiddenLayer1)> dropConnectLayer0(hiddenLayer1);
 
-      BaseLayer<PerformanceFunction> outputLayer;
+BaseLayer<PerformanceFunction> outputLayer;
 
-      OutputLayerType classOutputLayer;
+OutputLayerType classOutputLayer;
 
-      auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                              dropConnectLayer0, outputLayer);
+auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
+                        dropConnectLayer0, outputLayer);
 
-      FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-              PerformanceFunctionType> net(modules, classOutputLayer);
-      RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-                                 maxEpochs * trainData.n_cols, 1e-18);
-      net.Train(trainData, trainLabels, opt);
-      MatType prediction;
-      net.Predict(testData, prediction);
+FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
+            PerformanceFunctionType> net(modules, classOutputLayer);
+RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+                            maxEpochs * trainData.n_cols, 1e-18);
+net.Train(trainData, trainLabels, opt);
+MatType prediction;
+net.Predict(testData, prediction);
 
-      size_t error = 0;
-      for (size_t i = 0; i < testData.n_cols; i++) {
-        if (arma::sum(arma::sum(
-                arma::abs(prediction.col(i) - testLabels.col(i)))) == 0) {
-          error++;
-        }
-      }
-      double classificationError = 1 - double(error) / testData.n_cols;
-      BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+size_t error = 0;
+for (size_t i = 0; i < testData.n_cols; i++) 
+{
+    if (arma::sum(arma::sum(
+        arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+    {
+        error++;
+    }
+}
+double classificationError = 1 - double(error) / testData.n_cols;
+BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }   
     
 /**
  * Train and evaluate a DropConnect network(with a linearlayer) with the specified structure.
  */
-    template<
-            typename PerformanceFunction,
-            typename OutputLayerType,
-            typename PerformanceFunctionType,
-            typename MatType = arma::mat
-    >
-    void BuildDropConnectNetworkLinear(MatType& trainData,
-                                 MatType& trainLabels,
-                                 MatType& testData,
-                                 MatType& testLabels,
-                                 const size_t hiddenLayerSize,
-                                 const size_t maxEpochs,
-                                 const double classificationErrorThreshold) {
-      /*
-       * Construct a feed forward network with trainData.n_rows input nodes,
-       * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-       * network struct that looks like:
-       *
-       * Input         Hidden       DropConnect     Output
-       *  Layer         Layer         Layer        Layer
-       * +-----+       +-----+       +-----+       +-----+
-       * |     |       |     |       |     |       |     |
-       * |     +------>|     +------>|     +------>|     |
-       * |     |     +>|     |       |     |       |     |
-       * +-----+     | +--+--+       +-----+       +-----+
-       *             |
-       *  Bias       |
-       *  Layer      |
-       * +-----+     |
-       * |     |     |
-       * |     +-----+
-       * |     |
-       * +-----+
-       *
-       *
-       */
-      LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-      BiasLayer<> biasLayer(hiddenLayerSize);
-      BaseLayer<PerformanceFunction> hiddenLayer0;
-      const size_t number_of_rows = trainLabels.n_rows;
-      DropConnectLayer<> dropConnectLayer0(hiddenLayerSize, number_of_rows);
+template<
+    typename PerformanceFunction,
+    typename OutputLayerType,
+    typename PerformanceFunctionType,
+    typename MatType = arma::mat
+>
+void BuildDropConnectNetworkLinear(MatType& trainData,
+                                   MatType& trainLabels,
+                                   MatType& testData,
+                                   MatType& testLabels,
+                                   const size_t hiddenLayerSize,
+                                   const size_t maxEpochs,
+                                   const double classificationErrorThreshold) 
+{
+/*
+* Construct a feed forward network with trainData.n_rows input nodes,
+* hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+* network struct that looks like:
+*
+* Input         Hidden       DropConnect     Output
+*  Layer         Layer         Layer        Layer
+* +-----+       +-----+       +-----+       +-----+
+* |     |       |     |       |     |       |     |
+* |     +------>|     +------>|     +------>|     |
+* |     |     +>|     |       |     |       |     |
+* +-----+     | +--+--+       +-----+       +-----+
+*             |
+*  Bias       |
+*  Layer      |
+* +-----+     |
+* |     |     |
+* |     +-----+
+* |     |
+* +-----+
+*
+*
+*/
+LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+BiasLayer<> biasLayer(hiddenLayerSize);
+BaseLayer<PerformanceFunction> hiddenLayer0;
+const size_t number_of_rows = trainLabels.n_rows;
+DropConnectLayer<> dropConnectLayer0(hiddenLayerSize, number_of_rows);
 
-      BaseLayer<PerformanceFunction> outputLayer;
+BaseLayer<PerformanceFunction> outputLayer;
 
-      OutputLayerType classOutputLayer;
-      auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                              dropConnectLayer0, outputLayer);
+OutputLayerType classOutputLayer;
+auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
+                        dropConnectLayer0, outputLayer);
 
-      FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-              PerformanceFunctionType> net(modules, classOutputLayer);
-      RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-                                 maxEpochs * trainData.n_cols, 1e-18);
-      net.Train(trainData, trainLabels, opt);
-      MatType prediction;
-      net.Predict(testData, prediction);
+FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
+            PerformanceFunctionType> net(modules, classOutputLayer);
+RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+                        maxEpochs * trainData.n_cols, 1e-18);
+net.Train(trainData, trainLabels, opt);
+MatType prediction;
+net.Predict(testData, prediction);
 
-      size_t error = 0;
-      for (size_t i = 0; i < testData.n_cols; i++) {
-        if (arma::sum(arma::sum(
-                arma::abs(prediction.col(i) - testLabels.col(i)))) == 0) {
-          error++;
-        }
-      }
-      double classificationError = 1 - double(error) / testData.n_cols;
-      BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+size_t error = 0;
+for (size_t i = 0; i < testData.n_cols; i++)
+{
+    if (arma::sum(arma::sum(
+            arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+    {
+            error++;
     }
+}
+double classificationError = 1 - double(error) / testData.n_cols;
+BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+}
 /**
  * Train the dropconnect network on a larger dataset.
  */
