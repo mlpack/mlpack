@@ -150,8 +150,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         "scale to matrices with more than 4 billion elements.")
   endif(ARMA_HAS_64BIT_WORD EQUAL 0)
 else(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Adding the ARMA_32BIT_WORD preprocessor for 32 bit machines for clean build
-  add_definitions(-DARMA_32BIT_WORD)  
+  # If we are on a 32-bit system, we must manually specify the size of the word
+  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
+  # disabling 64-bit support.
+  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    add_definitions(-DARMA_32BIT_WORD)
+  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 # On Windows, Armadillo should be using LAPACK and BLAS but we still need to
