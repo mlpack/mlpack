@@ -212,7 +212,7 @@ template<
           return baseLayer.Weights();
        }
        else{
-	 return weights;
+	  return weights;
        }
      }
     
@@ -221,7 +221,7 @@ template<
     {
       if(uselayer)
       {
-	return baseLayer.InputParameter();
+	  return baseLayer.InputParameter();
       }
       else
       {
@@ -234,7 +234,7 @@ template<
     {
        if(uselayer)
       {
-	return baseLayer.InputParameter();
+ 	  return baseLayer.InputParameter();
       }
       else
       {
@@ -247,11 +247,11 @@ template<
     {
       if(uselayer)
       {
-	return baseLayer.OutputParameter();
+	 return baseLayer.OutputParameter();
       }
       else
       {
-	return outputParameter;
+	 return outputParameter;
       }
     }
 
@@ -318,14 +318,6 @@ template<
 	 return gradient;
        }
     }
-
-    //! Input Layer default value
-    InputLayer initRule(size_t inSize, size_t outSize)
-    {
-      InputLayer newLayer(inSize, outSize);
-      return std::forward<InputLayer>(newLayer);
-    } 
-
 
     //! The value of the deterministic parameter.
     bool Deterministic() const { return deterministic; }
