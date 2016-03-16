@@ -1,7 +1,7 @@
 set(SOURCES
   sgd.hpp
   sgd_impl.hpp
-  sgd_P.hpp
+  sgdp.hpp
   sgd_impl_P.cpp
   test_function.hpp
   test_function.cpp

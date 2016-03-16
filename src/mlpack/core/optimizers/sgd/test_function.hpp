@@ -38,6 +38,20 @@ class SGDTestFunction
                 arma::mat& gradient) const;
 };
 
+
+class BoothsFunction
+{
+  public:
+  BoothsFunction() { }
+  //! Return 3 (the number of functions).
+  size_t NumFunctions() const { return 2; }
+  arma::mat GetInitialPoint() const { return arma::mat("6;5"); }
+  double Evaluate(const arma::mat& coordinates, const size_t i) const;
+  void Gradient(const arma::mat& coordinates,const size_t i,arma::mat& gradient) const;
+};
+
+
+
 } // namespace test
 } // namespace optimization
 } // namespace mlpack
