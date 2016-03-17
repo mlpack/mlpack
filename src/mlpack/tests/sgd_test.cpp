@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
   //SGD_P<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9);
-  SGD_P<SGDTestFunction> s(f, 0.0003,   3000000, 1e-9);
+  SGD_P<SGDTestFunction> s(f, 0.0003,   3000000, 1e-119);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
 
-
+/*
 BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   BoothsFunction f;
@@ -50,8 +50,9 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 
 }
 
+*/
 
-
+/*
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.
@@ -73,6 +74,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     }
   }
 }
+*/
 
 
 BOOST_AUTO_TEST_SUITE_END();

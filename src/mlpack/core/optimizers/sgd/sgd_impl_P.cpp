@@ -55,70 +55,72 @@ double SGD_P<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   //sumIterate is taken track the  sum  all other computed iterate value from each thread. 
   arma::mat sumIterate(iterate.n_rows,iterate.n_cols);
 
-
-  #pragma omp parallel  shared(sumIterate)  
-  for(int it=0;it!=maxIterations;it++)
+  int it;   
+  bool halt=false;
+  #pragma omp parallel  shared(sumIterate,halt) private(it) 
   {
-    int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
-    arma::mat gradient(iterate.n_rows, iterate.n_cols);  //To make gradient private to each thread it is declared here.
-
-      
-    int selectedFunction;
+    it=0; 
+    while(it!=maxIterations && halt != true)
+    {
+      it++;
+      int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
+      arma::mat gradient(iterate.n_rows, iterate.n_cols);  //To make gradient private to each thread it is declared here.
+      int selectedFunction;
     
-    for(int j=0; j < numFunctions; j++)
-    {
-      selectedFunction=std::rand()%numFunctions;
-      function.Gradient(tIterate[th_num],selectedFunction, gradient);
-      tIterate[th_num] -= stepSize * gradient;
-    }
-
-
-    #pragma omp barrier    //wait untill all the threads reach here
-
-    //this portion will run only by one thread
-    #pragma omp master
-    {
-       sumIterate.zeros();
-    }    
+      for(int j=0; j < numFunctions; j++)
+      {
+        selectedFunction=std::rand()%numFunctions;
+        function.Gradient(tIterate[th_num],selectedFunction, gradient);
+        tIterate[th_num] -= stepSize * gradient;
+      }
+      #pragma omp barrier    //wait untill all the threads reach here
    
-    #pragma omp barrier   
+      //this portion will run only by one thread
+      #pragma omp master
+      {
+         sumIterate.zeros();
+      }    
+      #pragma omp barrier   
 
-    //Taking the sum of all other computed iterate. Siterate is shared by all threads
-    #pragma omp critical 
-    {
-      sumIterate += tIterate[th_num];
-      
-    }
+      //Taking the sum of all other computed iterate. Siterate is shared by all threads
+      #pragma omp critical 
+      {
+        sumIterate += tIterate[th_num];
+      }
     
-    //runing  a single thread 
-    #pragma omp master
-    {
-      sumIterate=sumIterate/num_thread;
-      overallObjective=0;
-
-      for (size_t i = 0; i < numFunctions; ++i)
+      #pragma omp barrier   
+      //runing  a single thread 
+      #pragma omp master
       {
-        overallObjective += function.Evaluate(sumIterate,i);
+        sumIterate=sumIterate/num_thread;
+        overallObjective=0;
+        for (size_t i = 0; i < numFunctions; ++i)
+        {
+          overallObjective += function.Evaluate(sumIterate,i);
+        }
+
+        std::cout<<it<<"   "<<lastObjective<<"  "<<overallObjective<<std::endl;
+
+        if (std::isnan(overallObjective) || std::isinf(overallObjective))
+        {
+          Log::Warn << "SGD: converged to " <<overallObjective << "; terminating"<< " with failure.  Try a smaller step size?" << std::endl;
+          halt=true; 
+
+        }
+
+
+        if (std::abs(lastObjective - overallObjective) < tolerance)
+        {
+          Log::Info << "SGD: minimized within tolerance " << tolerance << "; "<< "terminating optimization." << std::endl;
+      //  std::cout<<it<<"*   "<<lastObjective<<"  "<<overallObjective<<std::endl;
+          halt=true; 
+        }
+        lastObjective=overallObjective;
       }
+      #pragma omp barrier
 
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Log::Warn << "SGD: converged to " <<overallObjective << "; terminating"<< " with failure.  Try a smaller step size?" << std::endl;
-
-      }
-
-
-      if (std::abs(lastObjective - overallObjective) < tolerance)
-      {
-        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "<< "terminating optimization." << std::endl;
-        // #pragma omp cancelregion
-      }
-      lastObjective=overallObjective;
-    }
-    #pragma omp barrier
-
-  }   //end of for loop as well as the thereads
-
+    }   //end of while loop
+  }   //end of all thread
   
   iterate=sumIterate;
   overallObjective=0;
