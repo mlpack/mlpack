@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
   //SGD_P<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9);
-  SGD_P<SGDTestFunction> s(f, 0.0003,   3000000, 1e-119);
+  SGD_P<SGDTestFunction> s(f, 0.003,   3000000, 1e-119);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
