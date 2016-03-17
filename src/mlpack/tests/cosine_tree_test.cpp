@@ -51,6 +51,8 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
   // Initialize constants required for the test.
   const size_t numRows = 500;
   const size_t numCols = 1000;
+  // Calculation accuracy
+  const double precision = 1e-15;
 
   // Make a random dataset and the root object.
   arma::mat data = arma::randu(numRows, numCols);
@@ -105,14 +107,58 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
 
       // Check if the columns assigned to the children agree with the splitting
       // condition.
-      double cosineMax = arma::max(cosines % (cosines < 1));
+      // Due to miscalculations cosineMax calculated at CosineNodeSplit
+      // may differ from cosineMax below
+      double cosineMax = arma::max(cosines % (cosines < 1.0 + precision));
       double cosineMin = arma::min(cosines);
+      // If max(cosines) is close to 1.0 cosineMax and cosineMax2 may
+      // differ significantly
+      double cosineMax2 = arma::max(cosines % (cosines < 1.0 - precision));
 
-      for (i = 0; i < leftIndices.size(); i++)
-        BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin);
 
-      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-        BOOST_CHECK_GT(cosineMax - cosines(k), cosines(k) - cosineMin);
+      if(std::fabs(cosineMax - cosineMax2) < precision)
+      {
+        // Check with some precision
+	    for (i = 0; i < leftIndices.size(); i++)
+          BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin + precision);
+
+        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+          BOOST_CHECK_GT(cosineMax - cosines(k), cosines(k) - cosineMin - precision);
+	  }
+	  else
+	  {
+        size_t numMax1Errors = 0;
+        size_t numMax2Errors = 0;
+
+        // Find errors for cosineMax
+        for (i = 0; i < leftIndices.size(); i++)
+          if(cosineMax - cosines(i) >= cosines(i) - cosineMin + precision)
+            numMax1Errors++;
+
+        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+          if(cosineMax - cosines(k) <= cosines(k) - cosineMin - precision)
+            numMax1Errors++;
+
+        // Find errors for cosineMax
+        for (i = 0; i < leftIndices.size(); i++)
+          if(cosineMax2 - cosines(i) >= cosines(i) - cosineMin + precision)
+            numMax2Errors++;
+
+        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+          if(cosineMax2 - cosines(k) <= cosines(k) - cosineMin - precision)
+            numMax2Errors++;
+
+        if(numMax1Errors > 0 && numMax2Errors > 0)
+        {
+          // cosineMax and cosineMax2 do not match
+          // we should report the problem
+	      for (i = 0; i < leftIndices.size(); i++)
+            BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin);
+
+          for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+            BOOST_CHECK_GT(cosineMax - cosines(k), cosines(k) - cosineMin);
+        }
+      }
     }
   }
 }
