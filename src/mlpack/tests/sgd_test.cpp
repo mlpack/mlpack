@@ -24,11 +24,11 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
   //SGD_P<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9);
-  SGD_P<SGDTestFunction> s(f, 0.003,   3000000, 1e-119);
+  SGD_P<SGDTestFunction> s(f, 0.0003,   2000000, 1e-9);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
-  std::cout<<"result ="<<result<<" "<<coordinates[0]<<" "<<coordinates[1]<<" "<<coordinates[2]<<std::endl;
+  //std::cout<<"result ="<<result<<" "<<coordinates[0]<<" "<<coordinates[1]<<" "<<coordinates[2]<<std::endl;
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
