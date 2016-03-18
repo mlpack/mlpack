@@ -1,3 +1,10 @@
+/**
+ * @file ada_delta_impl.hpp
+ * @author Ryan Curtin
+ * @author Vasanth Kalingeri
+ *
+ * Implementation of the Adadelta optimizer.
+ */
 #ifndef __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_IMPL_HPP
 #define __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_IMPL_HPP
 
@@ -73,8 +80,8 @@ double AdaDelta<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "AdaDelta: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+        Log::Info << "AdaDelta: minimized within tolerance " << tolerance
+            << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -114,8 +121,8 @@ double AdaDelta<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       overallObjective += function.Evaluate(iterate, currentFunction);
   }
 
-  Log::Info << "AdaDelta: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+  Log::Info << "AdaDelta: maximum iterations (" << maxIterations
+      << ") reached; terminating optimization." << std::endl;
   // Calculate final objective.
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; ++i)

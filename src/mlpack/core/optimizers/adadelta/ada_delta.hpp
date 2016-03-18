@@ -1,3 +1,12 @@
+/**
+ * @file ada_delta.hpp
+ * @author Ryan Curtin
+ * @author Vasanth Kalingeri
+ *
+ * Implementation of the Adadelta optimizer. Adadelta is an optimizer that
+ * dynamically adapts over time using only first order information.
+ * Additionally, Adadelta requires no manual tuning of a learning rate.
+ */
 #ifndef __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_HPP
 #define __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_HPP
 
@@ -50,9 +59,9 @@ class AdaDelta
 {
  public:
   /**
-   * Construct the AdaDelta optimizer with the given function and parameters. The
-   * defaults here are not necessarily good for the given problem, so it is
-   * suggested that the values used be tailored to the task at hand.  The
+   * Construct the AdaDelta optimizer with the given function and parameters.
+   * The defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand. The
    * maximum number of iterations refers to the maximum number of points that
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
@@ -74,8 +83,8 @@ class AdaDelta
       const bool shuffle = true);
   
   /**
-   * Optimize the given function using AdaDelta. The given starting point will be
-   * modified to store the finishing point of the algorithm, and the final
+   * Optimize the given function using AdaDelta. The given starting point will
+   * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
    * @param iterate Starting point (will be modified).
