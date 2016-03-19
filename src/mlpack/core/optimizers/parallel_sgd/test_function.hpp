@@ -1,6 +1,6 @@
 /**
  * @file test_function.hpp
- * @author Ryan Curtin
+ * @author Ranjan Mondal
  *
  * Very simple test function for SGD.
  */
@@ -27,7 +27,7 @@ class SGDTestFunction
   size_t NumFunctions() const { return 3; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("6; -45.6; 6.2"); }
+  arma::mat GetInitialPoint() const {return arma::mat("6; -45.6; 6.2");} 
 
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const;
@@ -37,6 +37,19 @@ class SGDTestFunction
                 const size_t i,
                 arma::mat& gradient) const;
 };
+
+
+class BoothsFunction
+{
+  public:
+  BoothsFunction() { }
+  //! Return 3 (the number of functions).
+  size_t NumFunctions() const { return 2; }
+  arma::mat GetInitialPoint() const  { return arma::mat("6;5"); }
+  double Evaluate(const arma::mat& coordinates, const size_t i) const;
+  void Gradient(const arma::mat& coordinates,const size_t i,arma::mat& gradient) const;
+};
+
 
 
 } // namespace test
