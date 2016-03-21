@@ -3,13 +3,13 @@
  * @file parallel_sgd_test.cpp
  * @author Ranjan Mondal
  *
- * Test file for SGD (stochastic gradient descent).
+ * Test file for  parallel stochastic gradient descent).
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sgdp.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
-//#include <mlpack/core/optimizers/parallel_sgd/test_function.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/test_function.hpp>
+//#include <mlpack/core/optimizers/sgd/test_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -24,8 +24,8 @@ BOOST_AUTO_TEST_SUITE(PSGDTest);
 
 BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
-  SGDTestFunction f;
-  ParallelSGD<SGDTestFunction> s(f, 0.0003,   2000000, 1e-9);
+  PSGDTestFunction f;
+  ParallelSGD<PSGDTestFunction> s(f, 0.0003,   2000000, 1e-9);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
