@@ -36,10 +36,10 @@ endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  IF (APPLE)
+  if (APPLE)
     # detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
     # extract V from '10.V.x'.)
-    EXEC_PROGRAM(/usr/bin/sw_vers ARGS
+    exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
         "10\\.([0-9]+).*" "\\1"

@@ -11,29 +11,29 @@ find_library(ARPACK_LIBRARY
   )
 
 
-IF (ARPACK_LIBRARY)
-  SET(ARPACK_FOUND YES)
-ELSE ()
+if (ARPACK_LIBRARY)
+  set(ARPACK_FOUND YES)
+else ()
   # Search for PARPACK.
   find_library(ARPACK_LIBRARY
     NAMES parpack
     PATHS /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
   )
 
-  IF (ARPACK_LIBRARY)
-    SET(ARPACK_FOUND YES)
-  ELSE ()
-    SET(ARPACK_FOUND NO)
-  ENDIF ()
-ENDIF ()
+  if (ARPACK_LIBRARY)
+    set(ARPACK_FOUND YES)
+  else ()
+    set(ARPACK_FOUND NO)
+  endif ()
+endif ()
 
 
-IF (ARPACK_FOUND)
-  IF (NOT ARPACK_FIND_QUIETLY)
-     MESSAGE(STATUS "Found an ARPACK library: ${ARPACK_LIBRARY}")
-  ENDIF (NOT ARPACK_FIND_QUIETLY)
-ELSE (ARPACK_FOUND)
-  IF (ARPACK_FIND_REQUIRED)
-     MESSAGE(FATAL_ERROR "Could not find an ARPACK library")
-  ENDIF (ARPACK_FIND_REQUIRED)
-ENDIF (ARPACK_FOUND)
+if (ARPACK_FOUND)
+  if (NOT ARPACK_FIND_QUIETLY)
+     message(STATUS "Found an ARPACK library: ${ARPACK_LIBRARY}")
+  endif (NOT ARPACK_FIND_QUIETLY)
+else (ARPACK_FOUND)
+  if (ARPACK_FIND_REQUIRED)
+     message(FATAL_ERROR "Could not find an ARPACK library")
+  endif (ARPACK_FIND_REQUIRED)
+endif (ARPACK_FOUND)
