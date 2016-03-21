@@ -14,20 +14,20 @@ find_library(ACMLMP_LIBRARY
 if (ACMLMP_LIBRARY)
   set(ACMLMP_LIBRARIES ${ACMLMP_LIBRARY})
   set(ACMLMP_FOUND "YES")
-else (ACMLMP_LIBRARY)
+else ()
   set(ACMLMP_FOUND "NO")
-endif (ACMLMP_LIBRARY)
+endif ()
 
 
 if (ACMLMP_FOUND)
    if (NOT ACMLMP_FIND_QUIETLY)
       message(STATUS "Found the ACMLMP library: ${ACMLMP_LIBRARIES}")
-   endif (NOT ACMLMP_FIND_QUIETLY)
-else (ACMLMP_FOUND)
+   endif ()
+else ()
    if (ACMLMP_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find the ACMLMP library")
-   endif (ACMLMP_FIND_REQUIRED)
-endif (ACMLMP_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 get_filename_component (NATIVE_ACMLMP_LIB_PATH ${ACMLMP_LIBRARY} PATH)

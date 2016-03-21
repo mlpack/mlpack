@@ -21,9 +21,9 @@ endforeach()
 # every function signature.
 if (WIN32)
   add_library(mlpack ${MLPACK_SRCS})
-else (WIN32)
+else ()
   add_library(mlpack SHARED ${MLPACK_SRCS})
-endif (WIN32)
+endif ()
 target_link_libraries(mlpack
   ${ARMADILLO_LIBRARIES}
   ${Boost_LIBRARIES}
@@ -39,15 +39,15 @@ set_target_properties(mlpack
 # rt: clock_gettime()
 if(UNIX AND NOT APPLE)
     target_link_libraries(mlpack rt)
-endif(UNIX AND NOT APPLE)
+endif()
 
 # Backtrace for Linux need those libs.
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   if(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
     target_link_libraries(mlpack ${LIBBFD_LIBRARIES})
     target_link_libraries(mlpack ${LIBDL_LIBRARIES})
-  endif(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  endif()
+endif()
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

@@ -14,20 +14,20 @@ find_library(ACML_LIBRARY
 if (ACML_LIBRARY)
   set(ACML_LIBRARIES ${ACML_LIBRARY})
   set(ACML_FOUND "YES")
-else (ACML_LIBRARY)
+else ()
   set(ACML_FOUND "NO")
-endif (ACML_LIBRARY)
+endif ()
 
 
 if (ACML_FOUND)
    if (NOT ACML_FIND_QUIETLY)
       message(STATUS "Found the ACML library: ${ACML_LIBRARIES}")
-   endif (NOT ACML_FIND_QUIETLY)
-else (ACML_FOUND)
+   endif ()
+else ()
    if (ACML_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find the ACML library")
-   endif (ACML_FIND_REQUIRED)
-endif (ACML_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 get_filename_component (NATIVE_ACML_LIB_PATH ${ACML_LIBRARY} PATH)

@@ -19,7 +19,7 @@ if("${MLPACK_PATHDEF}" STREQUAL "")
       "${PATHDEF}")
 
   file(WRITE "${PATHDEF_OUTPUT_FILE}" "${MOD_PATHDEF}")
-else("${MLPACK_PATHDEF}" STREQUAL "")
+else()
   # Write unmodified file.
   file(WRITE "${PATHDEF_OUTPUT_FILE}" "${PATHDEF}")
-endif("${MLPACK_PATHDEF}" STREQUAL "")
+endif()

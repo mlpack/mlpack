@@ -14,20 +14,20 @@ find_library(OpenBLAS_LIBRARY
 if (OpenBLAS_LIBRARY)
   set(OpenBLAS_LIBRARIES ${OpenBLAS_LIBRARY})
   set(OpenBLAS_FOUND "YES")
-else (OpenBLAS_LIBRARY)
+else ()
   set(OpenBLAS_FOUND "NO")
-endif (OpenBLAS_LIBRARY)
+endif ()
 
 
 if (OpenBLAS_FOUND)
    if (NOT OpenBLAS_FIND_QUIETLY)
       message(STATUS "Found the OpenBLAS library: ${OpenBLAS_LIBRARIES}")
-   endif (NOT OpenBLAS_FIND_QUIETLY)
-else (OpenBLAS_FOUND)
+   endif ()
+else ()
    if (OpenBLAS_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find the OpenBLAS library")
-   endif (OpenBLAS_FIND_REQUIRED)
-endif (OpenBLAS_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 get_filename_component (NATIVE_OpenBLAS_LIB_PATH ${OpenBLAS_LIBRARY} PATH)

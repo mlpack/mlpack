@@ -21,20 +21,20 @@ find_library(BLAS_LIBRARY
 if (BLAS_LIBRARY)
   set(BLAS_LIBRARIES ${BLAS_LIBRARY})
   set(BLAS_FOUND "YES")
-else (BLAS_LIBRARY)
+else ()
   set(BLAS_FOUND "NO")
-endif (BLAS_LIBRARY)
+endif ()
 
 
 if (BLAS_FOUND)
    if (NOT BLAS_FIND_QUIETLY)
       message(STATUS "Found BLAS: ${BLAS_LIBRARIES}")
-   endif (NOT BLAS_FIND_QUIETLY)
-else (BLAS_FOUND)
+   endif ()
+else ()
    if (BLAS_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find BLAS")
-   endif (BLAS_FIND_REQUIRED)
-endif (BLAS_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 get_filename_component (NATIVE_BLAS_LIB_PATH ${BLAS_LIBRARY} PATH)
