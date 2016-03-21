@@ -6,6 +6,7 @@ rmsprop
 sa
 sdp
 parallel_sgd
+scd
 )
 
 foreach(dir ${DIRS})
