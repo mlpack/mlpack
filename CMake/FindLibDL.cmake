@@ -15,8 +15,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibDL DEFAULT_MSG
   LIBDL_LIBRARIES
   LIBDL_INCLUDE_DIRS)
 
-SET(CMAKE_REQUIRED_LIBRARIES dl)
-INCLUDE(CheckCSourceRuns)
+set(CMAKE_REQUIRED_LIBRARIES dl)
+include(CheckCSourceRuns)
 CHECK_C_SOURCE_RUNS("#include <dlfcn.h>
 #include <stdlib.h>
 void testfunc() {}
