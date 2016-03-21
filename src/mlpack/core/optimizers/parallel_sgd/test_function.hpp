@@ -2,10 +2,10 @@
  * @file test_function.hpp
  * @author Ranjan Mondal
  *
- * Very simple test function for SGD.
+ * Very simple test function for PSGD.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SGD_TEST_FUNCTION_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SGD_TEST_FUNCTION_HPP
+#ifndef __MLPACK_CORE_OPTIMIZERS_PPSGD_TEST_FUNCTION_HPP
+#define __MLPACK_CORE_OPTIMIZERS_PPSGD_TEST_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -17,11 +17,11 @@ namespace test {
 //! functions.  The gradient is not very steep far away from the optimum, so a
 //! larger step size may be required to optimize it in a reasonable number of
 //! iterations.
-class SGDTestFunction
+class PSGDTestFunction
 {
  public:
   //! Nothing to do for the constructor.
-  SGDTestFunction() { }
+  PSGDTestFunction() { }
 
   //! Return 3 (the number of functions).
   size_t NumFunctions() const { return 3; }

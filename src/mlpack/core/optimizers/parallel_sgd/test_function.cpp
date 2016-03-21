@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * Implementation of very simple test function for stochastic gradient descent
- * (SGD).
+ * (PSGD).
  */
 #include "test_function.hpp"
 
@@ -11,7 +11,7 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
+double PSGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
     const
 {
   switch (i)
@@ -30,7 +30,7 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
   }
 }
 
-void SGDTestFunction::Gradient(const arma::mat& coordinates,
+void PSGDTestFunction::Gradient(const arma::mat& coordinates,
                                const size_t i,
                                arma::mat& gradient) const
 {
