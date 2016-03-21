@@ -15,7 +15,6 @@
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
 
 #include <mlpack/methods/ann/layer/bias_layer.hpp>

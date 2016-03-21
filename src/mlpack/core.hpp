@@ -21,7 +21,8 @@
  * mlpack uses the Armadillo C++ matrix library (http://arma.sourceforge.net)
  * for general matrix, vector, and linear algebra support.  mlpack also uses the
  * program_options, math_c99, and unit_test_framework components of the Boost
- * library; in addition, LibXml2 is used.
+ * library, and optionally uses libbfd and libdl to give backtraces when
+ * compiled with debugging symbols on some platforms.
  *
  * @section howto How To Use This Documentation
  *
@@ -184,6 +185,7 @@
  *   - Andy Fang <AndyFang.DZ@gmail.com>
  *   - Barak Pearlmutter <barak+git@pearlmutter.net>
  *   - Ivari Horm <ivari@risk.ee>
+ *   - Dhawal Arora <d.p.arora1@gmail.com>
  */
 
 // First, include all of the prerequisites.

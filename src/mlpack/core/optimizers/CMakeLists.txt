@@ -1,12 +1,15 @@
 set(DIRS
-aug_lagrangian
-lbfgs
-minibatch_sgd
-rmsprop
-sa
-sdp
-parallel_sgd
-scd
+  adadelta
+  adam
+  aug_lagrangian
+  lbfgs
+  minibatch_sgd
+  rmsprop
+  sa
+  sdp
+  sgd
+  parallel_sgd
+  scd
 )
 
 foreach(dir ${DIRS})

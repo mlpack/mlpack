@@ -183,7 +183,7 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
-                  const bool deterministic = false);
+                  const bool deterministic = true);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,

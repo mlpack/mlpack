@@ -20,7 +20,7 @@ namespace bound {
 //! Empty Constructor.
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>::BallBound() :
-    radius(std::numeric_limits<ElemType>::min()),
+    radius(std::numeric_limits<ElemType>::lowest()),
     metric(new TMetricType()),
     ownsMetric(true)
 { /* Nothing to do. */ }
@@ -32,7 +32,7 @@ BallBound<VecType, TMetricType>::BallBound() :
  */
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>::BallBound(const size_t dimension) :
-    radius(std::numeric_limits<ElemType>::min()),
+    radius(std::numeric_limits<ElemType>::lowest()),
     center(dimension),
     metric(new TMetricType()),
     ownsMetric(true)
