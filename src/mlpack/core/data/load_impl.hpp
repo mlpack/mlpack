@@ -261,7 +261,12 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
 
-  const bool success = matrix.load(stream, loadType);
+  // We can't use the stream if the type is HDF5.
+  bool success;
+  if (loadType != arma::hdf5_binary)
+    success = matrix.load(stream, loadType);
+  else
+    success = matrix.load(filename, loadType);
 
   if (!success)
   {
