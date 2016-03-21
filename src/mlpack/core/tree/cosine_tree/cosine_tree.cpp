@@ -23,7 +23,7 @@ CosineTree::CosineTree(const arma::mat& dataset) :
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and calculate squared norms of the columns.
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
     indices[i] = i;
     double l2Norm = arma::norm(dataset.col(i), 2);
@@ -52,7 +52,7 @@ CosineTree::CosineTree(CosineTree& parentNode,
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and squared norms of the columns.
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
     indices[i] = parentNode.indices[subIndices[i]];
     l2NormsSquared(i) = parentNode.l2NormsSquared(subIndices[i]);
@@ -152,7 +152,7 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for(; i != treeQueue.end(); i++)
+  for ( ; i != treeQueue.end(); i++)
   {
     currentNode = *i;
 
@@ -161,14 +161,14 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
   }
 
   // If additional basis vector is passed, take it into account.
-  if(addBasisVector)
+  if (addBasisVector)
   {
     double projection = arma::dot(*addBasisVector, centroid);
     newBasisVector -= *addBasisVector * projection;
   }
 
   // Normalize the modified centroid vector.
-  if(arma::norm(newBasisVector, 2))
+  if (arma::norm(newBasisVector, 2))
     newBasisVector /= arma::norm(newBasisVector, 2);
 }
 
@@ -195,13 +195,13 @@ double CosineTree::MonteCarloError(CosineTree* node,
   // Set size of projection vector, depending on whether additional basis
   // vectors are passed.
   size_t projectionSize;
-  if(addBasisVector1 && addBasisVector2)
+  if (addBasisVector1 && addBasisVector2)
     projectionSize = treeQueue.size() + 2;
   else
     projectionSize = treeQueue.size();
 
   // For each sample, calculate the weighted projection onto the current basis.
-  for(size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; i++)
   {
     // Initialize projection as a vector of zeros.
     arma::vec projection;
@@ -212,7 +212,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for(; j != treeQueue.end(); j++, k++)
+    for ( ; j != treeQueue.end(); j++, k++)
     {
       currentNode = *j;
 
@@ -220,7 +220,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
                                 currentNode->BasisVector());
     }
     // If two additional vectors are passed, take their projections.
-    if(addBasisVector1 && addBasisVector2)
+    if (addBasisVector1 && addBasisVector2)
     {
       projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
                                   *addBasisVector1);
@@ -240,7 +240,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
   double mu = arma::mean(weightedMagnitudes);
   double sigma = arma::stddev(weightedMagnitudes);
 
-  if(!sigma)
+  if (!sigma)
   {
     node->L2Error(node->FrobNormSquared() - mu);
     return (node->FrobNormSquared() - mu);
@@ -268,7 +268,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for(; i != treeQueue.end(); i++, j++)
+  for ( ; i != treeQueue.end(); i++, j++)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();
@@ -278,7 +278,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 void CosineTree::CosineNodeSplit()
 {
   //! If less than two nodes, splitting does not make sense.
-  if(numColumns < 3) return;
+  if (numColumns < 3) return;
 
   //! Calculate cosines with respect to the splitting point.
   arma::vec cosines;
@@ -294,9 +294,9 @@ void CosineTree::CosineNodeSplit()
   // Split columns into left and right children. The splitting condition for the
   // column to be in the left child is as follows:
   //       cos_max - cos(i) <= cos(i) - cos_min
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
-    if(cosineMax - cosines(i) <= cosines(i) - cosineMin)
+    if (cosineMax - cosines(i) <= cosines(i) - cosineMin)
     {
       leftIndices.push_back(i);
     }
@@ -320,16 +320,17 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
-    cDistribution(i+1) = cDistribution(i) + l2NormsSquared(i) / frobNormSquared;
+    cDistribution(i + 1) = cDistribution(i) +
+        (l2NormsSquared(i) / frobNormSquared);
   }
 
   // Initialize sizes of the 'sampledIndices' and 'probabilities' vectors.
   sampledIndices.resize(numSamples);
   probabilities.zeros(numSamples);
 
-  for(size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; i++)
   {
     // Generate a random value for sampling.
     double randValue = arma::randu();
@@ -345,7 +346,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
 size_t CosineTree::ColumnSampleLS()
 {
   // If only one element is present, there can only be one sample.
-  if(numColumns < 2)
+  if (numColumns < 2)
   {
     return 0;
   }
@@ -355,9 +356,10 @@ size_t CosineTree::ColumnSampleLS()
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
-    cDistribution(i+1) = cDistribution(i) + l2NormsSquared(i) / frobNormSquared;
+    cDistribution(i + 1) = cDistribution(i) +
+        (l2NormsSquared(i) / frobNormSquared);
   }
 
   // Generate a random value for sampling.
@@ -376,17 +378,17 @@ size_t CosineTree::BinarySearch(arma::vec& cDistribution,
   size_t pivot = (start + end) / 2;
 
   // If pivot is zero, first point is the sampled point.
-  if(!pivot)
+  if (!pivot)
   {
     return pivot;
   }
 
   // Binary search recursive algorithm.
-  if(value > cDistribution(pivot - 1) && value <= cDistribution(pivot))
+  if (value > cDistribution(pivot - 1) && value <= cDistribution(pivot))
   {
     return (pivot - 1);
   }
-  else if(value < cDistribution(pivot - 1))
+  else if (value < cDistribution(pivot - 1))
   {
     return BinarySearch(cDistribution, value, start, pivot - 1);
   }
@@ -401,11 +403,11 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
   // Initialize cosine vector as a vector of zeros.
   cosines.zeros(numColumns);
 
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
     // If norm is zero, store cosine value as zero. Else, calculate cosine value
     // between two vectors.
-    if(l2NormsSquared(i) == 0)
+    if (l2NormsSquared(i) == 0)
     {
       cosines(i) = 0;
     }
@@ -423,7 +425,7 @@ void CosineTree::CalculateCentroid()
   centroid.zeros(dataset.n_rows);
 
   // Calculate centroid of columns in the node.
-  for(size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; i++)
   {
     centroid += dataset.col(indices[i]);
   }
