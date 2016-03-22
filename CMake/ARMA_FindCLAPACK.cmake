@@ -23,20 +23,20 @@ find_library(CLAPACK_LIBRARY
 if (CLAPACK_LIBRARY AND CLAPACK_INCLUDE_DIR)
     set(CLAPACK_LIBRARIES ${CLAPACK_LIBRARY})
     set(CLAPACK_FOUND "YES")
-else (CLAPACK_LIBRARY AND CLAPACK_INCLUDE_DIR)
+else ()
   set(CLAPACK_FOUND "NO")
-endif (CLAPACK_LIBRARY AND CLAPACK_INCLUDE_DIR)
+endif ()
 
 
 if (CLAPACK_FOUND)
    if (NOT CLAPACK_FIND_QUIETLY)
       message(STATUS "Found a CLAPACK library: ${CLAPACK_LIBRARIES}")
-   endif (NOT CLAPACK_FIND_QUIETLY)
-else (CLAPACK_FOUND)
+   endif ()
+else ()
    if (CLAPACK_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find a CLAPACK library")
-   endif (CLAPACK_FIND_REQUIRED)
-endif (CLAPACK_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 set (NATIVE_CLAPACK_INCLUDE_PATH ${CLAPACK_INCLUDE_DIR} )

@@ -21,20 +21,20 @@ find_library(LAPACK_LIBRARY
 if (LAPACK_LIBRARY)
   set(LAPACK_LIBRARIES ${LAPACK_LIBRARY})
   set(LAPACK_FOUND "YES")
-else (LAPACK_LIBRARY)
+else ()
   set(LAPACK_FOUND "NO")
-endif (LAPACK_LIBRARY)
+endif ()
 
 
 if (LAPACK_FOUND)
    if (NOT LAPACK_FIND_QUIETLY)
       message(STATUS "Found LAPACK: ${LAPACK_LIBRARIES}")
-   endif (NOT LAPACK_FIND_QUIETLY)
-else (LAPACK_FOUND)
+   endif ()
+else ()
    if (LAPACK_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find LAPACK")
-   endif (LAPACK_FIND_REQUIRED)
-endif (LAPACK_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 get_filename_component (NATIVE_LAPACK_LIB_PATH ${LAPACK_LIBRARY} PATH)

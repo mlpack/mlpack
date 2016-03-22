@@ -186,6 +186,7 @@
  *   - Barak Pearlmutter <barak+git@pearlmutter.net>
  *   - Ivari Horm <ivari@risk.ee>
  *   - Dhawal Arora <d.p.arora1@gmail.com>
+ *   - Alexander Leinoff <alexander-leinoff@uiowa.edu>
  */
 
 // First, include all of the prerequisites.

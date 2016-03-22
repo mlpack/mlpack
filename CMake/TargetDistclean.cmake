@@ -19,4 +19,4 @@ if (UNIX)
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -depth -type d -iname CMakeFiles -exec rm -rf {} \;
     COMMAND rm ARGS -rf bin lib include
     VERBATIM )
-endif(UNIX)
+endif()

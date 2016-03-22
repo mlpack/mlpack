@@ -21,16 +21,16 @@ if(WIN32)
         "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\${MATVER};MATLABROOT]"
         ABSOLUTE)
       set(MATLAB_VERSION ${MATVER})
-    endif((NOT DEFINED MATLAB_ROOT)
+    endif()
       OR ("${MATLAB_ROOT}" STREQUAL "")
       OR ("${MATLAB_ROOT}" STREQUAL "/registry"))
-  endforeach(MATVER)
+  endforeach()
 
   find_program(MATLAB_MEX
     mex
     ${MATLAB_ROOT}/bin
     )
-else(WIN32)
+else()
   # Check if this is a Mac.
   if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # This code is untested but taken from the older FindMatlab.cmake script as
@@ -50,11 +50,11 @@ else(WIN32)
           if(EXISTS /Applications/MATLAB_${MATVER}.app)
             set(MATLAB_ROOT /Applications/MATLAB_${MATVER}.app)
 
-          endif(EXISTS /Applications/MATLAB_${MATVER}.app)
-        endif((NOT DEFINED MATLAB_ROOT) OR ("${MATLAB_ROOT}" STREQUAL ""))
-      endforeach(MATVER)
+          endif()
+        endif()
+      endforeach()
 
-    endif((NOT DEFINED MATLAB_ROOT) OR ("${MATLAB_ROOT}" STREQUAL ""))
+    endif()
 
     find_program(MATLAB_MEX
       mex
@@ -62,7 +62,7 @@ else(WIN32)
       ${MATLAB_ROOT}/bin
     )
 
-  else(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  else()
     # On a Linux system.  The goal is to find MATLAB_ROOT.
     set(LIBRARY_EXTENSION .so)
 
@@ -89,18 +89,18 @@ else(WIN32)
     get_filename_component(MATLAB_BIN_ROOT "${MATLAB_MEX}" PATH)
     # Strip ./bin/.
     get_filename_component(MATLAB_ROOT "${MATLAB_BIN_ROOT}" PATH)
-  endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-endif(WIN32)
+  endif()
+endif()
 
 if(NOT EXISTS "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
   message(FATAL_ERROR "Could not find MATLAB mex compiler; try specifying MATLAB_ROOT.")
-else(NOT EXISTS "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
+else()
   if(EXISTS "${MATLAB_MEX}")
     message(STATUS "Found MATLAB mex compiler: ${MATLAB_MEX}")
     message(STATUS "MATLAB root: ${MATLAB_ROOT}")
     set(MATLABMEX_FOUND 1)
-  endif(EXISTS "${MATLAB_MEX}")
-endif(NOT EXISTS "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
+  endif()
+endif()
 
 mark_as_advanced(
   MATLAB_MEX
