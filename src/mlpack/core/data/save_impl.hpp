@@ -135,8 +135,8 @@ bool Save(const std::string& filename,
 
   // Transpose the matrix.  If we are saving HDF5, Armadillo already transposes
   // this on save, so we don't need to.
-  if ((transpose && loadType != arma::hdf5_binary) ||
-      (!transpose && loadType == arma::hdf5_binary))
+  if ((transpose && saveType != arma::hdf5_binary) ||
+      (!transpose && saveType == arma::hdf5_binary))
   {
     arma::Mat<eT> tmp = trans(matrix);
 
