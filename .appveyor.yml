@@ -20,6 +20,7 @@ build_script:
   - ps: cp C:\projects\mlpack\boost_unit_test_framework-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - appveyor DownloadFile http://sourceforge.net/projects/arma/files/armadillo-6.500.5.tar.gz
   - 7z x armadillo-6.500.5.tar.gz -so | 7z x -si -ttar > nul
+  - ps: (gc .\armadillo-6.500.5\include\armadillo_bits\config.hpp).replace("// #define ARMA_64BIT_WORD","#ifdef _WIN64`r`n#define ARMA_64BIT_WORD`r`n#else`r`n#define ARMA_32BIT_WORD`r`n#endif") | sc .\armadillo-6.500.5\include\armadillo_bits\config.hpp
   - cd armadillo-6.500.5 && mkdir build && cd build
   - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo" -DBUILD_SHARED_LIBS=OFF ..
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\armadillo-6.500.5\build\armadillo.sln" /m /verbosity:quiet /p:Configuration=Release;Platform=x64'
