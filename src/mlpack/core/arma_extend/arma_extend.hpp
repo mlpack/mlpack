@@ -24,6 +24,21 @@
 #define ARMA_EXTRA_CUBE_PROTO mlpack/core/arma_extend/Cube_extra_bones.hpp
 #define ARMA_EXTRA_CUBE_MEAT mlpack/core/arma_extend/Cube_extra_meat.hpp
 
+// Manually set ARMA_{64,32}BIT_WORD for _WIN64 or win32
+#if defined(_MSC_VER)
+    #ifdef _WIN64
+        #define ARMA_64BIT_WORD
+        #ifdef ARMA_32BIT_WORD
+            #undef ARMA_32BIT_WORD
+        #endif
+    #else
+        #define ARMA_32BIT_WORD
+        #ifdef ARMA_64BIT_WORD
+            #undef ARMA_64BIT_WORD
+        #endif
+    #endif
+#endif
+
 // Make sure that U64 and S64 support is enabled.
 #ifndef ARMA_USE_U64S64
   #define ARMA_USE_U64S64
