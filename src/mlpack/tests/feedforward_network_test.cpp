@@ -1,6 +1,7 @@
 /**
  * @file feedforward_network_test.cpp
  * @author Marcus Edel
+ * @author Palash Ahuja
  *
  * Tests the feed forward network.
  */
@@ -288,7 +289,8 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 }
 
 /**
- * Train and evaluate a DropConnect network(with a baselayer) with the specified structure.
+ * Train and evaluate a DropConnect network(with a baselayer) with the
+ * specified structure.
  */
 template<
     typename PerformanceFunction,
@@ -304,66 +306,71 @@ void BuildDropConnectNetwork(MatType& trainData,
                              const size_t maxEpochs,
                              const double classificationErrorThreshold) 
 {
-/*
-*  Construct a feed forward network with trainData.n_rows input nodes,
-*  hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-*  network struct that looks like:
-*
-*  Input         Hidden       DropConnect     Output
-*  Layer         Layer         Layer        Layer
-* +-----+       +-----+       +-----+       +-----+
-* |     |       |     |       |     |       |     |
-* |     +------>|     +------>|     +------>|     |
-* |     |     +>|     |       |     |       |     |
-* +-----+     | +--+--+       +-----+       +-----+
-*             |
-*  Bias       |
-*  Layer      |
-* +-----+     |
-* |     |     |
-* |     +-----+
-* |     |
-* +-----+
-*
-*
-*/
-LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-BiasLayer<> biasLayer(hiddenLayerSize);
-BaseLayer<PerformanceFunction> hiddenLayer0;
+ /*
+  *  Construct a feed forward network with trainData.n_rows input nodes,
+  *  hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+  *  network struct that looks like:
+  *
+  *  Input         Hidden     DropConnect     Output
+  *  Layer         Layer         Layer        Layer
+  * +-----+       +-----+       +-----+       +-----+
+  * |     |       |     |       |     |       |     |
+  * |     +------>|     +------>|     +------>|     |
+  * |     |     +>|     |       |     |       |     |
+  * +-----+     | +--+--+       +-----+       +-----+
+  *             |
+  *  Bias       |
+  *  Layer      |
+  * +-----+     |
+  * |     |     |
+  * |     +-----+
+  * |     |
+  * +-----+
+  *
+  *
+  */
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> biasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0;
 
-LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-DropConnectLayer<decltype(hiddenLayer1)> dropConnectLayer0(hiddenLayer1);
+  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+  DropConnectLayer<decltype(hiddenLayer1)> dropConnectLayer0(hiddenLayer1);
 
-BaseLayer<PerformanceFunction> outputLayer;
+  BaseLayer<PerformanceFunction> outputLayer;
 
-OutputLayerType classOutputLayer;
+  OutputLayerType classOutputLayer;
 
-auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                        dropConnectLayer0, outputLayer);
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
+                          dropConnectLayer0, outputLayer);
 
-FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-            PerformanceFunctionType> net(modules, classOutputLayer);
-RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-                            maxEpochs * trainData.n_cols, 1e-18);
-net.Train(trainData, trainLabels, opt);
-MatType prediction;
-net.Predict(testData, prediction);
+  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
+              PerformanceFunctionType> net(modules, classOutputLayer);
 
-size_t error = 0;
-for (size_t i = 0; i < testData.n_cols; i++) 
-{
-    if (arma::sum(arma::sum(
-        arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
-    {
-        error++;
-    }
-}
-double classificationError = 1 - double(error) / testData.n_cols;
-BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, 1e-18);
+
+  net.Train(trainData, trainLabels, opt);
+
+  MatType prediction;
+  net.Predict(testData, prediction);
+
+  size_t error = 0;
+  for (size_t i = 0; i < testData.n_cols; i++)
+  {
+      if (arma::sum(arma::sum(
+          arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+      {
+          error++;
+      }
+  }
+
+  double classificationError = 1 - double(error) / testData.n_cols;
+  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }   
     
 /**
- * Train and evaluate a DropConnect network(with a linearlayer) with the specified structure.
+ * Train and evaluate a DropConnect network(with a linearlayer) with the
+ * specified structure.
  */
 template<
     typename PerformanceFunction,
@@ -379,60 +386,64 @@ void BuildDropConnectNetworkLinear(MatType& trainData,
                                    const size_t maxEpochs,
                                    const double classificationErrorThreshold) 
 {
-/*
-* Construct a feed forward network with trainData.n_rows input nodes,
-* hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-* network struct that looks like:
-*
-* Input         Hidden       DropConnect     Output
-*  Layer         Layer         Layer        Layer
-* +-----+       +-----+       +-----+       +-----+
-* |     |       |     |       |     |       |     |
-* |     +------>|     +------>|     +------>|     |
-* |     |     +>|     |       |     |       |     |
-* +-----+     | +--+--+       +-----+       +-----+
-*             |
-*  Bias       |
-*  Layer      |
-* +-----+     |
-* |     |     |
-* |     +-----+
-* |     |
-* +-----+
-*
-*
-*/
-LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-BiasLayer<> biasLayer(hiddenLayerSize);
-BaseLayer<PerformanceFunction> hiddenLayer0;
-const size_t number_of_rows = trainLabels.n_rows;
-DropConnectLayer<> dropConnectLayer0(hiddenLayerSize, number_of_rows);
+ /*
+  * Construct a feed forward network with trainData.n_rows input nodes,
+  * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+  * network struct that looks like:
+  *
+  * Input         Hidden       DropConnect     Output
+  * Layer         Layer          Layer         Layer
+  * +-----+       +-----+       +-----+       +-----+
+  * |     |       |     |       |     |       |     |
+  * |     +------>|     +------>|     +------>|     |
+  * |     |     +>|     |       |     |       |     |
+  * +-----+     | +--+--+       +-----+       +-----+
+  *             |
+  *  Bias       |
+  *  Layer      |
+  * +-----+     |
+  * |     |     |
+  * |     +-----+
+  * |     |
+  * +-----+
+  *
+  *
+  */
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> biasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0;
 
-BaseLayer<PerformanceFunction> outputLayer;
+  DropConnectLayer<> dropConnectLayer0(hiddenLayerSize, trainLabels.n_rows);
 
-OutputLayerType classOutputLayer;
-auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                        dropConnectLayer0, outputLayer);
+  BaseLayer<PerformanceFunction> outputLayer;
 
-FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-            PerformanceFunctionType> net(modules, classOutputLayer);
-RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-                        maxEpochs * trainData.n_cols, 1e-18);
-net.Train(trainData, trainLabels, opt);
-MatType prediction;
-net.Predict(testData, prediction);
+  OutputLayerType classOutputLayer;
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
+                          dropConnectLayer0, outputLayer);
 
-size_t error = 0;
-for (size_t i = 0; i < testData.n_cols; i++)
-{
-    if (arma::sum(arma::sum(
-            arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
-    {
-            error++;
-    }
-}
-double classificationError = 1 - double(error) / testData.n_cols;
-BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
+              PerformanceFunctionType> net(modules, classOutputLayer);
+
+  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, 1e-18);
+
+  net.Train(trainData, trainLabels, opt);
+
+  MatType prediction;
+  net.Predict(testData, prediction);
+
+  size_t error = 0;
+  for (size_t i = 0; i < testData.n_cols; i++)
+  {
+      if (arma::sum(arma::sum(
+          arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+      {
+              error++;
+      }
+  }
+
+  double classificationError = 1 - double(error) / testData.n_cols;
+  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }
 /**
  * Train the dropconnect network on a larger dataset.
@@ -464,8 +475,8 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
       (trainData, trainLabels, testData, testLabels, 4, 100, 0.1);
 
   BuildDropConnectNetworkLinear<LogisticFunction,
-                          BinaryClassificationLayer,
-                          MeanSquaredErrorFunction>
+                                BinaryClassificationLayer,
+                                MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 4, 100, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -479,24 +490,15 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   // Vanilla neural net with logistic activation function.
   BuildDropConnectNetwork<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
+                          BinaryClassificationLayer,
+                          MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 8, 30, 0.4);
 
 
   BuildDropConnectNetworkLinear<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
+                                BinaryClassificationLayer,
+                                MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 8, 30, 0.4);
-
-  // Vanilla neural net with tanh activation function.
-  BuildDropConnectNetwork<TanhFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-    (dataset, labels, dataset, labels, 8, 30, 0.4);
-  BuildDropConnectNetworkLinear<TanhFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-    (dataset, labels, dataset, labels, 8, 30, 0.4);
 }
+
 BOOST_AUTO_TEST_SUITE_END();
