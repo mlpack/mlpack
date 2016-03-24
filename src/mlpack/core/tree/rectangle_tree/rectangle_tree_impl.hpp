@@ -154,8 +154,8 @@ RectangleTree(
     bound(other.bound),
     splitHistory(other.SplitHistory()),
     parentDistance(other.ParentDistance()),
-    dataset(new MatType(*other.dataset)),
-    ownsDataset(true),
+    dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
+    ownsDataset(deepCopy),
     points(other.Points()),
     localDataset(NULL)
 {

@@ -743,7 +743,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() * 2;
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + tree->NormalNodeMaxNumChildren();
         tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
@@ -760,7 +760,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
       }
 
       // If we don't have to worry about the root, we just enlarge this node.
-      tree->MaxNumChildren() *= 2;
+      tree->MaxNumChildren() += tree->NormalNodeMaxNumChildren();
       tree->Children().resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)
         tree->Child(i).Parent() = tree;
