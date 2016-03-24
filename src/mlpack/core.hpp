@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file core.hpp
  *
  * Include all of the base components required to write MLPACK methods, and the
@@ -187,6 +187,7 @@
  *   - Ivari Horm <ivari@risk.ee>
  *   - Dhawal Arora <d.p.arora1@gmail.com>
  *   - Alexander Leinoff <alexander-leinoff@uiowa.edu>
+ *   - Palash Ahuja <abhor902@gmail.com>
  */
 
 // First, include all of the prerequisites.
