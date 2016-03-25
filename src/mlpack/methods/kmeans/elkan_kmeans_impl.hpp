@@ -153,15 +153,14 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   double cNorm = 0.0; // Cluster movement for residual.
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
-    if (counts[c] > 0) {
+    if (counts[c] > 0)
       newCentroids.col(c) /= counts[c];
-      moveDistances(c) = metric.Evaluate(newCentroids.col(c), centroids.col(c));
-      cNorm += std::pow(moveDistances(c), 2.0);
-      distanceCalculations++;
-    } else {
-      newCentroids.col(c) = centroids.col(c); // Keep old centroid.
-      moveDistances(c) = 0.0;
-    }
+    else
+      newCentroids.col(c).fill(DBL_MAX); // Fill with invalid value.
+
+    moveDistances(c) = metric.Evaluate(newCentroids.col(c), centroids.col(c));
+    cNorm += std::pow(moveDistances(c), 2.0);
+    distanceCalculations++;
   }
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
