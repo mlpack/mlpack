@@ -118,7 +118,7 @@ class DualTreeKMeans
   void ExtractCentroids(Tree& node,
                         arma::mat& newCentroids,
                         arma::Col<size_t>& newCounts,
-                        arma::mat& centroids);
+                        const arma::mat& centroids);
 
   void CoalesceTree(Tree& node, const size_t child = 0);
   void DecoalesceTree(Tree& node);
