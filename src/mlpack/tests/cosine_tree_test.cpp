@@ -119,14 +119,14 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       if(std::fabs(cosineMax - cosineMax2) < precision)
       {
         // Check with some precision
-	    for (i = 0; i < leftIndices.size(); i++)
-          BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin + precision);
+        for (i = 0; i < leftIndices.size(); i++)
+          BOOST_REQUIRE_LT(cosineMax - cosines(i), cosines(i) - cosineMin + precision);
 
         for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-          BOOST_CHECK_GT(cosineMax - cosines(k), cosines(k) - cosineMin - precision);
-	  }
-	  else
-	  {
+          BOOST_REQUIRE_GT(cosineMax - cosines(k), cosines(k) - cosineMin - precision);
+      }
+      else
+      {
         size_t numMax1Errors = 0;
         size_t numMax2Errors = 0;
 
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
           if(cosineMax - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax1Errors++;
 
-        // Find errors for cosineMax
+        // Find errors for cosineMax2
         for (i = 0; i < leftIndices.size(); i++)
           if(cosineMax2 - cosines(i) >= cosines(i) - cosineMin + precision)
             numMax2Errors++;
@@ -148,16 +148,8 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
           if(cosineMax2 - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax2Errors++;
 
-        if(numMax1Errors > 0 && numMax2Errors > 0)
-        {
-          // cosineMax and cosineMax2 do not match
-          // we should report the problem
-	      for (i = 0; i < leftIndices.size(); i++)
-            BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin);
-
-          for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-            BOOST_CHECK_GT(cosineMax - cosines(k), cosines(k) - cosineMin);
-        }
+        //  One of the maximum cosine values should be correct
+        BOOST_REQUIRE_EQUAL(std::min(numMax1Errors,numMax2Errors),0);
       }
     }
   }
