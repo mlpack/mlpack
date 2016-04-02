@@ -8,10 +8,12 @@ set(DIRS
   sa
   sdp
   sgd
+  parallel_sgd
+  scd
 )
 
 foreach(dir ${DIRS})
-  add_subdirectory(${dir})
+add_subdirectory(${dir})
 endforeach()
 
 set(MLPACK_SRCS ${MLPACK_SRCS} PARENT_SCOPE)
