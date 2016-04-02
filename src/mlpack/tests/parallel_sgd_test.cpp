@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(coordinates);
-    BOOST_REQUIRE_SMALL(result, 1e-5);
+    BOOST_REQUIRE_SMALL(result, 1e-4);
     for (size_t j = 0; j < i; ++j)
     {
       BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.5);
