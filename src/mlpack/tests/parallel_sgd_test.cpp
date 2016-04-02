@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     BOOST_REQUIRE_SMALL(result, 1e-4);
     for (size_t j = 0; j < i; ++j)
     {
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.99);
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 02);
     }
   }
 }
