@@ -19,8 +19,8 @@ double compute_recall(
     const arma::Mat<size_t>& LSHneighbors, 
     const arma::Mat<size_t>& groundTruth)
 {
-  const int queries = LSHneighbors.n_cols;
-  const int neigh = LSHneighbors.n_rows;
+  const size_t queries = LSHneighbors.n_cols;
+  const size_t neigh = LSHneighbors.n_rows;
 
   int found_same = 0;
   for (size_t q = 0; q < queries; ++q)
@@ -53,12 +53,12 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const int numTries = 5; //tries for each test before declaring failure
 
   //read iris training and testing data as reference and query
-  const string data_train="iris_train.csv";
-  const string data_test="iris_test.csv";
+  const string trainSet="iris_train.csv";
+  const string testSet="iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(data_train, rdata, true);
-  data::Load(data_test, qdata, true);
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
 
   //Run classic knn on reference data
   AllkNN knn(rdata);
@@ -80,24 +80,24 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   for (int t = 0; t < numTries; ++t){
 
     fail = false;
-    const int Lsize = 6; //number of runs
-    const int L_value[] = {1, 8, 16, 32, 64, 128}; //number of tables
-    double L_value_recall[Lsize] = {0.0}; //recall of each LSH run
+    const int lSize = 6; //number of runs
+    const int lValue[] = {1, 8, 16, 32, 64, 128}; //number of tables
+    double lValueRecall[lSize] = {0.0}; //recall of each LSH run
 
-    for (size_t l=0; l < Lsize; ++l)
+    for (size_t l=0; l < lSize; ++l)
     {
       //run LSH with only numTables varying (other values default)
-      LSHSearch<> lsh_test1(rdata, numProj, L_value[l], 
+      LSHSearch<> lsh_test1(rdata, numProj, lValue[l], 
           hashWidth, secondHashSize, bucketSize);
       arma::Mat<size_t> LSHneighbors;
       arma::mat LSHdistances;
       lsh_test1.Search(qdata, k, LSHneighbors, LSHdistances);
 
       //compute recall for each query
-      L_value_recall[l] = compute_recall(LSHneighbors, groundTruth);
+      lValueRecall[l] = compute_recall(LSHneighbors, groundTruth);
 
       if (l > 0){
-        if(L_value_recall[l] < L_value_recall[l-1]-epsilon){
+        if(lValueRecall[l] < lValueRecall[l-1]-epsilon){
           fail = true; //if test fails at one point, stop and retry
           break;
         }
@@ -118,24 +118,30 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //will increase recall. Epsilon ensures that if noise lightly affects the 
   //projections, the test will not fail.
   
-  const int Hsize = 7; //number of runs
-  const double H_value[] = {0.1, 0.5, 1, 5, 10, 50, 500}; //hash width
-  double H_value_recall[Hsize] = {0.0}; //recall of each run
+  const int hSize = 7; //number of runs
+  const double hValue[] = {0.1, 0.5, 1, 5, 10, 50, 500}; //hash width
+  double hValueRecall[hSize] = {0.0}; //recall of each run
 
-  for (size_t h=0; h < Hsize; ++h)
+  for (size_t h=0; h < hSize; ++h)
   {
     //run LSH with only hashWidth varying (other values default)
-    LSHSearch<> lsh_test2(rdata, numProj, numTables, 
-            H_value[h], secondHashSize, bucketSize);
+    LSHSearch<> lsh_test2(
+        rdata, 
+        numProj, 
+        numTables, 
+        hValue[h], 
+        secondHashSize, 
+        bucketSize);
+    
     arma::Mat<size_t> LSHneighbors;
     arma::mat LSHdistances;
     lsh_test2.Search(qdata, k, LSHneighbors, LSHdistances);
 
     //compute recall for each query
-    H_value_recall[h] = compute_recall(LSHneighbors, groundTruth);
+    hValueRecall[h] = compute_recall(LSHneighbors, groundTruth);
 
     if (h > 0)
-        BOOST_REQUIRE_GE(H_value_recall[h], H_value_recall[h-1]-epsilon);
+        BOOST_REQUIRE_GE(hValueRecall[h], hValueRecall[h-1]-epsilon);
     
   }
 
@@ -146,24 +152,30 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //projections per table will decrease recall. Epsilon ensures that if noise 
   //lightly affects the projections, the test will not fail.
  
-  const int Psize = 5; //number of runs
-  const int P_value[] = {1, 10, 20, 50, 100}; //number of projections
-  double P_value_recall[Psize] = {0.0}; //recall of each run
+  const int pSize = 5; //number of runs
+  const int pValue[] = {1, 10, 20, 50, 100}; //number of projections
+  double pValueRecall[pSize] = {0.0}; //recall of each run
 
-  for (size_t p=0; p < Psize; ++p)
+  for (size_t p=0; p < pSize; ++p)
   {
     //run LSH with only numProj varying (other values default)
-    LSHSearch<> lsh_test3(rdata, P_value[p], numTables, 
-            hashWidth, secondHashSize, bucketSize);
+    LSHSearch<> lsh_test3(
+        rdata, 
+        pValue[p], 
+        numTables, 
+        hashWidth, 
+        secondHashSize, 
+        bucketSize);
+
     arma::Mat<size_t> LSHneighbors;
     arma::mat LSHdistances;
     lsh_test3.Search(qdata, k, LSHneighbors, LSHdistances);
 
     //compute recall for each query
-    P_value_recall[p] = compute_recall(LSHneighbors, groundTruth);
+    pValueRecall[p] = compute_recall(LSHneighbors, groundTruth);
 
     if (p > 0) //don't check first run, only that increasing P decreases recall
-        BOOST_REQUIRE_LE(P_value_recall[p] - epsilon, P_value_recall[p-1]);
+        BOOST_REQUIRE_LE(pValueRecall[p] - epsilon, pValueRecall[p-1]);
   }
   
   //Test: Run a very expensive LSH search, with a large number of hash tables
@@ -171,49 +183,49 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //the bar very low (recall >= 50%) to make sure that a test fail means bad
   //implementation.
   
-  const int H_exp = 10000; //first-level hash width
-  const int K_exp = 1; //projections per table
-  const int T_exp = 128; //number of tables
-  const double recall_thresh_exp = 0.5;
+  const int hExp = 10000; //first-level hash width
+  const int kExp = 1; //projections per table
+  const int tExp = 128; //number of tables
+  const double recallThreshExp = 0.5;
 
   LSHSearch<> lsh_test_exp(
       rdata, 
-      K_exp, 
-      T_exp, 
-      H_exp, 
+      kExp, 
+      tExp, 
+      hExp, 
       secondHashSize, 
       bucketSize);
-  arma::Mat<size_t> LSHneighbors_exp;
-  arma::mat LSHdistances_exp;
-  lsh_test_exp.Search(qdata, k, LSHneighbors_exp, LSHdistances_exp);
+  arma::Mat<size_t> LSHneighborsExp;
+  arma::mat LSHdistancesExp;
+  lsh_test_exp.Search(qdata, k, LSHneighborsExp, LSHdistancesExp);
   
-  const double recall_exp = compute_recall(LSHneighbors_exp, groundTruth);
+  const double recallExp = compute_recall(LSHneighborsExp, groundTruth);
 
-  BOOST_REQUIRE_GE(recall_exp, recall_thresh_exp);
+  BOOST_REQUIRE_GE(recallExp, recallThreshExp);
 
   //Test: Run a very cheap LSH search, with parameters that should cause recall
   //to be very low. Set the threshhold very high (recall <= 25%) to make sure
   //that a test fail means bad implementation.
   //This mainly checks that user-specified parameters are not ignored.
   
-  const int H_chp = 1; //small first-level hash width
-  const int K_chp = 1000; //large number of projections per table
-  const int T_chp = 1; //only one table
-  const double recall_thresh_chp = 0.25; //recall threshold
+  const int hChp = 1; //small first-level hash width
+  const int kChp = 1000; //large number of projections per table
+  const int tChp = 1; //only one table
+  const double recallThreshChp = 0.25; //recall threshold
 
   LSHSearch<> lsh_test_chp(
       rdata, 
-      K_chp, 
-      T_chp, 
-      H_chp, 
+      kChp, 
+      tChp, 
+      hChp, 
       secondHashSize, 
       bucketSize);
-  arma::Mat<size_t> LSHneighbors_chp;
-  arma::mat LSHdistances_chp;
-  lsh_test_chp.Search(qdata, k, LSHneighbors_chp, LSHdistances_chp);
+  arma::Mat<size_t> LSHneighborsChp;
+  arma::mat LSHdistancesChp;
+  lsh_test_chp.Search(qdata, k, LSHneighborsChp, LSHdistancesChp);
 
-  const double recall_chp = compute_recall(LSHneighbors_chp, groundTruth);
-  BOOST_REQUIRE_LE(recall_chp, recall_thresh_chp);
+  const double recallChp = compute_recall(LSHneighborsChp, groundTruth);
+  BOOST_REQUIRE_LE(recallChp, recallThreshChp);
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
