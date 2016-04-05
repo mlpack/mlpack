@@ -49,6 +49,7 @@ add_executable(mlpack_test
   nca_test.cpp
   network_util_test.cpp
   nmf_test.cpp
+  nonlinearCG_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   quic_svd_test.cpp
