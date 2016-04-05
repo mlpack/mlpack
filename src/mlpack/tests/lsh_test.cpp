@@ -49,7 +49,8 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const int bucketSize = 500;
   
   //test parameters
-  const double epsilon = 0.1;
+  const double epsilon = 0.1; //allowed deviation from expected monotonicity
+  const int numTries = 5; //tries for each test before declaring failure
 
   //read iris training and testing data as reference and query
   const string data_train="iris_train.csv";
@@ -71,12 +72,14 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //LSH's property is that (with high probability), increasing the number of
   //tables will increase recall. Epsilon ensures that if noise lightly affects
   //the projections, the test will not fail.
+  //This produces false negatives, so we attempt the test numTries times and
+  //only declare failure if all of them fail.
   
-  const int numTries = 5; //tries for each test before declaring failure
-  bool fail = false;
+  bool fail;
 
   for (int t = 0; t < numTries; ++t){
 
+    fail = false;
     const int Lsize = 6; //number of runs
     const int L_value[] = {1, 8, 16, 32, 64, 128}; //number of tables
     double L_value_recall[Lsize] = {0.0}; //recall of each LSH run
@@ -100,11 +103,13 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
         }
       }
     }
-    if ( !fail ){
+    if ( !fail )
+    {
       break; //if test passes one time, it is sufficient
     }
+
   }
-  BOOST_CHECK(fail == false);
+  BOOST_REQUIRE(fail == false);
    
   //Test: Run LSH with varying hash width, keeping all other parameters 
   //constant. Compute the recall, i.e. the number of reported neighbors that
@@ -130,7 +135,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
     H_value_recall[h] = compute_recall(LSHneighbors, groundTruth);
 
     if (h > 0)
-        BOOST_CHECK(H_value_recall[h] >= H_value_recall[h-1]-epsilon);
+        BOOST_REQUIRE_GE(H_value_recall[h], H_value_recall[h-1]-epsilon);
     
   }
 
@@ -158,7 +163,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
     P_value_recall[p] = compute_recall(LSHneighbors, groundTruth);
 
     if (p > 0) //don't check first run, only that increasing P decreases recall
-        BOOST_CHECK(P_value_recall[p] - epsilon <= P_value_recall[p-1]);
+        BOOST_REQUIRE_LE(P_value_recall[p] - epsilon, P_value_recall[p-1]);
   }
   
   //Test: Run a very expensive LSH search, with a large number of hash tables
@@ -184,7 +189,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   
   const double recall_exp = compute_recall(LSHneighbors_exp, groundTruth);
 
-  BOOST_CHECK(recall_exp >= recall_thresh_exp);
+  BOOST_REQUIRE_GE(recall_exp, recall_thresh_exp);
 
   //Test: Run a very cheap LSH search, with parameters that should cause recall
   //to be very low. Set the threshhold very high (recall <= 25%) to make sure
@@ -208,7 +213,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   lsh_test_chp.Search(qdata, k, LSHneighbors_chp, LSHdistances_chp);
 
   const double recall_chp = compute_recall(LSHneighbors_chp, groundTruth);
-  BOOST_CHECK(recall_chp <= recall_thresh_chp);
+  BOOST_REQUIRE_LE(recall_chp, recall_thresh_chp);
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
