@@ -261,7 +261,12 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
 
-  const bool success = matrix.load(stream, loadType);
+  // We can't use the stream if the type is HDF5.
+  bool success;
+  if (loadType != arma::hdf5_binary)
+    success = matrix.load(stream, loadType);
+  else
+    success = matrix.load(filename, loadType);
 
   if (!success)
   {
@@ -278,8 +283,13 @@ bool Load(const std::string& filename,
     Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
         << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
 
-  // Now transpose the matrix, if necessary.
-  if (transpose)
+  // Now transpose the matrix, if necessary.  Armadillo loads HDF5 matrices
+  // transposed, so we have to work around that.
+  if (transpose && loadType != arma::hdf5_binary)
+  {
+    inplace_transpose(matrix);
+  }
+  else if (!transpose && loadType == arma::hdf5_binary)
   {
     inplace_transpose(matrix);
   }

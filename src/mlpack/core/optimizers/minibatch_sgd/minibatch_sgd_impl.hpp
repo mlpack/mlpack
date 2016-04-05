@@ -120,8 +120,18 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
         gradient += funcGradient;
       }
 
-      // Now update the iterate.
-      iterate -= (stepSize / lastBatchSize) * gradient;
+      // Ensure the last batch size isn't zero, to avoid division by zero before
+      // updating.
+      if (lastBatchSize > 0)
+      {
+        // Now update the iterate.
+        iterate -= (stepSize / lastBatchSize) * gradient;
+      }
+      else
+      {
+        // Now update the iterate.
+        iterate -= stepSize * gradient;
+      }
 
       // Add that to the overall objective function.
       for (size_t j = 0; j < lastBatchSize; ++j)

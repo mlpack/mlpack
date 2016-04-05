@@ -6,7 +6,7 @@ include(CMake/CXX11.cmake)
 check_for_cxx11_compiler(HAS_CXX11)
 if(NOT HAS_CXX11)
   message(FATAL_ERROR "No C++11 compiler available!")
-endif(NOT HAS_CXX11)
+endif()
 enable_cxx11()
 
 # First, define all the compilation options.
@@ -29,7 +29,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
-endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+endif()
 
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
@@ -53,13 +53,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
       set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-     endif(${MACOSX_VERSION} LESS 9)
-  endif(APPLE)
+     endif()
+  endif()
 
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
-endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
@@ -76,33 +76,33 @@ if(DEBUG)
       include_directories(${LIBBFD_INCLUDE_DIRS})
       include_directories(${LIBDL_INCLUDE_DIRS})
       add_definitions(-DHAS_BFD_DL)
-    else(LIBBFD_FOUND AND LIBDL_FOUND)
+    else()
       message(WARNING "No libBFD and/or libDL has been found!")
-    endif(LIBBFD_FOUND AND LIBDL_FOUND)
-  endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    endif()
+  endif()
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
-endif(DEBUG)
+endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
 if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
+endif()
 
 # If the user asked for running test cases with verbose output, turn that on.
 if(TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
-endif(TEST_VERBOSE)
+endif()
 
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
-endif(ARMA_EXTRA_DEBUG)
+endif()
 
 # Now, find the libraries we need to compile against.  Several variables can be
 # set to manually specify the directory in which each of these libraries
@@ -125,12 +125,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(ARMA_HAS_64BIT_WORD 0)
   if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
     set(ARMA_HAS_64BIT_WORD 1)
-  else(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+  else()
     # Can we open the configuration file?  If not, issue a warning.
     if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
       message(WARNING "Armadillo configuration file "
           "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+    else()
       # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
       file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
       string(REGEX MATCH
@@ -139,8 +139,8 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
           "${ARMA_CONFIG}")
 
       string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-  endif(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+    endif()
+  endif()
 
   if(ARMA_HAS_64BIT_WORD EQUAL 0)
     message(WARNING "This is a 64-bit system, but Armadillo was compiled "
@@ -148,15 +148,15 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
         "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
         "scale to matrices with more than 4 billion elements.")
-  endif(ARMA_HAS_64BIT_WORD EQUAL 0)
-else(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  endif()
+else()
   # If we are on a 32-bit system, we must manually specify the size of the word
   # to be 32 bits, since otherwise Armadillo will produce a warning that it is
   # disabling 64-bit support.
   if (CMAKE_SIZEOF_VOID_P EQUAL 4)
     add_definitions(-DARMA_32BIT_WORD)
-  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  endif ()
+endif()
 
 # On Windows, Armadillo should be using LAPACK and BLAS but we still need to
 # link against it.  We don't want to use the FindLAPACK or FindBLAS modules
@@ -171,7 +171,7 @@ if (WIN32)
 
   if (NOT LAPACK_LIBRARY)
     message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
-  endif (NOT LAPACK_LIBRARY)
+  endif ()
 
   find_library(BLAS_LIBRARY
       NAMES blas libblas blas_win32_MT blas_win32
@@ -180,12 +180,12 @@ if (WIN32)
 
   if (NOT BLAS_LIBRARY)
     message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
-  endif (NOT BLAS_LIBRARY)
+  endif ()
 
   # Piggyback LAPACK and BLAS linking into Armadillo link.
   set(ARMADILLO_LIBRARIES
        ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
-endif (WIN32)
+endif ()
 
 # Include directories for the previous dependencies.
 include_directories(${ARMADILLO_INCLUDE_DIRS})
@@ -211,7 +211,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
   set(Boost_LIBRARIES "")
-endif (MSVC)
+endif ()
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
@@ -224,7 +224,7 @@ find_package(OpenMP)
 if (OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif (OPENMP_FOUND)
+endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
 # some reason.
@@ -237,7 +237,7 @@ if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-else (WIN32)
+else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
   # ${CMAKE_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
@@ -245,7 +245,7 @@ else (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
-endif (WIN32)
+endif ()
 
 # Determine whether or not this is a git repository, so that we can set the
 # version number if necessary.
@@ -272,8 +272,8 @@ if (GIT_FOUND)
   # Add gitversion.hpp to the list of sources.
   set(MLPACK_SRCS ${MLPACK_SRCS}
       "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp")
-  endif (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
-endif (GIT_FOUND)
+  endif ()
+endif ()
 
 # Create a target to generate arma_config.hpp, which is used to warn the user
 # when they are doing something stupid when linking something against mlpack.
@@ -296,7 +296,7 @@ add_subdirectory(src/mlpack)
 # depends on it.
 if (USING_GIT STREQUAL "YES")
   add_dependencies(mlpack mlpack_gitversion)
-endif (USING_GIT STREQUAL "YES")
+endif ()
 
 # Make the mlpack_arma_config target depend on mlpack (we couldn't do this
 # before the add_subdirectory() call because the mlpack target didn't exist
@@ -330,7 +330,7 @@ if (DOXYGEN_FOUND)
       COMPONENT doc
       OPTIONAL
   )
-endif (DOXYGEN_FOUND)
+endif ()
 
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
@@ -340,7 +340,7 @@ if (UNIX)
   # It's not a requirement that we make man pages.
   if (NOT TXT2MAN)
     message(WARNING "txt2man not found; man pages will not be generated.")
-  else (NOT TXT2MAN)
+  else ()
     # We have the tools.  We can make them.
     add_custom_target(man ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
@@ -389,5 +389,5 @@ if (UNIX)
     # Set the rules to install the documentation.
     install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
         DESTINATION share/man/man1/)
-  endif (NOT TXT2MAN)
-endif (UNIX)
+  endif ()
+endif ()

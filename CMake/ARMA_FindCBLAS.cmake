@@ -22,20 +22,20 @@ find_library(CBLAS_LIBRARY
 if (CBLAS_LIBRARY AND CBLAS_INCLUDE_DIR)
     set(CBLAS_LIBRARIES ${CBLAS_LIBRARY})
     set(CBLAS_FOUND "YES")
-else (CBLAS_LIBRARY AND CBLAS_INCLUDE_DIR)
+else ()
   set(CBLAS_FOUND "NO")
-endif (CBLAS_LIBRARY AND CBLAS_INCLUDE_DIR)
+endif ()
 
 
 if (CBLAS_FOUND)
    if (NOT CBLAS_FIND_QUIETLY)
       message(STATUS "Found a CBLAS library: ${CBLAS_LIBRARIES}")
-   endif (NOT CBLAS_FIND_QUIETLY)
-else (CBLAS_FOUND)
+   endif ()
+else ()
    if (CBLAS_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find a CBLAS library")
-   endif (CBLAS_FIND_REQUIRED)
-endif (CBLAS_FOUND)
+   endif ()
+endif ()
 
 # Deprecated declarations.
 set (NATIVE_CBLAS_INCLUDE_PATH ${CBLAS_INCLUDE_DIR} )

@@ -177,7 +177,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const double lastRefDescDist =
         traversalInfo.LastReferenceNode()->MinimumBoundDistance();
     adjustedScore = SortPolicy::CombineWorst(score, lastQueryDescDist);
-    adjustedScore = SortPolicy::CombineWorst(score, lastRefDescDist);
+    adjustedScore = SortPolicy::CombineWorst(adjustedScore, lastRefDescDist);
   }
 
   // Assemble an adjusted score.  For nearest neighbor search, this adjusted
