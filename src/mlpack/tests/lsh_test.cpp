@@ -16,22 +16,22 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 double compute_recall(
-    arma::Mat<size_t> LSHneighbors, 
-    arma::Mat<size_t> groundTruth)
+    const arma::Mat<size_t>& LSHneighbors, 
+    const arma::Mat<size_t>& groundTruth)
 {
-  const int n_queries = LSHneighbors.n_cols;
-  const int n_neigh = LSHneighbors.n_rows;
+  const int queries = LSHneighbors.n_cols;
+  const int neigh = LSHneighbors.n_rows;
 
   int found_same = 0;
-  for (int q = 0; q < n_queries; ++q)
+  for (size_t q = 0; q < queries; ++q)
   {
-    for (int n = 0; n < n_neigh; ++n)
+    for (size_t n = 0; n < neigh; ++n)
     {
       found_same+=(LSHneighbors(n,q)==groundTruth(n,q));
     }
   }
   return static_cast<double>(found_same)/
-    (static_cast<double>(n_queries*n_neigh));
+    (static_cast<double>(queries*neigh));
 }
 
 BOOST_AUTO_TEST_SUITE(LSHTest);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
     const int L_value[] = {1, 8, 16, 32, 64, 128}; //number of tables
     double L_value_recall[Lsize] = {0.0}; //recall of each LSH run
 
-    for (int l=0; l < Lsize; ++l)
+    for (size_t l=0; l < Lsize; ++l)
     {
       //run LSH with only numTables varying (other values default)
       LSHSearch<> lsh_test1(rdata, numProj, L_value[l], 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const double H_value[] = {0.1, 0.5, 1, 5, 10, 50, 500}; //hash width
   double H_value_recall[Hsize] = {0.0}; //recall of each run
 
-  for (int h=0; h < Hsize; ++h)
+  for (size_t h=0; h < Hsize; ++h)
   {
     //run LSH with only hashWidth varying (other values default)
     LSHSearch<> lsh_test2(rdata, numProj, numTables, 
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const int P_value[] = {1, 10, 20, 50, 100}; //number of projections
   double P_value_recall[Psize] = {0.0}; //recall of each run
 
-  for (int p=0; p < Psize; ++p)
+  for (size_t p=0; p < Psize; ++p)
   {
     //run LSH with only numProj varying (other values default)
     LSHSearch<> lsh_test3(rdata, P_value[p], numTables, 
