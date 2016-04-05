@@ -15,8 +15,9 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
-double compute_recall(arma::Mat<size_t> LSHneighbors, 
-        arma::Mat<size_t> groundTruth)
+double compute_recall(
+    arma::Mat<size_t> LSHneighbors, 
+    arma::Mat<size_t> groundTruth)
 {
   const int n_queries = LSHneighbors.n_cols;
   const int n_neigh = LSHneighbors.n_rows;
@@ -30,7 +31,7 @@ double compute_recall(arma::Mat<size_t> LSHneighbors,
     }
   }
   return static_cast<double>(found_same)/
-      (static_cast<double>(n_queries*n_neigh));
+    (static_cast<double>(n_queries*n_neigh));
 }
 
 BOOST_AUTO_TEST_SUITE(LSHTest);
@@ -133,12 +134,12 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
     
   }
 
-  //Test: Run LSH with varying number of Projections, keeping all other parameters 
+  //Test: Run LSH with varying number of projections, keeping other parameters 
   //constant. Compute the recall, i.e. the number of reported neighbors that
   //are real neighbors of the query.
   //LSH's property is that (with high probability), increasing the number of
-  //projections per table will decrease recall. Epsilon ensures that if noise lightly 
-  //affects the projections, the test will not fail.
+  //projections per table will decrease recall. Epsilon ensures that if noise 
+  //lightly affects the projections, the test will not fail.
  
   const int Psize = 5; //number of runs
   const int P_value[] = {1, 10, 20, 50, 100}; //number of projections
@@ -170,7 +171,13 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const int T_exp = 128; //number of tables
   const double recall_thresh_exp = 0.5;
 
-  LSHSearch<> lsh_test_exp(rdata, K_exp, T_exp, H_exp, secondHashSize, bucketSize);
+  LSHSearch<> lsh_test_exp(
+      rdata, 
+      K_exp, 
+      T_exp, 
+      H_exp, 
+      secondHashSize, 
+      bucketSize);
   arma::Mat<size_t> LSHneighbors_exp;
   arma::mat LSHdistances_exp;
   lsh_test_exp.Search(qdata, k, LSHneighbors_exp, LSHdistances_exp);
@@ -189,7 +196,13 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   const int T_chp = 1; //only one table
   const double recall_thresh_chp = 0.25; //recall threshold
 
-  LSHSearch<> lsh_test_chp(rdata, K_chp, T_chp, H_chp, secondHashSize, bucketSize);
+  LSHSearch<> lsh_test_chp(
+      rdata, 
+      K_chp, 
+      T_chp, 
+      H_chp, 
+      secondHashSize, 
+      bucketSize);
   arma::Mat<size_t> LSHneighbors_chp;
   arma::mat LSHdistances_chp;
   lsh_test_chp.Search(qdata, k, LSHneighbors_chp, LSHdistances_chp);
