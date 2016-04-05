@@ -2,8 +2,10 @@ set(DIRS
   adadelta
   adam
   aug_lagrangian
+  cg
   lbfgs
   minibatch_sgd
+  parallel_sgd
   rmsprop
   sa
   sdp
