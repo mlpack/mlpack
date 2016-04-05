@@ -72,25 +72,38 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //the projections, the test will not fail.
   
   const int numTries = 5; //tries for each test before declaring failure
-  const int Lsize = 6; //number of runs
-  const int L_value[] = {1, 8, 16, 32, 64, 128}; //number of tables
-  double L_value_recall[Lsize] = {0.0}; //recall of each LSH run
+  bool fail = false;
 
-  for (int l=0; l < Lsize; ++l)
-  {
-    //run LSH with only numTables varying (other values default)
-    LSHSearch<> lsh_test1(rdata, numProj, L_value[l], 
-            hashWidth, secondHashSize, bucketSize);
-    arma::Mat<size_t> LSHneighbors;
-    arma::mat LSHdistances;
-    lsh_test1.Search(qdata, k, LSHneighbors, LSHdistances);
+  for (int t = 0; t < numTries; ++t){
 
-    //compute recall for each query
-    L_value_recall[l] = compute_recall(LSHneighbors, groundTruth);
+    const int Lsize = 6; //number of runs
+    const int L_value[] = {1, 8, 16, 32, 64, 128}; //number of tables
+    double L_value_recall[Lsize] = {0.0}; //recall of each LSH run
 
-    if (l > 0)
-        BOOST_CHECK(L_value_recall[l] >= L_value_recall[l-1]-epsilon);
+    for (int l=0; l < Lsize; ++l)
+    {
+      //run LSH with only numTables varying (other values default)
+      LSHSearch<> lsh_test1(rdata, numProj, L_value[l], 
+          hashWidth, secondHashSize, bucketSize);
+      arma::Mat<size_t> LSHneighbors;
+      arma::mat LSHdistances;
+      lsh_test1.Search(qdata, k, LSHneighbors, LSHdistances);
+
+      //compute recall for each query
+      L_value_recall[l] = compute_recall(LSHneighbors, groundTruth);
+
+      if (l > 0){
+        if(L_value_recall[l] < L_value_recall[l-1]-epsilon){
+          fail = true; //if test fails at one point, stop and retry
+          break;
+        }
+      }
+    }
+    if ( !fail ){
+      break; //if test passes one time, it is sufficient
+    }
   }
+  BOOST_CHECK(fail == false);
    
   //Test: Run LSH with varying hash width, keeping all other parameters 
   //constant. Compute the recall, i.e. the number of reported neighbors that
