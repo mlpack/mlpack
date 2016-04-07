@@ -39,28 +39,38 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   double lastObjective = DBL_MAX;
 
   //get maximum number of threads that will be running. with is defined by OMP_NUM_THREADS
-  int num_thread=omp_get_max_threads();
+  size_t num_thread=omp_get_max_threads();
+
+  //T: after T iteration it will go for tollerence checking;  we can define T in many way
+  //size_t T=maxIterations/num_thread;
+  //Here I have thaken T=contant
+  size_t T=1000;
+
 
   //vector of iterate. length of tIterate is same as number of threads available.
   std::vector<arma::mat> tIterate; 
 
   //initializing each element of tIterate with initial iterate value 
-  for(int i=0;i<num_thread;i++)
+  for(size_t i=0;i<num_thread;i++)
   {
     tIterate.push_back(iterate);
   }
 
   //sumIterate is taken track the  sum  all other computed iterate value from each thread. 
   arma::mat sumIterate(iterate.n_rows,iterate.n_cols);
-
-  int it;   
+  size_t it;   
   bool halt=false;
+  sumIterate.zeros();
+
+
+
   #pragma omp parallel  shared(sumIterate,halt) private(it) 
   {
-    it=0; 
+    it=1; 
     while(it!=maxIterations && halt != true)
     {
       it++;
+
       int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
       arma::mat gradient(iterate.n_rows, iterate.n_cols);  //To make gradient private to each thread it is declared here.
       int selectedFunction;
@@ -69,25 +79,27 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(tIterate[th_num],selectedFunction, gradient);
       tIterate[th_num] -= stepSize * gradient;
       
-  
-      #pragma omp barrier    //wait untill all the threads reach here
-       //this portion will run only by one thread
-      #pragma omp master
+      
+      //checking whether or not it will go for tollerence checking 
+      if(it%T!=0)
       {
-         sumIterate.zeros();
-      }    
-      #pragma omp barrier   
+        continue;
+      }
 
-      //Taking the sum of all other computed iterate. Siterate is shared by all threads
+
       #pragma omp critical 
       {
         sumIterate += tIterate[th_num];
       }
     
+      //wait untill all thread update sumIterate
       #pragma omp barrier   
-      //runing  a single thread 
+
+
+      //runing  a single thread for tollerence checking
       #pragma omp master
       {
+
         sumIterate=sumIterate/num_thread;
         overallObjective=0;
         for (size_t i = 0; i < numFunctions; ++i)
@@ -100,24 +112,35 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
           Log::Warn << "Parallel SGD: converged to " <<overallObjective << "; terminating"<< " with failure.  Try a smaller step size?" << std::endl;
           halt=true; 
         }
-
+      
         if (std::abs(lastObjective - overallObjective) < tolerance)
         {
           Log::Info << "SGD: minimized within tolerance " << tolerance << "; "<< "terminating optimization." << std::endl;
           halt=true; 
         }
-         lastObjective=overallObjective;
         
+        sumIterate.zeros(); 
+        lastObjective=overallObjective;
+
       }
       #pragma omp barrier
 
     }   //end of while loop
   }   //end of all thread
-  
+ 
+
+   
+  sumIterate.zeros();
+  for(size_t t=0;t<num_thread;t++)
+  {
+    sumIterate += tIterate[t];
+  }
+  sumIterate=sumIterate/num_thread;
+
+
+
   iterate=sumIterate;
   overallObjective=0;
-
-
   // Calculating the  objective function with computed iterate
   for (size_t i = 0; i < numFunctions; ++i)
   overallObjective += function.Evaluate(iterate, i);
