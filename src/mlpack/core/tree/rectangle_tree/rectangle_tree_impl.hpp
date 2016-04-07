@@ -736,8 +736,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
         // We find the root and shrink bounds at the same time.
         bool stillShrinking = true;
-        RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>* root =
-            parent;
+        RectangleTree* root = parent;
         while (root->Parent() != NULL)
         {
           if (stillShrinking)

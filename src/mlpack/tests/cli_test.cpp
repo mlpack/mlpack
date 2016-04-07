@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <sstream>
+
 #ifndef _WIN32
   #include <sys/time.h>
 #endif
@@ -240,7 +241,7 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").tv_usec, 10000);
+  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 10000);
 
   // Restart it.
   Timer::Start("test_timer");
@@ -253,7 +254,7 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").tv_usec, 20000);
+  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 20000);
 
   // Just one more time, for good measure...
   Timer::Start("test_timer");
@@ -266,7 +267,7 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").tv_usec, 40000);
+  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)

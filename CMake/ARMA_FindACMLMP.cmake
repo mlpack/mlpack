@@ -5,33 +5,33 @@
 # also defined, but not for general use are
 #  ACMLMP_LIBRARY, where to find the ACMLMP library.
 
-SET(ACMLMP_NAMES ${ACMLMP_NAMES} acml_mp)
-FIND_LIBRARY(ACMLMP_LIBRARY
+set(ACMLMP_NAMES ${ACMLMP_NAMES} acml_mp)
+find_library(ACMLMP_LIBRARY
   NAMES ${ACMLMP_NAMES}
   PATHS /usr/lib64 /usr/lib /usr/*/lib64 /usr/*/lib /usr/*/gfortran64_mp/lib/ /usr/*/gfortran32_mp/lib/ /usr/local/lib64 /usr/local/lib /opt/lib64 /opt/lib /opt/*/lib64 /opt/*/lib /opt/*/gfortran64_mp/lib/ /opt/*/gfortran32_mp/lib/
   )
 
-IF (ACMLMP_LIBRARY)
-  SET(ACMLMP_LIBRARIES ${ACMLMP_LIBRARY})
-  SET(ACMLMP_FOUND "YES")
-ELSE (ACMLMP_LIBRARY)
-  SET(ACMLMP_FOUND "NO")
-ENDIF (ACMLMP_LIBRARY)
+if (ACMLMP_LIBRARY)
+  set(ACMLMP_LIBRARIES ${ACMLMP_LIBRARY})
+  set(ACMLMP_FOUND "YES")
+else ()
+  set(ACMLMP_FOUND "NO")
+endif ()
 
 
-IF (ACMLMP_FOUND)
-   IF (NOT ACMLMP_FIND_QUIETLY)
-      MESSAGE(STATUS "Found the ACMLMP library: ${ACMLMP_LIBRARIES}")
-   ENDIF (NOT ACMLMP_FIND_QUIETLY)
-ELSE (ACMLMP_FOUND)
-   IF (ACMLMP_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find the ACMLMP library")
-   ENDIF (ACMLMP_FIND_REQUIRED)
-ENDIF (ACMLMP_FOUND)
+if (ACMLMP_FOUND)
+   if (NOT ACMLMP_FIND_QUIETLY)
+      message(STATUS "Found the ACMLMP library: ${ACMLMP_LIBRARIES}")
+   endif ()
+else ()
+   if (ACMLMP_FIND_REQUIRED)
+      message(FATAL_ERROR "Could not find the ACMLMP library")
+   endif ()
+endif ()
 
 # Deprecated declarations.
-GET_FILENAME_COMPONENT (NATIVE_ACMLMP_LIB_PATH ${ACMLMP_LIBRARY} PATH)
+get_filename_component (NATIVE_ACMLMP_LIB_PATH ${ACMLMP_LIBRARY} PATH)
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   ACMLMP_LIBRARY
   )
