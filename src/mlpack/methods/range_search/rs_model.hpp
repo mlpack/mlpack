@@ -56,10 +56,10 @@ class RSModel
   RSType<tree::RTree>* rTreeRS;
   //! R* tree based range search object (NULL if not in use).
   RSType<tree::RStarTree>* rStarTreeRS;
-  //! X tree based range search object (NULL if not in use).
-  RSType<tree::XTree>* xTreeRS;
   //! Ball tree based range search object (NULL if not in use).
   RSType<tree::BallTree>* ballTreeRS;
+  //! X tree based range search object (NULL if not in use).
+  RSType<tree::XTree>* xTreeRS;
 
  public:
   /**

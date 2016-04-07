@@ -169,10 +169,10 @@ int main(int argc, char *argv[])
       tree = RSModel::R_TREE;
     else if (treeType == "r-star")
       tree = RSModel::R_STAR_TREE;
-    else if (treeType == "x")
-      tree = RSModel::X_TREE;
     else if (treeType == "ball")
       tree = RSModel::BALL_TREE;
+    else if (treeType == "x")
+      tree = RSModel::X_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;

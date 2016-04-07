@@ -162,10 +162,10 @@ int main(int argc, char *argv[])
       tree = KNNModel::R_TREE;
     else if (treeType == "r-star")
       tree = KNNModel::R_STAR_TREE;
-    else if (treeType == "x")
-      tree = KNNModel::X_TREE;
     else if (treeType == "ball")
       tree = KNNModel::BALL_TREE;
+    else if (treeType == "x")
+      tree = KNNModel::X_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;

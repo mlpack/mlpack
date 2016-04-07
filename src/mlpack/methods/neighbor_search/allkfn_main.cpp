@@ -158,10 +158,10 @@ int main(int argc, char *argv[])
       tree = KFNModel::R_TREE;
     else if (treeType == "r-star")
       tree = KFNModel::R_STAR_TREE;
-    else if (treeType == "x")
-      tree = KFNModel::X_TREE;
     else if (treeType == "ball")
       tree = KFNModel::BALL_TREE;
+    else if (treeType == "x")
+      tree = KFNModel::X_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;

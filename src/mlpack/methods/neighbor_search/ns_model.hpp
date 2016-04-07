@@ -75,8 +75,8 @@ class NSModel
   NSType<tree::StandardCoverTree>* coverTreeNS;
   NSType<tree::RTree>* rTreeNS;
   NSType<tree::RStarTree>* rStarTreeNS;
-  NSType<tree::XTree>* xTreeNS;
   NSType<tree::BallTree>* ballTreeNS;
+  NSType<tree::XTree>* xTreeNS;
 
  public:
   /**
