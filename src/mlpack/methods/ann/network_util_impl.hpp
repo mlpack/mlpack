@@ -34,7 +34,7 @@ typename std::enable_if<
   HasWeightsCheck<T, P&(T::*)()>::value, size_t>::type
 LayerSize(T& layer, P& /* unused */)
 {
-  return layer.Weights().n_elem;    
+  return layer.Weights().n_elem;
 }
 
 template<typename T, typename P>
@@ -162,6 +162,44 @@ LayerGradients(T& /* unused */,
                arma::mat& /* unused */,
                size_t /* unused */,
                P& /* unused */)
+{
+  return 0;
+}
+
+template<size_t I, typename... Tp>
+typename std::enable_if<I == sizeof...(Tp), size_t>::type
+NetworkInputSize(std::tuple<Tp...>& /* unused */)
+{
+  return 0;
+}
+
+template<size_t I, typename... Tp>
+typename std::enable_if<I < sizeof...(Tp), size_t>::type
+NetworkInputSize(std::tuple<Tp...>& network)
+{
+  const size_t inputSize = LayerInputSize(std::get<I>(network), std::get<I>(
+      network).OutputParameter());
+
+  if (inputSize)
+  {
+    return inputSize;
+  }
+
+  return NetworkInputSize<I + 1, Tp...>(network);
+}
+
+template<typename T, typename P>
+typename std::enable_if<
+  HasWeightsCheck<T, P&(T::*)()>::value, size_t>::type
+LayerInputSize(T& layer, P& /* unused */)
+{
+  return layer.Weights().n_cols;
+}
+
+template<typename T, typename P>
+typename std::enable_if<
+  !HasWeightsCheck<T, P&(T::*)()>::value, size_t>::type
+LayerInputSize(T& /* unused */, P& /* unused */)
 {
   return 0;
 }
