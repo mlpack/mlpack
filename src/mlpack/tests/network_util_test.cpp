@@ -1,6 +1,6 @@
 /**
  * @file network_util_test.cpp
- * @author Marcus edel
+ * @author Marcus Edel
  *
  * Simple tests for things in the network_util file.
  */
@@ -9,6 +9,7 @@
 #include <mlpack/methods/ann/network_util.hpp>
 #include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -93,6 +94,51 @@ BOOST_AUTO_TEST_CASE(LayerInputSizeTest)
   LinearLayer<> linearLayer(5, 10);
   BOOST_REQUIRE_EQUAL(LayerInputSize(linearLayer,
       linearLayer.OutputParameter()), 5);
+}
+
+/**
+ * Test the network weight auxiliary function using the given initialization
+ * rule.
+ */
+BOOST_AUTO_TEST_CASE(NetworkWeightsInitTest)
+{
+  // Create a two layer network.
+  LinearLayer<> linearLayer1(10, 10);
+  LinearLayer<> linearLayer2(10, 100);
+
+  arma::mat parameter = arma::zeros<arma::mat>(1100, 1);
+
+  // Create the network.
+  auto network = std::tie(linearLayer1, linearLayer2);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(parameter), 0);
+
+  RandomInitialization constantInit(1, 1);
+  NetworkWeights(constantInit, parameter, network);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(linearLayer1.Weights()), 100);
+  BOOST_REQUIRE_EQUAL(arma::accu(linearLayer2.Weights()), 1000);
+  BOOST_REQUIRE_EQUAL(arma::accu(parameter), 1100);
+}
+
+/**
+ * Test the layer weight auxiliary function using the given initialization rule.
+ */
+BOOST_AUTO_TEST_CASE(LayerWeightsInitTest)
+{
+  // Create a two layer network.
+  LinearLayer<> linearLayer1(10, 10);
+
+  arma::mat parameter = arma::zeros<arma::mat>(100, 1);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(parameter), 0);
+
+  RandomInitialization constantInit(1, 1);
+  arma::mat output;
+  LayerWeights(constantInit, linearLayer1, parameter, 0, output);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(linearLayer1.Weights()), 100);
+  BOOST_REQUIRE_EQUAL(arma::accu(parameter), 100);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
