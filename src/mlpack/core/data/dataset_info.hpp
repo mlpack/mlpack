@@ -31,8 +31,8 @@ enum Datatype : bool /* bool is all the precision we need for two types */
 /**
  * Auxiliary information for a dataset, including mappings to/from strings and
  * the datatype of each dimension.  DatasetInfo objects are optionally produced
- * by data::Load(), and store the type of each dimension (Datatype::NUMERIC or
- * Datatype::CATEGORICAL) as well as mappings from strings to unsigned integers
+ * by data::Load(), and store the type of each dimension (Datatype::numeric or
+ * Datatype::categorical) as well as mappings from strings to unsigned integers
  * and vice versa.
  */
 class DatasetInfo
@@ -56,15 +56,38 @@ class DatasetInfo
    */
   size_t MapString(const std::string& string, const size_t dimension);
 
+  /**
+   * Return the string that corresponds to a given value in a given dimension.
+   * If the string is not a valid mapping in the given dimension, a
+   * std::invalid_argument is thrown.
+   *
+   * @param value Mapped value for string.
+   * @param dimension Dimension to unmap string from.
+   */
   const std::string& UnmapString(const size_t value, const size_t dimension);
 
+  //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
+  //! Modify the type of a given dimension (be careful!).
   Datatype& Type(const size_t dimension);
 
+  /**
+   * Get the number of mappings for a particular dimension.  If the dimension
+   * is numeric, then this will return 0.
+   */
   size_t NumMappings(const size_t dimension) const;
 
+  /**
+   * Get the dimensionality of the DatasetInfo object (that is, how many
+   * dimensions it has information for).  If this object was created by a call
+   * to mlpack::data::Load(), then the dimensionality will be the same as the
+   * number of rows (dimensions) in the dataset.
+   */
   size_t Dimensionality() const;
 
+  /**
+   * Serialize the dataset information.
+   */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
@@ -73,9 +96,11 @@ class DatasetInfo
   }
 
  private:
+  //! Types of each dimension.
   std::vector<Datatype> types;
 
-  // Map entries will only exist for dimensions that are categorical.
+  //! Mappings from strings to integers.  Map entries will only exist for
+  //! dimensions that are categorical.
   std::unordered_map<size_t, std::pair<boost::bimap<std::string, size_t>,
       size_t>> maps;
 
