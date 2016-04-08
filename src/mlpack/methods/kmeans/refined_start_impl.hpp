@@ -21,8 +21,6 @@ void RefinedStart::Cluster(const MatType& data,
                            const size_t clusters,
                            arma::Row<size_t>& assignments) const
 {
-  math::RandomSeed(std::time(NULL));
-
   // This will hold the sampled datasets.
   const size_t numPoints = size_t(percentage * data.n_cols);
   MatType sampledData(data.n_rows, numPoints);
