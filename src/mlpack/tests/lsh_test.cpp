@@ -22,16 +22,8 @@ double ComputeRecall(
   const size_t queries = lshNeighbors.n_cols;
   const size_t neigh = lshNeighbors.n_rows;
 
-  size_t same = 0;
-  for (size_t q = 0; q < queries; ++q)
-  {
-    for (size_t n = 0; n < neigh; ++n)
-    {
-      same += (lshNeighbors(n, q) == groundTruth(n, q));
-    }
-  }
-  return static_cast<double>(same) /
-    (static_cast<double>(queries * neigh));
+  const double same = arma::accu(lshNeighbors == groundTruth);
+  return same / (static_cast<double>(queries * neigh));
 }
 
 BOOST_AUTO_TEST_SUITE(LSHTest);
