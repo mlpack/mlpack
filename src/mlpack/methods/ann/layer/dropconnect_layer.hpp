@@ -304,6 +304,9 @@ class DropConnectLayer
   }
 
 private:
+  //! Locally-stored layer object.
+  InputLayer baseLayer;
+
   //! Locally stored number of input units.
   size_t inSize;
 
@@ -313,6 +316,9 @@ private:
   //! The probability of setting a value to zero.
   double ratio;
 
+  //! The scale fraction.
+  double scale;
+
   //! If true the default layer is used otherwise a new layer will be created.
   bool uselayer;
 
@@ -321,9 +327,6 @@ private:
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored layer object.
-  InputLayer baseLayer;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
@@ -336,9 +339,6 @@ private:
 
   //! Locally-stored mast object.
   OutputDataType mask;
-
-  //! The scale fraction.
-  double scale;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
