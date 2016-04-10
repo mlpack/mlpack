@@ -68,8 +68,10 @@ class EmptyLayer
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename ErrorType, typename GradientType>
-  void Gradient(const ErrorType& /* d */, GradientType& /* g */)
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Gradient(const InputType& /* input */,
+                const ErrorType& /* error */,
+                GradientType& /* gradient */)
   {
     /* Nothing to do here. */
   }

@@ -134,11 +134,14 @@ class ConvLayer
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The input parameter used for calculating the gradient.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Cube<eT>& d, arma::Cube<eT>& g)
+  template<typename InputType, typename eT>
+  void Gradient(const InputType& input,
+                const arma::Cube<eT>& d,
+                arma::Cube<eT>& g)
   {
     g = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
         weights.n_slices);
@@ -147,7 +150,7 @@ class ConvLayer
     {
       for (size_t inMap = 0, s = outMap; inMap < inMaps; inMap++, s += outMaps)
       {
-        arma::Cube<eT> inputSlices = inputParameter.slices(inMap, inMap);
+        arma::Cube<eT> inputSlices = input.slices(inMap, inMap);
         arma::Cube<eT> deltaSlices = d.slices(outMap, outMap);
 
         arma::Cube<eT> output;

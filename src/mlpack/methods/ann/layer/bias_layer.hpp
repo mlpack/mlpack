@@ -97,29 +97,16 @@ class BiasLayer
   /*
    * Calculate the gradient using the output delta and the bias.
    *
-   * @param d The calculated error.
-   * @param g The calculated gradient.
+   * @param input The propagated input.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Cube<eT>& d, InputDataType& g)
+  template<typename eT, typename ErrorType, typename GradientType>
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const ErrorType& error,
+                GradientType& gradient)
   {
-    g = arma::Mat<eT>(weights.n_rows, weights.n_cols);
-    for (size_t s = 0; s < d.n_slices; s++)
-    {
-      g(s) = arma::accu(d.slice(s)) * bias;
-    }
-  }
-
-  /*
-   * Calculate the gradient using the output delta and the bias.
-   *
-   * @param d The calculated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& d, InputDataType& g)
-  {
-    g = d * bias;
+    gradient = error * bias;
   }
 
   //! Get the weights.

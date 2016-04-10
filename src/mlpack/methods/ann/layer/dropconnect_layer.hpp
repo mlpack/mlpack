@@ -175,22 +175,25 @@ class DropConnectLayer
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename InputType, typename eT, typename GradientDataType>
+  void Gradient(const InputType& input,
+                const arma::Mat<eT>& d,
+                GradientDataType& g)
   {
     if(uselayer)
     {
-      baseLayer.Gradient(d, g);
+      baseLayer.Gradient(input, d, g);
 
       // Denoise the weights.
       baseLayer.Weights() = denoise;
     }
     else
     {
-      g = d * inputParameter.t();
+      g = d * input.t();
 
       // Denoise the weights.
       weights = denoise;

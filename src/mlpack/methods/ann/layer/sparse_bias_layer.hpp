@@ -77,11 +77,14 @@ class SparseBiasLayer
   /*
    * Calculate the gradient using the output delta and the bias.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& d, InputDataType& g)
+  template<typename InputType, typename eT>
+  void Gradient(const InputType& /* input */,
+                const arma::Mat<eT>& d,
+                InputDataType& g)
   {    
     g = arma::sum(d, 1) / static_cast<typename InputDataType::value_type>(
         batchSize);
