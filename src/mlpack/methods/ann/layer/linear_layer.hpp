@@ -73,7 +73,8 @@ class LinearLayer
       for (size_t i = 0; i < data.n_cols; i++, c++)
       {
         data.col(i).subvec(s * input.n_rows * input.n_cols, (s + 1) *
-            input.n_rows * input.n_cols - 1) = arma::vectorise(input.slice(c));
+            input.n_rows * input.n_cols - 1) = arma::trans(arma::vectorise(
+            input.slice(c), 1));
       }
     }
 
@@ -97,17 +98,19 @@ class LinearLayer
     g = weights.t() * gy;
   }
   
-
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param d The calculated error.
-   * @param g The calculated gradient.
+   * @param input The propagated input.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Gradient(const InputType& input,
+                const ErrorType& error,
+                GradientType& gradient)
   {
-    GradientDelta(inputParameter, d, g);
+    GradientDelta(input, error, gradient);
   }
 
   //! Get the weights.
@@ -145,7 +148,7 @@ class LinearLayer
   }
 
  private:
-   /*
+  /*
    * Calculate the gradient using the output delta (3rd order tensor) and the
    * input activation (3rd order tensor).
    *
@@ -170,7 +173,7 @@ class LinearLayer
         data.row(i).subvec(s * input.n_rows *
             input.n_cols, (s + 1) *
             input.n_rows *
-            input.n_cols - 1) = arma::vectorise(
+        input.n_cols - 1) = arma::vectorise(
                 input.slice(c), 1);
       }
     }
@@ -187,12 +190,12 @@ class LinearLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(const arma::Mat<eT>& /* input unused */,
+  void GradientDelta(const arma::Mat<eT>& input,
                      const arma::Mat<eT>& d,
                      arma::Cube<eT>& g)
   {
     g = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
-    Gradient(d, g.slice(0));
+    Gradient(input, d, g.slice(0));
   }
 
   /*
@@ -204,12 +207,12 @@ class LinearLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(const arma::Cube<eT>& /* input unused */,
+  void GradientDelta(const arma::Cube<eT>& input,
                      const arma::Mat<eT>& d,
                      arma::Mat<eT>& g)
   {
     arma::Cube<eT> grad = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
-    Gradient(d, grad);
+    Gradient(input, d, grad);
     g = grad.slice(0);
   }
 

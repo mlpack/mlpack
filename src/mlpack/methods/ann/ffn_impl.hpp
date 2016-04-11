@@ -252,6 +252,12 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
             const size_t i,
             arma::mat& gradient)
 {
+  if (gradient.is_empty())
+  {
+    gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
+  }
+
+
   Evaluate(parameter, i, false);
 
   NetworkGradients(gradient, network);

@@ -175,22 +175,25 @@ class DropConnectLayer
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename InputType, typename eT, typename GradientDataType>
+  void Gradient(const InputType& input,
+                const arma::Mat<eT>& d,
+                GradientDataType& g)
   {
     if(uselayer)
     {
-      baseLayer.Gradient(d, g);
+      baseLayer.Gradient(input, d, g);
 
       // Denoise the weights.
       baseLayer.Weights() = denoise;
     }
     else
     {
-      g = d * inputParameter.t();
+      g = d * input.t();
 
       // Denoise the weights.
       weights = denoise;
@@ -304,6 +307,9 @@ class DropConnectLayer
   }
 
 private:
+  //! Locally-stored layer object.
+  InputLayer baseLayer;
+
   //! Locally stored number of input units.
   size_t inSize;
 
@@ -313,6 +319,9 @@ private:
   //! The probability of setting a value to zero.
   double ratio;
 
+  //! The scale fraction.
+  double scale;
+
   //! If true the default layer is used otherwise a new layer will be created.
   bool uselayer;
 
@@ -321,9 +330,6 @@ private:
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored layer object.
-  InputLayer baseLayer;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
@@ -336,9 +342,6 @@ private:
 
   //! Locally-stored mast object.
   OutputDataType mask;
-
-  //! The scale fraction.
-  double scale;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
