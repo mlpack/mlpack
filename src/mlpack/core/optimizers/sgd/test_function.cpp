@@ -41,7 +41,7 @@ void SGDTestFunction::Gradient(const arma::mat& coordinates,
       if (coordinates[0] >= 0)
         gradient[0] = std::exp(-coordinates[0]);
       else
-        gradient[0] = -std::exp(coordinates[1]);
+        gradient[0] = -std::exp(coordinates[0]);
       break;
 
     case 1:
