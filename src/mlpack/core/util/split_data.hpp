@@ -18,27 +18,13 @@ namespace util {
  */
 class TrainTestSplit
 {
-public:
-  /**
-   * @brief TrainTestSplit
-   * @param testRatio the ratio of test data
-   * @param seed seed of the random device
-   * @warning slice should not less than 1
-   */
-  TrainTestSplit(double testRatio,                
-                 arma::arma_rng::seed_type seed = 0) :
-    seed(seed),    
-    testRatio(testRatio)
-  {    
-  }
-
+public:  
   /**
    *Split training data and test data, please define
    *ARMA_USE_CXX11 to enable move of c++11
    *@param input input data want to split
    *@param label input label want to split
-   *@param testRatio the ratio of test data
-   *@param seed seed of the random device
+   *@param testRatio the ratio of test data   
    *@code
    *arma::mat input = loadData();
    *arma::Row<size_t> label = loadLabel();
@@ -58,7 +44,8 @@ public:
              arma::Mat<T> &trainData,
              arma::Mat<T> &testData,
              arma::Row<U> &trainLabel,
-             arma::Row<U> &testLabel)
+             arma::Row<U> &testLabel,
+             double testRatio)
   {
     size_t const testSize =
         static_cast<size_t>(input.n_cols * testRatio);
@@ -68,8 +55,7 @@ public:
     trainLabel.set_size(trainSize);
     testLabel.set_size(testSize);
 
-    using Col = arma::Col<size_t>;
-    arma::arma_rng::set_seed(seed);
+    using Col = arma::Col<size_t>;    
     Col const sequence = arma::linspace<Col>(0, input.n_cols - 1,
                                              input.n_cols);
     arma::Col<size_t> const order = arma::shuffle(sequence);
@@ -99,7 +85,8 @@ public:
   std::tuple<arma::Mat<T>, arma::Mat<T>,
   arma::Row<U>, arma::Row<U>>
   Split(arma::Mat<T> const &input,
-        arma::Row<U> const &inputLabel)
+        arma::Row<U> const &inputLabel,
+        double testRatio)
   {
     arma::Mat<T> trainData;
     arma::Mat<T> testData;
@@ -107,33 +94,11 @@ public:
     arma::Row<U> testLabel;
 
     Split(input, inputLabel, trainData, testData,
-          trainLabel, testLabel);
+          trainLabel, testLabel, testRatio);
 
     return std::make_tuple(trainData, testData,
                            trainLabel, testLabel);
   }
-
-  void Seed(arma::arma_rng::seed_type value)
-  {
-    seed = value;
-  }
-  arma::arma_rng::seed_type Seed() const
-  {
-    return seed;
-  }   
-
-  void TestRatio(double value)
-  {
-    testRatio = value;
-  }
-  double TestRatio() const
-  {
-    return testRatio;
-  }
-
-private:  
-  arma::arma_rng::seed_type seed;  
-  double testRatio;
 };
 
 } // namespace util
