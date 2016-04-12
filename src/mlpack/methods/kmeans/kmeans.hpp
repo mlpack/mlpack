@@ -10,7 +10,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
-#include "random_partition.hpp"
+#include "sample_initialization.hpp"
 #include "max_variance_new_cluster.hpp"
 #include "naive_kmeans.hpp"
 
@@ -47,8 +47,9 @@ namespace kmeans /** K-Means clustering. */ {
  * @tparam MetricType The distance metric to use for this KMeans; see
  *     metric::LMetric for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
- *     default constructor and 'void Cluster(const arma::mat&, const size_t,
- *     arma::Row<size_t>&)'.
+ *     default constructor and either 'void Cluster(const arma::mat&, const
+ *     size_t, arma::Row<size_t>&)' or 'void Cluster(const arma::mat&, const
+ *     size_t, arma::mat&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
  *     implement a default constructor and 'void EmptyCluster(const arma::mat&
  *     data, const size_t emptyCluster, const arma::mat& oldCentroids,
@@ -56,11 +57,11 @@ namespace kmeans /** K-Means clustering. */ {
  *     const size_t iteration)'.
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
- * @see RandomPartition, RefinedStart, AllowEmptyClusters,
+ * @see RandomPartition, SampleInitialization, RefinedStart, AllowEmptyClusters,
  *      MaxVarianceNewCluster, NaiveKMeans, ElkanKMeans
  */
 template<typename MetricType = metric::EuclideanDistance,
-         typename InitialPartitionPolicy = RandomPartition,
+         typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
          template<class, class> class LloydStepType = NaiveKMeans,
          typename MatType = arma::mat>
