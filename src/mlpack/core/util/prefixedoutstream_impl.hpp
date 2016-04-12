@@ -66,32 +66,9 @@ void PrefixedOutStream::BaseLogic(const T& val)
       return;
     }
 
-    // Now, we need to check for newlines in retrieved backtrace.
-    //If we find one, output up until the newline, then output the newline
-    //and the prefix and continue looking.
+    // Now, we need to check for newlines in the output and print it.
     size_t nl;
     size_t pos = 0;
-#ifdef HAS_BFD_DL
-      if(fatal)
-      {
-	Backtrace bt;
-	std::string btLine = bt.ToString();
-	while ((nl = btLine.find('\n', pos)) != std::string::npos)
-	{
-	  PrefixIfNeeded();
-	  
-	  destination << btLine.substr(pos, nl - pos);
-	  destination << std::endl;
-	  newlined = true;
-	    
-	  carriageReturned = true; // Regardless of whether or not we display it.
-      
-	  pos = nl + 1;
-	}
-	pos = 0;
-      }
-#endif
-    //The same logic like above, but this time for 'line'.
     while ((nl = line.find('\n', pos)) != std::string::npos)
     {
       PrefixIfNeeded();
@@ -121,6 +98,30 @@ void PrefixedOutStream::BaseLogic(const T& val)
   if (fatal && newlined)
   {
     std::cout << std::endl;
+
+    // Print a backtrace, if we can.
+#ifdef HAS_BFD_DL
+    if (fatal)
+    {
+      size_t nl;
+      size_t pos = 0;
+
+      Backtrace bt;
+      std::string btLine = bt.ToString();
+      while ((nl = btLine.find('\n', pos)) != std::string::npos)
+      {
+        PrefixIfNeeded();
+
+        destination << btLine.substr(pos, nl - pos);
+        destination << std::endl;
+
+        carriageReturned = true; // Regardless of whether or not we display it.
+
+        pos = nl + 1;
+      }
+    }
+#endif
+
     throw std::runtime_error("fatal error; see Log::Fatal output");
   }
 }
