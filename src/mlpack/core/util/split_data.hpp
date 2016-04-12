@@ -29,8 +29,7 @@ namespace util {
  *arma::mat testData;
  *arma::Row<size_t> trainLabel;
  *arma::Row<size_t> testLabel;
- *std::random_device rd;
- *TrainTestSplit tts(0.25);
+ *arma::arma_rng::set_seed(100); //set the seed if you like
  *TrainTestSplit(input, label, trainData,
  *               testData, trainLabel, testLabel);
  *@endcode
@@ -77,6 +76,11 @@ void TrainTestSplit(arma::Mat<T> const &input,
  *@param label input label want to split
  *@return They are trainData, testData, trainLabel and
  *testLabel
+ *@code
+ *arma::mat input = loadData();
+ *arma::Row<size_t> label = loadLabel();
+ *auto splitResult = TrainTestSplit(input, label, 0.2);
+ *@endcode
  */
 template<typename T,typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>,
