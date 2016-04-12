@@ -11,6 +11,8 @@
 
   * CosineTree test fix from Mikhail Lozhnikov (#358).
 
+  * Fixed HMM initial state estimation (#600).
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.
