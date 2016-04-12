@@ -120,19 +120,7 @@ public:
   arma::arma_rng::seed_type Seed() const
   {
     return seed;
-  }
-
-  size_t Slice() const
-  {
-    return slice;
-  }
-  void Slice(size_t value)
-  {
-    if(value < 1){
-      throw std::out_of_range("The range of slice should not less than 1");
-    }
-    slice = value;
-  }
+  }   
 
   void TestRatio(double value)
   {
@@ -144,8 +132,7 @@ public:
   }
 
 private:  
-  arma::arma_rng::seed_type seed;
-  size_t slice;
+  arma::arma_rng::seed_type seed;  
   double testRatio;
 };
 
