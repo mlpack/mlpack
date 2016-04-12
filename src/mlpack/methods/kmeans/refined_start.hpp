@@ -43,7 +43,23 @@ class RefinedStart
 
   /**
    * Partition the given dataset into the given number of clusters according to
-   * the random sampling scheme outlined in Bradley and Fayyad's paper.
+   * the random sampling scheme outlined in Bradley and Fayyad's paper, and
+   * return centroids.
+   *
+   * @tparam MatType Type of data (arma::mat or arma::sp_mat).
+   * @param data Dataset to partition.
+   * @param clusters Number of clusters to split dataset into.
+   * @param centroids Matrix to store centroids into.
+   */
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t clusters,
+               arma::mat& centroids) const;
+
+  /**
+   * Partition the given dataset into the given number of clusters according to
+   * the random sampling scheme outlined in Bradley and Fayyad's paper, and
+   * return point assignments.
    *
    * @tparam MatType Type of data (arma::mat or arma::sp_mat).
    * @param data Dataset to partition.
