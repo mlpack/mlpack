@@ -29,15 +29,15 @@ following file types:
  - Armadillo binary, denoted by .bin
  - Raw binary, denoted by .bin \b "(note: this will be loaded as"
    \b "one-dimensional data, which is likely not what is desired.)"
- - HDF5, denoted by .hdf, .hdf5, .h5, or .he5 \b "(note: HDF5 must be enabled"
-   \b "in the Armadillo configuration)"
- - ARFF, denoted by .arff \b "(note: this is not supported by all mlpack"
-   \b "command-line programs"; see \ref formatinfo )
+ - HDF5, denoted by .hdf, .hdf5, .h5, or .he5 (<b>note: HDF5 must be enabled"
+   in the Armadillo configuration</b>)
+ - ARFF, denoted by .arff (<b>note: this is not supported by all mlpack"
+   command-line programs </b>; see \ref formatcat )
 
-Datasets that are loaded by mlpack should be stored with \b "one row for "
-\b "one point" and \b "one column for one dimension".  Therefore, a dataset with
-three two-dimensional points \f$(0, 1)\f$, \f$(3, 1)\f$, and \f$(5, -5)\f$ would
-be stored in a csv file as:
+Datasets that are loaded by mlpack should be stored with <b>one row for 
+one point</b> and <b>one column for one dimension</b>.  Therefore, a dataset
+with three two-dimensional points \f$(0, 1)\f$, \f$(3, 1)\f$, and \f$(5, -5)\f$
+would be stored in a csv file as:
 
 \code
 0, 1
@@ -105,8 +105,7 @@ mlpack::data::Load() and mlpack::data::Save() documentation.
 In some situations it is useful to represent data not just as a numeric matrix
 but also as categorical data (i.e. with numeric but unordered categories).  This
 support is useful for, e.g., decision trees and other models that support
-categorical features.  
-
+categorical features.
 
 In some machine learning situations, such as, e.g., decision trees, categorical
 data can be used.  Categorical data might look like this (in CSV format):
@@ -141,6 +140,10 @@ $ mlpack_hoeffding_tree -t dataset.csv -l dataset.labels.csv -v
 [INFO ] 0 mappings in dimension 3.
 ...
 \endcode
+
+Currently, only the \c mlpack_hoeffding_tree program supports loading
+categorical data, and this is also the only program that supports loading an
+ARFF dataset.
 
 @section formatcatcpp Categorical features and C++
 
