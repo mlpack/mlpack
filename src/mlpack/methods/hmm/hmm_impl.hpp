@@ -162,6 +162,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     // Normalize the new initial probabilities.
     if (dataSeq.size() > 1)
       initial = newInitial / dataSeq.size();
+    else
+      initial = newInitial;
 
     // Assign the new transition matrix.  We use %= (element-wise
     // multiplication) because every element of the new transition matrix must
