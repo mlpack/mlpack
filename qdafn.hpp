@@ -23,7 +23,7 @@
 
 namespace qdafn {
 
-template<typename MatType>
+template<typename MatType = arma::mat>
 class QDAFN
 {
  public:
@@ -60,6 +60,8 @@ class QDAFN
   const size_t m;
   //! The random lines we are projecting onto.  Has l columns.
   arma::mat lines;
+  //! Projections of each point onto each random line.
+  arma::mat projections;
 
   //! Indices of the points for each S.
   arma::Mat<size_t> sIndices;

@@ -10,6 +10,9 @@
 // In case it hasn't been included yet.
 #include "qdafn.hpp"
 
+#include <queue>
+#include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
+
 namespace qdafn {
 
 // Constructor.
@@ -31,7 +34,7 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
 
   // Now, project each of the reference points onto each line, and collect the
   // top m elements.
-  arma::mat projections = lines.t() * referenceSet;
+  projections = referenceSet.t() * lines;
 
   // Loop over each projection and find the top m elements.
   sIndices.set_size(m, l);
@@ -43,8 +46,8 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     // Grab the top m elements.
     for (size_t j = 0; j < m; ++j)
     {
-      sIndices[j] = sortedIndices[j];
-      sValues[j] = projections(sortedIndices[j], i);
+      sIndices(j, i) = sortedIndices[j];
+      sValues(j, i) = projections(sortedIndices[j], i);
     }
   }
 }
@@ -61,6 +64,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
         "value of m!");
 
   neighbors.set_size(k, querySet.n_cols);
+  neighbors.fill(size_t() - 1);
   distances.zeros(k, querySet.n_cols);
 
   // Search for each point.
@@ -103,16 +107,21 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 
       // SortDistance() returns (size_t() - 1) if we shouldn't add it.
       if (insertPosition != (size_t() - 1))
-        InsertNeighbor(distances, neighbors, q, referenceIndex, dist);
+        InsertNeighbor(distances, neighbors, q, insertPosition, referenceIndex,
+            dist);
 
       // Now (line 14) get the next element and insert into the queue.  Do this
-      // by adjusting the previous value.
-      tableLocations[p.second]++;
-      const double val = p.first -
-          projections(tableLocations[p.second] - 1, p.second) +
-          projections(tableLocations[p.second], p.second);
+      // by adjusting the previous value.  Don't insert anything if we are at
+      // the end of the search, though.
+      if (i < m - 1)
+      {
+        tableLocations[p.second]++;
+        const double val = p.first -
+            projections(tableLocations[p.second] - 1, p.second) +
+            projections(tableLocations[p.second], p.second);
 
-      queue.push(std::make_pair(val, p.second));
+        queue.push(std::make_pair(val, p.second));
+      }
     }
   }
 }
