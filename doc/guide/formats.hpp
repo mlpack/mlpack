@@ -95,6 +95,7 @@ matrix with 10 points in 3 dimensions and saves it to a file as HDF5.
 // 3 dimensions (rows), with 10 points (columns).
 arma::mat dataset = arma::randu<arma::mat>(3, 10);
 mlpack::data::Save("dataset.h5", dataset);
+\endcode
 
 As with the command-line programs, the type of data to be loaded is
 automatically detected from the filename extension.  For more details, see the
@@ -250,8 +251,9 @@ void Serialize(Archive& ar, const unsigned int version);
 \endcode
 
 \note
-For more information on this method and how it works, see the TODO: add link
-boost::serialization documentation.  Note that mlpack uses a \c Serialize()
+For more information on this method and how it works, see the
+boost::serialization documentation at http://www.boost.org/libs/serialization/doc/
+.  Note that mlpack uses a \c Serialize()
 method and not a \c serialize() method, and also mlpack uses the
 mlpack::data::CreateNVP() method instead of \c BOOST_SERIALIZATION_NVP() ; this
 is for coherence with the mlpack style guidelines, and is done via a
@@ -261,9 +263,10 @@ head to hurt!).
 
 \note
 Examples of Serialize() methods can be found in most classes; one fairly
-straightforward example is the mlpack::math::Range class (TODO: add link).  A
-more complex example is the mlpack::tree::BinarySpaceTree class (TODO: add
-link).
+straightforward example is found \ref mlpack::math::Range::Serialize()
+"in the mlpack::math::Range class".  A more complex example is found \ref
+mlpack::tree::BinarySpaceTree::Serialize()
+"in the mlpack::tree::BinarySpaceTree class".
 
 Using the mlpack::data::Load() and mlpack::data::Save() classes is easy if the
 type being saved has a \c Serialize() method implemented: simply call either
