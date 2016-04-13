@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.5)
 project(qdafn C CXX)
 
 # Ensure that we have a C++11 compiler.
-include(CMake/CXX11.cmake)
+include(CXX11.cmake)
 check_for_cxx11_compiler(HAS_CXX11)
 if(NOT HAS_CXX11)
   message(FATAL_ERROR "No C++11 compiler available!")
@@ -212,6 +212,8 @@ else ()
 endif ()
 
 # Find the mlpack library and include directory.
+set(MLPACK_LIBRARY "")
+set(MLPACK_INCLUDE_DIR "")
 find_library(MLPACK_LIBRARY
   NAMES mlpack
   PATHS /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
@@ -222,7 +224,7 @@ find_path(MLPACK_INCLUDE_DIR mlpack/core.hpp
   /usr/local/include/
 )
 
-if (MLPACK_LIBRARY and MLPACK_INCLUDE_DIR)
+if (MLPACK_LIBRARY AND MLPACK_INCLUDE_DIR)
   mark_as_advanced(MLPACK_LIBRARY MLPACK_INCLUDE_DIR)
   include_directories(${MLPACK_INCLUDE_DIR})
 else ()
