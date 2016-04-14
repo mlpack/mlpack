@@ -231,7 +231,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   // Can we prune?
-  if (SortPolicy::IsBetter(bestDistance, adjustedScore))
+  if (!SortPolicy::IsBetter(adjustedScore, bestDistance))
   {
     if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
     {
