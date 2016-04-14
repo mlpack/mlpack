@@ -4,8 +4,8 @@
  *
  * Declaration of NCA class (Neighborhood Components Analysis).
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_HPP
-#define __MLPACK_METHODS_NCA_NCA_HPP
+#ifndef MLPACK_METHODS_NCA_NCA_HPP
+#define MLPACK_METHODS_NCA_NCA_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

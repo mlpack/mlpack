@@ -4,8 +4,8 @@
  *
  * A utility struct to contain all the possible FastMKS models.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
 
 #include <mlpack/core.hpp>
 #include "fastmks.hpp"

@@ -5,8 +5,8 @@
  * An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means
  * clustering.
  */
-#ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "pelleg_moore_kmeans_statistic.hpp"

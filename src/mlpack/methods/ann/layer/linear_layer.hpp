@@ -5,8 +5,8 @@
  * Definition of the LinearLayer class also known as fully-connected layer or
  * affine transformation.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_LINEAR_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_LINEAR_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LINEAR_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_LINEAR_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>

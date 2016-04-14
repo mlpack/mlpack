@@ -5,8 +5,8 @@
  * Template typedefs for the BinarySpaceTree class that satisfy the requirements
  * of the TreeType policy class.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
 
 // In case it hasn't been included yet.
 #include "../binary_space_tree.hpp"

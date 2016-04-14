@@ -4,8 +4,8 @@
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
  */
-#ifndef __MLPACK_CORE_HPP
-#define __MLPACK_CORE_HPP
+#ifndef MLPACK_CORE_HPP
+#define MLPACK_CORE_HPP
 
 /**
  * @mainpage mlpack Documentation

@@ -5,8 +5,8 @@
  * Initialization rule for alternating matrix factorization (AMF). This simple
  * initialization is performed by assigning a random matrix to W and H.
  */
-#ifndef __MLPACK_METHODS_LMF_RANDOM_INIT_HPP
-#define __MLPACK_METHODS_LMF_RANDOM_INIT_HPP
+#ifndef MLPACK_METHODS_LMF_RANDOM_INIT_HPP
+#define MLPACK_METHODS_LMF_RANDOM_INIT_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  * An implementation of Monteiro and Burer's formulation of low-rank
  * semidefinite programs (LR-SDP).
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_IMPL_HPP
 
 #include "lrsdp.hpp"
 

@@ -6,8 +6,8 @@
  * implement (although the actual implementations here don't make any sense
  * because this is just an example).
  */
-#ifndef __MLPACK_CORE_TREE_EXAMPLE_TREE_HPP
-#define __MLPACK_CORE_TREE_EXAMPLE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_EXAMPLE_TREE_HPP
+#define MLPACK_CORE_TREE_EXAMPLE_TREE_HPP
 
 namespace mlpack {
 namespace tree {

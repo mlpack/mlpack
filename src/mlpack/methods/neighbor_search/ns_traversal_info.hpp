@@ -5,8 +5,8 @@
  * This class holds traversal information for dual-tree traversals that are
  * using the NeighborSearchRules RuleType.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_TRAVERSAL_INFO_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_TRAVERSAL_INFO_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_TRAVERSAL_INFO_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_TRAVERSAL_INFO_HPP
 
 namespace mlpack {
 namespace neighbor {

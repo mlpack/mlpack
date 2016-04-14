@@ -7,8 +7,8 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "dual_tree_kmeans.hpp"

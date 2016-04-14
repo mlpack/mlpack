@@ -4,8 +4,8 @@
  *
  * No constraint on the covariance matrix.
  */
-#ifndef __MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
-#define __MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
+#ifndef MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
+#define MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  * Definition of the sparse input class which serve as the first layer
  * of the sparse autoencoder
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>

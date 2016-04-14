@@ -4,8 +4,8 @@
  *
  * Implementation of the RangeSearch class.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
 
 // Just in case it hasn't been included.
 #include "range_search.hpp"

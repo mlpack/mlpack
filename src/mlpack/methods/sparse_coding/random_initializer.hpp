@@ -5,8 +5,8 @@
  * A very simple random dictionary initializer for SparseCoding; it is probably
  * not a very good choice.
  */
-#ifndef __MLPACK_METHODS_SPARSE_CODING_RANDOM_INITIALIZER_HPP
-#define __MLPACK_METHODS_SPARSE_CODING_RANDOM_INITIALIZER_HPP
+#ifndef MLPACK_METHODS_SPARSE_CODING_RANDOM_INITIALIZER_HPP
+#define MLPACK_METHODS_SPARSE_CODING_RANDOM_INITIALIZER_HPP
 
 #include <mlpack/core.hpp>
 

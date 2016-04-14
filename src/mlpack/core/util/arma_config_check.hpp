@@ -8,8 +8,8 @@
  * debugging process where nobody can figure out why the stack is getting
  * mangled.
  */
-#ifndef __MLPACK_CORE_UTIL_ARMA_CONFIG_CHECK_HPP
-#define __MLPACK_CORE_UTIL_ARMA_CONFIG_CHECK_HPP
+#ifndef MLPACK_CORE_UTIL_ARMA_CONFIG_CHECK_HPP
+#define MLPACK_CORE_UTIL_ARMA_CONFIG_CHECK_HPP
 
 #include "arma_config.hpp"
 

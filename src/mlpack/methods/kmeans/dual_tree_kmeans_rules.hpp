@@ -6,8 +6,8 @@
  * nearest neighbor search.  For the most part we'll call out to
  * NeighborSearchRules when we can.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
-#define __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
+#ifndef MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
+#define MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
 
 #include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
 

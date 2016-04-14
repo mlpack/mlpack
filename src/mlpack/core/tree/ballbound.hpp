@@ -4,8 +4,8 @@
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
  */
-#ifndef __MLPACK_CORE_TREE_BALLBOUND_HPP
-#define __MLPACK_CORE_TREE_BALLBOUND_HPP
+#ifndef MLPACK_CORE_TREE_BALLBOUND_HPP
+#define MLPACK_CORE_TREE_BALLBOUND_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -201,4 +201,4 @@ struct BoundTraits<BallBound<VecType, TMetricType>>
 
 #include "ballbound_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_DBALLBOUND_HPP
+#endif // MLPACK_CORE_TREE_DBALLBOUND_HPP

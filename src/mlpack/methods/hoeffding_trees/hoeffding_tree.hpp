@@ -5,8 +5,8 @@
  * An implementation of the standard Hoeffding tree by Pedro Domingos and Geoff
  * Hulten in ``Mining High-Speed Data Streams''.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include "gini_impurity.hpp"

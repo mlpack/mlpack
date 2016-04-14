@@ -4,8 +4,8 @@
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_FFN_HPP
-#define __MLPACK_METHODS_ANN_FFN_HPP
+#ifndef MLPACK_METHODS_ANN_FFN_HPP
+#define MLPACK_METHODS_ANN_FFN_HPP
 
 #include <mlpack/core.hpp>
 

@@ -6,8 +6,8 @@
  * not transpose matrices on input, and it allows us to give better error
  * output.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_HPP
-#define __MLPACK_CORE_DATA_LOAD_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_HPP
+#define MLPACK_CORE_DATA_LOAD_HPP
 
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.

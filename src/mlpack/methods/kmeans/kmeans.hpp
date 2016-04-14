@@ -4,8 +4,8 @@
  *
  * K-Means clustering.
  */
-#ifndef __MLPACK_METHODS_KMEANS_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_KMEANS_HPP
 
 #include <mlpack/core.hpp>
 
@@ -192,4 +192,4 @@ class KMeans
 // Include implementation.
 #include "kmeans_impl.hpp"
 
-#endif // __MLPACK_METHODS_KMEANS_KMEANS_HPP
+#endif // MLPACK_METHODS_KMEANS_KMEANS_HPP

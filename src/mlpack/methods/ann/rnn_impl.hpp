@@ -4,8 +4,8 @@
  *
  * Definition of the RNN class, which implements recurrent neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_RNN_IMPL_HPP
-#define __MLPACK_METHODS_ANN_RNN_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RNN_IMPL_HPP
+#define MLPACK_METHODS_ANN_RNN_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rnn.hpp"

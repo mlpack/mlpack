@@ -6,8 +6,8 @@
  * Implementation of the LRSDPFunction class, and also template specializations
  * for faster execution with the AugLagrangian optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
 
 #include "lrsdp_function.hpp"
 

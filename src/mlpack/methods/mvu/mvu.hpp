@@ -9,8 +9,8 @@
  *
  * Note: this implementation of MVU does not work.  See #189.
  */
-#ifndef __MLPACK_METHODS_MVU_MVU_HPP
-#define __MLPACK_METHODS_MVU_MVU_HPP
+#ifndef MLPACK_METHODS_MVU_MVU_HPP
+#define MLPACK_METHODS_MVU_MVU_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  *
  * Utilities for rank-approximate neighbor search.
  */
-#ifndef __MLPACK_METHODS_RANN_RA_UTIL_HPP
-#define __MLPACK_METHODS_RANN_RA_UTIL_HPP
+#ifndef MLPACK_METHODS_RANN_RA_UTIL_HPP
+#define MLPACK_METHODS_RANN_RA_UTIL_HPP
 
 #include <mlpack/core.hpp>
 

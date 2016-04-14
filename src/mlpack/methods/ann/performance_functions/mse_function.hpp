@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the mean squared error performance function.
  */
-#ifndef __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_MSE_FUNCTION_HPP
-#define __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_MSE_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_MSE_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_MSE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 

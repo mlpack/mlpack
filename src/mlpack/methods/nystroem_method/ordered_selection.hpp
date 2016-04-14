@@ -6,8 +6,8 @@
  * kernel matrix approximation. This is mostly for testing, but might have
  * other uses.
  */
-#ifndef __MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
-#define __MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
+#ifndef MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
+#define MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
 
 #include <mlpack/core.hpp>
 

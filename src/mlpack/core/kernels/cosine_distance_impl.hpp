@@ -4,8 +4,8 @@
  *
  * This implements the cosine distance.
  */
-#ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_IMPL_HPP
-#define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_IMPL_HPP
+#ifndef MLPACK_CORE_KERNELS_COSINE_DISTANCE_IMPL_HPP
+#define MLPACK_CORE_KERNELS_COSINE_DISTANCE_IMPL_HPP
 
 #include "cosine_distance.hpp"
 

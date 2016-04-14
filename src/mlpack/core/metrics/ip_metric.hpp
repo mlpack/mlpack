@@ -5,8 +5,8 @@
  * Inner product induced metric.  If given a kernel function, this gives the
  * complementary metric.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
-#define __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
+#ifndef MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
+#define MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
 
 namespace mlpack {
 namespace metric {

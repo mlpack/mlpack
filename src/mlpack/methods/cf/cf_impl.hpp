@@ -8,8 +8,8 @@
  * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
  */
-#ifndef __MLPACK_METHODS_CF_CF_IMPL_HPP
-#define __MLPACK_METHODS_CF_CF_IMPL_HPP
+#ifndef MLPACK_METHODS_CF_CF_IMPL_HPP
+#define MLPACK_METHODS_CF_CF_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "cf.hpp"

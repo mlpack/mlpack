@@ -4,8 +4,8 @@
  *
  * Neural network utilities.
  */
-#ifndef __MLPACK_METHODS_ANN_NETWORK_UTIL_HPP
-#define __MLPACK_METHODS_ANN_NETWORK_UTIL_HPP
+#ifndef MLPACK_METHODS_ANN_NETWORK_UTIL_HPP
+#define MLPACK_METHODS_ANN_NETWORK_UTIL_HPP
 
 #include <mlpack/core.hpp>
 

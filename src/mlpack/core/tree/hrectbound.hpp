@@ -6,8 +6,8 @@
  * This file describes the interface for the HRectBound class, which implements
  * a hyperrectangle bound.
  */
-#ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
-#define __MLPACK_CORE_TREE_HRECTBOUND_HPP
+#ifndef MLPACK_CORE_TREE_HRECTBOUND_HPP
+#define MLPACK_CORE_TREE_HRECTBOUND_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/range.hpp>
@@ -215,4 +215,4 @@ struct BoundTraits<HRectBound<MetricType, ElemType>>
 
 #include "hrectbound_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_HRECTBOUND_HPP
+#endif // MLPACK_CORE_TREE_HRECTBOUND_HPP

@@ -10,8 +10,8 @@
  * known techniques such as incremental SVD, NMF, and batch-learning SVD can be
  * derived.
  */
-#ifndef __MLPACK_METHODS_AMF_AMF_HPP
-#define __MLPACK_METHODS_AMF_AMF_HPP
+#ifndef MLPACK_METHODS_AMF_AMF_HPP
+#define MLPACK_METHODS_AMF_AMF_HPP
 
 #include <mlpack/core.hpp>
 
@@ -263,5 +263,5 @@ typedef amf::AMF<amf::SimpleResidueTermination,
 // Include implementation.
 #include "amf_impl.hpp"
 
-#endif // __MLPACK_METHODS_AMF_AMF_HPP
+#endif // MLPACK_METHODS_AMF_AMF_HPP
 

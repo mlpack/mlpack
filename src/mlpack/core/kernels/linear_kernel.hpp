@@ -6,8 +6,8 @@
  *
  * Implementation of the linear kernel (just the standard dot product).
  */
-#ifndef __MLPACK_CORE_KERNELS_LINEAR_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_LINEAR_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_LINEAR_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_LINEAR_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 

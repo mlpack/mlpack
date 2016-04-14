@@ -5,8 +5,8 @@
  * This provides the KernelTraits class, a template class to get information
  * about various kernels.
  */
-#ifndef __MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
-#define __MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
+#ifndef MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
+#define MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
 
 namespace mlpack {
 namespace kernel {

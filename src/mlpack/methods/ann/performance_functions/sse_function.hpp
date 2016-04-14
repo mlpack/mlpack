@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the sum squared error performance function.
  */
-#ifndef __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SSE_FUNCTION_HPP
-#define __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SSE_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SSE_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SSE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 

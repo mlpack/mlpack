@@ -5,8 +5,8 @@
  * Use the Nystroem method for approximating a kernel matrix.
  */
 
-#ifndef __MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
-#define __MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
+#ifndef MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
+#define MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>

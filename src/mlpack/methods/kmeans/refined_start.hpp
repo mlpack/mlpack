@@ -6,8 +6,8 @@
  * K-Means clustering".  This class is meant to provide better initial points
  * for the k-means algorithm.
  */
-#ifndef __MLPACK_METHODS_KMEANS_REFINED_START_HPP
-#define __MLPACK_METHODS_KMEANS_REFINED_START_HPP
+#ifndef MLPACK_METHODS_KMEANS_REFINED_START_HPP
+#define MLPACK_METHODS_KMEANS_REFINED_START_HPP
 
 #include <mlpack/core.hpp>
 

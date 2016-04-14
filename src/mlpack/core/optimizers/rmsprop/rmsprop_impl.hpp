@@ -5,8 +5,8 @@
  *
  * Implementation of the RMSprop optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rmsprop.hpp"

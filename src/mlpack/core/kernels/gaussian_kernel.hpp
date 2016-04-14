@@ -6,8 +6,8 @@
  *
  * Implementation of the Gaussian kernel (GaussianKernel).
  */
-#ifndef __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

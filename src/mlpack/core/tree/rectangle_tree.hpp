@@ -5,8 +5,8 @@
  * Include all the necessary files to use the Rectangle Type Trees (RTree,
  * RStarTree, XTree, and HilbertRTree).
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_HPP
 
 /* We include bounds.hpp since it gives us the necessary files.
  * However, we will not use the "ballbounds" option.

@@ -4,8 +4,8 @@
  *
  * Definition of the MeanPooling class, which implements mean pooling.
  */
-#ifndef __MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
-#define __MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
+#ifndef MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
+#define MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
 
 #include <mlpack/core.hpp>
 

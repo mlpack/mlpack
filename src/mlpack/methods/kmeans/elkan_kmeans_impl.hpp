@@ -4,8 +4,8 @@
  *
  * An implementation of Elkan's algorithm for exact Lloyd iterations.
  */
-#ifndef __MLPACK_METHODS_KMEANS_ELKAN_KMEANS_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_ELKAN_KMEANS_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_ELKAN_KMEANS_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_ELKAN_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "elkan_kmeans.hpp"
