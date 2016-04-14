@@ -13,7 +13,7 @@ developers who want to use and contribute to mlpack but are not sure where to
 start.
 
  - \ref build
- - \ref formats
+ - \ref formatdoc
  - \ref matrices
  - \ref iodoc
  - \ref timer
