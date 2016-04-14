@@ -262,7 +262,7 @@ if (GIT_FOUND)
       OUTPUT_STRIP_TRAILING_WHITESPACE)
   if (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
     set (USING_GIT "YES")
-    add_definitions(-D__MLPACK_GIT_VERSION)
+    add_definitions(-DMLPACK_GIT_VERSION)
     include(CMake/CreateGitVersionHeader.cmake)
 
     add_custom_target(mlpack_gitversion ALL
