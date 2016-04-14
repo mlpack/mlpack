@@ -46,16 +46,16 @@ class NearestNeighborSort
 
   /**
    * Return whether or not value is "better" than ref.  In this case, that means
-   * that the value is less than the reference.
+   * that the value is less than or equal to the reference.
    *
    * @param value Value to compare
    * @param ref Value to compare with
    *
-   * @return bool indicating whether or not (value < ref).
+   * @return bool indicating whether or not (value <= ref).
    */
   static inline bool IsBetter(const double value, const double ref)
   {
-    return (value < ref);
+    return (value <= ref);
   }
 
   /**

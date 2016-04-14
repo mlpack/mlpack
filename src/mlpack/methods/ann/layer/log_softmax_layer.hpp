@@ -54,11 +54,11 @@ class LogSoftmaxLayer
     output.transform( [](double x)
     {
       //! Fast approximation of exp(-x) for x positive.
-      constexpr double A0 = 1.0;
-      constexpr double A1 = 0.125;
-      constexpr double A2 = 0.0078125;
-      constexpr double A3 = 0.00032552083;
-      constexpr double A4 = 1.0172526e-5;
+      static constexpr double A0 = 1.0;
+      static constexpr double A1 = 0.125;
+      static constexpr double A2 = 0.0078125;
+      static constexpr double A3 = 0.00032552083;
+      static constexpr double A4 = 1.0172526e-5;
 
       if (x < 13.0)
       {
