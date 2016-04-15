@@ -35,7 +35,7 @@ namespace radical {
  * }
  * @endcode
  */
-class Radical
+class MLPACK_API Radical
 {
  public:
   /**

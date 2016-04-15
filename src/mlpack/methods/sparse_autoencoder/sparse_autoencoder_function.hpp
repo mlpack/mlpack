@@ -18,7 +18,7 @@ namespace nn {
  * to create learning models like self-taught learning, stacked autoencoders,
  * conditional random fields (CRFs), and so forth.
  */
-class SparseAutoencoderFunction
+class MLPACK_API SparseAutoencoderFunction
 {
  public:
   /**

@@ -22,7 +22,7 @@ namespace kernel {
  *
  * where \f$ b \f$ is the bandwidth of the kernel.
  */
-class TriangularKernel
+class MLPACK_API TriangularKernel
 {
  public:
   /**

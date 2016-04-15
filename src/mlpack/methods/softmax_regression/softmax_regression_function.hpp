@@ -13,7 +13,7 @@
 namespace mlpack {
 namespace regression {
 
-class SoftmaxRegressionFunction
+class MLPACK_API SoftmaxRegressionFunction
 {
  public:
   /**

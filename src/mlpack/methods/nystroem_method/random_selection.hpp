@@ -14,7 +14,7 @@
 namespace mlpack {
 namespace kernel {
 
-class RandomSelection
+class MLPACK_API RandomSelection
 {
  public:
   /**

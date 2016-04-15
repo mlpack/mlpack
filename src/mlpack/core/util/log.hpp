@@ -47,7 +47,7 @@ namespace mlpack {
  *
  * @see PrefixedOutStream, NullOutStream, CLI
  */
-class Log
+class MLPACK_API Log
 {
  public:
   /**

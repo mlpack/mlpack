@@ -19,7 +19,7 @@ namespace gmm {
  * holds a reference to that vector instead of copying it.  (This doesn't apply
  * if you are deserializing the object from a file.)
  */
-class EigenvalueRatioConstraint
+class MLPACK_API EigenvalueRatioConstraint
 {
  public:
   /**

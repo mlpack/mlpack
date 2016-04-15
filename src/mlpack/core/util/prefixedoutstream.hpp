@@ -20,6 +20,7 @@
 
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <mlpack/core/util/string_util.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace util {
@@ -49,7 +50,7 @@ namespace util {
  * These objects are used for the mlpack::Log levels (DEBUG, INFO, WARN, and
  * FATAL).
  */
-class PrefixedOutStream
+class MLPACK_API PrefixedOutStream
 {
  public:
   /**

@@ -14,7 +14,7 @@
 namespace mlpack {
 namespace svd {
 
-class RegularizedSVDFunction
+class MLPACK_API RegularizedSVDFunction
 {
  public:
 

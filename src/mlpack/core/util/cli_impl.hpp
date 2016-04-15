@@ -13,6 +13,8 @@
 // Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
 
+#include "mlpack/prereqs.hpp"
+
 namespace mlpack {
 
 /**
@@ -64,7 +66,7 @@ void CLI::Add(const std::string& path,
 }
 
 // We specialize this in cli.cpp.
-template<>
+template<> MLPACK_API
 bool& CLI::GetParam<bool>(const std::string& identifier);
 
 /**

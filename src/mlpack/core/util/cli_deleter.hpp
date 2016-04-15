@@ -7,6 +7,8 @@
 #ifndef MLPACK_CORE_UTIL_CLI_DELETER_HPP
 #define MLPACK_CORE_UTIL_CLI_DELETER_HPP
 
+#include <mlpack/prereqs.hpp>
+
 namespace mlpack {
 namespace util {
 
@@ -17,7 +19,7 @@ namespace util {
  * CLIDeleter class, which will be initialized at the beginning of the program
  * and deleted at the end.  The destructor destroys the CLI singleton.
  */
-class CLIDeleter
+class MLPACK_API CLIDeleter
 {
  public:
   CLIDeleter();

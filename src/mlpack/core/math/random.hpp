@@ -13,11 +13,11 @@ namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
 
 // Global random object.
-extern std::mt19937 randGen;
+MLPACK_API extern std::mt19937 randGen;
 // Global uniform distribution.
-extern std::uniform_real_distribution<> randUniformDist;
+MLPACK_API extern std::uniform_real_distribution<> randUniformDist;
 // Global normal distribution.
-extern std::normal_distribution<> randNormalDist;
+MLPACK_API extern std::normal_distribution<> randNormalDist;
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
@@ -41,6 +41,7 @@ inline void RandomSeed(const size_t seed)
 /**
  * Generates a uniform random number between 0 and 1.
  */
+
 inline double Random()
 {
   return randUniformDist(randGen);
@@ -49,6 +50,7 @@ inline double Random()
 /**
  * Generates a uniform random number in the specified range.
  */
+
 inline double Random(const double lo, const double hi)
 {
   return lo + (hi - lo) * randUniformDist(randGen);
@@ -57,6 +59,7 @@ inline double Random(const double lo, const double hi)
 /**
  * Generates a uniform random integer.
  */
+
 inline int RandInt(const int hiExclusive)
 {
   return (int) std::floor((double) hiExclusive * randUniformDist(randGen));
@@ -65,6 +68,7 @@ inline int RandInt(const int hiExclusive)
 /**
  * Generates a uniform random integer.
  */
+
 inline int RandInt(const int lo, const int hiExclusive)
 {
   return lo + (int) std::floor((double) (hiExclusive - lo)
@@ -74,6 +78,7 @@ inline int RandInt(const int lo, const int hiExclusive)
 /**
  * Generates a normally distributed random number with mean 0 and variance 1.
  */
+
 inline double RandNormal()
 {
   return randNormalDist(randGen);
@@ -86,6 +91,7 @@ inline double RandNormal()
  * @param mean Mean of distribution.
  * @param variance Variance of distribution.
  */
+
 inline double RandNormal(const double mean, const double variance)
 {
   return variance * randNormalDist(randGen) + mean;

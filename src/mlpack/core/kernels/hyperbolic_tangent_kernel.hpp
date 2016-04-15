@@ -20,7 +20,7 @@ namespace kernel {
  * K(x, y) = \tanh(s <x, y> + t)
  * @f]
  */
-class HyperbolicTangentKernel
+class MLPACK_API HyperbolicTangentKernel
 {
  public:
   /**

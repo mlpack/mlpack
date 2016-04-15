@@ -19,7 +19,7 @@ namespace neighbor {
  * minimum distance is the best (so, when used with NeighborSearch, the output
  * is furthest neighbors).
  */
-class FurthestNeighborSort
+class MLPACK_API FurthestNeighborSort
 {
  public:
   /**

@@ -192,7 +192,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   {
     // Break up data into train and test sets.
     size_t start = fold * testSize;
-    size_t end = std::min((fold + 1) * testSize, (size_t) cvData.n_cols);
+    size_t end = std::min((size_t) (fold + 1) * testSize, (size_t) cvData.n_cols);
 
     arma::mat test = cvData.cols(start, end - 1);
     arma::mat train(cvData.n_rows, cvData.n_cols - test.n_cols);

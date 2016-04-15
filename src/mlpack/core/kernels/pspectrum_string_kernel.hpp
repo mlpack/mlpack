@@ -56,7 +56,7 @@ namespace kernel {
  * tree.  This kernel was originally written for the FastMKS method; so, at the
  * very least, it will work with that.
  */
-class PSpectrumStringKernel
+class MLPACK_API PSpectrumStringKernel
 {
  public:
   /**

@@ -15,7 +15,7 @@ namespace gmm {
 /**
  * Force a covariance matrix to be diagonal.
  */
-class DiagonalConstraint
+class MLPACK_API DiagonalConstraint
 {
  public:
   //! Force a covariance matrix to be diagonal.

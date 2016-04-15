@@ -20,7 +20,7 @@ namespace kernel {
  * K(x, y) = (x^T * y + offset) ^ {degree}.
  * @f]
  */
-class PolynomialKernel
+class MLPACK_API PolynomialKernel
 {
  public:
   /**

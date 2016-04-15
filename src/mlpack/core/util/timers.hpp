@@ -12,6 +12,8 @@
 #include <string>
 #include <chrono> // chrono library for cross platform timer calculation
 
+#include <mlpack/prereqs.hpp>
+
 #if defined(_WIN32)
  // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
@@ -30,7 +32,7 @@ namespace mlpack {
  * methods contained in this class allow a named timer to be started and
  * stopped, and its value to be obtained.
  */
-class Timer
+class MLPACK_API Timer
 {
  public:
   /**

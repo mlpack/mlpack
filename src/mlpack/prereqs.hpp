@@ -79,4 +79,40 @@
   #pragma warning(disable : 4519)
 #endif
 
+
+/* From http://gcc.gnu.org/wiki/Visibility */
+/* Generic helper definitions for shared library support */
+#if defined _WIN32 || defined __CYGWIN__
+#define MLPACK_HELPER_DLL_IMPORT __declspec(dllimport)
+#define MLPACK_HELPER_DLL_EXPORT __declspec(dllexport)
+#define MLPACK_HELPER_DLL_LOCAL
+#else
+#if __GNUC__ >= 4
+#define MLPACK_HELPER_DLL_IMPORT __attribute__ ((visibility ("default")))
+#define MLPACK_HELPER_DLL_EXPORT __attribute__ ((visibility ("default")))
+#define MLPACK_HELPER_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+#else
+#define MLPACK_HELPER_DLL_IMPORT
+#define MLPACK_HELPER_DLL_EXPORT
+#define MLPACK_HELPER_DLL_LOCAL
+#endif
+#endif
+
+/* Now we use the generic helper definitions above to define MLPACK_API and MLPACK_LOCAL.
+ * MLPACK_API is used for the public API symbols. It either DLL imports or DLL exports (or does nothing for static build)
+ * MLPACK_LOCAL is used for non-api symbols. */
+
+#ifndef MLPACK_STATIC /* defined if MLPACK is compiled as a DLL */
+#ifdef mlpack_EXPORTS /* defined if we are building the MLPACK DLL (instead of using it) */
+#define MLPACK_API MLPACK_HELPER_DLL_EXPORT
+#else
+#define MLPACK_API MLPACK_HELPER_DLL_IMPORT
+#endif /* MLPACK_DLL_EXPORTS */
+#define MLPACK_LOCAL MLPACK_HELPER_DLL_LOCAL
+#else /* MLPACK_STATIC is defined: this means MLPACK is a static lib. */
+#define MLPACK_API
+#define MLPACK_LOCAL
+#endif /* !MLPACK_STATIC */
+
+
 #endif

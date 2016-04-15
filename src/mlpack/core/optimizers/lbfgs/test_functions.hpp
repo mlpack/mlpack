@@ -45,7 +45,7 @@ namespace test {
  * "An automatic method for finding the greatest or least value of a function."
  *   H.H. Rosenbrock.  1960.  Comput. J. 3., 175-184.
  */
-class RosenbrockFunction
+class MLPACK_API RosenbrockFunction
 {
  public:
   RosenbrockFunction(); // initialize initial point
@@ -75,7 +75,7 @@ class RosenbrockFunction
  * "A comparative study of nonlinear programming codes."
  *   A.R. Colville.  1968.  Rep. 320-2949, IBM N.Y. Scientific Center.
  */
-class WoodFunction
+class MLPACK_API WoodFunction
 {
  public:
   WoodFunction(); // initialize initial point
@@ -105,7 +105,7 @@ class WoodFunction
  * "An analysis of the behavior of a glass of genetic adaptive systems."
  *   K.A. De Jong.  Ph.D. thesis, University of Michigan, 1975.
  */
-class GeneralizedRosenbrockFunction
+class MLPACK_API GeneralizedRosenbrockFunction
 {
  public:
   /***
@@ -136,7 +136,7 @@ class GeneralizedRosenbrockFunction
  * four dimensions.  In this function we are actually optimizing a 2x4 matrix of
  * coordinates, not a vector.
  */
-class RosenbrockWoodFunction
+class MLPACK_API RosenbrockWoodFunction
 {
  public:
   RosenbrockWoodFunction(); // initialize initial point

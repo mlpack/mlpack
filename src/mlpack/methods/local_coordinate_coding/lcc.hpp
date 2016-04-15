@@ -71,7 +71,7 @@ namespace lcc {
  * }
  * @endcode
  */
-class LocalCoordinateCoding
+class MLPACK_API LocalCoordinateCoding
 {
  public:
   /**

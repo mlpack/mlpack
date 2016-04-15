@@ -19,7 +19,7 @@ namespace gmm {
  * forcing here is also done in order to bring the condition number of the
  * matrix under 1e5 (10k), which should help with numerical stability.
  */
-class PositiveDefiniteConstraint
+class MLPACK_API PositiveDefiniteConstraint
 {
  public:
   /**

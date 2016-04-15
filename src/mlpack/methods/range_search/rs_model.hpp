@@ -19,7 +19,7 @@
 namespace mlpack {
 namespace range {
 
-class RSModel
+class MLPACK_API RSModel
 {
  public:
   enum TreeTypes

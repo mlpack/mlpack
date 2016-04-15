@@ -71,7 +71,7 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * arma::vec observation = g.Random();
  * @endcode
  */
-class GMM
+class MLPACK_API GMM
 {
  private:
   //! The number of Gaussians in the model.

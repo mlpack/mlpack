@@ -20,6 +20,7 @@ namespace math {
  * is ignored in the power operation and then re-added.  Useful for
  * eigenvalues.
  */
+MLPACK_API
 void VectorPower(arma::vec& vec, const double power);
 
 /**
@@ -29,6 +30,7 @@ void VectorPower(arma::vec& vec, const double power);
  * @param x Input matrix
  * @param xCentered Matrix to write centered output into
  */
+MLPACK_API
 void Center(const arma::mat& x, arma::mat& xCentered);
 
 /**
@@ -36,6 +38,7 @@ void Center(const arma::mat& x, arma::mat& xCentered);
  * matrix. Whitening means the covariance matrix of the result is the identity
  * matrix.
  */
+MLPACK_API
 void WhitenUsingSVD(const arma::mat& x,
                     arma::mat& xWhitened,
                     arma::mat& whiteningMatrix);
@@ -44,6 +47,7 @@ void WhitenUsingSVD(const arma::mat& x,
  * Whitens a matrix using the eigendecomposition of the covariance matrix.
  * Whitening means the covariance matrix of the result is the identity matrix.
  */
+MLPACK_API
 void WhitenUsingEig(const arma::mat& x,
                     arma::mat& xWhitened,
                     arma::mat& whiteningMatrix);
@@ -51,18 +55,21 @@ void WhitenUsingEig(const arma::mat& x,
 /**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.
  */
+MLPACK_API
 void RandVector(arma::vec& v);
 
 /**
  * Orthogonalize x and return the result in W, using eigendecomposition.
  * We will be using the formula \f$ W = x (x^T x)^{-0.5} \f$.
  */
+MLPACK_API
 void Orthogonalize(const arma::mat& x, arma::mat& W);
 
 /**
  * Orthogonalize x in-place.  This could be sped up by a custom
  * implementation.
  */
+MLPACK_API
 void Orthogonalize(arma::mat& x);
 
 /**
@@ -72,6 +79,7 @@ void Orthogonalize(arma::mat& x);
  * @param rowsToRemove Vector containing indices of rows to be removed.
  * @param output Matrix to copy non-removed rows into.
  */
+MLPACK_API
 void RemoveRows(const arma::mat& input,
                 const std::vector<size_t>& rowsToRemove,
                 arma::mat& output);
@@ -85,8 +93,10 @@ void RemoveRows(const arma::mat& input,
  * @param input A symmetric matrix
  * @param output
  */
+MLPACK_API
 void Svec(const arma::mat& input, arma::vec& output);
 
+MLPACK_API
 void Svec(const arma::sp_mat& input, arma::sp_vec& output);
 
 /**
@@ -95,6 +105,7 @@ void Svec(const arma::sp_mat& input, arma::sp_vec& output);
  * @param input
  * @param output A symmetric matrix
  */
+MLPACK_API
 void Smat(const arma::vec& input, arma::mat& output);
 
 /**
@@ -117,6 +128,7 @@ inline size_t SvecIndex(size_t i, size_t j, size_t n);
  * @param A
  * @param op
  */
+MLPACK_API
 void SymKronId(const arma::mat& A, arma::mat& op);
 
 } // namespace math

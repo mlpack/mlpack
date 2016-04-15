@@ -25,6 +25,7 @@ namespace det {
  * @param numClasses Number of classes in dataset.
  * @param leafClassMembershipFile Name of file to print to (optional).
  */
+MLPACK_API
 void PrintLeafMembership(DTree* dtree,
                          const arma::mat& data,
                          const arma::Mat<size_t>& labels,
@@ -39,6 +40,7 @@ void PrintLeafMembership(DTree* dtree,
  * @param dtree Density tree to use.
  * @param viFile Name of file to print to (optional).
  */
+MLPACK_API
 void PrintVariableImportance(const DTree* dtree,
                              const std::string viFile = "");
 
@@ -54,6 +56,7 @@ void PrintVariableImportance(const DTree* dtree,
  * @param minLeafSize Minimum number of points allowed in a leaf.
  * @param unprunedTreeOutput Filename to print unpruned tree to (optional).
  */
+MLPACK_API
 DTree* Trainer(arma::mat& dataset,
                const size_t folds,
                const bool useVolumeReg = false,

@@ -67,8 +67,9 @@ namespace optimization {
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
  */
+
 template<typename DecomposableFunctionType>
-class SGD
+class MLPACK_API SGD
 {
  public:
   /**

@@ -22,7 +22,7 @@ namespace kernel {
  *
  * The implementation is all in the header file because it is so simple.
  */
-class LaplacianKernel
+class MLPACK_API LaplacianKernel
 {
  public:
   /**

@@ -23,7 +23,7 @@ namespace neighbor {
  * SortPolicy.  All of the methods implemented here must be implemented by any
  * other SortPolicy classes.
  */
-class NearestNeighborSort
+class MLPACK_API NearestNeighborSort
 {
  public:
   /**

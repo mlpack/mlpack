@@ -35,7 +35,7 @@ enum Datatype : bool /* bool is all the precision we need for two types */
  * Datatype::categorical) as well as mappings from strings to unsigned integers
  * and vice versa.
  */
-class DatasetInfo
+class MLPACK_API DatasetInfo
 {
  public:
   /**

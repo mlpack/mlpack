@@ -45,7 +45,7 @@ namespace mlpack {
  *
  * @see PrefixedOutStream, Log
  */
-class Backtrace
+class MLPACK_API Backtrace
 {
  public:   
   /**

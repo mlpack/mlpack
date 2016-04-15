@@ -19,6 +19,7 @@ namespace math {
  * @param basis Matrix to store basis in.
  * @param d Desired number of dimensions in the basis.
  */
+MLPACK_API
 void RandomBasis(arma::mat& basis, const size_t d);
 
 } // namespace math

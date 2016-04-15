@@ -20,7 +20,7 @@ namespace optimization {
  * The minimum that satisfies the constraint is x = [1, 4], with an objective
  * value of 70.
  */
-class AugLagrangianTestFunction
+class MLPACK_API AugLagrangianTestFunction
 {
  public:
   AugLagrangianTestFunction();
@@ -53,7 +53,7 @@ class AugLagrangianTestFunction
  * The minimum that satisfies the two constraints is given as
  *   x = [0.12288, -1.1078, 0.015100], with an objective value of about 29.634.
  */
-class GockenbachFunction
+class MLPACK_API GockenbachFunction
 {
  public:
   GockenbachFunction();
@@ -97,7 +97,7 @@ class GockenbachFunction
  * coordinates given to the Evaluate(), Gradient(), EvaluateConstraint(), and
  * GradientConstraint() functions.
  */
-class LovaszThetaSDP
+class MLPACK_API LovaszThetaSDP
 {
  public:
   LovaszThetaSDP();

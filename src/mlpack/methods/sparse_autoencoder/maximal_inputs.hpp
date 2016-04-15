@@ -74,6 +74,7 @@ namespace nn {
  * @param parameters The parameters of the autoencoder.
  * @param output Matrix to store the maximal inputs in.
  */
+MLPACK_API
 void MaximalInputs(const arma::mat& parameters, arma::mat& output);
 
 /**
@@ -83,6 +84,7 @@ void MaximalInputs(const arma::mat& parameters, arma::mat& output);
  * @param input The input data to normalize.
  * @param output A matrix to store the input data in after normalization.
  */
+MLPACK_API
 void NormalizeColByMax(const arma::mat& input, arma::mat& output);
 
 } // namespace nn

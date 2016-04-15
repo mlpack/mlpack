@@ -36,7 +36,7 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-class DTree
+class MLPACK_API DTree
 {
  public:
   /**

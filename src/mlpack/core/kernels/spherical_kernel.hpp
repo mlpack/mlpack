@@ -15,7 +15,7 @@ namespace kernel {
  * The spherical kernel, which is 1 when the distance between the two argument
  * points is less than or equal to the bandwidth, or 0 otherwise.
  */
-class SphericalKernel
+class MLPACK_API SphericalKernel
 {
  public:
   /**

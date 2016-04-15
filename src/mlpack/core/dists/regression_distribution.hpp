@@ -22,7 +22,7 @@ namespace distribution {
  * The hmm observations should have the dependent variable in the first row,
  * with the independent variables in the other rows.
  */
-class RegressionDistribution
+class MLPACK_API RegressionDistribution
 {
  private:
   //! Regression function for representing conditional mean.

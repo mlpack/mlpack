@@ -13,7 +13,7 @@
 namespace mlpack {
 namespace neighbor {
 
-class RAUtil
+class MLPACK_API RAUtil
 {
  public:
   /**
