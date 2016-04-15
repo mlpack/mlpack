@@ -58,13 +58,14 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
   //sumIterate is taken track the  sum  all other computed iterate value from each thread. 
   arma::mat sumIterate(iterate.n_rows,iterate.n_cols);
+  arma::mat gradient(iterate.n_rows, iterate.n_cols);  //gradient for each thread.
   size_t it;   
   bool halt=false;
   sumIterate.zeros();
+  std::srand(std::time(0));
 
-
-
-  #pragma omp parallel  shared(sumIterate,halt) private(it) 
+  
+  #pragma omp parallel  shared(sumIterate,halt) private(it,gradient) 
   {
     it=1; 
     while(it!=maxIterations && halt != true)
@@ -72,7 +73,6 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       it++;
 
       int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
-      arma::mat gradient(iterate.n_rows, iterate.n_cols);  //To make gradient private to each thread it is declared here.
       int selectedFunction;
     
       selectedFunction=std::rand()%numFunctions;

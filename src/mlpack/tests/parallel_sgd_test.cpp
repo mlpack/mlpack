@@ -44,6 +44,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionPSGDSimpleTest)
 }
 
 
+
+/*
+  The  function f(x,y)=(x+2y-7)^2 +(2x+y-5)^2
+  minimum value of this function is 0,  at x=1  y=3;
+*/
+
+
+
 BOOST_AUTO_TEST_CASE(BoothsFunctionTest)
 {
   BoothsFunction f;

@@ -76,10 +76,12 @@ void BoothsFunction::Gradient(const arma::mat& coordinates,const size_t i,arma::
   switch(i)
   {
     case 0:
-      gradient[0]=2*(coordinates[0] + 2*coordinates[1] - 7) + 4*(2*coordinates[0] +coordinates[1] -5);
+      gradient[0]=2*(coordinates[0] + 2*coordinates[1] - 7);
+      gradient[1]=4*(coordinates[0] + 2*coordinates[1] - 7);
       break;
     case 1:
-      gradient[1]=4*(coordinates[0] + 2*coordinates[1] - 7) + 2*(2*coordinates[0] +coordinates[1] -5);
+      gradient[0]=4*(2*coordinates[0] +coordinates[1] -5 );
+      gradient[1]=2*(2*coordinates[0] +coordinates[1] -5 );
       break;
   }
 }
