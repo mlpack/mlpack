@@ -8,12 +8,15 @@ set(DIRS
   bindings
   core
   methods
-  tests
 )
 
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
 
 # MLPACK_SRCS is set in the subdirectories.
 # We don't use a DLL (shared) on Windows because it's a nightmare.  We can't
@@ -82,10 +85,3 @@ install(TARGETS mlpack
   ARCHIVE DESTINATION lib)
 
 add_dependencies(mlpack mlpack_headers)
-
-# For 'make test'.
-add_custom_target(test
-  ${CMAKE_BINARY_DIR}/bin/mlpack_test "--log_level=test_suite" # Set UTF runtime param
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
-  COMMENT "Running mlpack test"
-  DEPENDS mlpack_test)
