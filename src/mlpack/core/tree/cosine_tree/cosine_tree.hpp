@@ -4,8 +4,8 @@
  *
  * Definition of Cosine Tree.
  */
-#ifndef __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
-#define __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
+#define MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include <boost/heap/priority_queue.hpp>

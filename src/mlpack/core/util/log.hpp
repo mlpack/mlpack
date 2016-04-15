@@ -4,8 +4,8 @@
  *
  * Definition of the Log class.
  */
-#ifndef __MLPACK_CORE_UTIL_LOG_HPP
-#define __MLPACK_CORE_UTIL_LOG_HPP
+#ifndef MLPACK_CORE_UTIL_LOG_HPP
+#define MLPACK_CORE_UTIL_LOG_HPP
 
 #include <string>
 

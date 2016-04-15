@@ -6,8 +6,8 @@
  * implementation based on a minor note in the paper "Mining High-Speed Data
  * Streams" by Pedro Domingos and Geoff Hulten.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_NUMERIC_SPLIT_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_NUMERIC_SPLIT_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_NUMERIC_SPLIT_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_NUMERIC_SPLIT_HPP
 
 #include <mlpack/core.hpp>
 #include "numeric_split_info.hpp"

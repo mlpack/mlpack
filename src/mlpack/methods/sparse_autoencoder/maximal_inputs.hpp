@@ -4,8 +4,8 @@
  *
  * A function to find the maximal inputs of an autoencoder.
  */
-#ifndef __MLPACK_METHODS_NN_MAXIMAL_INPUTS_HPP
-#define __MLPACK_METHODS_NN_MAXIMAL_INPUTS_HPP
+#ifndef MLPACK_METHODS_NN_MAXIMAL_INPUTS_HPP
+#define MLPACK_METHODS_NN_MAXIMAL_INPUTS_HPP
 
 #include <mlpack/core.hpp>
 

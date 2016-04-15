@@ -2,8 +2,8 @@
  * @file lin_alg_impl.hpp
  * @author Stephen Tu
  */
-#ifndef __MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
-#define __MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
+#ifndef MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
+#define MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
 
 #include "lin_alg.hpp"
 

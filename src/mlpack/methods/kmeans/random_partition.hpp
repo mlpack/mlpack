@@ -5,8 +5,8 @@
  * Very simple partitioner which partitions the data randomly into the number of
  * desired clusters.  Used as the default InitialPartitionPolicy for KMeans.
  */
-#ifndef __MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP
-#define __MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP
+#ifndef MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP
+#define MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP
 
 #include <mlpack/core.hpp>
 

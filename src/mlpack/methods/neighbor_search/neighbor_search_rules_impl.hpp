@@ -4,8 +4,8 @@
  *
  * Implementation of NearestNeighborRules.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "neighbor_search_rules.hpp"
@@ -177,7 +177,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const double lastRefDescDist =
         traversalInfo.LastReferenceNode()->MinimumBoundDistance();
     adjustedScore = SortPolicy::CombineWorst(score, lastQueryDescDist);
-    adjustedScore = SortPolicy::CombineWorst(score, lastRefDescDist);
+    adjustedScore = SortPolicy::CombineWorst(adjustedScore, lastRefDescDist);
   }
 
   // Assemble an adjusted score.  For nearest neighbor search, this adjusted
@@ -231,7 +231,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   // Can we prune?
-  if (SortPolicy::IsBetter(bestDistance, adjustedScore))
+  if (!SortPolicy::IsBetter(adjustedScore, bestDistance))
   {
     if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
     {
@@ -447,4 +447,4 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
 } // namespace neighbor
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP

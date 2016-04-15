@@ -5,33 +5,33 @@
 # also defined, but not for general use are
 #  ACML_LIBRARY, where to find the ACML library.
 
-SET(ACML_NAMES ${ACML_NAMES} acml)
-FIND_LIBRARY(ACML_LIBRARY
+set(ACML_NAMES ${ACML_NAMES} acml)
+find_library(ACML_LIBRARY
   NAMES ${ACML_NAMES}
   PATHS /usr/lib64 /usr/lib /usr/*/lib64 /usr/*/lib /usr/*/gfortran64/lib/ /usr/*/gfortran32/lib/ /usr/local/lib64 /usr/local/lib /opt/lib64 /opt/lib /opt/*/lib64 /opt/*/lib /opt/*/gfortran64/lib/ /opt/*/gfortran32/lib/
   )
 
-IF (ACML_LIBRARY)
-  SET(ACML_LIBRARIES ${ACML_LIBRARY})
-  SET(ACML_FOUND "YES")
-ELSE (ACML_LIBRARY)
-  SET(ACML_FOUND "NO")
-ENDIF (ACML_LIBRARY)
+if (ACML_LIBRARY)
+  set(ACML_LIBRARIES ${ACML_LIBRARY})
+  set(ACML_FOUND "YES")
+else ()
+  set(ACML_FOUND "NO")
+endif ()
 
 
-IF (ACML_FOUND)
-   IF (NOT ACML_FIND_QUIETLY)
-      MESSAGE(STATUS "Found the ACML library: ${ACML_LIBRARIES}")
-   ENDIF (NOT ACML_FIND_QUIETLY)
-ELSE (ACML_FOUND)
-   IF (ACML_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find the ACML library")
-   ENDIF (ACML_FIND_REQUIRED)
-ENDIF (ACML_FOUND)
+if (ACML_FOUND)
+   if (NOT ACML_FIND_QUIETLY)
+      message(STATUS "Found the ACML library: ${ACML_LIBRARIES}")
+   endif ()
+else ()
+   if (ACML_FIND_REQUIRED)
+      message(FATAL_ERROR "Could not find the ACML library")
+   endif ()
+endif ()
 
 # Deprecated declarations.
-GET_FILENAME_COMPONENT (NATIVE_ACML_LIB_PATH ${ACML_LIBRARY} PATH)
+get_filename_component (NATIVE_ACML_LIB_PATH ${ACML_LIBRARY} PATH)
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   ACML_LIBRARY
   )

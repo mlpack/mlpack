@@ -6,8 +6,8 @@
  * {-1, 1} or otherwise.  The purpose of this function is to normalize labels to
  * {0, 1, 2, ...} and provide a mapping back to those labels.
  */
-#ifndef __MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
-#define __MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
+#ifndef MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
+#define MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
 
 #include <mlpack/prereqs.hpp>
 

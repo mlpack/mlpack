@@ -9,8 +9,8 @@
  * function as cov(trans(X)) but without the cost of computing trans(X)).  This
  * also gives sparse matrix support, if it is necessary.
  */
-#ifndef __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
-#define __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
+#ifndef MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
+#define MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 
 // Add batch constructor for sparse matrix (if version <= 3.810.0).
 #define ARMA_EXTRA_SPMAT_PROTO mlpack/core/arma_extend/SpMat_extra_bones.hpp
@@ -23,6 +23,21 @@
 // Add boost serialization for Cube.
 #define ARMA_EXTRA_CUBE_PROTO mlpack/core/arma_extend/Cube_extra_bones.hpp
 #define ARMA_EXTRA_CUBE_MEAT mlpack/core/arma_extend/Cube_extra_meat.hpp
+
+// Manually set ARMA_{64,32}BIT_WORD for _WIN64 or win32
+#if defined(_MSC_VER)
+    #ifdef _WIN64
+        #define ARMA_64BIT_WORD
+        #ifdef ARMA_32BIT_WORD
+            #undef ARMA_32BIT_WORD
+        #endif
+    #else
+        #define ARMA_32BIT_WORD
+        #ifdef ARMA_64BIT_WORD
+            #undef ARMA_64BIT_WORD
+        #endif
+    #endif
+#endif
 
 // Make sure that U64 and S64 support is enabled.
 #ifndef ARMA_USE_U64S64

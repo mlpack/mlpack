@@ -6,8 +6,8 @@
  * class which are commonly used.  This is meant to be included by
  * neighbor_search.h but is a separate file for simplicity.
  */
-#ifndef __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
-#define __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
 
 // In case someone included this directly.
 #include "neighbor_search.hpp"

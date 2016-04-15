@@ -4,8 +4,8 @@
  *
  * Definition of the SparseBiasLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SPARSE_BIAS_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -77,11 +77,14 @@ class SparseBiasLayer
   /*
    * Calculate the gradient using the output delta and the bias.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& d, InputDataType& g)
+  template<typename InputType, typename eT>
+  void Gradient(const InputType& /* input */,
+                const arma::Mat<eT>& d,
+                InputDataType& g)
   {    
     g = arma::sum(d, 1) / static_cast<typename InputDataType::value_type>(
         batchSize);

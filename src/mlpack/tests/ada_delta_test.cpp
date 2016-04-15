@@ -1,6 +1,7 @@
 /**
  * @file ada_delta_test.cpp
  * @author Marcus Edel
+ * @author Vasanth Kalingeri
  *
  * Tests the AdaDelta optimizer
  */
@@ -8,50 +9,36 @@
 
 #include <mlpack/core/optimizers/adadelta/ada_delta.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
-
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace arma;
-using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-using namespace mlpack::ann;
+using namespace mlpack;
 
 BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
 
 /**
- * Train and evaluate a vanilla network with the specified structure. Using the
- * iris data, the data set contains 3 classes. One class is linearly separable
- * from the other 2. The other two aren't linearly separable from each other.
+ * Tests the Adadelta optimizer using a simple test function.
  */
-
 BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 {
   SGDTestFunction f;
   AdaDelta<SGDTestFunction> optimizer(f, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  const double result = optimizer.Optimize(coordinates);
+  optimizer.Optimize(coordinates);
 
-  BOOST_REQUIRE_LE(std::abs(result) - 1.0, 0.2);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-3);
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
+  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
+  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
 }
 
 /**
@@ -113,48 +100,6 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
-}
-
-/**
- * Run AdaDelta on a feedforward neural network and make sure the results are
- * acceptable.
- */
-BOOST_AUTO_TEST_CASE(FeedforwardTest)
-{
-  // Test on a non-linearly separable dataset (XOR).
-  arma::mat input, labels;
-  input << 0 << 1 << 1 << 0 << arma::endr
-        << 1 << 0 << 1 << 0 << arma::endr;
-  labels << 0 << 0 << 1 << 1;
-
-  // Instantiate the first layer.
-  LinearLayer<> inputLayer(input.n_rows, 4);
-  BiasLayer<> biasLayer(4);
-  SigmoidLayer<> hiddenLayer0;
-
-  // Instantiate the second layer.
-  LinearLayer<> hiddenLayer1(4, labels.n_rows);
-  SigmoidLayer<> outputLayer;
-
-  // Instantiate the output layer.
-  BinaryClassificationLayer classOutputLayer;
-
-  // Instantiate the feedforward network.
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
-      outputLayer);
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-      MeanSquaredErrorFunction> net(modules, classOutputLayer);
-
-  AdaDelta<decltype(net)> opt(net, 0.88, 1e-15,
-      300 * input.n_cols, 1e-18);
-
-  net.Train(input, labels, opt);
-
-  arma::mat prediction;
-  net.Predict(input, prediction);
-
-  const bool b = arma::accu(prediction - labels) == 0;
-  BOOST_REQUIRE_EQUAL(b, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

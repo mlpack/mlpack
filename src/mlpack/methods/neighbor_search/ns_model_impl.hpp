@@ -7,8 +7,8 @@
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ns_model.hpp"

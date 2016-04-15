@@ -4,8 +4,8 @@
  *
  * Miscellaneous utility functions for serialization tests.
  */
-#ifndef __MLPACK_TESTS_SERIALIZATION_HPP
-#define __MLPACK_TESTS_SERIALIZATION_HPP
+#ifndef MLPACK_TESTS_SERIALIZATION_HPP
+#define MLPACK_TESTS_SERIALIZATION_HPP
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_iarchive.hpp>

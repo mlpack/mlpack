@@ -4,8 +4,8 @@
  *
  * Implementation of generalized rectangle tree.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
 
 // In case it wasn't included already for some reason.
 #include "rectangle_tree.hpp"
@@ -732,8 +732,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
         // We find the root and shrink bounds at the same time.
         bool stillShrinking = true;
-        RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>* root =
-            parent;
+        RectangleTree* root = parent;
         while (root->Parent() != NULL)
         {
           if (stillShrinking)

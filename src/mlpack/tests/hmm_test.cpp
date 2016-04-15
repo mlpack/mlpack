@@ -236,6 +236,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   std::vector<arma::mat> observations;
   size_t obsNum = 250; // Number of observations.
   size_t obsLen = 500; // Number of elements in each observation.
+  size_t stateZeroStarts = 0; // Number of times we start in state 0.
   for (size_t i = 0; i < obsNum; i++)
   {
     arma::mat observation(1, obsLen);
@@ -249,9 +250,15 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
       double r = math::Random();
 
       if (r <= 0.5)
+      {
+        if (obs == 0)
+          ++stateZeroStarts;
         state = 0;
+      }
       else
+      {
         state = 1;
+      }
 
       // Now set the observation.
       r = math::Random();
@@ -281,9 +288,12 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
 
   hmm.Train(observations);
 
+  // Calculate true probability of class 0 at the start.
+  double prob = double(stateZeroStarts) / observations.size();
+
   // Only require 2.5% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], prob, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 1.0 - prob, 2.5);
 
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);

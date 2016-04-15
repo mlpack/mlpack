@@ -4,8 +4,8 @@
  *
  * Definition of the RNN class, which implements recurrent neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_RNN_HPP
-#define __MLPACK_METHODS_ANN_RNN_HPP
+#ifndef MLPACK_METHODS_ANN_RNN_HPP
+#define MLPACK_METHODS_ANN_RNN_HPP
 
 #include <mlpack/core.hpp>
 
@@ -356,7 +356,7 @@ class RNN
    */
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Init(T& layer, P& /* unused */, D& /* unused */)
   {
     // Initialize the input size only once.
@@ -368,7 +368,7 @@ class RNN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Init(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */
@@ -696,20 +696,20 @@ class RNN
   template<typename T1, typename P1, typename D1, typename T2, typename P2,
       typename D2>
   typename std::enable_if<
-      HasGradientCheck<T1, void(T1::*)(const D1&, P1&)>::value &&
+      HasGradientCheck<T1, P1&(T1::*)()>::value &&
       HasRecurrentParameterCheck<T2, P2&(T2::*)()>::value, void>::type
   Update(T1& layer, P1& /* unused */, D1& /* unused */, T2& /* unused */,
          P2& /* unused */, D2& delta2)
   {
-    layer.Gradient(delta2, layer.Gradient());
+    layer.Gradient(layer.InputParameter(), delta2, layer.Gradient());
   }
 
   template<typename T1, typename P1, typename D1, typename T2, typename P2,
       typename D2>
   typename std::enable_if<
-      (!HasGradientCheck<T1, void(T1::*)(const D1&, P1&)>::value &&
+      (!HasGradientCheck<T1, P1&(T1::*)()>::value &&
       !HasRecurrentParameterCheck<T2, P2&(T2::*)()>::value) ||
-      (!HasGradientCheck<T1, void(T1::*)(const D1&, P1&)>::value &&
+      (!HasGradientCheck<T1, P1&(T1::*)()>::value &&
       HasRecurrentParameterCheck<T2, P2&(T2::*)()>::value), void>::type
   Update(T1& /* unused */, P1& /* unused */, D1& /* unused */, T2& /* unused */,
          P2& /* unused */, D2& /* unused */)
@@ -720,12 +720,12 @@ class RNN
   template<typename T1, typename P1, typename D1, typename T2, typename P2,
       typename D2>
   typename std::enable_if<
-      HasGradientCheck<T1, void(T1::*)(const D1&, P1&)>::value &&
+      HasGradientCheck<T1, P1&(T1::*)()>::value &&
       !HasRecurrentParameterCheck<T2, P2&(T2::*)()>::value, void>::type
   Update(T1& layer, P1& /* unused */, D1& delta1, T2& /* unused */,
          P2& /* unused */, D2& /* unused */)
   {
-    layer.Gradient(delta1, layer.Gradient());
+    layer.Gradient(layer.InputParameter(), delta1, layer.Gradient());
   }
 
   /*

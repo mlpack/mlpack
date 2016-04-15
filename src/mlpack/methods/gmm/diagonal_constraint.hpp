@@ -4,8 +4,8 @@
  *
  * Constrain a covariance matrix to be diagonal.
  */
-#ifndef __MLPACK_METHODS_GMM_DIAGONAL_CONSTRAINT_HPP
-#define __MLPACK_METHODS_GMM_DIAGONAL_CONSTRAINT_HPP
+#ifndef MLPACK_METHODS_GMM_DIAGONAL_CONSTRAINT_HPP
+#define MLPACK_METHODS_GMM_DIAGONAL_CONSTRAINT_HPP
 
 #include <mlpack/core.hpp>
 

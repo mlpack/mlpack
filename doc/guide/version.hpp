@@ -11,9 +11,9 @@ The following three macros provide major, minor, and patch versions of mlpack
 'z' is the patch version):
 
 @code
-__MLPACK_VERSION_MAJOR
-__MLPACK_VERSION_MINOR
-__MLPACK_VERSION_PATCH
+MLPACK_VERSION_MAJOR
+MLPACK_VERSION_MINOR
+MLPACK_VERSION_PATCH
 @endcode
 
 In addition, the function \c mlpack::util::GetVersion() returns the mlpack

@@ -67,8 +67,9 @@ class Adam
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
-   * @param beta1 The first moment coefficient.
-   * @param beta2 The second moment coefficient.
+   * @param beta1 Exponential decay rate for the first moment estimates.
+   * @param beta2 Exponential decay rate for the weighted infinity norm
+            estimates.
    * @param eps Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
@@ -142,10 +143,10 @@ class Adam
   //! The step size for each example.
   double stepSize;
 
-  //! The value used as first moment coefficient.
+  //! Exponential decay rate for the first moment estimates.
   double beta1;
 
-  //! The value used as second moment coefficient.
+  //! Exponential decay rate for the weighted infinity norm estimates.
   double beta2;
 
   //! The value used to initialise the mean squared gradient parameter.

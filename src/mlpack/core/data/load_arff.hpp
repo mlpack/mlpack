@@ -4,8 +4,8 @@
  *
  * Load an ARFF dataset.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_ARFF_HPP
-#define __MLPACK_CORE_DATA_LOAD_ARFF_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_ARFF_HPP
+#define MLPACK_CORE_DATA_LOAD_ARFF_HPP
 
 #include <mlpack/prereqs.hpp>
 

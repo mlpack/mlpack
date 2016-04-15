@@ -6,8 +6,8 @@
  * dual-tree traversal should be updating the members of this class before
  * Score() is called.
  */
-#ifndef __MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
-#define __MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
+#ifndef MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
+#define MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
 
 /**
  * The TraversalInfo class holds traversal information which is used in

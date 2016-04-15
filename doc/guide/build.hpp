@@ -84,6 +84,9 @@ The full list of options mlpack allows:
    OFF in releases)
  - ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
        (default OFF)
+ - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program (default ON)
+ - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
+       (default OFF)
 
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
@@ -105,7 +108,7 @@ You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
 @code
-$ make pca allknn allkfn
+$ make mlpack_pca mlpack_allknn mlpack_allkfn
 @endcode
 
 If the build fails and you cannot figure out why, register an account on Trac

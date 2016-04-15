@@ -5,8 +5,8 @@
  * Defines the PCA class to perform Principal Components Analysis on the
  * specified data set.
  */
-#ifndef __MLPACK_METHODS_PCA_PCA_HPP
-#define __MLPACK_METHODS_PCA_PCA_HPP
+#ifndef MLPACK_METHODS_PCA_PCA_HPP
+#define MLPACK_METHODS_PCA_PCA_HPP
 
 #include <mlpack/core.hpp>
 

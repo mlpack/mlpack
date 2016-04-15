@@ -1,11 +1,11 @@
-/**
+﻿/**
  * @file core.hpp
  *
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
  */
-#ifndef __MLPACK_CORE_HPP
-#define __MLPACK_CORE_HPP
+#ifndef MLPACK_CORE_HPP
+#define MLPACK_CORE_HPP
 
 /**
  * @mainpage mlpack Documentation
@@ -186,6 +186,10 @@
  *   - Barak Pearlmutter <barak+git@pearlmutter.net>
  *   - Ivari Horm <ivari@risk.ee>
  *   - Dhawal Arora <d.p.arora1@gmail.com>
+ *   - Alexander Leinoff <alexander-leinoff@uiowa.edu>
+ *   - Palash Ahuja <abhor902@gmail.com>
+ *   - Yannis Mentekidis <mentekid@gmail.com>
+ *   - Ranjan Mondal <ranjan.rev@gmail.com>
  */
 
 // First, include all of the prerequisites.

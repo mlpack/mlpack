@@ -4,8 +4,8 @@
  *
  * Implementation of the FastMKS class (fast max-kernel search).
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "fastmks.hpp"

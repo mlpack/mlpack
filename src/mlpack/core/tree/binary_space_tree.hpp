@@ -4,8 +4,8 @@
  *
  * Include all the necessary files to use the BinarySpaceTree class.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include "bounds.hpp"

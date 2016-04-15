@@ -4,8 +4,8 @@
  *
  * An implementation of QUIC-SVD.
  */
-#ifndef __MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
-#define __MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
+#ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
+#define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "quic_svd.hpp"

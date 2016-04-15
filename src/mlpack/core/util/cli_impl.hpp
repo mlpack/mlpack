@@ -4,8 +4,8 @@
  *
  * Implementation of templated functions of the CLI class.
  */
-#ifndef __MLPACK_CORE_UTIL_CLI_IMPL_HPP
-#define __MLPACK_CORE_UTIL_CLI_IMPL_HPP
+#ifndef MLPACK_CORE_UTIL_CLI_IMPL_HPP
+#define MLPACK_CORE_UTIL_CLI_IMPL_HPP
 
 // In case it has not already been included.
 #include "cli.hpp"

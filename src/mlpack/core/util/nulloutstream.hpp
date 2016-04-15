@@ -5,8 +5,8 @@
  *
  * Definition of the NullOutStream class.
  */
-#ifndef __MLPACK_CORE_UTIL_NULLOUTSTREAM_HPP
-#define __MLPACK_CORE_UTIL_NULLOUTSTREAM_HPP
+#ifndef MLPACK_CORE_UTIL_NULLOUTSTREAM_HPP
+#define MLPACK_CORE_UTIL_NULLOUTSTREAM_HPP
 
 #include <iostream>
 #include <streambuf>

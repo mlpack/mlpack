@@ -438,7 +438,7 @@ arma::Col<size_t> assignments;
 arma::sp_mat sparseCentroids;
 
 // We must change the fifth (and last) template parameter.
-KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+KMeans<metric::EuclideanDistance, SampleInitialization, MaxVarianceNewCluster,
        NaiveKMeans, arma::sp_mat> k;
 k.Cluster(sparseDataset, clusters, assignments, sparseCentroids);
 @endcode
@@ -452,7 +452,8 @@ template parameters:
  - \c MetricType: controls the distance metric used for clustering (by
    default, the squared Euclidean distance is used)
  - \c InitialPartitionPolicy: the method by which initial clusters are set; by
-   default, \ref mlpack::kmeans::RandomPartition "RandomPartition" is used
+   default, \ref mlpack::kmeans::SampleInitialization "SampleInitialization" is
+   used
  - \c EmptyClusterPolicy: the action taken when an empty cluster is encountered;
    by default, \ref mlpack::kmeans::MaxVarianceNewCluster "MaxVarianceNewCluster"
    is used
@@ -466,7 +467,7 @@ The class is defined like below:
 @code
 template<
   typename DistanceMetric = mlpack::metric::SquaredEuclideanDistance,
-  typename InitialPartitionPolicy = RandomPartition,
+  typename InitialPartitionPolicy = SampleInitialization,
   typename EmptyClusterPolicy = MaxVarianceNewCluster,
   template<class, class> class LloydStepType = NaiveKMeans,
   typename MatType = arma::mat
@@ -526,15 +527,26 @@ literature.  Fortunately, the \c KMeans<> class makes it very easy to implement
 one of these methods and plug it in without needing to modify the existing
 algorithm code at all.
 
-By default, the \c KMeans<> class uses mlpack::kmeans::RandomPartition, which
-randomly partitions points into clusters.  However, writing a new policy is
-simple; it needs to only implement the following functions:
+By default, the \c KMeans<> class uses mlpack::kmeans::SampleInitialization,
+which randomly samples points as initial centroids.  However, writing a new
+policy is simple; it needs to only implement the following functions:
 
 @code
 // Empty constructor is required.
 InitialPartitionPolicy();
 
-// This function is called to initialize the clusters.
+// Only *one* of the following two functions is required!  You should implement
+// whichever you find more convenient to implement.
+
+// This function is called to initialize the clusters and returns centroids.
+template<typename MatType>
+void Cluster(MatType& data,
+             const size_t clusters,
+             arma::mat& centroids);
+
+// This function is called to initialize the clusters and returns individual
+// point assignments.  The centroids will then be calculated from the given
+// assignments.
 template<typename MatType>
 void Cluster(MatType& data,
              const size_t clusters,
@@ -554,14 +566,24 @@ void Cluster(arma::mat& data,
              arma::Col<size_t> assignments);
 @endcode
 
-One alternate to the default RandomPartition policy is the RefinedStart policy,
-which is an implementation of the Bradley and Fayyad approach for finding
-initial points detailed in "Refined initial points for k-means clustering" and
-other places in this document.  Also see the documentation for
-mlpack::kmeans::RefinedStart for more information.
+Note that only one of the two possible \c Cluster() functions are required.
+This is because sometimes it is easier to express an initial partitioning policy
+as something that returns point assignments, and sometimes it is easier to
+express the policy as something that returns centroids.  The KMeans<> class will
+use whichever of these two functions is given; if both are given, the overload
+that returns centroids will be preferred.
 
-The \c Cluster() method must return valid initial assignments for every point in
-the dataset.
+One alternate to the default SampleInitialization policy is the RefinedStart
+policy, which is an implementation of the Bradley and Fayyad approach for
+finding initial points detailed in "Refined initial points for k-means
+clustering" and other places in this document.  Another option is the
+RandomPartition class, which randomly assigns points to clusters, but this may
+not work very well for most settings.  See the documentation for
+mlpack::kmeans::RefinedStart and mlpack::kmeans::RandomPartition for more
+information.
+
+If the \c Cluster() method returns point assignments instead of centroids, then
+valid initial assignments must be returned for every point in the dataset.
 
 As with the MetricType template parameter, an initialized InitialPartitionPolicy
 can be passed to the constructor of \c KMeans as a fourth argument.

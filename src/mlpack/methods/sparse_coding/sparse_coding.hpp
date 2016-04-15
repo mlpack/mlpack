@@ -5,8 +5,8 @@
  * Definition of the SparseCoding class, which performs L1 (LASSO) or
  * L1+L2 (Elastic Net)-regularized sparse coding with dictionary learning
  */
-#ifndef __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
-#define __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
+#ifndef MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
+#define MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/lars/lars.hpp>

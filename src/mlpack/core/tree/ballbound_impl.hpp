@@ -6,8 +6,8 @@
  *
  * @experimental
  */
-#ifndef __MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
-#define __MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
+#define MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
 
 // In case it hasn't been included already.
 #include "ballbound.hpp"
@@ -300,4 +300,4 @@ void BallBound<VecType, TMetricType>::Serialize(
 } // namespace bound
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
+#endif // MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

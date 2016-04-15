@@ -7,8 +7,8 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -118,7 +118,7 @@ class DualTreeKMeans
   void ExtractCentroids(Tree& node,
                         arma::mat& newCentroids,
                         arma::Col<size_t>& newCounts,
-                        arma::mat& centroids);
+                        const arma::mat& centroids);
 
   void CoalesceTree(Tree& node, const size_t child = 0);
   void DecoalesceTree(Tree& node);

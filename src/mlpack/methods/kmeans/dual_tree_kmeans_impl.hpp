@@ -7,8 +7,8 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "dual_tree_kmeans.hpp"
@@ -21,9 +21,9 @@ namespace kmeans {
 //! Call the tree constructor that does mapping.
 template<typename TreeType>
 TreeType* BuildTree(
-    typename TreeType::Mat& dataset,
+    const typename TreeType::Mat& dataset,
     std::vector<size_t>& oldFromNew,
-    typename boost::enable_if_c<
+    const typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
     >::type = 0)
 {
@@ -96,11 +96,10 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     arma::mat& newCentroids,
     arma::Col<size_t>& counts)
 {
-  // Build a tree on the centroids.
-  arma::mat oldCentroids(centroids); // Slow. :(
+  // Build a tree on the centroids.  This will make a copy if necessary, which
+  // is unfortunate, but I don't see a reasonable way around it.
   std::vector<size_t> oldFromNewCentroids;
-  Tree* centroidTree = BuildTree<Tree>(const_cast<MatType&>(centroids),
-      oldFromNewCentroids);
+  Tree* centroidTree = BuildTree<Tree>(centroids, oldFromNewCentroids);
 
   // Reset information in the tree, if we need to.
   if (iteration > 0)
@@ -134,7 +133,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
     Timer::Stop("knn");
 
-    UpdateTree(*tree, oldCentroids);
+    UpdateTree(*tree, centroids);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       visited[i] = false;
@@ -147,7 +146,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   }
 
   // We won't use the AllkNN class here because we have our own set of rules.
-  lastIterationCentroids = oldCentroids;
+  lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
   RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,
       lowerBounds, metric, prunedPoints, oldFromNewCentroids, visited);
@@ -171,27 +170,24 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Now we need to extract the clusters.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
-  ExtractCentroids(*tree, newCentroids, counts, oldCentroids);
+  ExtractCentroids(*tree, newCentroids, counts, centroids);
 
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
   clusterDistances[centroids.n_cols] = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
-    // Get the mapping to the old cluster, if necessary.
-    const size_t old = (tree::TreeTraits<Tree>::RearrangesDataset) ?
-        oldFromNewCentroids[c] : c;
-    if (counts[old] == 0)
+    if (counts[c] == 0)
     {
-      newCentroids.col(old).fill(DBL_MAX);
-      clusterDistances[old] = 0;
+      newCentroids.col(c).fill(DBL_MAX);
+      clusterDistances[c] = 0;
     }
     else
     {
-      newCentroids.col(old) /= counts(old);
+      newCentroids.col(c) /= counts(c);
       const double movement = metric.Evaluate(centroids.col(c),
-          newCentroids.col(old));
-      clusterDistances[old] = movement;
+          newCentroids.col(c));
+      clusterDistances[c] = movement;
       residual += std::pow(movement, 2.0);
 
       if (movement > clusterDistances[centroids.n_cols])
@@ -481,7 +477,7 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     Tree& node,
     arma::mat& newCentroids,
     arma::Col<size_t>& newCounts,
-    arma::mat& centroids)
+    const arma::mat& centroids)
 {
   // Does this node own points?
   if ((node.Stat().Pruned() == newCentroids.n_cols) ||

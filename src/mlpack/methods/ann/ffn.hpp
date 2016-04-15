@@ -4,8 +4,8 @@
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_FFN_HPP
-#define __MLPACK_METHODS_ANN_FFN_HPP
+#ifndef MLPACK_METHODS_ANN_FFN_HPP
+#define MLPACK_METHODS_ANN_FFN_HPP
 
 #include <mlpack/core.hpp>
 
@@ -380,15 +380,15 @@ private:
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Update(T& layer, P& /* unused */, D& delta)
   {
-    layer.Gradient(delta, layer.Gradient());
+    layer.Gradient(layer.InputParameter(), delta, layer.Gradient());
   }
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Update(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */

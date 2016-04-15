@@ -25,6 +25,7 @@ set(SOURCES
   random_partition.hpp
   refined_start.hpp
   refined_start_impl.hpp
+  sample_initialization.hpp
 )
 
 # Add directory name to sources.

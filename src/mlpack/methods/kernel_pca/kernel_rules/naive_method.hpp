@@ -5,8 +5,8 @@
  * Use the naive method to construct the kernel matrix.
  */
 
-#ifndef __MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
-#define __MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
+#ifndef MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
+#define MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
 
 #include <mlpack/core.hpp>
 

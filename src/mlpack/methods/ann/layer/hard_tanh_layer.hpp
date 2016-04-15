@@ -22,10 +22,10 @@ namespace ann /** Artificial Neural Network. */ {
  *     min & : x \le minValue \\
  *     x   & : otherwise
  *   \end{array}
- * \right.
+ * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     0 & : x > maxValue \\ 
+ *     0 & : x > maxValue \\
  *     0 & : x \le minValue \\
  *     1 & : otherwise
  *   \end{array}

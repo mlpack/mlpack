@@ -9,6 +9,15 @@
     when compiled with debugging and profiling symbols.  This requires libbfd
     and libdl to be present during compilation.
 
+  * CosineTree test fix from Mikhail Lozhnikov (#358).
+
+  * Fixed HMM initial state estimation (#600).
+
+  * Changed versioning macros __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR,
+    and __MLPACK_VERSION_PATCH to MLPACK_VERSION_MAJOR, MLPACK_VERSION_MINOR,
+    and MLPACK_VERSION_PATCH.  The old names will remain in place until
+    mlpack 3.0.0.
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.

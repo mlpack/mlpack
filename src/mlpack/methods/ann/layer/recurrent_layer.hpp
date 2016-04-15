@@ -4,8 +4,8 @@
  *
  * Definition of the RecurrentLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -90,11 +90,14 @@ class RecurrentLayer
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The propagated input activation.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename InputType, typename eT, typename GradientDataType>
+  void Gradient(const InputType& /* input */,
+                const arma::Mat<eT>& d,
+                GradientDataType& g)
   {
     g = d * recurrentParameter.t();
   }

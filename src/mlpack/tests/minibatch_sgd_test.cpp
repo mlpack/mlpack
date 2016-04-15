@@ -131,4 +131,27 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 }
 
+/**
+ * Run mini-batch SGD on a simple test function and make sure the last batch
+ * size is handled correctly.
+ *
+ * When using a batchsize that fulfilled the constraint:
+ * (numFunctions % batchSize) == 1 we have to make sure that the last batch size
+ * isn't zero.
+ */
+BOOST_AUTO_TEST_CASE(ZeroBatchSizeTest)
+{
+  // Create the generalized Rosenbrock function.
+  GeneralizedRosenbrockFunction f(10);
+
+  MiniBatchSGD<GeneralizedRosenbrockFunction> s(
+      f, f.NumFunctions() - 1, 0.01, 3);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  s.Optimize(coordinates);
+
+  const bool finite = coordinates.is_finite();
+  BOOST_REQUIRE_EQUAL(finite, true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

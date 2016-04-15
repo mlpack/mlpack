@@ -6,8 +6,8 @@
  * K-Means clustering".  This class is meant to provide better initial points
  * for the k-means algorithm.
  */
-#ifndef __MLPACK_METHODS_KMEANS_REFINED_START_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_REFINED_START_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_REFINED_START_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_REFINED_START_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "refined_start.hpp"
@@ -19,20 +19,14 @@ namespace kmeans {
 template<typename MatType>
 void RefinedStart::Cluster(const MatType& data,
                            const size_t clusters,
-                           arma::Row<size_t>& assignments) const
+                           arma::mat& centroids) const
 {
-  math::RandomSeed(std::time(NULL));
-
   // This will hold the sampled datasets.
   const size_t numPoints = size_t(percentage * data.n_cols);
   MatType sampledData(data.n_rows, numPoints);
   // vector<bool> is packed so each bool is 1 bit.
   std::vector<bool> pointsUsed(data.n_cols, false);
   arma::mat sampledCentroids(data.n_rows, samplings * clusters);
-
-  // We will use these objects repeatedly for clustering.
-  arma::Row<size_t> sampledAssignments;
-  arma::mat centroids;
 
   for (size_t i = 0; i < samplings; ++i)
   {
@@ -57,7 +51,7 @@ void RefinedStart::Cluster(const MatType& data,
     // the cluster with maximum variance.  This is not *exactly* what the paper
     // implements, but it is quite similar, and we'll call it "good enough".
     KMeans<> kmeans;
-    kmeans.Cluster(sampledData, clusters, sampledAssignments, centroids);
+    kmeans.Cluster(sampledData, clusters, centroids);
 
     // Store the sampled centroids.
     sampledCentroids.cols(i * clusters, (i + 1) * clusters - 1) = centroids;
@@ -67,7 +61,18 @@ void RefinedStart::Cluster(const MatType& data,
 
   // Now, we run k-means on the sampled centroids to get our final clusters.
   KMeans<> kmeans;
-  kmeans.Cluster(sampledCentroids, clusters, sampledAssignments, centroids);
+  kmeans.Cluster(sampledCentroids, clusters, centroids);
+}
+
+template<typename MatType>
+void RefinedStart::Cluster(const MatType& data,
+                           const size_t clusters,
+                           arma::Row<size_t>& assignments) const
+{
+  // Perform the Bradley-Fayyad refined start algorithm, and get initial
+  // centroids back.
+  arma::mat centroids;
+  Cluster(data, clusters, centroids);
 
   // Turn the final centroids into assignments.
   assignments.set_size(data.n_cols);
@@ -79,7 +84,11 @@ void RefinedStart::Cluster(const MatType& data,
 
     for (size_t j = 0; j < clusters; ++j)
     {
-      const double distance = kmeans.Metric().Evaluate(data.col(i),
+      // This is restricted to the L2 distance, and unfortunately it would take
+      // a lot of refactoring and redesign to make this more general... we would
+      // probably need to have KMeans take a template template parameter for the
+      // initial partition policy.  It's not clear how to best do this.
+      const double distance = metric::EuclideanDistance::Evaluate(data.col(i),
           centroids.col(j));
 
       if (distance < minDistance)

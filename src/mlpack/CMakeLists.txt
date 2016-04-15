@@ -8,12 +8,15 @@ set(DIRS
   bindings
   core
   methods
-  tests
 )
 
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
 
 # MLPACK_SRCS is set in the subdirectories.
 # We don't use a DLL (shared) on Windows because it's a nightmare.  We can't
@@ -21,9 +24,9 @@ endforeach()
 # every function signature.
 if (WIN32)
   add_library(mlpack ${MLPACK_SRCS})
-else (WIN32)
+else ()
   add_library(mlpack SHARED ${MLPACK_SRCS})
-endif (WIN32)
+endif ()
 target_link_libraries(mlpack
   ${ARMADILLO_LIBRARIES}
   ${Boost_LIBRARIES}
@@ -39,15 +42,15 @@ set_target_properties(mlpack
 # rt: clock_gettime()
 if(UNIX AND NOT APPLE)
     target_link_libraries(mlpack rt)
-endif(UNIX AND NOT APPLE)
+endif()
 
 # Backtrace for Linux need those libs.
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   if(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
     target_link_libraries(mlpack ${LIBBFD_LIBRARIES})
     target_link_libraries(mlpack ${LIBDL_LIBRARIES})
-  endif(LIBBFD_FOUND AND LIBDL_FOUND AND DEBUG)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  endif()
+endif()
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
@@ -82,10 +85,3 @@ install(TARGETS mlpack
   ARCHIVE DESTINATION lib)
 
 add_dependencies(mlpack mlpack_headers)
-
-# For 'make test'.
-add_custom_target(test
-  ${CMAKE_BINARY_DIR}/bin/mlpack_test "--log_level=test_suite" # Set UTF runtime param
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
-  COMMENT "Running mlpack test"
-  DEPENDS mlpack_test)

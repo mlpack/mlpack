@@ -111,10 +111,10 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     variance *= beta2;
     variance += (1 - beta2) * (gradient % gradient);
 
-    double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
-    double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
+    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
+    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
 
-    iterate -= (stepSize * std::sqrt(biasCorrection1) / biasCorrection2) *
+    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
         mean / (arma::sqrt(variance) + eps);
 
     // Now add that to the overall objective function.

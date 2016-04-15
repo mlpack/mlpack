@@ -16,8 +16,8 @@
  * Although this option currently is not implemented, it will be implemented
  * very soon.
  */
-#ifndef __MLPACK_METHODS_LARS_LARS_HPP
-#define __MLPACK_METHODS_LARS_LARS_HPP
+#ifndef MLPACK_METHODS_LARS_LARS_HPP
+#define MLPACK_METHODS_LARS_LARS_HPP
 
 #include <mlpack/core.hpp>
 

@@ -3,8 +3,8 @@
  *
  * Miscellaneous math random-related routines.
  */
-#ifndef __MLPACK_CORE_MATH_RANDOM_HPP
-#define __MLPACK_CORE_MATH_RANDOM_HPP
+#ifndef MLPACK_CORE_MATH_RANDOM_HPP
+#define MLPACK_CORE_MATH_RANDOM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <random>
@@ -94,4 +94,4 @@ inline double RandNormal(const double mean, const double variance)
 } // namespace math
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_MATH_MATH_LIB_HPP
+#endif // MLPACK_CORE_MATH_MATH_LIB_HPP

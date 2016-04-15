@@ -4,6 +4,7 @@ add_executable(mlpack_test
   activation_functions_test.cpp
   adaboost_test.cpp
   adam_test.cpp
+  ada_delta_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
   allkrann_search_test.cpp
@@ -92,4 +93,10 @@ add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E tar xjpf mnist_first250_training_4s_and_9s.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+)
+
+# For 'make test'.
+add_test (NAME mlpack_test
+  COMMAND mlpack_test "--log_level=test_suite" # Set UTF runtime param
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
 )

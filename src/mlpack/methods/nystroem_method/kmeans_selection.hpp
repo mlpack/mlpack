@@ -5,8 +5,8 @@
  * Use the centroids of the K-Means clustering method for use in the Nystroem
  * method of kernel matrix approximation.
  */
-#ifndef __MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP
-#define __MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP
+#ifndef MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP
+#define MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/kmeans/kmeans.hpp>

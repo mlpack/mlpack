@@ -4,8 +4,8 @@
  *
  * Generate a random d-dimensional basis.
  */
-#ifndef __MLPACK_CORE_MATH_RANDOM_BASIS_HPP
-#define __MLPACK_CORE_MATH_RANDOM_BASIS_HPP
+#ifndef MLPACK_CORE_MATH_RANDOM_BASIS_HPP
+#define MLPACK_CORE_MATH_RANDOM_BASIS_HPP
 
 #include <mlpack/prereqs.hpp>
 

@@ -51,6 +51,10 @@ Copyright:
   Copyright 2016, Barak Pearlmutter <barak+git@pearlmutter.net>
   Copyright 2016, Ivari Horm <ivari@risk.ee>
   Copyright 2016, Dhawal Arora <d.p.arora1@gmail.com>
+  Copyright 2016, Alexander Leinoff <alexander-leinoff@uiowa.edu>
+  Copyright 2016, Palash Ahuja <abhor902@gmail.com>
+  Copyright 2016, Yannis Mentekidis <mentekid@gmail.com>
+  Copyright 2016, Ranjan Mondal <ranjan.rev@gmail.com>
 License: BSD-3-clause
   All rights reserved.
   .

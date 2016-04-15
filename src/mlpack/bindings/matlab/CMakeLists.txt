@@ -41,7 +41,7 @@ if(UNIX)
         set(NEED_TO_WARN 0)
       endif(NOT ("${MEX_COMPILER_VERSION}" VERSION_LESS
           "${OTHER_COMPILER_VERSION}"))
-    endif(MEX_COMPILER_VERSION AND OTHER_COMPILER_VERSION)
+    endif()
 
     if(NEED_TO_WARN EQUAL 1)
       message(WARNING "The MATLAB runtime glibc is different than the system "
@@ -55,16 +55,16 @@ if(UNIX)
           "an overly-detailed dissertation/rant on why it is not possible to "
           "work around this issue in any way, see\n"
           "http://www.mlpack.org/trac/ticket/253 for more information.")
-    endif(NEED_TO_WARN EQUAL 1)
-  endif(MEX_WARNING)
-endif(UNIX)
+    endif()
+  endif()
+endif()
 
 # Ignore the fact that we are setting CMAKE_SHARED_LIBRARY_CXX_FLAGS on CMake
 # 2.8.9 and newer.  Because we are requiring at least CMake 2.8.5, we only have
 # to check the patch version.
 if(${CMAKE_PATCH_VERSION} GREATER 8)
   cmake_policy(SET CMP0018 OLD)
-endif(${CMAKE_PATCH_VERSION} GREATER 8)
+endif()
 
 # Use the mex compiler to compile.
 set(CMAKE_CXX_COMPILER "${MATLAB_MEX}")
@@ -77,10 +77,10 @@ set(CMAKE_CXX_COMPILER "${MATLAB_MEX}")
 if(DEBUG)
   set(CMAKE_CXX_FLAGS "-g")
   set(CMAKE_C_FLAGS "-g")
-else(DEBUG)
+else()
   set(CMAKE_CXX_FLAGS "-O")
   set(CMAKE_C_FLAGS "-O")
-endif(DEBUG)
+endif()
 
 # Don't give -fPIC; mex will do that for us.
 set(CMAKE_SHARED_LIBRARY_C_FLAGS "")
@@ -108,7 +108,7 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86" OR ${CMAKE_SYSTEM_PROCESSOR}
     STREQUAL "i686")
   set(CMAKE_SHARED_LIBRARY_SUFFIX ".mexglx")
   set(CMAKE_SHARED_MODULE_SUFFIX  ".mexglx")
-endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+endif()
 
 # Place MATLAB bindings in matlab/.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/matlab/)
