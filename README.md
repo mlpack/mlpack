@@ -122,7 +122,7 @@ This will build all library components as well as 'mlpack_test'.
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
-    $ make mlpack_pca mlpack_knn mlpack_kfn
+    $ make mlpack_pca mlpack_allknn mlpack_allkfn
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue; the mlpack developers will quickly help you figure it out:
@@ -142,7 +142,7 @@ You can now run the executables by name; you can link against mlpack with
 and the mlpack headers are found in
     `/usr/local/include/mlpack/`.
 
-If running the programs (i.e. `$ mlpack_knn -h`) gives an error of the form
+If running the programs (i.e. `$ mlpack_allknn -h`) gives an error of the form
 
     error while loading shared libraries: libmlpack.so.2: cannot open shared object file: No such file or directory
 
@@ -164,7 +164,7 @@ them from there, or you can install the library and (depending on system
 settings) they should be added to your PATH and you can call them directly.  The
 documentation below assumes the executables are in your PATH.
 
-Consider the 'mlpack_knn' program, which finds the k nearest neighbors in a
+Consider the 'mlpack_allknn' program, which finds the k nearest neighbors in a
 reference dataset of all the points in a query set.  That is, we have a query
 and a reference dataset. For each point in the query dataset, we wish to know
 the k points in the reference dataset which are closest to the given query
@@ -177,15 +177,15 @@ nearest points to that point.
 Each mlpack program has extensive help documentation which details what the
 method does, what each of the parameters are, and how to use them:
 
-    $ mlpack_knn --help
+    $ mlpack_allknn --help
 
-Running `mlpack_knn` on one dataset (that is, the query and reference
+Running `mlpack_allknn` on one dataset (that is, the query and reference
 datasets are the same) and finding the 5 nearest neighbors is very simple:
 
-    $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+    $ mlpack_allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 
 The `-v (--verbose)` flag is optional; it gives informational output.  It is not
-unique to `mlpack_knn` but is available in all mlpack programs.  Verbose
+unique to `mlpack_allknn` but is available in all mlpack programs.  Verbose
 output also gives timing output at the end of the program, which can be very
 useful.
 
