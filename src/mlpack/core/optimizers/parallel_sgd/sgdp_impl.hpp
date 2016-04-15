@@ -62,7 +62,7 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   size_t it;   
   bool halt=false;
   sumIterate.zeros();
-  std::srand(std::time(0));
+  math::RandomSeed(std::time(NULL));
 
   
   #pragma omp parallel  shared(sumIterate,halt) private(it,gradient) 
@@ -75,10 +75,9 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
       int selectedFunction;
     
-      selectedFunction=std::rand()%numFunctions;
+      selectedFunction=numFunctions*math::Random();
       function.Gradient(tIterate[th_num],selectedFunction, gradient);
       tIterate[th_num] -= stepSize * gradient;
-      
       
       //checking whether or not it will go for tollerence checking 
       if(it%T!=0)
