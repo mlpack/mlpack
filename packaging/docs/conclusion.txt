@@ -1,0 +1,13 @@
+mlpack was installed at
+
+   /usr/local/bin
+
+mlpack lib was installed at
+
+   /usr/local/lib
+
+mlpack header file was installed at
+
+   /usr/local/include/mlpack
+
+Make sure that /usr/local/bin is in your $PATH.
