@@ -98,7 +98,7 @@ namespace math {
  * set the buffer size and value.  See the Scale(), MinRange(), MaxRange(),
  * BufSize(), and BufValue() methods for more details.
  */
-class ColumnsToBlocks
+class MLPACK_API ColumnsToBlocks
 {
  public:
   /**

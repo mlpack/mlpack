@@ -69,7 +69,7 @@ namespace kernel {
  * is necessary.
  * @endnote
  */
-class ExampleKernel
+class MLPACK_API ExampleKernel
 {
  public:
   /**

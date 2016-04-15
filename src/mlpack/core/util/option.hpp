@@ -72,7 +72,7 @@ class Option
  *
  * @see core/io/cli.hpp, mlpack::CLI
  */
-class ProgramDoc
+class MLPACK_API ProgramDoc
 {
  public:
   /**

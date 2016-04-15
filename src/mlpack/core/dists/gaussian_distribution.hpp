@@ -16,7 +16,7 @@ namespace distribution {
 /**
  * A single multivariate Gaussian distribution.
  */
-class GaussianDistribution
+class MLPACK_API GaussianDistribution
 {
  private:
   //! Mean of the distribution.
@@ -90,6 +90,13 @@ class GaussianDistribution
     probabilities = arma::exp(logProbabilities);
   }
 
+  /**
+  * Calculates the multivariate Gaussian log probability density function for each
+  * data point (column) in the given matrix
+  *
+  * @param x List of observations.
+  * @param probabilities Output log probabilities for each input observation.
+  */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
 
   /**
@@ -161,33 +168,6 @@ class GaussianDistribution
    */
   void FactorCovariance();
 };
-
-/**
-* Calculates the multivariate Gaussian log probability density function for each
-* data point (column) in the given matrix
-*
-* @param x List of observations.
-* @param probabilities Output log probabilities for each input observation.
-*/
-inline void GaussianDistribution::LogProbability(const arma::mat& x,
-                                                 arma::vec& logProbabilities) const
-{
-  // Column i of 'diffs' is the difference between x.col(i) and the mean.
-  arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-
-  // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
-  // diffs).  We just don't need any of the other elements.  We can calculate
-  // the right hand part of the equation (instead of the left side) so that
-  // later we are referencing columns, not rows -- that is faster.
-  const arma::mat rhs = -0.5 * invCov * diffs;
-  arma::vec logExponents(diffs.n_cols); // We will now fill this.
-  for (size_t i = 0; i < diffs.n_cols; i++)
-    logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
-
-  const size_t k = x.n_rows;
-
-  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
-}
 
 
 } // namespace distribution

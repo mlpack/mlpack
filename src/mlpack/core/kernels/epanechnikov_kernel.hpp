@@ -21,7 +21,7 @@ namespace kernel {
  *
  * where @f$ b @f$ is the bandwidth the of the kernel (defaults to 1.0).
  */
-class EpanechnikovKernel
+class MLPACK_API EpanechnikovKernel
 {
  public:
   /**

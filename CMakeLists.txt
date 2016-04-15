@@ -11,6 +11,7 @@ enable_cxx11()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
+option(BUILD_SHARED_LIBS "shared/static libs" ON)
 option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
@@ -19,6 +20,10 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions (-DMLPACK_STATIC)
+endif ()
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)

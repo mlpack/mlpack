@@ -16,7 +16,7 @@ namespace ann /** Artificial Neural Network. */ {
  * The mean pooling rule for convolution neural networks. Average all values
  * within the receptive block.
  */
-class MeanPooling
+class MLPACK_API MeanPooling
 {
  public:
   /*

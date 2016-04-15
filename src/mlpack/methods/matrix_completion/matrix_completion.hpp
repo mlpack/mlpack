@@ -45,7 +45,7 @@ namespace matrix_completion {
  *
  * @see LRSDP
  */
-class MatrixCompletion
+class MLPACK_API MatrixCompletion
 {
  public:
   /**

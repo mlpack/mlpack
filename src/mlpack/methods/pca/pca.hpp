@@ -20,7 +20,7 @@ namespace pca {
  * found in almost any statistics or machine learning textbook, and all over the
  * internet.
  */
-class PCA
+class MLPACK_API PCA
 {
  public:
   /**

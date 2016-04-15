@@ -14,7 +14,7 @@
 namespace mlpack {
 namespace kernel {
 
-class OrderedSelection
+class MLPACK_API OrderedSelection
 {
  public:
   /**

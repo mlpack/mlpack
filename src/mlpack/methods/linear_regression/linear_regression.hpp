@@ -18,7 +18,7 @@ namespace regression /** Regression methods. */ {
  * Optionally, this class can perform ridge regression, if the lambda parameter
  * is set to a number greater than zero.
  */
-class LinearRegression
+class MLPACK_API LinearRegression
 {
  public:
   /**

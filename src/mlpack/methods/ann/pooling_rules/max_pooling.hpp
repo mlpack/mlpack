@@ -16,7 +16,7 @@ namespace ann /** Artificial Neural Network. */ {
  * The max pooling rule for convolution neural networks. Take the maximum value
  * within the receptive block.
  */
-class MaxPooling
+class MLPACK_API MaxPooling
 {
  public:
   /*

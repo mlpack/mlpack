@@ -81,7 +81,7 @@ namespace regression {
  * }
  * @endcode
  */
-class LARS
+class MLPACK_API LARS
 {
  public:
   /**

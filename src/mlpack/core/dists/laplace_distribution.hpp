@@ -41,7 +41,7 @@ namespace distribution {
  * in the paper above becomes simplified, and the PDF takes roughly the same
  * form as the univariate case.
  */
-class LaplaceDistribution
+class MLPACK_API LaplaceDistribution
 {
  public:
   /**

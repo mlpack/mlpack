@@ -17,7 +17,7 @@ namespace gmm {
  * way, although depending on your situation you may end up with a
  * non-invertible covariance matrix.
  */
-class NoConstraint
+class MLPACK_API NoConstraint
 {
  public:
   //! Do nothing, and do not modify the covariance matrix.

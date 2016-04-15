@@ -35,7 +35,7 @@ namespace distribution /** Probability distributions. */ {
  * into size_t before comparisons.
  * @endnote
  */
-class DiscreteDistribution
+class MLPACK_API DiscreteDistribution
 {
  public:
   /**

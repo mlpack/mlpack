@@ -25,7 +25,7 @@ namespace kernel {
  *
  * The implementation is all in the header file because it is so simple.
  */
-class GaussianKernel
+class MLPACK_API GaussianKernel
 {
  public:
   /**

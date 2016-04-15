@@ -22,7 +22,7 @@ namespace kernel {
  *
  * and this class assumes the standard L2 inner product.
  */
-class CosineDistance
+class MLPACK_API CosineDistance
 {
  public:
   /**

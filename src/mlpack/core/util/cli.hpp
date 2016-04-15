@@ -513,7 +513,7 @@ struct ParamData
  * collisions are still possible, and they produce bizarre error messages. See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-class CLI
+class MLPACK_API CLI
 {
  public:
   /**

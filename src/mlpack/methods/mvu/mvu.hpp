@@ -24,7 +24,7 @@ namespace mvu {
  * - dataset
  * - new dimensionality
  */
-class MVU
+class MLPACK_API MVU
 {
  public:
   MVU(const arma::mat& dataIn);

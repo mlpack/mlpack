@@ -107,7 +107,7 @@ namespace sparse_coding {
  *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
  *     dictionary)' function.
  */
-class SparseCoding
+class MLPACK_API SparseCoding
 {
  public:
   /**

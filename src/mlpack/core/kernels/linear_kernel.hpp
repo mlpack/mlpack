@@ -24,7 +24,7 @@ namespace kernel {
  *
  * This kernel has no parameters and therefore the evaluation can be static.
  */
-class LinearKernel
+class MLPACK_API LinearKernel
 {
  public:
   /**

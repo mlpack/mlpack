@@ -27,6 +27,7 @@ namespace neighbor {
  * @param distancesOut Matrix to store unmapped distances into.
  * @param squareRoot If true, take the square root of the distances.
  */
+MLPACK_API
 void Unmap(const arma::Mat<size_t>& neighbors,
            const arma::mat& distances,
            const std::vector<size_t>& referenceMap,
@@ -48,6 +49,7 @@ void Unmap(const arma::Mat<size_t>& neighbors,
  * @param distancesOut Matrix to store unmapped distances into.
  * @param squareRoot If true, take the square root of the distances.
  */
+MLPACK_API
 void Unmap(const arma::Mat<size_t>& neighbors,
            const arma::mat& distances,
            const std::vector<size_t>& referenceMap,

@@ -17,7 +17,7 @@ namespace sparse_coding {
  * A DictionaryInitializer for use with the SparseCoding class.  This provides a
  * random, normally distributed dictionary, such that each atom has a norm of 1.
  */
-class RandomInitializer
+class MLPACK_API RandomInitializer
 {
  public:
   /**

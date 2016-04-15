@@ -15,7 +15,7 @@ namespace fastmks {
 
 //! A utility struct to contain all the possible FastMKS models, for use by the
 //! mlpack_fastmks program.
-class FastMKSModel
+class MLPACK_API FastMKSModel
 {
  public:
   //! A list of all the kernels we support.

@@ -21,7 +21,7 @@ class CosineTree;
 typedef boost::heap::priority_queue<CosineTree*,
     boost::heap::compare<CompareCosineNode> > CosineNodeQueue;
 
-class CosineTree
+class MLPACK_API CosineTree
 {
  public:
   /**

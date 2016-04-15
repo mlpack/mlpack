@@ -72,7 +72,7 @@ struct FactorizerTraits
  *     the rating matrix (a W and H matrix).  This must implement the method
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
-class CF
+class MLPACK_API CF
 {
  public:
   /**

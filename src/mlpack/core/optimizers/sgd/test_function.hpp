@@ -17,7 +17,7 @@ namespace test {
 //! functions.  The gradient is not very steep far away from the optimum, so a
 //! larger step size may be required to optimize it in a reasonable number of
 //! iterations.
-class SGDTestFunction
+class MLPACK_API SGDTestFunction
 {
  public:
   //! Nothing to do for the constructor.
