@@ -68,14 +68,14 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   #pragma omp parallel  shared(sumIterate,halt) private(it,gradient) 
   {
     it=1; 
+    int selectedFunction;
+    int th_num;
     while(it!=maxIterations && halt != true)
     {
       it++;
 
-      int th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
-      int selectedFunction;
-    
-      selectedFunction=numFunctions*math::Random();
+      th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
+      selectedFunction=(int)numFunctions*math::Random();
       function.Gradient(tIterate[th_num],selectedFunction, gradient);
       tIterate[th_num] -= stepSize * gradient;
       
