@@ -13,10 +13,5 @@ endforeach()
 # append sources (with directory name) to list of all mlpack sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_radical
-  radical_main.cpp
-)
-target_link_libraries(mlpack_radical
-  mlpack
-)
-install(TARGETS mlpack_radical RUNTIME DESTINATION bin)
+add_cli_executable(radical)
+

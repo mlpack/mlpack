@@ -29,18 +29,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_allknn
-  allknn_main.cpp
-)
-target_link_libraries(mlpack_allknn
-  mlpack
-)
+add_cli_executable(allknn)
+add_cli_executable(allkfn)
 
-add_executable(mlpack_allkfn
-  allkfn_main.cpp
-)
-target_link_libraries(mlpack_allkfn
-  mlpack
-)
-
-install(TARGETS mlpack_allknn mlpack_allkfn RUNTIME DESTINATION bin)

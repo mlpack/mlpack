@@ -21,10 +21,5 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_emst
-  emst_main.cpp
-)
-target_link_libraries(mlpack_emst
-  mlpack
-)
-install(TARGETS mlpack_emst RUNTIME DESTINATION bin)
+add_cli_executable(emst)
+

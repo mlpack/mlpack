@@ -11,6 +11,7 @@ enable_cxx11()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
+option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
 option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)

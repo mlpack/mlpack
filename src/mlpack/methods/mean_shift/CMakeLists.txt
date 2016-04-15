@@ -14,11 +14,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# The main K-Means executable.
-add_executable(mlpack_mean_shift
-  mean_shift_main.cpp
-)
-target_link_libraries(mlpack_mean_shift
-  mlpack
-)
-install(TARGETS mlpack_mean_shift RUNTIME DESTINATION bin)
+add_cli_executable(mean_shift)
