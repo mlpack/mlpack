@@ -350,6 +350,8 @@ if (UNIX)
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
           mlpack_adaboost
+          mlpack_kfn
+          mlpack_knn
           mlpack_allkfn
           mlpack_allknn
           mlpack_allkrann
