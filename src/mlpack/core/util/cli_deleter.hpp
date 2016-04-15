@@ -4,8 +4,8 @@
  *
  * Definition of the CLIDeleter() class.
  */
-#ifndef __MLPACK_CORE_UTIL_CLI_DELETER_HPP
-#define __MLPACK_CORE_UTIL_CLI_DELETER_HPP
+#ifndef MLPACK_CORE_UTIL_CLI_DELETER_HPP
+#define MLPACK_CORE_UTIL_CLI_DELETER_HPP
 
 namespace mlpack {
 namespace util {

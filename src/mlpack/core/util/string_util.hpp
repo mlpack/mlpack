@@ -5,8 +5,8 @@
  *
  * Declares methods that are useful for writing formatting output.
  */
-#ifndef __MLPACK_CORE_STRING_UTIL_HPP
-#define __MLPACK_CORE_STRING_UTIL_HPP
+#ifndef MLPACK_CORE_STRING_UTIL_HPP
+#define MLPACK_CORE_STRING_UTIL_HPP
 
 #include <string>
 

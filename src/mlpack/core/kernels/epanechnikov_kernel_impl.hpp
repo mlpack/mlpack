@@ -4,8 +4,8 @@
  *
  * Implementation of template-based Epanechnikov kernel functions.
  */
-#ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP
-#define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP
+#ifndef MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP
+#define MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "epanechnikov_kernel.hpp"

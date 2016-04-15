@@ -4,8 +4,8 @@
  *
  * Typedef of cover tree to match TreeType API.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_TYPEDEF_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_TYPEDEF_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_TYPEDEF_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_TYPEDEF_HPP
 
 #include "cover_tree.hpp"
 

@@ -4,8 +4,8 @@
  *
  * Implementation of the polynomial kernel (just the standard dot product).
  */
-#ifndef __MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 

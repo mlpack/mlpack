@@ -8,8 +8,8 @@
  * This allows our mlpack naming conventions to remain intact, and only costs a
  * small amount of ridiculous template metaprogramming.
  */
-#ifndef __MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
-#define __MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
+#ifndef MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
+#define MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
 
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <boost/serialization/serialization.hpp>

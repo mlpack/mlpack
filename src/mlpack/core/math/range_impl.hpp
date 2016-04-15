@@ -3,8 +3,8 @@
  *
  * Implementation of the (inlined) Range class.
  */
-#ifndef __MLPACK_CORE_MATH_RANGE_IMPL_HPP
-#define __MLPACK_CORE_MATH_RANGE_IMPL_HPP
+#ifndef MLPACK_CORE_MATH_RANGE_IMPL_HPP
+#define MLPACK_CORE_MATH_RANGE_IMPL_HPP
 
 #include "range.hpp"
 #include <float.h>

@@ -5,8 +5,8 @@
  * Implementation of label normalization functions; these are useful for mapping
  * labels to the range [0, n).
  */
-#ifndef __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
-#define __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
+#define MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "normalize_labels.hpp"

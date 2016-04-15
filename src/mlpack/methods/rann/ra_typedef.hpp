@@ -5,8 +5,8 @@
  * Simple typedefs describing template instantiations of the RASearch
  * class which are commonly used.
  */
-#ifndef __MLPACK_RANN_RA_TYPEDEF_HPP
-#define __MLPACK_RANN_RA_TYPEDEF_HPP
+#ifndef MLPACK_RANN_RA_TYPEDEF_HPP
+#define MLPACK_RANN_RA_TYPEDEF_HPP
 
 // In case someone included this directly.
 #include "ra_search.hpp"

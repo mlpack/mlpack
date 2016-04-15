@@ -6,8 +6,8 @@
  *
  * Implementation of HMM class.
  */
-#ifndef __MLPACK_METHODS_HMM_HMM_IMPL_HPP
-#define __MLPACK_METHODS_HMM_HMM_IMPL_HPP
+#ifndef MLPACK_METHODS_HMM_HMM_IMPL_HPP
+#define MLPACK_METHODS_HMM_HMM_IMPL_HPP
 
 // Just in case...
 #include "hmm.hpp"
@@ -127,19 +127,20 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       // Add the log-likelihood of this sequence.  This is the E-step.
       loglik += Estimate(dataSeq[seq], stateProb, forward, backward, scales);
 
+      // Add to estimate of initial probability for state j.
+      for (size_t j = 0; j < transition.n_cols; ++j)
+        newInitial[j] += stateProb(j, 0);
+
       // Now re-estimate the parameters.  This is the M-step.
       //   pi_i = sum_d ((1 / P(seq[d])) sum_t (f(i, 0) b(i, 0))
       //   T_ij = sum_d ((1 / P(seq[d])) sum_t (f(i, t) T_ij E_i(seq[d][t]) b(i,
       //           t + 1)))
       //   E_ij = sum_d ((1 / P(seq[d])) sum_{t | seq[d][t] = j} f(i, t) b(i, t)
       // We store the new estimates in a different matrix.
-      for (size_t t = 0; t < dataSeq[seq].n_cols; t++)
+      for (size_t t = 0; t < dataSeq[seq].n_cols; ++t)
       {
-        for (size_t j = 0; j < transition.n_cols; j++)
+        for (size_t j = 0; j < transition.n_cols; ++j)
         {
-          // Add to estimate of initial probability for state j.
-          newInitial[j] = stateProb(j, 0);
-
           if (t < dataSeq[seq].n_cols - 1)
           {
             // Estimate of T_ij (probability of transition from state j to state
@@ -159,8 +160,10 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     }
 
     // Normalize the new initial probabilities.
-    if (dataSeq.size() == 0)
+    if (dataSeq.size() > 1)
       initial = newInitial / dataSeq.size();
+    else
+      initial = newInitial;
 
     // Assign the new transition matrix.  We use %= (element-wise
     // multiplication) because every element of the new transition matrix must

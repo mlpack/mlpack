@@ -5,8 +5,8 @@
  * Implementation of the convolution using the singular value decomposition to
  * speeded up the computation.
  */
-#ifndef __MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
-#define __MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
+#ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
+#define MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
 
 #include <mlpack/core.hpp>
 #include "border_modes.hpp"

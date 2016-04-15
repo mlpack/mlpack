@@ -6,8 +6,8 @@
  * for when you have an already defined dictionary and you plan on setting it
  * with SparseCoding::Dictionary().
  */
-#ifndef __MLPACK_METHODS_SPARSE_CODING_NOTHING_INITIALIZER_HPP
-#define __MLPACK_METHODS_SPARSE_CODING_NOTHING_INITIALIZER_HPP
+#ifndef MLPACK_METHODS_SPARSE_CODING_NOTHING_INITIALIZER_HPP
+#define MLPACK_METHODS_SPARSE_CODING_NOTHING_INITIALIZER_HPP
 
 #include <mlpack/core.hpp>
 

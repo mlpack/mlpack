@@ -6,8 +6,8 @@
  *
  * Definition of HMM class.
  */
-#ifndef __MLPACK_METHODS_HMM_HMM_HPP
-#define __MLPACK_METHODS_HMM_HMM_HPP
+#ifndef MLPACK_METHODS_HMM_HMM_HPP
+#define MLPACK_METHODS_HMM_HMM_HPP
 
 #include <mlpack/core.hpp>
 

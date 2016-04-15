@@ -5,8 +5,8 @@
  * Typedefs of RectangleTrees, for use by classes that require trees matching
  * the TreeType API.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_TYPEDEF_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_TYPEDEF_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_TYPEDEF_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_TYPEDEF_HPP
 
 #include "rectangle_tree.hpp"
 

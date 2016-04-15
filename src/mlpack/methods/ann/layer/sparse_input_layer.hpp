@@ -5,8 +5,8 @@
  * Definition of the sparse input class which serve as the first layer
  * of the sparse autoencoder
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SPARSE_INPUT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -82,15 +82,17 @@ class SparseInputLayer
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename InputType, typename eT, typename GradientDataType>
+  void Gradient(const InputType& input,
+                const arma::Mat<eT>& d,
+                GradientDataType& g)
   {
-    g = d * inputParameter.t() /
-        static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
-        lambda * weights;
+    g = d * input.t() / static_cast<typename InputType::value_type>(
+        input.n_cols) + lambda * weights;
   }
 
   //! Get the weights.

@@ -6,8 +6,8 @@
  *
  * Implementation of template-based GMM methods.
  */
-#ifndef __MLPACK_METHODS_GMM_GMM_IMPL_HPP
-#define __MLPACK_METHODS_GMM_GMM_IMPL_HPP
+#ifndef MLPACK_METHODS_GMM_GMM_IMPL_HPP
+#define MLPACK_METHODS_GMM_GMM_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "gmm.hpp"

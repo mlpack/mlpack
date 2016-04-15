@@ -5,8 +5,8 @@
  * Definition and implementation of the cross-entropy error performance
  * function.
  */
-#ifndef __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_CEE_FUNCTION_HPP
-#define __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_CEE_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_CEE_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_CEE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/linear_layer.hpp>

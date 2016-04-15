@@ -4,8 +4,8 @@
  *
  * This is the fourth layer of sparse autoencoder.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -91,15 +91,15 @@ class SparseOutputLayer
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The propagated input.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& d, arma::Mat<eT>& g)
+  template<typename InputType, typename eT>
+  void Gradient(const InputType input, const arma::Mat<eT>& d, arma::Mat<eT>& g)
   {        
-    g = d * inputParameter.t() /
-        static_cast<typename InputDataType::value_type>(inputParameter.n_cols) +
-        lambda * weights;    
+    g = d * input.t() / static_cast<typename InputType::value_type>(
+        input.n_cols) + lambda * weights;
   }
   
   //! Sets the KL divergence parameter.

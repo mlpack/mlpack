@@ -4,8 +4,8 @@
  *
  * Convenience methods to unmap results.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
 
 #include <mlpack/core.hpp>
 

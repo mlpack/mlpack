@@ -6,8 +6,8 @@
  * single-tree k-means clustering using the Pelleg-Moore fast k-means algorithm,
  * which has been shoehorned to fit into the mlpack tree abstractions.
  */
-#ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
-#define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
+#ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
+#define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
 
 #include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
 

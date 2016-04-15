@@ -5,8 +5,8 @@
  * Implementation of DecisionStump class.
  */
 
-#ifndef __MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
-#define __MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
+#ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
+#define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "decision_stump.hpp"

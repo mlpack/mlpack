@@ -6,8 +6,8 @@
  * Utility class to fit a GMM using the EM algorithm.  Used by
  * GMM::Estimate<>().
  */
-#ifndef __MLPACK_METHODS_GMM_EM_FIT_HPP
-#define __MLPACK_METHODS_GMM_EM_FIT_HPP
+#ifndef MLPACK_METHODS_GMM_EM_FIT_HPP
+#define MLPACK_METHODS_GMM_EM_FIT_HPP
 
 #include <mlpack/core.hpp>
 

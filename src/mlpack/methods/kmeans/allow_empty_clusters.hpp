@@ -5,8 +5,8 @@
  * This very simple policy is used when K-Means is allowed to return empty
  * clusters.
  */
-#ifndef __MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
-#define __MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
+#ifndef MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
+#define MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
 
 #include <mlpack/core.hpp>
 

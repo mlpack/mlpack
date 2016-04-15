@@ -3,8 +3,8 @@
  * @author Stephen Tu
  *
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
 
 #include <mlpack/core.hpp>
 

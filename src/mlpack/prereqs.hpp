@@ -3,8 +3,8 @@
  *
  * The core includes that mlpack expects; standard C++ includes and Armadillo.
  */
-#ifndef __MLPACK_PREREQS_HPP
-#define __MLPACK_PREREQS_HPP
+#ifndef MLPACK_PREREQS_HPP
+#define MLPACK_PREREQS_HPP
 
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES

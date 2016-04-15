@@ -4,8 +4,8 @@
  *
  * Definition of the RNN class, which implements recurrent neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_RNN_IMPL_HPP
-#define __MLPACK_METHODS_ANN_RNN_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RNN_IMPL_HPP
+#define MLPACK_METHODS_ANN_RNN_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rnn.hpp"
@@ -281,9 +281,17 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
             const size_t i,
             arma::mat& gradient)
 {
+  if (gradient.is_empty())
+  {
+    gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
+  }
+  else
+  {
+    gradient.zeros();
+  }
+
   Evaluate(parameter, i, false);
 
-  gradient.zeros();
   arma::mat currentGradient = arma::mat(gradient.n_rows, gradient.n_cols);
   NetworkGradients(currentGradient, network);
 

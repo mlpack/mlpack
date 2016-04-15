@@ -4,8 +4,8 @@
  *
  * Implementation of template specializations of LMetric class.
  */
-#ifndef __MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
-#define __MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
+#ifndef MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
+#define MLPACK_CORE_METRICS_LMETRIC_IMPL_HPP
 
 // In case it hasn't been included.
 #include "lmetric.hpp"

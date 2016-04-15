@@ -5,8 +5,8 @@
  * Implementation of the discrete distribution, where each discrete observation
  * has a given probability.
  */
-#ifndef __MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
-#define __MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 

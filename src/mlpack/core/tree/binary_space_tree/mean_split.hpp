@@ -6,8 +6,8 @@
  * Definition of MeanSplit, a class that splits a binary space partitioning tree
  * node into two parts using the mean of the values in a certain dimension.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
 
 #include <mlpack/core.hpp>
 

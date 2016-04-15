@@ -5,8 +5,8 @@
  * This file contains the specialization of the TreeTraits class for the
  * CoverTree type of tree.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
 
 #include <mlpack/core/tree/tree_traits.hpp>
 

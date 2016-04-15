@@ -6,8 +6,8 @@
  * k-means clustering.  This may still be the best choice for small datasets or
  * datasets with very high dimensionality.
  */
-#ifndef __MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "naive_kmeans.hpp"

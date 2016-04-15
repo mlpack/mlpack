@@ -7,8 +7,8 @@
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>

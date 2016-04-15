@@ -4,8 +4,8 @@
  *
  * Definition of the MaxPooling class, which implements max pooling.
  */
-#ifndef __MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
-#define __MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
+#ifndef MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
+#define MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
 
 #include <mlpack/core.hpp>
 

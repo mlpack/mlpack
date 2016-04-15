@@ -6,8 +6,8 @@
  * an empty cluster is detected, the point furthest from the centroid of the
  * cluster with maximum variance is taken to be a new cluster.
  */
-#ifndef __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_HPP
-#define __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_HPP
+#ifndef MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_HPP
+#define MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_HPP
 
 #include <mlpack/core.hpp>
 
