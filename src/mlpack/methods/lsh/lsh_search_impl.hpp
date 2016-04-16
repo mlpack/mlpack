@@ -218,28 +218,48 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   Log::Assert(hashVec.n_elem == numTablesToSearch);
 
-  // For all the buckets that the query is hashed into, sequentially
-  // collect the indices in those buckets.
-  arma::Col<size_t> refPointsConsidered;
-  refPointsConsidered.zeros(referenceSet->n_cols);
+  //TODO: The code below is unoptimized with respect to memory, since
+  //refPointsConsidered will be sparse. Alternatively, we could count the number
+  //of points hashed in the same bucket as the query and allocate only that many
+  //spaces
 
-  for (size_t i = 0; i < hashVec.n_elem; i++) // For all tables.
+  //Count number of points hashed in the same bucket as the query
+  size_t maxNumPoints = 0;
+  for (size_t i = 0; i < numTablesToSearch; ++i) //For all tables
   {
-    size_t hashInd = (size_t) hashVec[i];
+    size_t hashInd = (size_t) hashVec[i]; //find query's bucket
+    maxNumPoints += bucketContentSize[hashInd]; //count bucket contents
+  }
 
-    if (bucketContentSize[hashInd] > 0)
+  //Allocate space for query's potential neighbors
+  arma::uvec refPointsConsideredSmall;
+
+  refPointsConsideredSmall.zeros(maxNumPoints);
+
+  //Retrieve candidates
+  //size_t start = 0, stop = 0; //slice of candidates vector
+  size_t start = 0;
+  for (size_t i = 0; i < numTablesToSearch; ++i) //For all tables
+  {
+    size_t hashInd = (size_t) hashVec[i]; //find query's bucket
+
+    //tableRow hash indices corresponding to query
+    size_t tableRow = bucketRowInHashTable[hashInd];
+    assert(tableRow < secondHashSize);
+    assert(tableRow < secondHashTable.n_rows);
+
+    //TODO: this for loop can be replaced with a vector slice
+
+    //store all secondHashTable points in the candidates set
+    for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
     {
-      // Pick the indices in the bucket corresponding to 'hashInd'.
-      size_t tableRow = bucketRowInHashTable[hashInd];
-      assert(tableRow < secondHashSize);
-      assert(tableRow < secondHashTable.n_rows);
-
-      for (size_t j = 0; j < bucketContentSize[hashInd]; j++)
-        refPointsConsidered[secondHashTable(tableRow, j)]++;
+      refPointsConsideredSmall(start) = secondHashTable(tableRow, j);
+      start++;
     }
   }
 
-  referenceIndices = arma::find(refPointsConsidered > 0);
+  //Only keep unique candidates
+  referenceIndices = arma::unique(refPointsConsideredSmall);
 }
 
 // Search for nearest neighbors in a given query set.
