@@ -48,19 +48,12 @@ install(TARGETS mlpack_knn mlpack_kfn RUNTIME DESTINATION bin)
 # -- mlpack_knn/mlpack_kfn compatibility start --
 # make a copy of mlpack_knn/mlpack_kfn both on Windows and *unix for compatibility
 # should be removed in future release
-add_executable(mlpack_allknn
-  allknn_main.cpp
-)
-target_link_libraries(mlpack_allknn
-  mlpack
+get_filename_component(knn_ext $<TARGET_FILE:mlpack_knn> EXT)
+
+add_custom_command(TARGET mlpack_knn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mlpack_knn> $<TARGET_FILE_DIR:mlpack_knn>/mlpack_allknn${knn_ext}
 )
 
-add_executable(mlpack_allkfn
-  allkfn_main.cpp
-)
-target_link_libraries(mlpack_allkfn
-  mlpack
-)
-
-install(TARGETS mlpack_allknn mlpack_allkfn RUNTIME DESTINATION bin)
+MESSAGE( STATUS "knn_ext:" ${knn_ext} )
+MESSAGE( STATUS "mlpack_knn:" $<TARGET_FILE:mlpack_knn> )
 # -- mlpack_knn/mlpack_kfn compatibility end --
