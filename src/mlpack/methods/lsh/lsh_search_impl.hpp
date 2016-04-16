@@ -218,11 +218,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   Log::Assert(hashVec.n_elem == numTablesToSearch);
 
-  //TODO: The code below is unoptimized with respect to memory, since
-  //refPointsConsidered will be sparse. Alternatively, we could count the number
-  //of points hashed in the same bucket as the query and allocate only that many
-  //spaces
-
   //Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;
   for (size_t i = 0; i < numTablesToSearch; ++i) //For all tables
