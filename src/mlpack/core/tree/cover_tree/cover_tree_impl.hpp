@@ -27,7 +27,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const ElemType base,
     MetricType* metric) :
-    dataset(&dataset),
+    dataset(new MatType(dataset)),
     point(RootPointPolicy::ChooseRoot(dataset)),
     scale(INT_MAX),
     base(base),
@@ -52,19 +52,26 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
       dataset.n_cols - 1, dataset.n_cols - 1);
-  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
-  // occur.
-  if (point != 0)
-    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+  // This is now [1 2 3 4 ... n].  We now ensure that the initial root node is
+  // 0. So we swap dataset points and set point to 0.
+  if (point != 0) {
+    this->dataset->swap_cols(0, point);
+    point = 0;
+  }
 
-  arma::vec distances(dataset.n_cols - 1);
+  // Now the distances will be of size dataset.n_cols as we are using the
+  // same vector to perform all the distances computation.
+  arma::vec distances(dataset.n_cols);
 
   // Build the initial distances.
-  ComputeDistances(point, indices, distances, dataset.n_cols - 1);
+  ComputeDistances(point, distances, dataset.n_cols - 1);
 
   // Create the children.
   size_t farSetSize = 0;
-  size_t usedSetSize = 0;
+  // The logics asks us to maintain all the used variables on the left
+  // side of the array. Since the point has been taken the usedSetSize
+  // is 1 now.
+  size_t usedSetSize = 1;
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
       usedSetSize);
 
@@ -116,7 +123,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     MetricType& metric,
     const ElemType base) :
-    dataset(&dataset),
+    dataset(new MatType(dataset)),
     point(RootPointPolicy::ChooseRoot(dataset)),
     scale(INT_MAX),
     base(base),
@@ -137,19 +144,26 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
       dataset.n_cols - 1, dataset.n_cols - 1);
-  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
-  // occur.
-  if (point != 0)
-    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+  // This is now [1 2 3 4 ... n].  We now ensure that the initial root node is
+  // 0. So we swap dataset points and set point to 0.
+  if (point != 0) {
+    this->dataset->swap_cols(0, point);
+    point = 0;
+  }
 
-  arma::vec distances(dataset.n_cols - 1);
+  // Now the distances will be of size dataset.n_cols as we are using the
+  // same vector to perform all the distances computation.
+  arma::vec distances(dataset.n_cols);
 
   // Build the initial distances.
-  ComputeDistances(point, indices, distances, dataset.n_cols - 1);
+  ComputeDistances(point, distances, dataset.n_cols - 1);
 
   // Create the children.
   size_t farSetSize = 0;
-  size_t usedSetSize = 0;
+  // The logics asks us to maintain all the used variables on the left
+  // side of the array. Since the point has been taken the usedSetSize
+  // is 1 now.
+  size_t usedSetSize = 1;
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
       usedSetSize);
 
@@ -224,19 +238,26 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
       dataset->n_cols - 1, dataset->n_cols - 1);
-  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
-  // occur.
-  if (point != 0)
-    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+  // This is now [1 2 3 4 ... n].  We now ensure that the initial root node is
+  // 0. So we swap dataset points and set point to 0.
+  if (point != 0) {
+    dataset->swap_cols(0, point);
+    point = 0;
+  }
 
-  arma::vec distances(dataset->n_cols - 1);
+  // Now the distances will be of size dataset.n_cols as we are using the
+  // same vector to perform all the distances computation.
+  arma::vec distances(dataset->n_cols);
 
   // Build the initial distances.
-  ComputeDistances(point, indices, distances, dataset->n_cols - 1);
+  ComputeDistances(point, distances, dataset->n_cols - 1);
 
   // Create the children.
   size_t farSetSize = 0;
-  size_t usedSetSize = 0;
+  // The logics asks us to maintain all the used variables on the left
+  // side of the array. Since the point has been taken the usedSetSize
+  // is 1 now.
+  size_t usedSetSize = 1;
   CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
       usedSetSize);
 
@@ -309,19 +330,26 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
       dataset->n_cols - 1, dataset->n_cols - 1);
-  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
-  // occur.
-  if (point != 0)
-    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+  // This is now [1 2 3 4 ... n].  We now ensure that the initial root node is
+  // 0. So we swap dataset points and set point to 0.
+  if (point != 0) {
+    dataset->swap_cols(0, point);
+    point = 0;
+  }
 
-  arma::vec distances(dataset->n_cols - 1);
+  // Now the distances will be of size dataset.n_cols as we are using the
+  // same vector to perform all the distances computation.
+  arma::vec distances(dataset->n_cols);
 
   // Build the initial distances.
-  ComputeDistances(point, indices, distances, dataset->n_cols - 1);
+  ComputeDistances(point, distances, dataset->n_cols - 1);
 
   // Create the children.
   size_t farSetSize = 0;
-  size_t usedSetSize = 0;
+  // The logics asks us to maintain all the used variables on the left
+  // side of the array. Since the point has been taken the usedSetSize
+  // is 1 now.
+  size_t usedSetSize = 1;
   CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
       usedSetSize);
 
@@ -382,7 +410,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     size_t& farSetSize,
     size_t& usedSetSize,
     MetricType& metric) :
-    dataset(&dataset),
+    dataset(new MatType(dataset)),
     point(pointIndex),
     scale(scale),
     base(base),
@@ -427,7 +455,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const ElemType parentDistance,
     const ElemType furthestDescendantDistance,
     MetricType* metric) :
-    dataset(&dataset),
+    dataset(new MatType(dataset)),
     point(pointIndex),
     scale(scale),
     base(base),
@@ -793,8 +821,11 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // implicit node.  If the maximum distance is 0, every point in the near set
   // will be created as a leaf, and a child to this node.  We also do not need
   // to change the furthestChildDistance or furthestDescendantDistance.
-  const ElemType maxDistance = max(distances.rows(0,
-      nearSetSize + farSetSize - 1));
+
+  const ElemType maxDistance = max(distances.rows(usedSetSize,
+      usedSetSize + nearSetSize + farSetSize - 1));
+  const size_t storeUsedSetSize = usedSetSize;
+  const size_t storeNearSetSize = nearSetSize;
   if (maxDistance == 0)
   {
     // Make the self child at the lowest possible level.
@@ -805,14 +836,16 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     distanceComps += children.back()->DistanceComps();
 
     // Every point in the near set should be a leaf.
-    for (size_t i = 0; i < nearSetSize; ++i)
+    size_t i = 0;
+    while (i < nearSetSize)
     {
       // farSetSize and usedSetSize will not be modified.
-      children.push_back(new CoverTree(*dataset, base, indices[i],
-          INT_MIN, this, distances[i], indices, distances, 0, tempSize,
+      children.push_back(new CoverTree(*dataset, base, usedSetSize,
+          INT_MIN, this, distances[usedSetSize], indices, distances, 0, tempSize,
           usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
       usedSetSize++;
+      i++;
     }
 
     // The number of descendants is just the number of children, because each of
@@ -823,23 +856,29 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     // [ used | far | other used ]
     // and we want
     // [ far | all used ].
-    SortPointSet(indices, distances, 0, usedSetSize, farSetSize);
+    // I don't think there is any need of this anymore so commenting for time
+    // being
+    // SortPointSet(indices, distances, 0, usedSetSize, farSetSize);
 
     return;
   }
-
   const int nextScale = std::min(scale,
       (int) ceil(log(maxDistance) / log(base))) - 1;
   const ElemType bound = pow(base, nextScale);
 
+  size_t changeNearSetSize = 0, changeFarSetSize = 0;
   // First, make the self child.  We must split the given near set into the near
   // set and far set for the self child.
+  arma::Col<size_t> childIndices = arma::linspace<arma::Col<size_t> >(0,
+    nearSetSize - 1, nearSetSize);
+  //arma::vec childDistances(nearSetSize);
   size_t childNearSetSize =
-      SplitNearFar(indices, distances, bound, nearSetSize);
+      SplitNearFar(childIndices, distances, bound, usedSetSize, nearSetSize);
 
   // Build the self child (recursively).
   size_t childFarSetSize = nearSetSize - childNearSetSize;
-  size_t childUsedSetSize = 0;
+  size_t childUsedSetSize = usedSetSize;
+  
   children.push_back(new CoverTree(*dataset, base, point, nextScale, this, 0,
       indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize,
       *metric));
@@ -862,12 +901,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // and keeping in mind that childFar = our near set,
   // [ near | far | childUsed + used ]
   // is what we are trying to make.
-  SortPointSet(indices, distances, childFarSetSize, childUsedSetSize,
-      farSetSize);
+  // Again commenting for later review.
+  // SortPointSet(indices, distances, childFarSetSize, childUsedSetSize,
+  //    farSetSize);
 
   // Update size of near set and used set.
-  nearSetSize -= childUsedSetSize;
-  usedSetSize += childUsedSetSize;
+  nearSetSize -= (childUsedSetSize - usedSetSize);
+  usedSetSize += (childUsedSetSize - usedSetSize);
 
   // Now for each point in the near set, we need to make children.  To save
   // computation later, we'll create an array holding the points in the near
@@ -875,31 +915,33 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // and we will remove them.  ...if that's faster.  I think it is.
   while (nearSetSize > 0)
   {
-    size_t newPointIndex = nearSetSize - 1;
+    size_t newPointIndex = usedSetSize + nearSetSize - 1;
 
-    // Swap to front if necessary.
-    if (newPointIndex != 0)
+    // Swap to front if necessary. Here front is the position just after
+    // the used set.
+    if (newPointIndex != usedSetSize)
     {
-      const size_t tempIndex = indices[newPointIndex];
+      dataset->swap_cols(newPointIndex, usedSetSize);
+
       const ElemType tempDist = distances[newPointIndex];
 
-      indices[newPointIndex] = indices[0];
-      distances[newPointIndex] = distances[0];
+      distances[newPointIndex] = distances[usedSetSize];
 
-      indices[0] = tempIndex;
-      distances[0] = tempDist;
+      distances[usedSetSize] = tempDist;
+
+      newPointIndex = usedSetSize;
     }
-
     // Will this be a new furthest child?
-    if (distances[0] > furthestDescendantDistance)
-      furthestDescendantDistance = distances[0];
+    if (distances[newPointIndex] > furthestDescendantDistance)
+      furthestDescendantDistance = distances[newPointIndex];
 
     // If there's only one point left, we don't need this crap.
     if ((nearSetSize == 1) && (farSetSize == 0))
     {
       size_t childNearSetSize = 0;
-      children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
-          this, distances[0], indices, distances, childNearSetSize, farSetSize,
+
+      children.push_back(new CoverTree(*dataset, base, newPointIndex, nextScale,
+          this, distances[newPointIndex], indices, distances, childNearSetSize, farSetSize,
           usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
       numDescendants += children.back()->NumDescendants();
@@ -915,33 +957,56 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
 
     // Create the near and far set indices and distance vectors.  We don't fill
     // in the self-point, yet.
-    arma::Col<size_t> childIndices(nearSetSize + farSetSize);
-    childIndices.rows(0, (nearSetSize + farSetSize - 2)) = indices.rows(1,
-        nearSetSize + farSetSize - 1);
+    arma::Col<size_t> childIndices = arma::linspace<arma::Col<size_t> >(0,
+      nearSetSize + farSetSize - 2, nearSetSize + farSetSize - 1);
     arma::vec childDistances(nearSetSize + farSetSize);
 
     // Build distances for the child.
-    ComputeDistances(indices[0], childIndices, childDistances, nearSetSize
-        + farSetSize - 1);
+    // But first make a copy of the existing distances
+    size_t i;
+    for (i = 0; i < nearSetSize + farSetSize; ++i)
+    {
+      childDistances[i] = distances[i + usedSetSize];
+    }
 
-    // Split into near and far sets for this point.
-    childNearSetSize = SplitNearFar(childIndices, childDistances, bound,
+    ComputeDistances(usedSetSize, distances,
         nearSetSize + farSetSize - 1);
-    childFarSetSize = PruneFarSet(childIndices, childDistances,
-        base * bound, childNearSetSize,
+
+    // Reuse the variables declared earlier.
+    changeNearSetSize = 0;
+    changeFarSetSize = 0;
+    childUsedSetSize = usedSetSize + 1; // Mark self point as used.
+    // Split into near and far sets for this point.
+    childNearSetSize = SplitNearFar(childIndices, distances, bound,
+        childUsedSetSize, nearSetSize + farSetSize - 1);
+    childFarSetSize = PruneFarSet(childIndices, distances,
+        base * bound, childNearSetSize, childUsedSetSize,
         (nearSetSize + farSetSize - 1));
+
+    // Since the SplitNearFar and PruneFarSet change the dataset to the
+    // form:
+    // [used | childNear | childFar | other datapoints in near and far set]
+    // We use the following function to update it to
+    // [used | childNear | childFar | leftNear | leftFar | others]
+    // We can think this as an subsitute to what happens in 
+    // MoveToUsedSet function just the thing is we already maintain
+    // the used set to left side, and instead want to change other points.
+    UpdateDataset(childIndices, childDistances, distances, nearSetSize,
+      farSetSize, childNearSetSize, childFarSetSize, usedSetSize,
+      changeNearSetSize, changeFarSetSize);
 
     // Now that we know the near and far set sizes, we can put the used point
     // (the self point) in the correct place; now, when we call
     // MoveToUsedSet(), it will move the self-point correctly.  The distance
     // does not matter.
-    childIndices(childNearSetSize + childFarSetSize) = indices[0];
-    childDistances(childNearSetSize + childFarSetSize) = 0;
+    // We are removing the use of indices and new distances vectors.
+    // childIndices(childNearSetSize + childFarSetSize) = indices[0];
+    // childDistances(childNearSetSize + childFarSetSize) = 0;
 
     // Build this child (recursively).
-    childUsedSetSize = 1; // Mark self point as used.
-    children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
-        this, distances[0], childIndices, childDistances, childNearSetSize,
+    
+    children.push_back(new CoverTree(*dataset, base, usedSetSize, nextScale,
+        this, distances[usedSetSize], childIndices, distances, childNearSetSize,
         childFarSetSize, childUsedSetSize, *metric));
     numDescendants += children.back()->NumDescendants();
 
@@ -955,15 +1020,95 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     // [ childFar | childUsed ]
     // For each point in the childUsed set, we must move that point to the used
     // set in our own vector.
-    MoveToUsedSet(indices, distances, nearSetSize, farSetSize, usedSetSize,
-        childIndices, childFarSetSize, childUsedSetSize);
-  }
+    // Again since we are having changes, no need of this.
+    // MoveToUsedSet(indices, distances, nearSetSize, farSetSize, usedSetSize,
+    //    childIndices, childFarSetSize, childUsedSetSize);
 
+    // Just update the used set and near set sizes
+    nearSetSize = changeNearSetSize;
+    farSetSize = changeFarSetSize;
+    usedSetSize += (childUsedSetSize - usedSetSize);
+  }
   // Calculate furthest descendant.
-  for (size_t i = (nearSetSize + farSetSize); i < (nearSetSize + farSetSize +
-      usedSetSize); ++i)
+  for (size_t i = (storeUsedSetSize); i < (storeNearSetSize + storeUsedSetSize);
+      ++i)
     if (distances[i] > furthestDescendantDistance)
       furthestDescendantDistance = distances[i];
+}
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    UpdateDataset(arma::Col<size_t>& indices,
+                 arma::vec tempDistances,
+                 arma::vec& distances,
+                 const size_t parNearSetSize,
+                 const size_t parFarSetSize,
+                 const size_t nearSetSize,
+                 const size_t farSetSize,
+                 const size_t usedSetSize,
+                 size_t &changeNearSetSize,
+                 size_t &changeFarSetSize)
+{
+  size_t i, j;
+  std::vector<size_t> uncoveredIndices;
+  for (i = 1; i < (parNearSetSize + parFarSetSize); i++)
+  {
+    for (j = 0; j < nearSetSize; j++)
+      if(indices[j] + 1 == i)
+        break;
+    if (j == nearSetSize)
+    {
+      if(i < parNearSetSize)
+      {
+        uncoveredIndices.push_back(i);
+        changeNearSetSize++;
+      }
+      if (i >= parNearSetSize && i < parFarSetSize)
+        changeFarSetSize++;
+    }
+
+  }
+  // Now Update the dataset
+  // One major point is that the data set is properly arranged by
+  // the SplitNearFar and PruneFarSet function. But we need that 
+  // the dataset should look like
+  // [used | near | far]
+  // Currently it can be in any order, but the uncoveredIndices has
+  // the indices that should be placed just after used.
+
+  size_t replaceIndex = nearSetSize + 1;
+
+  for (i = 0; i < uncoveredIndices.size(); i++)
+  {
+    for (j = nearSetSize; j < parNearSetSize +
+      parFarSetSize; j++)
+    {
+      if (uncoveredIndices[i] == indices[j] + 1)
+      {
+        // Remember that the indices[j] is one behind because of 
+        // the child was already included when calculating the 
+        // near far sets.
+        dataset->swap_cols(uncoveredIndices[i] + usedSetSize,
+          replaceIndex + usedSetSize);
+        size_t tempIndex = indices[j];
+        indices[j] = indices[replaceIndex - 1];
+        indices[replaceIndex - 1] = tempIndex;
+        break;
+      }
+    }
+    replaceIndex++;
+  }
+
+  // And we need to copy the rest of distances to original.
+  for (i = nearSetSize + 1; i <= nearSetSize + farSetSize; i++)
+  {
+    distances[i + usedSetSize] = tempDistances[i - 1];
+  }
 }
 
 template<
@@ -976,16 +1121,17 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     SplitNearFar(arma::Col<size_t>& indices,
                  arma::vec& distances,
                  const ElemType bound,
+                 const size_t usedSetSize,
                  const size_t pointSetSize)
 {
+
   // Sanity check; there is no guarantee that this condition will not be true.
   // ...or is there?
   if (pointSetSize <= 1)
     return 0;
 
   // We'll traverse from both left and right.
-  size_t left = 0;
-  size_t right = pointSetSize - 1;
+  size_t left = usedSetSize, right = usedSetSize + pointSetSize - 1;
 
   // A modification of quicksort, with the pivot value set to the bound.
   // Everything on the left of the pivot will be less than or equal to the
@@ -997,14 +1143,17 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
   while (left != right)
   {
-    // Now swap the values and indices.
-    const size_t tempPoint = indices[left];
+    // Earlier we were not swapping the dataset, but now we are swapping.
+    dataset->swap_cols(left, right);
+
+    // Now swap the distances only.
+    const size_t tempPoint = indices[left - usedSetSize];
     const ElemType tempDist = distances[left];
 
-    indices[left] = indices[right];
+    indices[left - usedSetSize] = indices[right - usedSetSize];
     distances[left] = distances[right];
 
-    indices[right] = tempPoint;
+    indices[right - usedSetSize] = tempPoint;
     distances[right] = tempDist;
 
     // Traverse the left, seeing how many points are correctly on that side.
@@ -1018,9 +1167,8 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     while ((distances[right] > bound) && (left != right))
       --right;
   }
-
   // The final left value is the index of the first far value.
-  return left;
+  return left - usedSetSize;
 }
 
 // Returns the maximum distance between points.
@@ -1032,7 +1180,6 @@ template<
 >
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     ComputeDistances(const size_t pointIndex,
-                     const arma::Col<size_t>& indices,
                      arma::vec& distances,
                      const size_t pointSetSize)
 {
@@ -1041,75 +1188,11 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   distanceComps += pointSetSize;
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = metric->Evaluate(dataset->col(pointIndex),
-        dataset->col(indices[i]));
+    distances[i + 1 + pointIndex] = metric->Evaluate(dataset->col(pointIndex),
+        dataset->col(i + 1 + pointIndex));
   }
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    SortPointSet(arma::Col<size_t>& indices,
-                 arma::vec& distances,
-                 const size_t childFarSetSize,
-                 const size_t childUsedSetSize,
-                 const size_t farSetSize)
-{
-  // We'll use low-level memcpy calls ourselves, just to ensure it's done
-  // quickly and the way we want it to be.  Unfortunately this takes up more
-  // memory than one-element swaps, but there's not a great way around that.
-  const size_t bufferSize = std::min(farSetSize, childUsedSetSize);
-  const size_t bigCopySize = std::max(farSetSize, childUsedSetSize);
-
-  // Sanity check: there is no need to sort if the buffer size is going to be
-  // zero.
-  if (bufferSize == 0)
-    return (childFarSetSize + farSetSize);
-
-  size_t* indicesBuffer = new size_t[bufferSize];
-  ElemType* distancesBuffer = new ElemType[bufferSize];
-
-  // The start of the memory region to copy to the buffer.
-  const size_t bufferFromLocation = ((bufferSize == farSetSize) ?
-      (childFarSetSize + childUsedSetSize) : childFarSetSize);
-  // The start of the memory region to move directly to the new place.
-  const size_t directFromLocation = ((bufferSize == farSetSize) ?
-      childFarSetSize : (childFarSetSize + childUsedSetSize));
-  // The destination to copy the buffer back to.
-  const size_t bufferToLocation = ((bufferSize == farSetSize) ?
-      childFarSetSize : (childFarSetSize + farSetSize));
-  // The destination of the directly moved memory region.
-  const size_t directToLocation = ((bufferSize == farSetSize) ?
-      (childFarSetSize + farSetSize) : childFarSetSize);
-
-  // Copy the smaller piece to the buffer.
-  memcpy(indicesBuffer, indices.memptr() + bufferFromLocation,
-      sizeof(size_t) * bufferSize);
-  memcpy(distancesBuffer, distances.memptr() + bufferFromLocation,
-      sizeof(ElemType) * bufferSize);
-
-  // Now move the other memory.
-  memmove(indices.memptr() + directToLocation,
-      indices.memptr() + directFromLocation, sizeof(size_t) * bigCopySize);
-  memmove(distances.memptr() + directToLocation,
-      distances.memptr() + directFromLocation, sizeof(ElemType) * bigCopySize);
-
-  // Now copy the temporary memory to the right place.
-  memcpy(indices.memptr() + bufferToLocation, indicesBuffer,
-      sizeof(size_t) * bufferSize);
-  memcpy(distances.memptr() + bufferToLocation, distancesBuffer,
-      sizeof(ElemType) * bufferSize);
-
-  delete[] indicesBuffer;
-  delete[] distancesBuffer;
-
-  // This returns the complete size of the far set.
-  return (childFarSetSize + farSetSize);
-}
 
 template<
     typename MetricType,
@@ -1268,13 +1351,15 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
                 arma::vec& distances,
                 const ElemType bound,
                 const size_t nearSetSize,
+                const size_t usedSetSize,
                 const size_t pointSetSize)
 {
-  // What we are trying to do is remove any points greater than the bound from
-  // the far set.  We don't care what happens to those indices and distances...
-  // so, we don't need to properly swap points -- just drop new ones in place.
-  size_t left = nearSetSize;
-  size_t right = pointSetSize - 1;
+
+  // Now we are just trying to keep the far set just next to the close set.
+  // This will just make sure that the rest of the datset points are kept
+  // away from the set this node is dealing with.
+  size_t left = usedSetSize + nearSetSize;
+  size_t right = usedSetSize + pointSetSize - 1;
   while ((distances[left] <= bound) && (left != right))
     ++left;
   while ((distances[right] > bound) && (left != right))
@@ -1282,10 +1367,16 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
   while (left != right)
   {
-    // We don't care what happens to the point which should be on the right.
-    indices[left] = indices[right];
+    dataset->swap_cols(left, right);
+
+    const size_t tempPoint = indices[left - usedSetSize];
+    const ElemType tempDist = distances[left];
+
+    indices[left - usedSetSize] = indices[right - usedSetSize];
     distances[left] = distances[right];
-    --right; // Since we aren't changing the right.
+
+    indices[right - usedSetSize] = tempPoint;
+    distances[right] = tempDist;
 
     // Advance to next location which needs to switch.
     while ((distances[left] <= bound) && (left != right))
@@ -1296,7 +1387,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
   // The far set size is the left pointer, with the near set size subtracted
   // from it.
-  return (left - nearSetSize);
+  return (left - nearSetSize - usedSetSize);
 }
 
 /**

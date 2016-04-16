@@ -376,7 +376,7 @@ class CoverTree
 
  private:
   //! Reference to the matrix which this tree is built on.
-  const MatType* dataset;
+  MatType* dataset;
   //! Index of the point in the matrix which this node represents.
   size_t point;
   //! The list of children; the first is the self-child.
@@ -413,17 +413,15 @@ class CoverTree
 
   /**
    * Fill the vector of distances with the distances between the point specified
-   * by pointIndex and each point in the indices array.  The distances of the
+   * by pointIndex and each point ahead of it in pointSetSize.  The distances of the
    * first pointSetSize points in indices are calculated (so, this does not
    * necessarily need to use all of the points in the arrays).
    *
    * @param pointIndex Point to build the distances for.
-   * @param indices List of indices to compute distances for.
    * @param distances Vector to store calculated distances in.
    * @param pointSetSize Number of points in arrays to calculate distances for.
    */
   void ComputeDistances(const size_t pointIndex,
-                        const arma::Col<size_t>& indices,
                         arma::vec& distances,
                         const size_t pointSetSize);
   /**
@@ -437,14 +435,47 @@ class CoverTree
    * @param distances List of distances; will be reordered.
    * @param bound If the distance is less than or equal to this bound, the point
    *      is placed into the near set.
+   * @param usedSetSize The size of the set used till now.
    * @param pointSetSize Size of point set (because we may be sorting a smaller
    *      list than the indices vector will hold).
    */
   size_t SplitNearFar(arma::Col<size_t>& indices,
                       arma::vec& distances,
                       const ElemType bound,
+                      const size_t usedSetSize,
                       const size_t pointSetSize);
-
+  /**
+   * Update the dataset once it has been splitted by SplitNearFar and
+   * PruneFarSet. After these function the distances and dataset would
+   * not be in normal form.
+   *
+   * The distances are reset using the indices and tempDistances which
+   * were copied earlier.
+   *
+   * For dataset it looks something like:
+   * [used | childNear | childFar | other datapoints in near and far set]
+   * and we make it look like
+   * [used | childNear | childFar | left Near | left Far | others]
+   * 
+   * @param indices List of indices; will be reordered
+   * @param tempDistances Stores copy of part of original distances vector
+   * @param distances Original distances vector
+   * @param parNearSetSize nearSetSize for the parent node
+   * @param parFarSetSize farSetSize for parent node
+   * @param usedSetSize set of datapoints used till now
+   * @param changeNearSetSize the change in near set size of parent
+   * @param changeFarSetSize the changes in far set size of parent
+   */
+  void UpdateDataset(arma::Col<size_t>& indices,
+                      arma::vec tempDistances,
+                      arma::vec& distances,
+                      const size_t parNearSetSize,
+                      const size_t parFarSetSize,
+                      const size_t nearSetSize,
+                      const size_t farSetSize,
+                      const size_t usedSetSize,
+                      size_t &changeNearSetSize,
+                      size_t &changeFarSetSize);
   /**
    * Assuming that the list of indices and distances is sorted as
    * [ childFarSet | childUsedSet | farSet | usedSet ],
@@ -464,12 +495,6 @@ class CoverTree
    * @param childUsedSetSize Number of points in child used set (childUsedSet).
    * @param farSetSize Number of points in far set (farSet).
    */
-  size_t SortPointSet(arma::Col<size_t>& indices,
-                      arma::vec& distances,
-                      const size_t childFarSetSize,
-                      const size_t childUsedSetSize,
-                      const size_t farSetSize);
-
   void MoveToUsedSet(arma::Col<size_t>& indices,
                      arma::vec& distances,
                      size_t& nearSetSize,
@@ -482,6 +507,7 @@ class CoverTree
                      arma::vec& distances,
                      const ElemType bound,
                      const size_t nearSetSize,
+                     const size_t usedSetSize,
                      const size_t pointSetSize);
 
   /**
