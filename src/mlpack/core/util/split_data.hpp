@@ -13,8 +13,7 @@ namespace mlpack {
 namespace util {
 
 /**
- *Split training data and test data, please define
- *ARMA_USE_CXX11 to enable move of c++11
+ *Split training data and test data
  *@param input input data want to split
  *@param label input label want to split
  *@param trainData training data split by input
