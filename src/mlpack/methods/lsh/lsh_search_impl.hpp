@@ -233,11 +233,9 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   //Allocate space for query's potential neighbors
   arma::uvec refPointsConsideredSmall;
-
   refPointsConsideredSmall.zeros(maxNumPoints);
 
   //Retrieve candidates
-  //size_t start = 0, stop = 0; //slice of candidates vector
   size_t start = 0;
   for (size_t i = 0; i < numTablesToSearch; ++i) //For all tables
   {
@@ -248,14 +246,10 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     assert(tableRow < secondHashSize);
     assert(tableRow < secondHashTable.n_rows);
 
-    //TODO: this for loop can be replaced with a vector slice
-
+    //this for-loop could be replaced with a vector slice (TODO)
     //store all secondHashTable points in the candidates set
     for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
-    {
-      refPointsConsideredSmall(start) = secondHashTable(tableRow, j);
-      start++;
-    }
+      refPointsConsideredSmall(start++) = secondHashTable(tableRow, j);
   }
 
   //Only keep unique candidates
