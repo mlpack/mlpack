@@ -50,7 +50,7 @@ A list of all the sections this tutorial contains.
 @section cli_nstut Command-Line 'allknn'
 
 The simplest way to perform nearest-neighbors search in \b mlpack is to use the
-\c mlpack_allknn executable.  This program will perform nearest-neighbors search
+\c mlpack_knn executable.  This program will perform nearest-neighbors search
 and place the resultant neighbors into one file and the resultant distances into
 another.  The output files are organized such that the first row corresponds to
 the nearest neighbors of the first query point, with the first column
@@ -61,13 +61,13 @@ Below are several examples of simple usage (and the resultant output).  The
 individual option can be found by typing
 
 @code
-$ mlpack_allknn --help
+$ mlpack_knn --help
 @endcode
 
 @subsection cli_ex1_nstut One dataset, 5 nearest neighbors
 
 @code
-$ mlpack_allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+$ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'dataset.csv' (3 x 1000).
 [INFO ] Building reference tree...
@@ -144,7 +144,7 @@ distance of 7.664920518084e-02.  The third nearest neighbor to point 5 is point
 @subsection cli_ex2_nstut Query and reference dataset, 10 nearest neighbors
 
 @code
-$ mlpack_allknn -q query_dataset.csv -r reference_dataset.csv \
+$ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 > -n neighbors_out.csv -d distances_out.csv -k 10 -v
 [INFO ] Loading 'reference_dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'reference_dataset.csv' (3 x 1000).
