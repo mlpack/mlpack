@@ -21,10 +21,6 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(RectangleTreeTest);
 
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
-
 // Test the traits on RectangleTrees.
 
 BOOST_AUTO_TEST_CASE(RectangleTreeTraitsTest)
@@ -254,7 +250,7 @@ BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync)
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
-  
+
   typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
