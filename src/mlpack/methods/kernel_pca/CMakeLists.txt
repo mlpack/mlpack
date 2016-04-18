@@ -16,10 +16,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_subdirectory(kernel_rules)
 
-add_executable(mlpack_kernel_pca
-  kernel_pca_main.cpp
-)
-target_link_libraries(mlpack_kernel_pca
-  mlpack
-)
-install(TARGETS mlpack_kernel_pca RUNTIME DESTINATION bin)
+add_cli_executable(kernel_pca)
+

@@ -1,3 +1,16 @@
+
+macro (add_cli_executable name)
+if (BUILD_CLI_EXECUTABLES)
+  add_executable(mlpack_${name}
+    ${name}_main.cpp
+  )
+  target_link_libraries(mlpack_${name}
+    mlpack
+  )
+  install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
+endif ()
+endmacro ()
+
 # Recurse into each method mlpack provides.
 set(DIRS
   adaboost

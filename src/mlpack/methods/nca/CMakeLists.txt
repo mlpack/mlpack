@@ -16,10 +16,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_nca
-  nca_main.cpp
-)
-target_link_libraries(mlpack_nca
-  mlpack
-)
-install(TARGETS mlpack_nca RUNTIME DESTINATION bin)
+add_cli_executable (nca)
