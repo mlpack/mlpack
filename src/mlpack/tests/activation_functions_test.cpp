@@ -168,9 +168,9 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the LeakyReLU activation function test. The function is  
+ * Implementation of the LeakyReLU activation function test. The function is
  * implemented as LeakyReLU layer in the file leaky_relu_layer.hpp
- * 
+ *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
@@ -189,15 +189,15 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the LeakyReLU activation function derivative test. 
- * The derivative function is implemented as LeakyReLU layer in the file 
+ * Implementation of the LeakyReLU activation function derivative test.
+ * The derivative function is implemented as LeakyReLU layer in the file
  * leaky_relu_layer.hpp
  *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
 
-void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, 
+void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
   LeakyReLULayer<> lrf;
