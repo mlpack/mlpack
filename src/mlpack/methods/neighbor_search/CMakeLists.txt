@@ -33,8 +33,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_cli_executable(knn)
 add_cli_executable(kfn)
 
-install(TARGETS mlpack_knn mlpack_kfn RUNTIME DESTINATION bin)
-
+if (BUILD_CLI_EXECUTABLES)
 # -- mlpack_knn/mlpack_kfn compatibility start --
 # Make a copy of mlpack_knn/mlpack_kfn both on Windows and *unix for
 # compatibility.  This should be removed by mlpack 3.0.0.
@@ -53,3 +52,4 @@ add_custom_command(TARGET mlpack_kfn POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:mlpack_kfn> $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
 )
+endif ()
