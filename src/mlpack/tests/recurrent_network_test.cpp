@@ -25,12 +25,8 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
-  
-BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
+BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
 /**
  * Construct a 2-class dataset out of noisy sines.
@@ -582,7 +578,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
 BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
 {
   LSTMLayer<> hiddenLayerLSTMPeephole(10, true);
-  DistractedSequenceRecallTestNetwork(hiddenLayerLSTMPeephole);  
+  DistractedSequenceRecallTestNetwork(hiddenLayerLSTMPeephole);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
