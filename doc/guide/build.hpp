@@ -111,7 +111,7 @@ You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
 @code
-$ make mlpack_pca mlpack_allknn mlpack_allkfn
+$ make mlpack_pca mlpack_knn mlpack_kfn
 @endcode
 
 If the build fails and you cannot figure out why, register an account on Trac

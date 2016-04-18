@@ -21,7 +21,7 @@ be stated more simply: for each point in the dataset, we wish to know the
 
  - a \ref cli_nstut "simple command-line executable" to run nearest-neighbors search
    (and furthest-neighbors search)
- - a \ref allknn_nstut "simple C++ interface" to perform nearest-neighbors search (and
+ - a \ref knn_nstut "simple C++ interface" to perform nearest-neighbors search (and
    furthest-neighbors search)
  - a \ref neighborsearch_nstut "generic, extensible, and powerful C++ class (NeighborSearch)" for complex usage
 
@@ -35,10 +35,10 @@ A list of all the sections this tutorial contains.
    - \ref cli_ex1_nstut
    - \ref cli_ex2_nstut
    - \ref cli_ex3_nstut
- - \ref allknn_nstut
-   - \ref allknn_ex1_nstut
-   - \ref allknn_ex2_nstut
-   - \ref allknn_ex3_nstut
+ - \ref knn_nstut
+   - \ref knn_ex1_nstut
+   - \ref knn_ex2_nstut
+   - \ref knn_ex3_nstut
  - \ref neighborsearch_nstut
    - \ref sort_policy_doc_nstut
    - \ref metric_type_doc_nstut
@@ -47,7 +47,7 @@ A list of all the sections this tutorial contains.
    - \ref traverser_type_doc_nstut
  - \ref further_doc_nstut
 
-@section cli_nstut Command-Line 'allknn'
+@section cli_nstut Command-Line 'mlpack_knn'
 
 The simplest way to perform nearest-neighbors search in \b mlpack is to use the
 \c mlpack_knn executable.  This program will perform nearest-neighbors search
@@ -78,7 +78,7 @@ $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -97,7 +97,7 @@ $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.108968s
 [INFO ]   loading_data: 0.006495s
@@ -158,7 +158,7 @@ $ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -177,7 +177,7 @@ $ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.022589s
 [INFO ]   loading_data: 0.003572s
@@ -189,7 +189,7 @@ $ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 @subsection cli_ex3_nstut One dataset, 3 nearest neighbors, leaf size of 15 points
 
 @code
-$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
+$ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'dataset.csv' (3 x 1000).
 [INFO ] Building reference tree...
@@ -200,7 +200,7 @@ $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -219,7 +219,7 @@ $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.059020s
 [INFO ]   loading_data: 0.002791s
@@ -230,26 +230,26 @@ $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 
 Further documentation on options should be found by using the --help option.
 
-@section allknn_nstut The 'AllkNN' class
+@section knn_nstut The 'KNN' class
 
-The 'AllkNN' class is, specifically, a typedef of the more extensible
+The 'KNN' class is, specifically, a typedef of the more extensible
 NeighborSearch class, querying for nearest neighbors using the Euclidean
 distance.
 
 @code
 typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance>
-    AllkNN;
+    KNN;
 @endcode
 
-Using the AllkNN class is particularly simple; first, the object must be
+Using the KNN class is particularly simple; first, the object must be
 constructed and given a dataset.  Then, the method is run, and two matrices are
 returned: one which holds the indices of the nearest neighbors, and one which
 holds the distances of the nearest neighbors.  These are of the same structure
 as the output --neighbors_file and --distances_file for the CLI interface (see
-above).  A handful of examples of simple usage of the AllkNN class are given
+above).  A handful of examples of simple usage of the KNN class are given
 below.
 
-@subsection allknn_ex1_nstut 5 nearest neighbors on a single dataset
+@subsection knn_ex1_nstut 5 nearest neighbors on a single dataset
 
 @code
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -259,7 +259,7 @@ using namespace mlpack::neighbor;
 // Our dataset matrix, which is column-major.
 extern arma::mat data;
 
-AllkNN a(data);
+KNN a(data);
 
 // The matrices we will store output in.
 arma::Mat<size_t> resultingNeighbors;
@@ -270,7 +270,7 @@ a.Search(5, resultingNeighbors, resultingDistances);
 
 The output of the search is stored in resultingNeighbors and resultingDistances.
 
-@subsection allknn_ex2_nstut 10 nearest neighbors on a query and reference dataset
+@subsection knn_ex2_nstut 10 nearest neighbors on a query and reference dataset
 
 @code
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -280,7 +280,7 @@ using namespace mlpack::neighbor;
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
 
-AllkNN a(referenceData);
+KNN a(referenceData);
 
 // The matrices we will store output in.
 arma::Mat<size_t> resultingNeighbors;
@@ -289,7 +289,7 @@ arma::mat resultingDistances;
 a.Search(queryData, 10, resultingNeighbors, resultingDistances);
 @endcode
 
-@subsection allknn_ex3_nstut Naive (exhaustive) search for 6 nearest neighbors on one dataset
+@subsection knn_ex3_nstut Naive (exhaustive) search for 6 nearest neighbors on one dataset
 
 This example uses the O(n^2) naive search (not the tree-based search).
 
@@ -301,7 +301,7 @@ using namespace mlpack::neighbor;
 // Our dataset matrix, which is column-major.
 extern arma::mat dataset;
 
-AllkNN a(dataset, true);
+KNN a(dataset, true);
 
 // The matrices we will store output in.
 arma::Mat<size_t> resultingNeighbors;
@@ -363,7 +363,7 @@ static const double BestDistance();
 @endcode
 
 The mlpack::neighbor::FurthestNeighborSort class is another implementation,
-which is used to create the 'AllkFN' typedef class, which finds the furthest
+which is used to create the 'KFN' typedef class, which finds the furthest
 neighbors, as opposed to the nearest neighbors.
 
 @subsection metric_type_doc_nstut MetricType policy class

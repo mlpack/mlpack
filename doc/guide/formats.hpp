@@ -34,7 +34,7 @@ following file types:
  - ARFF, denoted by .arff (<b>note: this is not supported by all mlpack"
    command-line programs </b>; see \ref formatcat )
 
-Datasets that are loaded by mlpack should be stored with <b>one row for 
+Datasets that are loaded by mlpack should be stored with <b>one row for
 one point</b> and <b>one column for one dimension</b>.  Therefore, a dataset
 with three two-dimensional points \f$(0, 1)\f$, \f$(3, 1)\f$, and \f$(5, -5)\f$
 would be stored in a csv file as:
@@ -300,7 +300,7 @@ example files that may be useful to this end:
 
  - src/mlpack/methods/logistic_regression/logistic_regression_main.cpp
  - src/mlpack/methods/hoeffding_trees/hoeffding_tree_main.cpp
- - src/mlpack/methods/neighbor_search/allknn_main.cpp
+ - src/mlpack/methods/neighbor_search/knn_main.cpp
 
 If you are interested in adding support for more data types to mlpack, it would
 be preferable to add the support upstream to Armadillo instead, so that may be a
