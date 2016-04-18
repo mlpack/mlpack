@@ -1,4 +1,6 @@
-
+# This macro adds a command-line executable with the given name.  It assumes
+# that the file with main() is in <name>_main.cpp, and produces an output
+# program with the name mlpack_<name>.
 macro (add_cli_executable name)
 if (BUILD_CLI_EXECUTABLES)
   add_executable(mlpack_${name}
