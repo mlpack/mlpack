@@ -423,8 +423,8 @@ struct ParamData
  * The flag (boolean) type automatically defaults to false; it is specified
  * merely as a flag on the command line (no '=true' is required).
  *
- * Here is an example of a few parameters being defined; this is for the AllkNN
- * executable (methods/neighbor_search/allknn_main.cpp):
+ * Here is an example of a few parameters being defined; this is for the KNN
+ * executable (methods/neighbor_search/knn_main.cpp):
  *
  * @code
  * PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",

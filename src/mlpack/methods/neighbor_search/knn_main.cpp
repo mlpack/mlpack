@@ -1,5 +1,5 @@
 /**
- * @file allknn_main.cpp
+ * @file knn_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of the AllkNN executable.  Allows some number of standard
@@ -34,8 +34,8 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
     "neighbors in the file 'neighbors.csv':"
     "\n\n"
-    "$ allknn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
-    "  --neighbors_file=neighbors.csv"
+    "$ mlpack_nn --k=5 --reference_file=input.csv "
+    "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
     "\n\n"
     "The output files are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "

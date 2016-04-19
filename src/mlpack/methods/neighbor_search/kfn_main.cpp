@@ -1,9 +1,9 @@
 /**
 w
- * @file allkfn_main.cpp
+ * @file kfn_main.cpp
  * @author Ryan Curtin
  *
- * Implementation of the AllkFN executable.  Allows some number of standard
+ * Implementation of the KFN executable.  Allows some number of standard
  * options.
  */
 #include <mlpack/core.hpp>
@@ -33,8 +33,8 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
     "neighbors in the file 'neighbors.csv':"
     "\n\n"
-    "$ allkfn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
-    "  --neighbors_file=neighbors.csv"
+    "$ mlpack_kfn --k=5 --reference_file=input.csv "
+    "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
     "\n\n"
     "The output files are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "

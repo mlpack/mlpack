@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::mat copy(dataset);
 
   AllkRANN moveknn(std::move(copy));
-  AllkRANN allknn(dataset);
+  AllkRANN knn(dataset);
 
   BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
   BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
@@ -573,7 +573,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::Mat<size_t> moveNeighbors, neighbors;
 
   moveknn.Search(1, moveNeighbors, moveDistances);
-  allknn.Search(1, neighbors, distances);
+  knn.Search(1, neighbors, distances);
 
   BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
   BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);

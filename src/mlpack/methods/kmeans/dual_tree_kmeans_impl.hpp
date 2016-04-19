@@ -145,7 +145,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     interclusterDistances.set_size(1, centroids.n_cols);
   }
 
-  // We won't use the AllkNN class here because we have our own set of rules.
+  // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
   RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,

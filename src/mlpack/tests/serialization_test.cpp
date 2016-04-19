@@ -801,16 +801,16 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(AllkNNTest)
+BOOST_AUTO_TEST_CASE(KNNTest)
 {
-  using neighbor::AllkNN;
+  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  AllkNN allknn(dataset, false, false);
+  KNN knn(dataset, false, false);
 
-  AllkNN knnXml, knnText, knnBinary;
+  KNN knnXml, knnText, knnBinary;
 
-  SerializeObjectAll(allknn, knnXml, knnText, knnBinary);
+  SerializeObjectAll(knn, knnXml, knnText, knnBinary);
 
   // Now run nearest neighbor and make sure the results are the same.
   arma::mat querySet = arma::randu<arma::mat>(5, 1000);
@@ -818,7 +818,7 @@ BOOST_AUTO_TEST_CASE(AllkNNTest)
   arma::mat distances, xmlDistances, textDistances, binaryDistances;
   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-  allknn.Search(querySet, 5, neighbors, distances);
+  knn.Search(querySet, 5, neighbors, distances);
   knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
   knnText.Search(querySet, 5, textNeighbors, textDistances);
   knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
@@ -1124,7 +1124,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
 BOOST_AUTO_TEST_CASE(RASearchTest)
 {
   using neighbor::AllkRANN;
-  using neighbor::AllkNN;
+  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
 
@@ -1145,8 +1145,8 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   arma::mat distances, xmlDistances, textDistances, binaryDistances;
   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-  AllkNN allknn(dataset); // Exact search.
-  allknn.Search(querySet, 10, neighbors, distances);
+  KNN knn(dataset); // Exact search.
+  knn.Search(querySet, 10, neighbors, distances);
   krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
   krannText.Search(querySet, 5, textNeighbors, textDistances);
   krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);

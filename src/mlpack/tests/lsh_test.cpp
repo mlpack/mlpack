@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
   data::Load(testSet, qdata, true);
 
   // Run classic knn on reference data.
-  AllkNN knn(rdata);
+  KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
   data::Load(testSet, qdata, true);
 
   // Run classic knn on reference data.
-  AllkNN knn(rdata);
+  KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
   data::Load(testSet, qdata, true);
 
   // Run classic knn on reference data.
-  AllkNN knn(rdata);
+  KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
   data::Load(testSet, qdata, true);
 
   // Run classic knn on reference data.
-  AllkNN knn(rdata);
+  KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
