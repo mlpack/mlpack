@@ -30,7 +30,7 @@ class SparseErrorFunction
    */
   SparseErrorFunction(const double lambda = 0.0001,
                       const double beta = 3,
-                      const double rho = 0.01) :    
+                      const double rho = 0.01) :
     lambda(lambda), beta(beta), rho(rho)
   {
     // Nothing to do here.
@@ -39,10 +39,10 @@ class SparseErrorFunction
   SparseErrorFunction(SparseErrorFunction &&layer) noexcept
   {
     *this = std::move(layer);
-  }  
+  }
 
   SparseErrorFunction& operator=(SparseErrorFunction &&layer) noexcept
-  {    
+  {
     lambda = layer.lambda;
     beta = layer.beta;
     rho = layer.rho;

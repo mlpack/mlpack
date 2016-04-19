@@ -77,7 +77,7 @@ void XTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
           relevels);
     }
-   
+
     for (size_t i = 0; i < p; i++)
     {
       // We reverse the order again to reinsert the closest points first.

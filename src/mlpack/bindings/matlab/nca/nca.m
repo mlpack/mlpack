@@ -8,7 +8,7 @@ function result = nca(dataPoints, labels)
 %  value of k.  It works by using stochastic ("soft") neighbor assignments and
 %  using optimization techniques over the gradient of the accuracy of the
 %  neighbor assignments.
-%  
+%
 %  To work, this algorithm needs labeled data.  It can be given as the last row
 %  of the input dataset (--input_file), or alternatively in a separate file
 %  (--labels_file).
@@ -17,7 +17,7 @@ function result = nca(dataPoints, labels)
 % dataPoints - Input dataset to run NCA on.
 % labels     - Labels for input dataset.
 
-% interfacing with mlpack. transposing to machine learning standards. 
+% interfacing with mlpack. transposing to machine learning standards.
 result = mex_nca(dataPoints', labels);
 result = result';
 

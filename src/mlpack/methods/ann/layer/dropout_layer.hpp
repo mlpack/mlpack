@@ -64,7 +64,7 @@ class DropoutLayer
       rescale(rescale)
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -180,7 +180,7 @@ class DropoutLayer
   bool Rescale() const {return rescale; }
   //! Modify the value of the rescale parameter.
   bool& Rescale() {return rescale; }
-  
+
   /**
    * Serialize the layer.
    */

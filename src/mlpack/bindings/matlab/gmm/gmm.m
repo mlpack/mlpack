@@ -7,7 +7,7 @@ function result = gmm(dataPoints, varargin)
 %
 %Parameters:
 % dataPoints- (required) Matrix containing the data on which the model will be fit
-% seed      - (optional) Random seed.  If 0, 'std::time(NULL)' is used. 
+% seed      - (optional) Random seed.  If 0, 'std::time(NULL)' is used.
 %					    Default value is 0.
 % gaussians - (optional) Number of gaussians in the GMM. Default value is 1.
 

@@ -34,7 +34,7 @@ class SoftmaxLayer
   SoftmaxLayer()
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -82,7 +82,7 @@ class SoftmaxLayer
   InputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
-  
+
   /**
    * Serialize the layer.
    */

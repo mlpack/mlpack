@@ -273,14 +273,14 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
 {
   Timer::Start("test_timer");
-  
+
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
 {
   Timer::Stop("test_timer");
-  
+
   BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
 }
 

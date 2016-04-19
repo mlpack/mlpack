@@ -2,7 +2,7 @@
  * @file dropconnect_layer.hpp
  * @author Palash Ahuja
  *
- * Definition of the DropConnectLayer class, which implements a regularizer 
+ * Definition of the DropConnectLayer class, which implements a regularizer
  * that randomly sets connections to zero. Preventing units from co-adapting.
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
@@ -286,7 +286,7 @@ class DropConnectLayer
   {
     if(uselayer)
       return baseLayer.Gradient();
-    
+
     return gradient;
   }
 

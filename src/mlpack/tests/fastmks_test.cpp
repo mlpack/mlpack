@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(SparseFastMKSTest)
 
   // Store the results in these.
   arma::Mat<size_t> sparseIndices, denseIndices;
-  arma::mat sparseKernels, denseKernels; 
+  arma::mat sparseKernels, denseKernels;
 
   // Do the searches.
   sparsemks.Search(3, sparseIndices, sparseKernels);
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
 
   // Store the results in these.
   arma::Mat<size_t> sparseIndices, denseIndices;
-  arma::mat sparseKernels, denseKernels; 
+  arma::mat sparseKernels, denseKernels;
 
   // Do the searches.
   sparsepoly.Search(3, sparseIndices, sparseKernels);

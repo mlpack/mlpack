@@ -62,7 +62,7 @@ class OneHotLayer
     inputActivations.max(maxIndex);
     output(maxIndex) = 1;
   }
-  
+
   /**
    * Serialize the layer.
    */

@@ -14,7 +14,7 @@ void Cube<eT>::serialize(Archive& ar, const unsigned int /* version */)
   ar & make_nvp("n_cols", access::rw(n_cols));
   ar & make_nvp("n_elem_slice", access::rw(n_elem_slice));
   ar & make_nvp("n_slices", access::rw(n_slices));
-  ar & make_nvp("n_elem", access::rw(n_elem));    
+  ar & make_nvp("n_elem", access::rw(n_elem));
 
   // mem_state will always be 0 on load, so we don't need to save it.
   if (Archive::is_loading::value)

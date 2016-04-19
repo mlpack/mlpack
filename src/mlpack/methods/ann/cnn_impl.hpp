@@ -30,7 +30,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& responses,
        OptimizerType<NetworkType>& optimizer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -70,7 +70,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::cube& predictors,
        const arma::mat& responses,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))
@@ -99,7 +99,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::CNN(LayerType &&network,
        OutputType &&outputLayer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))

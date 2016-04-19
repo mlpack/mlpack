@@ -42,7 +42,7 @@ class SparseBiasLayer
       batchSize(batchSize)
   {
     weights.set_size(outSize, 1);
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -53,7 +53,7 @@ class SparseBiasLayer
    */
   template<typename eT>
   void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
-  {    
+  {
     output = input + arma::repmat(weights, 1, input.n_cols);
   }
 
@@ -72,7 +72,7 @@ class SparseBiasLayer
                 ErrorType& g)
   {
     g = gy;
-  }  
+  }
 
   /*
    * Calculate the gradient using the output delta and the bias.
@@ -85,7 +85,7 @@ class SparseBiasLayer
   void Gradient(const InputType& /* input */,
                 const arma::Mat<eT>& d,
                 InputDataType& g)
-  {    
+  {
     g = arma::sum(d, 1) / static_cast<typename InputDataType::value_type>(
         batchSize);
   }
@@ -119,7 +119,7 @@ class SparseBiasLayer
   InputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */

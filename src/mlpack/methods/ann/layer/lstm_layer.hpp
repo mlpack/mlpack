@@ -63,7 +63,7 @@ class LSTMLayer
     {
       peepholeWeights.set_size(0, 0);
     }
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -258,7 +258,7 @@ class LSTMLayer
           outGate.col(queryOffset).t());
 
       peepholeDerivatives.zeros();
-    }    
+    }
   }
 
   //! Get the peephole weights.
@@ -290,7 +290,7 @@ class LSTMLayer
   size_t SeqLen() const { return seqLen; }
   //! Modify the sequence length.
   size_t& SeqLen() { return seqLen; }
-  
+
   /**
    * Serialize the layer.
    */

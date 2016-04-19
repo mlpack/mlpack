@@ -133,7 +133,7 @@ class BiasLayer
   InputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   InputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */

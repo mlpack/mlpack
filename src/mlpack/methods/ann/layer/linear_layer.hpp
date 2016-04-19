@@ -97,7 +97,7 @@ class LinearLayer
   {
     g = weights.t() * gy;
   }
-  
+
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
@@ -137,7 +137,7 @@ class LinearLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer
    */

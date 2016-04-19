@@ -260,7 +260,7 @@ private:
 
     std::get<I>(network).Forward(std::get<I>(network).InputParameter(),
         std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -277,7 +277,7 @@ private:
   {
     std::get<I>(network).Forward(std::get<I - 1>(network).OutputParameter(),
                            std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -343,7 +343,7 @@ private:
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I < (sizeof...(Tp)), void>::type
   BackwardTail(const DataType& error, std::tuple<Tp...>& network)
-  {    
+  {
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta(),
@@ -371,7 +371,7 @@ private:
   >
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& network)
-  {   
+  {
     Update(std::get<I>(network), std::get<I>(network).OutputParameter(),
            std::get<I + 1>(network).Delta());
 

@@ -15,7 +15,7 @@ namespace optimization {
 
 template<typename DecomposableFunctionType>
 AdaDelta<DecomposableFunctionType>::AdaDelta(DecomposableFunctionType& function,
-                                           const double rho, 
+                                           const double rho,
                                            const double eps,
                                            const size_t maxIterations,
                                            const double tolerance,
@@ -60,7 +60,7 @@ double AdaDelta<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Leaky sum of squares of parameter gradient.
   arma::mat meanSquaredGradientDx = arma::zeros<arma::mat>(iterate.n_rows,
       iterate.n_cols);
-      
+
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
     // Is this iteration the start of a sequence?
@@ -99,7 +99,7 @@ double AdaDelta<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(iterate, visitationOrder[currentFunction], gradient);
     else
       function.Gradient(iterate, currentFunction, gradient);
-      
+
     // Accumulate gradient.
     meanSquaredGradient *= rho;
     meanSquaredGradient += (1 - rho) * (gradient % gradient);
@@ -112,7 +112,7 @@ double AdaDelta<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
     // Apply update.
     iterate -= dx;
-    
+
     // Now add that to the overall objective function.
     if (shuffle)
       overallObjective += function.Evaluate(iterate,

@@ -67,7 +67,7 @@ class OivsInitialization
       k(k), gamma(gamma),
       b(std::abs(ActivationFunction::inv(1 - epsilon) -
                  ActivationFunction::inv(epsilon)))
-  {    
+  {
   }
 
   /**
