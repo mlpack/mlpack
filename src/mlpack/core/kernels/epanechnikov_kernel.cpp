@@ -32,7 +32,7 @@ double EpanechnikovKernel::Evaluate(const double distance) const
 }
 
 /**
- * Evaluate gradient of the kernel not for two points 
+ * Evaluate gradient of the kernel not for two points
  * but for a numerical value.
  */
 double EpanechnikovKernel::Gradient(const double distance) const {

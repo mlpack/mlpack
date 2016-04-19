@@ -17,7 +17,7 @@ namespace ann /** Artificial Neural Network. */ {
  * the multinomial logistic loss of the softmax of its inputs. This layer is
  * meant to be used in combination with the negative log likelihood layer
  * (NegativeLogLikelihoodLayer), which expects that the input contains
- * log-probabilities for each class.  
+ * log-probabilities for each class.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

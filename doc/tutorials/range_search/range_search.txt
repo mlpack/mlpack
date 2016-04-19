@@ -82,7 +82,7 @@ $ mlpack_range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv \
 [INFO ] Search for points in the range [0, 0.076] with dual-tree kd-tree
 search...
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -102,7 +102,7 @@ search...
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.005201s
 [INFO ]   range_search/computing_neighbors: 0.017110s
@@ -159,7 +159,7 @@ $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
 [INFO ] Building query tree...
 [INFO ] Tree built.
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -179,7 +179,7 @@ $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.006199s
 [INFO ]   range_search/computing_neighbors: 0.024427s
@@ -205,7 +205,7 @@ $ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -L 0.7 \
 [INFO ] Search for points in the range [0.7, 0.8] with dual-tree kd-tree
 search...
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -225,7 +225,7 @@ search...
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.006298s
 [INFO ]   range_search/computing_neighbors: 0.411041s

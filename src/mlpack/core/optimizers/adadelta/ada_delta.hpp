@@ -33,7 +33,7 @@ namespace optimization {
  * }
  * @endcode
  *
- 
+
  * For AdaDelta to work, a DecomposableFunctionType template parameter is
  * required. This class must implement the following function:
  *
@@ -81,7 +81,7 @@ class AdaDelta
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true);
-  
+
   /**
    * Optimize the given function using AdaDelta. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final

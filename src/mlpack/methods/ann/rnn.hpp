@@ -9,7 +9,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp> 
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <mlpack/methods/ann/network_util.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -332,7 +332,7 @@ class RNN
   InitLayer(const InputDataType& /* unused */,
             const TargetDataType& target,
             std::tuple<Tp...>& /* unused */)
-  { 
+  {
     seqOutput = outputSize < target.n_elem ? true : false;
   }
 
@@ -345,7 +345,7 @@ class RNN
   {
     Init(std::get<I>(network), std::get<I>(network).OutputParameter(),
        std::get<I + 1>(network).Delta());
-    
+
     InitLayer<I + 1, InputDataType, TargetDataType, Tp...>(input, target,
         network);
   }
@@ -636,7 +636,7 @@ class RNN
     BackwardRecurrent(std::get<sizeof...(Tp) - I - 1>(network),
         std::get<sizeof...(Tp) - I - 1>(network).InputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta());
-    
+
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta(),

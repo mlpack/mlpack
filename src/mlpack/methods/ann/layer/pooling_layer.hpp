@@ -43,7 +43,7 @@ class PoolingLayer
       kSize(kSize), pooling(pooling)
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -146,7 +146,7 @@ class PoolingLayer
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-  
+
   /**
    * Serialize the layer.
    */

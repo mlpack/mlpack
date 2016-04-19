@@ -69,7 +69,7 @@ class ConvLayer
   {
     weights.set_size(wfilter, hfilter, inMaps * outMaps);
   }
-  
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -186,7 +186,7 @@ class ConvLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */

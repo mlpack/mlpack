@@ -57,9 +57,9 @@ class TriangularKernel
   {
     return std::max(0.0, (1 - distance) / bandwidth);
   }
-  
+
   /**
-   * Evaluate the gradient of triangular kernel 
+   * Evaluate the gradient of triangular kernel
    * given that the distance between the two
    * points is known.
    *

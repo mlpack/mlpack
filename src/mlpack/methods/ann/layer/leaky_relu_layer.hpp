@@ -2,8 +2,8 @@
  * @file leaky_relu_layer.hpp
  * @author Dhawal Arora
  *
- * Definition and implementation of LeakyReLULayer layer first introduced 
- * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng, 
+ * Definition and implementation of LeakyReLULayer layer first introduced
+ * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
  * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
@@ -40,9 +40,9 @@ class LeakyReLULayer
 {
  public:
   /**
-   * Create the LeakyReLULayer object using the specified parameters. 
-   * The non zero gradient can be adjusted by specifying tha parameter 
-   * alpha in the range 0 to 1. Default (alpha = 0.03) 
+   * Create the LeakyReLULayer object using the specified parameters.
+   * The non zero gradient can be adjusted by specifying tha parameter
+   * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
    * @param alpha Non zero gradient
    */
@@ -57,7 +57,7 @@ class LeakyReLULayer
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
-   */  
+   */
   template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output)
   {

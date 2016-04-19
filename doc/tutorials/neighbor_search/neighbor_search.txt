@@ -78,7 +78,7 @@ $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -97,7 +97,7 @@ $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.108968s
 [INFO ]   loading_data: 0.006495s
@@ -158,7 +158,7 @@ $ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -177,7 +177,7 @@ $ mlpack_knn -q query_dataset.csv -r reference_dataset.csv \
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.022589s
 [INFO ]   loading_data: 0.003572s
@@ -200,7 +200,7 @@ $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'neighbors_out.csv'.
 [INFO ] Saving CSV data to 'distances_out.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -219,7 +219,7 @@ $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.059020s
 [INFO ]   loading_data: 0.002791s

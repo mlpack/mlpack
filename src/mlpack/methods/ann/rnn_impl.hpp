@@ -30,7 +30,7 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& responses,
        OptimizerType<NetworkType>& optimizer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -72,7 +72,7 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& predictors,
        const arma::mat& responses,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -103,7 +103,7 @@ RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::RNN(LayerType &&network,
        OutputType &&outputLayer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -315,7 +315,7 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
     {
       Backward(error, network);
     }
-    
+
     // Link the parameters and update the gradients.
     LinkParameter(network);
     UpdateGradients<>(network);

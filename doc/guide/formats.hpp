@@ -34,7 +34,7 @@ following file types:
  - ARFF, denoted by .arff (<b>note: this is not supported by all mlpack"
    command-line programs </b>; see \ref formatcat )
 
-Datasets that are loaded by mlpack should be stored with <b>one row for 
+Datasets that are loaded by mlpack should be stored with <b>one row for
 one point</b> and <b>one column for one dimension</b>.  Therefore, a dataset
 with three two-dimensional points \f$(0, 1)\f$, \f$(3, 1)\f$, and \f$(5, -5)\f$
 would be stored in a csv file as:

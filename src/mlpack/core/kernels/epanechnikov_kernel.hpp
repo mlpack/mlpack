@@ -52,12 +52,12 @@ class EpanechnikovKernel
   double Evaluate(const double distance) const;
 
   /**
-   * Evaluate the Gradient of Epanechnikov kernel 
+   * Evaluate the Gradient of Epanechnikov kernel
    * given that the distance between the two
    * input points is known.
    */
   double Gradient(const double distance) const;
-  
+
   /**
    * Evaluate the Gradient of Epanechnikov kernel
    * given that the squared distance between the two

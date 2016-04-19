@@ -19,7 +19,7 @@ p.addParamValue('seed', 0, @isscalar);
 p.parse(varargin{:});
 parsed = p.Results;
 
-% interfacing with mlpack. transposing to machine learning standards. 
+% interfacing with mlpack. transposing to machine learning standards.
 assignments = mex_kmeans(dataPoints', clusters, parsed.max_iterations, ...
 	parsed.overclustering, parsed.allow_empty_clusters, ...
 	parsed.fast_kmeans, parsed.seed);

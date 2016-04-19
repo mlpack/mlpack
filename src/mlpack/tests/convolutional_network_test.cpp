@@ -137,7 +137,7 @@ void BuildVanillaNetwork()
  */
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
-  BuildVanillaNetwork<LogisticFunction>();  
+  BuildVanillaNetwork<LogisticFunction>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

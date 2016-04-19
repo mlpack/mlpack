@@ -53,7 +53,7 @@ void Log::Assert(bool condition, const std::string& message)
   {
 #ifdef HAS_BFD_DL
     Backtrace bt;
-  
+
     Log::Debug << bt.ToString();
 #endif
     Log::Debug << message << std::endl;

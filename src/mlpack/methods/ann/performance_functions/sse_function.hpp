@@ -26,7 +26,7 @@ class SumSquaredErrorFunction
    * @param target Target data.
    * @param error same as place holder
    * @return sum of squared errors.
-   */  
+   */
   template<typename DataType, typename... Tp>
   static double Error(const std::tuple<Tp...>& network,
                       const DataType& target,

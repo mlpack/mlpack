@@ -76,7 +76,7 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "Adam: converged to " << overallObjective 
+        Log::Warn << "Adam: converged to " << overallObjective
             << "; terminating with failure. Try a smaller step size?"
             << std::endl;
         return overallObjective;

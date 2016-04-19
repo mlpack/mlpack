@@ -183,7 +183,7 @@ class HardTanHLayer
    * @param x Input data.
    * @param y The resulting output activation.
    */
-   
+
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
