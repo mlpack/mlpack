@@ -104,9 +104,18 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       const size_t insertPosition =
           mlpack::neighbor::FurthestNeighborSort::SortDistance(queryDist,
           queryIndices, dist);
+      bool found = false;
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
+      {
+        if (neighbors(j, q) == referenceIndex)
+        {
+          found = true;
+          break;
+        }
+      }
 
       // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-      if (insertPosition != (size_t() - 1))
+      if (insertPosition != (size_t() - 1) && !found)
         InsertNeighbor(distances, neighbors, q, insertPosition, referenceIndex,
             dist);
 
