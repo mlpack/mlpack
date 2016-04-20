@@ -6,6 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include "qdafn.hpp"
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace qdafn;
 using namespace mlpack;
@@ -40,6 +41,9 @@ PARAM_STRING("neighbors_file", "File to save furthest neighbor indices to.",
 PARAM_STRING("distances_file", "File to save furthest neighbor distances to.",
     "d", "");
 
+PARAM_FLAG("calculate_error", "If set, calculate the average distance error.",
+    "e");
+
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
@@ -66,6 +70,25 @@ int main(int argc, char** argv)
   Timer::Start("qdafn_search");
   q.Search(queryData, k, neighbors, distances);
   Timer::Stop("qdafn_search");
+
+  // Print the number of base cases.
+  Log::Info << "Total distance evaluations: " <<
+      (queryData.n_cols * numProjections) << "." << endl;
+
+  if (CLI::HasParam("calculate_error"))
+  {
+    neighbor::AllkFN kfn(referenceData);
+
+    arma::Mat<size_t> trueNeighbors;
+    arma::mat trueDistances;
+
+    kfn.Search(queryData, 1, trueNeighbors, trueDistances);
+
+    const double averageError = arma::sum(trueDistances / distances.row(0)) /
+        distances.n_cols;
+
+    Log::Info << "Average error: " << averageError << "." << endl;
+  }
 
   // Save the results.
   if (CLI::HasParam("neighbors_file"))
