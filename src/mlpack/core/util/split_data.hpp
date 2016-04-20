@@ -3,11 +3,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <iterator>
-#include <numeric>
-#include <random>
 #include <tuple>
-#include <vector>
 
 namespace mlpack {
 namespace util {
@@ -34,26 +30,25 @@ namespace util {
  *@endcode
  */
 template<typename T, typename U>
-void TrainTestSplit(arma::Mat<T> const &input,
-                    arma::Row<U> const &inputLabel,
+void TrainTestSplit(const arma::Mat<T> &input,
+                    const arma::Row<U> &inputLabel,
                     arma::Mat<T> &trainData,
                     arma::Mat<T> &testData,
                     arma::Row<U> &trainLabel,
                     arma::Row<U> &testLabel,
-                    double const testRatio)
+                    const double testRatio)
 {
   size_t const testSize =
       static_cast<size_t>(input.n_cols * testRatio);
-  size_t const trainSize = input.n_cols - testSize;
+  const size_t trainSize = input.n_cols - testSize;
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  using Col = arma::Col<size_t>;
-  Col const sequence = arma::linspace<Col>(0, input.n_cols - 1,
-                                           input.n_cols);
-  arma::Col<size_t> const order = arma::shuffle(sequence);
+  const arma::Col<size_t> order =
+      arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
+                                                      input.n_cols));
 
   for(size_t i = 0; i != trainSize; ++i)
   {
@@ -84,9 +79,9 @@ void TrainTestSplit(arma::Mat<T> const &input,
 template<typename T,typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>,
 arma::Row<U>, arma::Row<U>>
-TrainTestSplit(arma::Mat<T> const &input,
-               arma::Row<U> const &inputLabel,
-               double const testRatio)
+TrainTestSplit(const arma::Mat<T> &input,
+               const arma::Row<U> &inputLabel,
+               const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
