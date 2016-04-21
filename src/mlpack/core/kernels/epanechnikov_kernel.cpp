@@ -38,7 +38,7 @@ double EpanechnikovKernel::Evaluate(const double distance) const
 double EpanechnikovKernel::Gradient(const double distance) const {
   if (std::abs(bandwidth) < std::abs(distance)) {
     return 0;
-  } else if (std::abs(bandwidth > std::abs(distance))) {
+  } else if (std::abs(bandwidth) > std::abs(distance)) {
     return -2 * inverseBandwidthSquared * distance;
   } else {
     // The gradient doesn't exist.
