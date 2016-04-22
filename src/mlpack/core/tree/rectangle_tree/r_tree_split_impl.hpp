@@ -14,6 +14,20 @@
 namespace mlpack {
 namespace tree {
 
+template<typename TreeType>
+RTreeSplit<TreeType>::RTreeSplit() :
+    tree(NULL)
+{
+
+}
+
+template<typename TreeType>
+RTreeSplit<TreeType>::RTreeSplit(TreeType *node) :
+    tree(node)
+{
+
+}
+
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -21,7 +35,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
+void RTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -35,7 +49,7 @@ void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    SplitLeafNode(copy, relevels);
+    copy->SplitNode(relevels);
     return;
   }
 
@@ -46,7 +60,7 @@ void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   // rectangles, only points.  We assume that the tree uses Euclidean Distance.
   int i = 0;
   int j = 0;
-  GetPointSeeds(*tree, i, j);
+  GetPointSeeds(i, j);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -66,7 +80,7 @@ void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    SplitNonLeafNode(par, relevels);
+    par->SplitNode(relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -85,7 +99,7 @@ void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
+bool RTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -98,13 +112,13 @@ bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    SplitNonLeafNode(copy, relevels);
+    copy->SplitNode(relevels);
     return true;
   }
 
   int i = 0;
   int j = 0;
-  GetBoundSeeds(*tree, i, j);
+  GetBoundSeeds(i, j);
 
   assert(i != j);
 
@@ -131,7 +145,7 @@ bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    SplitNonLeafNode(par, relevels);
+    par->SplitNode(relevels);
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
@@ -157,18 +171,18 @@ bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
  * The indices of these points will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit::GetPointSeeds(const TreeType& tree, int& iRet, int& jRet)
+void RTreeSplit<TreeType>::GetPointSeeds(int& iRet, int& jRet)
 {
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
   // that would create the most voluminous hyperrectangle.
   typename TreeType::ElemType worstPairScore = -1.0;
-  for (size_t i = 0; i < tree.Count(); i++)
+  for (size_t i = 0; i < tree->Count(); i++)
   {
-    for (size_t j = i + 1; j < tree.Count(); j++)
+    for (size_t j = i + 1; j < tree->Count(); j++)
     {
       const typename TreeType::ElemType score = arma::prod(arma::abs(
-          tree.LocalDataset().col(i) - tree.LocalDataset().col(j)));
+          tree->LocalDataset().col(i) - tree->LocalDataset().col(j)));
 
       if (score > worstPairScore)
       {
@@ -185,23 +199,23 @@ void RTreeSplit::GetPointSeeds(const TreeType& tree, int& iRet, int& jRet)
  * indices of the bounds will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit::GetBoundSeeds(const TreeType& tree, int& iRet, int& jRet)
+void RTreeSplit<TreeType>::GetBoundSeeds(int& iRet, int& jRet)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
 
   ElemType worstPairScore = -1.0;
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree->NumChildren(); i++)
   {
-    for (size_t j = i + 1; j < tree.NumChildren(); j++)
+    for (size_t j = i + 1; j < tree->NumChildren(); j++)
     {
       ElemType score = 1.0;
-      for (size_t k = 0; k < tree.Bound().Dim(); k++)
+      for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        const ElemType hiMax = std::max(tree.Children()[i]->Bound()[k].Hi(),
-                                        tree.Children()[j]->Bound()[k].Hi());
-        const ElemType loMin = std::min(tree.Children()[i]->Bound()[k].Lo(),
-                                        tree.Children()[j]->Bound()[k].Lo());
+        const ElemType hiMax = std::max(tree->Children()[i]->Bound()[k].Hi(),
+                                        tree->Children()[j]->Bound()[k].Hi());
+        const ElemType loMin = std::min(tree->Children()[i]->Bound()[k].Lo(),
+                                        tree->Children()[j]->Bound()[k].Lo());
         score *= (hiMax - loMin);
       }
 
@@ -216,7 +230,7 @@ void RTreeSplit::GetBoundSeeds(const TreeType& tree, int& iRet, int& jRet)
 }
 
 template<typename TreeType>
-void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
+void RTreeSplit<TreeType>::AssignPointDestNode(TreeType* oldTree,
                                      TreeType* treeOne,
                                      TreeType* treeTwo,
                                      const int intI,
@@ -357,7 +371,7 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
 }
 
 template<typename TreeType>
-void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
+void RTreeSplit<TreeType>::AssignNodeDestNode(TreeType* oldTree,
                                     TreeType* treeOne,
                                     TreeType* treeTwo,
                                     const int intI,
@@ -522,7 +536,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
  * numberOfChildren.
  */
 template<typename TreeType>
-void RTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;

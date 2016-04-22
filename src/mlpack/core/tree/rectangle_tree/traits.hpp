@@ -21,7 +21,7 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType,
+         template<typename> class SplitType,
          typename DescentType>
 class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
                                DescentType>>

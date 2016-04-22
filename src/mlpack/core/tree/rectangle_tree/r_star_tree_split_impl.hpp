@@ -15,6 +15,20 @@
 namespace mlpack {
 namespace tree {
 
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit() :
+    tree(NULL)
+{
+
+}
+
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit(TreeType *node) :
+    tree(node)
+{
+
+}
+
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -22,7 +36,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
+void RStarTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -41,7 +55,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    SplitLeafNode(copy, relevels);
+    copy->SplitNode(relevels);
     return;
   }
 
@@ -58,7 +72,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
     {
-      SplitLeafNode(tree, relevels);
+      tree->SplitNode(relevels);
       return;
     }
 
@@ -251,7 +265,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    SplitNonLeafNode(par, relevels);
+    par->SplitNode(relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -269,8 +283,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
-                                      std::vector<bool>& relevels)
+bool RStarTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -288,7 +301,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    SplitNonLeafNode(copy, relevels);
+    copy->SplitNode(relevels);
     return true;
   }
 
@@ -644,7 +657,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    SplitNonLeafNode(par, relevels);
+    par->SplitNode(relevels);
   }
 
   // We have to update the children of each of these new nodes so that they
@@ -673,7 +686,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
  * numberOfChildren.
  */
 template<typename TreeType>
-void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RStarTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;

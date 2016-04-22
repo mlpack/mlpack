@@ -35,13 +35,15 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam DescentType The heuristic to use when descending the tree to insert
  *    points.
  */
+
 template<typename MetricType = metric::EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         typename SplitType = RTreeSplit,
+         template<typename> class SplitType = RTreeSplit,
          typename DescentType = RTreeDescentHeuristic>
 class RectangleTree
 {
+  friend class SplitType<RectangleTree>;
   // The metric *must* be the euclidean distance.
   static_assert(boost::is_same<MetricType, metric::EuclideanDistance>::value,
       "RectangleTree: MetricType must be metric::EuclideanDistance.");
@@ -118,6 +120,8 @@ class RectangleTree
   std::vector<size_t> points;
   //! The local dataset
   MatType* localDataset;
+  //! The class that performs the split of the node.
+  SplitType<RectangleTree> split;
 
  public:
   //! A single traverser for rectangle type trees.  See
