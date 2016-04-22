@@ -6,8 +6,8 @@
  * class which are commonly used.  This is meant to be included by
  * neighbor_search.h but is a separate file for simplicity.
  */
-#ifndef __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
-#define __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
 
 // In case someone included this directly.
 #include "neighbor_search.hpp"
@@ -21,14 +21,30 @@ namespace mlpack {
 namespace neighbor {
 
 /**
- * The AllkNN class is the all-k-nearest-neighbors method.  It returns L2
- * distances (Euclidean distances) for each of the k nearest neighbors.
+ * The KNN class is the k-nearest-neighbors method.  It returns L2 distances
+ * (Euclidean distances) for each of the k nearest neighbors.
+ */
+typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> KNN;
+
+/**
+ * The KFN class is the k-furthest-neighbors method.  It returns L2 distances
+ * (Euclidean distances) for each of the k furthest neighbors.
+ */
+typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> KFN;
+
+/**
+ * @deprecated
+ * The AllkNN class is the k-nearest-neighbors method.  It returns L2 distances
+ * (Euclidean distances) for each of the k nearest neighbors.  This typedef will
+ * be removed in mlpack 3.0.0; use the KNN typedef instead.
  */
 typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> AllkNN;
 
 /**
- * The AllkFN class is the all-k-furthest-neighbors method.  It returns L2
- * distances (Euclidean distances) for each of the k furthest neighbors.
+ * @deprecated
+ * The AllkFN class is the k-furthest-neighbors method.  It returns L2
+ * distances (Euclidean distances) for each of the k furthest neighbors.  This
+ * typedef will be removed in mlpack 3.0.0; use the KFN typedef instead.
  */
 typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> AllkFN;
 

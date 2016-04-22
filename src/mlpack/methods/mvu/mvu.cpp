@@ -50,13 +50,13 @@ void MVU::Unfold(const size_t newDim,
   mvuSolver.AModes().ones();
   mvuSolver.AModes()[0] = 0;
 
-  // Now all of the other constraints.  We first have to run AllkNN to get the
+  // Now all of the other constraints.  We first have to run KNN to get the
   // list of nearest neighbors.
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  AllkNN allknn(data);
-  allknn.Search(numNeighbors, neighbors, distances);
+  KNN knn(data);
+  knn.Search(numNeighbors, neighbors, distances);
 
   // Add each of the other constraints.  They are sparse constraints:
   //   Tr(A_ij K) = d_ij;

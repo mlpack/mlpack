@@ -20,10 +20,6 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(LayerTraitsTest);
 
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
-
 // Test the defaults.
 BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)
 {

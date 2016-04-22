@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 8, 200, 0.1);
-  
+
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
@@ -304,7 +304,7 @@ void BuildDropConnectNetwork(MatType& trainData,
                              MatType& testLabels,
                              const size_t hiddenLayerSize,
                              const size_t maxEpochs,
-                             const double classificationErrorThreshold) 
+                             const double classificationErrorThreshold)
 {
  /*
   *  Construct a feed forward network with trainData.n_rows input nodes,
@@ -366,8 +366,8 @@ void BuildDropConnectNetwork(MatType& trainData,
 
   double classificationError = 1 - double(error) / testData.n_cols;
   BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}   
-    
+}
+
 /**
  * Train and evaluate a DropConnect network(with a linearlayer) with the
  * specified structure.
@@ -384,7 +384,7 @@ void BuildDropConnectNetworkLinear(MatType& trainData,
                                    MatType& testLabels,
                                    const size_t hiddenLayerSize,
                                    const size_t maxEpochs,
-                                   const double classificationErrorThreshold) 
+                                   const double classificationErrorThreshold)
 {
  /*
   * Construct a feed forward network with trainData.n_rows input nodes,

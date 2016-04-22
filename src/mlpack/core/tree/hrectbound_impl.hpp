@@ -6,8 +6,8 @@
  *
  * @experimental
  */
-#ifndef __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
-#define __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
+#define MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 
 #include <math.h>
 
@@ -470,4 +470,4 @@ void HRectBound<MetricType, ElemType>::Serialize(Archive& ar,
 } // namespace bound
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
+#endif // MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

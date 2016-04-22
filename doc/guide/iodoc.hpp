@@ -19,7 +19,7 @@ mlpack has four logging levels:
  - Log::Warn
  - Log::Fatal
 
-Output to Log::Debug does not show (and has no performance penalty) when mlpack 
+Output to Log::Debug does not show (and has no performance penalty) when mlpack
 is compiled without debugging symbols.  Output to Log::Info is only shown when
 the program is run with the --verbose (or -v) flag.  Log::Warn is always shown,
 and Log::Fatal will throw a std::runtime_error exception, when a newline is sent

@@ -4,8 +4,8 @@
  *
  * Definition of the CNN class, which implements convolutional neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_CNN_IMPL_HPP
-#define __MLPACK_METHODS_ANN_CNN_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_CNN_IMPL_HPP
+#define MLPACK_METHODS_ANN_CNN_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "cnn.hpp"
@@ -30,7 +30,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& responses,
        OptimizerType<NetworkType>& optimizer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -70,7 +70,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::cube& predictors,
        const arma::mat& responses,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))
@@ -99,7 +99,7 @@ CNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::CNN(LayerType &&network,
        OutputType &&outputLayer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))

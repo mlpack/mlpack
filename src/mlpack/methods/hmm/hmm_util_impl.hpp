@@ -4,8 +4,8 @@
  *
  * Implementation of HMM utilities to load arbitrary HMM types.
  */
-#ifndef __MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
-#define __MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
+#ifndef MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
+#define MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
 
 #include <mlpack/core.hpp>
 

@@ -6,8 +6,8 @@
  * single-tree breadth-first recursion with a pruning rule and a base case (two
  * point) rule.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 

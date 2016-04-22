@@ -4,8 +4,8 @@
  *
  * Definition of the SoftmaxLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -34,7 +34,7 @@ class SoftmaxLayer
   SoftmaxLayer()
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -82,7 +82,7 @@ class SoftmaxLayer
   InputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
-  
+
   /**
    * Serialize the layer.
    */

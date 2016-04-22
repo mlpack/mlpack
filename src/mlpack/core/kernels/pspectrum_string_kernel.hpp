@@ -8,8 +8,8 @@
  * strings; then, the actual strings are given to the PSpectrumStringKernel at
  * construction time, and the kernel knows to map the indices to actual strings.
  */
-#ifndef __MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP
 
 #include <map>
 #include <string>

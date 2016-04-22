@@ -105,7 +105,7 @@ different types of kernels:
  - \ref mlpack::kernel::HyperbolicTangentKernel "hyperbolic tangent kernel"
 
 Note that when a shift-invariant kernel is used, the results will be the same as
-nearest neighbor search, so @ref nstutorial "allknn" may be a better option.  A
+nearest neighbor search, so @ref nstutorial "KNN" may be a better option.  A
 shift-invariant kernel is a kernel that depends only on the distance between the
 two input points.  The \ref mlpack::kernel::GaussianKernel "Gaussian kernel",
 \ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", and \ref

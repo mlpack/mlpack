@@ -5,8 +5,8 @@
  * This provides the LayerTraits class, a template class to get information
  * about various layers.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
-#define __MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
+#define MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
 
 #include <mlpack/core/util/sfinae_utility.hpp>
 

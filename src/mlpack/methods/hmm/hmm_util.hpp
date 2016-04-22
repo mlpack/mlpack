@@ -4,8 +4,8 @@
  *
  * Utility to read HMM type from file.
  */
-#ifndef __MLPACK_METHODS_HMM_HMM_UTIL_HPP
-#define __MLPACK_METHODS_HMM_HMM_UTIL_HPP
+#ifndef MLPACK_METHODS_HMM_HMM_UTIL_HPP
+#define MLPACK_METHODS_HMM_HMM_UTIL_HPP
 
 #include <mlpack/core.hpp>
 

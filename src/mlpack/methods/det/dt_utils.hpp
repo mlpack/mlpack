@@ -5,8 +5,8 @@
  * This file implements functions to perform different tasks with the Density
  * Tree class.
  */
-#ifndef __MLPACK_METHODS_DET_DT_UTILS_HPP
-#define __MLPACK_METHODS_DET_DT_UTILS_HPP
+#ifndef MLPACK_METHODS_DET_DT_UTILS_HPP
+#define MLPACK_METHODS_DET_DT_UTILS_HPP
 
 #include <mlpack/core.hpp>
 #include "dtree.hpp"
@@ -64,4 +64,4 @@ DTree* Trainer(arma::mat& dataset,
 } // namespace det
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_DET_DT_UTILS_HPP
+#endif // MLPACK_METHODS_DET_DT_UTILS_HPP

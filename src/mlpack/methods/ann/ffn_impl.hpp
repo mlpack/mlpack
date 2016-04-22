@@ -4,8 +4,8 @@
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_FFN_IMPL_HPP
-#define __MLPACK_METHODS_ANN_FFN_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_FFN_IMPL_HPP
+#define MLPACK_METHODS_ANN_FFN_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ffn.hpp"
@@ -30,7 +30,7 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& responses,
        OptimizerType<NetworkType>& optimizer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction)),
@@ -70,7 +70,7 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
        const arma::mat& predictors,
        const arma::mat& responses,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))
@@ -99,7 +99,7 @@ FFN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::FFN(LayerType &&network,
        OutputType &&outputLayer,
        InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) : 
+       PerformanceFunction performanceFunction) :
     network(std::forward<LayerType>(network)),
     outputLayer(std::forward<OutputType>(outputLayer)),
     performanceFunc(std::move(performanceFunction))
@@ -252,6 +252,12 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
             const size_t i,
             arma::mat& gradient)
 {
+  if (gradient.is_empty())
+  {
+    gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
+  }
+
+
   Evaluate(parameter, i, false);
 
   NetworkGradients(gradient, network);

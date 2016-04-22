@@ -5,8 +5,8 @@
  * Implementation of RASearch class to perform rank-approximate
  * all-nearest-neighbors on two specified data sets.
  */
-#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
-#define __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
+#ifndef MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
+#define MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 
 #include <mlpack/core.hpp>
 

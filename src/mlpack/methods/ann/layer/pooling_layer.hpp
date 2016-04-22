@@ -5,8 +5,8 @@
  * Definition of the PoolingLayer class, which attaches various pooling
  * functions to the embedding layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_POOLING_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_POOLING_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_POOLING_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_POOLING_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/pooling_rules/mean_pooling.hpp>
@@ -43,7 +43,7 @@ class PoolingLayer
       kSize(kSize), pooling(pooling)
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -146,7 +146,7 @@ class PoolingLayer
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-  
+
   /**
    * Serialize the layer.
    */

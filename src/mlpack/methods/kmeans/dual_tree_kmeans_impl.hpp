@@ -7,8 +7,8 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "dual_tree_kmeans.hpp"
@@ -145,7 +145,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     interclusterDistances.set_size(1, centroids.n_cols);
   }
 
-  // We won't use the AllkNN class here because we have our own set of rules.
+  // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
   RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,

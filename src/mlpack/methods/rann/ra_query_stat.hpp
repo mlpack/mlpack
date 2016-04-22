@@ -5,8 +5,8 @@
  * Defines the RAQueryStat class, which is the statistic used for
  * rank-approximate nearest neighbor search (RASearch).
  */
-#ifndef __MLPACK_METHODS_RANN_RA_QUERY_STAT_HPP
-#define __MLPACK_METHODS_RANN_RA_QUERY_STAT_HPP
+#ifndef MLPACK_METHODS_RANN_RA_QUERY_STAT_HPP
+#define MLPACK_METHODS_RANN_RA_QUERY_STAT_HPP
 
 #include <mlpack/core.hpp>
 

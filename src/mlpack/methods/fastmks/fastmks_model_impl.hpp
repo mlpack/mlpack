@@ -4,8 +4,8 @@
  *
  * Implementation of templated functions of FastMKSModel.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_IMPL_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_IMPL_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_IMPL_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_IMPL_HPP
 
 #include "fastmks_model.hpp"
 

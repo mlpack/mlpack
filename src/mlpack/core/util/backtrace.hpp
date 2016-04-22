@@ -22,17 +22,17 @@ namespace mlpack {
 /**
  * Provides a backtrace.
  *
- * The Backtrace class retrieve addresses of each called function from the 
- * stack and decode file name, function & line number. Retrieved informations 
+ * The Backtrace class retrieve addresses of each called function from the
+ * stack and decode file name, function & line number. Retrieved informations
  * can be printed in form:
- * 
+ *
  * @code
  * [b]: (count) /directory/to/file.cpp:function(args):line_number
  * @endcode
  *
  * Backtrace is printed always when Log::Assert failed.
  * An example is given below.
- * 
+ *
  * @code
  * if (!someImportantCondition())
  * {
@@ -40,18 +40,18 @@ namespace mlpack {
  *   Log::Fatal << std::endl;
  * }
  * @endcode
- * 
+ *
  * @note Log::Assert will not be shown when compiling in non-debug mode.
  *
  * @see PrefixedOutStream, Log
  */
 class Backtrace
 {
- public:   
+ public:
   /**
    * Constructor initialize fields and call GetAddress to retrieve addresses
    * for each frame of backtrace.
-   * 
+   *
    * @param maxDepth Maximum depth of backtrace. Default 32 steps.
    */
 #ifdef HAS_BFD_DL
@@ -65,21 +65,21 @@ class Backtrace
  private:
   /**
    * Gets addresses of each called function from the stack.
-   * 
+   *
    * @param maxDepth Maximum depth of backtrace. Default 32 steps.
    */
   static void GetAddress(int maxDepth);
-   
+
   /**
    * Decodes file name, function & line number.
-   * 
+   *
    * @param address Address of traced frame.
    */
   static void DecodeAddress(long address);
-  
+
   //! Demangles function name.
   static void DemangleFunction();
-  
+
   //! Backtrace datastructure.
   struct Frames
   {

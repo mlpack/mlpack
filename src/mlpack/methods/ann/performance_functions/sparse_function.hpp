@@ -6,8 +6,8 @@
  * Definition and implementation of the sparse performance function.
  */
 
-#ifndef __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SPARSE_FUNCTION_HPP
-#define __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SPARSE_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SPARSE_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_SPARSE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -30,7 +30,7 @@ class SparseErrorFunction
    */
   SparseErrorFunction(const double lambda = 0.0001,
                       const double beta = 3,
-                      const double rho = 0.01) :    
+                      const double rho = 0.01) :
     lambda(lambda), beta(beta), rho(rho)
   {
     // Nothing to do here.
@@ -39,10 +39,10 @@ class SparseErrorFunction
   SparseErrorFunction(SparseErrorFunction &&layer) noexcept
   {
     *this = std::move(layer);
-  }  
+  }
 
   SparseErrorFunction& operator=(SparseErrorFunction &&layer) noexcept
-  {    
+  {
     lambda = layer.lambda;
     beta = layer.beta;
     rho = layer.rho;

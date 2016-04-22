@@ -4,8 +4,8 @@
  *
  * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
  */
-#ifndef __MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
-#define __MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>

@@ -5,8 +5,8 @@
  * Definition of the BaseLayer class, which attaches various functions to the
  * embedding layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
@@ -133,7 +133,7 @@ class BaseLayer
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-  
+
   /**
    * Serialize the layer.
    */

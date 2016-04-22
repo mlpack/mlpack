@@ -29,18 +29,27 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_allknn
-  allknn_main.cpp
-)
-target_link_libraries(mlpack_allknn
-  mlpack
+# Add mlpack_knn and mlpack_kfn executables.
+add_cli_executable(knn)
+add_cli_executable(kfn)
+
+if (BUILD_CLI_EXECUTABLES)
+# -- mlpack_knn/mlpack_kfn compatibility start --
+# Make a copy of mlpack_knn/mlpack_kfn both on Windows and *unix for
+# compatibility.  This should be removed by mlpack 3.0.0.
+get_property(knn_loc TARGET mlpack_knn PROPERTY LOCATION)
+get_filename_component(knn_ext ${knn_loc} EXT)
+
+add_custom_command(TARGET mlpack_knn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:mlpack_knn> $<TARGET_FILE_DIR:mlpack_knn>/mlpack_allknn${knn_ext}
 )
 
-add_executable(mlpack_allkfn
-  allkfn_main.cpp
-)
-target_link_libraries(mlpack_allkfn
-  mlpack
-)
+get_property(kfn_loc TARGET mlpack_kfn PROPERTY LOCATION)
+get_filename_component(kfn_ext ${kfn_loc} EXT)
 
-install(TARGETS mlpack_allknn mlpack_allkfn RUNTIME DESTINATION bin)
+add_custom_command(TARGET mlpack_kfn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:mlpack_kfn> $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
+)
+endif ()

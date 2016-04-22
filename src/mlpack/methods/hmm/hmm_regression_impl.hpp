@@ -6,8 +6,8 @@
  *
  * Implementation of HMMRegression class.
  */
-#ifndef __MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
-#define __MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
+#ifndef MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
+#define MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
 
 // Just in case...
 #include "hmm_regression.hpp"

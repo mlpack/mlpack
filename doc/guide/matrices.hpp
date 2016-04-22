@@ -12,7 +12,7 @@ http://arma.sourceforge.net/docs.html
 
 Nonetheless, there are a few further caveats for mlpack Armadillo usage.
 
-@section format Column-wise Matrices
+@section format Column-major Matrices
 
 Armadillo matrices are stored in a column-major format; this means that on disk,
 each column is located in contiguous memory.

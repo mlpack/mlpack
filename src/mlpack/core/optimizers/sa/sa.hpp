@@ -4,8 +4,8 @@
  *
  * Simulated Annealing (SA).
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
+#define MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
 
 #include <mlpack/prereqs.hpp>
 

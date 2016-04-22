@@ -5,8 +5,8 @@
  * Definition and implementation of a trainer that trains the parameters of a
  * neural network according to a supervised dataset.
  */
-#ifndef __MLPACK_METHODS_ANN_TRAINER_TRAINER_HPP
-#define __MLPACK_METHODS_ANN_TRAINER_TRAINER_HPP
+#ifndef MLPACK_METHODS_ANN_TRAINER_TRAINER_HPP
+#define MLPACK_METHODS_ANN_TRAINER_TRAINER_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  * NetworkTraits class, a template class to get information about various
  * networks.
  */
-#ifndef __MLPACK_METHODS_ANN_NETWORK_TRAITS_HPP
-#define __MLPACK_METHODS_ANN_NETWORK_TRAITS_HPP
+#ifndef MLPACK_METHODS_ANN_NETWORK_TRAITS_HPP
+#define MLPACK_METHODS_ANN_NETWORK_TRAITS_HPP
 
 namespace mlpack {
 namespace ann {

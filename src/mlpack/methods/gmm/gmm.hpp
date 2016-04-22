@@ -6,8 +6,8 @@
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  */
-#ifndef __MLPACK_METHODS_MOG_MOG_EM_HPP
-#define __MLPACK_METHODS_MOG_MOG_EM_HPP
+#ifndef MLPACK_METHODS_MOG_MOG_EM_HPP
+#define MLPACK_METHODS_MOG_MOG_EM_HPP
 
 #include <mlpack/core.hpp>
 

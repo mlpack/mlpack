@@ -6,8 +6,8 @@
  * easy way to serialize a rank-approximate neighbor search model by abstracting
  * the types of trees and reflecting the RASearch API.
  */
-#ifndef __MLPACK_METHODS_RANN_RA_MODEL_HPP
-#define __MLPACK_METHODS_RANN_RA_MODEL_HPP
+#ifndef MLPACK_METHODS_RANN_RA_MODEL_HPP
+#define MLPACK_METHODS_RANN_RA_MODEL_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>

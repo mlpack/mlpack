@@ -5,8 +5,8 @@
  *
  * Implementation of the Nystroem method for approximating a kernel matrix.
  */
-#ifndef __MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_IMPL_HPP
-#define __MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_IMPL_HPP
+#ifndef MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_IMPL_HPP
+#define MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "nystroem_method.hpp"

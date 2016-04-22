@@ -21,8 +21,8 @@
  * feasible primal/dual point (and therefore the duality gap is zero), and
  * that the constraint matrices are linearly independent.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
 
 #include "primal_dual.hpp"
 

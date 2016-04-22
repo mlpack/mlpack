@@ -11,6 +11,17 @@
 
   * CosineTree test fix from Mikhail Lozhnikov (#358).
 
+  * Fixed HMM initial state estimation (#600).
+
+  * Changed versioning macros __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR,
+    and __MLPACK_VERSION_PATCH to MLPACK_VERSION_MAJOR, MLPACK_VERSION_MINOR,
+    and MLPACK_VERSION_PATCH.  The old names will remain in place until
+    mlpack 3.0.0.
+
+  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
+    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
+    3.0.0.
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.

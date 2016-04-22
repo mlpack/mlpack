@@ -9,7 +9,7 @@ function sequence = hmm_generate(model, sequence_length, varargin)
 % model           - (required) HMM model struct.
 % sequence_length - (required) Length of the sequence to produce.
 % start_state	    - (optional) Starting state of sequence.  Default value 0.
-% seed            - (optional) Random seed.  If 0, 'std::time(NULL)' is used. 
+% seed            - (optional) Random seed.  If 0, 'std::time(NULL)' is used.
 %                   Default value 0.
 
 % a parser for the inputs
@@ -21,7 +21,7 @@ p.addParamValue('seed', 0, @isscalar);
 p.parse(varargin{:});
 parsed = p.Results;
 
-% interfacing with mlpack. 
+% interfacing with mlpack.
 sequence = mex_hmm_generate(model, sequence_length, ...
 	parsed.start_state, parsed.seed);
 

@@ -4,8 +4,8 @@
  * Definition of the Range class, which represents a simple range with a lower
  * and upper bound.
  */
-#ifndef __MLPACK_CORE_MATH_RANGE_HPP
-#define __MLPACK_CORE_MATH_RANGE_HPP
+#ifndef MLPACK_CORE_MATH_RANGE_HPP
+#define MLPACK_CORE_MATH_RANGE_HPP
 
 namespace mlpack {
 namespace math {
@@ -183,4 +183,4 @@ class RangeType
 // Include inlined implementation.
 #include "range_impl.hpp"
 
-#endif // __MLPACK_CORE_MATH_RANGE_HPP
+#endif // MLPACK_CORE_MATH_RANGE_HPP

@@ -5,8 +5,8 @@
  * A StatisticType for trees which holds the blacklist for various k-means
  * clusters.  See the Pelleg and Moore paper for more details.
  */
-#ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_STATISTIC_HPP
-#define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_STATISTIC_HPP
+#ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_STATISTIC_HPP
+#define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_STATISTIC_HPP
 
 namespace mlpack {
 namespace kmeans {

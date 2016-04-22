@@ -4,8 +4,8 @@
  *
  * Exponential (geometric) cooling schedule used in SA.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SA_EXPONENTIAL_SCHEDULE_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SA_EXPONENTIAL_SCHEDULE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SA_EXPONENTIAL_SCHEDULE_HPP
+#define MLPACK_CORE_OPTIMIZERS_SA_EXPONENTIAL_SCHEDULE_HPP
 
 namespace mlpack {
 namespace optimization {

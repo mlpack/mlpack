@@ -4,8 +4,8 @@
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
  */
-#ifndef __MLPACK_CORE_HPP
-#define __MLPACK_CORE_HPP
+#ifndef MLPACK_CORE_HPP
+#define MLPACK_CORE_HPP
 
 /**
  * @mainpage mlpack Documentation
@@ -51,8 +51,6 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkfn
- * - mlpack_allknn
  * - mlpack_allkrann
  * - mlpack_cf
  * - mlpack_decision_stump
@@ -68,7 +66,9 @@
  * - mlpack_hmm_generate
  * - mlpack_hoeffding_tree
  * - mlpack_kernel_pca
+ * - mlpack_kfn
  * - mlpack_kmeans
+ * - mlpack_knn
  * - mlpack_lars
  * - mlpack_linear_regression
  * - mlpack_local_coordinate_coding
@@ -126,8 +126,7 @@
  *  - Simple Least-Squares Linear Regression -
  *        mlpack::regression::LinearRegression
  *  - Sparse Coding - mlpack::sparse_coding::SparseCoding
- *  - Tree-based neighbor search (AllkNN, AllkFN) -
- *        mlpack::neighbor::NeighborSearch
+ *  - Tree-based neighbor search (KNN, KFN) - mlpack::neighbor::NeighborSearch
  *  - Tree-based range search - mlpack::range::RangeSearch
  *
  * @section remarks Final Remarks
@@ -189,6 +188,7 @@
  *   - Alexander Leinoff <alexander-leinoff@uiowa.edu>
  *   - Palash Ahuja <abhor902@gmail.com>
  *   - Yannis Mentekidis <mentekid@gmail.com>
+ *   - Ranjan Mondal <ranjan.rev@gmail.com>
  */
 
 // First, include all of the prerequisites.

@@ -19,8 +19,8 @@
  * }
  * @endcode
  */
-#ifndef __MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
-#define __MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
+#ifndef MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
+#define MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
@@ -67,7 +67,7 @@ class OivsInitialization
       k(k), gamma(gamma),
       b(std::abs(ActivationFunction::inv(1 - epsilon) -
                  ActivationFunction::inv(epsilon)))
-  {    
+  {
   }
 
   /**

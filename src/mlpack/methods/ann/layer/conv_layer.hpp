@@ -4,8 +4,8 @@
  *
  * Definition of the ConvLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_CONV_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_CONV_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_CONV_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_CONV_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -69,7 +69,7 @@ class ConvLayer
   {
     weights.set_size(wfilter, hfilter, inMaps * outMaps);
   }
-  
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -134,11 +134,14 @@ class ConvLayer
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
+   * @param input The input parameter used for calculating the gradient.
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Cube<eT>& d, arma::Cube<eT>& g)
+  template<typename InputType, typename eT>
+  void Gradient(const InputType& input,
+                const arma::Cube<eT>& d,
+                arma::Cube<eT>& g)
   {
     g = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
         weights.n_slices);
@@ -147,7 +150,7 @@ class ConvLayer
     {
       for (size_t inMap = 0, s = outMap; inMap < inMaps; inMap++, s += outMaps)
       {
-        arma::Cube<eT> inputSlices = inputParameter.slices(inMap, inMap);
+        arma::Cube<eT> inputSlices = input.slices(inMap, inMap);
         arma::Cube<eT> deltaSlices = d.slices(outMap, outMap);
 
         arma::Cube<eT> output;
@@ -183,7 +186,7 @@ class ConvLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */

@@ -4,8 +4,8 @@
  *
  * Rules for the single or dual tree traversal for fast max-kernel search.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>

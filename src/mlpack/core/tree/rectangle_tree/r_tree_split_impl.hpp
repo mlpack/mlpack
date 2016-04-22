@@ -4,8 +4,8 @@
  *
  * Implementation of class (RTreeSplit) to split a RectangleTree.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
 
 #include "r_tree_split.hpp"
 #include "rectangle_tree.hpp"

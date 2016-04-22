@@ -4,8 +4,8 @@
  *
  * Definition of the Epanechnikov kernel.
  */
-#ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 
@@ -52,12 +52,12 @@ class EpanechnikovKernel
   double Evaluate(const double distance) const;
 
   /**
-   * Evaluate the Gradient of Epanechnikov kernel 
+   * Evaluate the Gradient of Epanechnikov kernel
    * given that the distance between the two
    * input points is known.
    */
   double Gradient(const double distance) const;
-  
+
   /**
    * Evaluate the Gradient of Epanechnikov kernel
    * given that the squared distance between the two

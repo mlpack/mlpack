@@ -4,8 +4,8 @@
  *
  * Tree traverser rules for the DualTreeBoruvka algorithm.
  */
-#ifndef __MLPACK_METHODS_EMST_DTB_RULES_HPP
-#define __MLPACK_METHODS_EMST_DTB_RULES_HPP
+#ifndef MLPACK_METHODS_EMST_DTB_RULES_HPP
+#define MLPACK_METHODS_EMST_DTB_RULES_HPP
 
 #include <mlpack/core.hpp>
 

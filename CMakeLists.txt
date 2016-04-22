@@ -16,6 +16,10 @@ option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
+option(BUILD_TESTS "Build tests." ON)
+option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
+
+enable_testing ()
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
@@ -262,7 +266,7 @@ if (GIT_FOUND)
       OUTPUT_STRIP_TRAILING_WHITESPACE)
   if (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
     set (USING_GIT "YES")
-    add_definitions(-D__MLPACK_GIT_VERSION)
+    add_definitions(-DMLPACK_GIT_VERSION)
     include(CMake/CreateGitVersionHeader.cmake)
 
     add_custom_target(mlpack_gitversion ALL
@@ -350,8 +354,8 @@ if (UNIX)
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
           mlpack_adaboost
-          mlpack_allkfn
-          mlpack_allknn
+          mlpack_kfn
+          mlpack_knn
           mlpack_allkrann
           mlpack_cf
           mlpack_decision_stump

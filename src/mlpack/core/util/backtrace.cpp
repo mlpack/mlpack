@@ -62,9 +62,9 @@ std::vector<Backtrace::Frames> Backtrace::stack;
 
 #ifdef HAS_BFD_DL
 // Binary File Descriptor objects.
-bfd* abfd = 0;		// Descriptor datastructure.
-asymbol **syms = 0;	// Symbols datastructure.
-asection *text = 0;	// Strings datastructure.
+bfd* abfd = 0;          // Descriptor datastructure.
+asymbol **syms = 0;     // Symbols datastructure.
+asection *text = 0;     // Strings datastructure.
 #endif
 
 #ifdef HAS_BFD_DL
@@ -116,7 +116,7 @@ void Backtrace::DecodeAddress(long addr)
   if (!abfd)
   {
     char ename[1024];
-    int l = readlink("/proc/self/exe",ename,sizeof(ename));
+    int l = readlink("/proc/self/exe", ename, sizeof(ename));
     if (l == -1)
     {
       perror("Failed to open executable!\n");
@@ -145,7 +145,7 @@ void Backtrace::DecodeAddress(long addr)
 
   if (offset > 0)
   {
-    if(FIND_LINE)
+    if (FIND_LINE)
     {
       DemangleFunction();
       // Save retrieved informations.
@@ -189,7 +189,7 @@ std::string Backtrace::ToString()
     return stackStr;
   }
 
-  for(unsigned int i = 0; i < stack.size(); i++)
+  for (size_t i = 0; i < stack.size(); i++)
   {
     frame = stack[i];
 
@@ -197,9 +197,9 @@ std::string Backtrace::ToString()
     it << i + 1;
 
       stackStr += "[bt]: (" + it.str() + ") "
-	       + frame.file + ":"
-	       + lineOss.str() + " "
-	       + frame.function + ":\n";
+          + frame.file + ":"
+          + lineOss.str() + " "
+          + frame.function + ":\n";
 
     lineOss.str("");
     it.str("");

@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the trivially simple triangular kernel.
  */
-#ifndef __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -57,9 +57,9 @@ class TriangularKernel
   {
     return std::max(0.0, (1 - distance) / bandwidth);
   }
-  
+
   /**
-   * Evaluate the gradient of triangular kernel 
+   * Evaluate the gradient of triangular kernel
    * given that the distance between the two
    * points is known.
    *

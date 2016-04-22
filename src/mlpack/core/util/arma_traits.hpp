@@ -4,8 +4,8 @@
  *
  * Some traits used for template metaprogramming (SFINAE) with Armadillo types.
  */
-#ifndef __MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
-#define __MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
+#ifndef MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
+#define MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
 
 // Structs have public members by default (that's why they are chosen over
 // classes).

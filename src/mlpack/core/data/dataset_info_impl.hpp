@@ -4,8 +4,8 @@
  *
  * An implementation of the DatasetInfo class.
  */
-#ifndef __MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
-#define __MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
+#define MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "dataset_info.hpp"

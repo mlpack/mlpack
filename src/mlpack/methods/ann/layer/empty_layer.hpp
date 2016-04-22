@@ -68,21 +68,23 @@ class EmptyLayer
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename ErrorType, typename GradientType>
-  void Gradient(const ErrorType& /* d */, GradientType& /* g */)
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Gradient(const InputType& /* input */,
+                const ErrorType& /* error */,
+                GradientType& /* gradient */)
   {
     /* Nothing to do here. */
   }
 
   //! Get the weights.
   OutputDataType const& Weights() const { return weights; }
-  
+
   //! Modify the weights.
   OutputDataType& Weights() { return weights; }
-  
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
-  
+
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
@@ -94,7 +96,7 @@ class EmptyLayer
 
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
-  
+
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
@@ -103,7 +105,7 @@ class EmptyLayer
 
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   //! Locally-stored weight object.
   OutputDataType weights;
 

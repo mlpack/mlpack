@@ -4,8 +4,8 @@
  *
  * Includes all the necessary files to use the CoverTree class.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include "cover_tree/first_point_is_root.hpp"

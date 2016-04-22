@@ -5,8 +5,8 @@
  * Definition of the MulticlassClassificationLayer class, which implements a
  * multiclass classification layer that can be used as output layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -61,13 +61,13 @@ class MulticlassClassificationLayer
   {
     output = inputActivations;
   }
-  
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
-  {    			
+  {
   }
 }; // class MulticlassClassificationLayer
 

@@ -6,8 +6,8 @@
  * Implementation of class (MidpointSplit) to split a binary space partition
  * tree.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_IMPL_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_IMPL_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_IMPL_HPP
 
 #include "midpoint_split.hpp"
 #include <mlpack/core/tree/bounds.hpp>

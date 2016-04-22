@@ -4,8 +4,8 @@
  *
  * Implementation of the Laplacian kernel (LaplacianKernel).
  */
-#ifndef __MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_LAPLACIAN_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 
@@ -72,7 +72,7 @@ class LaplacianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(-t / bandwidth);
   }
-  
+
   /**
    * Evaluation of the gradient of the Laplacian kernel
    * given the distance between two points.

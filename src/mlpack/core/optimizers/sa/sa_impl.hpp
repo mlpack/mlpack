@@ -4,8 +4,8 @@
  *
  * The implementation of the SA optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
 
 #include <mlpack/core/dists/laplace_distribution.hpp>
 

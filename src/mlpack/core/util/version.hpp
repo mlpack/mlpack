@@ -4,13 +4,19 @@
  *
  * The current version of mlpack, available as macros and as a string.
  */
-#ifndef __MLPACK_CORE_UTIL_VERSION_HPP
-#define __MLPACK_CORE_UTIL_VERSION_HPP
+#ifndef MLPACK_CORE_UTIL_VERSION_HPP
+#define MLPACK_CORE_UTIL_VERSION_HPP
 
 #include <string>
 
 // The version of mlpack.  If this is a git repository, this will be a version
 // with higher number than the most recent release.
+#define MLPACK_VERSION_MAJOR 2
+#define MLPACK_VERSION_MINOR 0
+#define MLPACK_VERSION_PATCH "x"
+
+// Reverse compatibility; these macros will be removed in future versions of
+// mlpack (3.0.0 and newer)!
 #define __MLPACK_VERSION_MAJOR 2
 #define __MLPACK_VERSION_MINOR 0
 #define __MLPACK_VERSION_PATCH "x"

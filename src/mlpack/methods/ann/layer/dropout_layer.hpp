@@ -5,8 +5,8 @@
  * Definition of the DropoutLayer class, which implements a regularizer that
  * randomly sets units to zero. Preventing units from co-adapting.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_DROPOUT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_DROPOUT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_DROPOUT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_DROPOUT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -64,7 +64,7 @@ class DropoutLayer
       rescale(rescale)
   {
     // Nothing to do here.
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -180,7 +180,7 @@ class DropoutLayer
   bool Rescale() const {return rescale; }
   //! Modify the value of the rescale parameter.
   bool& Rescale() {return rescale; }
-  
+
   /**
    * Serialize the layer.
    */

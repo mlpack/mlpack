@@ -6,8 +6,8 @@
  * Implementation of Kernel PCA class to perform Kernel Principal Components
  * Analysis on the specified data set.
  */
-#ifndef __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
-#define __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
+#ifndef MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
+#define MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
 
 // In case it hasn't already been included.
 #include "kernel_pca.hpp"

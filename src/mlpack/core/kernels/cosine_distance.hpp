@@ -5,8 +5,8 @@
  * This implements the cosine distance (or cosine similarity) between two
  * vectors, which is a measure of the angle between the two vectors.
  */
-#ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
-#define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#ifndef MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#define MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 
 #include <mlpack/core.hpp>
 
@@ -47,7 +47,7 @@ class KernelTraits<CosineDistance>
  public:
   //! The cosine kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  
+
   //! The cosine kernel doesn't include a squared distance.
   static const bool UsesSquaredDistance = false;
 };

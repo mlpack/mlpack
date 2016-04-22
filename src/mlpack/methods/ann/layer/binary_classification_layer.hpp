@@ -5,8 +5,8 @@
  * Definition of the BinaryClassificationLayer class, which implements a
  * binary class classification layer that can be used as output layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -23,8 +23,11 @@ class BinaryClassificationLayer
  public:
   /**
    * Create the BinaryClassificationLayer object.
+   *
+   * @param confidence The confidence used for the output class transformation.
    */
-  BinaryClassificationLayer()
+  BinaryClassificationLayer(const double confidence = 0.5) :
+      confidence(confidence)
   {
     // Nothing to do here.
   }
@@ -58,17 +61,26 @@ class BinaryClassificationLayer
     output = inputActivations;
 
     for (size_t i = 0; i < output.n_elem; i++)
-      output(i) = output(i) > 0.5 ? 1 : 0;
+      output(i) = output(i) > confidence ? 1 : 0;
   }
-  
+
+  //! Get the confidence parameter.
+  double const& Confidence() const { return confidence; }
+  //! Modify the confidence parameter.
+  double& Confidence() { return confidence; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    /* Nothing to do here */
+    ar & data::CreateNVP(confidence, "confidence");
   }
+
+ private:
+   double confidence;
+
 }; // class BinaryClassificationLayer
 
 //! Layer traits for the binary class classification layer.

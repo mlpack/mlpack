@@ -4,8 +4,8 @@
  *
  * Wrapper class for SVD factorizers used for Collaborative Filtering.
  */
-#ifndef __MLPACK_METHODS_SVDWRAPPER_HPP
-#define __MLPACK_METHODS_SVDWRAPPER_HPP
+#ifndef MLPACK_METHODS_SVDWRAPPER_HPP
+#define MLPACK_METHODS_SVDWRAPPER_HPP
 
 #include <mlpack/core.hpp>
 

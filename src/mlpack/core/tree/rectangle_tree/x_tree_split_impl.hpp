@@ -4,8 +4,8 @@
  *
  * Implementation of class (XTreeSplit) to split a RectangleTree.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
 
 #include "x_tree_split.hpp"
 #include "rectangle_tree.hpp"
@@ -122,7 +122,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
       root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
           relevels);
     }
-   
+
     for (size_t i = 0; i < p; i++)
     {
       // We reverse the order again to reinsert the closest points first.

@@ -5,8 +5,8 @@
  * Definition of the LSTMLayer class, which implements a lstm network
  * layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -59,7 +59,11 @@ class LSTMLayer
       peepholeWeights.set_size(outSize, 3);
       peepholeDerivatives = arma::zeros<OutputDataType>(outSize, 3);
     }
-  }  
+    else
+    {
+      peepholeWeights.set_size(0, 0);
+    }
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -90,6 +94,7 @@ class LSTMLayer
     // Split up the inputactivation into the 3 parts (inGate, forgetGate,
     // outGate).
     inGate.col(offset) = input.submat(0, 0, outSize - 1, 0);
+
     forgetGate.col(offset) = input.submat(outSize, 0, (outSize * 2) - 1, 0);
     outGate.col(offset) = input.submat(outSize * 3, 0, (outSize * 4) - 1, 0);
 
@@ -226,8 +231,17 @@ class LSTMLayer
     offset = (offset + 1) % seqLen;
   }
 
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& /* unused */, GradientDataType& /* unused */)
+  /**
+   * Ordinary feed backward pass of the lstm layer.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
+  template<typename InputType, typename eT, typename GradientDataType>
+  void Gradient(const InputType& /* input */,
+                const arma::Mat<eT>& /* gy */,
+                GradientDataType& /* g */)
   {
     if (peepholes && offset == 0)
     {
@@ -244,7 +258,7 @@ class LSTMLayer
           outGate.col(queryOffset).t());
 
       peepholeDerivatives.zeros();
-    }    
+    }
   }
 
   //! Get the peephole weights.
@@ -276,7 +290,7 @@ class LSTMLayer
   size_t SeqLen() const { return seqLen; }
   //! Modify the sequence length.
   size_t& SeqLen() { return seqLen; }
-  
+
   /**
    * Serialize the layer.
    */

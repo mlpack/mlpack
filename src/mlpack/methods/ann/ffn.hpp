@@ -4,8 +4,8 @@
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  */
-#ifndef __MLPACK_METHODS_ANN_FFN_HPP
-#define __MLPACK_METHODS_ANN_FFN_HPP
+#ifndef MLPACK_METHODS_ANN_FFN_HPP
+#define MLPACK_METHODS_ANN_FFN_HPP
 
 #include <mlpack/core.hpp>
 
@@ -260,7 +260,7 @@ private:
 
     std::get<I>(network).Forward(std::get<I>(network).InputParameter(),
         std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -277,7 +277,7 @@ private:
   {
     std::get<I>(network).Forward(std::get<I - 1>(network).OutputParameter(),
                            std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -343,7 +343,7 @@ private:
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I < (sizeof...(Tp)), void>::type
   BackwardTail(const DataType& error, std::tuple<Tp...>& network)
-  {    
+  {
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta(),
@@ -371,7 +371,7 @@ private:
   >
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& network)
-  {   
+  {
     Update(std::get<I>(network), std::get<I>(network).OutputParameter(),
            std::get<I + 1>(network).Delta());
 
@@ -380,15 +380,15 @@ private:
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Update(T& layer, P& /* unused */, D& delta)
   {
-    layer.Gradient(delta, layer.Gradient());
+    layer.Gradient(layer.InputParameter(), delta, layer.Gradient());
   }
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, P&(T::*)()>::value, void>::type
   Update(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */

@@ -7,8 +7,8 @@
  *
  * This also gives several convenience typedefs for commonly used L-metrics.
  */
-#ifndef __MLPACK_CORE_METRICS_LMETRIC_HPP
-#define __MLPACK_CORE_METRICS_LMETRIC_HPP
+#ifndef MLPACK_CORE_METRICS_LMETRIC_HPP
+#define MLPACK_CORE_METRICS_LMETRIC_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  * Define the formats that can be used by mlpack's Load() and Save() mechanisms
  * via boost::serialization.
  */
-#ifndef __MLPACK_CORE_DATA_FORMATS_HPP
-#define __MLPACK_CORE_DATA_FORMATS_HPP
+#ifndef MLPACK_CORE_DATA_FORMATS_HPP
+#define MLPACK_CORE_DATA_FORMATS_HPP
 
 namespace mlpack {
 namespace data {

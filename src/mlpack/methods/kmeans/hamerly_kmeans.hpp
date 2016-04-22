@@ -4,8 +4,8 @@
  *
  * An implementation of Greg Hamerly's algorithm for k-means clustering.
  */
-#ifndef __MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_HPP
 
 namespace mlpack {
 namespace kmeans {

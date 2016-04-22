@@ -5,8 +5,8 @@
  *
  * The generic L-BFGS optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/core.hpp>
 
@@ -258,5 +258,5 @@ class L_BFGS
 
 #include "lbfgs_impl.hpp"
 
-#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 

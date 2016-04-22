@@ -7,8 +7,8 @@
  * also reflects the RangeSearch API and automatically directs to the right
  * tree types.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>

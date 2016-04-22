@@ -5,8 +5,8 @@
  * Ancient Boost.Test versions don't act how we expect.  This file includes the
  * things we need to fix that.
  */
-#ifndef __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
-#define __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
+#ifndef MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
+#define MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
 
 #include <boost/version.hpp>
 

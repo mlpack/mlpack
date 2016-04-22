@@ -3,8 +3,8 @@
  *
  * The core includes that mlpack expects; standard C++ includes and Armadillo.
  */
-#ifndef __MLPACK_PREREQS_HPP
-#define __MLPACK_PREREQS_HPP
+#ifndef MLPACK_PREREQS_HPP
+#define MLPACK_PREREQS_HPP
 
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <tuple>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
@@ -77,6 +78,7 @@
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
+  #define ARMA_USE_CXX11
 #endif
 
 #endif

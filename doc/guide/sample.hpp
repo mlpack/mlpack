@@ -79,8 +79,8 @@ int main()
 
 For more complex examples, it is useful to refer to the main executables:
 
- - methods/neighbor_search/allknn_main.cpp
- - methods/neighbor_search/allkfn_main.cpp
+ - methods/neighbor_search/knn_main.cpp
+ - methods/neighbor_search/kfn_main.cpp
  - methods/emst/emst_main.cpp
  - methods/radical/radical_main.cpp
  - methods/nca/nca_main.cpp
