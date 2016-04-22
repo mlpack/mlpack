@@ -77,6 +77,7 @@
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
+  #define ARMA_USE_CXX11
 #endif
 
 #endif
