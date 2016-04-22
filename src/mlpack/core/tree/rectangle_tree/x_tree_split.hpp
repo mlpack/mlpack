@@ -35,8 +35,17 @@ class XTreeSplit
   //! Default constructor
   XTreeSplit();
 
-  //! Construct this with specified node.
+  //! Construct this with the specified node.
   XTreeSplit(TreeType *node);
+
+  //! Construct this with the specified node and the specified normalNodeMaxNumChildren.
+  XTreeSplit(TreeType *node,const size_t normalNodeMaxNumChildren);
+
+  //! Construct this with the specified node and the parent of the node.
+  XTreeSplit(TreeType *node,const TreeType *parentNode);
+
+  //! Create a copy of the other.split.
+  XTreeSplit(TreeType *node,const TreeType &other);
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
@@ -54,6 +63,9 @@ class XTreeSplit
  private:
   //! The node which has to be split.
   TreeType *tree;
+
+  //! The max number of child nodes a non-leaf normal node can have.
+  size_t normalNodeMaxNumChildren;
 
   /**
    * Class to allow for faster sorting.
@@ -80,6 +92,12 @@ class XTreeSplit
    * Insert a node into another node.
    */
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
+
+ public:
+  //! Return the maximum number of a normal node's children.
+  size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
+  //! Modify the maximum number of a normal node's children.
+  size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
 };
 
 } // namespace tree

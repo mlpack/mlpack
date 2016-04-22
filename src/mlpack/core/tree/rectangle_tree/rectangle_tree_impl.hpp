@@ -29,7 +29,6 @@ RectangleTree(const MatType& data,
               const size_t maxNumChildren,
               const size_t minNumChildren,
               const size_t firstDataIndex) :
-    normalNodeMaxNumChildren(maxNumChildren),
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -71,7 +70,6 @@ RectangleTree(MatType&& data,
               const size_t maxNumChildren,
               const size_t minNumChildren,
               const size_t firstDataIndex) :
-    normalNodeMaxNumChildren(maxNumChildren),
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -110,7 +108,6 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
         parentNode,const size_t numMaxChildren) :
-    normalNodeMaxNumChildren(parentNode->NormalNodeMaxNumChildren()),
     maxNumChildren(numMaxChildren > 0 ? numMaxChildren : parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
@@ -130,7 +127,7 @@ RectangleTree(
                                                   maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
-  split = SplitType<RectangleTree>(this);
+  split = SplitType<RectangleTree>(this,parentNode);
 }
 
 /**
@@ -146,7 +143,6 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     const RectangleTree& other,
     const bool deepCopy) :
-    normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
     maxNumChildren(other.MaxNumChildren()),
     minNumChildren(other.MinNumChildren()),
     numChildren(other.NumChildren()),
@@ -164,7 +160,7 @@ RectangleTree(
     points(other.Points()),
     localDataset(NULL)
 {
-  split = SplitType<RectangleTree>(this);
+  split = SplitType<RectangleTree>(this,other);
   if (deepCopy)
   {
     if (numChildren > 0)

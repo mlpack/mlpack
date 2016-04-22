@@ -16,14 +16,41 @@ namespace tree {
 
 template<typename TreeType>
 XTreeSplit<TreeType>::XTreeSplit() :
-    tree(NULL)
+    tree(NULL),
+    normalNodeMaxNumChildren(0)
 {
 
 }
 
 template<typename TreeType>
 XTreeSplit<TreeType>::XTreeSplit(TreeType *node) :
-    tree(node)
+    tree(node),
+    normalNodeMaxNumChildren(node->MaxNumChildren())
+{
+
+}
+
+
+template<typename TreeType>
+XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const size_t normalNodeMaxNumChildren) :
+    tree(node),
+    normalNodeMaxNumChildren(normalNodeMaxNumChildren)
+{
+
+}
+
+template<typename TreeType>
+XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const TreeType *parent) :
+    tree(node),
+    normalNodeMaxNumChildren(parent->Split().NormalNodeMaxNumChildren())
+{
+
+}
+
+template<typename TreeType>
+XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const TreeType &other) :
+    tree(node),
+    normalNodeMaxNumChildren(other.Split().NormalNodeMaxNumChildren())
 {
 
 }
@@ -54,7 +81,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
-    copy->SplitNode(relevels);
+    copy->Split().SplitLeafNode(relevels);
     return;
   }
 
@@ -72,7 +99,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     size_t p = tree->MaxLeafSize() * 0.3;
     if (p == 0)
     {
-      tree->SplitNode(relevels);
+      tree->Split().SplitLeafNode(relevels);
       return;
     }
 
@@ -233,8 +260,8 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),tree->NormalNodeMaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),tree->NormalNodeMaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
 
   // The leaf nodes should never have any overlap introduced by the above method
   // since a split axis is chosen and then points are assigned based on their
@@ -285,7 +312,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
   // in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -324,7 +351,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->SplitNode(relevels);
+    copy->Split().SplitNonLeafNode(relevels);
     return true;
   }
 
@@ -758,7 +785,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + tree->NormalNodeMaxNumChildren();
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + NormalNodeMaxNumChildren();
         tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
@@ -775,7 +802,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
       }
 
       // If we don't have to worry about the root, we just enlarge this node.
-      tree->MaxNumChildren() += tree->NormalNodeMaxNumChildren();
+      tree->MaxNumChildren() += NormalNodeMaxNumChildren();
       tree->Children().resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)
         tree->Child(i).Parent() = tree;
@@ -818,7 +845,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
   }
 
   // We have to update the children of each of these new nodes so that they

@@ -25,8 +25,14 @@ class RStarTreeSplit
   //! Default constructor
   RStarTreeSplit();
 
-  //! Construct this with specified node.
+  //! Construct this with the specified node.
   RStarTreeSplit(TreeType *node);
+
+  //! Construct this with the specified node and the parent of the node.
+  RStarTreeSplit(TreeType *node,const TreeType *parentNode);
+
+  //! Create a copy of the other.split.
+  RStarTreeSplit(TreeType *node,const TreeType &other);
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An

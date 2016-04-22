@@ -43,7 +43,6 @@ template<typename MetricType = metric::EuclideanDistance,
          typename DescentType = RTreeDescentHeuristic>
 class RectangleTree
 {
-  friend class SplitType<RectangleTree>;
   // The metric *must* be the euclidean distance.
   static_assert(boost::is_same<MetricType, metric::EuclideanDistance>::value,
       "RectangleTree: MetricType must be metric::EuclideanDistance.");
@@ -78,9 +77,6 @@ class RectangleTree
   } SplitHistoryStruct;
 
  private:
-  //! The max number of child nodes a non-leaf normal node can have. 
-  //! (used in x-trees)
-  size_t normalNodeMaxNumChildren;
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
   //! The minimum number of child nodes a non-leaf node can have.
@@ -325,6 +321,11 @@ class RectangleTree
   //! Modify the split history object of this node.
   SplitHistoryStruct& SplitHistory() { return splitHistory; }
 
+  //! Return the split object of this node.
+  const SplitType<RectangleTree>& Split() const { return split; }
+  //! Modify the split object of this node.
+  SplitType<RectangleTree>& Split() { return split; }
+
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
@@ -337,11 +338,6 @@ class RectangleTree
   size_t MinLeafSize() const { return minLeafSize; }
   //! Modify the minimum leaf size.
   size_t& MinLeafSize() { return minLeafSize; }
-
-  //! Return the maximum number of a normal node's children (used in x-trees).
-  size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
-  //! Modify the maximum number of a normal node's children (used in x-trees).
-  size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
 
   //! Return the maximum number of children (in a non-leaf node).
   size_t MaxNumChildren() const { return maxNumChildren; }

@@ -25,8 +25,14 @@ class RTreeSplit
   //! Default constructor
   RTreeSplit();
 
-  //! Construct this with specified node.
+  //! Construct this with the specified node.
   RTreeSplit(TreeType *node);
+
+  //! Construct this with the specified node and the parent of the node.
+  RTreeSplit(TreeType *node,const TreeType *parentNode);
+
+  //! Create a copy of the other.split.
+  RTreeSplit(TreeType *node,const TreeType &other);
 
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split

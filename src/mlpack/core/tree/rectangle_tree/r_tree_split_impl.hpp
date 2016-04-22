@@ -28,6 +28,20 @@ RTreeSplit<TreeType>::RTreeSplit(TreeType *node) :
 
 }
 
+template<typename TreeType>
+RTreeSplit<TreeType>::RTreeSplit(TreeType *node,const TreeType *) :
+    tree(node)
+{
+
+}
+
+template<typename TreeType>
+RTreeSplit<TreeType>::RTreeSplit(TreeType *node,const TreeType &) :
+    tree(node)
+{
+
+}
+
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -49,7 +63,7 @@ void RTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->SplitNode(relevels);
+    copy->Split().SplitLeafNode(relevels);
     return;
   }
 
@@ -80,7 +94,7 @@ void RTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -112,7 +126,7 @@ bool RTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->SplitNode(relevels);
+    copy->Split().SplitNonLeafNode(relevels);
     return true;
   }
 
@@ -145,7 +159,7 @@ bool RTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.

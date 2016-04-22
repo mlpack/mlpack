@@ -29,6 +29,21 @@ RStarTreeSplit<TreeType>::RStarTreeSplit(TreeType *node) :
 
 }
 
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit(TreeType *node,const TreeType *) :
+    tree(node)
+{
+
+}
+
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit(TreeType *node,const TreeType &) :
+    tree(node)
+{
+
+}
+
+
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -55,7 +70,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    copy->SplitNode(relevels);
+    copy->Split().SplitLeafNode(relevels);
     return;
   }
 
@@ -72,7 +87,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
     {
-      tree->SplitNode(relevels);
+      tree->Split().SplitLeafNode(relevels);
       return;
     }
 
@@ -265,7 +280,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -301,7 +316,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    copy->SplitNode(relevels);
+    copy->Split().SplitNonLeafNode(relevels);
     return true;
   }
 
@@ -657,7 +672,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    par->SplitNode(relevels);
+    par->Split().SplitNonLeafNode(relevels);
   }
 
   // We have to update the children of each of these new nodes so that they
