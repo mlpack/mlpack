@@ -1,8 +1,8 @@
 /**
- * @file sparse_autoencoder_test.cpp
- * @author Siddharth Agrawal
+ * @file split_data_test.cpp
+ * @author Tham Ngap Wei
  *
- * Test the SparseAutoencoder class.
+ * Test the SplitData method.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/split_data.hpp>
@@ -17,40 +17,45 @@ using namespace mlpack::data;
 BOOST_AUTO_TEST_SUITE(SplitDataTest);
 
 /**
- * compare the data after train test split
- * @param inputData The original data set before split
- * @param compareData The data want to compare with the inputData,
- * it could be train data or test data
- * @param inputLabel The label of the compareData
+ * Compare the data after train test split.  This assumes that the labels
+ * correspond to each column, so that we can easily check each point against its
+ * original.
+ *
+ * @param inputData The original data set before split.
+ * @param compareData The data want to compare with the inputData;
+ *   it could be train data or test data.
+ * @param inputLabel The labels of each point in compareData.
  */
-void CompareData(arma::mat const &inputData, arma::mat const &compareData,
-                 arma::Row<size_t> const &inputLabel)
+void CompareData(const mat& inputData,
+                 const mat& compareData,
+                 const Row<size_t>& inputLabel)
 {
-  for(size_t i = 0; i != compareData.n_cols; ++i){
-    arma::mat const &lhsCol = inputData.col(inputLabel(i));
-    arma::mat const &rhsCol = compareData.col(i);
-    for(size_t j = 0; j != lhsCol.n_rows; ++j){
+  for (size_t i = 0; i != compareData.n_cols; ++i)
+  {
+    const mat& lhsCol = inputData.col(inputLabel(i));
+    const mat& rhsCol = compareData.col(i);
+    for (size_t j = 0; j != lhsCol.n_rows; ++j)
+    {
       BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
     }
   }
 }
 
 BOOST_AUTO_TEST_CASE(SplitDataSplitResultMat)
-{    
-  arma::mat input(2,10);
+{
+  mat input(2, 10);
   input.randu();
-  using Labels = arma::Row<size_t>;
-  //set the labels range same as the col, so the CompareData
-  //can compare the data after TrainTestSplit are valid or not
-  Labels const labels =
-          arma::linspace<Labels>(0, input.n_cols-1,
-                                 input.n_cols);
+
+  // Set the labels to the column ID, so that CompareData can compare the data
+  // after TrainTestSplit is called.
+  const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
+      input.n_cols);
 
   auto const value = TrainTestSplit(input, labels, 0.2);
-  BOOST_REQUIRE(std::get<0>(value).n_cols == 8);
-  BOOST_REQUIRE(std::get<1>(value).n_cols == 2);
-  BOOST_REQUIRE(std::get<2>(value).n_cols == 8);
-  BOOST_REQUIRE(std::get<3>(value).n_cols == 2);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8);
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2);
+  BOOST_REQUIRE_EQUAL(std::get<2>(value).n_cols, 8);
+  BOOST_REQUIRE_EQUAL(std::get<3>(value).n_cols, 2);
 
   CompareData(input, std::get<0>(value), std::get<2>(value));
   CompareData(input, std::get<1>(value), std::get<3>(value));
