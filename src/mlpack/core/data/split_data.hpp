@@ -4,7 +4,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace util {
+namespace data {
 
 /**
  *Split training data and test data
@@ -95,7 +95,7 @@ TrainTestSplit(const arma::Mat<T> &input,
                          trainLabel, testLabel);
 }
 
-} // namespace util
+} // namespace data
 } // namespace mlpack
 
 #endif
