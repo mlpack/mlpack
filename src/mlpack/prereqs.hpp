@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <tuple>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES

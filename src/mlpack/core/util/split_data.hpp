@@ -3,8 +3,6 @@
 
 #include <mlpack/core.hpp>
 
-#include <tuple>
-
 namespace mlpack {
 namespace util {
 
