@@ -252,7 +252,6 @@ class GlimpseLayer
   //! glimpse.
   void Location(const arma::mat& location)
   {
-    // Log::Debug << "location: " << location.t() << std::endl;
     this->location = location;
   }
 
