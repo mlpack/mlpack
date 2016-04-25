@@ -22,6 +22,9 @@ endif ()
 # MLPACK_SRCS is set in the subdirectories.
 add_library(mlpack ${MLPACK_SRCS})
 
+# Generate export symbols for Windows, instead of adding __declspec(dllimport)
+# and __declspec(dllexport) everywhere.  However, those modifiers are still
+# necessary for global variables (of which there are a few in mlpack).
 set_target_properties(mlpack PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include(GenerateExportHeader)
 generate_export_header(mlpack)

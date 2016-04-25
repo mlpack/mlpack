@@ -6,13 +6,17 @@
 #ifndef MLPACK_CORE_MATH_RANDOM_HPP
 #define MLPACK_CORE_MATH_RANDOM_HPP
 
-#include <mlpack_export.h>
-
 #include <mlpack/prereqs.hpp>
+#include <mlpack_export.h>
 #include <random>
 
 namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
+
+/**
+ * MLPACK_EXPORT is required for global variables; it exports the symbols
+ * correctly on Windows.
+ */
 
 // Global random object.
 extern MLPACK_EXPORT std::mt19937 randGen;

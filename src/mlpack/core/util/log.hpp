@@ -8,7 +8,6 @@
 #define MLPACK_CORE_UTIL_LOG_HPP
 
 #include <string>
-
 #include <mlpack_export.h>
 
 #include "prefixedoutstream.hpp"
@@ -60,6 +59,10 @@ class Log
   static void Assert(bool condition,
                      const std::string& message = "Assert Failed.");
 
+  /**
+   * MLPACK_EXPORT is required for global variables, so that they are properly
+   * exported by the Windows compiler.
+   */
 
   // We only use PrefixedOutStream if the program is compiled with debug
   // symbols.
