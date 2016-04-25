@@ -9,6 +9,8 @@
 
 #include <string>
 
+#include <mlpack_export.h>
+
 #include "prefixedoutstream.hpp"
 #include "nulloutstream.hpp"
 
@@ -63,21 +65,21 @@ class Log
   // symbols.
 #ifdef DEBUG
   //! Prints debug output with the appropriate tag: [DEBUG].
-  static util::PrefixedOutStream Debug;
+  static MLPACK_EXPORT util::PrefixedOutStream Debug;
 #else
   //! Dumps debug output into the bit nether regions.
-  static util::NullOutStream Debug;
+  static MLPACK_EXPORT util::NullOutStream Debug;
 #endif
 
   //! Prints informational messages if --verbose is specified, prefixed with
   //! [INFO ].
-  static util::PrefixedOutStream Info;
+  static MLPACK_EXPORT util::PrefixedOutStream Info;
 
   //! Prints warning messages prefixed with [WARN ].
-  static util::PrefixedOutStream Warn;
+  static MLPACK_EXPORT util::PrefixedOutStream Warn;
 
   //! Prints fatal messages prefixed with [FATAL], then terminates the program.
-  static util::PrefixedOutStream Fatal;
+  static MLPACK_EXPORT util::PrefixedOutStream Fatal;
 
   //! Reference to cout, if necessary.
   static std::ostream& cout;

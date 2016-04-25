@@ -6,6 +6,8 @@
 #ifndef MLPACK_CORE_MATH_RANDOM_HPP
 #define MLPACK_CORE_MATH_RANDOM_HPP
 
+#include <mlpack_export.h>
+
 #include <mlpack/prereqs.hpp>
 #include <random>
 
@@ -13,11 +15,11 @@ namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
 
 // Global random object.
-extern std::mt19937 randGen;
+extern MLPACK_EXPORT std::mt19937 randGen;
 // Global uniform distribution.
-extern std::uniform_real_distribution<> randUniformDist;
+extern MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist;
 // Global normal distribution.
-extern std::normal_distribution<> randNormalDist;
+extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
