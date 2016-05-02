@@ -7,7 +7,7 @@
 #define MLPACK_CORE_MATH_RANDOM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack_export.h>
+#include <mlpack/mlpack_export.h>
 #include <random>
 
 namespace mlpack {

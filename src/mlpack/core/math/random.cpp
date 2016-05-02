@@ -4,7 +4,7 @@
  * Declarations of global random number generators.
  */
 #include <random>
-#include <mlpack_export.h>
+#include <mlpack/mlpack_export.h>
 
 namespace mlpack {
 namespace math {
