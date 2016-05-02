@@ -1,5 +1,5 @@
 include_directories(..) # <mlpack/[whatever]>
-include_directories(${CMAKE_CURRENT_BINARY_DIR}) # mlpack_export.h
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.h
 
 # Add core.hpp to list of sources.
 set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
