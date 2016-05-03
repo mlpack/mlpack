@@ -36,34 +36,28 @@ class XTreeSplit
   XTreeSplit();
 
   //! Construct this with the specified node.
-  XTreeSplit(TreeType *node);
-
-  //! Construct this with the specified node and the specified normalNodeMaxNumChildren.
-  XTreeSplit(TreeType *node,const size_t normalNodeMaxNumChildren);
+  XTreeSplit(const TreeType *node);
 
   //! Construct this with the specified node and the parent of the node.
-  XTreeSplit(TreeType *node,const TreeType *parentNode);
+  XTreeSplit(const TreeType *node,const TreeType *parentNode);
 
   //! Create a copy of the other.split.
-  XTreeSplit(TreeType *node,const TreeType &other);
+  XTreeSplit(const TreeType &other);
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  void SplitLeafNode(std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
  private:
-  //! The node which has to be split.
-  TreeType *tree;
-
   //! The max number of child nodes a non-leaf normal node can have.
   size_t normalNodeMaxNumChildren;
 

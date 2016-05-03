@@ -16,40 +16,27 @@ namespace tree {
 
 template<typename TreeType>
 XTreeSplit<TreeType>::XTreeSplit() :
-    tree(NULL),
     normalNodeMaxNumChildren(0)
 {
 
 }
 
 template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(TreeType *node) :
-    tree(node),
+XTreeSplit<TreeType>::XTreeSplit(const TreeType *node) :
     normalNodeMaxNumChildren(node->MaxNumChildren())
 {
 
 }
 
-
 template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const size_t normalNodeMaxNumChildren) :
-    tree(node),
-    normalNodeMaxNumChildren(normalNodeMaxNumChildren)
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const TreeType *parent) :
-    tree(node),
+XTreeSplit<TreeType>::XTreeSplit(const TreeType *,const TreeType *parent) :
     normalNodeMaxNumChildren(parent->Split().NormalNodeMaxNumChildren())
 {
 
 }
 
 template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const TreeType &other) :
-    tree(node),
+XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
     normalNodeMaxNumChildren(other.Split().NormalNodeMaxNumChildren())
 {
 
@@ -63,7 +50,7 @@ XTreeSplit<TreeType>::XTreeSplit(TreeType *node,const TreeType &other) :
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
+void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -81,7 +68,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
-    copy->Split().SplitLeafNode(relevels);
+    copy->Split().SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -99,7 +86,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
     size_t p = tree->MaxLeafSize() * 0.3;
     if (p == 0)
     {
-      tree->Split().SplitLeafNode(relevels);
+      tree->Split().SplitLeafNode(tree,relevels);
       return;
     }
 
@@ -312,7 +299,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
   // in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(relevels);
+    par->Split().SplitNonLeafNode(par,relevels);
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -334,7 +321,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
+bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -351,7 +338,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitNonLeafNode(relevels);
+    copy->Split().SplitNonLeafNode(copy,relevels);
     return true;
   }
 
@@ -845,7 +832,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(std::vector<bool>& relevels)
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    par->Split().SplitNonLeafNode(relevels);
+    par->Split().SplitNonLeafNode(par,relevels);
   }
 
   // We have to update the children of each of these new nodes so that they
