@@ -53,29 +53,6 @@ class RectangleTree
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
 
-  /**
-   * The X tree requires that the tree records it's "split history".  To make
-   * this easy, we use the following structure.
-   */
-  typedef struct SplitHistoryStruct
-  {
-    int lastDimension;
-    std::vector<bool> history;
-
-    SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
-    {
-      for (int i = 0; i < dim; i++)
-        history[i] = false;
-    }
-
-    template<typename Archive>
-    void Serialize(Archive& ar, const unsigned int /* version */)
-    {
-      ar & data::CreateNVP(lastDimension, "lastDimension");
-      ar & data::CreateNVP(history, "history");
-    }
-  } SplitHistoryStruct;
-
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -103,8 +80,6 @@ class RectangleTree
   bound::HRectBound<metric::EuclideanDistance, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
-  //! A struct to store the "split history" for X trees.
-  SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
   ElemType parentDistance;
   //! The dataset.
@@ -315,11 +290,6 @@ class RectangleTree
   const StatisticType& Stat() const { return stat; }
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
-
-  //! Return the split history object of this node.
-  const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
-  //! Modify the split history object of this node.
-  SplitHistoryStruct& SplitHistory() { return splitHistory; }
 
   //! Return the split object of this node.
   const SplitType<RectangleTree>& Split() const { return split; }

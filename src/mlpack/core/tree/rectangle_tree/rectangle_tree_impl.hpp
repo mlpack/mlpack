@@ -39,7 +39,6 @@ RectangleTree(const MatType& data,
     maxLeafSize(maxLeafSize),
     minLeafSize(minLeafSize),
     bound(data.n_rows),
-    splitHistory(bound.Dim()),
     parentDistance(0),
     dataset(new MatType(data)),
     ownsDataset(true),
@@ -80,7 +79,6 @@ RectangleTree(MatType&& data,
     maxLeafSize(maxLeafSize),
     minLeafSize(minLeafSize),
     bound(data.n_rows),
-    splitHistory(bound.Dim()),
     parentDistance(0),
     dataset(new MatType(std::move(data))),
     ownsDataset(true),
@@ -118,7 +116,6 @@ RectangleTree(
     maxLeafSize(parentNode->MaxLeafSize()),
     minLeafSize(parentNode->MinLeafSize()),
     bound(parentNode->Bound().Dim()),
-    splitHistory(bound.Dim()),
     parentDistance(0),
     dataset(&parentNode->Dataset()),
     ownsDataset(false),
@@ -153,7 +150,6 @@ RectangleTree(
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
-    splitHistory(other.SplitHistory()),
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
     ownsDataset(deepCopy),
@@ -701,7 +697,6 @@ RectangleTree() :
     count(0),
     maxLeafSize(0),
     minLeafSize(0),
-    splitHistory(0),
     parentDistance(0.0),
     dataset(NULL),
     ownsDataset(false),
@@ -1023,7 +1018,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   ar & CreateNVP(minLeafSize, "minLeafSize");
   ar & CreateNVP(bound, "bound");
   ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(splitHistory, "splitHistory");
   ar & CreateNVP(parentDistance, "parentDistance");
   ar & CreateNVP(dataset, "dataset");
 
@@ -1033,6 +1027,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
   ar & CreateNVP(points, "points");
   ar & CreateNVP(localDataset, "localDataset");
+  ar & CreateNVP(split, "split");
 
   // Because 'children' holds mlpack types (that have Serialize()), we can't use
   // the std::vector serialization.

@@ -57,9 +57,34 @@ class XTreeSplit
    */
   bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
+  /**
+   * The X tree requires that the tree records it's "split history".  To make
+   * this easy, we use the following structure.
+   */
+  typedef struct SplitHistoryStruct
+  {
+    int lastDimension;
+    std::vector<bool> history;
+
+    SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
+    {
+      for (int i = 0; i < dim; i++)
+        history[i] = false;
+    }
+
+    template<typename Archive>
+    void Serialize(Archive& ar, const unsigned int /* version */)
+    {
+      ar & data::CreateNVP(lastDimension, "lastDimension");
+      ar & data::CreateNVP(history, "history");
+    }
+  } SplitHistoryStruct;
+
  private:
   //! The max number of child nodes a non-leaf normal node can have.
   size_t normalNodeMaxNumChildren;
+  //! A struct to store the "split history" for X trees.
+  SplitHistoryStruct splitHistory;
 
   /**
    * Class to allow for faster sorting.
@@ -92,6 +117,17 @@ class XTreeSplit
   size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
   //! Modify the maximum number of a normal node's children.
   size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
+  //! Return the split history of the node assosiated with this object.
+  const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
+  //! Modify the split history of the node assosiated with this object.
+  SplitHistoryStruct& SplitHistory() { return splitHistory; }
+
+
+  /**
+   * Serialize the split.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace tree

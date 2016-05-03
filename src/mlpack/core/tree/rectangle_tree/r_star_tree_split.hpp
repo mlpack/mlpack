@@ -72,6 +72,13 @@ class RStarTreeSplit
    * Insert a node into another node.
    */
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
+
+ public:
+  /**
+   * Serialize the split.
+   */
+  template<typename Archive>
+  void Serialize(Archive &, const unsigned int /* version */) { };
 };
 
 } // namespace tree
