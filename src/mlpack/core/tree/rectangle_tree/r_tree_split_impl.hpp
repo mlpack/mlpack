@@ -27,12 +27,6 @@ RTreeSplit<TreeType>::RTreeSplit(const TreeType *)
 }
 
 template<typename TreeType>
-RTreeSplit<TreeType>::RTreeSplit(const TreeType *,const TreeType *)
-{
-
-}
-
-template<typename TreeType>
 RTreeSplit<TreeType>::RTreeSplit(const TreeType &)
 {
 

@@ -28,9 +28,6 @@ class RTreeSplit
   //! Construct this with the specified node.
   RTreeSplit(const TreeType *node);
 
-  //! Construct this with the specified node and the parent of the node.
-  RTreeSplit(const TreeType *node,const TreeType *parentNode);
-
   //! Create a copy of the other.split.
   RTreeSplit(const TreeType &other);
 

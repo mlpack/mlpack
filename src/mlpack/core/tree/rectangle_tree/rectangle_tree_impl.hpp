@@ -124,7 +124,7 @@ RectangleTree(
                                                   maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
-  split = SplitType<RectangleTree>(this,parentNode);
+  split = SplitType<RectangleTree>(this);
 }
 
 /**

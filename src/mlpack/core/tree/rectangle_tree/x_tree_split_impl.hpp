@@ -24,15 +24,9 @@ XTreeSplit<TreeType>::XTreeSplit() :
 
 template<typename TreeType>
 XTreeSplit<TreeType>::XTreeSplit(const TreeType *node) :
-    normalNodeMaxNumChildren(node->MaxNumChildren()),
-    splitHistory(node->Bound().Dim())
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType *node,const TreeType *parent) :
-    normalNodeMaxNumChildren(parent->Split().NormalNodeMaxNumChildren()),
+    normalNodeMaxNumChildren(node->Parent() ? 
+                             node->Parent()->Split().NormalNodeMaxNumChildren() :
+                             node->MaxNumChildren()),
     splitHistory(node->Bound().Dim())
 {
 
