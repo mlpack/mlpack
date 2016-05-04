@@ -1251,7 +1251,7 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[10];
+  RSModel models[12];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1260,8 +1260,10 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   models[5] = RSModel(RSModel::TreeTypes::R_TREE, false);
   models[6] = RSModel(RSModel::TreeTypes::R_STAR_TREE, true);
   models[7] = RSModel(RSModel::TreeTypes::R_STAR_TREE, false);
-  models[8] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
-  models[9] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
+  models[8] = RSModel(RSModel::TreeTypes::X_TREE, true);
+  models[9] = RSModel(RSModel::TreeTypes::X_TREE, false);
+  models[10] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
+  models[11] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1275,7 +1277,7 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 12; ++i)
     {
       // We only have std::move() constructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1319,7 +1321,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[10];
+  RSModel models[12];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1328,8 +1330,10 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   models[5] = RSModel(RSModel::TreeTypes::R_TREE, false);
   models[6] = RSModel(RSModel::TreeTypes::R_STAR_TREE, true);
   models[7] = RSModel(RSModel::TreeTypes::R_STAR_TREE, false);
-  models[8] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
-  models[9] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
+  models[8] = RSModel(RSModel::TreeTypes::X_TREE, true);
+  models[9] = RSModel(RSModel::TreeTypes::X_TREE, false);
+  models[10] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
+  models[11] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1342,7 +1346,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 12; ++i)
     {
       // We only have std::move() cosntructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);

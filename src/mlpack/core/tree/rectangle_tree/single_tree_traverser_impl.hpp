@@ -20,7 +20,7 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType,
+         template<typename> class SplitType,
          typename DescentType>
 template<typename RuleType>
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
@@ -32,7 +32,7 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType,
+         template<typename> class SplitType,
          typename DescentType>
 template<typename RuleType>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::

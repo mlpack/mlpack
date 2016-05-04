@@ -28,7 +28,8 @@ NSModel<SortPolicy>::NSModel(int treeType, bool randomBasis) :
     coverTreeNS(NULL),
     rTreeNS(NULL),
     rStarTreeNS(NULL),
-    ballTreeNS(NULL)
+    ballTreeNS(NULL),
+    xTreeNS(NULL)
 {
   // Nothing to do.
 }
@@ -47,6 +48,8 @@ NSModel<SortPolicy>::~NSModel()
     delete rStarTreeNS;
   if (ballTreeNS)
     delete ballTreeNS;
+  if (xTreeNS)
+    delete xTreeNS;
 }
 
 //! Serialize the kNN model.
@@ -72,12 +75,16 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
       delete rStarTreeNS;
     if (ballTreeNS)
       delete ballTreeNS;
+    if (xTreeNS)
+      delete xTreeNS;
 
     // Set all the pointers to NULL.
     kdTreeNS = NULL;
     coverTreeNS = NULL;
     rTreeNS = NULL;
     rStarTreeNS = NULL;
+    ballTreeNS = NULL;
+    xTreeNS = NULL;
   }
 
   // We'll only need to serialize one of the kNN objects, based on the type.
@@ -99,6 +106,9 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
     case BALL_TREE:
       ar & data::CreateNVP(ballTreeNS, name);
       break;
+    case X_TREE:
+      ar & data::CreateNVP(xTreeNS, name);
+      break;
   }
 }
 
@@ -115,6 +125,8 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
     return rStarTreeNS->ReferenceSet();
   else if (ballTreeNS)
     return ballTreeNS->ReferenceSet();
+  else if (xTreeNS)
+    return xTreeNS->ReferenceSet();
 
   throw std::runtime_error("no neighbor search model initialized");
 }
@@ -133,6 +145,8 @@ bool NSModel<SortPolicy>::SingleMode() const
     return rStarTreeNS->SingleMode();
   else if (ballTreeNS)
     return ballTreeNS->SingleMode();
+  else if (xTreeNS)
+    return xTreeNS->SingleMode();
 
   throw std::runtime_error("no neighbor search model initialized");
 }
@@ -150,6 +164,8 @@ bool& NSModel<SortPolicy>::SingleMode()
     return rStarTreeNS->SingleMode();
   else if (ballTreeNS)
     return ballTreeNS->SingleMode();
+  else if (xTreeNS)
+    return xTreeNS->SingleMode();
 
   throw std::runtime_error("no neighbor search model initialized");
 }
@@ -167,6 +183,8 @@ bool NSModel<SortPolicy>::Naive() const
     return rStarTreeNS->Naive();
   else if (ballTreeNS)
     return ballTreeNS->Naive();
+  else if (xTreeNS)
+    return xTreeNS->Naive();
 
   throw std::runtime_error("no neighbor search model initialized");
 }
@@ -184,6 +202,8 @@ bool& NSModel<SortPolicy>::Naive()
     return rStarTreeNS->Naive();
   else if (ballTreeNS)
     return ballTreeNS->Naive();
+  else if (xTreeNS)
+    return xTreeNS->Naive();
 
   throw std::runtime_error("no neighbor search model initialized");
 }
@@ -238,6 +258,8 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     delete rStarTreeNS;
   if (ballTreeNS)
     delete ballTreeNS;
+  if (xTreeNS)
+    delete xTreeNS;
 
   // Do we need to modify the reference set?
   if (randomBasis)
@@ -307,6 +329,11 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
         ballTreeNS->oldFromNewReferences = std::move(oldFromNewReferences);
       }
 
+      break;
+    case X_TREE:
+      // If necessary, build the X tree.
+      xTreeNS = new NSType<tree::XTree>(std::move(referenceSet), naive,
+          singleMode);
       break;
   }
 
@@ -413,6 +440,10 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
       }
 
       break;
+    case X_TREE:
+      // No mapping necessary.
+      xTreeNS->Search(querySet, k, neighbors, distances);
+      break;
   }
 }
 
@@ -447,6 +478,9 @@ void NSModel<SortPolicy>::Search(const size_t k,
     case BALL_TREE:
       ballTreeNS->Search(k, neighbors, distances);
       break;
+    case X_TREE:
+      xTreeNS->Search(k, neighbors, distances);
+      break;
   }
 }
 
@@ -466,6 +500,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R* tree";
     case BALL_TREE:
       return "ball tree";
+    case X_TREE:
+      return "X tree";
     default:
       return "unknown tree";
   }

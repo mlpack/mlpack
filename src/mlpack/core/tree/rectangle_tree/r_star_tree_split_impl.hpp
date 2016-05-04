@@ -15,6 +15,25 @@
 namespace mlpack {
 namespace tree {
 
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit()
+{
+
+}
+
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit(const TreeType *)
+{
+
+}
+
+template<typename TreeType>
+RStarTreeSplit<TreeType>::RStarTreeSplit(const TreeType &)
+{
+
+}
+
+
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -22,7 +41,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
+void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -41,7 +60,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    SplitLeafNode(copy, relevels);
+    copy->Split().SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -58,7 +77,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
     {
-      SplitLeafNode(tree, relevels);
+      tree->Split().SplitLeafNode(tree,relevels);
       return;
     }
 
@@ -95,7 +114,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   int bestAreaIndexOnBestAxis = 0;
   bool tiedOnOverlap = false;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
 
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
@@ -251,7 +270,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    SplitNonLeafNode(par, relevels);
+    par->Split().SplitNonLeafNode(par,relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -269,8 +288,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
-                                      std::vector<bool>& relevels)
+bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -288,7 +306,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    SplitNonLeafNode(copy, relevels);
+    copy->Split().SplitNonLeafNode(copy,relevels);
     return true;
   }
 
@@ -359,7 +377,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   bool tiedOnOverlap = false;
   bool lowIsBest = true;
   int bestAxis = 0;
-  ElemType bestAxisScore = DBL_MAX;
+  ElemType bestAxisScore = std::numeric_limits<ElemType>::max();
   for (size_t j = 0; j < tree->Bound().Dim(); j++)
   {
     ElemType axisScore = 0.0;
@@ -450,8 +468,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
     {
       bestAxisScore = axisScore;
       bestAxis = j;
-      ElemType bestOverlapIndexOnBestAxis = 0;
-      ElemType bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
       for (size_t i = 1; i < areas.size(); i++)
       {
         if (overlapedAreas[i] < overlapedAreas[bestOverlapIndexOnBestAxis])
@@ -565,8 +583,8 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
       bestAxisScore = axisScore;
       bestAxis = j;
       lowIsBest = false;
-      ElemType bestOverlapIndexOnBestAxis = 0;
-      ElemType bestAreaIndexOnBestAxis = 0;
+      bestOverlapIndexOnBestAxis = 0;
+      bestAreaIndexOnBestAxis = 0;
 
       for (size_t i = 1; i < areas.size(); i++)
       {
@@ -644,7 +662,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    SplitNonLeafNode(par, relevels);
+    par->Split().SplitNonLeafNode(par,relevels);
   }
 
   // We have to update the children of each of these new nodes so that they
@@ -673,7 +691,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
  * numberOfChildren.
  */
 template<typename TreeType>
-void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RStarTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;

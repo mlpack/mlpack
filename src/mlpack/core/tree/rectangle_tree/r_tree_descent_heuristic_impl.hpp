@@ -20,7 +20,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
 
-  ElemType minScore = DBL_MAX;
+  ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 
@@ -64,7 +64,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
 
-  ElemType minScore = DBL_MAX;
+  ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 

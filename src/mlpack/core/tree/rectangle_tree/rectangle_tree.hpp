@@ -35,10 +35,11 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam DescentType The heuristic to use when descending the tree to insert
  *    points.
  */
+
 template<typename MetricType = metric::EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         typename SplitType = RTreeSplit,
+         template<typename> class SplitType = RTreeSplit,
          typename DescentType = RTreeDescentHeuristic>
 class RectangleTree
 {
@@ -51,29 +52,6 @@ class RectangleTree
   typedef MatType Mat;
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
-
-  /**
-   * The X tree requires that the tree records it's "split history".  To make
-   * this easy, we use the following structure.
-   */
-  typedef struct SplitHistoryStruct
-  {
-    int lastDimension;
-    std::vector<bool> history;
-
-    SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
-    {
-      for (int i = 0; i < dim; i++)
-        history[i] = false;
-    }
-
-    template<typename Archive>
-    void Serialize(Archive& ar, const unsigned int /* version */)
-    {
-      ar & data::CreateNVP(lastDimension, "lastDimension");
-      ar & data::CreateNVP(history, "history");
-    }
-  } SplitHistoryStruct;
 
  private:
   //! The max number of child nodes a non-leaf node can have.
@@ -102,8 +80,6 @@ class RectangleTree
   bound::HRectBound<metric::EuclideanDistance, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
-  //! A struct to store the "split history" for X trees.
-  SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
   ElemType parentDistance;
   //! The dataset.
@@ -115,6 +91,8 @@ class RectangleTree
   std::vector<size_t> points;
   //! The local dataset
   MatType* localDataset;
+  //! The class that performs the split of the node.
+  SplitType<RectangleTree> split;
 
  public:
   //! A single traverser for rectangle type trees.  See
@@ -173,8 +151,10 @@ class RectangleTree
    * firstDataIndex) from the parent.
    *
    * @param parentNode The parent of the node that is being constructed.
+   * @param numMaxChildren The max number of child nodes (used in x-trees).
    */
-  explicit RectangleTree(RectangleTree* parentNode);
+  explicit RectangleTree(RectangleTree* parentNode,
+                const size_t numMaxChildren = 0);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
@@ -311,10 +291,10 @@ class RectangleTree
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
 
-  //! Return the split history object of this node.
-  const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
-  //! Modify the split history object of this node.
-  SplitHistoryStruct& SplitHistory() { return splitHistory; }
+  //! Return the split object of this node.
+  const SplitType<RectangleTree>& Split() const { return split; }
+  //! Modify the split object of this node.
+  SplitType<RectangleTree>& Split() { return split; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
