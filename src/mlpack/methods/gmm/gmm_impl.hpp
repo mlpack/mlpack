@@ -161,7 +161,7 @@ double GMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
+      fitter.Estimate(observations, probabilities, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
