@@ -17,11 +17,14 @@ template<typename DecomposableFunctionType>
 ParallelSGD<DecomposableFunctionType>::ParallelSGD(DecomposableFunctionType& function,
                                    const double stepSize,
                                    const size_t maxIterations,
-                                   const double tolerance) :   
+                                   const double tolerance,
+                                   const bool shuffle) :   
     function(function),
     stepSize(stepSize),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    shuffle(shuffle)
+
 { /* Nothing to do. */ }
 
 
@@ -36,15 +39,8 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
   // To keep track of where we are and how things are going.
   double overallObjective = 0;
-  double lastObjective = DBL_MAX;
-
   //get maximum number of threads that will be running. with is defined by OMP_NUM_THREADS
   size_t num_thread=omp_get_max_threads();
-
-  //T: after T iteration it will go for tollerence checking;  we can define T in many way
-  //size_t T=maxIterations/num_thread;
-  //Here I have thaken T=contant
-  size_t T=1000;
 
 
   //vector of iterate. length of tIterate is same as number of threads available.
@@ -58,92 +54,50 @@ double ParallelSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
   //sumIterate is taken track the  sum  all other computed iterate value from each thread. 
   arma::mat sumIterate(iterate.n_rows,iterate.n_cols);
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);  //gradient for each thread.
-  size_t it;   
-  bool halt=false;
   sumIterate.zeros();
-  math::RandomSeed(std::time(NULL));
-
+  int th_num;
   
-  #pragma omp parallel  shared(sumIterate,halt) private(it,gradient) 
+  #pragma omp parallel  private(th_num) 
   {
-    it=1; 
-    int selectedFunction;
-    int th_num;
-    while(it!=maxIterations && halt != true)
-    {
-      it++;
-
-      th_num=omp_get_thread_num(); //thread number is stored in which the thread is running. 
-      selectedFunction=(int)numFunctions*math::Random();
-      function.Gradient(tIterate[th_num],selectedFunction, gradient);
-      tIterate[th_num] -= stepSize * gradient;
-      
-      //checking whether or not it will go for tollerence checking 
-      if(it%T!=0)
-      {
-        continue;
-      }
-
-
-      #pragma omp critical 
-      {
-        sumIterate += tIterate[th_num];
-      }
-    
-      //wait untill all thread update sumIterate
-      #pragma omp barrier   
-
-
-      //runing  a single thread for tollerence checking
-      #pragma omp master
-      {
-
-        sumIterate=sumIterate/num_thread;
-        overallObjective=0;
-        for (size_t i = 0; i < numFunctions; ++i)
-        {
-          overallObjective += function.Evaluate(sumIterate,i);
-        }
-
-        if (std::isnan(overallObjective) || std::isinf(overallObjective))
-        {
-          Log::Warn << "Parallel SGD: converged to " <<overallObjective << "; terminating"<< " with failure.  Try a smaller step size?" << std::endl;
-          halt=true; 
-        }
-      
-        if (std::abs(lastObjective - overallObjective) < tolerance)
-        {
-          Log::Info << "SGD: minimized within tolerance " << tolerance << "; "<< "terminating optimization." << std::endl;
-          halt=true; 
-        }
-        
-        sumIterate.zeros(); 
-        lastObjective=overallObjective;
-
-      }
-      #pragma omp barrier
-
-    }   //end of while loop
-  }   //end of all thread
- 
-
-   
-  sumIterate.zeros();
-  for(size_t t=0;t<num_thread;t++)
-  {
-    sumIterate += tIterate[t];
+      th_num=omp_get_thread_num();
+      SGD<DecomposableFunctionType> sgd(function,stepSize,maxIterations,tolerance,shuffle);
+      sgd.Optimize(tIterate[th_num]);
   }
-  sumIterate=sumIterate/num_thread;
+  
+  //k is taken to count number of thread which give valid output i.e not inf or not nan 
+  int k=0;
+  for(size_t i=0;i<num_thread;i++)
+  {
 
+     overallObjective=0;
+     for (size_t i = 0; i < numFunctions; ++i)
+     {
+       overallObjective += function.Evaluate(sumIterate,i);
+     }
 
+     if (!(std::isnan(overallObjective) || std::isinf(overallObjective)))
+     {
+       sumIterate+=tIterate[i];
+       k++;
+     }
+     
 
+  }
+  
+  if(k==0)
+  {
+    return(overallObjective);
+  }
+
+  sumIterate=sumIterate/k;
   iterate=sumIterate;
   overallObjective=0;
-  // Calculating the  objective function with computed iterate
+
   for (size_t i = 0; i < numFunctions; ++i)
-  overallObjective += function.Evaluate(iterate, i);
-  
+  {
+    overallObjective += function.Evaluate(sumIterate,i);
+  }
+
   return overallObjective;
 }
 

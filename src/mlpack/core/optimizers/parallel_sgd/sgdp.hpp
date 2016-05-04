@@ -10,7 +10,7 @@
 #include <mlpack/core.hpp>
 #include<omp.h>
 #include<vector>
-
+#include"../sgd/sgd.hpp"
 namespace mlpack {
 namespace optimization {
 
@@ -29,7 +29,8 @@ class ParallelSGD
   ParallelSGD(DecomposableFunctionType& function,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
-      const double tolerance = 1e-5);
+      const double tolerance = 1e-5,
+      const bool shuffle = true );
 
   /**
    * Optimize the given function using  parallel stochastic gradient descent.
@@ -59,7 +60,10 @@ class ParallelSGD
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
-
+  //! Get whether or not the individual functions are shuffled.
+  bool Shuffle() const { return shuffle; }
+  //! Modify whether or not the individual functions are shuffled.
+  bool& Shuffle() { return shuffle; }
 
  private:
   //! The instantiated function.
@@ -73,6 +77,10 @@ class ParallelSGD
 
   //! The tolerance for termination.
   double tolerance;
+  //! Controls whether or not the individual functions are shuffled when
+  //! iterating.
+  bool shuffle;
+  
 
 };
 

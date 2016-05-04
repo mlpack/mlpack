@@ -33,11 +33,10 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionPSGDSimpleTest)
   arma::Row<size_t> responses("1 1 0");
   
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
-  ParallelSGD<LogisticRegressionFunction<>> psgd(lrf, 0.005, 500000, 1e-10);
+  ParallelSGD<LogisticRegressionFunction<>> psgd(lrf, 0.005,500000, 1e-10,false);
 
   LogisticRegression<> lr(psgd);
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0] - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
-
     BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 7.0);
     BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 14.0);
     BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
@@ -55,7 +54,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionPSGDSimpleTest)
 BOOST_AUTO_TEST_CASE(BoothsFunctionTest)
 {
   BoothsFunction f;
-  ParallelSGD<BoothsFunction> s(f, 0.0003, 5000000, 1e-9);
+  ParallelSGD<BoothsFunction> s(f, 0.0003, 5000000, 1e-9,false);
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
   BOOST_REQUIRE_SMALL(result, 1e-3);
@@ -73,7 +72,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    ParallelSGD<GeneralizedRosenbrockFunction> s(f, 0.001,0, 1e-15);
+    ParallelSGD<GeneralizedRosenbrockFunction> s(f, 0.001,0, 1e-15,false);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(coordinates);
