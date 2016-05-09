@@ -1,5 +1,5 @@
 include_directories(..) # <mlpack/[whatever]>
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.h
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
 set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
@@ -27,7 +27,7 @@ add_library(mlpack ${MLPACK_SRCS})
 # necessary for global variables (of which there are a few in mlpack).
 set_target_properties(mlpack PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include(GenerateExportHeader)
-generate_export_header(mlpack)
+generate_export_header(mlpack EXPORT_FILE_NAME mlpack_export.hpp)
 if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DMLPACK_STATIC_DEFINE)
 endif ()
@@ -70,7 +70,7 @@ add_custom_command(TARGET mlpack_headers POST_BUILD
   COMMAND ${CMAKE_COMMAND} ARGS -E
     make_directory ${CMAKE_BINARY_DIR}/include/mlpack/
   COMMAND ${CMAKE_COMMAND} ARGS -E
-    copy ${CMAKE_CURRENT_BINARY_DIR}/mlpack_export.h
+    copy ${CMAKE_CURRENT_BINARY_DIR}/mlpack_export.hpp
          ${CMAKE_BINARY_DIR}/include/mlpack)
 
 # Then copy each of the header files over to that directory.

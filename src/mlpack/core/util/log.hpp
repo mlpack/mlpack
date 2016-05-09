@@ -8,7 +8,7 @@
 #define MLPACK_CORE_UTIL_LOG_HPP
 
 #include <string>
-#include <mlpack/mlpack_export.h>
+#include <mlpack/mlpack_export.hpp>
 
 #include "prefixedoutstream.hpp"
 #include "nulloutstream.hpp"
