@@ -133,7 +133,7 @@ class GlimpseLayer
               ReSampling(poolingInput, output.slice(j));
             }
           }
-        }        
+        }
       }
     }
   }
@@ -217,7 +217,7 @@ class GlimpseLayer
             {
               DownwardReSampling(inputParameter.slice(paddedSlice),
                   mappedError.slice(j), poolingOutput);
-            }            
+            }
 
             inputPadded.subcube(x, y,
                 paddedSlice, x + glimpseSize - 1, y + glimpseSize - 1,
@@ -270,7 +270,7 @@ class GlimpseLayer
       for (size_t j = 0; j < w.n_cols; j++, i++)
       {
         w(k, j) = t(i);
-      }      
+      }
     }
   }
 
@@ -383,9 +383,9 @@ class GlimpseLayer
         double nw = (ixNe - ix) * (iySw - iy);
 
         // Calculate the weighted sum.
-        output(y, x) = input(iyNw, ixNw) * nw + 
+        output(y, x) = input(iyNw, ixNw) * nw +
             input(iyNw, std::min(ixNe,  iWidth)) * ne +
-            input(std::min(iySw, iHeight), ixNw) * sw + 
+            input(std::min(iySw, iHeight), ixNw) * sw +
             input(std::min(iySw, iHeight), std::min(ixNe, iWidth)) * se;
       }
     }
@@ -408,7 +408,7 @@ class GlimpseLayer
     double iHeight = input.n_cols - 1;
 
     double wRatio = iWidth / (size - 1);
-    double hRatio = iHeight / (size - 1);    
+    double hRatio = iHeight / (size - 1);
 
     for (size_t y = 0; y < size; y++)
     {

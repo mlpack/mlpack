@@ -134,9 +134,9 @@ class LeakyReLULayer
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the non zero gradient
+  //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
-  //! Modify the non zero gradient
+  //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
   /**
