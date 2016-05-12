@@ -408,7 +408,7 @@ tree building and other operations:
 // This function is required by the MetricType policy.
 // Evaluate the metric between two points (which may be of different types).
 template<typename VecTypeA, typename VecTypeB>
-void Evaluate(VecTypeA& a, VecTypeB& b);
+double Evaluate(const VecTypeA& a, const VecTypeB& b);
 @endcode
 
 Note that this method is not necessarily static, so a \c MetricType object
