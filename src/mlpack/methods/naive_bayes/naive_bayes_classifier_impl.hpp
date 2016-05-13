@@ -37,12 +37,14 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     probabilities.zeros(classes);
     means.zeros(dimensionality, classes);
     variances.zeros(dimensionality, classes);
+    posteriorProbabilities.zeros(dimensionality, classes);
   }
   else
   {
     probabilities.set_size(classes);
     means.set_size(dimensionality, classes);
     variances.set_size(dimensionality, classes);
+    posteriorProbabilities.set_size(dimensionality, classes);
   }
   Train(data, labels, incremental);
 }
@@ -56,6 +58,7 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const size_t dimensionality,
   probabilities.zeros(classes);
   means.zeros(dimensionality, classes);
   variances.zeros(dimensionality, classes);
+  posteriorProbabilities.zeros(dimensionality, classes);
 }
 
 template<typename MatType>
@@ -156,6 +159,7 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
   probabilities /= trainingPoints;
 }
 
+
 template<typename MatType>
 void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
                                              arma::Row<size_t>& results)
@@ -168,6 +172,8 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
   arma::mat invVar = 1.0 / variances;
 
   arma::mat testProbs = arma::repmat(probs.t(), data.n_cols, 1);
+
+  posteriorProbabilities.set_size(probs.size(), data.n_cols);
 
   results.set_size(data.n_cols); // No need to fill with anything yet.
 
@@ -193,7 +199,8 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
     testProbs.col(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
         log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
   }
-
+  
+  posteriorProbabilities = testProbs;
   // Now calculate the label.
   for (size_t i = 0; i < data.n_cols; ++i)
   {

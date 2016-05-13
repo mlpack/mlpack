@@ -132,6 +132,10 @@ class NaiveBayesClassifier
 
   //! Get the prior probabilities for each class.
   const arma::vec& Probabilities() const { return probabilities; }
+
+  //! Get the confidence scores( posterior probabilities) for each class.
+  const MatType& ConfidenceScores() const { return posteriorProbabilities; };
+
   //! Modify the prior probabilities for each class.
   arma::vec& Probabilities() { return probabilities; }
 
@@ -148,6 +152,8 @@ class NaiveBayesClassifier
   arma::vec probabilities;
   //! Number of training points seen so far.
   size_t trainingPoints;
+  //! Posterior Probabilities/ Confidence Scores.
+  MatType posteriorProbabilities;
 };
 
 } // namespace naive_bayes
