@@ -186,7 +186,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       emission[state].Train(emissionList, emissionProb[state]);
 
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
-        << std::endl;
+        << "." << std::endl;
 
     if (std::abs(oldLoglik - loglik) < tolerance)
     {
