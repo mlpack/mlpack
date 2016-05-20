@@ -52,7 +52,7 @@ class NSModel
   };
 
  private:
-  int treeType;
+  TreeTypes treeType;
   size_t leafSize;
 
   // For random projections.
@@ -83,7 +83,7 @@ class NSModel
    * Initialize the NSModel with the given type and whether or not a random
    * basis should be used.
    */
-  NSModel(int treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   //! Clean memory, if necessary.
   ~NSModel();
@@ -105,8 +105,8 @@ class NSModel
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
 
-  int TreeType() const { return treeType; }
-  int& TreeType() { return treeType; }
+  TreeTypes TreeType() const { return treeType; }
+  TreeTypes& TreeType() { return treeType; }
 
   bool RandomBasis() const { return randomBasis; }
   bool& RandomBasis() { return randomBasis; }
