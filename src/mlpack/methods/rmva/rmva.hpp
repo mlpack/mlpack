@@ -2,7 +2,8 @@
  * @file rmva.hpp
  * @author Marcus Edel
  *
- * Definition of the RNN class, which implements feed forward neural networks.
+ * Definition of the RecurrentNeuralAttention class, which implements the
+ * Recurrent Model for Visual Attention.
  */
 #ifndef __MLPACK_METHODS_RMVA_RMVA_HPP
 #define __MLPACK_METHODS_RMVA_RMVA_HPP
@@ -23,11 +24,32 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a standard feed forward network.
+ * This class implements the Recurrent Model for Visual Attention, using a
+ * variety of possible layer implementations.
  *
- * @tparam LayerTypes Contains all layer modules used to construct the network.
- * @tparam OutputLayerType The outputlayer type used to evaluate the network.
- * @tparam PerformanceFunction Performance strategy used to claculate the error.
+ * For more information, see the following paper.
+ *
+ * @code
+ * @article{MnihHGK14,
+ *   title={Recurrent Models of Visual Attention},
+ *   author={Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
+ *   journal={CoRR},
+ *   volume={abs/1406.6247},
+ *   year={2014}
+ * }
+ * @endcode
+ *
+ * @tparam LocatorType Type of locator network.
+ * @tparam LocationSensorType Type of location sensor network.
+ * @tparam GlimpseSensorType Type of glimpse sensor network.
+ * @tparam GlimpseType Type of glimpse network.
+ * @tparam StartType Type of start network.
+ * @tparam FeedbackType Type of feedback network.
+ * @tparam TransferType Type of transfer network.
+ * @tparam ClassifierType Type of classifier network.
+ * @tparam RewardPredictorType Type of reward predictor network.
+ * @tparam InitializationRuleType Rule used to initialize the weight matrix.
+ * @tparam MatType Matrix type (arma::mat or arma::sp_mat).
  */
 template<
   typename LocatorType,
@@ -60,11 +82,20 @@ class RecurrentNeuralAttention
       MatType>;
 
   /**
-   * Construct the RNN object, which will construct a recurrent neural
-   * network with the specified layers.
+   * Construct the RecurrentNeuralAttention object, which will construct the
+   * recurrent model for visual attentionh using the specified networks.
    *
-   * @param network The network modules used to construct the network.
-   * @param outputLayer The outputlayer used to evaluate the network.
+   * @param locator The locator network.
+   * @param locationSensor The location sensor network.
+   * @param glimpseSensor The glimpse sensor network.
+   * @param glimpse The glimpse network.
+   * @param start The start network.
+   * @param feedback The feedback network.
+   * @param transfer The transfer network.
+   * @param classifier The classifier network.
+   * @param rewardPredictor The reward predictor network.
+   * @param nStep Number of steps for the back-propagate through time.
+   * @param initializeRule Rule used to initialize the weight matrix.
    */
   template<typename TypeLocator,
            typename TypeLocationSensor,
@@ -85,8 +116,20 @@ class RecurrentNeuralAttention
                            TypeClassifier&& classifier,
                            TypeRewardPredictor&& rewardPredictor,
                            const size_t nStep,
-                           InitializationRuleType initializeRule = InitializationRuleType());
-
+                           InitializationRuleType initializeRule =
+                              InitializationRuleType());
+  /**
+   * Train the network on the given input data using the given optimizer.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param optimizer Instantiated optimizer used to train the model.
+   */
   template<
       template<typename> class OptimizerType = mlpack::optimization::RMSprop
   >
@@ -105,8 +148,8 @@ class RecurrentNeuralAttention
   void Predict(arma::mat& predictors, arma::mat& responses);
 
   /**
-   * Evaluate the feedforward network with the given parameters. This function
-   * is usually called by the optimizer to train the model.
+   * Evaluate the network with the given parameters. This function is usually
+   * called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
    * @param i Index of point to use for objective function evaluation.
@@ -118,8 +161,8 @@ class RecurrentNeuralAttention
                   const bool deterministic = true);
 
   /**
-   * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only one point in the dataset. This is useful for
+   * Evaluate the gradient of the network with the given parameters, and with
+   * respect to only one point in the dataset. This is useful for
    * optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
@@ -174,7 +217,8 @@ class RecurrentNeuralAttention
     ResetParameter(rewardPredictor);
     ResetParameter(start);
 
-    // Aample an initial starting actions by forwarding zeros through the locator.
+    // Sample an initial starting actions by forwarding zeros through the
+    // locator.
     locatorInput.push_back(new arma::cube(arma::zeros<arma::cube>(inputSize, 1,
         input.n_slices)));
 
@@ -378,7 +422,7 @@ class RecurrentNeuralAttention
   template<typename T, typename P>
   typename std::enable_if<
       HasRecurrentParameterCheck<T, P&(T::*)()>::value, void>::type
-  Save(const size_t layerNumber,
+  Save(const size_t /* layerNumber */,
        boost::ptr_vector<MatType>& activations,
        T& layer,
        P& /* unused */)
@@ -626,7 +670,7 @@ class RecurrentNeuralAttention
 
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I == (sizeof...(Tp)), void>::type
-  BackwardTail(const DataType& error, std::tuple<Tp...>& t)
+  BackwardTail(const DataType& /* error */, std::tuple<Tp...>& t)
   {
     std::get<sizeof...(Tp) - I>(t).Backward(
         std::get<sizeof...(Tp) - I>(t).OutputParameter(),
@@ -740,14 +784,14 @@ class RecurrentNeuralAttention
     // Nothing to do here
   }
 
+  //! The locator network.
+  LocatorType locator;
+
   //! The location sensor network.
   LocationSensorType locationSensor;
 
   //! The glimpse sensor network.
   GlimpseSensorType glimpseSensor;
-
-  //! The locator network.
-  LocatorType locator;
 
   //! The glimpse network.
   GlimpseType glimpse;
@@ -905,8 +949,8 @@ class RecurrentNeuralAttention
   arma::mat evaluationLocation;
 }; // class RecurrentNeuralAttention
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 // Include implementation.
 #include "rmva_impl.hpp"

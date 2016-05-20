@@ -2,7 +2,7 @@
  * @file rmva_impl.hpp
  * @author Marcus Edel
  *
- * Definition of the FFN class, which implements feed forward neural networks.
+ * Implementation of the Recurrent Model for Visual Attention.
  */
 #ifndef __MLPACK_METHODS_RMVA_RMVA_IMPL_HPP
 #define __MLPACK_METHODS_RMVA_RMVA_IMPL_HPP
@@ -12,7 +12,6 @@
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
-
 
 template<
   typename LocatorType,
@@ -270,7 +269,7 @@ double RecurrentNeuralAttention<
   location.clear();
   feedbackActivationsInput.clear();
 
-  // Aample an initial starting actions by forwarding zeros through the locator.
+  // Sample an initial starting actions by forwarding zeros through the locator.
   locatorInput.push_back(new arma::cube(arma::zeros<arma::cube>(inputSize, 1,
       input.n_slices)));
 
@@ -583,7 +582,7 @@ void RecurrentNeuralAttention<
     UpdateGradients(std::get<0>(transfer).Delta(), locationSensor);
     UpdateGradients(std::get<0>(transfer).Delta(), glimpseSensor);
 
-    // feedback module
+    // Feedback module.
     if (step != 0)
     {
       UpdateGradients(feedbackActivationsInput[step - 1],
