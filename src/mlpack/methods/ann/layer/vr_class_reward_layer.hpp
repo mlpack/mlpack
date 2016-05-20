@@ -70,7 +70,6 @@ class VRClassRewardLayer
   template<typename eT>
   double Forward(const arma::Mat<eT>& input, const arma::Mat<eT>& target)
   {
-    double output = 0;
     reward = 0;
     arma::uword index;
 
@@ -78,7 +77,7 @@ class VRClassRewardLayer
     {
       input.unsafe_col(i).max(index);
       reward = ((index + 1) == target(i)) * scale;
-    }   
+    }
 
     if (sizeAverage)
     {
@@ -101,7 +100,7 @@ class VRClassRewardLayer
   double Backward(const arma::field<arma::Mat<eT> >& input,
                 const arma::Mat<eT>& /* gy */,
                 arma::field<arma::Mat<eT> >& g)
-  {    
+  {
     g = arma::field<arma::Mat<eT> >(2, 1);
     g(0, 0) = arma::zeros(input(0, 0).n_rows, input(0, 0).n_cols);
 
