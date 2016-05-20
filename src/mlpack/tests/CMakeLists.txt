@@ -77,6 +77,7 @@ add_executable(mlpack_test
   nystroem_method_test.cpp
   armadillo_svd_test.cpp
   recurrent_network_test.cpp
+  ne_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
