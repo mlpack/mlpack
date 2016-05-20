@@ -21,7 +21,7 @@ namespace neighbor {
  * basis should be used.
  */
 template<typename SortPolicy>
-NSModel<SortPolicy>::NSModel(int treeType, bool randomBasis) :
+NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
     randomBasis(randomBasis),
     kdTreeNS(NULL),
