@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
-    int tree = 0;
+    KNNModel::TreeTypes tree = KNNModel::KD_TREE;
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")
