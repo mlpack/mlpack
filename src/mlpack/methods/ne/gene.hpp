@@ -111,12 +111,14 @@ class NeuronGene {
   NeuronGene() {}
 
   // Parametric constructor.
-  NeuronGene(int id,
+  NeuronGene(unsigned int id,
   	         NeuronType type,
-  	         ActivationFuncType actFuncType):
+  	         ActivationFuncType actFuncType,
+  	         unsigned int depth):
     aId(id),
     aType(type),
-    aActFuncType(actFuncType)
+    aActFuncType(actFuncType),
+    aDepth(depth)
   {}
 
   // Copy constructor.
@@ -124,6 +126,7 @@ class NeuronGene {
   	aId = neuronGene.aId;
   	aType = neuronGene.aType;
   	aActFuncType = neuronGene.aActFuncType;
+  	aDepth = neuronGene.aDepth;
   }
 
   // Destructor.
@@ -138,6 +141,24 @@ class NeuronGene {
   // Get activation function type.
   ActivationFuncType ActFuncType() const { return aActFuncType; }
 
+  // Set activation function type.
+  void ActFuncType(ActivationFuncType actFuncType) { aActFuncType = actFuncType; }
+
+  // Get depth.
+  unsigned int Depth() const { return aDepth; }
+
+  // Operator =.
+  NeuronGene& operator =(const NeuronGene& neuronGene) {
+    if (this != &neuronGene) {
+  	  aId = neuronGene.aId;
+  	  aType = neuronGene.aType;
+  	  aActFuncType = neuronGene.aActFuncType;
+  	  aDepth = neuronGene.aDepth;
+    }
+    
+    return *this;
+  }  
+
  private:
   // Neuron id.
   unsigned int aId;
@@ -148,16 +169,8 @@ class NeuronGene {
   // Activation function type.
   ActivationFuncType aActFuncType;
 
-  // Operator =.
-  NeuronGene& operator =(const NeuronGene& neuronGene) {
-    if (this != &neuronGene) {
-  	  aId = neuronGene.aId;
-  	  aType = neuronGene.aType;
-  	  aActFuncType = neuronGene.aActFuncType;
-    }
-    
-    return *this;
-  }  
+  // Depth in neural network
+  unsigned int aDepth;
 
 };
 
