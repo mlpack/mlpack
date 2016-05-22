@@ -5,8 +5,8 @@
  * Definition of the ConstantLayer class, which outputs a constant value given
  * any input.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

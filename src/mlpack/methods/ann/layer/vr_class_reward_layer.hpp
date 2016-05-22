@@ -5,8 +5,8 @@
  * Definition of the VRClassRewardLayer class, which implements the variance
  * reduced classification reinforcement layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

@@ -5,8 +5,8 @@
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
  * algorithm for the normal distribution.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

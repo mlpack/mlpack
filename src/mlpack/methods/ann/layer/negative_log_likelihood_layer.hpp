@@ -4,8 +4,8 @@
  *
  * Definition of the NegativeLogLikelihoodLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_Layer_HPP
-#define __MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_Layer_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_Layer_HPP
+#define MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_Layer_HPP
 
 #include <mlpack/core.hpp>
 

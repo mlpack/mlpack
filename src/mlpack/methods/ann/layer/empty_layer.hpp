@@ -4,8 +4,8 @@
  *
  * Definition of the EmptyLayer class, which is basically empty.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
 
 namespace mlpack{
 namespace ann /** Artificial Neural Network. */ {
