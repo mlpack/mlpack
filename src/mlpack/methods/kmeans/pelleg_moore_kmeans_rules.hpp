@@ -9,8 +9,6 @@
 #ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
 #define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
 
-#include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
-
 namespace mlpack {
 namespace kmeans {
 
