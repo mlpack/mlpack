@@ -1,0 +1,45 @@
+/**
+ * @file hilbert_r_tree_descent_heuristic_impl.hpp
+ * @author Mikhail Lozhnikov
+ *
+ * Implementation of HilbertRTreeDescentHeuristic, a class that chooses the best child
+ * of a node in an R tree when inserting a new point.
+ */
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
+
+#include "hilbert_r_tree_descent_heuristic.hpp"
+
+namespace mlpack {
+namespace tree {
+
+template<typename TreeType>
+size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(const TreeType* node, const arma::vec& point)
+{
+  size_t bestIndex = 0;
+
+  for(bestIndex = node->NumChildren() - 1; bestIndex > 0; bestIndex--)
+    if(node->Children()[bestIndex]->Split().LargestHilbertValue().CompareWithPoint(point) < 0)
+      break;
+
+  return bestIndex;
+}
+
+template<typename TreeType>
+size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
+                                  const TreeType* insertedNode)
+{
+  size_t bestIndex = 0;
+
+  for(bestIndex = node->NumChildren() - 1; bestIndex > 0; bestIndex--)
+    if(node->Children()[bestIndex]->Split().LargestHilbertValue() < node->Split().LargestHilbertValue())
+      break;
+
+  return bestIndex;
+}
+
+
+} //  namespace tree
+} //  namespace mlpack
+
+#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
