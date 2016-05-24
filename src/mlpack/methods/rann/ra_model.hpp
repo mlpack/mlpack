@@ -45,7 +45,7 @@ class RAModel
 
  private:
   //! The type of tree being used.
-  int treeType;
+  TreeTypes treeType;
   //! The leaf size of the tree being used (useful only for the kd-tree).
   size_t leafSize;
 
@@ -79,7 +79,7 @@ class RAModel
    * Initialize the RAModel with the given type and whether or not a random
    * basis should be used.
    */
-  RAModel(int treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  RAModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   //! Clean memory, if necessary.
   ~RAModel();
@@ -132,9 +132,9 @@ class RAModel
   size_t& LeafSize();
 
   //! Get the type of tree being used.
-  int TreeType() const;
+  TreeTypes TreeType() const;
   //! Modify the type of tree being used.
-  int& TreeType();
+  TreeTypes& TreeType();
 
   //! Get whether or not a random basis is being used.
   bool RandomBasis() const;
