@@ -48,7 +48,6 @@ set(DIRS
   range_search
   rann
   regularized_svd
-  rmva
   softmax_regression
   sparse_autoencoder
   sparse_coding
