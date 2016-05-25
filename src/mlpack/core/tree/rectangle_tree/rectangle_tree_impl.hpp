@@ -20,9 +20,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree(const MatType& data,
               const size_t maxLeafSize,
               const size_t minLeafSize,
@@ -48,7 +50,7 @@ RectangleTree(const MatType& data,
 {
   stat = StatisticType(*this);
 
-  split = SplitType<RectangleTree>(this);
+  auxiliaryInfo = AuxiliaryInformationType<RectangleTree>(this);
 
   // For now, just insert the points in order.
   RectangleTree* root = this;
@@ -60,9 +62,11 @@ RectangleTree(const MatType& data,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree(MatType&& data,
               const size_t maxLeafSize,
               const size_t minLeafSize,
@@ -88,7 +92,7 @@ RectangleTree(MatType&& data,
 {
   stat = StatisticType(*this);
 
-  split = SplitType<RectangleTree>(this);
+  auxiliaryInfo = AuxiliaryInformationType<RectangleTree>(this);
 
   // For now, just insert the points in order.
   RectangleTree* root = this;
@@ -100,13 +104,17 @@ RectangleTree(MatType&& data,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree(
-    RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
+    RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                  AuxiliaryInformationType>*
         parentNode,const size_t numMaxChildren) :
-    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : parentNode->MaxNumChildren()),
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : 
+                                        parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
     children(maxNumChildren + 1),
@@ -124,7 +132,7 @@ RectangleTree(
                                                   maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
-  split = SplitType<RectangleTree>(this);
+  auxiliaryInfo = AuxiliaryInformationType<RectangleTree>(this);
 }
 
 /**
@@ -134,9 +142,11 @@ RectangleTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree(
     const RectangleTree& other,
     const bool deepCopy) :
@@ -156,7 +166,7 @@ RectangleTree(
     points(other.Points()),
     localDataset(NULL)
 {
-  split = SplitType<RectangleTree>(other);
+  auxiliaryInfo = AuxiliaryInformationType<RectangleTree>(other);
   if (deepCopy)
   {
     if (numChildren > 0)
@@ -185,10 +195,12 @@ RectangleTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename Archive>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
     const typename boost::enable_if<typename Archive::is_loading>::type*) :
@@ -206,9 +218,11 @@ RectangleTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 ~RectangleTree()
 {
   for (size_t i = 0; i < numChildren; i++)
@@ -227,9 +241,11 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     SoftDelete()
 {
   parent = NULL;
@@ -247,9 +263,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     NullifyData()
 {
   localDataset = NULL;
@@ -262,9 +280,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     InsertPoint(const size_t point)
 {
   // Expand the bound regardless of whether it is a leaf node.
@@ -299,9 +319,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     InsertPoint(const size_t point, std::vector<bool>& relevels)
 {
   // Expand the bound regardless of whether it is a leaf node.
@@ -334,9 +356,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     InsertNode(RectangleTree* node,
                const size_t level,
                std::vector<bool>& relevels)
@@ -363,9 +387,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     DeletePoint(const size_t point)
 {
   // It is possible that this will cause a reinsertion, so we need to handle the
@@ -408,9 +434,11 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     DeletePoint(const size_t point, std::vector<bool>& relevels)
 {
   if (numChildren == 0)
@@ -443,9 +471,11 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     RemoveNode(const RectangleTree* node, std::vector<bool>& relevels)
 {
   for (size_t i = 0; i < numChildren; i++)
@@ -472,10 +502,11 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                     DescentType>::TreeSize() const
+                     DescentType, AuxiliaryInformationType>::TreeSize() const
 {
   int n = 0;
   for (int i = 0; i < numChildren; i++)
@@ -487,10 +518,11 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                     DescentType>::TreeDepth() const
+                     DescentType, AuxiliaryInformationType>::TreeDepth() const
 {
   int n = 1;
   RectangleTree* currentNode = const_cast<RectangleTree*> (this);
@@ -507,10 +539,11 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                          DescentType>::IsLeaf() const
+                          DescentType, AuxiliaryInformationType>::IsLeaf() const
 {
   return (numChildren == 0);
 }
@@ -522,13 +555,14 @@ inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline
 typename RectangleTree<MetricType, StatisticType, MatType, SplitType,
-    DescentType>::ElemType
+    DescentType, AuxiliaryInformationType>::ElemType
 RectangleTree<MetricType, StatisticType, MatType, SplitType,
-    DescentType>::FurthestPointDistance() const
+    DescentType, AuxiliaryInformationType>::FurthestPointDistance() const
 {
   if (!IsLeaf())
     return 0.0;
@@ -547,13 +581,14 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline
 typename RectangleTree<MetricType, StatisticType, MatType, SplitType,
-    DescentType>::ElemType
+    DescentType, AuxiliaryInformationType>::ElemType
 RectangleTree<MetricType, StatisticType, MatType, SplitType,
-    DescentType>::FurthestDescendantDistance() const
+    DescentType, AuxiliaryInformationType>::FurthestDescendantDistance() const
 {
   // Return the distance from the centroid to a corner of the bound.
   return 0.5 * bound.Diameter();
@@ -566,10 +601,11 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::NumPoints() const
+                       DescentType, AuxiliaryInformationType>::NumPoints() const
 {
   if (numChildren != 0) // This is not a leaf node.
     return 0;
@@ -583,10 +619,11 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::NumDescendants() const
+                  DescentType, AuxiliaryInformationType>::NumDescendants() const
 {
   if (numChildren == 0)
   {
@@ -607,10 +644,11 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::Descendant(const size_t index) const
+    DescentType, AuxiliaryInformationType>::Descendant(const size_t index) const
 {
   // I think this may be inefficient...
   if (numChildren == 0)
@@ -639,10 +677,11 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                            DescentType>::Point(const size_t index) const
+         DescentType, AuxiliaryInformationType>::Point(const size_t index) const
 {
   return points[index];
 }
@@ -654,9 +693,11 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     SplitNode(std::vector<bool>& relevels)
 {
   if (numChildren == 0)
@@ -667,7 +708,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    split.SplitLeafNode(this,relevels);
+    SplitType::SplitLeafNode(this,relevels);
   }
   else
   {
@@ -677,7 +718,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    split.SplitNonLeafNode(this,relevels);
+    SplitType::SplitNonLeafNode(this,relevels);
   }
 }
 
@@ -685,9 +726,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 RectangleTree() :
     maxNumChildren(0), // Try to give sensible defaults, but it shouldn't matter
     minNumChildren(0), // because this tree isn't valid anyway and is only used
@@ -712,9 +755,11 @@ RectangleTree() :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     CondenseTree(const arma::vec& point,
                  std::vector<bool>& relevels,
                  const bool usePoint)
@@ -841,9 +886,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     ShrinkBoundForPoint(const arma::vec& point)
 {
   bool shrunk = false;
@@ -937,9 +984,11 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     ShrinkBoundForBound(const bound::HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
@@ -971,10 +1020,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename Archive>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
     Serialize(Archive& ar,
               const unsigned int /* version */)
 {
@@ -1027,7 +1078,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
   ar & CreateNVP(points, "points");
   ar & CreateNVP(localDataset, "localDataset");
-  ar & CreateNVP(split, "split");
+  ar & CreateNVP(auxiliaryInfo, "auxiliaryInfo");
 
   // Because 'children' holds mlpack types (that have Serialize()), we can't use
   // the std::vector serialization.

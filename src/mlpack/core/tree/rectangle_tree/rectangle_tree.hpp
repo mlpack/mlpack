@@ -14,6 +14,7 @@
 #include "../statistic.hpp"
 #include "r_tree_split.hpp"
 #include "r_tree_descent_heuristic.hpp"
+#include "no_auxiliary_information.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -39,8 +40,9 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename MetricType = metric::EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename> class SplitType = RTreeSplit,
-         typename DescentType = RTreeDescentHeuristic>
+         typename SplitType = RTreeSplit,
+         typename DescentType = RTreeDescentHeuristic,
+         template<typename> class AuxiliaryInformationType = NoAuxiliaryInformation>
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
@@ -91,8 +93,8 @@ class RectangleTree
   std::vector<size_t> points;
   //! The local dataset
   MatType* localDataset;
-  //! The class that performs the split of the node.
-  SplitType<RectangleTree> split;
+  //! A tree-specific information
+  AuxiliaryInformationType<RectangleTree> auxiliaryInfo;
 
  public:
   //! A single traverser for rectangle type trees.  See
@@ -291,10 +293,12 @@ class RectangleTree
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
 
-  //! Return the split object of this node.
-  const SplitType<RectangleTree>& Split() const { return split; }
+  //! Return the auxiliary information object of this node.
+  const AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo() const 
+  { return auxiliaryInfo; }
   //! Modify the split object of this node.
-  SplitType<RectangleTree>& Split() { return split; }
+  AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo() 
+  { return auxiliaryInfo; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;

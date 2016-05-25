@@ -38,7 +38,8 @@ using RTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             RTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            NoAuxiliaryInformation>;
 
 /**
  * The R*-tree, a more recent variant of the R tree.  This template typedef
@@ -65,7 +66,8 @@ using RStarTree = RectangleTree<MetricType,
                                 StatisticType,
                                 MatType,
                                 RStarTreeSplit,
-                                RStarTreeDescentHeuristic>;
+                                RStarTreeDescentHeuristic,
+                                NoAuxiliaryInformation>;
 
 /**
  * The X-tree, a variant of the R tree with supernodes.  This template typedef
@@ -90,7 +92,8 @@ using XTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             XTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            XTreeAuxiliaryInformation>;
 
 } // namespace tree
 } // namespace mlpack

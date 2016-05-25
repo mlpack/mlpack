@@ -19,10 +19,12 @@
 #include "rectangle_tree/dual_tree_traverser_impl.hpp"
 #include "rectangle_tree/r_tree_split.hpp"
 #include "rectangle_tree/r_star_tree_split.hpp"
+#include "rectangle_tree/no_auxiliary_information.hpp"
 #include "rectangle_tree/r_tree_descent_heuristic.hpp"
 #include "rectangle_tree/r_star_tree_descent_heuristic.hpp"
 #include "rectangle_tree/traits.hpp"
 #include "rectangle_tree/x_tree_split.hpp"
+#include "rectangle_tree/x_tree_auxiliary_information.hpp"
 #include "rectangle_tree/typedef.hpp"
 
 #endif

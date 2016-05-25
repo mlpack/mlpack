@@ -14,33 +14,6 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit() :
-    normalNodeMaxNumChildren(0),
-    splitHistory(0)
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType *node) :
-    normalNodeMaxNumChildren(node->Parent() ? 
-                             node->Parent()->Split().NormalNodeMaxNumChildren() :
-                             node->MaxNumChildren()),
-    splitHistory(node->Bound().Dim())
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
-    normalNodeMaxNumChildren(other.Split().NormalNodeMaxNumChildren()),
-    splitHistory(other.Split().SplitHistory())
-{
-
-}
-
-
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -48,7 +21,7 @@ XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -66,7 +39,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
-    copy->Split().SplitLeafNode(copy,relevels);
+    XTreeSplit::SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -84,7 +57,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     size_t p = tree->MaxLeafSize() * 0.3;
     if (p == 0)
     {
-      tree->Split().SplitLeafNode(tree,relevels);
+      XTreeSplit::SplitLeafNode(tree,relevels);
       return;
     }
 
@@ -245,8 +218,10 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(),
+                            tree->AuxiliaryInfo().NormalNodeMaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(),
+                            tree->AuxiliaryInfo().NormalNodeMaxNumChildren());
 
   // The leaf nodes should never have any overlap introduced by the above method
   // since a split axis is chosen and then points are assigned based on their
@@ -288,16 +263,16 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
   par->Children()[par->NumChildren()++] = treeTwo;
 
   // We now update the split history of each new node.
-  treeOne->Split().SplitHistory().history[bestAxis] = true;
-  treeOne->Split().SplitHistory().lastDimension = bestAxis;
-  treeTwo->Split().SplitHistory().history[bestAxis] = true;
-  treeTwo->Split().SplitHistory().lastDimension = bestAxis;
+  treeOne->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeOne->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
+  treeTwo->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeTwo->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
 
   // We only add one at a time, so we should only need to test for equality just
   // in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par,relevels);
+    XTreeSplit::SplitNonLeafNode(par,relevels);
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -319,7 +294,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -336,7 +311,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitNonLeafNode(copy,relevels);
+    XTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
 
@@ -351,7 +326,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   std::vector<bool> axes(tree->Bound().Dim());
   std::vector<int> dimensionsLastUsed(tree->NumChildren());
   for (size_t i = 0; i < tree->NumChildren(); i++)
-    dimensionsLastUsed[i] = tree->Child(i).Split().SplitHistory().lastDimension;
+    dimensionsLastUsed[i] = 
+                    tree->Child(i).AuxiliaryInfo().SplitHistory().lastDimension;
   std::sort(dimensionsLastUsed.begin(), dimensionsLastUsed.end());
 
   size_t lastDim = dimensionsLastUsed[dimensionsLastUsed.size()/2];
@@ -362,7 +338,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   {
     axes[i] = true;
     for (size_t j = 0; j < tree->NumChildren(); j++)
-      axes[i] = axes[i] & tree->Child(j).Split().SplitHistory().history[i];
+      axes[i] = axes[i] & 
+                tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
     {
       minOverlapSplitDimension = i;
@@ -375,7 +352,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     {
       axes[i] = true;
       for (size_t j = 0; j < tree->NumChildren(); j++)
-        axes[i] = axes[i] & tree->Child(j).Split().SplitHistory().history[i];
+        axes[i] = axes[i] & 
+                  tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
       if (axes[i] == true)
       {
         minOverlapSplitDimension = i;
@@ -770,7 +748,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + NormalNodeMaxNumChildren();
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + 
+                              tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
         tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
@@ -787,7 +766,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       }
 
       // If we don't have to worry about the root, we just enlarge this node.
-      tree->MaxNumChildren() += NormalNodeMaxNumChildren();
+      tree->MaxNumChildren() += 
+                              tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
       tree->Children().resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)
         tree->Child(i).Parent() = tree;
@@ -800,10 +780,10 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   }
 
   // Update the split history of each child.
-  treeOne->Split().SplitHistory().history[bestAxis] = true;
-  treeOne->Split().SplitHistory().lastDimension = bestAxis;
-  treeTwo->Split().SplitHistory().history[bestAxis] = true;
-  treeTwo->Split().SplitHistory().lastDimension = bestAxis;
+  treeOne->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeOne->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
+  treeTwo->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeTwo->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
 
   // Remove this node and insert treeOne and treeTwo
   TreeType* par = tree->Parent();
@@ -830,7 +810,7 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    par->Split().SplitNonLeafNode(par,relevels);
+    XTreeSplit::SplitNonLeafNode(par,relevels);
   }
 
   // We have to update the children of each of these new nodes so that they
@@ -859,25 +839,11 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
  * numberOfChildren.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()] = srcNode;
   destTree->NumChildren()++;
-}
-
-/**
- * Serialize the split.
- */
-template<typename TreeType>
-template<typename Archive>
-void XTreeSplit<TreeType>::Serialize(Archive& ar,const unsigned int /* version */)
-{
-  using data::CreateNVP;
-
-  ar & CreateNVP(normalNodeMaxNumChildren, "normalNodeMaxNumChildren");
-  ar & CreateNVP(splitHistory, "splitHistory");
-
 }
 
 } // namespace tree

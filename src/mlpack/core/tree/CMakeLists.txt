@@ -43,6 +43,7 @@ set(SOURCES
   rectangle_tree/dual_tree_traverser_impl.hpp
   rectangle_tree/r_tree_split.hpp
   rectangle_tree/r_tree_split_impl.hpp
+  rectangle_tree/no_auxiliary_information.hpp
   rectangle_tree/r_tree_descent_heuristic.hpp
   rectangle_tree/r_tree_descent_heuristic_impl.hpp
   rectangle_tree/r_star_tree_descent_heuristic.hpp
@@ -51,6 +52,7 @@ set(SOURCES
   rectangle_tree/r_star_tree_split_impl.hpp
   rectangle_tree/x_tree_split.hpp
   rectangle_tree/x_tree_split_impl.hpp
+  rectangle_tree/x_tree_auxiliary_information.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
