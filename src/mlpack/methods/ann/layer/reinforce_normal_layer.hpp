@@ -46,13 +46,14 @@ class ReinforceNormalLayer
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output)
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     if (!deterministic)
     {
       // Multiply by standard deviations and re-center the means to the mean.
-      output = arma::randn<OutputType>(arma::size(input)) * stdev + input;
+      output = arma::randn<arma::Mat<eT> >(input.n_rows, input.n_cols) *
+          stdev + input;
     }
     else
     {
