@@ -15,6 +15,7 @@ endmacro ()
 
 # Recurse into each method mlpack provides.
 set(DIRS
+  preprocess
   adaboost
   amf
   ann
