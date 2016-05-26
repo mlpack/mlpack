@@ -13,17 +13,15 @@ PROGRAM_INFO("Split into Train and Test Data", "This "
 
 // Define parameters for data
 PARAM_STRING_REQ("input_file", "File containing data,", "i");
-PARAM_STRING_REQ("output_train_data", "File name to save train data", "d");
-PARAM_STRING_REQ("output_test_data", "File name to save test data", "D");
-
-// Define parameters for labels
 PARAM_STRING_REQ("input_label", "File containing labels", "I");
-PARAM_STRING_REQ("output_train_label", "File name to save train label", "l");
-PARAM_STRING_REQ("output_test_label", "File name to save test label", "L");
+PARAM_STRING_REQ("training_file", "File name to save train data", "t");
+PARAM_STRING_REQ("test_file", "File name to save test data", "T");
+PARAM_STRING_REQ("training_labels_file", "File name to save train label", "l");
+PARAM_STRING_REQ("test_labels_file", "File name to save test label", "L");
 
 // Define optional test ratio, default is 0.2 (Test 20% Train 80%)
-PARAM_DOUBLE("test_ratio", "Ratio of test set, defaults to 0.2"
-    "if not set", "r", 0.2);
+PARAM_DOUBLE("test_ratio", "Ratio of test set, if not set,"
+    "the ratio defaults to 0.2", "r", 0.2);
 
 using namespace mlpack;
 using namespace arma;
@@ -34,16 +32,12 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  // data
   const string inputFile = CLI::GetParam<string>("input_file");
-  const string outputTrainData = CLI::GetParam<string>("output_train_data");
-  const string outputTestData = CLI::GetParam<string>("output_test_data");
-  // labels
   const string inputLabel = CLI::GetParam<string>("input_label");
-  const string outputTrainLabel = CLI::GetParam<string>("output_train_label");
-  const string outputTestLabel = CLI::GetParam<string>("output_test_label");
-
-  // Ratio
+  const string trainingFile = CLI::GetParam<string>("training_file");
+  const string testFile = CLI::GetParam<string>("test_file");
+  const string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
+  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
   // container for input data and labels
@@ -62,16 +56,9 @@ int main(int argc, char** argv)
   Log::Info << "Train Label Count: " << get<2>(value).n_cols << endl;
   Log::Info << "Test Label Count: " << get<3>(value).n_cols << endl;
 
-  // Save Train Data
-  data::Save(outputTrainData, get<0>(value), false);
-
-  // Save Test Data
-  data::Save(outputTestData, get<1>(value), false);
-
-  // Save Train Label
-  data::Save(outputTrainLabel, get<2>(value), false);
-
-  // Save Test Label
-  data::Save(outputTestLabel, get<3>(value), false);
+  data::Save(trainingFile, get<0>(value), false);
+  data::Save(testFile, get<1>(value), false);
+  data::Save(trainingLabelsFile, get<2>(value), false);
+  data::Save(testLabelsFile, get<3>(value), false);
 }
 
