@@ -132,7 +132,7 @@ Documentation is automatically generated using those macros, and when the
 program is run with --help the following is displayed:
 
 @code
-$ pca --help
+$ mlpack_pca --help
 Principal Components Analysis
 
   This program performs principal components analysis on the given dataset.  It
