@@ -2,7 +2,7 @@
  * @file split_data.hpp
  * @author Tham Ngap Wei, Keon Kim
  *
- * Defines TrainTestSplit() and LabelTrainTestSplit(), utility functions to split a dataset into a
+ * Defines Split(), a utility function to split a dataset into a
  * training set and a test set.
  */
 #ifndef MLPACK_CORE_UTIL_SPLIT_DATA_HPP
@@ -28,7 +28,7 @@ namespace data {
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
- * LabelTrainTestSplit(input, label, trainData,
+ * Split(input, label, trainData,
  *                testData, trainLabel, testLabel, 0.3);
  * @endcode
  *
@@ -41,13 +41,13 @@ namespace data {
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  */
 template<typename T, typename U>
-void LabelTrainTestSplit(const arma::Mat<T>& input,
-                         const arma::Row<U>& inputLabel,
-                         arma::Mat<T>& trainData,
-                         arma::Mat<T>& testData,
-                         arma::Row<U>& trainLabel,
-                         arma::Row<U>& testLabel,
-                         const double testRatio)
+void Split(const arma::Mat<T>& input,
+                    const arma::Row<U>& inputLabel,
+                    arma::Mat<T>& trainData,
+                    arma::Mat<T>& testData,
+                    arma::Row<U>& trainLabel,
+                    arma::Row<U>& testLabel,
+                    const double testRatio)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -86,7 +86,7 @@ void LabelTrainTestSplit(const arma::Mat<T>& input,
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
- * TrainTestSplit(input, trainData, testData, 0.3);
+ * Split(input, trainData, testData, 0.3);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -95,7 +95,7 @@ void LabelTrainTestSplit(const arma::Mat<T>& input,
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  */
 template<typename T>
-void TrainTestSplit(const arma::Mat<T>& input,
+void Split(const arma::Mat<T>& input,
                     arma::Mat<T>& trainData,
                     arma::Mat<T>& testData,
                     const double testRatio)
@@ -129,7 +129,7 @@ void TrainTestSplit(const arma::Mat<T>& input,
  * @code
  * arma::mat input = loadData();
  * arma::Row<size_t> label = loadLabel();
- * auto splitResult = LabelTrainTestSplit(input, label, 0.2);
+ * auto splitResult = Split(input, label, 0.2);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -140,16 +140,16 @@ void TrainTestSplit(const arma::Mat<T>& input,
  */
 template<typename T,typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
-LabelTrainTestSplit(const arma::Mat<T>& input,
-                    const arma::Row<U>& inputLabel,
-                    const double testRatio)
+Split(const arma::Mat<T>& input,
+               const arma::Row<U>& inputLabel,
+               const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
   arma::Row<U> trainLabel;
   arma::Row<U> testLabel;
 
-  LabelTrainTestSplit(input, inputLabel, trainData, testData, trainLabel, testLabel,
+  Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
       testRatio);
 
   return std::make_tuple(trainData, testData, trainLabel, testLabel);
@@ -163,7 +163,7 @@ LabelTrainTestSplit(const arma::Mat<T>& input,
  *
  * @code
  * arma::mat input = loadData();
- * auto splitResult = TrainTestSplit(input, 0.2);
+ * auto splitResult = Split(input, 0.2);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -173,12 +173,12 @@ LabelTrainTestSplit(const arma::Mat<T>& input,
  */
 template<typename T>
 std::tuple<arma::Mat<T>, arma::Mat<T>>
-TrainTestSplit(const arma::Mat<T>& input,
+Split(const arma::Mat<T>& input,
                const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
-  TrainTestSplit(input, trainData, testData, testRatio);
+  Split(input, trainData, testData, testRatio);
 
   return std::make_tuple(trainData, testData);
 }

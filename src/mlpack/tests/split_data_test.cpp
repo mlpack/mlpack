@@ -73,11 +73,11 @@ BOOST_AUTO_TEST_CASE(SplitDataSplitResultMat)
   input.randu();
 
   // Set the labels to the column ID, so that CompareData can compare the data
-  // after LabelTrainTestSplit is called.
+  // after Split is called.
   const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
       input.n_cols);
 
-  const auto value = LabelTrainTestSplit(input, labels, 0.2);
+  const auto value = Split(input, labels, 0.2);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8);
   BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2);
   BOOST_REQUIRE_EQUAL(std::get<2>(value).n_cols, 8);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(SplitDataLargerTest)
   const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
       input.n_cols);
 
-  const auto value = LabelTrainTestSplit(input, labels, 0.3);
+  const auto value = Split(input, labels, 0.3);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 497 - size_t(0.3 * 497));
   BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, size_t(0.3 * 497));
   BOOST_REQUIRE_EQUAL(std::get<2>(value).n_cols, 497 - size_t(0.3 * 497));

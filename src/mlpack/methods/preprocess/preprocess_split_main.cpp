@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   arma::rowvec labels_row = labels.row(0); // extract first row
 
   // Split Data
-  const auto value = data::LabelTrainTestSplit(data, labels_row, testRatio);
+  const auto value = data::Split(data, labels_row, testRatio);
   Log::Info << "Train Data Count: " << get<0>(value).n_cols << endl;
   Log::Info << "Test Data Count: " << get<1>(value).n_cols << endl;
   Log::Info << "Train Label Count: " << get<2>(value).n_cols << endl;
