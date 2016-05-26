@@ -42,23 +42,35 @@ int main(int argc, char** argv)
 
   // container for input data and labels
   arma::mat data;
-  arma::Mat<size_t> labels;
+  arma::mat labels;
 
   // Load Data and Labels
   data::Load(inputFile, data, true);
   data::Load(inputLabel, labels, true);
-  arma::Row<size_t> labels_row = labels.row(0); // extract first row
+  arma::rowvec labels_row = labels.row(0); // extract first row
 
   // Split Data
-  const auto value = data::TrainTestSplit(data, labels_row, testRatio);
+  const auto value = data::LabelTrainTestSplit(data, labels_row, testRatio);
   Log::Info << "Train Data Count: " << get<0>(value).n_cols << endl;
   Log::Info << "Test Data Count: " << get<1>(value).n_cols << endl;
   Log::Info << "Train Label Count: " << get<2>(value).n_cols << endl;
   Log::Info << "Test Label Count: " << get<3>(value).n_cols << endl;
 
-  data::Save(trainingFile, get<0>(value), false);
-  data::Save(testFile, get<1>(value), false);
-  data::Save(trainingLabelsFile, get<2>(value), false);
-  data::Save(testLabelsFile, get<3>(value), false);
+  // Cast double matrix to string matrix
+  //Mat<string> training = conv_to<Mat<string>>::from(get<0>(value));
+  //Mat<string> test = conv_to<Mat<string>>::from(get<1>(value));
+  //Mat<string> trainingLabels = conv_to<Mat<string>>::from(get<2>(value));
+  //Mat<string> testLabels = conv_to<Mat<string>>::from(get<3>(value));
+
+  //Cast double matrix to string matrix
+  mat training = get<0>(value);
+  mat test = get<1>(value);
+  mat trainingLabels = get<2>(value);
+  mat testLabels = get<3>(value);
+
+  data::Save(trainingFile, training, false);
+  data::Save(testFile, test, false);
+  data::Save(trainingLabelsFile, trainingLabels, false);
+  data::Save(testLabelsFile, testLabels, false);
 }
 
