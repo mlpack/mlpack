@@ -272,7 +272,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   {
     Log::Warn<<"Requested "<<T<<" bins are more than existing number, using "<<
       (1<<numProj)-1<<" instead."<<endl;
-    T = (1<<numProj) - 1;
+    T = ( 1<<numProj ) - 1;
   }
 
   // Each column of additionalProbingBins is the code of a bin.
@@ -292,23 +292,23 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
   // calculate scores = distances^2
   arma::vec scores(2*numProj);
-  scores.rows(0, numProj-1) = arma::pow(limLow, 2);
-  scores.rows(numProj, 2*numProj-1) = arma::pow(limHigh, 2);
+  scores.rows(0, numProj - 1) = arma::pow(limLow, 2);
+  scores.rows(numProj, 2 * numProj - 1) = arma::pow(limHigh, 2);
 
   // actions vector shows what transformation to apply to a coordinate
-  arma::Col<short int> actions(2*numProj); //will be [-1 ... 1 ...]
-  actions.rows(0, numProj-1) = 
-    -1*arma::ones<arma::Col<short int>>(numProj); //-1s
-  actions.rows(numProj, 2*numProj-1) = 
-    arma::ones<arma::Col<short int>>(numProj); //1s
+  arma::Col<short int> actions(2 * numProj); //will be [-1 ... 1 ...]
+  actions.rows(0, numProj - 1) = 
+    -1 * arma::ones< arma::Col<short int> > (numProj); //-1s
+  actions.rows(numProj, 2 * numProj - 1) = 
+    arma::ones< arma::Col<short int> > (numProj); //1s
 
   // acting dimension vector shows which coordinate to transform according to
   // actions
-  arma::Col<size_t> positions(2*numProj); //will be [0 1 2 ... 0 1 2 ...]
-  positions.rows(0, numProj-1) = 
-    arma::linspace<arma::Col<size_t>>(0, numProj-1, numProj);
-  positions.rows(numProj, 2*numProj-1) = 
-    arma::linspace<arma::Col<size_t>>(0, numProj-1, numProj);
+  arma::Col<size_t> positions(2 * numProj); //will be [0 1 2 ... 0 1 2 ...]
+  positions.rows(0, numProj - 1) = 
+    arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
+  positions.rows(numProj, 2 * numProj - 1) = 
+    arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
 
   // sort in increasing order
   arma::Col<long long unsigned int> sortidx = arma::sort_index(scores);
@@ -368,7 +368,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       perturbationSets.push_back(As); //add shifted set to sets
       std::pair<double, size_t> shifted(
           perturbationScore(As, scores), 
-          perturbationSets.size()-1); //create new (score, index) pair for shift
+          perturbationSets.size() - 1); //create new (score, index) pair for shift
       minHeap.push(shifted);
 
       //modify Ai (expand)
@@ -377,7 +377,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       perturbationSets.push_back(Ae); //add expanded set to sets
       std::pair<double, size_t> expanded(
           perturbationScore(Ae, scores),
-          perturbationSets.size()-1); //create new (score, index) pair for expand
+          perturbationSets.size() - 1); //create new (score, index) pair for expand
       minHeap.push(expanded);
 
     }while (! perturbationValid(Ai, positions, numProj)  );//Discard invalid perturbations
@@ -739,6 +739,33 @@ void LSHSearch<SortPolicy>::BuildHash()
   Log::Info << "Final hash table size: (" << numRowsInTable << " x "
             << maxBucketSize << ")" << std::endl;
   secondHashTable.resize(numRowsInTable, maxBucketSize);
+}
+
+
+template<typename SortPolicy>
+double LSHSearch<SortPolicy>::ComputeRecall(
+          const arma::Mat<size_t> &foundNeighbors,
+          const arma::Mat<size_t> &realNeighbors)
+{
+
+  //make sure the user has given us correct input
+  assert(foundNeighbors.n_cols == realNeighbors.n_cols);
+  assert(foundNeighbors.n_rows == realNeighbors.n_rows);
+
+  const size_t queries = foundNeighbors.n_cols;
+  const size_t neighbors = foundNeighbors.n_rows; //k
+
+
+  double found = 0;
+  for (size_t col = 0; col < queries; ++col) //for each point
+    for (size_t row = 0; row < neighbors; ++row) //for each neighbor in found
+      for (size_t nei = 0; nei < realNeighbors.n_rows; ++nei) //look for neighbor in real
+        if (realNeighbors(row, col) == foundNeighbors(nei, col))
+        {
+          found++;
+          break;
+        }
+  return found/realNeighbors.n_elem;
 }
 
 template<typename SortPolicy>

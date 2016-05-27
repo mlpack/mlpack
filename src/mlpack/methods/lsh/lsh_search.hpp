@@ -143,6 +143,11 @@ class LSHSearch
               const size_t T = 0,
               const size_t numTablesToSearch = 0);
 
+
+  //TODO: Document this
+  double ComputeRecall(const arma::Mat<size_t> &foundNeighbors,
+                       const arma::Mat<size_t> &realNeighbors);
+
   /**
    * Serialize the LSH model.
    *
