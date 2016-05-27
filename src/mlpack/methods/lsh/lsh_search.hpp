@@ -191,6 +191,14 @@ class LSHSearch
   void BuildHash();
 
   /**
+   * TODO: Document this
+   */
+  void GetAdditionalProbingBins(const arma::vec &allProjInTables, 
+                                const arma::vec &queryCodesNotFloored,
+                                const size_t T,
+                                arma::mat &additionalProbingBins) const;
+
+  /**
    * This function takes a query and hashes it into each of the hash tables to
    * get keys for the query and then the key is hashed to a bucket of the second
    * hash table and all the points (if any) in those buckets are collected as
@@ -200,11 +208,13 @@ class LSHSearch
    * @param referenceIndices The list of neighbor candidates obtained from
    *    hashing the query into all the hash tables and eventually into
    *    multiple buckets of the second hash table.
+   * @param T The number of additional probing bins for Multiprobe LSH
    */
   template<typename VecType>
   void ReturnIndicesFromTable(const VecType& queryPoint,
                               arma::uvec& referenceIndices,
-                              size_t numTablesToSearch) const;
+                              size_t numTablesToSearch,
+                              size_t T = 0) const;
 
   /**
    * This is a helper function that computes the distance of the query to the
