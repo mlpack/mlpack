@@ -67,7 +67,17 @@ void CheckDuplication(const Row<size_t>& trainLabels,
     BOOST_REQUIRE_EQUAL(counts[i], 1);
 }
 
-BOOST_AUTO_TEST_CASE(SplitDataSplitResultMat)
+BOOST_AUTO_TEST_CASE(SplitDataResultMat)
+{
+  mat input(2, 10);
+  input.randu();
+
+  const auto value = Split(input, 0.2);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // test data
+}
+
+BOOST_AUTO_TEST_CASE(SplitLabeledDataResultMat)
 {
   mat input(2, 10);
   input.randu();
@@ -95,6 +105,16 @@ BOOST_AUTO_TEST_CASE(SplitDataSplitResultMat)
  * The same test as above, but on a larger dataset.
  */
 BOOST_AUTO_TEST_CASE(SplitDataLargerTest)
+{
+  mat input(10, 497);
+  input.randu();
+
+  const auto value = Split(input, 0.3);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 497 - size_t(0.3 * 497));
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, size_t(0.3 * 497));
+}
+
+BOOST_AUTO_TEST_CASE(SplitLabeledDataLargerTest)
 {
   mat input(10, 497);
   input.randu();
