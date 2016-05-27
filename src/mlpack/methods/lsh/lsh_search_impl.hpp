@@ -234,13 +234,16 @@ inline void perturbationExpand(std::vector<size_t> &A)
 }
 
 // Return true if perturbation set is valid
-inline bool perturbationValid(const std::vector<size_t> &A, const size_t numProj)
+inline bool perturbationValid(
+    const std::vector<size_t> &A, 
+    const arma::Col<size_t> &positions, 
+    const size_t numProj)
 {
   bool check[numProj] = {0};
 
   for (size_t i = 0; i < A.size(); ++i)
   {
-    if ( A[i] >= numProj )
+    if ( positions(A[i]) >= numProj )
       return false; //invalid if contains non-existing dimension
 
     //check that we only see each dimension once
@@ -257,12 +260,20 @@ template<typename SortPolicy>
 void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     const arma::vec &queryCode,
     const arma::vec &queryCodeNotFloored,
-    const size_t T,
+    size_t T,
     arma::mat &additionalProbingBins) const
 {
 
   if (T == 0)
     return;
+
+  //if requested for more bins than actually exist, do maximum possible
+  if (T > ( (size_t) (1<<numProj) - 1) )
+  {
+    Log::Warn<<"Requested "<<T<<" bins are more than existing number, using "<<
+      (1<<numProj)-1<<" instead."<<endl;
+    T = (1<<numProj) - 1;
+  }
 
   // Each column of additionalProbingBins is the code of a bin.
   additionalProbingBins.zeros(numProj, T);
@@ -369,7 +380,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
           perturbationSets.size()-1); //create new (score, index) pair for expand
       minHeap.push(expanded);
 
-    }while (! perturbationValid(Ai, numProj)  );//Discard invalid perturbations
+    }while (! perturbationValid(Ai, positions, numProj)  );//Discard invalid perturbations
     
     //add perturbation vector to probing sequence if valid
     for (size_t i = 0; i < Ai.size(); ++i)

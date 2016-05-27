@@ -210,7 +210,7 @@ class LSHSearch
    */
   void GetAdditionalProbingBins(const arma::vec &queryCode, 
                                 const arma::vec &queryCodeNotFloored,
-                                const size_t T,
+                                size_t T,
                                 arma::mat &additionalProbingBins) const;
 
   /**
