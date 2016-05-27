@@ -116,6 +116,7 @@ class LSHSearch
               const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
+              const size_t T = 0,
               const size_t numTablesToSearch = 0);
 
   /**
@@ -139,6 +140,7 @@ class LSHSearch
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
+              const size_t T = 0,
               const size_t numTablesToSearch = 0);
 
   /**
