@@ -305,11 +305,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   actions = actions(sortidx);
   positions = positions(sortidx);
 
-  //DEBUG (TODO: remove this)
-  //cout<<"-=-=-=-=-=-GetAdditionalProbingBins()-=-=-=-=-=-="<<endl;
-  //cout<<scores.t()<<endl;
-  //cout<<positions.t()<<endl;
-
 
   // Theory:
   // From the paper: This is the part that creates the probing sequence
@@ -381,9 +376,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       additionalProbingBins(positions(Ai[i]), pvec) += actions(Ai[i]);
 
   }
-  //cout<<"Initial Query Code:"<<endl<<queryCode.t()<<endl;
-  //cout<<"Additional Bin:"<<endl<<additionalProbingBins.t()<<endl;
-  //cout<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="<<endl;
 
 
 }

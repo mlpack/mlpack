@@ -193,10 +193,23 @@ class LSHSearch
   void BuildHash();
 
   /**
-   * TODO: Document this
+   * This function generates first-level codes for T bins adjacent to the query's
+   * own bin. These T bins are the T most likely bins where a query's neighbor
+   * might have ended up. To calculate this likelihood, the distance of the
+   * query's projection from the first-level hash limits is computed.
+   *
+   * The resulting codes are placed in additionalProbingBins, sized numProj x T.
+   *
+   * This function is designed based on the paper "Multi-Probe LSH: Efficient
+   * Indexing for High-Dimensional Similarity Search" by Q. Lv et al.
+   *
+   * @param queryCode the first-level hash code of a query
+   * @param queryCodeNotFloored the unfloored projection of a query
+   * @param T the number of additional probing bins to be found
+   * @param additionalProbingBins The matrix of additional bin codes
    */
-  void GetAdditionalProbingBins(const arma::vec &allProjInTables, 
-                                const arma::vec &queryCodesNotFloored,
+  void GetAdditionalProbingBins(const arma::vec &queryCode, 
+                                const arma::vec &queryCodeNotFloored,
                                 const size_t T,
                                 arma::mat &additionalProbingBins) const;
 
