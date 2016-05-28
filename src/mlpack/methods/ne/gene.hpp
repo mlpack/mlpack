@@ -142,7 +142,9 @@ class NeuronGene {
   ActivationFuncType ActFuncType() const { return aActFuncType; }
 
   // Set activation function type.
-  void ActFuncType(ActivationFuncType actFuncType) { aActFuncType = actFuncType; }
+  void ActFuncType(ActivationFuncType actFuncType) {
+    aActFuncType = actFuncType;
+  }
 
   // Get depth.
   unsigned int Depth() const { return aDepth; }
