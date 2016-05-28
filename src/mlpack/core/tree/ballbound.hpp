@@ -19,11 +19,11 @@ namespace bound {
  * specific point (center). TMetricType is the custom metric type that defaults
  * to the Euclidean (L2) distance.
  *
- * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  * @tparam TMetricType metric type used in the distance measure.
+ * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
-template<typename VecType = arma::vec,
-         typename TMetricType = metric::LMetric<2, true>>
+template<typename TMetricType = metric::LMetric<2, true>,
+         typename VecType = arma::vec>
 class BallBound
 {
  public:
@@ -189,8 +189,8 @@ class BallBound
 };
 
 //! A specialization of BoundTraits for this bound type.
-template<typename VecType, typename TMetricType>
-struct BoundTraits<BallBound<VecType, TMetricType>>
+template<typename TMetricType, typename VecType>
+struct BoundTraits<BallBound<TMetricType, VecType>>
 {
   //! These bounds are potentially loose in some dimensions.
   const static bool HasTightBounds = false;
