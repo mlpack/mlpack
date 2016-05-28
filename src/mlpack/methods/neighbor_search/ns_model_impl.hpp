@@ -320,7 +320,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       {
         std::vector<size_t> oldFromNewReferences;
         typename NSType<tree::BallTree>::Tree* ballTree =
-            new typename NSType<tree::KDTree>::Tree(std::move(referenceSet),
+            new typename NSType<tree::BallTree>::Tree(std::move(referenceSet),
             oldFromNewReferences, leafSize);
         ballTreeNS = new NSType<tree::BallTree>(ballTree, singleMode);
 
