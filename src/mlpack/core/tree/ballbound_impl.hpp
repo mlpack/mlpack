@@ -18,10 +18,10 @@ namespace mlpack {
 namespace bound {
 
 //! Empty Constructor.
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::BallBound() :
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::BallBound() :
     radius(std::numeric_limits<ElemType>::lowest()),
-    metric(new TMetricType()),
+    metric(new MetricType()),
     ownsMetric(true)
 { /* Nothing to do. */ }
 
@@ -30,11 +30,11 @@ BallBound<TMetricType, VecType>::BallBound() :
  *
  * @param dimension Dimensionality of ball bound.
  */
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::BallBound(const size_t dimension) :
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::BallBound(const size_t dimension) :
     radius(std::numeric_limits<ElemType>::lowest()),
     center(dimension),
-    metric(new TMetricType()),
+    metric(new MetricType()),
     ownsMetric(true)
 { /* Nothing to do. */ }
 
@@ -44,18 +44,18 @@ BallBound<TMetricType, VecType>::BallBound(const size_t dimension) :
  * @param radius Radius of ball bound.
  * @param center Center of ball bound.
  */
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::BallBound(const ElemType radius,
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::BallBound(const ElemType radius,
                                            const VecType& center) :
     radius(radius),
     center(center),
-    metric(new TMetricType()),
+    metric(new MetricType()),
     ownsMetric(true)
 { /* Nothing to do. */ }
 
 //! Copy Constructor. To prevent memory leaks.
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::BallBound(const BallBound& other) :
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::BallBound(const BallBound& other) :
     radius(other.radius),
     center(other.center),
     metric(other.metric),
@@ -63,8 +63,8 @@ BallBound<TMetricType, VecType>::BallBound(const BallBound& other) :
 { /* Nothing to do. */ }
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>& BallBound<TMetricType, VecType>::operator=(
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
     const BallBound& other)
 {
   radius = other.radius;
@@ -74,8 +74,8 @@ BallBound<TMetricType, VecType>& BallBound<TMetricType, VecType>::operator=(
 }
 
 //! Move constructor.
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::BallBound(BallBound&& other) :
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::BallBound(BallBound&& other) :
     radius(other.radius),
     center(other.center),
     metric(other.metric),
@@ -89,17 +89,17 @@ BallBound<TMetricType, VecType>::BallBound(BallBound&& other) :
 }
 
 //! Destructor to release allocated memory.
-template<typename TMetricType, typename VecType>
-BallBound<TMetricType, VecType>::~BallBound()
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>::~BallBound()
 {
   if (ownsMetric)
     delete metric;
 }
 
 //! Get the range in a certain dimension.
-template<typename TMetricType, typename VecType>
-math::RangeType<typename BallBound<TMetricType, VecType>::ElemType>
-BallBound<TMetricType, VecType>::operator[](const size_t i) const
+template<typename MetricType, typename VecType>
+math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+BallBound<MetricType, VecType>::operator[](const size_t i) const
 {
   if (radius < 0)
     return math::Range();
@@ -110,8 +110,8 @@ BallBound<TMetricType, VecType>::operator[](const size_t i) const
 /**
  * Determines if a point is within the bound.
  */
-template<typename TMetricType, typename VecType>
-bool BallBound<TMetricType, VecType>::Contains(const VecType& point) const
+template<typename MetricType, typename VecType>
+bool BallBound<MetricType, VecType>::Contains(const VecType& point) const
 {
   if (radius < 0)
     return false;
@@ -122,10 +122,10 @@ bool BallBound<TMetricType, VecType>::Contains(const VecType& point) const
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 template<typename OtherVecType>
-typename BallBound<TMetricType, VecType>::ElemType
-BallBound<TMetricType, VecType>::MinDistance(
+typename BallBound<MetricType, VecType>::ElemType
+BallBound<MetricType, VecType>::MinDistance(
     const OtherVecType& point,
     typename boost::enable_if<IsVector<OtherVecType>>* /* junk */) const
 {
@@ -138,9 +138,9 @@ BallBound<TMetricType, VecType>::MinDistance(
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<typename TMetricType, typename VecType>
-typename BallBound<TMetricType, VecType>::ElemType
-BallBound<TMetricType, VecType>::MinDistance(const BallBound& other)
+template<typename MetricType, typename VecType>
+typename BallBound<MetricType, VecType>::ElemType
+BallBound<MetricType, VecType>::MinDistance(const BallBound& other)
     const
 {
   if (radius < 0)
@@ -156,10 +156,10 @@ BallBound<TMetricType, VecType>::MinDistance(const BallBound& other)
 /**
  * Computes maximum distance.
  */
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 template<typename OtherVecType>
-typename BallBound<TMetricType, VecType>::ElemType
-BallBound<TMetricType, VecType>::MaxDistance(
+typename BallBound<MetricType, VecType>::ElemType
+BallBound<MetricType, VecType>::MaxDistance(
     const OtherVecType& point,
     typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
@@ -172,9 +172,9 @@ BallBound<TMetricType, VecType>::MaxDistance(
 /**
  * Computes maximum distance.
  */
-template<typename TMetricType, typename VecType>
-typename BallBound<TMetricType, VecType>::ElemType
-BallBound<TMetricType, VecType>::MaxDistance(const BallBound& other)
+template<typename MetricType, typename VecType>
+typename BallBound<MetricType, VecType>::ElemType
+BallBound<MetricType, VecType>::MaxDistance(const BallBound& other)
     const
 {
   if (radius < 0)
@@ -188,10 +188,10 @@ BallBound<TMetricType, VecType>::MaxDistance(const BallBound& other)
  *
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 template<typename OtherVecType>
-math::RangeType<typename BallBound<TMetricType, VecType>::ElemType>
-BallBound<TMetricType, VecType>::RangeDistance(
+math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+BallBound<MetricType, VecType>::RangeDistance(
     const OtherVecType& point,
     typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
@@ -206,9 +206,9 @@ BallBound<TMetricType, VecType>::RangeDistance(
   }
 }
 
-template<typename TMetricType, typename VecType>
-math::RangeType<typename BallBound<TMetricType, VecType>::ElemType>
-BallBound<TMetricType, VecType>::RangeDistance(
+template<typename MetricType, typename VecType>
+math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+BallBound<MetricType, VecType>::RangeDistance(
     const BallBound& other) const
 {
   if (radius < 0)
@@ -226,9 +226,9 @@ BallBound<TMetricType, VecType>::RangeDistance(
 /**
  * Expand the bound to include the given bound.
  *
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 const BallBound<VecType>&
-BallBound<TMetricType, VecType>::operator|=(
+BallBound<MetricType, VecType>::operator|=(
     const BallBound<VecType>& other)
 {
   double dist = metric->Evaluate(center, other);
@@ -246,10 +246,10 @@ BallBound<TMetricType, VecType>::operator|=(
  * The difference lies in the way we initialize the ball bound. The way we
  * expand the bound is same.
  */
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 template<typename MatType>
-const BallBound<TMetricType, VecType>&
-BallBound<TMetricType, VecType>::operator|=(const MatType& data)
+const BallBound<MetricType, VecType>&
+BallBound<MetricType, VecType>::operator|=(const MatType& data)
 {
   if (radius < 0)
   {
@@ -277,9 +277,9 @@ BallBound<TMetricType, VecType>::operator|=(const MatType& data)
 }
 
 //! Serialize the BallBound.
-template<typename TMetricType, typename VecType>
+template<typename MetricType, typename VecType>
 template<typename Archive>
-void BallBound<TMetricType, VecType>::Serialize(
+void BallBound<MetricType, VecType>::Serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

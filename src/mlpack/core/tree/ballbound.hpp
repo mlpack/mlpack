@@ -16,13 +16,13 @@ namespace bound {
 
 /**
  * Ball bound encloses a set of points at a specific distance (radius) from a
- * specific point (center). TMetricType is the custom metric type that defaults
+ * specific point (center). MetricType is the custom metric type that defaults
  * to the Euclidean (L2) distance.
  *
- * @tparam TMetricType metric type used in the distance measure.
+ * @tparam MetricType metric type used in the distance measure.
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
-template<typename TMetricType = metric::LMetric<2, true>,
+template<typename MetricType = metric::LMetric<2, true>,
          typename VecType = arma::vec>
 class BallBound
 {
@@ -31,8 +31,6 @@ class BallBound
   typedef typename VecType::elem_type ElemType;
   //! A public version of the vector type.
   typedef VecType Vec;
-  //! Needed for BinarySpaceTree.
-  typedef TMetricType MetricType;
 
  private:
   //! The radius of the ball bound.
@@ -40,7 +38,7 @@ class BallBound
   //! The center of the ball bound.
   VecType center;
   //! The metric used in this bound.
-  TMetricType* metric;
+  MetricType* metric;
 
   /**
    * To know whether this object allocated memory to the metric member
@@ -179,9 +177,9 @@ class BallBound
   ElemType Diameter() const { return 2 * radius; }
 
   //! Returns the distance metric used in this bound.
-  const TMetricType& Metric() const { return *metric; }
+  const MetricType& Metric() const { return *metric; }
   //! Modify the distance metric used in this bound.
-  TMetricType& Metric() { return *metric; }
+  MetricType& Metric() { return *metric; }
 
   //! Serialize the bound.
   template<typename Archive>
@@ -189,8 +187,8 @@ class BallBound
 };
 
 //! A specialization of BoundTraits for this bound type.
-template<typename TMetricType, typename VecType>
-struct BoundTraits<BallBound<TMetricType, VecType>>
+template<typename MetricType, typename VecType>
+struct BoundTraits<BallBound<MetricType, VecType>>
 {
   //! These bounds are potentially loose in some dimensions.
   const static bool HasTightBounds = false;
