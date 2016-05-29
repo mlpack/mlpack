@@ -234,16 +234,13 @@ inline void perturbationExpand(std::vector<size_t> &A)
 }
 
 // Return true if perturbation set is valid
-inline bool perturbationValid(
-    const std::vector<size_t> &A, 
-    const arma::Col<size_t> &positions, 
-    const size_t numProj)
+inline bool perturbationValid(const std::vector<size_t> &A, const size_t numProj)
 {
   bool check[numProj] = {0};
 
   for (size_t i = 0; i < A.size(); ++i)
   {
-    if ( positions(A[i]) >= numProj )
+    if ( A[i] >= numProj )
       return false; //invalid if contains non-existing dimension
 
     //check that we only see each dimension once
@@ -260,20 +257,12 @@ template<typename SortPolicy>
 void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     const arma::vec &queryCode,
     const arma::vec &queryCodeNotFloored,
-    size_t T,
+    const size_t T,
     arma::mat &additionalProbingBins) const
 {
 
   if (T == 0)
     return;
-
-  //if requested for more bins than actually exist, do maximum possible
-  if (T > ( (size_t) (1<<numProj) - 1) )
-  {
-    Log::Warn<<"Requested "<<T<<" bins are more than existing number, using "<<
-      (1<<numProj)-1<<" instead."<<endl;
-    T = (1<<numProj) - 1;
-  }
 
   // Each column of additionalProbingBins is the code of a bin.
   additionalProbingBins.zeros(numProj, T);
@@ -315,6 +304,11 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   scores = scores(sortidx);
   actions = actions(sortidx);
   positions = positions(sortidx);
+
+  //DEBUG (TODO: remove this)
+  //cout<<"-=-=-=-=-=-GetAdditionalProbingBins()-=-=-=-=-=-="<<endl;
+  //cout<<scores.t()<<endl;
+  //cout<<positions.t()<<endl;
 
 
   // Theory:
@@ -380,13 +374,16 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
           perturbationSets.size()-1); //create new (score, index) pair for expand
       minHeap.push(expanded);
 
-    }while (! perturbationValid(Ai, positions, numProj)  );//Discard invalid perturbations
+    }while (! perturbationValid(Ai, numProj)  );//Discard invalid perturbations
     
     //add perturbation vector to probing sequence if valid
     for (size_t i = 0; i < Ai.size(); ++i)
       additionalProbingBins(positions(Ai[i]), pvec) += actions(Ai[i]);
 
   }
+  //cout<<"Initial Query Code:"<<endl<<queryCode.t()<<endl;
+  //cout<<"Additional Bin:"<<endl<<additionalProbingBins.t()<<endl;
+  //cout<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="<<endl;
 
 
 }
@@ -431,29 +428,43 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   Log::Assert(hashVec.n_elem == numTablesToSearch);
 
-  //Multiprobe process
-  arma::mat hashMat; //each row will have T additional 2nd-level-hash codes
-  hashMat.zeros(T, numTablesToSearch);
+  //Matrix storing 2nd-level hashes for main and additional probes
+  arma::mat hashMat; //each row will have numTablesToSearch bins
 
-
-  for (size_t i = 0; i < numTablesToSearch; ++i)
+  if (T > 0)
   {
-    arma::mat additionalProbingBins;
+    //Multiprobe LSH
+    hashMat.zeros(T, numTablesToSearch);
+    
 
-    //construct probing sequence for each table
-    GetAdditionalProbingBins(allProjInTables.unsafe_col(i), 
-                            queryCodesNotFloored.unsafe_col(i),
-                            T,
-                            additionalProbingBins);
+    for (size_t i = 0; i < numTablesToSearch; ++i)
+    {
+      //for each of L tables, construct probing sequence of T additional bins
+      arma::mat additionalProbingBins;
 
-    //map each probing bin to a code of the second hash table
-    hashMat.col(i) = secondHashWeights.t() * additionalProbingBins;
-    for (size_t j = 0; j < T; ++j)
-      hashMat(j, i) = (double) ((size_t) hashMat(j, i) % secondHashSize);
+      //construct probing sequence for each table
+      GetAdditionalProbingBins(allProjInTables.unsafe_col(i), 
+          queryCodesNotFloored.unsafe_col(i),
+          T,
+          additionalProbingBins);
+
+      //map each probing bin to a code of the second hash table
+      hashMat.col(i) = additionalProbingBins.t() * secondHashWeights; //column vector
+      
+      for (size_t j = 0; j < T; ++j)
+        hashMat(j, i) = (double) ((size_t) hashMat(j, i) % secondHashSize);
+
+    }
+    //add primary bins before additional bins
+    hashMat = arma::join_vert(hashVec, hashMat);
+
   }
-
-  hashMat = arma::join_vert(hashVec, hashMat);
-  //cout<<hashMat<<endl;
+  else
+  {
+    //Classic (Single probe) LSH
+    hashMat.zeros(1, numTablesToSearch);
+    hashMat.row(0) = hashVec;
+  }
 
   // For all the buckets that the query is hashed into, sequentially
   // collect the indices in those buckets.
@@ -464,7 +475,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   {
     for (size_t p = 0; p < T + 1; ++p) // For all probes
     {
-      size_t hashInd = (size_t) hashMat(i,p);
+      size_t hashInd = (size_t) hashMat(p,i);
 
       if (bucketContentSize[hashInd] > 0)
       {
@@ -488,8 +499,8 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
                                    const size_t k,
                                    arma::Mat<size_t>& resultingNeighbors,
                                    arma::mat& distances,
-                                   const size_t T,
-                                   const size_t numTablesToSearch)
+                                   const size_t numTablesToSearch,
+                                   const size_t T)
 {
   // Ensure the dimensionality of the query set is correct.
   if (querySet.n_rows != referenceSet->n_rows)
@@ -523,7 +534,18 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   size_t avgIndicesReturned = 0;
 
   Timer::Start("computing_neighbors");
-  Log::Info << "Computing "<<T<<" additional probing codes per table per query"<<std::endl;
+
+  size_t Teffective = T;
+  if ( T > ( (size_t) ( ( 1 << numProj ) - 1 ) ) )
+  {
+    Teffective = (1 << numProj) - 1;
+    Log::Warn<<"Requested "<<T<<" bins are more than possible. Using "<<
+      Teffective << " instead."<<endl;
+
+  }
+
+  Log::Info << "Computing "<<Teffective<<
+    " additional probing codes per table per query"<<std::endl;
 
   // Go through every query point sequentially.
   for (size_t i = 0; i < querySet.n_cols; i++)
@@ -531,7 +553,7 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
-    ReturnIndicesFromTable(querySet.col(i), refIndices, numTablesToSearch, T);
+    ReturnIndicesFromTable(querySet.col(i), refIndices, numTablesToSearch, Teffective);
 
     // An informative book-keeping for the number of neighbor candidates
     // returned on average.
@@ -558,8 +580,8 @@ void LSHSearch<SortPolicy>::
 Search(const size_t k,
        arma::Mat<size_t>& resultingNeighbors,
        arma::mat& distances,
-       const size_t T,
-       const size_t numTablesToSearch)
+       const size_t numTablesToSearch,
+       const size_t T)
 {
   // This is monochromatic search; the query set is the reference set.
   resultingNeighbors.set_size(k, referenceSet->n_cols);
