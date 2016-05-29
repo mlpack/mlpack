@@ -5,8 +5,8 @@
  * Defines Split(), a utility function to split a dataset into a
  * training set and a test set.
  */
-#ifndef MLPACK_CORE_UTIL_SPLIT_DATA_HPP
-#define MLPACK_CORE_UTIL_SPLIT_DATA_HPP
+#ifndef MLPACK_CORE_DATA_SPLIT_DATA_HPP
+#define MLPACK_CORE_DATA_SPLIT_DATA_HPP
 
 #include <mlpack/core.hpp>
 
