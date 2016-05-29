@@ -144,7 +144,15 @@ class LSHSearch
               const size_t T = 0);
 
 
-  //TODO: Document this
+  /**
+   * Computes the recall of an LSH search, given the found neighbor IDs and the
+   * real neighbor IDs.
+   * This is different than accuracy because recall is a set intersection
+   * operation (where both sets are ordered).
+   *
+   * @param foundNeighbors IDs of neighbors found. Size nQueries x k
+   * @param realNeighbors IDs of actual k-Nearest Neighbors. Size nQueries x k
+   */
   double ComputeRecall(const arma::Mat<size_t> &foundNeighbors,
                        const arma::Mat<size_t> &realNeighbors);
 
