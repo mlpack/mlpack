@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     arma::Mat<size_t> trueNeighbors;
     data::Load(trueNeighborsFile, trueNeighbors, true);
     double recall = allkann.ComputeRecall(neighbors, trueNeighbors);
-    Log::Info << "Recall: " << 100*recall << "%%"<<endl;
+    Log::Info << "Recall: " << 100 * recall << "%%"<<endl;
 
   }
 
