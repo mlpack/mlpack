@@ -307,6 +307,8 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   //This test verifies the correctnes of Multiprobe LSH. Increasing the number
   //of probes should not cause any decrease in recall, since we're only looking
   //into more buckets and not skipping previous ones.
+  //This is true because we don't re-train LSH between iterations. We're using
+  //the same projection tables, but probing more buckets.
   
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
