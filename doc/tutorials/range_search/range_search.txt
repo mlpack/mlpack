@@ -67,7 +67,7 @@ option is used so that output is given.  Further documentation on each
 individual option can be found by typing
 
 @code
-$ range_search --help
+$ mlpack_range_search --help
 @endcode
 
 @subsection cli_ex1_rstut One dataset, points with distance <= 0.01
@@ -147,7 +147,7 @@ empty.
 @subsection cli_ex2_rstut Query and reference dataset, range [1.0, 1.5]
 
 @code
-$ range_search -q query_dataset.csv -r reference_dataset.csv -n \
+$ mlpack_range_search -q query_dataset.csv -r reference_dataset.csv -n \
 > neighbors_out.csv -d distances_out.csv -L 1.0 -U 1.5 -v
 [INFO ] Loading 'reference_dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'reference_dataset.csv' (3x1000).
@@ -196,8 +196,8 @@ faster computation.  The leaf size is modifiable through the command-line
 interface, as shown below.
 
 @code
-$ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -L 0.7 \
-> -U 0.8 -l 15 -v
+$ mlpack_range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv \
+> -L 0.7 -U 0.8 -l 15 -v
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'dataset.csv' (3x1000).
 [INFO ] Building reference tree...

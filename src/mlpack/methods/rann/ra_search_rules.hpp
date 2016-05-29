@@ -9,7 +9,7 @@
 #ifndef MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 #define MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
-#include "../neighbor_search/ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -185,7 +185,7 @@ class RASearchRules
       return arma::sum(numSamplesMade);
   }
 
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

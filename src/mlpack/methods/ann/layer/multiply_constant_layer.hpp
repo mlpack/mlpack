@@ -5,8 +5,8 @@
  * Definition of the MultiplyConstantLayer class, which multiplies the input by
  * a (non-learnable) constant.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

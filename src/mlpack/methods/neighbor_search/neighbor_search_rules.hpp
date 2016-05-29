@@ -8,7 +8,7 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
-#include "ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -94,7 +94,7 @@ class NeighborSearchRules
   size_t& Scores() { return scores; }
 
   //! Convenience typedef.
-  typedef NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get the traversal info.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
