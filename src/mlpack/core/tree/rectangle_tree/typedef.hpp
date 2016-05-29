@@ -95,6 +95,37 @@ using XTree = RectangleTree<MetricType,
                             RTreeDescentHeuristic,
                             XTreeAuxiliaryInformation>;
 
+/**
+ * The Hilbert R-tree, a variant of the R tree with an ordering along the Hilbert curve. This template typedef
+ * satisfies the TreeType policy API.
+ *
+ */
+
+template<typename TreeType>
+using RecursiveHilbertRTreeAuxiliaryInformation =
+      HilbertRTreeAuxiliaryInformation<TreeType,RecursiveHilbertValue>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using HilbertRTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            HilbertRTreeSplit,
+                            HilbertRTreeDescentHeuristic,
+                            RecursiveHilbertRTreeAuxiliaryInformation>;
+
+template<typename TreeType>
+using DiscreteHilbertRTreeAuxiliaryInformation =
+      HilbertRTreeAuxiliaryInformation<TreeType,RecursiveHilbertValue>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using DiscreteHilbertRTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            HilbertRTreeSplit,
+                            HilbertRTreeDescentHeuristic,
+                            DiscreteHilbertRTreeAuxiliaryInformation>;
+
+
 } // namespace tree
 } // namespace mlpack
 

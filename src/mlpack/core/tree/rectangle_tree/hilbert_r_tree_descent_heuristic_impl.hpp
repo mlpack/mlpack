@@ -19,7 +19,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(const TreeType* node, con
   size_t bestIndex = 0;
 
   for(bestIndex = node->NumChildren() - 1; bestIndex > 0; bestIndex--)
-    if(node->Children()[bestIndex]->Split().LargestHilbertValue().CompareWithPoint(point) < 0)
+    if(node->Children()[bestIndex]->Split().LargestHilbertValue().CompareWith(node,point) < 0)
       break;
 
   return bestIndex;
@@ -32,7 +32,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
   size_t bestIndex = 0;
 
   for(bestIndex = node->NumChildren() - 1; bestIndex > 0; bestIndex--)
-    if(node->Children()[bestIndex]->Split().LargestHilbertValue() < node->Split().LargestHilbertValue())
+    if(node->Children()[bestIndex]->Split().LargestHilbertValue().CompareWith(node,node->Split().LargestHilbertValue()) < 0)
       break;
 
   return bestIndex;

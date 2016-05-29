@@ -14,23 +14,8 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType,typename HilbertValue>
-HilbertRTreeSplit::HilbertRTreeSplit()
-{
-}
-
-template<typename TreeType,typename HilbertValue>
-HilbertRTreeSplit(const TreeType *node)
-{
-}
-
-template<typename TreeType,typename HilbertValue>
-HilbertRTreeSplit(const TreeType &other)
-{
-}
-
-template<typename TreeType,typename HilbertValue>
-void HilbertRTreeSplit<TreeType,HilbertValue>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+template<typename TreeType>
+void HilbertRTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -44,7 +29,7 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::SplitLeafNode(TreeType *tree,std:
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitLeafNode(copy,relevels);
+    copy->AuxiliarityInfo().SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -76,12 +61,12 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::SplitLeafNode(TreeType *tree,std:
   RedistributePointsEvenly(parent,firstSibling,lastSibling);
 
   if(parent->NumChildren() == parent->MaxNumChildren() + 1)
-    parent->Split().SplitNonLeafNode(parent,relevels);
+    parent->AuxiliarityInfo().SplitNonLeafNode(parent,relevels);
 
 }
 
-template<typename TreeType,typename HilbertValue>
-void HilbertRTreeSplit<TreeType,HilbertValue>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+template<typename TreeType>
+bool HilbertRTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -90,13 +75,14 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::SplitNonLeafNode(TreeType *tree,s
   {
     // We actually want to copy this way.  Pointers and everything.
     TreeType* copy = new TreeType(*tree, false);
+
     copy->Parent() = tree;
-    tree->Count() = 0;
+    tree->NumChildren() = 0;
     tree->NullifyData();
-    // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitLeafNode(copy,relevels);
-    return;
+
+    HilbertRTreeSplit::SplitNonLeafNode(copy,relevels);
+    return true;
   }
 
   TreeType *parent = tree->Parent();
@@ -126,11 +112,11 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::SplitNonLeafNode(TreeType *tree,s
   RedistributeNodesEvenly(parent,firstSibling,lastSibling);
 
   if(parent->NumChildren() == parent->MaxNumChildren() + 1)
-    parent->Split().SplitNonLeafNode(parent,relevels);
+    parent->AuxiliarityInfo().SplitNonLeafNode(parent,relevels);
 }
 
-template<typename TreeType,typename HilbertValue>
-bool HilbertRTreeSplit<TreeType,HilbertValue>::FindCooperatingSiblings(TreeType *parent,size_t iTree,size_t &firstSubling,size_t &lastSibling)
+template<typename TreeType>
+bool HilbertRTreeSplit::FindCooperatingSiblings(TreeType *parent,size_t iTree,size_t &firstSibling,size_t &lastSibling)
 {
   size_t start = (iTree > splitOrder-1 ? iTree - splitOrder + 1 : 0);
   size_t end = (iTree + splitOrder <= parent->NumChildren() ? iTree + splitOrder : parent->NumChildren());
@@ -139,13 +125,13 @@ bool HilbertRTreeSplit<TreeType,HilbertValue>::FindCooperatingSiblings(TreeType 
   if(parent->Children()[iTree]->NumChildren() != 0)
   {
     for(iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
-      if(parent->Children()][iUnderfullSibling]->NumChildren() < parent->Children()][iUnderfullSibling]->MaxNumChildren() - 1)
+      if(parent->Children()[iUnderfullSibling]->NumChildren() < parent->Children()[iUnderfullSibling]->MaxNumChildren() - 1)
         break;
   }
   else
   {
     for(iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
-      if(parent->Children()][iUnderfullSibling]->NumPoints() < parent->Children()][iUnderfullSibling]->MaxLeafSize() - 1)
+      if(parent->Children()[iUnderfullSibling]->NumPoints() < parent->Children()[iUnderfullSibling]->MaxLeafSize() - 1)
         break;
   }
 
@@ -166,8 +152,8 @@ bool HilbertRTreeSplit<TreeType,HilbertValue>::FindCooperatingSiblings(TreeType 
   return true;
 }
 
-template<typename TreeType,typename HilbertValue>
-void HilbertRTreeSplit<TreeType,HilbertValue>::RedistributeNodesEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling)
+template<typename TreeType>
+void HilbertRTreeSplit::RedistributeNodesEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling)
 {
   size_t numChildren = 0;
   size_t numChildrenPerNode,numRestChildren;
@@ -211,12 +197,13 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::RedistributeNodesEvenly(const Tre
     {
       parent->Children()[i]->NumChildren() = numChildrenPerNode;
     }
-    parent->Children()[i]->Split().largestHilbertValue = children[iChild-1]->Split().largestHilbertValue;
+    parent->Children()[i]->AuxiliarityInfo().largestHilbertValue = 
+    children[iChild-1]->AuxiliarityInfo().largestHilbertValue;
   }
 }
 
-template<typename TreeType,typename HilbertValue>
-void HilbertRTreeSplit<TreeType,HilbertValue>::RedistributePointsEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling)
+template<typename TreeType>
+void HilbertRTreeSplit::RedistributePointsEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling)
 {
   size_t numPoints = 0;
   size_t numPointsPerNode,numRestPoints;
@@ -244,7 +231,8 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::RedistributePointsEvenly(const Tr
   {
     parent->Children()[i]->Bound().Clear();
 
-    for(size_t j = 0; j < numPointsPerNode; j++)
+    size_t j;
+    for(j = 0; j < numPointsPerNode; j++)
     {
       parent->Children()[i]->Bound() |= parent->Children()[i]->Dataset()->col(points[iPoint]);
       parent->Children()[i]->Points()[j] = points[iPoint];
@@ -268,18 +256,6 @@ void HilbertRTreeSplit<TreeType,HilbertValue>::RedistributePointsEvenly(const Tr
 //    Adjust the largestHilbertValue
 //    parent->Children()[i]->Split().largestHilbertValue.AdjustValue();
   }
-}
-
-/**
- * Serialize the split.
- */
-template<typename TreeType,typename HilbertValue>
-template<typename Archive>
-void XTreeSplit<TreeType>::Serialize(Archive& ar,const unsigned int /* version */)
-{
-  using data::CreateNVP;
-
-  ar & CreateNVP(largestHilbertValue, "largestHilbertValue");
 }
 
 } // namespace tree

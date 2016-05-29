@@ -13,52 +13,34 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-template<typename TreeType,typename HilbertValue>
+const int splitOrder = 2;
+
 class HilbertRTreeSplit
 {
  public:
-  //! Default constructor
-  HilbertRTreeSplit();
-
-  //! Construct this with the specified node.
-  HilbertRTreeSplit(const TreeType *node);
-
-  //! Create a copy of the other.split.
-  HilbertRTreeSplit(const TreeType &other);
-
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
    */
+  template<typename TreeType>
   void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
+  template<typename TreeType>
   bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+
  private:
-  HilbertValue largestHilbertValue;
-  const int splitOrder = 2;
+  template<typename TreeType>
+  bool FindCooperatingSiblings(TreeType *parent,size_t iTree,size_t &firstSibling,size_t &lastSibling);
 
- public:
-  HilbertValue &LargestHilbertValue() { return largestHilbertValue };
-
-  HilbertValue LargestHilbertValue() { return largestHilbertValue } const;
-
-  bool FindCooperatingSiblings(TreeType *parent,size_t iTree,size_t &firstSubling,size_t &lastSibling);
-
+  template<typename TreeType>
   void RedistributeNodesEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling);
 
+  template<typename TreeType>
   void RedistributePointsEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling);
-
-
- public:
-  /**
-   * Serialize the split.
-   */
-  template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */);
 
 };
 } // namespace tree

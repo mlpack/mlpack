@@ -25,6 +25,11 @@
 #include "rectangle_tree/traits.hpp"
 #include "rectangle_tree/x_tree_split.hpp"
 #include "rectangle_tree/x_tree_auxiliary_information.hpp"
+#include "rectangle_tree/hilbert_r_tree_descent_heuristic.hpp"
+#include "rectangle_tree/hilbert_r_tree_split.hpp"
+#include "rectangle_tree/hilbert_r_tree_auxiliary_information.hpp"
+#include "rectangle_tree/recursive_hilbert_value.hpp"
+#include "rectangle_tree/discrete_hilbert_value.hpp"
 #include "rectangle_tree/typedef.hpp"
 
 #endif

@@ -32,6 +32,34 @@ class XTreeAuxiliaryInformation
     splitHistory(other.AuxiliaryInfo().SplitHistory())
   { };
 
+  bool HandlePointInsertion(TreeType *, const size_t)
+  {
+    return false;
+  }
+
+  bool HandleNodeInsertion(TreeType *,TreeType *,bool)
+  {
+    return false;
+  }
+
+  bool HandlePointDeletion(TreeType *,const size_t)
+  {
+    return false;
+  }
+
+  bool HandleNodeRemoval(TreeType *,const size_t)
+  {
+    return false;
+  }
+
+  bool ShrinkAuxiliaryInfo(TreeType *)
+  {
+    return false;
+  }
+
+  void Copy(TreeType *,TreeType *)
+  { }
+
   /**
    * The X tree requires that the tree records it's "split history".  To make
    * this easy, we use the following structure.

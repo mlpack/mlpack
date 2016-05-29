@@ -19,6 +19,35 @@ class NoAuxiliaryInformation
   NoAuxiliaryInformation(const TreeType *) { };
   NoAuxiliaryInformation(const TreeType &) { };
 
+  bool HandlePointInsertion(TreeType *, const size_t)
+  {
+    return false;
+  }
+
+  bool HandleNodeInsertion(TreeType *,TreeType *,bool)
+  {
+    return false;
+  }
+
+  bool HandlePointDeletion(TreeType *,const size_t)
+  {
+    return false;
+  }
+
+  bool HandleNodeRemoval(TreeType *,const size_t)
+  {
+    return false;
+  }
+
+  bool ShrinkAuxiliaryInfo(TreeType *)
+  {
+    return false;
+  }
+
+  void Copy(TreeType *,TreeType *)
+  { }
+
+
   /**
    * Serialize the information.
    */

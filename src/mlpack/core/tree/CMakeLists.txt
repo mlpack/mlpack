@@ -53,6 +53,16 @@ set(SOURCES
   rectangle_tree/x_tree_split.hpp
   rectangle_tree/x_tree_split_impl.hpp
   rectangle_tree/x_tree_auxiliary_information.hpp
+  rectangle_tree/hilbert_r_tree_descent_heuristic.hpp
+  rectangle_tree/hilbert_r_tree_descent_heuristic_impl.hpp
+  rectangle_tree/hilbert_r_tree_split.hpp
+  rectangle_tree/hilbert_r_tree_split_impl.hpp
+  rectangle_tree/hilbert_r_tree_auxiliary_information.hpp
+  rectangle_tree/hilbert_r_tree_auxiliary_information_impl.hpp
+  rectangle_tree/recursive_hilbert_value.hpp
+  rectangle_tree/recursive_hilbert_value_impl.hpp
+  rectangle_tree/discrete_hilbert_value.hpp
+  rectangle_tree/discrete_hilbert_value_impl.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
