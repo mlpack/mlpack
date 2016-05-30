@@ -60,7 +60,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    copy->Split().SplitLeafNode(copy,relevels);
+    copy->Split().SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -77,7 +77,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
     {
-      tree->Split().SplitLeafNode(tree,relevels);
+      tree->Split().SplitLeafNode(tree, relevels);
       return;
     }
 
@@ -270,7 +270,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par,relevels);
+    par->Split().SplitNonLeafNode(par, relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -306,7 +306,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    copy->Split().SplitNonLeafNode(copy,relevels);
+    copy->Split().SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -662,7 +662,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
   {
-    par->Split().SplitNonLeafNode(par,relevels);
+    par->Split().SplitNonLeafNode(par, relevels);
   }
 
   // We have to update the children of each of these new nodes so that they

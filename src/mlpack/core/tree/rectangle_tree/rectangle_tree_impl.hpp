@@ -667,7 +667,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    split.SplitLeafNode(this,relevels);
+    split.SplitLeafNode(this, relevels);
   }
   else
   {
@@ -677,7 +677,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    split.SplitNonLeafNode(this,relevels);
+    split.SplitNonLeafNode(this, relevels);
   }
 }
 

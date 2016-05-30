@@ -53,7 +53,7 @@ void RTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitLeafNode(copy,relevels);
+    copy->Split().SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -84,7 +84,7 @@ void RTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par,relevels);
+    par->Split().SplitNonLeafNode(par, relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -116,7 +116,7 @@ bool RTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitNonLeafNode(copy,relevels);
+    copy->Split().SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -149,7 +149,7 @@ bool RTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par,relevels);
+    par->Split().SplitNonLeafNode(par, relevels);
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
