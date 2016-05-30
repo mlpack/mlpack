@@ -42,12 +42,12 @@ namespace data {
  */
 template<typename T, typename U>
 void Split(const arma::Mat<T>& input,
-                    const arma::Row<U>& inputLabel,
-                    arma::Mat<T>& trainData,
-                    arma::Mat<T>& testData,
-                    arma::Row<U>& trainLabel,
-                    arma::Row<U>& testLabel,
-                    const double testRatio)
+           const arma::Row<U>& inputLabel,
+           arma::Mat<T>& trainData,
+           arma::Mat<T>& testData,
+           arma::Row<U>& trainLabel,
+           arma::Row<U>& testLabel,
+           const double testRatio)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -96,9 +96,9 @@ void Split(const arma::Mat<T>& input,
  */
 template<typename T>
 void Split(const arma::Mat<T>& input,
-                    arma::Mat<T>& trainData,
-                    arma::Mat<T>& testData,
-                    const double testRatio)
+           arma::Mat<T>& trainData,
+           arma::Mat<T>& testData,
+           const double testRatio)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -111,11 +111,11 @@ void Split(const arma::Mat<T>& input,
 
   for (size_t i = 0; i != trainSize; ++i)
   {
-     trainData.col(i) = input.col(order[i]);
+    trainData.col(i) = input.col(order[i]);
   }
   for (size_t i = 0; i != testSize; ++i)
   {
-     testData.col(i) = input.col(order[i + trainSize]);
+    testData.col(i) = input.col(order[i + trainSize]);
   }
 }
 
@@ -141,8 +141,8 @@ void Split(const arma::Mat<T>& input,
 template<typename T,typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
 Split(const arma::Mat<T>& input,
-               const arma::Row<U>& inputLabel,
-               const double testRatio)
+      const arma::Row<U>& inputLabel,
+      const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
@@ -174,13 +174,13 @@ Split(const arma::Mat<T>& input,
 template<typename T>
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
-               const double testRatio)
+      const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
   Split(input, trainData, testData, testRatio);
 
-  return std::make_tuple(trainData, testData);
+  return std::make_tuple(std::move(trainData), std::move(testData));
 }
 
 } // namespace data

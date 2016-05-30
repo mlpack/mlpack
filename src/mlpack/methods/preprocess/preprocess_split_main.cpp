@@ -87,7 +87,7 @@ int main(int argc, char** argv)
   if (CLI::HasParam("test_ratio"))
   {
     //sanity check on test_ratio
-    if ((testRatio < 0.0) && (testRatio > 1.0))
+    if ((testRatio < 0.0) || (testRatio > 1.0))
     {
       Log::Fatal << "Invalid parameter for test_ratio. "
         << "test_ratio must be between 0.0 and 1.0" << endl;
@@ -116,16 +116,10 @@ int main(int argc, char** argv)
     Log::Info << "Train Label Count: " << get<2>(value).n_cols << endl;
     Log::Info << "Test Label Count: " << get<3>(value).n_cols << endl;
 
-    // TODO: fix full precision problem
-    mat training = get<0>(value);
-    mat test = get<1>(value);
-    mat trainingLabels = get<2>(value);
-    mat testLabels = get<3>(value);
-
-    data::Save(trainingFile, training, false);
-    data::Save(testFile, test, false);
-    data::Save(trainingLabelsFile, trainingLabels, false);
-    data::Save(testLabelsFile, testLabels, false);
+    data::Save(trainingFile, get<0>(value), false);
+    data::Save(testFile, get<1>(value), false);
+    data::Save(trainingLabelsFile, get<2>(value), false);
+    data::Save(testLabelsFile, get<3>(value), false);
   }
   else // split without parameters
   {
@@ -133,12 +127,8 @@ int main(int argc, char** argv)
     Log::Info << "Train Data Count: " << get<0>(value).n_cols << endl;
     Log::Info << "Test Data Count: " << get<1>(value).n_cols << endl;
 
-    // TODO: fix full precision problem
-    mat training = get<0>(value);
-    mat test = get<1>(value);
-
-    data::Save(trainingFile, training, false);
-    data::Save(testFile, test, false);
+    data::Save(trainingFile, get<0>(value), false);
+    data::Save(testFile, get<1>(value), false);
   }
 }
 

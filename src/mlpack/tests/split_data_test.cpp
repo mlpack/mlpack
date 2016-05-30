@@ -41,6 +41,22 @@ void CompareData(const mat& inputData,
   }
 }
 
+void CheckMatEqual(const mat& inputData,
+                   const mat& compareData)
+{
+  const mat& sortedInput = arma::sort(inputData, "ascend", 1);
+  const mat& sortedCompare = arma::sort(compareData, "ascend", 1);
+  for (size_t i = 0; i < sortedInput.n_cols; ++i)
+  {
+    const mat& lhsCol = sortedInput.col(i);
+    const mat& rhsCol = sortedCompare.col(i);
+    for (size_t j = 0; j < lhsCol.n_rows; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
+    }
+  }
+}
+
 /**
  * Check that no labels have been duplicated.
  */
@@ -70,11 +86,15 @@ void CheckDuplication(const Row<size_t>& trainLabels,
 BOOST_AUTO_TEST_CASE(SplitDataResultMat)
 {
   mat input(2, 10);
-  input.randu();
+  size_t count = 0; // count for putting unique sequential values
+  input.imbue([&count] () { return ++count; });
 
   const auto value = Split(input, 0.2);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
   BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // test data
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  CheckMatEqual(input, concat);
 }
 
 BOOST_AUTO_TEST_CASE(SplitLabeledDataResultMat)
@@ -106,12 +126,16 @@ BOOST_AUTO_TEST_CASE(SplitLabeledDataResultMat)
  */
 BOOST_AUTO_TEST_CASE(SplitDataLargerTest)
 {
+  size_t count = 0;
   mat input(10, 497);
-  input.randu();
+  input.imbue([&count] () { return ++count; });
 
   const auto value = Split(input, 0.3);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 497 - size_t(0.3 * 497));
   BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, size_t(0.3 * 497));
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  CheckMatEqual(input, concat);
 }
 
 BOOST_AUTO_TEST_CASE(SplitLabeledDataLargerTest)
