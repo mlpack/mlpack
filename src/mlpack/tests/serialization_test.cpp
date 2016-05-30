@@ -354,12 +354,12 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
 
 BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
 {
-  BallBound<arma::vec, MahalanobisDistance<>> b(100);
+  BallBound<MahalanobisDistance<>, arma::vec> b(100);
   b.Center().randu();
   b.Radius() = 14.0;
   b.Metric().Covariance().randu(100, 100);
 
-  BallBound<arma::vec, MahalanobisDistance<>> xmlB, textB, binaryB;
+  BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
 
   SerializeObjectAll(b, xmlB, textB, binaryB);
 
