@@ -31,8 +31,6 @@ namespace data {
 
 namespace details{
 
-namespace{
-
 template<typename Tokenizer>
 std::vector<std::string> ToTokens(Tokenizer &lineTok)
 {
@@ -49,6 +47,7 @@ std::vector<std::string> ToTokens(Tokenizer &lineTok)
   return tokens;
 }
 
+inline
 void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
                      std::vector<std::string> &output,
                      size_t index)
@@ -95,8 +94,6 @@ void MapToNumerical(const std::vector<std::string> &tokens,
       token.clear();
     }
   }
-}
-
 }
 
 }
