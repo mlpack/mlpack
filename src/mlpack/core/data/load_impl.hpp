@@ -390,8 +390,11 @@ bool Load(const std::string& filename,
 
     auto notNumber = [](std::string const &str)
     {
-      return std::any_of(std::begin(str), std::end(str),
-                         [](char c){ return !std::isdigit(c);});
+      eT val(0);
+      std::stringstream token;
+      token.str(str);
+      token>>val;
+      return token.fail();
     };
     size_t row = 0;
     while (!stream.bad() && !stream.fail() && !stream.eof())
@@ -421,13 +424,13 @@ bool Load(const std::string& filename,
           }
         }
         else
-        {
-          std::stringstream sstream;
+        {          
+          std::stringstream token;
           for(size_t i = 0; i != tokens.size(); ++i)
-          {
-            sstream<<tokens[i];
-            sstream>>matrix.at(row, i);
-            sstream.clear();
+          {            
+            token.str(tokens[i]);
+            token>>matrix.at(row, i);
+            token.clear();
           }
         }
       }
