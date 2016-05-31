@@ -389,81 +389,48 @@ bool Load(const std::string& filename,
     stream.open(filename, std::fstream::in);
 
     // Extract line by line.
-    std::stringstream token;
+    auto notNumber = [](std::string const &str)
+    {
+      return std::any_of(std::begin(str), std::end(str),
+                         [](char c){ return !std::isdigit(c);});
+    };
     size_t row = 0;
     while (!stream.bad() && !stream.fail() && !stream.eof())
     {
       std::getline(stream, buffer, '\n');
-
-      // Look at each token.  Unfortunately we have to do this character by
-      // character, because things may be escaped in quotes.
       Tokenizer lineTok(buffer, sep);
-      size_t col = 0;
-      for (Tokenizer::iterator it = lineTok.begin(); it != lineTok.end(); ++it)
+      std::vector<std::string> tokens;
+      if(!transpose)
       {
-        // Attempt to extract as type eT.  If that fails, we'll assume it's a
-        // string and map it (which may involve retroactively mapping everything
-        // we've seen so far).
-        token.clear();
-        token.str(*it);
-
-        eT val = eT(0);
-        token >> val;
-
-        if (token.fail())
+        for (Tokenizer::iterator it = lineTok.begin(); it != lineTok.end(); ++it)
         {
-          // Conversion failed; but it may be a NaN or inf.  Armadillo has
-          // convenient functions to check.
-          if (!arma::diskio::convert_naninf(val, token.str()))
+          std::string trimmedToken(*it);
+          boost::trim(trimmedToken);
+          tokens.emplace_back(std::move(trimmedToken));
+        }
+        bool const notNumeric = std::any_of(std::begin(tokens),
+                                           std::end(tokens), notNumber);
+        if(notNumeric)
+        {
+          for(size_t i = 0; i != tokens.size(); ++i)
           {
-            // We need to perform a mapping.
-            const size_t dim = (transpose) ? col : row;
-            if (info.Type(dim) == Datatype::numeric)
-            {
-              // We must map everything we have seen up to this point and change
-              // the values in the matrix.
-              if (transpose)
-              {
-                // Whatever we've seen so far has successfully mapped to an eT.
-                // So we need to print it back to a string.  We'll use
-                // Armadillo's functionality for that.
-                for (size_t i = 0; i < row; ++i)
-                {
-                  std::stringstream sstr;
-                  arma::arma_ostream::print_elem(sstr, matrix.at(i, col),
-                      false);
-                  eT newVal = info.MapString(sstr.str(), col);
-                  matrix.at(i, col) = newVal;
-                }
-              }
-              else
-              {
-                for (size_t i = 0; i < col; ++i)
-                {
-                  std::stringstream sstr;
-                  arma::arma_ostream::print_elem(sstr, matrix.at(row, i),
-                      false);
-                  eT newVal = info.MapString(sstr.str(), row);
-                  matrix.at(row, i) = newVal;
-                }
-              }
-            }
-
-            // Strip whitespace from either side of the string.
-            std::string trimmedToken(token.str());
-            boost::trim(trimmedToken);
-            val = info.MapString(trimmedToken, dim);
+            eT const val = static_cast<eT>(info.MapString(tokens[i], row));
+            matrix.at(row, i) = val;
           }
         }
-
-        if (transpose)
-          matrix(col, row) = val;
         else
-          matrix(row, col) = val;
-
-        ++col;
+        {
+          std::stringstream sstream;
+          for(size_t i = 0; i != tokens.size(); ++i)
+          {
+            eT val(0);
+            sstream<<tokens[i];
+            sstream>>val;
+            matrix.at(row, i) = val;
+            sstream.clear();
+          }
+        }
       }
-
       ++row;
     }
   }
