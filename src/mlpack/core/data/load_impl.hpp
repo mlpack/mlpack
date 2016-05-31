@@ -59,12 +59,12 @@ void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
 }
 
 template<typename eT>
-void MapToNumerical(std::vector<std::string> const &tokens,
+void MapToNumerical(const std::vector<std::string> &tokens,
                     size_t &row,
                     DatasetInfo &info,
                     arma::Mat<eT> &matrix)
 {
-  auto notNumber = [](std::string const &str)
+  auto notNumber = [](const std::string &str)
   {
     eT val(0);
     std::stringstream token;
@@ -73,13 +73,13 @@ void MapToNumerical(std::vector<std::string> const &tokens,
     return token.fail();
   };
 
-  bool const notNumeric = std::any_of(std::begin(tokens),
-                                     std::end(tokens), notNumber);
+  const bool notNumeric = std::any_of(std::begin(tokens),
+                                      std::end(tokens), notNumber);
   if(notNumeric)
   {
     for(size_t i = 0; i != tokens.size(); ++i)
     {
-      eT const val = static_cast<eT>(info.MapString(tokens[i], row));
+      const eT val = static_cast<eT>(info.MapString(tokens[i], row));
       matrix.at(row, i) = val;
     }
   }
