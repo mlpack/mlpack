@@ -17,9 +17,9 @@ contain only numeric features in order to be loaded successfully by mlpack.
 
 The types of datasets that mlpack can load are roughly the same as the types of
 matrices that Armadillo can load.  However, the load functionality that mlpack
-provides \b "only supports loading dense datasets".  When datasets are loaded by
-mlpack, \b the \b "file's type is detected using the file's extension".  mlpack
-supports the following file types:
+provides <b>only supports loading dense datasets</b>.  When datasets are loaded
+by mlpack, <b>the file's type is detected using the file's extension</b>.
+mlpack supports the following file types:
 
  - csv (comma-separated values), denoted by .csv or .txt
  - tsv (tab-separated values), denoted by .tsv, .csv, or .txt
