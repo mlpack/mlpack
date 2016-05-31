@@ -459,14 +459,19 @@ bool Load(const std::string& filename,
     if(transpose)
     {
       std::vector<std::vector<std::string>> tokensArray;
+      std::vector<std::string> tokens;
       while (!stream.bad() && !stream.fail() && !stream.eof())
       {
         // Extract line by line.
         std::getline(stream, buffer, '\n');
         Tokenizer lineTok(buffer, sep);
-        tokensArray.emplace_back(details::ToTokens(lineTok));
+        tokens = details::ToTokens(lineTok);
+        if(tokens.size() == cols)
+        {
+          tokensArray.emplace_back(details::ToTokens(lineTok));
+        }
       }
-      std::vector<std::string> tokens;
+      std::cout<<"array size : "<<tokensArray.size()<<std::endl;
       for(size_t i = 0; i != cols; ++i)
       {
         details::TransPoseTokens(tokensArray, tokens, i);
