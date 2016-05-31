@@ -402,12 +402,14 @@ bool Load(const std::string& filename,
       std::vector<std::string> tokens;
       if(!transpose)
       {
-        for (Tokenizer::iterator it = lineTok.begin(); it != lineTok.end(); ++it)
+        std::transform(std::begin(lineTok), std::end(lineTok),
+                       std::back_inserter(tokens),
+                       [&tokens](std::string const &str)
         {
-          std::string trimmedToken(*it);
+          std::string trimmedToken(str);
           boost::trim(trimmedToken);
-          tokens.emplace_back(std::move(trimmedToken));
-        }
+          return std::move(trimmedToken);
+        });
         bool const notNumeric = std::any_of(std::begin(tokens),
                                            std::end(tokens), notNumber);
         if(notNumeric)
