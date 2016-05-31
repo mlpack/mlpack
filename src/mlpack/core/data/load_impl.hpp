@@ -388,7 +388,6 @@ bool Load(const std::string& filename,
     stream.close();
     stream.open(filename, std::fstream::in);
 
-    // Extract line by line.
     auto notNumber = [](std::string const &str)
     {
       return std::any_of(std::begin(str), std::end(str),
@@ -397,6 +396,7 @@ bool Load(const std::string& filename,
     size_t row = 0;
     while (!stream.bad() && !stream.fail() && !stream.eof())
     {
+      // Extract line by line.
       std::getline(stream, buffer, '\n');
       Tokenizer lineTok(buffer, sep);
       std::vector<std::string> tokens;
@@ -423,10 +423,8 @@ bool Load(const std::string& filename,
           std::stringstream sstream;
           for(size_t i = 0; i != tokens.size(); ++i)
           {
-            eT val(0);
             sstream<<tokens[i];
-            sstream>>val;
-            matrix.at(row, i) = val;
+            sstream>>matrix.at(row, i);
             sstream.clear();
           }
         }
