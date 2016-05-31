@@ -179,7 +179,7 @@ class LSHSearch
   const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
 
   //! Get the projection tables.
-  std::vector<arma::mat> getProjectionTables() { return projections; }
+  const std::vector<arma::mat> getProjectionTables() { return projections; }
 
   //! Change the projection tables (Retrains object)
   void setProjectionTables(std::vector<arma::mat> projTables)
