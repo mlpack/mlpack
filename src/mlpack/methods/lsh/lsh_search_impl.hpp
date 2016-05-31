@@ -437,16 +437,14 @@ void LSHSearch<SortPolicy>::BuildHash(const std::vector<arma::mat> &projection)
     }
     else //user-specified projection tables
     {
-      //TODO: check that projection.size() == numTables
-
       projMat = projection[i];
 
       //make sure specified matrix is of correct size
-      if (projMat.n_rows != referenceSet->n_rows)
+      if ( projMat.n_rows != referenceSet->n_rows )
         throw std::invalid_argument( 
             "projection table dimensionality doesn't"
             " equal dataset dimensionality" );
-      if (projMat.n_cols != numProj)
+      if ( projMat.n_cols != numProj )
         throw std::invalid_argument(
             "projection table doesn't have correct number of projections");
     }
