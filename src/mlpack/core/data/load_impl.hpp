@@ -468,7 +468,7 @@ bool Load(const std::string& filename,
         tokens = details::ToTokens(lineTok);
         if(tokens.size() == cols)
         {
-          tokensArray.emplace_back(details::ToTokens(lineTok));
+          tokensArray.emplace_back(std::move(tokens));
         }
       }
       for(size_t i = 0; i != cols; ++i)
