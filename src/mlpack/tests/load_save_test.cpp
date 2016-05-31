@@ -1094,43 +1094,45 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest)
 }
 
 /**
- * The test CSV Keon suggested in #658.
+ * A harder test CSV based on the concerns in #658.
  */
-BOOST_AUTO_TEST_CASE(KeonsSimpleDatasetInfoTest)
+BOOST_AUTO_TEST_CASE(HarderKeonTest)
 {
   fstream f;
   f.open("test.csv", fstream::out);
-  f << "1, 1, 1" << endl;
-  f << ", 1, 1" << endl;
-  f << "1, 1, 1" << endl;
-  f << "1, 1, 1" << endl;
+  f << "a,, 13,\t, 0" << endl;
+  f << "b, 3, 14, hello,1" << endl;
+  f << "b, 4, 15, , 2" << endl;
+  f << ", 5, 16, ," << endl;
   f.close();
 
-  // Load without transpose.
+  // Load transposed.
   arma::mat dataset;
   data::DatasetInfo info;
-  data::Load("test.csv", dataset, info, true, false);
-
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 4);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 0);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 2);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(3), 0);
-
-  // Load with transpose.
-  data::DatasetInfo newInfo;
   data::Load("test.csv", dataset, info, true, true);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 5);
   BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 2);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 0);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
 
-  remove("test.csv");
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 5);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 4);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(3), 2); // \t and "" are equivalent.
+  BOOST_REQUIRE_EQUAL(info.NumMappings(4), 4);
+
+  // Now load non-transposed.
+  data::DatasetInfo ntInfo;
+  data::Load("test.csv", dataset, ntInfo, true, false);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 5);
+
+  BOOST_REQUIRE_EQUAL(ntInfo.Dimensionality(), 4);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(0), 4);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(1), 5);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(2), 5);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
 }
 
 /**
