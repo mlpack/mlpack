@@ -65,7 +65,8 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
                                   const size_t numTables,
                                   const double hashWidthIn,
                                   const size_t secondHashSize,
-                                  const size_t bucketSize)
+                                  const size_t bucketSize,
+                                  const std::vector<arma::mat> &projection)
 {
   // Set new reference set.
   if (this->referenceSet && ownsSet)
@@ -97,7 +98,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
 
   Log::Info << "Hash width chosen as: " << hashWidth << std::endl;
 
-  BuildHash();
+  BuildHash(projection);
 }
 
 template<typename SortPolicy>
@@ -355,7 +356,7 @@ Search(const size_t k,
 }
 
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::BuildHash()
+void LSHSearch<SortPolicy>::BuildHash(const std::vector<arma::mat> &projection)
 {
   // The first level hash for a single table outputs a 'numProj'-dimensional
   // integer key for each point in the set -- (key, pointID)
@@ -412,6 +413,13 @@ void LSHSearch<SortPolicy>::BuildHash()
   // Step III: Create each hash table in the first level hash one by one and
   // putting them directly into the 'secondHashTable' for memory efficiency.
   projections.clear(); // Reset projections vector.
+
+
+  if (projection.size() != 0 && projection.size() != numTables)
+    throw std::invalid_argument(
+        "number of projection tables provided must be equal to numProj"
+        );
+
   for (size_t i = 0; i < numTables; i++)
   {
     // Step IV: Obtain the 'numProj' projections for each table.
@@ -419,7 +427,29 @@ void LSHSearch<SortPolicy>::BuildHash()
     // For L2 metric, 2-stable distributions are used, and
     // the normal Z ~ N(0, 1) is a 2-stable distribution.
     arma::mat projMat;
-    projMat.randn(referenceSet->n_rows, numProj);
+
+    if (projection.size() == 0) //random generation of table i
+    {
+
+      // For L2 metric, p-stable distributions are used, and the normal
+      // Z ~ N(0, 1) is p-stable.
+      projMat.randn(referenceSet->n_rows, numProj);
+    }
+    else //user-specified projection tables
+    {
+      //TODO: check that projection.size() == numTables
+
+      projMat = projection[i];
+
+      //make sure specified matrix is of correct size
+      if (projMat.n_rows != referenceSet->n_rows)
+        throw std::invalid_argument( 
+            "projection table dimensionality doesn't"
+            " equal dataset dimensionality" );
+      if (projMat.n_cols != numProj)
+        throw std::invalid_argument(
+            "projection table doesn't have correct number of projections");
+    }
 
     // Save the projection matrix for querying.
     projections.push_back(projMat);

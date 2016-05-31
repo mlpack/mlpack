@@ -83,15 +83,19 @@ class LSHSearch
   ~LSHSearch();
 
   /**
-   * Train the LSH model on the given dataset.  This means building new hash
-   * tables.
+   * Train the LSH model on the given dataset.  If a correct vector is not
+   * provided, this means building new hash tables. Otherwise, we use the ones
+   * provided by the user.
    */
   void Train(const arma::mat& referenceSet,
              const size_t numProj,
              const size_t numTables,
              const double hashWidth = 0.0,
              const size_t secondHashSize = 99901,
-             const size_t bucketSize = 500);
+             const size_t bucketSize = 500,
+             const std::vector<arma::mat> &projection
+             = std::vector<arma::mat>()
+             );
 
   /**
    * Compute the nearest neighbors of the points in the given query set and
@@ -174,6 +178,24 @@ class LSHSearch
   //! Get the second hash table.
   const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
 
+  //! Get the projection tables.
+  std::vector<arma::mat> getProjectionTables() { return projections; }
+
+  //! Change the projection tables (Retrains object)
+  void setProjectionTables(std::vector<arma::mat> projTables)
+  {
+    // Simply call Train() with given projection tables
+    Train(
+        *referenceSet,
+        numProj,
+        numTables,
+        hashWidth,
+        secondHashSize,
+        bucketSize,
+        projTables
+        );
+  };
+
  private:
   /**
    * This function builds a hash table with two levels of hashing as presented
@@ -188,7 +210,7 @@ class LSHSearch
    * are private members of this class, initialized during the class
    * initialization.
    */
-  void BuildHash();
+  void BuildHash(const std::vector<arma::mat> &projection);
 
   /**
    * This function takes a query and hashes it into each of the hash tables to
