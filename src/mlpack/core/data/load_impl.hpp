@@ -471,7 +471,6 @@ bool Load(const std::string& filename,
           tokensArray.emplace_back(details::ToTokens(lineTok));
         }
       }
-      std::cout<<"array size : "<<tokensArray.size()<<std::endl;
       for(size_t i = 0; i != cols; ++i)
       {
         details::TransPoseTokens(tokensArray, tokens, i);
