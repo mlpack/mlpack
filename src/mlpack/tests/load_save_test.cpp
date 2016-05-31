@@ -1094,6 +1094,46 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest)
 }
 
 /**
+ * The test CSV Keon suggested in #658.
+ */
+BOOST_AUTO_TEST_CASE(KeonsSimpleDatasetInfoTest)
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, 1, 1" << endl;
+  f << ", 1, 1" << endl;
+  f << "1, 1, 1" << endl;
+  f << "1, 1, 1" << endl;
+  f.close();
+
+  // Load without transpose.
+  arma::mat dataset;
+  data::DatasetInfo info;
+  data::Load("test.csv", dataset, info, true, false);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 4);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 0);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 2);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(3), 0);
+
+  // Load with transpose.
+  data::DatasetInfo newInfo;
+  data::Load("test.csv", dataset, info, true, true);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 2);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 0);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
+
+  remove("test.csv");
+}
+
+/**
  * A simple ARFF load test.  Two attributes, both numeric.
  */
 BOOST_AUTO_TEST_CASE(SimpleARFFTest)
