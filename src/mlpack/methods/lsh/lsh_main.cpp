@@ -48,7 +48,7 @@ PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
-PARAM_STRING("truth_file", "File of true neighbors for each query. "
+PARAM_STRING("true_neighbors_file", "File of true neighbors for each query. "
     "If specified, will compute recall (\% of neighbors found). Run with -v "
     "to get output printed on screen (optional).",
     "t","");
@@ -71,9 +71,9 @@ PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
 PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
     500);
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_INT("numProbes", "Number of additional probes to use for Multiprobe LSH. "
+PARAM_INT("num_probes", "Number of additional probes to use for Multiprobe LSH. "
     "If 0, classic LSH is used (optional).", "T", 0);
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 int main(int argc, char *argv[])
 {
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   const string neighborsFile = CLI::GetParam<string>("neighbors_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string trueNeighborsFile = CLI::GetParam<string>("truth_file");
+  const string trueNeighborsFile = CLI::GetParam<string>("true_neighbors_file");
 
   size_t k = CLI::GetParam<int>("k");
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
   const size_t numProj = CLI::GetParam<int>("projections");
   const size_t numTables = CLI::GetParam<int>("tables");
   const double hashWidth = CLI::GetParam<double>("hash_width");
-  const size_t numProbes = CLI::GetParam<int>("numProbes");
+  const size_t numProbes = CLI::GetParam<int>("num_probes");
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -197,12 +197,12 @@ int main(int argc, char *argv[])
   Log::Info << "Neighbors computed." << endl;
 
   //Compute recall, if provided with truth file
-  if (CLI::HasParam("truth_file"))
+  if (CLI::HasParam("true_neighbors_file"))
   {
     arma::Mat<size_t> trueNeighbors;
     data::Load(trueNeighborsFile, trueNeighbors, true);
     double recall = allkann.ComputeRecall(neighbors, trueNeighbors);
-    Log::Info << "Recall: " << 100 * recall << "%%"<<endl;
+    Log::Info << "Recall: " << 100 * recall << "\%"<<endl;
 
   }
 

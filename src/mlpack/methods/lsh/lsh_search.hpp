@@ -206,10 +206,22 @@ class LSHSearch
   void BuildHash();
 
   /**
-   * TODO: Document this
+   * This function implements Multiprobe LSH described in "Multi-Probe LSH:
+   * Efficient Indexing for High-Dimensional Similarity Search" by Qin Lv et al.
+   *
+   * The function computes and stores in additionalProbingBins's columns T codes
+   * that are most likely to contain the query's neighbors (after the query's
+   * own bin). Theoretically this should increase neighbors found correctly
+   * meaning reducing the number of tables needed to be used.
+   *
+   * @param queryCode The code of a query point hashed into a projection table
+   * @param queryCodeNotFloored the unfloored value of the query's hash
+   * @param T The number of additional probing bins to calculate
+   * @param additionalProbingBins matrix to store bin codes
+   *
    */
-  void GetAdditionalProbingBins(const arma::vec &allProjInTables, 
-                                const arma::vec &queryCodesNotFloored,
+  void GetAdditionalProbingBins(const arma::vec &queryCode, 
+                                const arma::vec &queryCodeNotFloored,
                                 const size_t T,
                                 arma::mat &additionalProbingBins) const;
 

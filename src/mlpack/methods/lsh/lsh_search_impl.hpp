@@ -8,8 +8,6 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_IMPL_HPP
 
 #include <mlpack/core.hpp>
-#include <vector> //TODO: included?
-#include <queue> //TODO: included?
 
 //TODO: remove this
 using std::cout;
@@ -192,7 +190,7 @@ class CompareGreater
 {
   public:
     bool operator()(
-        std::pair<double, size_t> p1, 
+        std::pair<double, size_t> p1,
         std::pair<double, size_t> p2){
       //only compare the double values
       return p1.first > p2.first;
@@ -208,12 +206,12 @@ inline double perturbationScore(
 {
   double score = 0.0;
   for (size_t i = 0; i < A.size(); ++i)
-    score+=scores[i];
+    score+=scores[A[i]];
   return score;
 }
 
 // Replace max element with max element+1 in perturbation set A
-inline void perturbationShift(std::vector<size_t> &A, const size_t numProj)
+inline void perturbationShift(std::vector<size_t> &A)
 {
   size_t max_pos = 0;
   size_t max = A[0];
@@ -225,22 +223,16 @@ inline void perturbationShift(std::vector<size_t> &A, const size_t numProj)
       max_pos = i;
     }
   }
-  if (A[max_pos] < 2*numProj - 1)
-    A[max_pos]++;
-  else
-    return; //don't add indices that will make A invalid
+  A[max_pos]++;
 }
 
 // Add 1+max element to perturbation set A
-inline void perturbationExpand(std::vector<size_t> &A, const size_t numProj)
+inline void perturbationExpand(std::vector<size_t> &A)
 {
   size_t max = A[0];
   for (size_t i = 1; i < A.size(); ++i)
     if (A[i] > max)
       max = A[i];
-  if (max+1 >= 2*numProj){
-    return; //don't add indices that will make A invalid
-  }
   A.push_back(max+1);
 }
 
@@ -249,22 +241,30 @@ inline void perturbationExpand(std::vector<size_t> &A, const size_t numProj)
 // are larger than the queryCode's dimensions.
 inline bool perturbationValid(
     const std::vector<size_t> &A,
-    const arma::Col<size_t> &positions,
     const size_t numProj)
 {
-  bool check[numProj] = {0};
+  //stack allocation and initialization to 0 (bool check[numProj] = {0}) made
+  //some compilers complain so use new to be safe...
+  bool *check = new bool[numProj]();
 
   for (size_t i = 0; i < A.size(); ++i)
   {
-    if ( positions[A[i]] >= numProj )
-      return false; //invalid if contains non-existing dimension
+    if ( A[i] >= 2*numProj)
+    {
+      delete []check;
+      return false;
+    }
 
     //check that we only see each dimension once
-    if (check[A[i]] == 0)
-      check[A[i]] = 1;
+    if (check[A[i] % numProj ] == 0)
+      check[A[i] % numProj ] = 1;
     else
+    {
+      delete []check;
       return false;
+    }
   }
+  delete []check;
   return true;
 }
 
@@ -282,7 +282,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     return;
 
   // Each column of additionalProbingBins is the code of a bin.
-  additionalProbingBins.zeros(numProj, T);
+  additionalProbingBins.set_size(numProj, T);
 
   // Copy the query's code, then add/subtract according to perturbations
   for (size_t c = 0; c < T; ++c)
@@ -302,18 +302,18 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   scores.rows(numProj, 2 * numProj - 1) = arma::pow(limHigh, 2);
 
   // actions vector shows what transformation to apply to a coordinate
-  arma::Col<short int> actions(2 * numProj); //will be [-1 ... 1 ...]
+  arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
 
-  actions.rows(0, numProj - 1) = //first numProj rows
-    -1 * arma::ones< arma::Col<short int> > (numProj); //-1s
+  actions.rows(0, numProj - 1) = // first numProj rows
+    -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
 
-  actions.rows(numProj, 2 * numProj - 1) = //last numProj rows
-    arma::ones< arma::Col<short int> > (numProj); //1s
+  actions.rows(numProj, 2 * numProj - 1) = // last numProj rows
+    arma::ones< arma::Col<short int> > (numProj); // 1s
 
 
   // acting dimension vector shows which coordinate to transform according to
   // actions described by actions vector
-  arma::Col<size_t> positions(2 * numProj); //will be [0 1 2 ... 0 1 2 ...]
+  arma::Col<size_t> positions(2 * numProj); // will be [0 1 2 ... 0 1 2 ...]
   positions.rows(0, numProj - 1) =
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
   positions.rows(numProj, 2 * numProj - 1) =
@@ -345,58 +345,72 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   Ao.push_back(0); // initial perturbation holds smallest score (0 if sorted)
 
   std::vector< std::vector<size_t> > perturbationSets;
-  perturbationSets.push_back(Ao); //storage of perturbation sets
+  perturbationSets.push_back(Ao); // storage of perturbation sets
 
-  //define a priority queue with CompareGreater as a minheap
+
+  // define a priority queue with CompareGreater as a minheap
   std::priority_queue<
-    std::pair<double, size_t>,        //contents: pairs of (score, index)
-    std::vector<                      //container: vector of pairs
+    std::pair<double, size_t>,        // contents: pairs of (score, index)
+    std::vector<                      // container: vector of pairs
       std::pair<double, size_t>
       >,
-    mlpack::neighbor::CompareGreater  //comparator of pairs (compares scores)
-  > minHeap; //our minheap
+    mlpack::neighbor::CompareGreater // comparator of pairs(compare scores)
+  > minHeap; // our minheap
 
-  //Start by adding the lowest scoring set to the minheap
+  // Start by adding the lowest scoring set to the minheap
   std::pair<double, size_t> pair0( perturbationScore(Ao, scores), 0 );
   minHeap.push(pair0);
 
-  //loop invariable: after pvec iterations, additionalProbingBins contains pvec
-  //valid codes of the highest-scoring bins
+  double prevScore = 0; // store score of smallest inserted vector (for assert)
+  // loop invariable: after pvec iterations, additionalProbingBins contains pvec
+  // valid codes of the highest-scoring bins
   for (size_t pvec = 0; pvec < T; ++pvec)
   {
     std::vector<size_t> Ai;
     do
     {
-      //get the perturbation set corresponding to the minimum score
+      // get the perturbation set corresponding to the minimum score
       Ai = perturbationSets[ minHeap.top().second ];
       minHeap.pop(); // .top() returns, .pop() removes
 
-      //modify Ai (shift)
+
+      // modify Ai (shift)
       std::vector<size_t> As = Ai;
-      perturbationShift(As, numProj);
-      perturbationSets.push_back(As); //add shifted set to sets
-      std::pair<double, size_t> shifted(
-          perturbationScore(As, scores),
-          perturbationSets.size() - 1); //create new (score, index) pair for shift
-      minHeap.push(shifted);
+      perturbationShift(As);
+      if ( perturbationValid(As, numProj) )
+      {
+        perturbationSets.push_back(As); // add shifted set to sets
+        std::pair<double, size_t> shifted(
+            perturbationScore(As, scores),
+            perturbationSets.size() - 1); // (score, position) pair for shift
+        minHeap.push(shifted);
+      }
 
-      //modify Ai (expand)
+      // modify Ai (expand)
       std::vector<size_t> Ae = Ai;
-      perturbationExpand(Ae, numProj);
-      perturbationSets.push_back(Ae); //add expanded set to sets
-      std::pair<double, size_t> expanded(
-          perturbationScore(Ae, scores),
-          perturbationSets.size() - 1); //create new (score, index) pair for expand
-      minHeap.push(expanded);
+      perturbationExpand(Ae);
+      if ( perturbationValid(Ae, numProj) )
+      {
+        perturbationSets.push_back(Ae); // add expanded set to sets
+        std::pair<double, size_t> expanded(
+            perturbationScore(Ae, scores),
+            perturbationSets.size() - 1); // (score, position) pair for expand
+        minHeap.push(expanded);
+      }
 
-    }while (! perturbationValid(Ai, positions, numProj)  );//Discard invalid perturbations
 
-    //add perturbation vector to probing sequence if valid
+    }while (! perturbationValid(Ai, numProj)  );//Discard invalid perturbations
+
+    // a valid perturbation must have higher score than previous valid ones,
+    // meaning the bin it corresponds to is less likely to hold neighbors
+    assert ( perturbationScore(Ai, scores) >= prevScore );
+    prevScore = perturbationScore(Ai, scores);
+
+    // add perturbation vector to probing sequence if valid
     for (size_t i = 0; i < Ai.size(); ++i)
       additionalProbingBins(positions(Ai[i]), pvec) += actions(Ai[i]);
 
   }
-
 }
 
 template<typename SortPolicy>
@@ -439,40 +453,40 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   Log::Assert(hashVec.n_elem == numTablesToSearch);
 
-  //Matrix storing 2nd-level hashes for main and additional probes
-  arma::mat hashMat; //each row will have numTablesToSearch bins
+  // Matrix storing 2nd-level hashes for main and additional probes
+  arma::mat hashMat; // each row will have numTablesToSearch bins
 
   if (T > 0) // Multiprobe LSH
   {
-    
+
     //Matrix containing T+1 2nd-level codes for each table
     hashMat.zeros(T, numTablesToSearch);
 
 
     for (size_t i = 0; i < numTablesToSearch; ++i)
     {
-      //for each of L tables, construct probing sequence of T additional bins
+      // for each of L tables, construct probing sequence of T additional bins
       arma::mat additionalProbingBins;
 
-      //construct probing sequence for each table
+      // construct probing sequence for each table
       GetAdditionalProbingBins(allProjInTables.unsafe_col(i),
           queryCodesNotFloored.unsafe_col(i),
           T,
           additionalProbingBins);
 
-      //map each probing bin to a code of the second hash table
-      hashMat.col(i) = additionalProbingBins.t() * secondHashWeights; //column vector
+      // map each probing bin to a code of the second hash table
+      hashMat.col(i) = additionalProbingBins.t() * secondHashWeights;
       for (size_t j = 0; j < T; ++j)
         hashMat(j, i) = (double) ((size_t) hashMat(j, i) % secondHashSize);
 
     }
-    //prepend main probing bins to additional probing bins
+    // prepend main probing bins to additional probing bins
     hashMat = arma::join_vert(hashVec, hashMat);
 
   }
-  else //Classic (Single probe) LSH
+  else // Classic (Single probe) LSH
   {
-    //hashMat is only 1 row, the main code for each bin
+    // hashMat is only 1 row, the main code for each bin
     hashMat.zeros(1, numTablesToSearch);
     hashMat.row(0) = hashVec;
   }
@@ -482,7 +496,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   arma::Col<size_t> refPointsConsidered;
   refPointsConsidered.zeros(referenceSet->n_cols);
 
-  //Column-major loop
+  // Column-major loop
   for (size_t i = 0; i < numTablesToSearch; ++i) // For all tables.
   {
     for (size_t p = 0; p < T + 1; ++p) // For all probes
@@ -545,6 +559,8 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
   size_t avgIndicesReturned = 0;
 
+  //cout<<"Called with T="<<T<<endl;
+  //cout<<"And numTablesToSearch="<<numTablesToSearch<<endl;
   Timer::Start("computing_neighbors");
 
   size_t Teffective = T;
