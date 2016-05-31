@@ -14,10 +14,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_rmva
-  rmva_main.cpp
-)
-target_link_libraries(mlpack_rmva
-  mlpack
-)
-install(TARGETS mlpack_rmva RUNTIME DESTINATION bin)
+add_cli_executable(rmva)
