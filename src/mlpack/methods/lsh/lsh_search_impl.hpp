@@ -358,19 +358,19 @@ template<typename SortPolicy>
 void LSHSearch<SortPolicy>::BuildHash()
 {
   // The first level hash for a single table outputs a 'numProj'-dimensional
-  // integer key for each point in the set -- (key, pointID)
-  // The key creation details are presented below
+  // integer key for each point in the set -- (key, pointID). The key creation
+  // details are presented below.
   //
-  // The second level hash is performed by hashing the key to
-  // an integer in the range [0, 'secondHashSize').
+  // The second level hash is performed by hashing the key to an integer in the
+  // range [0, 'secondHashSize').
   //
-  // This is done by creating a weight vector 'secondHashWeights' of
-  // length 'numProj' with each entry an integer randomly chosen
-  // between [0, 'secondHashSize').
+  // This is done by creating a weight vector 'secondHashWeights' of length
+  // 'numProj' with each entry an integer randomly chosen between [0,
+  // 'secondHashSize').
   //
-  // Then the bucket for any key and its corresponding point is
-  // given by <key, 'secondHashWeights'> % 'secondHashSize'
-  // and the corresponding point ID is put into that bucket.
+  // Then the bucket for any key and its corresponding point is given by <key,
+  // 'secondHashWeights'> % 'secondHashSize' and the corresponding point ID is
+  // put into that bucket.
 
   // Step I: Prepare the second level hash.
 
@@ -379,9 +379,9 @@ void LSHSearch<SortPolicy>::BuildHash()
                                   (double) secondHashSize);
 
   // The 'secondHashTable' is initially an empty matrix of size
-  // ('secondHashSize' x 'bucketSize'). But by only filling the buckets
-  // as points land in them allows us to shrink the size of the
-  // 'secondHashTable' at the end of the hashing.
+  // ('secondHashSize' x 'bucketSize'). But by only filling the buckets as
+  // points land in them allows us to shrink the size of the 'secondHashTable'
+  // at the end of the hashing.
 
   // Fill the second hash table n = referenceSet.n_cols.  This is because no
   // point has index 'n' so the presence of this in the bucket denotes that
@@ -404,8 +404,8 @@ void LSHSearch<SortPolicy>::BuildHash()
   size_t numRowsInTable = 0;
 
   // Step II: The offsets for all projections in all tables.
-  // Since the 'offsets' are in [0, hashWidth], we obtain the 'offsets'
-  // as randu(numProj, numTables) * hashWidth.
+  // Since the 'offsets' are in [0, hashWidth], we obtain the 'offsets' as
+  // randu(numProj, numTables) * hashWidth.
   offsets.randu(numProj, numTables);
   offsets *= hashWidth;
 
@@ -416,8 +416,8 @@ void LSHSearch<SortPolicy>::BuildHash()
   {
     // Step IV: Obtain the 'numProj' projections for each table.
 
-    // For L2 metric, 2-stable distributions are used, and
-    // the normal Z ~ N(0, 1) is a 2-stable distribution.
+    // For L2 metric, 2-stable distributions are used, and the normal Z ~ N(0,
+    // 1) is a 2-stable distribution.
     arma::mat projMat;
     projMat.randn(referenceSet->n_rows, numProj);
 
