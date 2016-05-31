@@ -11,8 +11,8 @@ enable_cxx11()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" ON)
-option(PROFILE "Compile with profiling information" ON)
+option(DEBUG "Compile with debugging information" OFF)
+option(PROFILE "Compile with profiling information" OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
