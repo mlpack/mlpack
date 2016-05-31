@@ -16,9 +16,10 @@ suitable numeric representation.  Therefore, in general, datasets on disk should
 contain only numeric features in order to be loaded successfully by mlpack.
 
 The types of datasets that mlpack can load are roughly the same as the types of
-matrices that Armadillo can load.  When datasets are loaded by mlpack, \b the
-\b "file's type is detected using the file's extension".  mlpack supports the
-following file types:
+matrices that Armadillo can load.  However, the load functionality that mlpack
+provides \b "only supports loading dense datasets".  When datasets are loaded by
+mlpack, \b the \b "file's type is detected using the file's extension".  mlpack
+supports the following file types:
 
  - csv (comma-separated values), denoted by .csv or .txt
  - tsv (tab-separated values), denoted by .tsv, .csv, or .txt
@@ -100,6 +101,42 @@ mlpack::data::Save("dataset.h5", dataset);
 As with the command-line programs, the type of data to be loaded is
 automatically detected from the filename extension.  For more details, see the
 mlpack::data::Load() and mlpack::data::Save() documentation.
+
+@section sparseload Dealing with sparse matrices
+
+As mentioned earlier, support for loading sparse matrices in mlpack is not
+available at this time.  To use a sparse matrix with mlpack code, you will have
+to write a C++ program instead of using any of the command-line tools, because
+the command-line tools all use dense datasets internally.  (There is one
+exception: the \c mlpack_cf program, for collaborative filtering, loads sparse
+coordinate lists.)
+
+In addition, the \c mlpack::data::Load() function does not support loading any
+sparse format; so the best idea is to use undocumented Armadillo functionality
+to load coordinate lists.  Suppose you have a coordinate list file like the one
+below:
+
+\code
+$ cat cl.csv
+0 0 0.332
+1 3 3.126
+4 4 1.333
+\endcode
+
+This represents a 5x5 matrix with three nonzero elements.  We can load this
+using Armadillo:
+
+\code
+arma::sp_mat matrix;
+matrix.load("cl.csv", arma::coord_ascii);
+matrix = matrix.t(); // We must transpose after load!
+\endcode
+
+The transposition after loading is necessary if the coordinate list is in
+row-major format (that is, if each row in the matrix represents a point and each
+column represents a feature).  Be sure that the matrix you use with mlpack
+methods has points as columns and features as rows!  See \ref matrices for more
+information.
 
 @section formatcat Categorical features and command line programs
 
