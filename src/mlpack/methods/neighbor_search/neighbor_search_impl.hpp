@@ -640,7 +640,6 @@ Search(const size_t k,
         // Reset bounds of this node.
         node->Stat().FirstBound() = SortPolicy::WorstDistance();
         node->Stat().SecondBound() = SortPolicy::WorstDistance();
-        node->Stat().Bound() = SortPolicy::WorstDistance();
         node->Stat().LastDistance() = 0.0;
 
         // Then add the children.
