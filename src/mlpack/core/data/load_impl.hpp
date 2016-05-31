@@ -29,6 +29,74 @@
 namespace mlpack {
 namespace data {
 
+namespace details{
+
+template<typename Tokenizer>
+std::vector<std::string> ToTokens(Tokenizer &lineTok)
+{
+  std::vector<std::string> tokens;
+  std::transform(std::begin(lineTok), std::end(lineTok),
+                 std::back_inserter(tokens),
+                 [&tokens](std::string const &str)
+  {
+    std::string trimmedToken(str);
+    boost::trim(trimmedToken);
+    return std::move(trimmedToken);
+  });
+
+  return tokens;
+}
+
+void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
+                     std::vector<std::string> &output,
+                     size_t index)
+{
+  output.clear();
+  for(size_t i = 0; i != input.size(); ++i)
+  {
+    output.emplace_back(input[i][index]);
+  }
+}
+
+template<typename eT>
+void MapToNumerical(std::vector<std::string> const &tokens,
+                    size_t &row,
+                    DatasetInfo &info,
+                    arma::Mat<eT> &matrix)
+{
+  auto notNumber = [](std::string const &str)
+  {
+    eT val(0);
+    std::stringstream token;
+    token.str(str);
+    token>>val;
+    return token.fail();
+  };
+
+  bool const notNumeric = std::any_of(std::begin(tokens),
+                                     std::end(tokens), notNumber);
+  if(notNumeric)
+  {
+    for(size_t i = 0; i != tokens.size(); ++i)
+    {
+      eT const val = static_cast<eT>(info.MapString(tokens[i], row));
+      matrix.at(row, i) = val;
+    }
+  }
+  else
+  {
+    std::stringstream token;
+    for(size_t i = 0; i != tokens.size(); ++i)
+    {
+      token.str(tokens[i]);
+      token>>matrix.at(row, i);
+      token.clear();
+    }
+  }
+}
+
+}
+
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
 {
@@ -37,7 +105,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
     X = arma::trans(X);
     return false;
   }
-  catch (std::bad_alloc& exception)
+  catch (std::bad_alloc&)
   {
 #if (ARMA_VERSION_MAJOR >= 4) || \
     ((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR >= 930))
@@ -386,55 +454,38 @@ bool Load(const std::string& filename,
     }
 
     stream.close();
-    stream.open(filename, std::fstream::in);
+    stream.open(filename, std::fstream::in);    
 
-    auto notNumber = [](std::string const &str)
+    if(transpose)
     {
-      eT val(0);
-      std::stringstream token;
-      token.str(str);
-      token>>val;
-      return token.fail();
-    };
-    size_t row = 0;
-    while (!stream.bad() && !stream.fail() && !stream.eof())
-    {
-      // Extract line by line.
-      std::getline(stream, buffer, '\n');
-      Tokenizer lineTok(buffer, sep);
-      std::vector<std::string> tokens;
-      if(!transpose)
+      std::vector<std::vector<std::string>> tokensArray;
+      while (!stream.bad() && !stream.fail() && !stream.eof())
       {
-        std::transform(std::begin(lineTok), std::end(lineTok),
-                       std::back_inserter(tokens),
-                       [&tokens](std::string const &str)
-        {
-          std::string trimmedToken(str);
-          boost::trim(trimmedToken);
-          return std::move(trimmedToken);
-        });
-        bool const notNumeric = std::any_of(std::begin(tokens),
-                                           std::end(tokens), notNumber);
-        if(notNumeric)
-        {
-          for(size_t i = 0; i != tokens.size(); ++i)
-          {
-            eT const val = static_cast<eT>(info.MapString(tokens[i], row));
-            matrix.at(row, i) = val;
-          }
-        }
-        else
-        {          
-          std::stringstream token;
-          for(size_t i = 0; i != tokens.size(); ++i)
-          {            
-            token.str(tokens[i]);
-            token>>matrix.at(row, i);
-            token.clear();
-          }
-        }
+        // Extract line by line.
+        std::getline(stream, buffer, '\n');
+        Tokenizer lineTok(buffer, sep);
+        tokensArray.emplace_back(details::ToTokens(lineTok));
       }
-      ++row;
+      std::vector<std::string> tokens;
+      for(size_t i = 0; i != cols; ++i)
+      {
+        details::TransPoseTokens(tokensArray, tokens, i);
+        details::MapToNumerical(tokens, i,
+                                info, matrix);
+      }
+    }
+    else
+    {
+      size_t row = 0;
+      while (!stream.bad() && !stream.fail() && !stream.eof())
+      {
+        // Extract line by line.
+        std::getline(stream, buffer, '\n');
+        Tokenizer lineTok(buffer, sep);
+        details::MapToNumerical(details::ToTokens(lineTok), row,
+                                info, matrix);
+        ++row;
+      }
     }
   }
   else if (extension == "arff")
