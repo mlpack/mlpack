@@ -642,9 +642,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-  {
     RStarTreeSplit::SplitNonLeafNode(par,relevels);
-  }
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.

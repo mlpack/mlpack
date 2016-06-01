@@ -809,9 +809,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-  {
     XTreeSplit::SplitNonLeafNode(par,relevels);
-  }
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.

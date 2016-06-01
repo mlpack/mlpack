@@ -14,7 +14,7 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename SortPolicy>
-RAModel<SortPolicy>::RAModel(const int treeType, const bool randomBasis) :
+RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
     treeType(treeType),
     leafSize(20),
     randomBasis(randomBasis),
@@ -377,13 +377,13 @@ size_t& RAModel<SortPolicy>::LeafSize()
 }
 
 template<typename SortPolicy>
-int RAModel<SortPolicy>::TreeType() const
+typename RAModel<SortPolicy>::TreeTypes RAModel<SortPolicy>::TreeType() const
 {
   return treeType;
 }
 
 template<typename SortPolicy>
-int& RAModel<SortPolicy>::TreeType()
+typename RAModel<SortPolicy>::TreeTypes& RAModel<SortPolicy>::TreeType()
 {
   return treeType;
 }

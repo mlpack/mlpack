@@ -14,7 +14,7 @@ using namespace mlpack::range;
  * Initialize the RSModel with the given tree type and whether or not a random
  * basis should be used.
  */
-RSModel::RSModel(int treeType, bool randomBasis) :
+RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
     randomBasis(randomBasis),
     kdTreeRS(NULL),

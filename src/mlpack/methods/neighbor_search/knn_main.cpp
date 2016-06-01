@@ -34,7 +34,7 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
     "neighbors in the file 'neighbors.csv':"
     "\n\n"
-    "$ mlpack_nn --k=5 --reference_file=input.csv "
+    "$ mlpack_knn --k=5 --reference_file=input.csv "
     "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
     "\n\n"
     "The output files are organized such that row i and column j in the "
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
-    int tree = 0;
+    KNNModel::TreeTypes tree = KNNModel::KD_TREE;
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")

@@ -111,7 +111,10 @@ TrainTestSplit(const arma::Mat<T>& input,
   TrainTestSplit(input, inputLabel, trainData, testData, trainLabel, testLabel,
       testRatio);
 
-  return std::make_tuple(trainData, testData, trainLabel, testLabel);
+  return std::make_tuple(std::move(trainData),
+                         std::move(testData),
+                         std::move(trainLabel),
+                         std::move(testLabel));
 }
 
 } // namespace data
