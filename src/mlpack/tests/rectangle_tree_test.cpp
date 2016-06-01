@@ -614,6 +614,151 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   }
 }
 
+BOOST_AUTO_TEST_CASE(DiscreteHilbertRTreeTraverserTest)
+{
+  arma::mat dataset;
+
+  const int numP = 1000;
+
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  typedef DiscreteHilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  // Nearest neighbor search with the Hilbert R tree.
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      DiscreteHilbertRTree > knn1(&hilbertRTree, true);
+
+  BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
+
+  CheckSync(hilbertRTree);
+  CheckContainment(hilbertRTree);
+  CheckExactContainment(hilbertRTree);
+  CheckHierarchy(hilbertRTree);
+
+  knn1.Search(5, neighbors1, distances1);
+
+  // Nearest neighbor search the naive way.
+  KNN knn2(dataset, true, true);
+
+  knn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RecursiveHilbertRTreeTraverserTest)
+{
+  arma::mat dataset;
+
+  const int numP = 1000;
+
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  typedef RecursiveHilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  // Nearest neighbor search with the Hilbert R tree.
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RecursiveHilbertRTree > knn1(&hilbertRTree, true);
+
+  BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
+
+  CheckSync(hilbertRTree);
+  CheckContainment(hilbertRTree);
+  CheckExactContainment(hilbertRTree);
+  CheckHierarchy(hilbertRTree);
+
+  knn1.Search(5, neighbors1, distances1);
+
+  // Nearest neighbor search the naive way.
+  KNN knn2(dataset, true, true);
+
+  knn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
+template<typename TreeType>
+void CheckHilbertOrdering(TreeType *tree)
+{
+  if(tree->IsLeaf())
+  {
+    for(size_t i = 0; i < tree->NumPoints() - 1; i++)
+      BOOST_REQUIRE_LE(
+              tree->AuxiliaryInfo().LargestHilbertValue().ComparePoints(
+                arma::vec(tree->LocalDataset().col(i-1)),
+                arma::vec(tree->LocalDataset().col(i))),
+              0);
+
+    BOOST_REQUIRE_EQUAL(
+                  tree->AuxiliaryInfo().LargestHilbertValue().CompareWith(
+                      tree,
+                      tree->Points()[tree->NumPoints() - 1]),
+                  0);
+  }
+  else
+  {
+    for(size_t i = 0; i < tree->NumChildren() - 1; i++)
+      BOOST_REQUIRE_LE(
+            tree->AuxiliaryInfo().LargestHilbertValue().CompareValues(tree,
+                tree->Children()[i-1]->AuxiliaryInfo().LargestHilbertValue(),
+                tree->Children()[i]->AuxiliaryInfo().LargestHilbertValue()),
+            0);
+
+    BOOST_REQUIRE_EQUAL(
+            tree->AuxiliaryInfo().LargestHilbertValue().CompareWith(
+                tree,
+                tree->Children()[tree->NumChildren() - 1]->AuxiliaryInfo().LargestHilbertValue()),
+            0);
+
+    for(size_t i = 0; i < tree->NumChildren(); i++)
+      CheckHilbertOrdering(tree->Children()[i]);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DiscreteHilbertOrderingTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef DiscreteHilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckHilbertOrdering(&hilbertRTree);
+}
+
+BOOST_AUTO_TEST_CASE(RecursiveHilbertOrderingTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef RecursiveHilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckHilbertOrdering(&hilbertRTree);
+}
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.

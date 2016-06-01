@@ -16,6 +16,15 @@ namespace tree {
 template<typename TreeType>
 inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
+    const size_t point)
+{
+  return ChooseDescentNode(node,node->Dataset().col(point));
+}
+
+
+template<typename TreeType>
+inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
+    const TreeType* node,
     const arma::vec& point)
 {
   // Convenience typedef.

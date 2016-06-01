@@ -309,8 +309,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   auxiliaryInfo.HandlePointInsertion(this,point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this,
-      dataset->col(point));
+  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, lvls);
 }
 
@@ -348,8 +347,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   auxiliaryInfo.HandlePointInsertion(this,point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this,
-      dataset->col(point));
+  const size_t descentNode = DescentType::ChooseDescentNode(this,point);
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -814,11 +812,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         while (root->Parent() != NULL)
         {
           if (stillShrinking)
-            stillShrinking = root->AuxiliaryInfo().ShrinkAuxiliaryInfo(root);
+            stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
           root = root->Parent();
         }
         if (stillShrinking)
-          stillShrinking = root->AuxiliaryInfo().ShrinkAuxiliaryInfo(root);
+          stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
        // Reinsert the points at the root node.
         for (size_t j = 0; j < count; j++)
@@ -868,11 +866,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           while (root->Parent() != NULL)
           {
             if (stillShrinking)
-              stillShrinking = root->AuxiliaryInfo().ShrinkAuxiliaryInfo(root);
+              stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
             root = root->Parent();
           }
           if (stillShrinking)
-            stillShrinking = root->AuxiliaryInfo().ShrinkAuxiliaryInfo(root);
+            stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
           // Reinsert the nodes at the root node.
           for (size_t i = 0; i < numChildren; i++)
@@ -923,11 +921,11 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   // If we didn't delete it, shrink the bound if we need to.
   if (usePoint &&
-      (ShrinkBoundForPoint(point) || auxiliaryInfo.ShrinkAuxiliaryInfo(this)) &&
+      (ShrinkBoundForPoint(point) || auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
       parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
   else if (!usePoint &&
-           (ShrinkBoundForBound(bound) || auxiliaryInfo.ShrinkAuxiliaryInfo(this)) &&
+           (ShrinkBoundForBound(bound) || auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
            parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
 }

@@ -15,11 +15,16 @@ template<typename TreeType>
 class XTreeAuxiliaryInformation
 {
  public:
+  //! Default constructor
   XTreeAuxiliaryInformation() :
     normalNodeMaxNumChildren(0),
     splitHistory(0)
   { };
 
+  /**
+   * Construct this whith the specified node.
+   * @param node The node that stores this auxiliary information.
+   */
   XTreeAuxiliaryInformation(const TreeType *node) :
     normalNodeMaxNumChildren(node->Parent() ? 
                     node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren() :
@@ -27,38 +32,72 @@ class XTreeAuxiliaryInformation
     splitHistory(node->Bound().Dim())
   { };
 
+  /**
+   * Create an auxiliary information object by copying from the other node.
+   * @param other The node from which the information will be copied.
+   */
   XTreeAuxiliaryInformation(const TreeType &other) :
     normalNodeMaxNumChildren(other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
     splitHistory(other.AuxiliaryInfo().SplitHistory())
   { };
 
+  /**
+   * Some tree types require to save some properties at the insertion process.
+   * This method should return false if it does not handle the process.
+   */
   bool HandlePointInsertion(TreeType *, const size_t)
   {
     return false;
   }
 
+  /**
+   * Some tree types require to save some properties at the insertion process.
+   * This method should return false if it does not handle the process.
+   */
   bool HandleNodeInsertion(TreeType *,TreeType *,bool)
   {
     return false;
   }
 
+  /**
+   * Some tree types require to save some properties at the deletion process.
+   * This method should return false if it does not handle the process.
+   */
   bool HandlePointDeletion(TreeType *,const size_t)
   {
     return false;
   }
 
+  /**
+   * Some tree types require to save some properties at the deletion process.
+   * This method should return false if it does not handle the process.
+   */
   bool HandleNodeRemoval(TreeType *,const size_t)
   {
     return false;
   }
 
-  bool ShrinkAuxiliaryInfo(TreeType *)
+  /**
+   * Some tree types require to propagate the information downward.
+   * This method should return false if this is not the case.
+   */
+  bool UpdateAuxiliaryInfo(TreeType *)
   {
     return false;
   }
 
-  void Copy(TreeType *,TreeType *)
-  { }
+  /**
+   * Copy the auxiliary information from one node to another.
+   * @param dst The node to which the information being copied.
+   * @param src The node from which the information being copied.
+   */
+  void Copy(TreeType *dst,TreeType *src)
+  {
+    dst->AuxiliaryInfo().NormalNodeMaxNumChildren() =
+                                src->AuxiliaryInfo().NormalNodeMaxNumChildren();
+
+    dst->AuxiliaryInfo().SplitHistory() = src->AuxiliaryInfo().SplitHistory();
+  }
 
   /**
    * The X tree requires that the tree records it's "split history".  To make

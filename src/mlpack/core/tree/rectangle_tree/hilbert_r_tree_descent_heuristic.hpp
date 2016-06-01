@@ -16,9 +16,36 @@ namespace tree {
 class HilbertRTreeDescentHeuristic
 {
  public:
-    template<typename TreeType>
+  /**
+   * Evaluate the node using a heuristic. Returns the number of the node
+   * with minimum largest Hilbert value is greater than the Hilbert value of
+   * the point being inserted.
+   *
+   * @param node The node that is being evaluated.
+   * @param point The point that is being inserted.
+   */
+  template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* node, const arma::vec& point);
 
+  /**
+   * Evaluate the node using a heuristic. Returns the number of the node
+   * with minimum largest Hilbert value is greater than the Hilbert value of
+   * the point being inserted.
+   *
+   * @param node The node that is being evaluated.
+   * @param point The number of the point that is being inserted.
+   */
+  template<typename TreeType>
+  static size_t ChooseDescentNode(const TreeType* node, const size_t point);
+
+  /**
+   * Evaluate the node using a heuristic. Returns the number of the node
+   * with minimum largest Hilbert value is greater than the largest
+   * Hilbert value of the point being inserted.
+   *
+   * @param node The node that is being evaluated.
+   * @param insertedNode The node that is being inserted.
+   */
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* node,
                                   const TreeType* insertedNode);

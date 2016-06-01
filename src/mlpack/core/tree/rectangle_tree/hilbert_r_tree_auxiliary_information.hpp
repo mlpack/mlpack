@@ -16,26 +16,82 @@ template<typename TreeType,typename HilbertValue>
 class HilbertRTreeAuxiliaryInformation
 {
  public:
+  //! Default constructor
   HilbertRTreeAuxiliaryInformation();
 
+  /**
+   * Construct this as an axiliary information for the node node.
+   * @param node The node that stores this auxiliary information.
+   */
   HilbertRTreeAuxiliaryInformation(const TreeType *node);
 
+  /**
+   * Create an auxiliary information object by copying from the other node.
+   * @param other The node from which the information will be copied.
+   */
   HilbertRTreeAuxiliaryInformation(const TreeType &other);
-  
+
+  /**
+   * The Hilbert R tree requires to insert points according to their
+   * Hilbert value. This method should take care of it.
+   * It returns false if it does nothing and true if it handles
+   * the insertion process.
+   * @param node The node in which the point is being inserted.
+   * @param point The number of the point being inserted.
+   */
   bool HandlePointInsertion(TreeType *node, const size_t point);
   
+  /**
+   * The Hilbert R tree requires to insert nodes according to their
+   * Hilbert value. This method should take care of it.
+   * It returns false if it does nothing and true if it handles
+   * the insertion process.
+   * @param node The node in which the nodeToInsert is being inserted.
+   * @param nodeToInsert The node being inserted.
+   * @param insertionLevel The level of the tree at which the nodeToInsert
+   *        should be inserted.
+   */
   bool HandleNodeInsertion(TreeType *node,
                            TreeType *nodeToInsert,bool insertionLevel);
 
+  /**
+   * The Hilbert R tree requires all points to be arranged according to their
+   * Hilbert value. This method should take care of saving this property
+   * after the deletion process.
+   * It returns false if it does nothing and true if it handles
+   * the deletion process.
+   * @param node The node from which the point is being deleted.
+   * @param localIndex The index of the point being deleted.
+   */
   bool HandlePointDeletion(TreeType *node,const size_t localIndex);
 
+  /**
+   * The Hilbert R tree requires all nodes to be arranged according to their
+   * Hilbert value. This method should take care of saving this property
+   * after the deletion process.
+   * It returns false if it does nothing and true if it handles
+   * the deletion process.
+   * @param node The node from which the node is being deleted.
+   * @param nodeIndex The index of the node being deleted.
+   */
   bool HandleNodeRemoval(TreeType *node,const size_t nodeIndex);
 
-  bool ShrinkAuxiliaryInfo(TreeType *node);
+  /**
+   * Update the auxiliary information in the node. The method returns true
+   * if the update should be propogated downward.
+   * @param node The node in which the auxiliary information being update.
+   */
+  bool UpdateAuxiliaryInfo(TreeType *node);
 
+  /**
+   * Copy the auxiliary information from one node to another.
+   * @param dst The node to which the information is being copied.
+   * @param src The node from which the information is being copied.
+   */
   void Copy(TreeType *dst,TreeType *src);
 
  private:
+  //! The largest Hilbert value of a point enclosed by the node.
   HilbertValue largestHilbertValue;
 
  public:

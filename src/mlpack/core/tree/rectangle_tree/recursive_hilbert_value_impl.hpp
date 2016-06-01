@@ -26,11 +26,12 @@ template<typename TreeType>
 int RecursiveHilbertValue::CompareValues(TreeType *tree,
                        RecursiveHilbertValue &val1, RecursiveHilbertValue &val2)
 {
+  typedef typename TreeType::ElemType ElemType;
   size_t point1 = val1.LargestValue();
   size_t point2 = val2.LargestValue();
 
-  return ComparePoints(tree->Dataset()->col(point1),
-                       tree->Dataset()->col(point2));
+  return ComparePoints(arma::Col<ElemType>(tree->Dataset().col(point1)),
+                       arma::Col<ElemType>(tree->Dataset().col(point2)));
 }
 
 template<typename TreeType>
@@ -44,7 +45,16 @@ template<typename TreeType,typename ElemType>
 int RecursiveHilbertValue::CompareWith(TreeType *tree,
                                        const arma::Col<ElemType> &pt)
 {
-  return ComparePoints(tree->Dataset()->col(largestValue),pt);
+  return ComparePoints(arma::Col<ElemType>(tree->Dataset()->col(largestValue)),pt);
+}
+
+template<typename TreeType>
+int RecursiveHilbertValue::CompareWith(TreeType *tree,
+                                       const size_t point)
+{
+  typedef typename TreeType::ElemType ElemType;
+  return ComparePoints(arma::Col<ElemType>(tree->Dataset().col(largestValue)),
+                       arma::Col<ElemType>(tree->Dataset().col(point)));
 }
 
 
@@ -60,6 +70,7 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
 
   center += vec;
 
+  // Get bits in order to use the Gray code
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
     size_t j = comp.permutation[i];
@@ -69,6 +80,8 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
     bits2[i] = (pt2(j) > center(j) && !comp.inversion[j]) ||
        (pt2(j) <= center(j) && !comp.inversion[j]);
   }
+
+  // Gray encode
   for(size_t i = 1; i < pt1.n_rows; i++)
   {
     bits[i] ^= bits[i-1];
@@ -92,9 +105,16 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
       return 1;
   }
 
+  if(comp.recursionLevel >= recursionDepth)
+    return 0;
+
+  comp.recursionLevel++;
+
   if(bits[pt1.n_rows-1])
     comp.invertResult = !comp.invertResult;
 
+  // Since the Hilbert curve is continuous we should permutate and intend
+  // coordinate axes depending on the position of the point
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
     size_t j = comp.permutation[i];
@@ -111,6 +131,7 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
     }      
   }
 
+  // Choose an appropriate subhypercube
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
     if(pt1(i) > center(i))
@@ -125,13 +146,14 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
 template<typename TreeType>
 size_t RecursiveHilbertValue::InsertPoint(TreeType *node, const size_t point)
 {
+  typedef typename TreeType::ElemType ElemType;
   if(node->IsLeaf())
   {
     size_t i;
 
     for(i = 0; i < node->NumPoints(); i++)
-      if(ComparePoints(node->LocalDataset()->col(i),
-                       node->Dataset()->col(point)) > 0)
+      if(ComparePoints(arma::Col<ElemType>(node->LocalDataset().col(i)),
+                       arma::Col<ElemType>(node->Dataset().col(point)))> 0)
         break;
     if(i == node->NumPoints())
       largestValue = point;
@@ -145,8 +167,8 @@ size_t RecursiveHilbertValue::InsertPoint(TreeType *node, const size_t point)
       largestValue = point;
       return 0;
     }
-    if(ComparePoints(node->Dataset()->col(point),
-                     node->Dataset()->col(largestValue)) > 0)
+    if(ComparePoints(arma::Col<ElemType>(node->Dataset().col(point)),
+                     arma::Col<ElemType>(node->Dataset().col(largestValue))) > 0)
       largestValue = point;
   }
   return 0;
@@ -155,10 +177,11 @@ size_t RecursiveHilbertValue::InsertPoint(TreeType *node, const size_t point)
 template<typename TreeType>
 void RecursiveHilbertValue::InsertNode(TreeType *node)
 {
+  typedef typename TreeType::ElemType ElemType;
   size_t point = node->AuxiliaryInfo().LargestHilbertValue().LargestValue();
 
-  if(ComparePoints(node->Dataset()->col(point),
-                   node->Dataset()->col(largestValue)) > 0)
+  if(ComparePoints(arma::Col<ElemType>(node->Dataset()->col(point)),
+                   arma::Col<ElemType>(node->Dataset()->col(largestValue))) > 0)
     largestValue = point;
 }
 
@@ -200,6 +223,21 @@ void RecursiveHilbertValue::Copy(TreeType *dst, TreeType *src)
 {
   dst->AuxiliaryInfo().LargestHilbertValue().LargestValue() =
     src->AuxiliaryInfo().LargestHilbertValue().LargestValue();
+}
+
+template<typename TreeType>
+void RecursiveHilbertValue::UpdateLargestValue(TreeType *node)
+{
+  if(node->IsLeaf())
+  {
+    largestValue = (node->NumPoints() > 0 ?
+                    node->Points()[node->NumPoints() - 1] : -1);
+  }
+  else
+  {
+    largestValue = (node->NumChildren() > 0 ?
+                    node->Children()[node->NumChildren() - 1]->AuxiliaryInfo().LargestHilbertValue().LargestValue() : -1);
+  }
 }
 
 

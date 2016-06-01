@@ -13,7 +13,11 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-const int splitOrder = 2;
+/**
+ * The order of the splitting policy. The Hilbert R tree splits a node
+ * on overflow, turnung splitOrder node to (splitOrder+1) nodes.
+ */
+constexpr int splitOrder = 2;
 
 class HilbertRTreeSplit
 {
@@ -21,26 +25,55 @@ class HilbertRTreeSplit
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
+   * @param node. The node that is being split.
+   * @param relevels Not used.
    */
   template<typename TreeType>
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
+   * @param node. The node that is being split.
+   * @param relevels Not used.
    */
   template<typename TreeType>
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
  private:
+  /**
+   * Try to find splitOrder cooperating siblings in order to redistribute
+   * their children evenly. Returns true on success.
+   * @param parent The parent of of the overflowing node.
+   * @param iTree The number of the overflowing node.
+   * @param firstSibling The first cooperating sibling.
+   * @param lastSibling The last cooperating sibling.
+   */
   template<typename TreeType>
-  bool FindCooperatingSiblings(TreeType *parent,size_t iTree,size_t &firstSibling,size_t &lastSibling);
+  static bool FindCooperatingSiblings(TreeType *parent,size_t iTree,
+                               size_t &firstSibling,size_t &lastSibling);
 
+  /**
+   * Redistribute the children of the cooperating siblings evenly
+   * among them.
+   * @param parent The parent of of the overflowing node.
+   * @param firstSibling The first cooperating sibling.
+   * @param lastSibling The last cooperating sibling.
+   */
   template<typename TreeType>
-  void RedistributeNodesEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling);
+  static void RedistributeNodesEvenly(const TreeType *parent,
+                               size_t firstSibling,size_t lastSibling);
 
+  /**
+   * Redistribute the points of the cooperating siblings evenly
+   * among them.
+   * @param parent The parent of of the overflowing node.
+   * @param firstSibling The first cooperating sibling.
+   * @param lastSibling The last cooperating sibling.
+   */
   template<typename TreeType>
-  void RedistributePointsEvenly(const TreeType *parent,size_t firstSibling,size_t lastSibling);
+  static void RedistributePointsEvenly(const TreeType *parent,
+                                size_t firstSibling,size_t lastSibling);
 
 };
 } // namespace tree
