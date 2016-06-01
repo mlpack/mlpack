@@ -1210,8 +1210,8 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
   for (size_t i = 0; i < lsh.NumProjections(); ++i)
   {
-    CheckMatrices(lsh.Projection(i), xmlLsh.Projection(i),
-        textLsh.Projection(i), binaryLsh.Projection(i));
+    CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
+        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
   }
 
   CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),

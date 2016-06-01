@@ -524,7 +524,7 @@ void LSHSearch<SortPolicy>::BuildHash(const arma::cube &projection)
 template<typename SortPolicy>
 template<typename Archive>
 void LSHSearch<SortPolicy>::Serialize(Archive& ar,
-                                      const unsigned int /* version */)
+                                      const unsigned int version)
 {
   using data::CreateNVP;
 
@@ -542,9 +542,24 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
 
   // Delete existing projections, if necessary.
   if (Archive::is_loading::value)
-    projections.zeros(0, 0, 0); // TODO: correct way to clear this?
+    projections.reset();
 
-  ar & CreateNVP(projections, "projections");
+  // Backward compatibility: older version of LSHSearch stored the projection
+  // tables in a std::vector<arma::mat>.
+  if (version == 0)
+  {
+    std::vector<arma::mat> tmpProj;
+    ar & CreateNVP(tmpProj, "projections");
+
+    projections.set_size(tmpProj[0].n_rows, tmpProj[0].n_cols, tmpProj.size());
+    for (size_t i = 0; i < tmpProj.size(); ++i)
+      projections.slice(i) = tmpProj[i];
+  }
+  else
+  {
+    ar & CreateNVP(projections, "projections");
+  }
+
   ar & CreateNVP(offsets, "offsets");
   ar & CreateNVP(hashWidth, "hashWidth");
   ar & CreateNVP(secondHashSize, "secondHashSize");
