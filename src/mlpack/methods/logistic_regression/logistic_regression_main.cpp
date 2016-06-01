@@ -94,7 +94,10 @@ PARAM_STRING("output_model_file", "File to save trained logistic regression "
 // Testing.
 PARAM_STRING("test_file", "File containing test dataset.", "T", "");
 PARAM_STRING("output_file", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "");
+    "where the predictions for the test set will be saved.", "o", "");
+PARAM_STRING("output_probabilities_file", "If --test_file is specified, this "
+    "file is where the class probabilities for the test set will be saved.",
+    "p", "");
 PARAM_DOUBLE("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -116,6 +119,8 @@ int main(int argc, char** argv)
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
   const string outputFile = CLI::GetParam<string>("output_file");
+  const string outputProbabilitiesFile =
+      CLI::GetParam<string>("output_probabilities_file");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
 
   // One of inputFile and modelFile must be specified.
@@ -260,13 +265,24 @@ int main(int argc, char** argv)
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    Log::Info << "Predicting classes of points in '" << testFile << "'."
-        << endl;
-    model.Predict(testSet, predictions, decisionBoundary);
-
-    // Save the results, if necessary.
     if (!outputFile.empty())
+    {
+      Log::Info << "Predicting classes of points in '" << testFile << "'."
+          << endl;
+      model.Classify(testSet, predictions, decisionBoundary);
+
       data::Save(outputFile, predictions, false);
+    }
+
+    if (!outputProbabilitiesFile.empty())
+    {
+      Log::Info << "Calculating class probabilities of points in '" << testFile
+          << "'." << endl;
+      arma::mat probabilities;
+      model.Classify(testSet, probabilities);
+
+      data::Save(outputProbabilitiesFile, probabilities, false);
+    }
   }
 
   if (!outputModelFile.empty())
