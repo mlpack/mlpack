@@ -162,7 +162,7 @@ class LSHSearch
   const arma::mat& ReferenceSet() const { return *referenceSet; }
 
   //! Get the number of projections.
-  size_t NumProjections() const { return projections.size(); }
+  size_t NumProjections() const { return projections.n_slices; }
 
   //! Get the offsets 'b' for each of the projections.  (One 'b' per column.)
   const arma::mat& Offsets() const { return offsets; }
