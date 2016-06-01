@@ -65,6 +65,7 @@
   #define BOOST_PFTO
 #endif
 #include <mlpack/core/data/serialization_shim.hpp>
+#include <mlpack/core/data/serialization_template_version.hpp>
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
