@@ -54,14 +54,23 @@ class RecursiveHilbertValue
     //! Indicates that the axis should be inverted
     std::vector<bool> inversion;
     //! Indicates that the result should be inverted
+    arma::Col<ElemType> center;
+    arma::Col<ElemType> vec;
+    std::vector<int> bits;
+    std::vector<int> bits2;
     bool invertResult;
     int recursionLevel;
+
 
     tagCompareStruct(size_t dim) :
       Lo(dim),
       Hi(dim),
       permutation(dim),
       inversion(dim),
+      center(dim),
+      vec(dim),
+      bits(dim),
+      bits2(dim),
       invertResult(false),
       recursionLevel(0)
     {
@@ -186,7 +195,10 @@ class RecursiveHilbertValue
   void UpdateLargestValue(TreeType *node);
 
   //! Return the largest Hilbert value
-  size_t LargestValue() const { return largestValue; }
+  ptrdiff_t LargestValue() const { return largestValue; }
+
+  //! Modify the largest Hilbert value
+  ptrdiff_t& LargestValue() { return largestValue; }
 
  private:
   //! The largest Hilbert value i.e. the number of the point in the dataset.

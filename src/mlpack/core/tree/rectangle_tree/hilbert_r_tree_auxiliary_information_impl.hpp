@@ -25,7 +25,7 @@ HilbertRTreeAuxiliaryInformation()
 template<typename TreeType,typename HilbertValue>
 HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
 HilbertRTreeAuxiliaryInformation(const TreeType *node) :
-    largestHilbertValue(node)
+    largestHilbertValue(new HilbertValue(node))
 {
 
 };
@@ -33,10 +33,17 @@ HilbertRTreeAuxiliaryInformation(const TreeType *node) :
 template<typename TreeType,typename HilbertValue>
 HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
 HilbertRTreeAuxiliaryInformation(const TreeType &other) :
-    largestHilbertValue(other)
+    largestHilbertValue(new HilbertValue(other))
 {
 
 };
+
+template<typename TreeType,typename HilbertValue>
+HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
+~HilbertRTreeAuxiliaryInformation()
+{
+  delete largestHilbertValue;
+}
   
 template<typename TreeType,typename HilbertValue>
 bool HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
@@ -46,7 +53,7 @@ HandlePointInsertion(TreeType *node,const size_t point)
   {
     // Get the position at which the point should be inserted
     // Update the largest Hilbert value of the node
-    size_t pos = largestHilbertValue.InsertPoint(node,point);
+    size_t pos = largestHilbertValue->InsertPoint(node,point);
 
     // Move points
     for(size_t i = node->NumPoints(); i > pos; i--)
@@ -60,7 +67,7 @@ HandlePointInsertion(TreeType *node,const size_t point)
     node->Count()++;
   }
   else
-    largestHilbertValue.InsertPoint(node,point);  //  Update LHV
+    largestHilbertValue->InsertPoint(node,point);  //  Update LHV
 
   return true;
 }
@@ -90,10 +97,10 @@ HandleNodeInsertion(TreeType *node,TreeType *nodeToInsert,bool insertionLevel)
     nodeToInsert->Parent() = node;
 
     // Update the largest Hilbert value
-    largestHilbertValue.InsertNode(nodeToInsert);
+    largestHilbertValue->InsertNode(nodeToInsert);
   }
   else
-    largestHilbertValue.InsertNode(nodeToInsert); //  Update LHV
+    largestHilbertValue->InsertNode(nodeToInsert); //  Update LHV
 
   return true;
 }
@@ -103,7 +110,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
 HandlePointDeletion(TreeType *node,const size_t localIndex)
 {
   // Update the largest Hilbert value
-  largestHilbertValue.DeletePoint(node,localIndex);
+  largestHilbertValue->DeletePoint(node,localIndex);
 
   for(size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
   {
@@ -119,7 +126,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
 HandleNodeRemoval(TreeType *node,const size_t nodeIndex)
 {
   // Update the largest Hilbert value
-  largestHilbertValue.RemoveNode(node,nodeIndex);
+  largestHilbertValue->RemoveNode(node,nodeIndex);
 
   for(size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
     node->Children()[i-1] = node->Children()[i];
@@ -139,7 +146,8 @@ UpdateAuxiliaryInfo(TreeType *node)
   if(HilbertValue::CompareValues(largestHilbertValue,
                             child->AuxiliaryInfo().LargestHilbertValue()) < 0)
   {
-    largestHilbertValue = child->AuxiliaryInfo().LargestHilbertValue();
+    largestHilbertValue->Copy(node,child);
+//    largestHilbertValue = child->AuxiliaryInfo().LargestHilbertValue();
     return true;
   }
   return false;
@@ -149,7 +157,7 @@ template<typename TreeType,typename HilbertValue>
 void HilbertRTreeAuxiliaryInformation<TreeType,HilbertValue>::
 Copy(TreeType *dst,TreeType *src)
 {
-  largestHilbertValue.Copy(dst,src);
+  largestHilbertValue->Copy(dst,src);
 }
 
 template<typename TreeType,typename HilbertValue>

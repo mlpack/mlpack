@@ -65,7 +65,7 @@ SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
                  iTree + splitOrder : parent->NumChildren() - 1);
   firstSibling = (lastSibling > splitOrder ? lastSibling - splitOrder : 0);
 
-  assert(lastSibling - firstSibling == splitOrder);
+  assert(lastSibling - firstSibling <= splitOrder);
   assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
@@ -130,7 +130,7 @@ SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   firstSibling = (lastSibling > splitOrder ?
                   lastSibling - splitOrder : 0);
 
-  assert(lastSibling - firstSibling == splitOrder);
+  assert(lastSibling - firstSibling <= splitOrder);
   assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
@@ -251,14 +251,13 @@ RedistributeNodesEvenly(const TreeType *parent,
            parent->Children()[i]->MaxNumChildren());
 
     // Fix the largest Hilbert value of the sibling.
-    parent->Children()[i]->AuxiliaryInfo().LargestHilbertValue() = 
-                    children[iChild-1]->AuxiliaryInfo().LargestHilbertValue();
+    parent->Children()[i]->AuxiliaryInfo().LargestHilbertValue().UpdateLargestValue(parent->Children()[i]);
   }
 }
 
 template<typename TreeType>
 void HilbertRTreeSplit::
-RedistributePointsEvenly(const TreeType *parent,
+RedistributePointsEvenly(TreeType *parent,
                          size_t firstSibling, size_t lastSibling)
 {
   size_t numPoints = 0;
@@ -319,6 +318,14 @@ RedistributePointsEvenly(const TreeType *parent,
            parent->Children()[i]->MaxLeafSize());
     // Fix the largest Hilbert value of the sibling.
     parent->Children()[i]->AuxiliaryInfo().LargestHilbertValue().UpdateLargestValue(parent->Children()[i]);
+  }
+
+  TreeType *root = parent;
+
+  while(root != NULL)
+  {
+    root->AuxiliaryInfo().LargestHilbertValue().UpdateLargestValue(root);
+    root = root->Parent();
   }
 }
 

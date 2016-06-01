@@ -94,7 +94,7 @@ class RectangleTree
   //! The local dataset
   MatType* localDataset;
   //! A tree-specific information
-  AuxiliaryInformationType<RectangleTree> auxiliaryInfo;
+  AuxiliaryInformationType<RectangleTree> *auxiliaryInfo;
 
  public:
   //! A single traverser for rectangle type trees.  See
@@ -294,11 +294,11 @@ class RectangleTree
   StatisticType& Stat() { return stat; }
 
   //! Return the auxiliary information object of this node.
-  const AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo() const 
-  { return auxiliaryInfo; }
+  const AuxiliaryInformationType<RectangleTree> &AuxiliaryInfo() const
+  { return *auxiliaryInfo; }
   //! Modify the split object of this node.
-  AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo() 
-  { return auxiliaryInfo; }
+  AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo()
+  { return *auxiliaryInfo; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;

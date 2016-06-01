@@ -92,7 +92,7 @@ class DiscreteHilbertValue
    * @param tree Not used
    * @param val The number of the point to compare with.
    */
-  template<typename TreeType,typename ElemType>
+  template<typename TreeType>
   int CompareWith(TreeType *tree, const size_t point);
 
   /**
@@ -146,10 +146,14 @@ class DiscreteHilbertValue
   void UpdateLargestValue(TreeType *node);
 
   //! Copy the largest Hilbert value.
-  DiscreteHilbertValue operator = (DiscreteHilbertValue &val);
+  DiscreteHilbertValue operator = (const DiscreteHilbertValue &val);
 
   //! Return the largest Hilbert value
   std::list<arma::Col<uint64_t>>::iterator LargestValue() const
+  { return largestValue; }
+
+  //! Modify the largest Hilbert value
+  std::list<arma::Col<uint64_t>>::iterator &LargestValue()
   { return largestValue; }
 
   //! Modify the local dataset
@@ -182,6 +186,10 @@ class DiscreteHilbertValue
    */
   static int CompareValues(const arma::Col<uint64_t> &value1,
                            const arma::Col<uint64_t> &value2);
+  /**
+   * Returns true if the node has the largest Hilbert value.
+   */
+  bool HasValue();
 };
 } // namespace tree
 } // namespace mlpack

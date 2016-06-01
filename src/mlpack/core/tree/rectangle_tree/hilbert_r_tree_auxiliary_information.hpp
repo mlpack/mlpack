@@ -31,6 +31,9 @@ class HilbertRTreeAuxiliaryInformation
    */
   HilbertRTreeAuxiliaryInformation(const TreeType &other);
 
+  //! Free memory
+  ~HilbertRTreeAuxiliaryInformation();
+
   /**
    * The Hilbert R tree requires to insert points according to their
    * Hilbert value. This method should take care of it.
@@ -92,13 +95,13 @@ class HilbertRTreeAuxiliaryInformation
 
  private:
   //! The largest Hilbert value of a point enclosed by the node.
-  HilbertValue largestHilbertValue;
+  HilbertValue *largestHilbertValue;
 
  public:
   //! Return the largest Hilbert value of a point covered by the node.
-  HilbertValue LargestHilbertValue() const { return largestHilbertValue; }
+  HilbertValue& LargestHilbertValue() const { return *largestHilbertValue; }
   //! Modify the largest Hilbert value of a point covered by the node.
-  HilbertValue& LargestHilbertValue() { return largestHilbertValue; }
+  HilbertValue& LargestHilbertValue() { return *largestHilbertValue; }
 
   /**
    * Serialize the information.

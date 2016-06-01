@@ -72,7 +72,7 @@ class HilbertRTreeSplit
    * @param lastSibling The last cooperating sibling.
    */
   template<typename TreeType>
-  static void RedistributePointsEvenly(const TreeType *parent,
+  static void RedistributePointsEvenly(TreeType *parent,
                                 size_t firstSibling,size_t lastSibling);
 
 };

@@ -63,45 +63,43 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
                                          const arma::Col<ElemType> &pt2,
                                          CompareStruct<ElemType> &comp)
 {
-  arma::Col<ElemType> center = comp.Hi * 0.5;
-  arma::Col<ElemType> vec = comp.Lo * 0.5;
-  std::vector<int> bits(pt1.n_rows,0);
-  std::vector<int> bits2(pt1.n_rows,0);
+  comp.center = comp.Hi * 0.5;
+  comp.vec = comp.Lo * 0.5;
 
-  center += vec;
+  comp.center += comp.vec;
 
   // Get bits in order to use the Gray code
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
     size_t j = comp.permutation[i];
-    bits[i] = (pt1(j) > center(j) && !comp.inversion[j]) ||
-       (pt1(j) <= center(j) && !comp.inversion[j]);
+    comp.bits[i] = (pt1(j) > comp.center(j) && !comp.inversion[j]) ||
+       (pt1(j) <= comp.center(j) && !comp.inversion[j]);
 
-    bits2[i] = (pt2(j) > center(j) && !comp.inversion[j]) ||
-       (pt2(j) <= center(j) && !comp.inversion[j]);
+    comp.bits2[i] = (pt2(j) > comp.center(j) && !comp.inversion[j]) ||
+       (pt2(j) <= comp.center(j) && !comp.inversion[j]);
   }
 
   // Gray encode
   for(size_t i = 1; i < pt1.n_rows; i++)
   {
-    bits[i] ^= bits[i-1];
-    bits2[i] ^= bits2[i-1];
+    comp.bits[i] ^= comp.bits[i-1];
+    comp.bits2[i] ^= comp.bits2[i-1];
   }
 
   if(comp.invertResult)
   {
     for(size_t i = 0; i < pt1.n_rows; i++)
     {
-      bits[i] = !bits[i];
-      bits2[i] = !bits2[i];
+      comp.bits[i] = !comp.bits[i];
+      comp.bits2[i] = !comp.bits2[i];
     }
   }
 
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
-    if(bits[i] < bits2[i])
+    if(comp.bits[i] < comp.bits2[i])
       return -1;
-    if(bits[i] > bits2[i])
+    if(comp.bits[i] > comp.bits2[i])
       return 1;
   }
 
@@ -110,7 +108,7 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
 
   comp.recursionLevel++;
 
-  if(bits[pt1.n_rows-1])
+  if(comp.bits[pt1.n_rows-1])
     comp.invertResult = !comp.invertResult;
 
   // Since the Hilbert curve is continuous we should permutate and intend
@@ -119,8 +117,8 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
   {
     size_t j = comp.permutation[i];
     size_t j0 = comp.permutation[0];
-    if((pt1(j) > center(j) && !comp.inversion[j]) ||
-       (pt1(j) <= center(j) && !comp.inversion[j]))
+    if((pt1(j) > comp.center(j) && !comp.inversion[j]) ||
+       (pt1(j) <= comp.center(j) && !comp.inversion[j]))
       comp.inversion[j0] = !comp.inversion[j0];
     else
     {
@@ -128,16 +126,16 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
       tmp = comp.permutation[0];
       comp.permutation[0] = comp.permutation[i];
       comp.permutation[i] = tmp;
-    }      
+    }
   }
 
   // Choose an appropriate subhypercube
   for(size_t i = 0; i < pt1.n_rows; i++)
   {
-    if(pt1(i) > center(i))
-      comp.Lo(i) = center(i);
+    if(pt1(i) > comp.center(i))
+      comp.Lo(i) = comp.center(i);
     else
-      comp.Hi(i) = center(i);
+      comp.Hi(i) = comp.center(i);
   }
 
   return ComparePoints(pt1,pt2,comp);

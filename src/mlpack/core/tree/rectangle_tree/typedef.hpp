@@ -115,7 +115,7 @@ using RecursiveHilbertRTree = RectangleTree<MetricType,
 
 template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
-      HilbertRTreeAuxiliaryInformation<TreeType,RecursiveHilbertValue>;
+      HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
 using DiscreteHilbertRTree = RectangleTree<MetricType,

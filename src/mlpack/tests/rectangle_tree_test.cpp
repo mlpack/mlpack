@@ -706,8 +706,8 @@ void CheckHilbertOrdering(TreeType *tree)
     for(size_t i = 0; i < tree->NumPoints() - 1; i++)
       BOOST_REQUIRE_LE(
               tree->AuxiliaryInfo().LargestHilbertValue().ComparePoints(
-                arma::vec(tree->LocalDataset().col(i-1)),
-                arma::vec(tree->LocalDataset().col(i))),
+                arma::vec(tree->LocalDataset().col(i)),
+                arma::vec(tree->LocalDataset().col(i+1))),
               0);
 
     BOOST_REQUIRE_EQUAL(
@@ -721,8 +721,8 @@ void CheckHilbertOrdering(TreeType *tree)
     for(size_t i = 0; i < tree->NumChildren() - 1; i++)
       BOOST_REQUIRE_LE(
             tree->AuxiliaryInfo().LargestHilbertValue().CompareValues(tree,
-                tree->Children()[i-1]->AuxiliaryInfo().LargestHilbertValue(),
-                tree->Children()[i]->AuxiliaryInfo().LargestHilbertValue()),
+                tree->Children()[i]->AuxiliaryInfo().LargestHilbertValue(),
+                tree->Children()[i+1]->AuxiliaryInfo().LargestHilbertValue()),
             0);
 
     BOOST_REQUIRE_EQUAL(
