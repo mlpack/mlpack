@@ -291,8 +291,8 @@ class LSHSearch
   //! The number of hash tables.
   size_t numTables;
 
-  //! The std::vector containing the projection matrix of each table.
-  arma::cube projections; // should be [numProj x dims] x numTables
+  //! The arma::cube containing the projection matrix of each table.
+  arma::cube projections; // should be [numProj x dims] x numTables slices
 
   //! The list of the offsets 'b' for each of the projection for each table.
   arma::mat offsets; // should be numProj x numTables
