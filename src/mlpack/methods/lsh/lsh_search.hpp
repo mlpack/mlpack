@@ -93,8 +93,8 @@ class LSHSearch
              const double hashWidth = 0.0,
              const size_t secondHashSize = 99901,
              const size_t bucketSize = 500,
-             const std::vector<arma::mat> &projection
-             = std::vector<arma::mat>()
+             const arma::cube &projection
+             = arma::zeros<arma::cube>(0,0,0)
              );
 
   /**
@@ -163,8 +163,6 @@ class LSHSearch
 
   //! Get the number of projections.
   size_t NumProjections() const { return projections.size(); }
-  //! Get the projection matrix of the given table.
-  const arma::mat& Projection(const size_t i) const { return projections[i]; }
 
   //! Get the offsets 'b' for each of the projections.  (One 'b' per column.)
   const arma::mat& Offsets() const { return offsets; }
@@ -179,10 +177,10 @@ class LSHSearch
   const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
 
   //! Get the projection tables.
-  const std::vector<arma::mat> Projections() { return projections; }
+  const arma::cube Projections() { return projections; }
 
   //! Change the projection tables (Retrains object)
-  void Projections(const std::vector<arma::mat> &projTables)
+  void Projections(const arma::cube &projTables)
   {
     // Simply call Train() with given projection tables
     Train(
@@ -210,7 +208,7 @@ class LSHSearch
    * are private members of this class, initialized during the class
    * initialization.
    */
-  void BuildHash(const std::vector<arma::mat> &projection);
+  void BuildHash(const arma::cube &projection);
 
   /**
    * This function takes a query and hashes it into each of the hash tables to
@@ -294,7 +292,7 @@ class LSHSearch
   size_t numTables;
 
   //! The std::vector containing the projection matrix of each table.
-  std::vector<arma::mat> projections; // should be [numProj x dims] x numTables
+  arma::cube projections; // should be [numProj x dims] x numTables
 
   //! The list of the offsets 'b' for each of the projection for each table.
   arma::mat offsets; // should be numProj x numTables

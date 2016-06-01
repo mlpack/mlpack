@@ -66,7 +66,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
                                   const double hashWidthIn,
                                   const size_t secondHashSize,
                                   const size_t bucketSize,
-                                  const std::vector<arma::mat> &projection)
+                                  const arma::cube &projection)
 {
   // Set new reference set.
   if (this->referenceSet && ownsSet)
@@ -206,7 +206,8 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   // Compute the projection of the query in each table.
   arma::mat allProjInTables(numProj, numTablesToSearch);
   for (size_t i = 0; i < numTablesToSearch; i++)
-    allProjInTables.unsafe_col(i) = projections[i].t() * queryPoint;
+    //allProjInTables.unsafe_col(i) = projections[i].t() * queryPoint;
+    allProjInTables.unsafe_col(i) = projections.slice(i).t() * queryPoint;
   allProjInTables += offsets.cols(0, numTablesToSearch - 1);
   allProjInTables /= hashWidth;
 
@@ -356,7 +357,7 @@ Search(const size_t k,
 }
 
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::BuildHash(const std::vector<arma::mat> &projection)
+void LSHSearch<SortPolicy>::BuildHash(const arma::cube &projection)
 {
   // The first level hash for a single table outputs a 'numProj'-dimensional
   // integer key for each point in the set -- (key, pointID)
@@ -412,45 +413,39 @@ void LSHSearch<SortPolicy>::BuildHash(const std::vector<arma::mat> &projection)
 
   // Step III: Create each hash table in the first level hash one by one and
   // putting them directly into the 'secondHashTable' for memory efficiency.
-  projections.clear(); // Reset projections vector.
+  //projections.clear(); // Reset projections vector.
 
 
-  if (projection.size() != 0 && projection.size() != numTables)
+
+  // Step IV: Obtain the 'numProj' projections for each table.
+
+  if (projection.n_slices == 0) //random generation of tables
+  {
+    // For L2 metric, 2-stable distributions are used, and
+    // the normal Z ~ N(0, 1) is a 2-stable distribution.
+
+    //numTables random tables arranged in a cube
+    projections.randn(
+        referenceSet->n_rows,
+        numProj,
+        numTables
+    );
+  }
+  else if (projection.n_slices == numTables) //user defined tables
+  {
+    projections = projection;
+  }
+  else //invalid argument
+  {
     throw std::invalid_argument(
         "number of projection tables provided must be equal to numProj"
         );
+  }
+    
 
   for (size_t i = 0; i < numTables; i++)
   {
-    // Step IV: Obtain the 'numProj' projections for each table.
 
-    // For L2 metric, 2-stable distributions are used, and
-    // the normal Z ~ N(0, 1) is a 2-stable distribution.
-    arma::mat projMat;
-
-    if (projection.size() == 0) //random generation of table i
-    {
-
-      // For L2 metric, p-stable distributions are used, and the normal
-      // Z ~ N(0, 1) is p-stable.
-      projMat.randn(referenceSet->n_rows, numProj);
-    }
-    else //user-specified projection tables
-    {
-      projMat = projection[i];
-
-      //make sure specified matrix is of correct size
-      if ( projMat.n_rows != referenceSet->n_rows )
-        throw std::invalid_argument( 
-            "projection table dimensionality doesn't"
-            " equal dataset dimensionality" );
-      if ( projMat.n_cols != numProj )
-        throw std::invalid_argument(
-            "projection table doesn't have correct number of projections");
-    }
-
-    // Save the projection matrix for querying.
-    projections.push_back(projMat);
 
     // Step V: create the 'numProj'-dimensional key for each point in each
     // table.
@@ -465,7 +460,8 @@ void LSHSearch<SortPolicy>::BuildHash(const std::vector<arma::mat> &projection)
     // key = { floor( (<proj_i, point> + offset_i) / 'hashWidth' ) forall i }
     arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
                                        referenceSet->n_cols);
-    arma::mat hashMat = projMat.t() * (*referenceSet);
+    // arma::mat hashMat = projMat.t() * (*referenceSet);
+    arma::mat hashMat = projections.slice(i).t() * (*referenceSet);
     hashMat += offsetMat;
     hashMat /= hashWidth;
 
@@ -546,7 +542,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
 
   // Delete existing projections, if necessary.
   if (Archive::is_loading::value)
-    projections.clear();
+    projections.zeros(0, 0, 0); // TODO: correct way to clear this?
 
   ar & CreateNVP(projections, "projections");
   ar & CreateNVP(offsets, "offsets");
