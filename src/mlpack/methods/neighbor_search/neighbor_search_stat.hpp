@@ -29,11 +29,9 @@ class NeighborSearchStat
   //! using the best descendant candidate distance modified by the furthest
   //! descendant distance.
   double secondBound;
-  //! The better of the two bounds.
-  double bound;
-
-  //! The last distance evaluation node.
-  void* lastDistanceNode;
+  //! The aux bound on the node's neighbor distances (B_aux). This represents
+  //! the best descendant candidate distance (used to calculate secondBound).
+  double auxBound;
   //! The last distance evaluation.
   double lastDistance;
 
@@ -45,7 +43,7 @@ class NeighborSearchStat
   NeighborSearchStat() :
       firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
-      bound(SortPolicy::WorstDistance()),
+      auxBound(SortPolicy::WorstDistance()),
       lastDistance(0.0) { }
 
   /**
@@ -56,7 +54,7 @@ class NeighborSearchStat
   NeighborSearchStat(TreeType& /* node */) :
       firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
-      bound(SortPolicy::WorstDistance()),
+      auxBound(SortPolicy::WorstDistance()),
       lastDistance(0.0) { }
 
   //! Get the first bound.
@@ -67,10 +65,10 @@ class NeighborSearchStat
   double SecondBound() const { return secondBound; }
   //! Modify the second bound.
   double& SecondBound() { return secondBound; }
-  //! Get the overall bound (the better of the two bounds).
-  double Bound() const { return bound; }
-  //! Modify the overall bound (it should be the better of the two bounds).
-  double& Bound() { return bound; }
+  //! Get the aux bound.
+  double AuxBound() const { return auxBound; }
+  //! Modify the aux bound.
+  double& AuxBound() { return auxBound; }
   //! Get the last distance calculation.
   double LastDistance() const { return lastDistance; }
   //! Modify the last distance calculation.
@@ -84,7 +82,7 @@ class NeighborSearchStat
 
     ar & CreateNVP(firstBound, "firstBound");
     ar & CreateNVP(secondBound, "secondBound");
-    ar & CreateNVP(bound, "bound");
+    ar & CreateNVP(auxBound, "auxBound");
     ar & CreateNVP(lastDistance, "lastDistance");
   }
 };
