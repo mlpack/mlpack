@@ -36,7 +36,10 @@ void CompareData(const mat& inputData,
     const mat& rhsCol = compareData.col(i);
     for (size_t j = 0; j != lhsCol.n_rows; ++j)
     {
-      BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
+      if (std::abs(rhsCol(j)) < 1e-5)
+        BOOST_REQUIRE_SMALL(lhsCol(j), 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
     }
   }
 }
@@ -52,7 +55,10 @@ void CheckMatEqual(const mat& inputData,
     const mat& rhsCol = sortedCompare.col(i);
     for (size_t j = 0; j < lhsCol.n_rows; ++j)
     {
-      BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
+      if (std::abs(rhsCol(j)) < 1e-5)
+        BOOST_REQUIRE_SMALL(lhsCol(j), 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
     }
   }
 }
