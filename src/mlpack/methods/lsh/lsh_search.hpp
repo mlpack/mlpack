@@ -65,6 +65,31 @@ class LSHSearch
    *     Default values are already provided here.
    */
   LSHSearch(const arma::mat& referenceSet,
+            const arma::cube& projections,
+            const double hashWidth = 0.0,
+            const size_t secondHashSize = 99901,
+            const size_t bucketSize = 500);
+
+  /**
+   * This function initializes the LSH class. It builds the hash one the
+   * reference set using the provided projections. See the individual functions
+   * performing the hashing for details on how the hashing is done.
+   *
+   * @param referenceSet Set of reference points and the set of queries.
+   * @param projections Cube of projection tables. For a cube of size (a, b, c)
+   *     we set numProj = a, numTables = c. b is the reference set
+   *     dimensionality.
+   * @param hashWidth The width of hash for every table. If 0 (the default) is
+   *     provided, then the hash width is automatically obtained by computing
+   *     the average pairwise distance of 25 pairs.  This should be a reasonable
+   *     upper bound on the nearest-neighbor distance in general.
+   * @param secondHashSize The size of the second hash table. This should be a
+   *     large prime number.
+   * @param bucketSize The size of the bucket in the second hash table. This is
+   *     the maximum number of points that can be hashed into single bucket.
+   *     Default values are already provided here.
+   */
+  LSHSearch(const arma::mat& referenceSet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth = 0.0,
@@ -177,7 +202,7 @@ class LSHSearch
   const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
 
   //! Get the projection tables.
-  const arma::cube Projections() { return projections; }
+  const arma::cube& Projections() { return projections; }
 
   //! Change the projection tables (Retrains object)
   void Projections(const arma::cube &projTables)
