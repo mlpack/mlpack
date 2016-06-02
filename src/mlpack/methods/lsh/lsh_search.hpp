@@ -202,20 +202,13 @@ class LSHSearch
   //! Get the projection tables.
   const arma::cube& Projections() { return projections; }
 
-  //! Change the projection tables (Retrains object)
-  void Projections(const arma::cube &projTables)
+  //! Change the projection tables (this retrains the LSH model).
+  void Projections(const arma::cube& projTables)
   {
-    // Simply call Train() with given projection tables
-    Train(
-        *referenceSet,
-        numProj,
-        numTables,
-        hashWidth,
-        secondHashSize,
-        bucketSize,
-        projTables
-        );
-  };
+    // Simply call Train() with the given projection tables.
+    Train(*referenceSet, numProj, numTables, hashWidth, secondHashSize,
+        bucketSize, projTables);
+  }
 
  private:
   /**

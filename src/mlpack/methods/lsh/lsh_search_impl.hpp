@@ -165,27 +165,22 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
   // Step III: Obtain the 'numProj' projections for each table.
   projections.clear(); // Reset projections vector.
 
-  if (projection.n_slices == 0) //random generation of tables
+  if (projection.n_slices == 0) // Randomly generate the tables.
   {
     // For L2 metric, 2-stable distributions are used, and the normal Z ~ N(0,
     // 1) is a 2-stable distribution.
 
-    // numTables random tables arranged in a cube.
-    projections.randn(
-        referenceSet.n_rows,
-        numProj,
-        numTables
-    );
+    // Build numTables random tables arranged in a cube.
+    projections.randn(referenceSet.n_rows, numProj, numTables);
   }
-  else if (projection.n_slices == numTables) //user defined tables
+  else if (projection.n_slices == numTables) // Take user-defined tables.
   {
     projections = projection;
   }
-  else //invalid argument
+  else // The user gave something wrong.
   {
-    throw std::invalid_argument(
-        "number of projection tables provided must be equal to numProj"
-        );
+    throw std::invalid_argument("LSHSearch::Train(): number of projection "
+        "tables provided must be equal to numProj");
   }
 
   for (size_t i = 0; i < numTables; i++)
@@ -213,7 +208,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
 
     // This gives us the bucket for the corresponding point ID.
     for (size_t j = 0; j < secondHashVec.n_elem; j++)
-      secondHashVec[j] = (double)((size_t) secondHashVec[j] % secondHashSize);
+      secondHashVec[j] = (double) ((size_t) secondHashVec[j] % secondHashSize);
 
     Log::Assert(secondHashVec.n_elem == referenceSet.n_cols);
 
