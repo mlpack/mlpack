@@ -1,5 +1,15 @@
 ### mlpack 2.0.2
 ###### 2016-??-??
+  * LSHSearch::Projection(size_t) that returned a single projection matrix has
+    been removed. In its place, LSHSearch::Projections() has been added, which
+    returns an arma::cube with each projection table in a slice (#663).
+
+  * A new constructor has been added to LSHSearch that creates objects using
+    projection tables provided in an arma::cube (#663).
+
+  * LSHSearch::Projections(arma::cube) has been added that allows users to
+    change the projection tables of an LSHSearch object (#663).
+
   * Handle zero-variance dimensions in DET (#515).
 
   * Add MiniBatchSGD optimizer (src/mlpack/core/optimizers/minibatch_sgd/) and
