@@ -8,6 +8,7 @@ add_executable(mlpack_test
   allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
+  binarize_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp
