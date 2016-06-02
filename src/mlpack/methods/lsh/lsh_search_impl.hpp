@@ -519,11 +519,6 @@ Search(const size_t k,
 }
 
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::BuildHash(const arma::cube &projection)
-{
-}
-
-template<typename SortPolicy>
 template<typename Archive>
 void LSHSearch<SortPolicy>::Serialize(Archive& ar,
                                       const unsigned int version)

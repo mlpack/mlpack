@@ -118,9 +118,7 @@ class LSHSearch
              const double hashWidth = 0.0,
              const size_t secondHashSize = 99901,
              const size_t bucketSize = 500,
-             const arma::cube &projection
-             = arma::zeros<arma::cube>(0,0,0)
-             );
+             const arma::cube& projection = arma::cube());
 
   /**
    * Compute the nearest neighbors of the points in the given query set and
@@ -220,21 +218,6 @@ class LSHSearch
   };
 
  private:
-  /**
-   * This function builds a hash table with two levels of hashing as presented
-   * in the paper. This function first hashes the points with 'numProj' random
-   * projections to a single hash table creating (key, point ID) pairs where the
-   * key is a 'numProj'-dimensional integer vector.
-   *
-   * Then each key in this hash table is hashed into a second hash table using a
-   * standard hash.
-   *
-   * This function does not have any parameters and relies on parameters which
-   * are private members of this class, initialized during the class
-   * initialization.
-   */
-  void BuildHash(const arma::cube &projection);
-
   /**
    * This function takes a query and hashes it into each of the hash tables to
    * get keys for the query and then the key is hashed to a bucket of the second
