@@ -7,9 +7,22 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
-PROGRAM_INFO("Split into Train and Test Data", "This "
-    "utility takes data and labels and split into a training "
-    "set and a test set.");
+PROGRAM_INFO("Split Data", "This utility takes data and split into a training "
+    "set and a test set. Before the split happens, it shuffles the data in "
+    "the each feature. Without (--test_ratio) specified, the default "
+    "test-to-training ratio is set to 0.2."
+    "\n\n"
+    "The program does not modify or write on the original file, but instead "
+    "makes a seperate files to save the training and test files; you can "
+    "specify the file names with (-training_file) and (-test_file). If the "
+    "names are not specified, the program automatically names the training "
+    "and test file by attaching 'train_' and 'test_' in front of the "
+    "original file name"
+    "\n\n"
+    "Optionally, a label can be also be splited along with the data at the "
+    "same time by specifying (--input_lables) option. Splitting label works "
+    "the same as splitting the data and you can also specify the names using "
+    "(--trainning_labels_file) and (--test_labels_file).");
 
 // Define parameters for data
 PARAM_STRING_REQ("input_file", "File containing data,", "i");

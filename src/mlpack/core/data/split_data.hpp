@@ -183,7 +183,8 @@ Split(const arma::Mat<T>& input,
   arma::Mat<T> testData;
   Split(input, trainData, testData, testRatio);
 
-  return std::make_tuple(std::move(trainData), std::move(testData));
+  return std::make_tuple(std::move(trainData),
+                         std::move(testData));
 }
 
 } // namespace data
