@@ -210,6 +210,10 @@ class LSHSearch
         bucketSize, projTables);
   }
 
+  //! Get a single projection matrix.  This function is deprecated and will be
+  //! removed in mlpack 2.1.0!
+  const arma::mat& Projection(size_t i) { return projections.slice(i); }
+
  private:
   /**
    * This function takes a query and hashes it into each of the hash tables to
