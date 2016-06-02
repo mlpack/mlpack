@@ -20,6 +20,7 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances,
     MetricType& metric,
+    const double epsilon,
     const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
@@ -27,6 +28,7 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     distances(distances),
     metric(metric),
     sameSet(sameSet),
+    epsilon(epsilon),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
     baseCases(0),
@@ -112,7 +114,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   // Compare against the best k'th distance for this query point so far.
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
 }
@@ -128,7 +131,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     return oldScore;
 
   // Just check the score again against the distances.
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
 }
@@ -418,6 +422,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   queryNode.Stat().FirstBound() = worstDistance;
   queryNode.Stat().SecondBound() = bestDistance;
   queryNode.Stat().AuxBound() = auxDistance;
+
+  worstDistance = SortPolicy::Relax(worstDistance, epsilon);
 
   if (SortPolicy::IsBetter(worstDistance, bestDistance))
     return worstDistance;

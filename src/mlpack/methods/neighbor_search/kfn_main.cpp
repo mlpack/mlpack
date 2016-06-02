@@ -72,6 +72,8 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "s");
+PARAM_DOUBLE("epsilon", "If specified, will do approximate furthest neighbor "
+    "search with given relative error.", "e", 0);
 
 // Convenience typedef.
 typedef NSModel<FurthestNeighborSort> KFNModel;
@@ -138,6 +140,12 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater than 0."
         << endl;
 
+  // Sanity check on epsilon.
+  const double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be non-negative. "
+        << endl;
+
   // We either have to load the reference data, or we have to load the model.
   NSModel<FurthestNeighborSort> kfn;
   const bool naive = CLI::HasParam("naive");
@@ -175,7 +183,8 @@ int main(int argc, char *argv[])
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
+        epsilon);
   }
   else
   {
@@ -191,6 +200,7 @@ int main(int argc, char *argv[])
     kfn.SingleMode() = CLI::HasParam("single_mode");
     kfn.Naive() = CLI::HasParam("naive");
     kfn.LeafSize() = size_t(lsInt);
+    kfn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.

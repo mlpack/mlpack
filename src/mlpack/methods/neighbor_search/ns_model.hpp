@@ -178,6 +178,16 @@ class NaiveVisitor : public boost::static_visitor<bool&>
 };
 
 /**
+ * EpsilonVisitor exposes the Epsilon method of the given NSType.
+ */
+class EpsilonVisitor : public boost::static_visitor<double&>
+{
+ public:
+  template<typename NSType>
+  double& operator()(NSType *ns) const;
+};
+
+/**
  * ReferenceSetVisitor exposes the referenceSet of the given NSType.
  */
 class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
@@ -266,6 +276,10 @@ class NSModel
   bool Naive() const;
   bool& Naive();
 
+  //! Expose Epsilon.
+  double Epsilon() const;
+  double& Epsilon();
+
   //! Expose leafSize.
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
@@ -282,7 +296,8 @@ class NSModel
   void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,
                   const bool naive,
-                  const bool singleMode);
+                  const bool singleMode,
+                  const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
   void Search(arma::mat&& querySet,
