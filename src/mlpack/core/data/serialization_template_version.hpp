@@ -18,7 +18,6 @@
 #define BOOST_TEMPLATE_CLASS_VERSION(SIGNATURE, T, N) \
 namespace boost { \
 namespace serialization { \
-template<> \
 SIGNATURE \
 struct version<mlpack::data::SecondShim<T>> \
 { \
