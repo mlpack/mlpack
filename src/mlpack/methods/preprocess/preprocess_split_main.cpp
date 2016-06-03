@@ -17,8 +17,7 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "files to save the training and test files; you can specify the file names "
     "with --training_file (-t) and --test_file (-T). If these options are not "
     "specified, the program automatically names the training and test file by "
-    "prepending 'train_' and 'test_' to the dataset filename (which was "
-    "specified by --input_file)."
+    "to 'train.csv' and 'test.csv'."
     "\n\n"
     "Optionally, labels can be also be split along with the data by specifying "
     "the --input_labels_file (-I) option. Splitting labels works the same way "
@@ -26,8 +25,7 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "to the files specified by --training_labels_file (-l) and "
     "--test_labels_file (-L), respectively. If these options are not specified,"
     " then the program will automatically name the training labels and test "
-    "labels file by prepending 'train_' and 'test_' to the labels filename "
-    "(which was specified by --input_labels_file)."
+    "labels file to 'train_labels.csv' and 'test_labels.csv'."
     "\n\n"
     "So, a simple example where we want to split dataset.csv into "
     "train_dataset.csv and test_dataset.csv with 60% of the data in the "
@@ -48,10 +46,12 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
 PARAM_STRING_REQ("input_file", "File containing data,", "i");
 // Define optional parameters.
 PARAM_STRING("input_labels_file", "File containing labels", "I", "");
-PARAM_STRING("training_file", "File name to save train data", "t", "");
-PARAM_STRING("test_file", "File name to save test data", "T", "");
-PARAM_STRING("training_labels_file", "File name to save train label", "l", "");
-PARAM_STRING("test_labels_file", "File name to save test label", "L", "");
+PARAM_STRING("training_file", "File name to save train data", "t", "train.csv");
+PARAM_STRING("test_file", "File name to save test data", "T", "test.csv");
+PARAM_STRING("training_labels_file", "File name to save train label", "l",
+             "train_labels.csv");
+PARAM_STRING("test_labels_file", "File name to save test label", "L",
+             "test_labels.csv");
 
 // Define optional test ratio, default is 0.2 (Test 20% Train 80%)
 PARAM_DOUBLE("test_ratio", "Ratio of test set, if not set,"
@@ -67,40 +67,36 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
   const string inputFile = CLI::GetParam<string>("input_file");
   const string inputLabels = CLI::GetParam<string>("input_labels_file");
-  string trainingFile = CLI::GetParam<string>("training_file");
-  string testFile = CLI::GetParam<string>("test_file");
-  string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
-  string testLabelsFile = CLI::GetParam<string>("test_labels_file");
+  const string trainingFile = CLI::GetParam<string>("training_file");
+  const string testFile = CLI::GetParam<string>("test_file");
+  const string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
+  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
   // Check on data parameters.
-  if (trainingFile.empty())
+  if (!CLI::HasParam("training_file"))
   {
-    trainingFile = "train_" + inputFile;
     Log::Warn << "You did not specify --training_file, so the training set file"
-        << " name will be automatically set to '" << trainingFile << "'." 
+        << " name will be automatically set to '" << trainingFile << "'."
         << endl;
   }
-  if (testFile.empty())
+  if (!CLI::HasParam("test_file"))
   {
-    testFile = "test_" + inputFile;
     Log::Warn << "You did not specify --test_file, so the test set file name "
         << "will be automatically set to '" << testFile << "'." << endl;
   }
 
   // Check on label parameters.
-  if (!inputLabels.empty())
+  if (CLI::HasParam("input_labels"))
   {
     if (!CLI::HasParam("training_labels_file"))
     {
-      trainingLabelsFile = "train_" + inputLabels;
       Log::Warn << "You did not specify --training_labels_file, so the training"
           << "set labels file name will be automatically set to '"
           << trainingLabelsFile << "'." << endl;
     }
     if (!CLI::HasParam("test_labels_file"))
     {
-      testLabelsFile = "test_" + inputLabels;
       Log::Warn << "You did not specify --test_labels_file, so the test set "
         << "labels file name will be automatically set to '"
         << testLabelsFile << "'." << endl;
