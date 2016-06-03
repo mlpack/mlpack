@@ -1362,6 +1362,48 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
 }
 
 /**
+ * A harder test CSV based on the concerns in #658.
+ */
+BOOST_AUTO_TEST_CASE(HarderKeonTest)
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a,, 13,\t, 0" << endl;
+  f << "b, 3, 14, hello,1" << endl;
+  f << "b, 4, 15, , 2" << endl;
+  f << ", 5, 16, ," << endl;
+  f.close();
+
+  // Load transposed.
+  arma::mat dataset;
+  data::DatasetInfo info;
+  data::Load("test.csv", dataset, info, true, true);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 5);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 4);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(3), 2); // \t and "" are equivalent.
+  BOOST_REQUIRE_EQUAL(info.NumMappings(4), 4);
+
+  // Now load non-transposed.
+  data::DatasetInfo ntInfo;
+  data::Load("test.csv", dataset, ntInfo, true, false);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 5);
+
+  BOOST_REQUIRE_EQUAL(ntInfo.Dimensionality(), 4);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(0), 4);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(1), 5);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(2), 5);
+  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
+}
+
+/**
  * A simple ARFF load test.  Two attributes, both numeric.
  */
 BOOST_AUTO_TEST_CASE(SimpleARFFTest)
