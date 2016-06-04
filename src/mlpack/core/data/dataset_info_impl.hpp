@@ -21,7 +21,8 @@ inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
 }
 
 // Map the string to a numeric id.
-inline size_t DatasetInfo::MapString(const std::string& string,
+template<typename T>
+inline size_t DatasetInfo::MapString(T&& string,
                                      const size_t dimension)
 {
   // If this condition is true, either we have no mapping for the given string
@@ -35,13 +36,13 @@ inline size_t DatasetInfo::MapString(const std::string& string,
     if (numMappings == 0)
       types[dimension] = Datatype::categorical;
     typedef boost::bimap<std::string, size_t>::value_type PairType;
-    maps[dimension].first.insert(PairType(string, numMappings));
+    maps[dimension].first.insert(PairType(std::forward<T>(string), numMappings));
     return numMappings++;
   }
   else
   {
     // This string already exists in the mapping.
-    return maps[dimension].first.left.at(string);
+    return maps[dimension].first.left.at(std::forward<T>(string));
   }
 }
 

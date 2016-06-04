@@ -53,8 +53,16 @@ class DatasetInfo
    *
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
-   */
-  size_t MapString(const std::string& string, const size_t dimension);
+   */  
+  size_t MapString(const std::string &string, const size_t dimension)
+  {
+    return MapString(string, dimension);
+  }
+
+  size_t MapString(std::string &&string, const size_t dimension)
+  {
+    return MapString(std::move(string), dimension);
+  }
 
   /**
    * Return the string that corresponds to a given value in a given dimension.
@@ -95,7 +103,7 @@ class DatasetInfo
     ar & data::CreateNVP(maps, "maps");
   }
 
- private:
+ private:    
   //! Types of each dimension.
   std::vector<Datatype> types;
 
@@ -104,6 +112,8 @@ class DatasetInfo
   std::unordered_map<size_t, std::pair<boost::bimap<std::string, size_t>,
       size_t>> maps;
 
+  template<typename T>
+  size_t MapString(T&& string, const size_t dimension);
 };
 
 } // namespace data
