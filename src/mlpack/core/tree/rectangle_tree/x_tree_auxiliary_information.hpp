@@ -25,7 +25,7 @@ class XTreeAuxiliaryInformation
    * Construct this whith the specified node.
    * @param node The node that stores this auxiliary information.
    */
-  XTreeAuxiliaryInformation(const TreeType *node) :
+  XTreeAuxiliaryInformation(const TreeType* node) :
     normalNodeMaxNumChildren(node->Parent() ? 
                     node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren() :
                     node->MaxNumChildren()),
@@ -36,7 +36,7 @@ class XTreeAuxiliaryInformation
    * Create an auxiliary information object by copying from the other node.
    * @param other The node from which the information will be copied.
    */
-  XTreeAuxiliaryInformation(const TreeType &other) :
+  XTreeAuxiliaryInformation(const TreeType& other) :
     normalNodeMaxNumChildren(other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
     splitHistory(other.AuxiliaryInfo().SplitHistory())
   { };
@@ -45,16 +45,20 @@ class XTreeAuxiliaryInformation
    * Some tree types require to save some properties at the insertion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandlePointInsertion(TreeType *, const size_t)
+  bool HandlePointInsertion(TreeType* , const size_t)
   {
     return false;
   }
 
+  bool HandlePointInsertion(TreeType* , const arma::vec&)
+  {
+    return false;
+  }
   /**
    * Some tree types require to save some properties at the insertion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandleNodeInsertion(TreeType *,TreeType *,bool)
+  bool HandleNodeInsertion(TreeType* , TreeType *,bool)
   {
     return false;
   }
@@ -63,7 +67,7 @@ class XTreeAuxiliaryInformation
    * Some tree types require to save some properties at the deletion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandlePointDeletion(TreeType *,const size_t)
+  bool HandlePointDeletion(TreeType* , const size_t)
   {
     return false;
   }
@@ -72,7 +76,7 @@ class XTreeAuxiliaryInformation
    * Some tree types require to save some properties at the deletion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandleNodeRemoval(TreeType *,const size_t)
+  bool HandleNodeRemoval(TreeType* , const size_t)
   {
     return false;
   }
@@ -81,7 +85,7 @@ class XTreeAuxiliaryInformation
    * Some tree types require to propagate the information downward.
    * This method should return false if this is not the case.
    */
-  bool UpdateAuxiliaryInfo(TreeType *)
+  bool UpdateAuxiliaryInfo(TreeType* )
   {
     return false;
   }
@@ -91,13 +95,16 @@ class XTreeAuxiliaryInformation
    * @param dst The node to which the information being copied.
    * @param src The node from which the information being copied.
    */
-  void Copy(TreeType *dst,TreeType *src)
+  void Copy(TreeType* dst,TreeType* src)
   {
     dst->AuxiliaryInfo().NormalNodeMaxNumChildren() =
                                 src->AuxiliaryInfo().NormalNodeMaxNumChildren();
 
     dst->AuxiliaryInfo().SplitHistory() = src->AuxiliaryInfo().SplitHistory();
   }
+
+  void NullifyData()
+  { }
 
   /**
    * The X tree requires that the tree records it's "split history".  To make

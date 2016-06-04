@@ -16,14 +16,18 @@ class NoAuxiliaryInformation
 {
  public:
   NoAuxiliaryInformation() { };
-  NoAuxiliaryInformation(const TreeType *) { };
-  NoAuxiliaryInformation(const TreeType &) { };
+  NoAuxiliaryInformation(const TreeType* ) { };
+  NoAuxiliaryInformation(const TreeType& ) { };
 
   /**
    * Some tree types require to save some properties at the insertion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandlePointInsertion(TreeType *, const size_t)
+  bool HandlePointInsertion(TreeType* , const size_t)
+  {
+    return false;
+  }
+  bool HandlePointInsertion(TreeType* , const arma::vec& )
   {
     return false;
   }
@@ -32,7 +36,7 @@ class NoAuxiliaryInformation
    * Some tree types require to save some properties at the insertion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandleNodeInsertion(TreeType *,TreeType *,bool)
+  bool HandleNodeInsertion(TreeType* , TreeType* ,bool)
   {
     return false;
   }
@@ -41,7 +45,7 @@ class NoAuxiliaryInformation
    * Some tree types require to save some properties at the deletion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandlePointDeletion(TreeType *,const size_t)
+  bool HandlePointDeletion(TreeType* , const size_t)
   {
     return false;
   }
@@ -50,7 +54,7 @@ class NoAuxiliaryInformation
    * Some tree types require to save some properties at the deletion process.
    * This method should return false if it does not handle the process.
    */
-  bool HandleNodeRemoval(TreeType *,const size_t)
+  bool HandleNodeRemoval(TreeType* , const size_t)
   {
     return false;
   }
@@ -59,7 +63,7 @@ class NoAuxiliaryInformation
    * Some tree types require to propagate the information downward.
    * This method should return false if this is not the case.
    */
-  bool UpdateAuxiliaryInfo(TreeType *)
+  bool UpdateAuxiliaryInfo(TreeType* )
   {
     return false;
   }
@@ -67,7 +71,10 @@ class NoAuxiliaryInformation
   /**
    * Nothing to copy.
    */
-  void Copy(TreeType *,TreeType *)
+  void Copy(TreeType* , TreeType* )
+  { }
+
+  void NullifyData()
   { }
 
 

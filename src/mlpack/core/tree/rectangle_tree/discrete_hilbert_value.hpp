@@ -13,9 +13,13 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+template<typename TreeElemType>
 class DiscreteHilbertValue
 {
  public:
+  typedef typename std::conditional<sizeof(TreeElemType)*CHAR_BIT <= 32,
+                                    uint32_t,
+                                    uint64_t>::type HilbertElemType;
   //! Default constructor
   DiscreteHilbertValue();
 
@@ -25,14 +29,13 @@ class DiscreteHilbertValue
    * @param node The node that stores this Hilbert value.
    */
   template<typename TreeType>
-  DiscreteHilbertValue(const TreeType *tree);
+  DiscreteHilbertValue(const TreeType* tree);
 
   /**
-   * Create a Hilbert value object by copying from the other node.
-   * @param other The node from which the value will be copied.
+   * Create a Hilbert value object by copying from another one.
+   * @param other The Hilbert value object from which the value will be copied.
    */
-  template<typename TreeType>
-  DiscreteHilbertValue(const TreeType &other);
+  DiscreteHilbertValue(const DiscreteHilbertValue& other);
 
   //! Free memory
   ~DiscreteHilbertValue();
@@ -45,9 +48,10 @@ class DiscreteHilbertValue
    * @param pt1 The first point.
    * @param pt2 The second point.
    */
-  template<typename ElemType>
-  static int ComparePoints(const arma::Col<ElemType> &pt1,
-                                                const arma::Col<ElemType> &pt2);
+  template<typename VecType1, typename VecType2>
+  static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
+                           typename boost::enable_if<IsVector<VecType1>>* = 0,
+                           typename boost::enable_if<IsVector<VecType2>>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -56,20 +60,17 @@ class DiscreteHilbertValue
    * @param val1 The first point.
    * @param val2 The second point.
    */
-  template<typename TreeType>
-  static int CompareValues(TreeType *tree, DiscreteHilbertValue &val1,
-                                                    DiscreteHilbertValue &val2);
+  static int CompareValues(const DiscreteHilbertValue& val1,
+                                              const DiscreteHilbertValue& val2);
 
   /**
    * Compare the largest Hilbert value of the node with the val value.
    * It returns 1 if the value of the node is greater than val,
    * -1 if the value of the node is less than val and
    * 0 if the values are equal. This method does not compute the Hilbert values.
-   * @param tree Not used
    * @param val The Hilbert value to compare with.
    */
-  template<typename TreeType>
-  int CompareWith(TreeType *tree, DiscreteHilbertValue &val);
+  int CompareWith(const DiscreteHilbertValue& val) const;
 
   /**
    * Compare the largest Hilbert value of the node with the Hilbert value
@@ -80,8 +81,9 @@ class DiscreteHilbertValue
    * @param tree Not used
    * @param val The point to compare with.
    */
-  template<typename TreeType,typename ElemType>
-  int CompareWith(TreeType *tree, const arma::Col<ElemType> &pt);
+  template<typename VecType>
+  int CompareWith(const VecType& pt,
+                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Compare the largest Hilbert value of the node with the Hilbert value
@@ -92,8 +94,10 @@ class DiscreteHilbertValue
    * @param tree Not used
    * @param val The number of the point to compare with.
    */
-  template<typename TreeType>
-  int CompareWith(TreeType *tree, const size_t point);
+
+  template<typename VecType>
+  int CompareWithCachedPoint(const VecType& pt,
+                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Update the largest Hilbert value of the node and insert the point
@@ -101,15 +105,15 @@ class DiscreteHilbertValue
    * @param node The node in which the point is being inserted.
    * @param point The number of the point being inserted.
    */
-  template<typename TreeType>
-  size_t InsertPoint(TreeType *node, const size_t point);
-
+  template<typename TreeType, typename VecType>
+  size_t InsertPoint(TreeType *node, const VecType& pt,
+                     typename boost::enable_if<IsVector<VecType>>* = 0);
   /**
    * Update the largest Hilbert value of the node.
    * @param node The node being inserted.
    */
   template<typename TreeType>
-  void InsertNode(TreeType *node);
+  void InsertNode(TreeType* node);
 
   /**
    * Update the largest Hilbert value of the node and delete the point
@@ -118,7 +122,7 @@ class DiscreteHilbertValue
    * @param localIndex The number of the point in the local dataset.
    */
   template<typename TreeType>
-  void DeletePoint(TreeType *node, const size_t localIndex);
+  void DeletePoint(TreeType* node, const size_t localIndex);
 
   /**
    * Update the largest Hilbert value of the node.
@@ -126,7 +130,7 @@ class DiscreteHilbertValue
    * @param nodeIndex The number of the node being deleted.
    */
   template<typename TreeType>
-  void RemoveNode(TreeType *node, const size_t nodeIndex);
+  void RemoveNode(TreeType* node, const size_t nodeIndex);
 
   /**
    * Copy the largest Hilbert value and the local dataset
@@ -134,8 +138,10 @@ class DiscreteHilbertValue
    * @param src The node from which the information is being copied.
    */
   template<typename TreeType>
-  void Copy(TreeType *dst, TreeType *src);
-
+  void Copy(TreeType* dst, TreeType* src);
+  
+  void NullifyData();
+  
   /**
    * Update the largest Hilbert value and the local dataset.
    * The children of the node (or the points that the node contains) should be
@@ -143,39 +149,55 @@ class DiscreteHilbertValue
    * @param node The node in which the information should be updated.
    */
   template<typename TreeType>
-  void UpdateLargestValue(TreeType *node);
+  void UpdateLargestValue(TreeType* node);
 
-  //! Copy the largest Hilbert value.
-  DiscreteHilbertValue operator = (const DiscreteHilbertValue &val);
+  template<typename TreeType>
+  void UpdateHilbertValues(TreeType* parent, size_t firstSibling,
+                           size_t lastSibling);
 
-  //! Return the largest Hilbert value
-  std::list<arma::Col<uint64_t>>::iterator LargestValue() const
-  { return largestValue; }
+  //! Return the number of values
+  size_t NumValues() const
+  { return numValues; }
 
-  //! Modify the largest Hilbert value
-  std::list<arma::Col<uint64_t>>::iterator &LargestValue()
-  { return largestValue; }
+  //! Modify the number of values
+  size_t& NumValues()
+  { return numValues; }
 
-  //! Modify the local dataset
-  std::list<arma::Col<uint64_t>> *LocalDataset() { return localDataset; }
+  //! Return the local dataset
+  const arma::Mat<HilbertElemType>* LocalDataset() const
+  { return localDataset; }
+
   //! Modify the dataset
-  arma::Mat<uint64_t> *Dataset() { return dataset; }
+  arma::Mat<HilbertElemType>*& LocalDataset() { return localDataset; }
+  
+  //! Modify the valueToInsert
+  arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
+
+  //! Modify the valueToInsert
+  const arma::Col<HilbertElemType>* ValueToInsert() const
+  { return valueToInsert; }
+
  private:
-  //! The dataset
-  arma::Mat<uint64_t> *dataset;
-  //! Indicates that the node owns the dataset
-  bool ownsDataset;
+  //! The number of bits that we can store
+  static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;
   //! The local dataset
-  std::list<arma::Col<uint64_t>> *localDataset;
-  //! The largest Hilbert value
-  std::list<arma::Col<uint64_t>>::iterator largestValue;
+  arma::Mat<HilbertElemType>* localDataset;
+  //! Indicates that the node owns the local dataset
+  bool ownsLocalDataset;
+  //! The number of values in the local dataset
+  size_t numValues;
+  //! The Hilbert value of the point that is being inserted
+  arma::Col<HilbertElemType>* valueToInsert;
+  //! Indicates that the node owns the valueToInsert 
+  bool ownsValueToInsert;
 
   /**
    * Calculate the Hilbert value of the point pt.
    * @param pt The point for which the Hilbert value should be calculated.
    */
-  template<typename ElemType>
-  static arma::Col<uint64_t> CalculateValue(const arma::Col<ElemType> &pt);
+  template<typename VecType>
+  static arma::Col<HilbertElemType> CalculateValue(const VecType& pt,
+                             typename boost::enable_if<IsVector<VecType>>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -184,12 +206,12 @@ class DiscreteHilbertValue
    * @param value1 The first value.
    * @param value2 The second value.
    */
-  static int CompareValues(const arma::Col<uint64_t> &value1,
-                           const arma::Col<uint64_t> &value2);
+  static int CompareValues(const arma::Col<HilbertElemType>& value1,
+                           const arma::Col<HilbertElemType>& value2);
   /**
    * Returns true if the node has the largest Hilbert value.
    */
-  bool HasValue();
+  bool HasValue() const;
 };
 } // namespace tree
 } // namespace mlpack

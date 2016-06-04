@@ -13,112 +13,117 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-inline DiscreteHilbertValue::DiscreteHilbertValue() :
-    dataset(new arma::Mat<uint64_t>()),
-    ownsDataset(true),
-    localDataset(new std::list<arma::Col<uint64_t>>()),
-    largestValue(localDataset->end())
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue() :
+    localDataset(NULL),
+    ownsLocalDataset(false),
+    numValues(0),
+    valueToInsert(NULL),
+    ownsValueToInsert(false)
 {
 
-};
+}
 
-inline DiscreteHilbertValue::~DiscreteHilbertValue()
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>::~DiscreteHilbertValue()
 {
-  delete localDataset;
-  if(ownsDataset)
-    delete dataset;
-};
+  if(ownsLocalDataset)
+    delete localDataset;
+  if(ownsValueToInsert)
+    delete valueToInsert;
+}
 
+template<typename TreeElemType>
 template<typename TreeType>
-DiscreteHilbertValue::DiscreteHilbertValue(const TreeType *tree) :
-    dataset(tree->Parent() ?
-          tree->Parent()->AuxiliaryInfo().LargestHilbertValue().Dataset() :
-          new arma::Mat<uint64_t>(tree->Dataset().n_rows,
-                                  tree->Dataset().n_cols)),
-    ownsDataset(!tree->Parent()),
-    localDataset(new std::list<arma::Col<uint64_t>>()),
-    largestValue(localDataset->end())
+DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
+    localDataset(NULL),
+    ownsLocalDataset(false),
+    numValues(0),
+    valueToInsert(tree->Parent() ? 
+                tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert() :
+                new arma::Col<HilbertElemType>(tree->LocalDataset().n_rows)),
+    ownsValueToInsert(tree->Parent() ? false : true)
 {
-  typedef typename TreeType::ElemType ElemType;
   // Calculate the Hilbert value for all points
-  if(!tree->Parent())
+  if(!tree->Parent()) //  This is the root node
+    ownsLocalDataset = true;
+  else if(tree->Parent()->Children()[0]->IsLeaf())
   {
-    for(size_t i = 0; i < tree->Dataset().n_cols; i++)
-      dataset->col(i) = CalculateValue((arma::Col<ElemType>)tree->Dataset().col(i));
+    // This is a leaf node
+    assert(tree->Parent()->NumChildren() > 0);
+    ownsLocalDataset = true;
   }
+    
+  if(ownsLocalDataset)
+  {
+    localDataset =  new arma::Mat<HilbertElemType>(tree->LocalDataset().n_rows,
+                                            tree->MaxLeafSize() + 1);
+  }
+
 }
 
-template<typename TreeType>
-DiscreteHilbertValue::DiscreteHilbertValue(const TreeType &other) :
-    dataset(other.AuxiliaryInfo().LargestHilbertValue().Dataset()),
-    ownsDataset(false),
-    localDataset(new std::list<arma::Col<uint64_t>>()),
-    largestValue(other.AuxiliaryInfo().LargestHilbertValue().LargestValue())
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>::
+DiscreteHilbertValue(const DiscreteHilbertValue& other) :
+    localDataset(const_cast<arma::Mat<HilbertElemType>*>(other.LocalDataset())),
+    ownsLocalDataset(other.ownsLocalDataset),
+    numValues(other.NumValues()),
+    valueToInsert(const_cast<arma::Col<HilbertElemType>*>(other.ValueToInsert())),
+    ownsValueToInsert(false)
 {
-  if(other.IsLeaf())
-  {
-    std::list<arma::Col<uint64_t>> *otherDataset =
-                     other.AuxiliaryInfo().LargestHilbertValue().LocalDataset();
-    for(std::list<arma::Col<uint64_t>>::iterator it = otherDataset->begin(); it != otherDataset->end(); it++)
-    {
-      localDataset->push_back(*it);
-    }
-    largestValue = localDataset->end();
-    if(otherDataset->size() > 0)
-      largestValue--;
-  }
+
 }
 
-template<typename ElemType>
-arma::Col<uint64_t> DiscreteHilbertValue::
-CalculateValue(const arma::Col<ElemType> &pt)
+template<typename TreeElemType>
+template<typename VecType>
+arma::Col<typename DiscreteHilbertValue<TreeElemType>::HilbertElemType>
+DiscreteHilbertValue<TreeElemType>::
+CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
 {
-  arma::Col<uint64_t> res(pt.n_rows);
-  constexpr int order = 64;   // The number of bits that we can store
-  constexpr double numPowers =
-                        std::log2(std::numeric_limits<ElemType>::max_exponent -
-                        std::numeric_limits<ElemType>::min_exponent + 1.0);
-
+  typedef typename VecType::elem_type VecElemType;
+  arma::Col<HilbertElemType> res(pt.n_rows);
   // The number of bits for the exponent
-  constexpr int numExpBits = std::ceil(numPowers);
+  const int numExpBits =
+             std::ceil(std::log2(std::numeric_limits<VecElemType>::max_exponent -
+                      std::numeric_limits<VecElemType>::min_exponent + 1.0));
   // The number of bits for the mantissa
-  constexpr int numMantBits = order - numExpBits - 1;
+  const int numMantBits = order - numExpBits - 1;
 
   for(size_t i = 0; i < pt.n_rows; i++)
   {
     int e;
-    ElemType normalizedVal = std::frexp(pt(i),&e);
+    VecElemType normalizedVal = std::frexp(pt(i),&e);
     bool sgn = std::signbit(normalizedVal);
 
     if(sgn)
       normalizedVal = -normalizedVal;
 
-    if(e < std::numeric_limits<ElemType>::min_exponent)
+    if(e < std::numeric_limits<VecElemType>::min_exponent)
     {
-      uint64_t tmp = 1 << (std::numeric_limits<ElemType>::min_exponent - e);
-      e = std::numeric_limits<ElemType>::min_exponent;
+      HilbertElemType tmp = 1 << (std::numeric_limits<VecElemType>::min_exponent - e);
+      e = std::numeric_limits<VecElemType>::min_exponent;
       normalizedVal /= tmp;
     }
     //  Extract the mantissa
-    uint64_t tmp = (uint64_t)1 << numMantBits;
+    HilbertElemType tmp = (HilbertElemType)1 << numMantBits;
     res(i) = std::floor(normalizedVal / tmp);
     //  Add the exponent
-    res(i) |= ((uint64_t)(e - std::numeric_limits<ElemType>::min_exponent)) << numMantBits;
+    res(i) |= ((HilbertElemType)(e - std::numeric_limits<VecElemType>::min_exponent)) << numMantBits;
 
     // Negative values should be inverted
     if(sgn)
-      res(i) = ((uint64_t)1 << (order - 1)) - 1 - res(i);
+      res(i) = ((HilbertElemType)1 << (order - 1)) - 1 - res(i);
     else
-      res(i) |= (uint64_t)1 << (order - 1);
+      res(i) |= (HilbertElemType)1 << (order - 1);
   }
 
-  uint64_t M = (uint64_t)1 << (order - 1);
+  HilbertElemType M = (HilbertElemType)1 << (order - 1);
 
   // Since the Hilbert curve is continuous we should permutate and intend
   // coordinate axes depending on the position of the point
-  for(uint64_t Q = M; Q > 1; Q >>= 1)
+  for(HilbertElemType Q = M; Q > 1; Q >>= 1)
   {
-    uint64_t P = Q - 1;
+    HilbertElemType P = Q - 1;
 
     for(size_t i = 0; i < pt.n_rows; i++)
     {
@@ -126,7 +131,7 @@ CalculateValue(const arma::Col<ElemType> &pt)
         res(0) ^= P;
       else            // Permutate
       {
-        uint64_t t = (res(0) ^ res(i)) & P;
+        HilbertElemType t = (res(0) ^ res(i)) & P;
         res(0) ^= t;
         res(i) ^= t;
       }
@@ -137,10 +142,10 @@ CalculateValue(const arma::Col<ElemType> &pt)
   for(size_t i = 1; i < pt.n_rows; i++)
     res(i) ^= res(i-1);
 
-  uint64_t t = 0;
+  HilbertElemType t = 0;
 
   // Some coordinate axes should be inverted
-  for(uint64_t Q = M; Q > 1; Q >>= 1)
+  for(HilbertElemType Q = M; Q > 1; Q >>= 1)
     if( res(pt.n_rows - 1) & Q)
       t ^= Q - 1;
 
@@ -148,7 +153,7 @@ CalculateValue(const arma::Col<ElemType> &pt)
     res(i) ^= t;
 
   // We should rearrange bits in order to compare two Hilbert values faster
-  arma::Col<uint64_t> rearrangedResult(pt.n_rows,arma::fill::zeros);
+  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows,arma::fill::zeros);
 
   for(size_t i = 0; i < order; i++)
     for(size_t j = 0; j < pt.n_rows; j++)
@@ -162,9 +167,10 @@ CalculateValue(const arma::Col<ElemType> &pt)
   return rearrangedResult;
 }
 
-inline int DiscreteHilbertValue::
-CompareValues(const arma::Col<uint64_t> &value1,
-              const arma::Col<uint64_t> &value2)
+template<typename TreeElemType>
+int DiscreteHilbertValue<TreeElemType>::
+CompareValues(const arma::Col<HilbertElemType>& value1,
+              const arma::Col<HilbertElemType>& value2)
 {
   for(size_t i = 0;i < value1.n_rows; i++)
   {
@@ -179,19 +185,23 @@ CompareValues(const arma::Col<uint64_t> &value1,
 
 
 
-template<typename ElemType>
-int DiscreteHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
-                                        const arma::Col<ElemType> &pt2)
+template<typename TreeElemType>
+template<typename VecType1, typename VecType2>
+int DiscreteHilbertValue<TreeElemType>::
+ComparePoints(const VecType1& pt1, const VecType2& pt2, 
+              typename boost::enable_if<IsVector<VecType1>>*,
+              typename boost::enable_if<IsVector<VecType2>>*)
 {
-  arma::Col<uint64_t> val1 = CalculateValue(pt1);
-  arma::Col<uint64_t> val2 = CalculateValue(pt2);
+  arma::Col<HilbertElemType> val1 = CalculateValue(pt1);
+  arma::Col<HilbertElemType> val2 = CalculateValue(pt2);
 
   return CompareValues(val1,val2);
 }
 
-template<typename TreeType>
-int DiscreteHilbertValue::CompareValues(TreeType *,
-                         DiscreteHilbertValue &val1, DiscreteHilbertValue &val2)
+template<typename TreeElemType>
+int DiscreteHilbertValue<TreeElemType>::
+CompareValues(const DiscreteHilbertValue& val1,
+              const DiscreteHilbertValue& val2)
 {
   if(val1.HasValue() && !val2.HasValue())
     return 1;
@@ -200,197 +210,214 @@ int DiscreteHilbertValue::CompareValues(TreeType *,
   else if(!val1.HasValue() && !val2.HasValue())
     return 0;
 
-  return CompareValues(*val1.LargestValue(),*val2.LargestValue());
+  return CompareValues(val1.LocalDataset()->col(val1.NumValues() - 1),
+                       val2.LocalDataset()->col(val2.NumValues() - 1));
 }
 
-template<typename TreeType>
-int DiscreteHilbertValue::CompareWith(TreeType *, DiscreteHilbertValue &val)
+template<typename TreeElemType>
+int DiscreteHilbertValue<TreeElemType>::
+CompareWith(const DiscreteHilbertValue& val) const
 {
-  return CompareValues(*largestValue,*val.LargestValue());
+  return CompareValues(*this, val);
 }
 
-template<typename TreeType,typename ElemType>
-int DiscreteHilbertValue::CompareWith(TreeType *tree,
-                                      const arma::Col<ElemType> &pt)
+template<typename TreeElemType>
+template<typename VecType>
+int DiscreteHilbertValue<TreeElemType>::
+CompareWith(const VecType& pt,
+            typename boost::enable_if<IsVector<VecType>>*) const
 {
-  arma::Col<uint64_t> val = CalculateValue(pt);
+  arma::Col<HilbertElemType> val = CalculateValue(pt);
 
   if(!HasValue())
     return -1;
 
-  return CompareValues(*largestValue,val);
+  return CompareValues(localDataset->col(numValues - 1),val);
 }
 
-template<typename TreeType>
-int DiscreteHilbertValue::CompareWith(TreeType *,
-                                      const size_t point)
+template<typename TreeElemType>
+template<typename VecType>
+int DiscreteHilbertValue<TreeElemType>::
+CompareWithCachedPoint(const VecType& ,
+            typename boost::enable_if<IsVector<VecType>>*) const
 {
   if(!HasValue())
     return -1;
-  return CompareValues(*largestValue,dataset->col(point));
+
+  return CompareValues(localDataset->col(numValues - 1),*valueToInsert);
 }
 
-template<typename TreeType>
-size_t DiscreteHilbertValue::InsertPoint(TreeType *node, const size_t point)
+template<typename TreeElemType>
+template<typename TreeType, typename VecType>
+size_t DiscreteHilbertValue<TreeElemType>::
+InsertPoint(TreeType *node, const VecType& pt,
+                            typename boost::enable_if<IsVector<VecType>>*)
 {
   size_t i = 0;
-  std::list<arma::Col<uint64_t>>::iterator it = localDataset->end();
 
+  // All point are inserted to the root node
+  if(!node->Parent())
+    *valueToInsert = CalculateValue(pt);
   if(node->IsLeaf())
   {
     // Find an appropriate place
-    for(it = localDataset->begin(); it != localDataset->end(); it++)
-    {
-      if(CompareValues(*it, dataset->col(point)) > 0)
+    for(i = 0; i < numValues; i++)
+      if(CompareValues(localDataset->col(i), *valueToInsert) > 0)
         break;
-      i++;
-    }
-    std::list<arma::Col<uint64_t>>::iterator insertedIterator =
-                                   localDataset->insert(it,dataset->col(point));
-    // Update the largest Hilbert value
-    if(it == localDataset->end())
-      largestValue = insertedIterator;
+
+    for(size_t j = numValues; j > i; j--)
+      localDataset->col(j) = localDataset->col(j-1);
+
+    localDataset->col(i) = *valueToInsert;
+    numValues++;
 
     // Propogate changes of the largest Hilbert value downward
     TreeType *root = node->Parent();
 
     while(root != NULL)
     {
-      if(root->AuxiliaryInfo().LargestHilbertValue().LargestValue() ==
-          root->AuxiliaryInfo().LargestHilbertValue().LocalDataset()->end())
-        root->AuxiliaryInfo().LargestHilbertValue().LargestValue() = insertedIterator;
+      root->AuxiliaryInfo().HilbertValue().LocalDataset() = localDataset;
+      root->AuxiliaryInfo().HilbertValue().NumValues() = numValues;
 
       root = root->Parent();
     }
-  }
-  else if(largestValue != localDataset->end())
-  {
-    // We do not update the largest Hilbert value since we do not know the
-    // iterator
-    if(CompareValues(*largestValue,dataset->col(point)) < 0)
-      largestValue = localDataset->end();
   }
 
   return i;
 }
 
+template<typename TreeElemType>
 template<typename TreeType>
-void DiscreteHilbertValue::InsertNode(TreeType *node)
+void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
-  std::list<arma::Col<uint64_t>>::iterator it =
-                    node->AuxiliaryInfo().LargestHilbertValue().LargestValue();
-
-  // Update the largest Hilbert value
-  if(largestValue != localDataset->end() &&
-        it != node->AuxiliaryInfo().LargestHilbertValue().LocalDataset()->end())
-    if(*it > *largestValue)
-      largestValue = it;
-}
-
-template<typename TreeType>
-void DiscreteHilbertValue::DeletePoint(TreeType *node, const size_t localIndex)
-{
-  std::list<arma::Col<uint64_t>>::iterator it = localDataset->begin();
-
-  // Delete the Hilbert value from the local dataset
-  for(size_t i=0; i < localIndex; i++)
-    it++;
-  localDataset->erase(it);
-
-  // Update the largest Hilbert value
-  if(localDataset->size() == 0)
-    largestValue = localDataset->end();
-  else
+  DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
+  
+  if(CompareWith(node,val) < 0)
   {
-    largestValue = localDataset->end();
-    largestValue--;
+    localDataset = val.LocalDataset();
+    numValues = val.NumValues();
   }
 }
 
+template<typename TreeElemType>
 template<typename TreeType>
-void DiscreteHilbertValue::RemoveNode(TreeType *node, const size_t nodeIndex)
+void DiscreteHilbertValue<TreeElemType>::
+DeletePoint(TreeType* node, const size_t localIndex)
+{
+
+  // Delete the Hilbert value from the local dataset
+  for(size_t i = numValues - 1; i > localIndex; i--)
+    localDataset->col(i-1) = localDataset->col(i);
+
+  numValues--;
+}
+
+template<typename TreeElemType>
+template<typename TreeType>
+void DiscreteHilbertValue<TreeElemType>::
+RemoveNode(TreeType* node, const size_t nodeIndex)
 {
   if(node->NumChildren() <= 1)
   {
-    largestValue = localDataset->end();
+    localDataset = NULL;
+    numValues = 0;
     return;
   }
   if(nodeIndex + 1 == node->NumChildren())
   {
     // Update the largest Hilbert value if the value exists
-    TreeType *child = node->Children()[nodeIndex-1];
-    if(child->AuxiliaryInfo.LargestHilbertValue().LargestValue() !=
-       child->AuxiliaryInfo.LargestHilbertValue().LocalDataset()->end())
-      largestValue = child->AuxiliaryInfo.LargestHilbertValue().LargestValue();
-    else
-      largestValue = localDataset->end();
-  }
-}
-
-template<typename TreeType>
-void DiscreteHilbertValue::Copy(TreeType *dst, TreeType *src)
-{
-  DiscreteHilbertValue &dstVal = dst->AuxiliaryInfo().LargestHilbertValue();
-  DiscreteHilbertValue &srcVal = src->AuxiliaryInfo().LargestHilbertValue();
-
-  // Copy the largest Hilbert value and the local dataset
-  dstVal.LargestValue() = srcVal.LargestValue();
-
-  dstVal.LocalDataset()->clear();
-  std::list<arma::Col<uint64_t>>::iterator it = srcVal.LocalDataset()->begin();
-  for( ; it != srcVal.LocalDataset()->end(); it++)
-    dstVal.LocalDataset()->push_back(*it);
-
-  if(dst->IsLeaf())
-  {
-    dstVal.LargestValue() = dstVal.LocalDataset()->end();
-    if(dst->NumPoints() > 0)
-      dstVal.LargestValue()--;
-  }
-}
-
-inline DiscreteHilbertValue DiscreteHilbertValue::operator = (const DiscreteHilbertValue &val)
-{
-  // Copy the largest Hilbert value
-  largestValue = val.LargestValue();
-
-  return *this;
-}
-
-template<typename TreeType>
-void DiscreteHilbertValue::UpdateLargestValue(TreeType *node)
-{
-  if(node->IsLeaf())
-  {
-    // Update the largest Hilbert value and the local dataset
-    localDataset->clear();
-    if(node->NumPoints() == 0)
+    TreeType* child = node->Children()[nodeIndex-1];
+    if(child->AuxiliaryInfo.HilbertValue().NumValues() != 0)
     {
-      largestValue = localDataset->end();
-      return;
+      numValues = child->AuxiliaryInfo.HilbertValue().NumValues();
+      localDataset = child->AuxiliaryInfo.HilbertValue().LocalDataset();
     }
-    for(size_t i = 0; i < node->NumPoints(); i++)
-      localDataset->push_back(dataset->col(node->Points()[i]));
-    largestValue = localDataset->end();
-    largestValue--;
-  }
-  else
-  {
-    if(localDataset->size() > 0)
-      localDataset->clear();
-    //  Update the largest Hilbert value;
-    if(node->NumChildren() == 0)
-      largestValue = localDataset->end();
-    else if(node->Children()[node->NumChildren()-1]->AuxiliaryInfo().LargestHilbertValue().HasValue())
-      largestValue = node->Children()[node->NumChildren()-1]->AuxiliaryInfo().LargestHilbertValue().LargestValue();
     else
-      largestValue = localDataset->end();
+    {
+      localDataset = NULL;
+      numValues = 0;
+    }
   }
 }
 
-inline bool DiscreteHilbertValue::HasValue()
+template<typename TreeElemType>
+template<typename TreeType>
+void DiscreteHilbertValue<TreeElemType>::Copy(TreeType* dst, TreeType* src)
 {
-  return largestValue != localDataset->end();
+}
+
+template<typename TreeElemType>
+void DiscreteHilbertValue<TreeElemType>::NullifyData()
+{
+  ownsLocalDataset = false;
+}
+
+template<typename TreeElemType>
+template<typename TreeType>
+void DiscreteHilbertValue<TreeElemType>::UpdateLargestValue(TreeType* node)
+{
+  if(!node->IsLeaf())
+  {
+    // Update the largest Hilbert value
+    localDataset = node->Children()[node->NumChildren()-1]->AuxiliaryInfo().HilbertValue().LocalDataset();
+    numValues = node->Children()[node->NumChildren()-1]->AuxiliaryInfo().HilbertValue().NumValues();
+  }
+}
+
+template<typename TreeElemType>
+template<typename TreeType>
+void DiscreteHilbertValue<TreeElemType>::
+UpdateHilbertValues(TreeType* parent, size_t firstSibling, size_t lastSibling)
+{
+  //  We should update the local dataset if points were redistributed
+  
+  size_t numPoints = 0;
+
+  for(size_t i = firstSibling; i<= lastSibling; i++)
+    numPoints += parent->Children()[i]->NumPoints();
+
+  // Copy the local datasets
+  arma::Mat<HilbertElemType> tmp(localDataset->n_rows,numPoints);
+
+  size_t iPoint = 0;
+  for(size_t i = firstSibling; i<= lastSibling; i++)
+  {
+    DiscreteHilbertValue<TreeElemType> &value =
+                          parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+    
+    for(size_t j = 0; j < value.NumValues(); j++)
+    {
+      tmp.col(iPoint) = value.LocalDataset()->col(j);
+      iPoint++;
+    }
+  }
+  assert(iPoint == numPoints);
+
+  iPoint = 0;
+
+  //  Redistribute the Hilbert values
+  for(size_t i = firstSibling; i<= lastSibling; i++)
+  {
+    DiscreteHilbertValue<TreeElemType> &value =
+                          parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+    
+    for(size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
+    {
+      value.LocalDataset()->col(j) = tmp.col(iPoint);
+      iPoint++;
+    }
+    value.NumValues() = parent->Children()[i]->NumPoints();
+  }
+
+  assert(iPoint == numPoints);
+
+}
+
+
+template<typename TreeElemType>
+bool DiscreteHilbertValue<TreeElemType>::HasValue() const
+{
+  return numValues > 0;
 }
 
 } // namespace tree

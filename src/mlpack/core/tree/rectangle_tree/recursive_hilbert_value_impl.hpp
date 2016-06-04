@@ -11,57 +11,120 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+template<typename TreeElemType>
+RecursiveHilbertValue<TreeElemType>::RecursiveHilbertValue() :
+    largestValue(NULL),
+    ownsLargestValue(false),
+    hasLargestValue(false)
+{
 
-template<typename ElemType>
-int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
-                                         const arma::Col<ElemType> &pt2)
+}
+
+template<typename TreeElemType>
+template<typename TreeType>
+RecursiveHilbertValue<TreeElemType>::
+RecursiveHilbertValue(const TreeType* tree) :
+    largestValue(NULL),
+    ownsLargestValue(false),
+    hasLargestValue(false)
+{
+  if(!tree->Parent()) //  This is the root node
+    ownsLargestValue = true;
+  else if(tree->Parent()->Children()[0]->IsLeaf())
+  {
+    // This is a leaf node
+    assert(tree->Parent()->NumChildren() > 0);
+    ownsLargestValue = true;
+  }
+    
+  if(ownsLargestValue)
+  {
+    largestValue =  new arma::Col<TreeElemType>(tree->LocalDataset().n_rows);
+  }
+}
+
+template<typename TreeElemType>
+RecursiveHilbertValue<TreeElemType>::
+RecursiveHilbertValue(const RecursiveHilbertValue& other) :
+    largestValue(const_cast<arma::Col<TreeElemType>*>(other.LargestValue())),
+    ownsLargestValue(other.ownsLargestValue),
+    hasLargestValue(other.hasLargestValue)
+{
+
+}
+
+template<typename TreeElemType>
+RecursiveHilbertValue<TreeElemType>::~RecursiveHilbertValue()
+{
+  if(ownsLargestValue)
+    delete largestValue;
+}
+
+template<typename TreeElemType>
+template<typename VecType1, typename VecType2>
+int RecursiveHilbertValue<TreeElemType>::
+ComparePoints(const VecType1& pt1, const VecType2& pt2,
+                                typename boost::enable_if<IsVector<VecType1>>*,
+                                typename boost::enable_if<IsVector<VecType2>>* )
 {
   size_t dim = pt1.n_rows;
-  CompareStruct<ElemType> comp(dim);
+  CompareStruct comp(dim);
 
-  return ComparePoints(pt1,pt2,comp);
+  return ComparePoints(pt1, pt2, comp);
 };
 
-template<typename TreeType>
-int RecursiveHilbertValue::CompareValues(TreeType *tree,
-                       RecursiveHilbertValue &val1, RecursiveHilbertValue &val2)
+template<typename TreeElemType>
+int RecursiveHilbertValue<TreeElemType>::
+CompareValues(const RecursiveHilbertValue& val1,
+              const RecursiveHilbertValue& val2)
 {
-  typedef typename TreeType::ElemType ElemType;
-  size_t point1 = val1.LargestValue();
-  size_t point2 = val2.LargestValue();
+  if(!val1.hasLargestValue && val2.hasLargestValue)
+    return -1;
+  else if(val1.hasLargestValue && !val2.hasLargestValue)
+    return 1;
+  else if(!val1.hasLargestValue && !val2.hasLargestValue)
+    return 0;
 
-  return ComparePoints(arma::Col<ElemType>(tree->Dataset().col(point1)),
-                       arma::Col<ElemType>(tree->Dataset().col(point2)));
+  return ComparePoints(*val1.LargestValue(),
+                       *val2.LargestValue());
 }
 
-template<typename TreeType>
-int RecursiveHilbertValue::CompareWith(TreeType *tree,
-                                       RecursiveHilbertValue &val)
+template<typename TreeElemType>
+int RecursiveHilbertValue<TreeElemType>::
+CompareWith(const RecursiveHilbertValue& val) const
 {
-  return CompareValues(tree,*this,val);
+  if(!hasLargestValue)
+    return -1;
+  return CompareValues(*this,val);
 }
 
-template<typename TreeType,typename ElemType>
-int RecursiveHilbertValue::CompareWith(TreeType *tree,
-                                       const arma::Col<ElemType> &pt)
+template<typename TreeElemType>
+template<typename VecType>
+int RecursiveHilbertValue<TreeElemType>::
+CompareWith(const VecType& point,
+            typename boost::enable_if<IsVector<VecType>>* ) const
 {
-  return ComparePoints(arma::Col<ElemType>(tree->Dataset()->col(largestValue)),pt);
+  if(!hasLargestValue)
+    return -1;
+  return ComparePoints(*largestValue, point);
 }
 
-template<typename TreeType>
-int RecursiveHilbertValue::CompareWith(TreeType *tree,
-                                       const size_t point)
+template<typename TreeElemType>
+template<typename VecType>
+int RecursiveHilbertValue<TreeElemType>::
+CompareWithCachedPoint(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType>>* ) const
 {
-  typedef typename TreeType::ElemType ElemType;
-  return ComparePoints(arma::Col<ElemType>(tree->Dataset().col(largestValue)),
-                       arma::Col<ElemType>(tree->Dataset().col(point)));
+  return CompareWith(point);
 }
 
+template<typename TreeElemType>
+template<typename VecType1, typename VecType2>
+int RecursiveHilbertValue<TreeElemType>::
+ComparePoints(const VecType1& pt1, const VecType2& pt2,
+           CompareStruct& comp, typename boost::enable_if<IsVector<VecType1>>*,
+                                typename boost::enable_if<IsVector<VecType2>>* )
 
-template<typename ElemType>
-int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
-                                         const arma::Col<ElemType> &pt2,
-                                         CompareStruct<ElemType> &comp)
 {
   comp.center = comp.Hi * 0.5;
   comp.vec = comp.Lo * 0.5;
@@ -141,102 +204,128 @@ int RecursiveHilbertValue::ComparePoints(const arma::Col<ElemType> &pt1,
   return ComparePoints(pt1,pt2,comp);
 }
 
-template<typename TreeType>
-size_t RecursiveHilbertValue::InsertPoint(TreeType *node, const size_t point)
+template<typename TreeElemType>
+template<typename TreeType, typename VecType>
+size_t RecursiveHilbertValue<TreeElemType>::
+InsertPoint(TreeType* node, const VecType& point,
+                                 typename boost::enable_if<IsVector<VecType>>* )
 {
-  typedef typename TreeType::ElemType ElemType;
   if(node->IsLeaf())
   {
     size_t i;
 
     for(i = 0; i < node->NumPoints(); i++)
-      if(ComparePoints(arma::Col<ElemType>(node->LocalDataset().col(i)),
-                       arma::Col<ElemType>(node->Dataset().col(point)))> 0)
+      if(ComparePoints(node->LocalDataset().col(i), point) > 0)
         break;
     if(i == node->NumPoints())
-      largestValue = point;
+      *largestValue = point;
+
+    hasLargestValue = true;
+
+    // Propogate changes of the largest Hilbert value downward
+    TreeType *root = node->Parent();
+
+    while(root != NULL)
+    {
+      root->AuxiliaryInfo().HilbertValue().LargestValue() = largestValue;
+      root->AuxiliaryInfo().HilbertValue().hasLargestValue = true;
+
+      root = root->Parent();
+    }
 
     return i;
   }
-  else
-  {
-    if(largestValue < 0)
-    {
-      largestValue = point;
-      return 0;
-    }
-    if(ComparePoints(arma::Col<ElemType>(node->Dataset().col(point)),
-                     arma::Col<ElemType>(node->Dataset().col(largestValue))) > 0)
-      largestValue = point;
-  }
+
   return 0;
 }
 
-template<typename TreeType>
-void RecursiveHilbertValue::InsertNode(TreeType *node)
-{
-  typedef typename TreeType::ElemType ElemType;
-  size_t point = node->AuxiliaryInfo().LargestHilbertValue().LargestValue();
 
-  if(ComparePoints(arma::Col<ElemType>(node->Dataset()->col(point)),
-                   arma::Col<ElemType>(node->Dataset()->col(largestValue))) > 0)
-    largestValue = point;
+template<typename TreeElemType>
+template<typename TreeType>
+void RecursiveHilbertValue<TreeElemType>::InsertNode(TreeType* node)
+{
+  if(CompareWith(node->AuxiliaryInfo().HilbertValue()) < 0)
+  {
+    largestValue = node->AuxiliaryInfo().HilbertValue().LargestValue();
+    hasLargestValue = true;
+  }
 }
 
+template<typename TreeElemType>
 template<typename TreeType>
-void RecursiveHilbertValue::DeletePoint(TreeType *node, const size_t localIndex)
+void RecursiveHilbertValue<TreeElemType>::
+DeletePoint(TreeType* node, const size_t localIndex)
 {
   if(node->NumPoints() <= 1)
   {
-    largestValue = -1;
+    hasLargestValue = false;
     return;
   }
   if(localIndex + 1 == node->NumPoints())
-    largestValue = node->Points()[localIndex-1];
+    *largestValue = node->LocalDataset()[localIndex-1];
   
 }
 
+template<typename TreeElemType>
 template<typename TreeType>
-void RecursiveHilbertValue::RemoveNode(TreeType *node, const size_t nodeIndex)
+void RecursiveHilbertValue<TreeElemType>::
+RemoveNode(TreeType* node, const size_t nodeIndex)
 {
   if(node->NumChildren() <= 1)
   {
-    largestValue = -1;
+    hasLargestValue = false;
     return;
   }
   if(nodeIndex + 1 == node->NumChildren())
-    largestValue = node->Children()[nodeIndex-1]->AuxiliaryInfo.LargestHilbertValue().LargestValue();
+    largestValue = node->Children()[nodeIndex-1]->AuxiliaryInfo.HilbertValue().LargestValue();
 
 }
 
-inline RecursiveHilbertValue RecursiveHilbertValue::operator = (const RecursiveHilbertValue &val)
-{
-  largestValue = val.LargestValue();
-
-  return *this;
-}
-
+template<typename TreeElemType>
 template<typename TreeType>
-void RecursiveHilbertValue::Copy(TreeType *dst, TreeType *src)
+void RecursiveHilbertValue<TreeElemType>::Copy(TreeType* dst, TreeType* src)
 {
   dst->AuxiliaryInfo().LargestHilbertValue().LargestValue() =
     src->AuxiliaryInfo().LargestHilbertValue().LargestValue();
 }
 
-template<typename TreeType>
-void RecursiveHilbertValue::UpdateLargestValue(TreeType *node)
+template<typename TreeElemType>
+void RecursiveHilbertValue<TreeElemType>::NullifyData()
 {
-  if(node->IsLeaf())
-  {
-    largestValue = (node->NumPoints() > 0 ?
-                    node->Points()[node->NumPoints() - 1] : -1);
-  }
-  else
+  ownsLargestValue = false;
+}
+
+template<typename TreeElemType>
+template<typename TreeType>
+void RecursiveHilbertValue<TreeElemType>::UpdateLargestValue(TreeType* node)
+{
+  if(!node->IsLeaf())
   {
     largestValue = (node->NumChildren() > 0 ?
-                    node->Children()[node->NumChildren() - 1]->AuxiliaryInfo().LargestHilbertValue().LargestValue() : -1);
+                    node->Children()[node->NumChildren() - 1]->AuxiliaryInfo().HilbertValue().LargestValue() : NULL);
+    hasLargestValue =  (node->NumChildren() > 0 ?
+                    node->Children()[node->NumChildren() - 1]->AuxiliaryInfo().HilbertValue().hasLargestValue : false);
   }
 }
+
+template<typename TreeElemType>
+template<typename TreeType>
+void RecursiveHilbertValue<TreeElemType>::
+UpdateHilbertValues(TreeType* parent, size_t firstSibling,  size_t lastSibling)
+{
+  for(size_t i = firstSibling; i<= lastSibling; i++)
+  {
+    RecursiveHilbertValue<TreeElemType> &value =
+                          parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+
+    assert(parent->Children()[i]->NumPoints() > 0);
+
+    *value.LargestValue() = parent->Children()[i]->LocalDataset().col(parent->Children()[i]->NumPoints() - 1);
+    value.hasLargestValue = true;
+  }
+
+}
+
 
 
 } // namespace tree

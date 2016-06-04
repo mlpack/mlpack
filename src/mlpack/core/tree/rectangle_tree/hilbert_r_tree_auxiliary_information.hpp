@@ -12,10 +12,13 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType,typename HilbertValue>
+template<typename TreeType,
+         template<typename> class HilbertValueType>
 class HilbertRTreeAuxiliaryInformation
 {
  public:
+  //! The element type held by the tree.
+  typedef typename TreeType::ElemType ElemType;
   //! Default constructor
   HilbertRTreeAuxiliaryInformation();
 
@@ -23,13 +26,13 @@ class HilbertRTreeAuxiliaryInformation
    * Construct this as an axiliary information for the node node.
    * @param node The node that stores this auxiliary information.
    */
-  HilbertRTreeAuxiliaryInformation(const TreeType *node);
+  HilbertRTreeAuxiliaryInformation(const TreeType* node);
 
   /**
    * Create an auxiliary information object by copying from the other node.
    * @param other The node from which the information will be copied.
    */
-  HilbertRTreeAuxiliaryInformation(const TreeType &other);
+  HilbertRTreeAuxiliaryInformation(const HilbertRTreeAuxiliaryInformation& other);
 
   //! Free memory
   ~HilbertRTreeAuxiliaryInformation();
@@ -42,7 +45,12 @@ class HilbertRTreeAuxiliaryInformation
    * @param node The node in which the point is being inserted.
    * @param point The number of the point being inserted.
    */
-  bool HandlePointInsertion(TreeType *node, const size_t point);
+  bool HandlePointInsertion(TreeType* node, const size_t point);
+
+  template<typename VecType>
+  bool HandlePointInsertion(TreeType* node, const VecType& point,
+                             typename boost::enable_if<IsVector<VecType>>* = 0);
+
   
   /**
    * The Hilbert R tree requires to insert nodes according to their
@@ -54,8 +62,8 @@ class HilbertRTreeAuxiliaryInformation
    * @param insertionLevel The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
-  bool HandleNodeInsertion(TreeType *node,
-                           TreeType *nodeToInsert,bool insertionLevel);
+  bool HandleNodeInsertion(TreeType* node,
+                           TreeType* nodeToInsert,bool insertionLevel);
 
   /**
    * The Hilbert R tree requires all points to be arranged according to their
@@ -66,7 +74,7 @@ class HilbertRTreeAuxiliaryInformation
    * @param node The node from which the point is being deleted.
    * @param localIndex The index of the point being deleted.
    */
-  bool HandlePointDeletion(TreeType *node,const size_t localIndex);
+  bool HandlePointDeletion(TreeType* node,const size_t localIndex);
 
   /**
    * The Hilbert R tree requires all nodes to be arranged according to their
@@ -77,31 +85,34 @@ class HilbertRTreeAuxiliaryInformation
    * @param node The node from which the node is being deleted.
    * @param nodeIndex The index of the node being deleted.
    */
-  bool HandleNodeRemoval(TreeType *node,const size_t nodeIndex);
+  bool HandleNodeRemoval(TreeType* node,const size_t nodeIndex);
 
   /**
    * Update the auxiliary information in the node. The method returns true
    * if the update should be propogated downward.
    * @param node The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType *node);
+  bool UpdateAuxiliaryInfo(TreeType* node);
 
   /**
    * Copy the auxiliary information from one node to another.
    * @param dst The node to which the information is being copied.
    * @param src The node from which the information is being copied.
    */
-  void Copy(TreeType *dst,TreeType *src);
+  void Copy(TreeType* dst,TreeType* src);
+
+  void NullifyData();
 
  private:
   //! The largest Hilbert value of a point enclosed by the node.
-  HilbertValue *largestHilbertValue;
+  HilbertValueType<ElemType> hilbertValue;
 
  public:
   //! Return the largest Hilbert value of a point covered by the node.
-  HilbertValue& LargestHilbertValue() const { return *largestHilbertValue; }
+  const HilbertValueType<ElemType>& HilbertValue() const
+  { return hilbertValue; }
   //! Modify the largest Hilbert value of a point covered by the node.
-  HilbertValue& LargestHilbertValue() { return *largestHilbertValue; }
+  HilbertValueType<ElemType>& HilbertValue() { return hilbertValue; }
 
   /**
    * Serialize the information.

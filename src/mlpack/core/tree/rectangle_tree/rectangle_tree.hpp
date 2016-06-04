@@ -94,7 +94,7 @@ class RectangleTree
   //! The local dataset
   MatType* localDataset;
   //! A tree-specific information
-  AuxiliaryInformationType<RectangleTree> *auxiliaryInfo;
+  AuxiliaryInformationType<RectangleTree> auxiliaryInfo;
 
  public:
   //! A single traverser for rectangle type trees.  See
@@ -202,6 +202,7 @@ class RectangleTree
    * @param point The point (arma::vec&) to be inserted.
    */
   void InsertPoint(const size_t point);
+  void InsertPoint(const arma::vec &point);
 
   /**
    * Inserts a point into the tree, tracking which levels have been inserted
@@ -214,6 +215,7 @@ class RectangleTree
    *      insertion.
    */
   void InsertPoint(const size_t point, std::vector<bool>& relevels);
+  void InsertPoint(const arma::vec &point, std::vector<bool>& relevels);
 
   /**
    * Inserts a node into the tree, tracking which levels have been inserted
@@ -239,6 +241,7 @@ class RectangleTree
    * removed and false if it is not.  (ie. the point is not in the tree)
    */
   bool DeletePoint(const size_t point);
+  bool DeletePoint(const arma::vec &point);
 
   /**
    * Deletes a point in the tree, tracking levels.  The point will be removed
@@ -250,6 +253,7 @@ class RectangleTree
    * the tree)
    */
   bool DeletePoint(const size_t point, std::vector<bool>& relevels);
+  bool DeletePoint(const arma::vec &point, std::vector<bool>& relevels);
 
   /**
    * Removes a node from the tree.  You are responsible for deleting it if you
@@ -295,10 +299,10 @@ class RectangleTree
 
   //! Return the auxiliary information object of this node.
   const AuxiliaryInformationType<RectangleTree> &AuxiliaryInfo() const
-  { return *auxiliaryInfo; }
+  { return auxiliaryInfo; }
   //! Modify the split object of this node.
   AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo()
-  { return *auxiliaryInfo; }
+  { return auxiliaryInfo; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;

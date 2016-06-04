@@ -14,13 +14,13 @@ namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 constexpr int recursionDepth = 500;
+
+template<typename TreeElemType>
 class RecursiveHilbertValue
 {
  public:
   //! Default constructor
-  RecursiveHilbertValue() :
-    largestValue(-1)
-  { };
+  RecursiveHilbertValue();
 
   /**
    * Construct this for the node tree. If the node is the root this method
@@ -28,34 +28,30 @@ class RecursiveHilbertValue
    * @param node The node that stores this Hilbert value.
    */
   template<typename TreeType>
-  RecursiveHilbertValue(const TreeType *) :
-    largestValue(-1)
-  { };
+  RecursiveHilbertValue(const TreeType* tree);
 
   /**
-   * Create a Hilbert value object by copying from the other node.
-   * @param other The node from which the value will be copied.
+   * Create a Hilbert value object by copying from another one.
+   * @param other The Hilbert value object from which the value will be copied.
    */
-  template<typename TreeType>
-  RecursiveHilbertValue(const TreeType &other) :
-    largestValue(other.AuxiliaryInfo().LargestHilbertValue().LargestValue())
-  { };
+  RecursiveHilbertValue(const RecursiveHilbertValue& other);
+
+  ~RecursiveHilbertValue();
 
   //! This struct is designed in order to facilitate the recursion.
-  template<typename ElemType>
-  struct tagCompareStruct
+  typedef struct tagCompareStruct
   {
     //! Lower bound
-    arma::Col<ElemType> Lo;
+    arma::Col<TreeElemType> Lo;
     //! High bound
-    arma::Col<ElemType> Hi;
+    arma::Col<TreeElemType> Hi;
     //! Permutation of axes
     std::vector<size_t> permutation;
     //! Indicates that the axis should be inverted
     std::vector<bool> inversion;
     //! Indicates that the result should be inverted
-    arma::Col<ElemType> center;
-    arma::Col<ElemType> vec;
+    arma::Col<TreeElemType> center;
+    arma::Col<TreeElemType> vec;
     std::vector<int> bits;
     std::vector<int> bits2;
     bool invertResult;
@@ -76,15 +72,13 @@ class RecursiveHilbertValue
     {
       for(size_t i = 0; i < dim; i++)
       {
-        Lo[i] = std::numeric_limits<ElemType>::lowest();
-        Hi[i] = std::numeric_limits<ElemType>::max();
+        Lo[i] = std::numeric_limits<TreeElemType>::lowest();
+        Hi[i] = std::numeric_limits<TreeElemType>::max();
         permutation[i] = i;
         inversion[i] = false;
       }
     }
-  };
-  template<typename ElemType>
-  using CompareStruct = struct tagCompareStruct<ElemType>;
+  } CompareStruct;
 
   /**
    * Compare two points. It returns 1 if the first point is greater than
@@ -93,9 +87,10 @@ class RecursiveHilbertValue
    * @param pt1 The first point.
    * @param pt2 The second point.
    */
-  template<typename ElemType>
-  static int ComparePoints(const arma::Col<ElemType> &pt1,
-                                                const arma::Col<ElemType> &pt2);
+  template<typename VecType1, typename VecType2>
+  static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
+                           typename boost::enable_if<IsVector<VecType1>>* = 0,
+                           typename boost::enable_if<IsVector<VecType2>>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -104,57 +99,50 @@ class RecursiveHilbertValue
    * @param val1 The first Hilbert value.
    * @param val2 The second Hilbert value.
    */
-  template<typename TreeType>
-  static int CompareValues(TreeType *tree, RecursiveHilbertValue &val1,
-                                                   RecursiveHilbertValue &val2);
+
+  static int CompareValues(const RecursiveHilbertValue& val1,
+                           const RecursiveHilbertValue& val2);
 
   /**
    * Compare the largest Hilbert value of the node with the val value.
    * It returns 1 if the value of the node is greater than val,
    * -1 if the value of the node is less than val and
    * 0 if the values are equal.
-   * @param tree The pointer to the tree.
    * @param val The Hilbert value to compare with.
    */
-  template<typename TreeType>
-  int CompareWith(TreeType *tree, RecursiveHilbertValue &val);
+  int CompareWith(const RecursiveHilbertValue& val) const;
 
   /**
    * Compare the largest Hilbert value of the node with the Hilbert value
    * of the point. It returns 1 if the value of the node is greater than
    * the value of the point, -1 if the value of the node is less than
    * the value of the point and 0 if the values are equal.
-   * @param tree The pointer to the tree.
-   * @param pt The point to compare with.
+   * @param point The point to compare with.
    */
-  template<typename TreeType,typename ElemType>
-  int CompareWith(TreeType *tree, const arma::Col<ElemType> &pt);
+  template<typename VecType>
+  int CompareWith(const VecType& point,
+                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
-  /**
-   * Compare the largest Hilbert value of the node with the Hilbert value
-   * of the point. It returns 1 if the value of the node is greater than
-   * the value of the point, -1 if the value of the node is less than
-   * the value of the point and 0 if the values are equal.
-   * @param tree The pointer to the tree.
-   * @param point The number of the point to compare with.
-   */
-  template<typename TreeType>
-  int CompareWith(TreeType *tree, const size_t point);
+  template<typename VecType>
+  int CompareWithCachedPoint(const VecType& point,
+                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
+
 
   /**
    * Update the largest Hilbert value of the node.
    * @param node The node in which the point is being inserted.
    * @param point The number of the point being inserted.
    */
-  template<typename TreeType>
-  size_t InsertPoint(TreeType *node, const size_t point);
+  template<typename TreeType, typename VecType>
+  size_t InsertPoint(TreeType* node, const VecType& point,
+                             typename boost::enable_if<IsVector<VecType>>* = 0);
 
   /**
    * Update the largest Hilbert value of the node.
    * @param node The node being inserted.
    */
   template<typename TreeType>
-  void InsertNode(TreeType *node);
+  void InsertNode(TreeType* node);
 
   /**
    * Update the largest Hilbert value of the node.
@@ -162,7 +150,7 @@ class RecursiveHilbertValue
    * @param nodeIndex The number of the node being deleted.
    */
   template<typename TreeType>
-  void DeletePoint(TreeType *node, const size_t localIndex);
+  void DeletePoint(TreeType* node, const size_t localIndex);
 
   /**
    * Update the largest Hilbert value of the node.
@@ -170,14 +158,8 @@ class RecursiveHilbertValue
    * @param nodeIndex The number of the node being deleted.
    */
   template<typename TreeType>
-  void RemoveNode(TreeType *node, const size_t nodeIndex);
+  void RemoveNode(TreeType* node, const size_t nodeIndex);
 
-  /**
-   * Copy the largest Hilbert value.
-   * @param dst The node to which the information is being copied.
-   * @param src The node from which the information is being copied.
-   */
-  RecursiveHilbertValue operator = (const RecursiveHilbertValue &val);
 
   /**
    * Copy the largest Hilbert value.
@@ -185,24 +167,32 @@ class RecursiveHilbertValue
    * @param src The node from which the information is being copied.
    */
   template<typename TreeType>
-  void Copy(TreeType *dst, TreeType *src);
+  void Copy(TreeType* dst, TreeType* src);
+
+  void NullifyData();
 
   /**
    * Update the largest Hilbert value.
    * @param node The node in which the information should be updated.
    */
   template<typename TreeType>
-  void UpdateLargestValue(TreeType *node);
+  void UpdateLargestValue(TreeType* node);
+
+  template<typename TreeType>
+  void UpdateHilbertValues(TreeType* parent, size_t firstSibling,
+                           size_t lastSibling);
 
   //! Return the largest Hilbert value
-  ptrdiff_t LargestValue() const { return largestValue; }
+  const arma::Col<TreeElemType>* LargestValue() const { return largestValue; }
 
   //! Modify the largest Hilbert value
-  ptrdiff_t& LargestValue() { return largestValue; }
+  arma::Col<TreeElemType>*& LargestValue() { return largestValue; }
 
  private:
-  //! The largest Hilbert value i.e. the number of the point in the dataset.
-  ptrdiff_t largestValue;
+  //! The point that has the largest Hilbert value.
+  arma::Col<TreeElemType>* largestValue;
+  bool ownsLargestValue;
+  bool hasLargestValue;
 
   /**
    * Compare two points. It returns 1 if the first point is greater than
@@ -212,10 +202,10 @@ class RecursiveHilbertValue
    * @param pt2 The second point.
    * @param comp An object of CompareStruct.
    */
-  template<typename ElemType>
-  static int ComparePoints(const arma::Col<ElemType> &pt1,
-                           const arma::Col<ElemType> &pt2,
-                           CompareStruct<ElemType> &comp);
+  template<typename VecType1, typename VecType2>
+  static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
+       CompareStruct& comp, typename boost::enable_if<IsVector<VecType1>>* = 0,
+                            typename boost::enable_if<IsVector<VecType2>>* = 0);
 
 };
 } // namespace tree
