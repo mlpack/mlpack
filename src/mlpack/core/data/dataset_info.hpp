@@ -56,12 +56,12 @@ class DatasetInfo
    */  
   size_t MapString(const std::string &string, const size_t dimension)
   {
-    return MapString(string, dimension);
+    return MapStringImpl(string, dimension);
   }
 
   size_t MapString(std::string &&string, const size_t dimension)
   {
-    return MapString(std::move(string), dimension);
+    return MapStringImpl(std::move(string), dimension);
   }
 
   /**
@@ -113,7 +113,7 @@ class DatasetInfo
       size_t>> maps;
 
   template<typename T>
-  size_t MapString(T&& string, const size_t dimension);
+  size_t MapStringImpl(T&& string, const size_t dimension);
 };
 
 } // namespace data
