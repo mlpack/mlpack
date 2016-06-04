@@ -7,7 +7,7 @@
 #ifndef MLPACK_CORE_DATA_LOAD_CSV_HPP
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
-#include<boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi.hpp>
 
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
@@ -191,8 +191,8 @@ private:
     infoSet = DatasetInfo(ColSize());
     inout.set_size(infoSet.Dimensionality(), RowSize());
     size_t parseTime = 0;
-    std::unordered_set<size_t> mapRows;
-    while(!TranposeParseImpl(inout, infoSet, mapRows))
+    std::set<size_t> mapCols;
+    while(!TranposeParseImpl(inout, infoSet, mapCols))
     {
       //avoid infinite loop
       ++parseTime;
@@ -206,9 +206,12 @@ private:
 
   template<typename T>
   bool TranposeParseImpl(arma::Mat<T> &inout, DatasetInfo &infoSet,
-                         std::unordered_set<size_t> &mapRows)
+                         std::set<size_t> &mapCols)
   {
     using namespace boost::spirit;
+
+    //static size_t loop = 0;
+    //std::cout<<"loop "<<loop++<<std::endl;
 
     size_t row = 0;
     size_t col = 0;
@@ -216,19 +219,37 @@ private:
     std::string line;
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
-
     auto setNum = [&](T val)
     {
-      inout(row++, col) = val;
-      ++progress;
-      //std::cout<<val<<",";
+      //std::cout<<"val(" <<val<<"),";
+      if(mapCols.find(progress) != std::end(mapCols))
+      {
+        inout(row, col) =
+            static_cast<T>(infoSet.MapString(std::to_string(val),
+                                             progress));
+      }
+      else
+      {
+        inout(row, col) = val;
+      }
+      ++progress; ++row;
     };
     auto setCharClass = [&](iter_type const &iter)
     {
-      //std::cout<<std::string(iter.begin(), iter.end())<<",";
-      inout(row++, col) =
-          static_cast<T>(infoSet.MapString(std::string(iter.begin(), iter.end()),
-                                           progress++));
+      if(mapCols.find(progress) != std::end(mapCols))
+      {
+        //std::cout<<"nstr("<<std::string(iter.begin(), iter.end())<<"),";
+        inout(row, col) =
+            static_cast<T>(infoSet.MapString(std::string(iter.begin(), iter.end()),
+                                             progress));
+      }
+      else
+      {
+        //std::cout<<"str("<<std::string(iter.begin(), iter.end())<<"),";
+        mapCols.insert(progress);
+        //TODO : find a way to stop parsing from here
+      }
+      ++progress; ++row;
     };
 
     qi::rule<std::string::iterator, T()> numRule = CreateNumRule<T>();
@@ -236,39 +257,21 @@ private:
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
-      const bool shouldMapNum = mapRows.find(row) != std::end(mapRows);
-      bool allNumber = false;
-      if(!shouldMapNum)
-      {
-        allNumber = qi::parse(begin, line.end(), numRule[setNum] % ",");
-      }
-      //std::cout<<"progress "<<parseProgress<<", "<<inout.n_rows<<std::endl;
+      row = 0;
+      progress = 0;
+      const size_t oldSize = mapCols.size();
+      const bool canParse = qi::parse(begin, line.end(),
+                                      (numRule[setNum] | charRule[setCharClass]) % ",");
       //std::cout<<std::endl;
-      //input like 2-200 or 2DM will make the parser fail,
-      //so we have to make sure col == inout.n_cols, else parse
-      //the input line again
-      if(shouldMapNum || !allNumber || progress != inout.n_rows)
+      if(!canParse)
       {
-        //std::cout<<"not all number"<<std::endl;
-        mapRows.insert(row);
-
-        if(!shouldMapNum)
-        {
-          return false;
-        }
-
-        begin = line.begin();
-        row = 0;
-        progress = 0;
-        const bool canParse = qi::parse(begin, line.end(),
-                                        charRule[setCharClass] % ",");
-        //std::cout<<std::endl;
-        if(!canParse)
-        {
-          throw std::runtime_error("LoadCSV cannot parse categories");
-        }
+        throw std::runtime_error("LoadCSV cannot parse categories");
       }
-      row = 0; progress = 0; ++col;
+      if(mapCols.size() > oldSize)
+      {
+        return false;
+      }
+      ++col;
     }
 
     return true;
