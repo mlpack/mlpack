@@ -11,6 +11,8 @@
 
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
+
+#include <unordered_set>
 #include <string>
 
 #include "format.hpp"
@@ -164,7 +166,10 @@ private:
       auto begin = line.begin();
       const bool allNumber =
           qi::parse(begin, line.end(), numRule[setNum] % ",");
-      if(!allNumber)
+      //input like 2-200 or 2DM will make the parser fail,
+      //so we have to make sure col == inout.n_cols, else parse
+      //the input line again
+      if(!allNumber || col != inout.n_cols)
       {
         begin = line.begin();
         col = 0;
@@ -185,19 +190,29 @@ private:
   {
     infoSet = DatasetInfo(ColSize());
     inout.set_size(infoSet.Dimensionality(), RowSize());
-    while(!TranposeParseImpl(inout, infoSet))
+    size_t parseTime = 0;
+    std::unordered_set<size_t> mapRows;
+    while(!TranposeParseImpl(inout, infoSet, mapRows))
     {
-
+      //avoid infinite loop
+      ++parseTime;
+      infoSet = DatasetInfo(inout.n_rows);
+      if(parseTime == inout.n_rows)
+      {
+        return;
+      }
     }
   }
 
   template<typename T>
-  bool TranposeParseImpl(arma::Mat<T> &inout, DatasetInfo &infoSet)
+  bool TranposeParseImpl(arma::Mat<T> &inout, DatasetInfo &infoSet,
+                         std::unordered_set<size_t> &mapRows)
   {
     using namespace boost::spirit;
 
     size_t row = 0;
     size_t col = 0;
+    size_t progress = 0;
     std::string line;
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
@@ -205,12 +220,15 @@ private:
     auto setNum = [&](T val)
     {
       inout(row++, col) = val;
+      ++progress;
+      //std::cout<<val<<",";
     };
     auto setCharClass = [&](iter_type const &iter)
     {
+      //std::cout<<std::string(iter.begin(), iter.end())<<",";
       inout(row++, col) =
           static_cast<T>(infoSet.MapString(std::string(iter.begin(), iter.end()),
-                                           col));
+                                           progress++));
     };
 
     qi::rule<std::string::iterator, T()> numRule = CreateNumRule<T>();
@@ -218,28 +236,39 @@ private:
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
-      const bool allNumber =
-          qi::parse(begin, line.end(), numRule[setNum] % ",");
-      if(!allNumber)
+      const bool shouldMapNum = mapRows.find(row) != std::end(mapRows);
+      bool allNumber = false;
+      if(!shouldMapNum)
       {
-        begin = line.begin();
-        const size_t dimension = infoSet.NumMappings(col);
-        if((dimension == 0 && row == 0) || dimension != 0)
-        {
-          row = 0;
-          const bool canParse = qi::parse(begin, line.end(),
-                                          charRule[setCharClass] % ",");
-          if(!canParse)
-          {
-            throw std::runtime_error("LoadCSV cannot parse categories");
-          }
-        }
-        else
+        allNumber = qi::parse(begin, line.end(), numRule[setNum] % ",");
+      }
+      //std::cout<<"progress "<<parseProgress<<", "<<inout.n_rows<<std::endl;
+      //std::cout<<std::endl;
+      //input like 2-200 or 2DM will make the parser fail,
+      //so we have to make sure col == inout.n_cols, else parse
+      //the input line again
+      if(shouldMapNum || !allNumber || progress != inout.n_rows)
+      {
+        //std::cout<<"not all number"<<std::endl;
+        mapRows.insert(row);
+
+        if(!shouldMapNum)
         {
           return false;
         }
+
+        begin = line.begin();
+        row = 0;
+        progress = 0;
+        const bool canParse = qi::parse(begin, line.end(),
+                                        charRule[setCharClass] % ",");
+        //std::cout<<std::endl;
+        if(!canParse)
+        {
+          throw std::runtime_error("LoadCSV cannot parse categories");
+        }
       }
-      row = 0; ++col;
+      row = 0; progress = 0; ++col;
     }
 
     return true;
