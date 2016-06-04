@@ -400,7 +400,6 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
   size_t q;
   for (size_t j = 0; j < k; ++j) //for each neighbor
   {
-    q = 0;
     if (neighbors(j, 0) == N || neighbors(j, 1) == N) //neighbor not found, ignore
       continue;
 
@@ -466,14 +465,14 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
     if (neighbors(j, 0) == N || neighbors(j, 1) == N)
       continue;
 
-    q = 0;
     //query 1 is in cluster 3, which is points 20:29
+    q = 0;
     BOOST_REQUIRE(
         neighbors(j, q) >= N/2 && neighbors(j, q) < 3*N/4
         );
 
-    q = 1;
     //query 2 is in cluster 2, which is points 10:19
+    q = 1;
     BOOST_REQUIRE(
         neighbors(j, q) >= N/4 && neighbors(j, q) < N/2
         );
