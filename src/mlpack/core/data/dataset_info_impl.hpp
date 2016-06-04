@@ -22,8 +22,8 @@ inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
 
 // Map the string to a numeric id.
 template<typename T>
-inline size_t DatasetInfo::MapString(T&& string,
-                                     const size_t dimension)
+inline size_t DatasetInfo::MapStringImpl(T&& string,
+                                         const size_t dimension)
 {
   // If this condition is true, either we have no mapping for the given string
   // or we have no mappings for the given dimension at all.  In either case,
