@@ -20,8 +20,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
 
 PARAM_STRING_REQ("input_file", "File containing observations,", "i");
 PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
-PARAM_STRING("output_file", "File to save predicted state sequence to.", "o",
-    "output.csv");
+PARAM_STRING_REQ("output_file", "File to save predicted state sequence to.",
+    "o");
 
 using namespace mlpack;
 using namespace mlpack::hmm;

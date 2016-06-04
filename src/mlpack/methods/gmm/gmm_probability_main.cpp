@@ -20,9 +20,7 @@ PROGRAM_INFO("GMM Probability Calculator",
 
 PARAM_STRING_REQ("input_model_file", "File containing input GMM.", "m");
 PARAM_STRING_REQ("input_file", "File containing points.", "i");
-
-PARAM_STRING("output_file", "File to save calculated probabilities to.", "o",
-    "output.csv");
+PARAM_STRING_REQ("output_file", "File to save calculated probabilities to.", "o");
 
 int main(int argc, char** argv)
 {

@@ -34,8 +34,8 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
     "column corresponds to the distance between the two points.");
 
 PARAM_STRING_REQ("input_file", "Data input file.", "i");
-PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "o",
-    "emst_output.csv");
+PARAM_STRING_REQ("output_file", "Data output file.  Stored as an edge list.",
+    "o");
 PARAM_FLAG("naive", "Compute the MST using O(n^2) naive algorithm.", "n");
 PARAM_INT("leaf_size", "Leaf size in the kd-tree.  One-element leaves give the "
     "empirically best performance, but at the cost of greater memory "

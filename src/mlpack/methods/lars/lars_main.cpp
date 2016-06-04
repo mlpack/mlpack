@@ -40,7 +40,7 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     " can be saved with the --output_model_file, or, if training is not desired"
     " at all, a model can be loaded with --input_model_file.  Any output "
     "predictions from a test file can be saved into the file specified by the "
-    "--output_predictions option.");
+    "--output_predictions_file option.");
 
 PARAM_STRING("input_file", "File containing covariates (X).", "i", "");
 PARAM_STRING("responses_file", "File containing y (responses/observations).",
@@ -51,8 +51,8 @@ PARAM_STRING("output_model_file", "File to save model to.", "M", "");
 
 PARAM_STRING("test_file", "File containing points to regress on (test points).",
     "t", "");
-PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "predictions.csv");
+PARAM_STRING("output_predictions_file", "If --test_file is specified, this "
+    "file is where the predicted responses will be saved.", "o", "");
 
 PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
@@ -93,14 +93,18 @@ int main(int argc, char* argv[])
     Log::Fatal << "Both --input_file (-i) and --input_model_file (-m) are "
         << "specified, but only one may be specified!" << endl;
 
-  if (!CLI::HasParam("output_predictions") &&
+  if (!CLI::HasParam("output_predictions_file") &&
       !CLI::HasParam("output_model_file"))
-    Log::Warn << "--output_predictions (-o) and --output_model_file (-M) are "
-        << "not specified; no results will be saved!" << endl;
+    Log::Warn << "--output_predictions_file (-o) and --output_model_file (-M) "
+        << "are not specified; no results will be saved!" << endl;
 
-  if (CLI::HasParam("output_predictions") && !CLI::HasParam("test_file"))
-    Log::Warn << "--output_predictions (-o) specified, but --test_file (-t) is "
-        << "not; no results will be saved." << endl;
+  if (CLI::HasParam("output_predictions_file") && !CLI::HasParam("test_file"))
+    Log::Warn << "--output_predictions_file (-o) specified, but --test_file "
+        << "(-t) is not; no results will be saved." << endl;
+
+  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions_file"))
+    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
+        << "(-o) is not; no results will be saved." << endl;
 
   // Initialize the object.
   LARS lars(useCholesky, lambda1, lambda2);
@@ -109,16 +113,16 @@ int main(int argc, char* argv[])
   {
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data.
-    const string matXFilename = CLI::GetParam<string>("input_file");
+    const string inputFile = CLI::GetParam<string>("input_file");
     mat matX;
-    data::Load(matXFilename, matX, true, false);
+    data::Load(inputFile, matX, true, false);
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row).  So we should not transpose upon loading.
-    const string yFilename = CLI::GetParam<string>("responses_file");
-    mat matY; // Will be a vector.
-    data::Load(yFilename, matY, true, false);
+    const string responsesFile = CLI::GetParam<string>("responses_file");
+    mat matY; // /yFWill be a vector.
+    data::Load(responsesFile, matY, true, false);
 
     // Make sure y is oriented the right way.
     if (matY.n_rows == 1)
@@ -135,16 +139,14 @@ int main(int argc, char* argv[])
   }
   else // We must have --input_model_file.
   {
-    const string modelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(modelFile, "lars_model", lars, true);
+    const string inputModelFile = CLI::GetParam<string>("input_model_file");
+    data::Load(inputModelFile, "lars_model", lars, true);
   }
 
   if (CLI::HasParam("test_file"))
   {
     Log::Info << "Regressing on test points." << endl;
     const string testFile = CLI::GetParam<string>("test_file");
-    const string outputPredictionsFile =
-        CLI::GetParam<string>("output_predictions");
 
     // Load test points.
     mat testPoints;
@@ -161,7 +163,12 @@ int main(int argc, char* argv[])
     lars.Predict(testPoints.t(), predictions, false);
 
     // Save test predictions.  One per line, so, don't transpose on save.
-    data::Save(outputPredictionsFile, predictions, true, false);
+    if (CLI::HasParam("output_predictions_file"))
+    {
+      const string outputPredictionsFile =
+        CLI::GetParam<string>("output_predictions_file");
+      data::Save(outputPredictionsFile, predictions, true, false);
+    }
   }
 
   if (CLI::HasParam("output_model_file"))

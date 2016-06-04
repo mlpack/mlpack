@@ -21,10 +21,9 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
 
 PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
 PARAM_INT_REQ("length", "Length of sequence to generate.", "l");
+PARAM_STRING_REQ("output_file", "File to save observation sequence to.", "o");
 
 PARAM_INT("start_state", "Starting state of sequence.", "t", 0);
-PARAM_STRING("output_file", "File to save observation sequence to.", "o",
-    "output.csv");
 PARAM_STRING("state_file", "File to save hidden state sequence to (may be left "
     "unspecified.", "S", "");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -65,9 +64,11 @@ struct Generate
     data::Save(outputFile, observations, true);
 
     // Do we want to save the hidden sequence?
-    const string sequenceFile = CLI::GetParam<string>("state_file");
-    if (sequenceFile != "")
+    if (CLI::HasParam("state_file"))
+    {
+      const string sequenceFile = CLI::GetParam<string>("state_file");
       data::Save(sequenceFile, sequence, true);
+    }
   }
 };
 
