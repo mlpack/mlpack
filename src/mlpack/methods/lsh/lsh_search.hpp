@@ -322,7 +322,7 @@ class LSHSearch
   arma::Col<size_t> bucketContentSize;
 
   //! For a particular hash value, points to the row in secondHashTable
-  //! corresponding to this value.  Should be secondHashSize.
+  //! corresponding to this value. Length secondHashSize.
   arma::Col<size_t> bucketRowInHashTable;
 
   //! The number of distance evaluations.
