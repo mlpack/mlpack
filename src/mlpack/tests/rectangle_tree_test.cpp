@@ -699,7 +699,7 @@ BOOST_AUTO_TEST_CASE(RecursiveHilbertRTreeTraverserTest)
 }
 
 template<typename TreeType>
-void CheckHilbertOrdering(TreeType *tree)
+void CheckHilbertOrdering(TreeType* tree)
 {
   if(tree->IsLeaf())
   {

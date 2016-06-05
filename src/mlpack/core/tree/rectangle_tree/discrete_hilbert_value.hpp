@@ -212,6 +212,10 @@ class DiscreteHilbertValue
    * Returns true if the node has the largest Hilbert value.
    */
   bool HasValue() const;
+
+ public:
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 };
 } // namespace tree
 } // namespace mlpack

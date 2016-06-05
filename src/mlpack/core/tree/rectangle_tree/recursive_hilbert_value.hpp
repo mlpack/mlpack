@@ -206,7 +206,9 @@ class RecursiveHilbertValue
   static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
        CompareStruct& comp, typename boost::enable_if<IsVector<VecType1>>* = 0,
                             typename boost::enable_if<IsVector<VecType2>>* = 0);
-
+ public:
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 };
 } // namespace tree
 } // namespace mlpack

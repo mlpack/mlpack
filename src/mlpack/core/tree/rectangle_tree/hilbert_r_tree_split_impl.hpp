@@ -34,7 +34,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     return;
   }
 
-  TreeType *parent = tree->Parent();
+  TreeType* parent = tree->Parent();
   size_t iTree = 0;
   for(iTree = 0;parent->Children()[iTree] != tree; iTree++);
 
@@ -97,7 +97,7 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
     return true;
   }
 
-  TreeType *parent = tree->Parent();
+  TreeType* parent = tree->Parent();
 
   size_t iTree = 0;
   for(iTree = 0;parent->Children()[iTree] != tree; iTree++);
@@ -318,7 +318,7 @@ RedistributePointsEvenly(TreeType *parent,
   // Fix the largest Hilbert values of the siblings.
   parent->AuxiliaryInfo().HilbertValue().UpdateHilbertValues(parent, firstSibling, lastSibling);
 
-  TreeType *root = parent;
+  TreeType* root = parent;
 
   while(root != NULL)
   {

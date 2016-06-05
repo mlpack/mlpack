@@ -188,8 +188,7 @@ UpdateAuxiliaryInfo(TreeType* node)
     return true;
 
   TreeType *child = node->Children()[node->NumChildren()-1];
-  if(HilbertValueType<ElemType>::CompareValues(hilbertValue,
-                            child->AuxiliaryInfo().hilbertValue()) < 0)
+  if(hilbertValue.CompareWith(child->AuxiliaryInfo().hilbertValue()) < 0)
   {
     hilbertValue.Copy(node,child);
 //    hilbertValue = child->AuxiliaryInfo().hilbertValue();

@@ -270,17 +270,16 @@ InsertPoint(TreeType *node, const VecType& pt,
 
     localDataset->col(i) = *valueToInsert;
     numValues++;
-
     // Propogate changes of the largest Hilbert value downward
-    TreeType *root = node->Parent();
+    TreeType* root = node->Parent();
 
     while(root != NULL)
     {
-      root->AuxiliaryInfo().HilbertValue().LocalDataset() = localDataset;
-      root->AuxiliaryInfo().HilbertValue().NumValues() = numValues;
+      root->AuxiliaryInfo().HilbertValue().UpdateLargestValue(root);
 
       root = root->Parent();
     }
+
   }
 
   return i;
@@ -344,6 +343,11 @@ template<typename TreeElemType>
 template<typename TreeType>
 void DiscreteHilbertValue<TreeElemType>::Copy(TreeType* dst, TreeType* src)
 {
+  DiscreteHilbertValue<TreeElemType> &dstVal = dst->AuxiliaryInfo().HilbertValue();
+  DiscreteHilbertValue<TreeElemType> &srcVal = src->AuxiliaryInfo().HilbertValue();
+
+  dst.LocalDataset() = src.LocalDataset();
+  dst.NumValues() = src.NumValues();
 }
 
 template<typename TreeElemType>
@@ -418,6 +422,20 @@ template<typename TreeElemType>
 bool DiscreteHilbertValue<TreeElemType>::HasValue() const
 {
   return numValues > 0;
+}
+
+template<typename TreeElemType>
+template<typename Archive>
+void DiscreteHilbertValue<TreeElemType>::
+Serialize(Archive& ar, const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  ar & CreateNVP(localDataset, "localDataset");
+  ar & CreateNVP(ownsLocalDataset, "ownsLocalDataset");
+  ar & CreateNVP(numValues, "numValues");
+  ar & CreateNVP(valueToInsert, "valueToInsert");
+  ar & CreateNVP(ownsValueToInsert, "ownsValueToInsert");
 }
 
 } // namespace tree

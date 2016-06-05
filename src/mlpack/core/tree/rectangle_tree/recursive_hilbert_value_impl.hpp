@@ -223,7 +223,7 @@ InsertPoint(TreeType* node, const VecType& point,
     hasLargestValue = true;
 
     // Propogate changes of the largest Hilbert value downward
-    TreeType *root = node->Parent();
+    TreeType* root = node->Parent();
 
     while(root != NULL)
     {
@@ -285,8 +285,10 @@ template<typename TreeElemType>
 template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::Copy(TreeType* dst, TreeType* src)
 {
-  dst->AuxiliaryInfo().LargestHilbertValue().LargestValue() =
-    src->AuxiliaryInfo().LargestHilbertValue().LargestValue();
+  dst->AuxiliaryInfo().HilbertValue().LargestValue() =
+    src->AuxiliaryInfo().HilbertValue().LargestValue();
+  dst->AuxiliaryInfo().HilbertValue().hasLargestValue =
+    src->AuxiliaryInfo().HilbertValue().hasLargestValue;
 }
 
 template<typename TreeElemType>
@@ -326,7 +328,17 @@ UpdateHilbertValues(TreeType* parent, size_t firstSibling,  size_t lastSibling)
 
 }
 
+template<typename TreeElemType>
+template<typename Archive>
+void RecursiveHilbertValue<TreeElemType>::
+Serialize(Archive& ar, const unsigned int /* version */)
+{
+  using data::CreateNVP;
 
+  ar & CreateNVP(largestValue, "largestValue");
+  ar & CreateNVP(ownsLargestValue, "ownsLargestValue");
+  ar & CreateNVP(hasLargestValue, "hasLargestValue");
+}
 
 } // namespace tree
 } // namespace mlpack
