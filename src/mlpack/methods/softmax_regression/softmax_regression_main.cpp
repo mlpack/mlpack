@@ -21,16 +21,16 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "(-r), and if an intercept term is not desired in the model, the "
     "--no_intercept (-N) can be specified."
     "\n\n"
-    "The trained model can be saved to a file with the --output_model (-m) "
+    "The trained model can be saved to a file with the --output_model_file (-m) "
     "option.  If training is not desired, but only testing is, a model can be "
-    "loaded with the --input_model (-i) option.  At the current time, a loaded "
+    "loaded with the --input_model_file (-i) option.  At the current time, a loaded "
     "model cannot be trained further, so specifying both -i and -t is not "
     "allowed."
     "\n\n"
     "The program is also able to evaluate a model on test data.  A test dataset"
     " can be specified with the --test_data (-T) option.  Class predictions "
-    "will be saved in the file specified with the --predictions_file (-p) "
-    "option.  If labels are specified for the test data, with the --test_labels"
+    "will be saved in the file specified with the --output_predictions_file (-p) "
+    "option.  If labels are specified for the test data, with the --test_labels_file"
     " (-L) option, then the program will print the accuracy of the predictions "
     "on the given test set and its corresponding labels.");
 
@@ -41,16 +41,16 @@ PARAM_STRING("labels_file", "A file containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row", "l", "");
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing existing model (parameters).",
+PARAM_STRING("input_model_file_file", "File containing existing model (parameters).",
     "m", "");
-PARAM_STRING("output_model_file", "File to save trained softmax regression "
+PARAM_STRING("output_model_file_file", "File to save trained softmax regression "
     "model to.", "M", "");
 
 // Testing.
 PARAM_STRING("test_data", "File containing test dataset.", "T", "");
-PARAM_STRING("predictions_file", "File to save predictions for test dataset "
+PARAM_STRING("output_predictions_file", "File to save predictions for test dataset "
     "into.", "p", "");
-PARAM_STRING("test_labels", "File containing test labels.", "L", "");
+PARAM_STRING("test_labels_file", "File containing test labels.", "L", "");
 
 // Softmax configuration options.
 PARAM_INT("max_iterations", "Maximum number of iterations before termination.",
@@ -73,7 +73,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 // Test the accuracy of the model.
 template<typename Model>
 void TestPredictAcc(const string& testFile,
-                    const string& predictionsFile,
+                    const string& outputPredictionsFile,
                     const string& testLabels,
                     const size_t numClasses,
                     const Model& model);
@@ -81,7 +81,7 @@ void TestPredictAcc(const string& testFile,
 // Build the softmax model given the parameters.
 template<typename Model>
 std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
-                                    const string& labelFile,
+                                    const string& labelsFile,
                                     const string& inputModelFile,
                                     const size_t maxIterations);
 
@@ -92,51 +92,52 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   const std::string trainingFile = CLI::GetParam<std::string>("training_file");
-  const std::string inputModelFile = CLI::GetParam<std::string>("input_model");
+  const std::string labelsFile = CLI::GetParam<std::string>("labels_file");
+
+  const std::string inputModelFile =
+      CLI::GetParam<std::string>("input_model_file");
+  const string outputModelFile = CLI::GetParam<string>("output_model_file");
+  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
+  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const string outputPredictionsFile =
+      CLI::GetParam<string>("output_predictions_file");
 
   // One of inputFile and modelFile must be specified.
-  if (inputModelFile.empty() && trainingFile.empty())
-    Log::Fatal << "One of --input_model or --training_file must be specified."
+  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training_file"))
+    Log::Fatal << "One of --input_model_file or --training_file must be specified."
         << endl;
 
-  const std::string labelFile = CLI::GetParam<std::string>("labels_file");
-  if (!trainingFile.empty() && labelFile.empty())
+  if (CLI::HasParam("training_file") && CLI::HasParam("labels_file"))
     Log::Fatal << "--labels_file must be specified with --training_file!"
         << endl;
-
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   if (maxIterations < 0)
     Log::Fatal << "Invalid value for maximum iterations (" << maxIterations
         << ")! Must be greater than or equal to 0." << endl;
 
-  const string outputModelFile = CLI::GetParam<string>("output_model");
-  const string testLabelsFile = CLI::GetParam<string>("test_labels");
-  const string predictionsFile = CLI::GetParam<string>("predictions_file");
-
   // Make sure we have an output file of some sort.
-  if (outputModelFile.empty() && testLabelsFile.empty() &&
-      predictionsFile.empty())
-    Log::Warn << "None of --output_model, --test_labels, or --predictions_file "
-        << "are set; no results from this program will be saved." << endl;
+  if (!CLI::HasParam("output_model_file") &&
+      !CLI::HasParam("test_labels_file") &&
+      !CLI::HasParam("output_predictions_file"))
+    Log::Warn << "None of --output_model_file, --test_labels_file, or "
+      << "--output_predictions_file are set; no results from this program "
+      << " will be saved." << endl;
 
 
   using SM = regression::SoftmaxRegression<>;
   std::unique_ptr<SM> sm = TrainSoftmax<SM>(trainingFile,
-                                            labelFile,
+                                            labelsFile,
                                             inputModelFile,
                                             maxIterations);
 
   TestPredictAcc(CLI::GetParam<string>("test_data"),
-                 CLI::GetParam<string>("predictions_file"),
-                 CLI::GetParam<string>("test_labels"),
+                 CLI::GetParam<string>("output_predictions_file"),
+                 CLI::GetParam<string>("test_labels_file"),
                  sm->NumClasses(), *sm);
 
-  if (!outputModelFile.empty())
-  {
-    data::Save(CLI::GetParam<std::string>("output_model"),
+  if (CLI::HasParam("output_model_file"))
+    data::Save(CLI::GetParam<std::string>("output_model_file"),
         "softmax_regression_model", *sm, true);
-  }
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -156,7 +157,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 template<typename Model>
 void TestPredictAcc(const string& testFile,
-                    const string& predictionsFile,
+                    const string& outputPredictionsFile,
                     const string& testLabelsFile,
                     size_t numClasses,
                     const Model& model)
@@ -164,19 +165,19 @@ void TestPredictAcc(const string& testFile,
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (testFile.empty() && predictionsFile.empty() && testLabelsFile.empty())
+  if (testFile.empty() && outputPredictionsFile.empty() && testLabelsFile.empty())
     return;
 
   if (!testLabelsFile.empty() && testFile.empty())
   {
-    Log::Warn << "--test_labels specified, but --test_file is not specified."
+    Log::Warn << "--test_labels_file specified, but --test_file is not specified."
         << "  The parameter will be ignored." << endl;
     return;
   }
 
-  if (!predictionsFile.empty() && testFile.empty())
+  if (!outputPredictionsFile.empty() && testFile.empty())
   {
-    Log::Warn << "--predictions_file specified, but --test_file is not "
+    Log::Warn << "--output_predictions_file specified, but --test_file is not "
         << "specified.  The parameter will be ignored." << endl;
     return;
   }
@@ -189,8 +190,8 @@ void TestPredictAcc(const string& testFile,
   model.Predict(testData, predictLabels);
 
   // Save predictions, if desired.
-  if (!predictionsFile.empty())
-    data::Save(predictionsFile, predictLabels);
+  if (!outputPredictionsFile.empty())
+    data::Save(outputPredictionsFile, predictLabels);
 
   // Calculate accuracy, if desired.
   if (!testLabelsFile.empty())
@@ -203,8 +204,8 @@ void TestPredictAcc(const string& testFile,
     if (testData.n_cols != testLabels.n_elem)
     {
       Log::Fatal << "Test data in --test_data has " << testData.n_cols
-          << " points, but labels in --test_labels have " << testLabels.n_elem
-          << " labels!" << endl;
+          << " points, but labels in --test_labels_file have "
+          << testLabels.n_elem << " labels!" << endl;
     }
 
     std::vector<size_t> bingoLabels(numClasses, 0);
@@ -235,7 +236,7 @@ void TestPredictAcc(const string& testFile,
 
 template<typename Model>
 std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
-                                    const string& labelFile,
+                                    const string& labelsFile,
                                     const string& inputModelFile,
                                     const size_t maxIterations)
 {
@@ -258,7 +259,7 @@ std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
     //load functions of mlpack do not works on windows, it will complain
     //"[FATAL] Unable to detect type of 'softmax_data.txt'; incorrect extension?"
     data::Load(trainingFile, trainData, true);
-    data::Load(labelFile, tmpTrainLabels, true);
+    data::Load(labelsFile, tmpTrainLabels, true);
     trainLabels = tmpTrainLabels.row(0);
 
     if (trainData.n_cols != trainLabels.n_elem)
