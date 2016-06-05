@@ -21,14 +21,6 @@
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
 
-namespace details /** Implementation details, please do not use them in production codes */{
-
-//put the implementation details do not depend on template params
-//out of template class, this could reduce duplicate binary codes
-//if the compiler/linker not smart enough
-
-}
-
 /**
  *Load the csv file.This class use boost::spirit
  *to implement the parser, please refer to following link
