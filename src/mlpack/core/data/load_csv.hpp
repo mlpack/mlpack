@@ -29,7 +29,9 @@ namespace data /** Functions to load and save matrices and models. */ {
 class LoadCSV
 {      
 public:
-  explicit LoadCSV(std::string const &file) : inFile(file)
+  explicit LoadCSV(const std::string &file) :
+    extension(Extension(file)),
+    inFile(file)
   {
     if(!inFile.is_open())
     {
@@ -292,10 +294,20 @@ private:
   boost::spirit::qi::rule<std::string::iterator, iter_type()> CreateCharRule() const
   {
     using namespace boost::spirit;
-    return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" ,\r\n")]
-        >> -qi::omit[*qi::char_(" ")];
+
+    if(extension == "csv")
+    {
+      return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" ,\r\n")]
+          >> -qi::omit[*qi::char_(" ")];
+    }
+    else
+    {
+      return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" \t\r\n")]
+          >> -qi::omit[*qi::char_(" ")];
+    }
   }
 
+  std::string extension;
   std::ifstream inFile;
 };
 
