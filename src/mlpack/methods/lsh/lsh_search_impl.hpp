@@ -393,16 +393,15 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   // points) of zeros, and mark found indices as 1.
   // Option 1 runs faster for small maxNumPoints but worse for larger values, so
   // we choose based on a heuristic.
-  
   const float cutoff = 0.1;
-  const float selectivity =
-    static_cast<float>(maxNumPoints) / static_cast<float>(referenceSet->n_cols);
+  const float selectivity = static_cast<float>(maxNumPoints) /
+      static_cast<float>(referenceSet->n_cols);
 
-  if ( selectivity > cutoff )
+  if (selectivity > cutoff)
   {
-    // Heuristic: larger maxNumPoints, use find()
-
-    // Reference points hashed in the same bucket as the query are set to >0
+    // Heuristic: larger maxNumPoints means we should use find() because it
+    // should be faster.
+    // Reference points hashed in the same bucket as the query are set to >0.
     arma::Col<size_t> refPointsConsidered;
     refPointsConsidered.zeros(referenceSet->n_cols);
 
@@ -412,7 +411,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
       if (bucketContentSize[hashInd] > 0)
       {
-        // Pick the indices in the bucket corresponding to hashInd
+        // Pick the indices in the bucket corresponding to hashInd.
         size_t tableRow = bucketRowInHashTable[hashInd];
         assert(tableRow < secondHashSize);
         assert(tableRow < secondHashTable.n_rows);
@@ -422,44 +421,42 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
       }
     }
 
-    //only keep reference points found in some bucket
+    // Only keep reference points found in at least one bucket.
     referenceIndices = arma::find(refPointsConsidered > 0);
     return;
   }
-
   else
-  
   {
-    // Heuristic: smaller maxNumPoints, use unique()
-    // Allocate space for query's potential neighbors
+    // Heuristic: smaller maxNumPoints means we should use unique() because it
+    // should be faster.
+    // Allocate space for the query's potential neighbors.
     arma::uvec refPointsConsideredSmall;
     refPointsConsideredSmall.zeros(maxNumPoints);
 
-    // Retrieve candidates
+    // Retrieve candidates.
     size_t start = 0;
     for (size_t i = 0; i < numTablesToSearch; ++i) // For all tables
     {
-      size_t hashInd = (size_t) hashVec[i]; // find query's bucket
+      size_t hashInd = (size_t) hashVec[i]; // Find the query's bucket.
 
       if (bucketContentSize[hashInd] > 0)
       {
-        // tableRow hash indices corresponding to query
+        // tableRow hash indices corresponding to query.
         size_t tableRow = bucketRowInHashTable[hashInd];
         assert(tableRow < secondHashSize);
         assert(tableRow < secondHashTable.n_rows);
 
-        // this for-loop could be replaced with a vector slice (TODO)
-        // store all secondHashTable points in the candidates set
+        // This for-loop could be replaced with a vector slice (TODO).
+        // Store all secondHashTable points in the candidates set.
         for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
           refPointsConsideredSmall(start++) = secondHashTable(tableRow, j);
       }
     }
 
-    // Only keep unique candidates
+    // Only keep unique candidates.
     referenceIndices = arma::unique(refPointsConsideredSmall);
     return;
   }
-
 }
 
 // Search for nearest neighbors in a given query set.
