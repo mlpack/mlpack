@@ -43,16 +43,12 @@ If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
 Debian older than Jessie, you will have to compile Armadillo from source.  See
 the README.txt distributed with Armadillo for more information.
 
-On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
+On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# yum install boost-devel boost-test boost-program-options boost-math
+# dnf install boost-devel boost-test boost-program-options boost-math
   armadillo-devel binutils-devel
 @endcode
-
-On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
-version available is too old and must be compiled by hand.  The same applies for
-Fedora 16 and older.
 
 @section config Configuring CMake
 
