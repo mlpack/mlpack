@@ -22,6 +22,7 @@ set(DIRS
   decision_stump
   det
   emst
+  edge_boxes
   fastmks
   gmm
   hmm
