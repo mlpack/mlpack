@@ -8,7 +8,6 @@ set(SOURCES
   neighbor_search_stat.hpp
   ns_model.hpp
   ns_model_impl.hpp
-  ns_traversal_info.hpp
   sort_policies/nearest_neighbor_sort.hpp
   sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp

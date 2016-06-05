@@ -302,6 +302,73 @@ BOOST_AUTO_TEST_CASE(RecallTest)
   BOOST_REQUIRE_LE(recallChp, recallThreshChp);
 }
 
+BOOST_AUTO_TEST_CASE(MultiprobeTest)
+{
+  //This test verifies the correctnes of Multiprobe LSH. Increasing the number
+  //of probes should not cause any decrease in recall, since we're only looking
+  //into more buckets and not skipping previous ones.
+  //This is true because we don't re-train LSH between iterations. We're using
+  //the same projection tables, but probing more buckets.
+  
+  // kNN and LSH parameters (use LSH default parameters).
+  const int k = 4;
+  const double hashWidth = 0.0;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+  const int numTables = 4;
+  const int numProj = 3;
+
+
+  // Read iris training and testing data as reference and query sets.
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Run classic knn on reference data.
+  KNN knn(rdata);
+  arma::Mat<size_t> groundTruth;
+  arma::mat groundDistances;
+  knn.Search(qdata, k, groundTruth, groundDistances);
+
+  //Train LSH model with data
+  LSHSearch<> lshTest(
+      rdata,
+      numTables,
+      numProj,
+      hashWidth,
+      secondHashSize,
+      bucketSize);
+  arma::Mat<size_t> lshNeighbors;
+  arma::mat lshDistances;
+
+
+  // LSH test parameters for number of probes.
+  const int pSize = 5; // Number of runs.
+  const int pValue[] = {0, 1, 2, 3, 4}; // Number of projections.
+  double pValueRecall = 0.0;
+
+  for (size_t i = 0; i < pSize; ++i)
+  {
+    //search with a given number of probes
+    lshTest.Search(
+        qdata,
+        k,
+        lshNeighbors,
+        lshDistances,
+        numTables,
+        pValue[i]
+        );
+
+    double r = lshTest.ComputeRecall(lshNeighbors, groundTruth);
+    BOOST_REQUIRE( r >= pValueRecall); //reduced recall means error
+    pValueRecall = r;
+  }
+
+}
+
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
   // This is a not very good test that simply checks that the re-trained LSH

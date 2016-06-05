@@ -22,6 +22,9 @@
     mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
     3.0.0.
 
+  * Add --random_initialization option to mlpack_hmm_train, for use when no
+    labels are provided.
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.

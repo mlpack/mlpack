@@ -5,8 +5,8 @@
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
  * algorithm for the normal distribution.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -46,13 +46,14 @@ class ReinforceNormalLayer
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output)
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     if (!deterministic)
     {
       // Multiply by standard deviations and re-center the means to the mean.
-      output = arma::randn<OutputType>(arma::size(input)) * stdev + input;
+      output = arma::randn<arma::Mat<eT> >(input.n_rows, input.n_cols) *
+          stdev + input;
     }
     else
     {

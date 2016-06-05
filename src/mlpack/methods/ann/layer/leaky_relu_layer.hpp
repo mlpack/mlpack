@@ -6,8 +6,8 @@
  * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
  * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -134,9 +134,9 @@ class LeakyReLULayer
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the non zero gradient
+  //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
-  //! Modify the non zero gradient
+  //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
   /**

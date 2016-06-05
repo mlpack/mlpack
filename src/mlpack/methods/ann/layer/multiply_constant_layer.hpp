@@ -1,12 +1,12 @@
 /**
- * @file constant_layer.hpp
+ * @file multiply_constant_layer.hpp
  * @author Marcus Edel
  *
- * Definition of the ConstantLayer class, which outputs a constant value given
- * any input.
+ * Definition of the MultiplyConstantLayer class, which multiplies the input by
+ * a (non-learnable) constant.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
-#define MLPACK_METHODS_ANN_LAYER_CONSTANT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -14,8 +14,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the constant layer. The constant layer outputs a given
- * constant value given any input value.
+ * Implementation of the multiply constant layer. The multiply constant layer
+ * multiplies the input by a (non-learnable) constant.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -26,50 +26,42 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class ConstantLayer
+class MultiplyConstantLayer
 {
  public:
   /**
-   * Create the ConstantLayer object that outputs a given constant scalar value
-   * given any input value.
-   *
-   * @param outSize The number of output units.
-   * @param scalar The constant value used to create the constant output.
+   * Create the BaseLayer object.
    */
-  ConstantLayer(const size_t outSize, const double scalar)
+  MultiplyConstantLayer(const double scalar) : scalar(scalar)
   {
-    constantOutput = OutputDataType(outSize, 1);
-    constantOutput.fill(scalar);
+    // Nothing to do here.
   }
 
   /**
-   * Ordinary feed forward pass of a neural network. The forward pass fills the
-   * output with the specified constant parameter.
+   * Ordinary feed forward pass of a neural network. Multiply the input with the
+   * specified constant scalar value.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& /* input */, arma::Mat<eT>& output)
+  template<typename InputType, typename OutputType>
+  void Forward(const InputType& input, OutputType& output)
   {
-    output = constantOutput;
+    output = input * scalar;
   }
 
   /**
-   * Ordinary feed backward pass of a neural network. The backward pass of the
-   * constant layer is returns always a zero output error matrix.
+   * Ordinary feed backward pass of a neural network. The backward pass
+   * multiplies the error with the specified constant scalar value.
    *
    * @param input The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& /* gy */,
-                arma::Mat<eT>& g)
+  template<typename DataType>
+  void Backward(const DataType& /* input */, const DataType& gy, DataType& g)
   {
-    g = arma::zeros<arma::Mat<eT> >(inputParameter.n_rows,
-        inputParameter.n_cols);
+    g = gy * scalar;
   }
 
   //! Get the input parameter.
@@ -93,12 +85,12 @@ class ConstantLayer
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(constantOutput, "constantOutput");
+    ar & data::CreateNVP(scalar, "scalar");
   }
 
  private:
-  //! Locally-stored constant output matrix.
-  OutputDataType constantOutput;
+  //! Locally-stored constant scalar value.
+  const double scalar;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -108,7 +100,7 @@ class ConstantLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class ConstantLayer
+}; // class MultiplyConstantLayer
 
 }; // namespace ann
 }; // namespace mlpack

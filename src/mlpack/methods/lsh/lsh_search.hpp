@@ -116,7 +116,8 @@ class LSHSearch
               const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              const size_t numTablesToSearch = 0);
+              const size_t numTablesToSearch = 0,
+              const size_t T = 0);
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
@@ -139,7 +140,21 @@ class LSHSearch
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              const size_t numTablesToSearch = 0);
+              const size_t numTablesToSearch = 0,
+              const size_t T = 0);
+
+
+  /**
+   * Computes the recall of an LSH search, given the found neighbor IDs and the
+   * real neighbor IDs.
+   * This is different than accuracy because recall is a set intersection
+   * operation (where both sets are ordered).
+   *
+   * @param foundNeighbors IDs of neighbors found. Size nQueries x k
+   * @param realNeighbors IDs of actual k-Nearest Neighbors. Size nQueries x k
+   */
+  double ComputeRecall(const arma::Mat<size_t> &foundNeighbors,
+                       const arma::Mat<size_t> &realNeighbors);
 
   /**
    * Serialize the LSH model.
@@ -191,6 +206,26 @@ class LSHSearch
   void BuildHash();
 
   /**
+   * This function implements Multiprobe LSH described in "Multi-Probe LSH:
+   * Efficient Indexing for High-Dimensional Similarity Search" by Qin Lv et al.
+   *
+   * The function computes and stores in additionalProbingBins's columns T codes
+   * that are most likely to contain the query's neighbors (after the query's
+   * own bin). Theoretically this should increase neighbors found correctly
+   * meaning reducing the number of tables needed to be used.
+   *
+   * @param queryCode The code of a query point hashed into a projection table
+   * @param queryCodeNotFloored the unfloored value of the query's hash
+   * @param T The number of additional probing bins to calculate
+   * @param additionalProbingBins matrix to store bin codes
+   *
+   */
+  void GetAdditionalProbingBins(const arma::vec &queryCode, 
+                                const arma::vec &queryCodeNotFloored,
+                                const size_t T,
+                                arma::mat &additionalProbingBins) const;
+
+  /**
    * This function takes a query and hashes it into each of the hash tables to
    * get keys for the query and then the key is hashed to a bucket of the second
    * hash table and all the points (if any) in those buckets are collected as
@@ -200,11 +235,13 @@ class LSHSearch
    * @param referenceIndices The list of neighbor candidates obtained from
    *    hashing the query into all the hash tables and eventually into
    *    multiple buckets of the second hash table.
+   * @param T The number of additional probing bins for Multiprobe LSH
    */
   template<typename VecType>
   void ReturnIndicesFromTable(const VecType& queryPoint,
                               arma::uvec& referenceIndices,
-                              size_t numTablesToSearch) const;
+                              size_t numTablesToSearch,
+                              size_t T = 0) const;
 
   /**
    * This is a helper function that computes the distance of the query to the

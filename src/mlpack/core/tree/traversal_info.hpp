@@ -9,6 +9,9 @@
 #ifndef MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
 #define MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
 
+namespace mlpack {
+namespace tree {
+
 /**
  * The TraversalInfo class holds traversal information which is used in
  * dual-tree (and single-tree) traversals.  A traversal should be updating the
@@ -81,5 +84,8 @@ class TraversalInfo
   //! The last base case.
   double lastBaseCase;
 };
+
+} // namespace tree
+} // namespace mlpack
 
 #endif
