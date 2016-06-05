@@ -295,7 +295,7 @@ private:
   {
     using namespace boost::spirit;
 
-    if(extension == "csv")
+    if(extension == "csv" || extension == "txt")
     {
       return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" ,\r\n")]
           >> -qi::omit[*qi::char_(" ")];
