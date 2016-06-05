@@ -317,7 +317,7 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    LoadCSV loader(filename);
+    LoadCSV loader(filename, fatal);
     loader.Load(matrix, info, transpose);
   }
   else if (extension == "arff")

@@ -29,20 +29,23 @@ namespace data /** Functions to load and save matrices and models. */ {
 class LoadCSV
 {      
 public:
-  explicit LoadCSV(const std::string &file) :
+  explicit LoadCSV(std::string file, bool fatal = false) :
     extension(Extension(file)),
+    fatalIfOpenFail(fatal),
+    fileName(std::move(file)),
     inFile(file)
   {
-    if(!inFile.is_open())
-    {
-      throw std::runtime_error("LoadCSV can not open file");
-    }
-    inFile.unsetf(std::ios::skipws);
+    CanOpen();
   }
 
   template<typename T>
   void Load(arma::Mat<T> &inout, DatasetInfo &infoSet, bool transpose = true)
   {
+    if(!CanOpen())
+    {
+      return;
+    }
+
     //please refer to the comments of ColSize if you do not familiar
     //with boost::spirit yet
     if(transpose)
@@ -128,6 +131,26 @@ private:
       return boost::spirit::qi::real_parser<T>();
     }
   };
+
+  bool CanOpen()
+  {
+    if(!inFile.is_open())
+    {
+      if(fatalIfOpenFail)
+      {
+        Log::Fatal << "Cannot open file '" << fileName << "'. " << std::endl;
+      }
+      else
+      {
+        Log::Warn << "Cannot open file '" << fileName << "'; load failed."
+                  << std::endl;
+      }
+      return false;
+    }
+    inFile.unsetf(std::ios::skipws);
+
+    return true;
+  }
 
   template<typename T>
   void NonTranposeParse(arma::Mat<T> &inout, DatasetInfo &infoSet)
@@ -308,6 +331,8 @@ private:
   }
 
   std::string extension;
+  bool fatalIfOpenFail;
+  std::string fileName;
   std::ifstream inFile;
 };
 
