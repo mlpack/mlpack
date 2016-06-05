@@ -171,7 +171,7 @@ private:
     };
     auto setCharClass = [&](iter_type const &iter)
     {
-      std::string str = std::string(iter.begin(), iter.end());
+      std::string str(iter.begin(), iter.end());
       if(str == "\t")
       {
         str.clear();
@@ -261,7 +261,7 @@ private:
       if(mapCols.find(progress) != std::end(mapCols))
       {
         //std::cout<<"nstr("<<std::string(iter.begin(), iter.end())<<"),";
-        std::string str = std::string(iter.begin(), iter.end());
+        std::string str(iter.begin(), iter.end());
         if(str == "\t")
         {
           str.clear();
