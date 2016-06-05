@@ -171,8 +171,13 @@ private:
     };
     auto setCharClass = [&](iter_type const &iter)
     {
+      std::string str = std::string(iter.begin(), iter.end());
+      if(str == "\t")
+      {
+        str.clear();
+      }
       inout(row, col++) =
-          static_cast<T>(infoSet.MapString(std::string(iter.begin(), iter.end()),
+          static_cast<T>(infoSet.MapString(std::move(str),
                                            row));
     };
 
@@ -256,8 +261,13 @@ private:
       if(mapCols.find(progress) != std::end(mapCols))
       {
         //std::cout<<"nstr("<<std::string(iter.begin(), iter.end())<<"),";
+        std::string str = std::string(iter.begin(), iter.end());
+        if(str == "\t")
+        {
+          str.clear();
+        }
         inout(row, col) =
-            static_cast<T>(infoSet.MapString(std::string(iter.begin(), iter.end()),
+            static_cast<T>(infoSet.MapString(std::move(str),
                                              progress));
       }
       else
