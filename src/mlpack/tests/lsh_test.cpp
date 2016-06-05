@@ -33,40 +33,52 @@ double ComputeRecall(
  * Generates a point set of four clusters around (0.5, 0.5),
  * (3.5, 0.5), (0.5, 3.5), (3.5, 3.5)
  */
-void getPointset(const size_t N, arma::mat& rdata)
+void GetPointset(const size_t N, arma::mat& rdata)
 {
   const size_t d = 2;
   // Create four clusters of points
-  arma::mat C1(d, N/4, arma::fill::randu);
-  arma::mat C2(d, N/4, arma::fill::randu);
-  arma::mat C3(d, N/4, arma::fill::randu);
-  arma::mat C4(d, N/4, arma::fill::randu);
+  arma::mat C1(d, N / 4, arma::fill::randu);
+  arma::mat C2(d, N / 4, arma::fill::randu);
+  arma::mat C3(d, N / 4, arma::fill::randu);
+  arma::mat C4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1<<0<<arma::endr<<3<<arma::endr;
+  offset1
+    <<0<<arma::endr
+    <<3<<arma::endr;
+  
   arma::colvec offset2;
-  offset2<<3<<arma::endr<<3<<arma::endr;
+  offset2
+    <<3<<arma::endr
+    <<3<<arma::endr;
+  
   arma::colvec offset4;
-  offset4<<3<<arma::endr<<0<<arma::endr;
+  offset4
+    <<3<<arma::endr
+    <<0<<arma::endr;
+  
   //spread points in plane
-  for (size_t p = 0; p < N/4; ++p)
+  for (size_t p = 0; p < N / 4; ++p)
   {
-    C1.col(p)+=offset1;
-    C2.col(p)+=offset2;
-    C4.col(p)+=offset4;
+    C1.col(p) += offset1;
+    C2.col(p) += offset2;
+    C4.col(p) += offset4;
   }
 
   rdata.set_size(d, N);
-  rdata.cols(0, N/4-1) = C1;
-  rdata.cols(N/4, N/2-1) = C2;
-  rdata.cols(N/2, 3*N/4-1) = C3;
-  rdata.cols(3*N/4, N-1) = C4;
+  rdata.cols(0, (N / 4) - 1) = C1;
+
+  rdata.cols(N / 4, (N / 2) - 1) = C2;
+  
+  rdata.cols(N / 2, (3 * N / 4) - 1) = C3;
+  
+  rdata.cols(3 * N / 4, N - 1) = C4;
 }
 
 /**
  * Generates two queries, one around (0.5, 0.5) and one around (3.5, 3.5)
  */
-void getQueries(arma::mat& qdata)
+void GetQueries(arma::mat& qdata)
 {
   const size_t d = 2;
   // generate two queries inside two of the clusters
@@ -77,8 +89,8 @@ void getQueries(arma::mat& qdata)
 
   // offset second query to go into cluster 2
   q2.randu(d, 1);
-  q2.row(0)+=3;
-  q2.row(1)+=3;
+  q2.row(0) += 3;
+  q2.row(1) += 3;
 
   qdata.set_size(d, 2);
   qdata.col(0) = q1;
@@ -375,11 +387,11 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
   const size_t N = 40; //must be devisable by 4 to create 4 clusters properly
   arma::mat rdata;
   arma::mat qdata;
-  getPointset(N, rdata);
-  getQueries(qdata);
+  GetPointset(N, rdata);
+  GetQueries(qdata);
 
 
-  const int k = N/2;
+  const int k = N / 2;
   const double hashWidth = 1;
   const int secondHashSize = 99901;
   const int bucketSize = 500;
@@ -407,13 +419,13 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
     //cluster 4. Clusters 3 and 4 have points 20:39, so only neighbors among
     //those should be found
     q = 0;
-    BOOST_REQUIRE(neighbors(j, q) >= N/2);
+    BOOST_REQUIRE(neighbors(j, q) >= N / 2);
   
     //query 2 is in cluster 2, which under this projection was merged with
     //cluster 1. Clusters 1 and 2 have points 0:19, so only neighbors among
     //those should be found
     q = 1;
-    BOOST_REQUIRE(neighbors(j, q) < N/2);
+    BOOST_REQUIRE(neighbors(j, q) < N / 2);
 
   }
 }
@@ -433,11 +445,11 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
   const size_t N = 40;
   arma::mat rdata;
   arma::mat qdata;
-  getPointset(N, rdata);
-  getQueries(qdata);
+  GetPointset(N, rdata);
+  GetQueries(qdata);
 
 
-  const int k = N/2;
+  const int k = N / 2;
   const double hashWidth = 1;
   const int secondHashSize = 99901;
   const int bucketSize = 500;
@@ -468,13 +480,15 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
     //query 1 is in cluster 3, which is points 20:29
     q = 0;
     BOOST_REQUIRE(
-        neighbors(j, q) >= N/2 && neighbors(j, q) < 3*N/4
+        neighbors(j, q) < 3 * N / 4 &&
+        neighbors(j, q) >= N / 2
         );
 
     //query 2 is in cluster 2, which is points 10:19
     q = 1;
     BOOST_REQUIRE(
-        neighbors(j, q) >= N/4 && neighbors(j, q) < N/2
+        neighbors(j, q) < N / 2 &&
+        neighbors(j, q) >= N / 4
         );
   }
 
