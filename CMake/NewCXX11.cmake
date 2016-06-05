@@ -11,4 +11,7 @@ target_compile_features(mlpack PUBLIC
     cxx_static_assert
     cxx_template_template_parameters
     cxx_delegating_constructors
+    cxx_variadic_templates
+    cxx_nullptr
+    cxx_noexcept
 )
