@@ -10,6 +10,7 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 #include "extension.hpp"
+#include "load_csv.hpp"
 
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
@@ -28,75 +29,6 @@
 
 namespace mlpack {
 namespace data {
-
-namespace details{
-
-template<typename Tokenizer>
-std::vector<std::string> ToTokens(Tokenizer &lineTok)
-{
-  std::vector<std::string> tokens;
-  std::transform(std::begin(lineTok), std::end(lineTok),
-                 std::back_inserter(tokens),
-                 [&tokens](std::string const &str)
-  {
-    std::string trimmedToken(str);
-    boost::trim(trimmedToken);
-    return std::move(trimmedToken);
-  });
-
-  return tokens;
-}
-
-inline
-void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
-                     std::vector<std::string> &output,
-                     size_t index)
-{
-  output.clear();
-  for(size_t i = 0; i != input.size(); ++i)
-  {
-    output.emplace_back(input[i][index]);
-  }
-}
-
-template<typename eT>
-void MapToNumerical(const std::vector<std::string> &tokens,
-                    size_t &row,
-                    DatasetInfo &info,
-                    arma::Mat<eT> &matrix)
-{
-  auto notNumber = [](const std::string &str)
-  {
-    eT val(0);
-    std::stringstream token;
-    token.str(str);
-    token>>val;
-    return token.fail();
-  };
-
-  const bool notNumeric = std::any_of(std::begin(tokens),
-                                      std::end(tokens), notNumber);
-  if(notNumeric)
-  {
-    for(size_t i = 0; i != tokens.size(); ++i)
-    {
-      const eT val = static_cast<eT>(info.MapString(tokens[i], row));
-      matrix.at(row, i) = val;
-    }
-  }
-  else
-  {
-    std::stringstream token;
-    for(size_t i = 0; i != tokens.size(); ++i)
-    {
-      token.str(tokens[i]);
-      token>>matrix.at(row, i);
-      token.clear();
-    }
-  }
-}
-
-}
 
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
@@ -381,117 +313,12 @@ bool Load(const std::string& filename,
   Timer::Start("loading_data");
 
   // Get the extension.
-  std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-  stream.open(filename.c_str(), std::fstream::in);
-
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
+  const std::string extension = Extension(filename);
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    // True if we're looking for commas; if false, we're looking for spaces.
-    bool commas = (extension == "csv");
-
-    std::string type;
-    if (extension == "csv")
-      type = "CSV data";
-    else
-      type = "raw ASCII-formatted data";
-
-    Log::Info << "Loading '" << filename << "' as " << type << ".  "
-        << std::flush;
-    std::string separators;
-    if (commas)
-      separators = ",";
-    else
-      separators = " \t";
-
-    // We'll load this as CSV (or CSV with spaces or tabs) according to
-    // RFC4180.  So the first thing to do is determine the size of the matrix.
-    std::string buffer;
-    size_t cols = 0;
-
-    std::getline(stream, buffer, '\n');
-    // Count commas and whitespace in the line, ignoring anything inside
-    // quotes.
-    typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-    boost::escaped_list_separator<char> sep("\\", separators, "\"");
-    Tokenizer tok(buffer, sep);
-    for (Tokenizer::iterator i = tok.begin(); i != tok.end(); ++i)
-      ++cols;
-
-    // Now count the number of lines in the file.  We've already counted the
-    // first one.
-    size_t rows = 1;
-    while (!stream.eof() && !stream.bad() && !stream.fail())
-    {
-      std::getline(stream, buffer, '\n');
-      if (!stream.fail())
-        ++rows;
-    }
-
-    // Now we have the size.  So resize our matrix.
-    if (transpose)
-    {
-      matrix.set_size(cols, rows);
-      info = DatasetInfo(cols);
-    }
-    else
-    {
-      matrix.set_size(rows, cols);
-      info = DatasetInfo(rows);
-    }
-
-    stream.close();
-    stream.open(filename, std::fstream::in);    
-
-    if(transpose)
-    {
-      std::vector<std::vector<std::string>> tokensArray;
-      std::vector<std::string> tokens;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        tokens = details::ToTokens(lineTok);
-        if(tokens.size() == cols)
-        {
-          tokensArray.emplace_back(std::move(tokens));
-        }
-      }
-      for(size_t i = 0; i != cols; ++i)
-      {
-        details::TransPoseTokens(tokensArray, tokens, i);
-        details::MapToNumerical(tokens, i,
-                                info, matrix);
-      }
-    }
-    else
-    {
-      size_t row = 0;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        details::MapToNumerical(details::ToTokens(lineTok), row,
-                                info, matrix);
-        ++row;
-      }
-    }
+    LoadCSV loader(filename);
+    loader.Load(matrix, info, transpose);
   }
   else if (extension == "arff")
   {
