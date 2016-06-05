@@ -33,7 +33,7 @@ public:
     extension(Extension(file)),
     fatalIfOpenFail(fatal),
     fileName(std::move(file)),
-    inFile(file)
+    inFile(fileName)
   {
     CanOpen();
   }
