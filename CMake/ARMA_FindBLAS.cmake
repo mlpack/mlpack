@@ -5,33 +5,40 @@
 # also defined, but not for general use are
 #  BLAS_LIBRARY, where to find the BLAS library.
 
-SET(BLAS_NAMES ${BLAS_NAMES} blas)
-FIND_LIBRARY(BLAS_LIBRARY
+set(BLAS_NAMES ${BLAS_NAMES} blas)
+
+# Find the ATLAS version preferentially.
+find_library(BLAS_LIBRARY
+  NAMES ${BLAS_NAMES}
+  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/local/lib64/atlas /usr/local/lib/atlas
+  NO_DEFAULT_PATH)
+
+find_library(BLAS_LIBRARY
   NAMES ${BLAS_NAMES}
   PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
   )
 
-IF (BLAS_LIBRARY)
-  SET(BLAS_LIBRARIES ${BLAS_LIBRARY})
-  SET(BLAS_FOUND "YES")
-ELSE (BLAS_LIBRARY)
-  SET(BLAS_FOUND "NO")
-ENDIF (BLAS_LIBRARY)
+if (BLAS_LIBRARY)
+  set(BLAS_LIBRARIES ${BLAS_LIBRARY})
+  set(BLAS_FOUND "YES")
+else ()
+  set(BLAS_FOUND "NO")
+endif ()
 
 
-IF (BLAS_FOUND)
-   IF (NOT BLAS_FIND_QUIETLY)
-      MESSAGE(STATUS "Found a BLAS library: ${BLAS_LIBRARIES}")
-   ENDIF (NOT BLAS_FIND_QUIETLY)
-ELSE (BLAS_FOUND)
-   IF (BLAS_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find a BLAS library")
-   ENDIF (BLAS_FIND_REQUIRED)
-ENDIF (BLAS_FOUND)
+if (BLAS_FOUND)
+   if (NOT BLAS_FIND_QUIETLY)
+      message(STATUS "Found BLAS: ${BLAS_LIBRARIES}")
+   endif ()
+else ()
+   if (BLAS_FIND_REQUIRED)
+      message(FATAL_ERROR "Could not find BLAS")
+   endif ()
+endif ()
 
 # Deprecated declarations.
-GET_FILENAME_COMPONENT (NATIVE_BLAS_LIB_PATH ${BLAS_LIBRARY} PATH)
+get_filename_component (NATIVE_BLAS_LIB_PATH ${BLAS_LIBRARY} PATH)
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   BLAS_LIBRARY
   )

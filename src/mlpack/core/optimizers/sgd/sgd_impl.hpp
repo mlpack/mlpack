@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 
 #include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
 // In case it hasn't been included yet.
@@ -50,10 +50,10 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   const size_t numFunctions = function.NumFunctions();
 
   // This is used only if shuffle is true.
-  arma::vec visitationOrder;
+  arma::Col<size_t> visitationOrder;
   if (shuffle)
-    visitationOrder = arma::shuffle(arma::linspace(0, (numFunctions - 1),
-        numFunctions));
+    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        (numFunctions - 1), numFunctions));
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;

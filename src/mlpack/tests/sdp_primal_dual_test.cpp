@@ -567,8 +567,8 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 //
 //  arma::Mat<size_t> neighbors;
 //  arma::mat distances;
-//  AllkNN allknn(origData);
-//  allknn.Search(numNeighbors, neighbors, distances);
+//  KNN knn(origData);
+//  knn.Search(numNeighbors, neighbors, distances);
 //
 //  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
 //  sdp.C().eye(numPoints, numPoints);

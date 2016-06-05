@@ -220,17 +220,17 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
     // Check the mean.
     for (size_t j = 0; j < dims; j++)
       BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Mean()[j],
-          (means[sortRef[i]])[j], 1e-5);
+          (means[sortRef[i]])[j], 0.001);
 
     // Check the covariance.
     for (size_t row = 0; row < dims; row++)
       for (size_t col = 0; col < dims; col++)
         BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Covariance()(row, col),
-            (covars[sortRef[i]])(row, col), 1e-5);
+            (covars[sortRef[i]])(row, col), 0.05);
 
     // Check the weight.
     BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
-        1e-5);
+        0.001);
   }
 }
 

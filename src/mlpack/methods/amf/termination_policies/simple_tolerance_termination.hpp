@@ -30,7 +30,7 @@ namespace amf {
 /**
  * This class implements residue tolerance termination policy. Termination
  * criterion is met when increase in residue value drops below the given tolerance.
- * To accomodate spikes certain number of successive residue drops are accepted.
+ * To accommodate spikes certain number of successive residue drops are accepted.
  * This upper imit on successive drops can be adjusted with reverseStepCount.
  * Secondary termination criterion terminates algorithm when iteration count
  * goes above the threshold.

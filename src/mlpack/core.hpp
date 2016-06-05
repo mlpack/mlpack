@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file core.hpp
  *
  * Include all of the base components required to write MLPACK methods, and the
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_HPP
-#define __MLPACK_CORE_HPP
+#ifndef MLPACK_CORE_HPP
+#define MLPACK_CORE_HPP
 
 /**
  * @mainpage mlpack Documentation
@@ -36,7 +36,8 @@
  * mlpack uses the Armadillo C++ matrix library (http://arma.sourceforge.net)
  * for general matrix, vector, and linear algebra support.  mlpack also uses the
  * program_options, math_c99, and unit_test_framework components of the Boost
- * library; in addition, LibXml2 is used.
+ * library, and optionally uses libbfd and libdl to give backtraces when
+ * compiled with debugging symbols on some platforms.
  *
  * @section howto How To Use This Documentation
  *
@@ -65,8 +66,6 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkfn
- * - mlpack_allknn
  * - mlpack_allkrann
  * - mlpack_cf
  * - mlpack_decision_stump
@@ -82,7 +81,9 @@
  * - mlpack_hmm_generate
  * - mlpack_hoeffding_tree
  * - mlpack_kernel_pca
+ * - mlpack_kfn
  * - mlpack_kmeans
+ * - mlpack_knn
  * - mlpack_lars
  * - mlpack_linear_regression
  * - mlpack_local_coordinate_coding
@@ -140,8 +141,7 @@
  *  - Simple Least-Squares Linear Regression -
  *        mlpack::regression::LinearRegression
  *  - Sparse Coding - mlpack::sparse_coding::SparseCoding
- *  - Tree-based neighbor search (AllkNN, AllkFN) -
- *        mlpack::neighbor::NeighborSearch
+ *  - Tree-based neighbor search (KNN, KFN) - mlpack::neighbor::NeighborSearch
  *  - Tree-based range search - mlpack::range::RangeSearch
  *
  * @section remarks Final Remarks
@@ -196,6 +196,14 @@
  *   - Grzegorz Krajewski <krajekg@gmail.com>
  *   - Joseph Mariadassou <joe.mariadassou@gmail.com>
  *   - Pavel Zhigulin <pashaworking@gmail.com>
+ *   - Andy Fang <AndyFang.DZ@gmail.com>
+ *   - Barak Pearlmutter <barak+git@pearlmutter.net>
+ *   - Ivari Horm <ivari@risk.ee>
+ *   - Dhawal Arora <d.p.arora1@gmail.com>
+ *   - Alexander Leinoff <alexander-leinoff@uiowa.edu>
+ *   - Palash Ahuja <abhor902@gmail.com>
+ *   - Yannis Mentekidis <mentekid@gmail.com>
+ *   - Ranjan Mondal <ranjan.rev@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -217,6 +225,10 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
+//mlpack::backtrace only for linux
+#ifdef HAS_BFD_DL
+  #include <mlpack/core/util/backtrace.hpp>
+#endif
 
 // Include kernel traits.
 #include <mlpack/core/kernels/kernel_traits.hpp>

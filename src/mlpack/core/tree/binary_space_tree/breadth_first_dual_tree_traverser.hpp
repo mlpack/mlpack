@@ -22,8 +22,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 #include <queue>
@@ -46,7 +46,7 @@ struct QueueFrame
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType> class BoundType,
+         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
@@ -121,5 +121,5 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 // Include implementation.
 #include "breadth_first_dual_tree_traverser_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
+#endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
 

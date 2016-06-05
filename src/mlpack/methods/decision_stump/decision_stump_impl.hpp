@@ -20,8 +20,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
-#define __MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
+#ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
+#define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "decision_stump.hpp"
@@ -94,9 +94,6 @@ void DecisionStump<MatType>::Train(const MatType& data,
                                    const arma::Row<size_t>& labels,
                                    const arma::rowvec& weights)
 {
-  this->classes = classes;
-  this->bucketSize = bucketSize;
-
   // If classLabels are not all identical, proceed with training.
   size_t bestDim = 0;
   double entropy;

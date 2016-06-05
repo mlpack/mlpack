@@ -20,11 +20,16 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
-#define __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
+#ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
+#define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
 
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"
+
+#ifdef HAS_BFD_DL
+  #include "backtrace.hpp"
+#endif
+
 #include <iostream>
 
 namespace mlpack {
@@ -76,9 +81,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
       return;
     }
 
-    // Now, we need to check for newlines in this line.  If we find one, output
-    // up until the newline, then output the newline and the prefix and continue
-    // looking.
+    // Now, we need to check for newlines in the output and print it.
     size_t nl;
     size_t pos = 0;
     while ((nl = line.find('\n', pos)) != std::string::npos)
@@ -108,7 +111,34 @@ void PrefixedOutStream::BaseLogic(const T& val)
 
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
+  {
+    std::cout << std::endl;
+
+    // Print a backtrace, if we can.
+#ifdef HAS_BFD_DL
+    if (fatal)
+    {
+      size_t nl;
+      size_t pos = 0;
+
+      Backtrace bt;
+      std::string btLine = bt.ToString();
+      while ((nl = btLine.find('\n', pos)) != std::string::npos)
+      {
+        PrefixIfNeeded();
+
+        destination << btLine.substr(pos, nl - pos);
+        destination << std::endl;
+
+        carriageReturned = true; // Regardless of whether or not we display it.
+
+        pos = nl + 1;
+      }
+    }
+#endif
+
     throw std::runtime_error("fatal error; see Log::Fatal output");
+  }
 }
 
 // This is an inline function (that is why it is here and not in .cc).

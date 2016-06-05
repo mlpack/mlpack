@@ -24,10 +24,6 @@
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 
-#include <mlpack/core/metrics/ip_metric.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -36,7 +32,6 @@ using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
-using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(SGDTest);
 

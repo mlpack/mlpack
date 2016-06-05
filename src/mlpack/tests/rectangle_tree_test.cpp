@@ -36,10 +36,6 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(RectangleTreeTest);
 
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
-
 // Test the traits on RectangleTrees.
 
 BOOST_AUTO_TEST_CASE(RectangleTreeTraitsTest)
@@ -269,7 +265,7 @@ BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync)
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
-  
+
   typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
@@ -441,11 +437,11 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> allknn1(&tree, true);
+      RTree> knn1(&tree, true);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
-  allknn1.Search(querySet, 5, neighbors1, distances1);
+  knn1.Search(querySet, 5, neighbors1, distances1);
 
   arma::mat newDataset;
   newDataset = dataset;
@@ -455,9 +451,9 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   arma::mat distances2;
 
   // Nearest neighbor search the naive way.
-  AllkNN allknn2(newDataset, true, true);
+  KNN knn2(newDataset, true, true);
 
-  allknn2.Search(querySet, 5, neighbors2, distances2);
+  knn2.Search(querySet, 5, neighbors2, distances2);
 
   for (size_t i = 0; i < neighbors1.size(); i++)
   {
@@ -531,14 +527,14 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> allknn1(&tree, true);
+      RTree> knn1(&tree, true);
 
-  allknn1.Search(5, neighbors1, distances1);
+  knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  AllkNN allknn2(dataset, true, true);
+  KNN knn2(dataset, true, true);
 
-  allknn2.Search(5, neighbors2, distances2);
+  knn2.Search(5, neighbors2, distances2);
 
   for (size_t i = 0; i < neighbors1.size(); i++)
   {
@@ -564,7 +560,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RStarTree> allknn1(&rTree, true);
+      RStarTree> knn1(&rTree, true);
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
@@ -573,12 +569,12 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
 
-  allknn1.Search(5, neighbors1, distances1);
+  knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  AllkNN allknn2(dataset, true, true);
+  KNN knn2(dataset, true, true);
 
-  allknn2.Search(5, neighbors2, distances2);
+  knn2.Search(5, neighbors2, distances2);
 
   for (size_t i = 0; i < neighbors1.size(); i++)
   {
@@ -590,7 +586,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
 // A test to ensure that the SingleTreeTraverser is working correctly by
 // comparing its results to the results of a naive search.
-/** This is known to not work: see #368.
+//* This is known to not work: see #368.
 BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 {
   arma::mat dataset;
@@ -603,32 +599,28 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RectangleTree<
-      XTreeSplit<RStarTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RStarTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef XTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType xTree(dataset, 20, 6, 5, 2, 0);
 
   // Nearest neighbor search with the X tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&xTree, dataset, true);
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat, XTree >
+      knn1(&xTree, true);
 
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
   CheckSync(xTree);
-  //CheckContainment(xTree);
+  CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
 
-  allknn1.Search(5, neighbors1, distances1);
+  knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  AllkNN allknn2(dataset, true, true);
+  KNN knn2(dataset, true, true);
 
-  allknn2.Search(5, neighbors2, distances2);
+  knn2.Search(5, neighbors2, distances2);
 
   for (size_t i = 0; i < neighbors1.size(); i++)
   {
@@ -636,7 +628,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
   }
 }
-*/
+
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.

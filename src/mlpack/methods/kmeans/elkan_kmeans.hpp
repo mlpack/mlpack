@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_KMEANS_ELKAN_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_ELKAN_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_ELKAN_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_ELKAN_KMEANS_HPP
 
 namespace mlpack {
 namespace kmeans {

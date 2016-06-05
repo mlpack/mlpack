@@ -141,7 +141,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    FindEmptyClusterPolicy<RandomPartition>(RandomPartition());
+    FindEmptyClusterPolicy<SampleInitialization>(SampleInitialization());
   }
 }
 

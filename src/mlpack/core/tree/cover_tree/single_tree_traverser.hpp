@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_COVER_TREE_SINGLE_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 

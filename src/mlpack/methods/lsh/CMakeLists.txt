@@ -17,10 +17,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The code to compute the approximate neighbor for the given query and reference
 # sets with p-stable LSH.
-add_executable(mlpack_lsh
-  lsh_main.cpp
-)
-target_link_libraries(mlpack_lsh
-  mlpack
-)
-install(TARGETS mlpack_lsh RUNTIME DESTINATION bin)
+add_cli_executable(lsh)

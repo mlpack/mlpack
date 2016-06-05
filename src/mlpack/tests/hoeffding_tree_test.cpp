@@ -28,6 +28,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
+#include "serialization.hpp"
 
 #include <stack>
 
@@ -916,9 +917,10 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
   arma::mat spiralDataset(2, 10000);
   for (size_t i = 0; i < 10000; ++i)
   {
-    // One circle every 2000 samples.
-    const double magnitude = 2.0 + (double(i) / 20000.0);
-    const double angle = (i % 20000) * (2 * M_PI);
+    // One circle every 20000 samples.  Plus some noise.
+    const double magnitude = 2.0 + (double(i) / 20000.0) +
+        0.5 * mlpack::math::Random();
+    const double angle = (i % 20000) * (2 * M_PI) + mlpack::math::Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
@@ -950,52 +952,207 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
     l[i] = labels[indices[i]];
   }
 
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 4999);
+  arma::mat testData = d.cols(5000, 9999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
+  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+
   data::DatasetInfo info(2);
 
   // Now build two decision trees; one in batch mode, and one in streaming mode.
   // We need to set the confidence pretty high so that the streaming tree isn't
   // able to have enough samples to build to the same leaves.
-  HoeffdingTree<> batchTree(d, info, l, 5, true, 0.999);
-  HoeffdingTree<> streamTree(d, info, l, 5, false, 0.999);
-
-  size_t batchNodes = 0, streamNodes = 0;
-  std::stack<HoeffdingTree<>*> queue;
-  queue.push(&batchTree);
-  while (!queue.empty())
-  {
-    ++batchNodes;
-    HoeffdingTree<>* node = queue.top();
-    queue.pop();
-    for (size_t i = 0; i < node->NumChildren(); ++i)
-      queue.push(&node->Child(i));
-  }
-  queue.push(&streamTree);
-  while (!queue.empty())
-  {
-    ++streamNodes;
-    HoeffdingTree<>* node = queue.top();
-    queue.pop();
-    for (size_t i = 0; i < node->NumChildren(); ++i)
-      queue.push(&node->Child(i));
-  }
+  HoeffdingTree<> batchTree(trainingData, info, trainingLabels, 5, true,
+      0.99999999);
+  HoeffdingTree<> streamTree(trainingLabels, info, trainingLabels, 5, false,
+      0.99999999);
 
   // Ensure that the performance of the batch tree is better.
   size_t batchCorrect = 0;
   size_t streamCorrect = 0;
-  for (size_t i = 0; i < 10000; ++i)
+  for (size_t i = 0; i < 5000; ++i)
   {
-    size_t streamLabel = streamTree.Classify(spiralDataset.col(i));
-    size_t batchLabel = batchTree.Classify(spiralDataset.col(i));
+    size_t streamLabel = streamTree.Classify(testData.col(i));
+    size_t batchLabel = batchTree.Classify(testData.col(i));
 
-    if (streamLabel == labels[i])
+    if (streamLabel == testLabels[i])
       ++streamCorrect;
-    if (batchLabel == labels[i])
+    if (batchLabel == testLabels[i])
       ++batchCorrect;
   }
 
   // The batch tree must be a bit better than the stream tree.  But not too
   // much, since the accuracy is already going to be very high.
-  BOOST_REQUIRE_GT(batchCorrect, streamCorrect);
+  BOOST_REQUIRE_GE(batchCorrect, streamCorrect);
+}
+
+// Make sure that changing the confidence properly propagates to all leaves.
+BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 9000);
+  arma::Row<size_t> labels(9000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  HoeffdingTree<> tree(info, 3, 0.5); // Low success probability.
+
+  size_t i = 0;
+  while ((tree.NumChildren() == 0) && (i < 9000))
+  {
+    tree.Train(dataset.col(i), labels[i]);
+    i++;
+  }
+
+  BOOST_REQUIRE_LT(i, 9000);
+
+  // Now we have split the root node, but we need to make sure we can feed
+  // through the rest of the points while requiring a confidence of 1.0, and
+  // make sure no splits happen.
+  tree.SuccessProbability(1.0);
+  tree.MaxSamples(0);
+
+  i = 0;
+  while ((tree.NumChildren() == 0) && (i < 90000))
+  {
+    tree.Train(dataset.col(i % 9000), labels[i % 9000]);
+    i++;
+  }
+
+  for (size_t c = 0; c < tree.NumChildren(); ++c)
+    BOOST_REQUIRE_EQUAL(tree.Child(c).NumChildren(), 0);
+}
+
+//! Make sure parameter changes are propagated to children.
+BOOST_AUTO_TEST_CASE(ParameterChangeTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 9000);
+  arma::Row<size_t> labels(9000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  HoeffdingTree<> tree(dataset, info, labels, 3, true); // Batch training.
+
+  // Now change parameters...
+  tree.SuccessProbability(0.7);
+  tree.MinSamples(17);
+  tree.MaxSamples(192);
+  tree.CheckInterval(3);
+
+  std::stack<HoeffdingTree<>*> stack;
+  stack.push(&tree);
+  while (!stack.empty())
+  {
+    HoeffdingTree<>* node = stack.top();
+    stack.pop();
+
+    BOOST_REQUIRE_CLOSE(node->SuccessProbability(), 0.7, 1e-5);
+    BOOST_REQUIRE_EQUAL(node->MinSamples(), 17);
+    BOOST_REQUIRE_EQUAL(node->MaxSamples(), 192);
+    BOOST_REQUIRE_EQUAL(node->CheckInterval(), 3);
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      stack.push(&node->Child(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 9000);
+  arma::Row<size_t> labels(9000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Batch training will give a tree with many labels.
+  HoeffdingTree<> deepTree(dataset, info, labels, 3, true);
+  // Streaming training will not.
+  HoeffdingTree<> shallowTree(dataset, info, labels, 3, false);
+
+  // Now serialize the shallow tree into the deep tree.
+  std::ostringstream oss;
+  {
+    boost::archive::binary_oarchive boa(oss);
+    boa << data::CreateNVP(shallowTree, "streamingDecisionTree");
+  }
+
+  std::istringstream iss(oss.str());
+  {
+    boost::archive::binary_iarchive bia(iss);
+    bia >> data::CreateNVP(deepTree, "streamingDecisionTree");
+  }
+
+  // Now do some classification and make sure the results are the same.
+  arma::Row<size_t> deepPredictions, shallowPredictions;
+  shallowTree.Classify(dataset, shallowPredictions);
+  deepTree.Classify(dataset, deepPredictions);
+
+  for (size_t i = 0; i < deepPredictions.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(shallowPredictions[i], deepPredictions[i]);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

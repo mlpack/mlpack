@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include "gini_impurity.hpp"
@@ -206,6 +206,26 @@ class HoeffdingTree
   const HoeffdingTree& Child(const size_t i) const { return *children[i]; }
   //! Modify a child.
   HoeffdingTree& Child(const size_t i) { return *children[i]; }
+
+  //! Get the confidence required for a split.
+  double SuccessProbability() const { return successProbability; }
+  //! Modify the confidence required for a split.
+  void SuccessProbability(const double successProbability);
+
+  //! Get the minimum number of samples for a split.
+  size_t MinSamples() const { return minSamples; }
+  //! Modify the minimum number of samples for a split.
+  void MinSamples(const size_t minSamples);
+
+  //! Get the maximum number of samples before a split is forced.
+  size_t MaxSamples() const { return maxSamples; }
+  //! Modify the maximum number of samples before a split is forced.
+  void MaxSamples(const size_t maxSamples);
+
+  //! Get the number of samples before a split check is performed.
+  size_t CheckInterval() const { return checkInterval; }
+  //! Modify the number of samples before a split check is performed.
+  void CheckInterval(const size_t checkInterval);
 
   /**
    * Given a point and that this node is not a leaf, calculate the index of the

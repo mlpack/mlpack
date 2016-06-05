@@ -21,8 +21,11 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
-#define __MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
+#ifndef MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
+#define MLPACK_CORE_TREE_TRAVERSAL_INFO_HPP
+
+namespace mlpack {
+namespace tree {
 
 /**
  * The TraversalInfo class holds traversal information which is used in
@@ -96,5 +99,8 @@ class TraversalInfo
   //! The last base case.
   double lastBaseCase;
 };
+
+} // namespace tree
+} // namespace mlpack
 
 #endif

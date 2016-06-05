@@ -23,8 +23,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_CF_CF_HPP
-#define __MLPACK_METHODS_CF_CF_HPP
+#ifndef MLPACK_METHODS_CF_CF_HPP
+#define MLPACK_METHODS_CF_CF_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>

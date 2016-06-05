@@ -19,13 +19,12 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
-#define __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
+#ifndef MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
+#define MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
-
-#include "../neighbor_search/ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace fastmks {
@@ -106,7 +105,7 @@ class FastMKSRules
   //! Modify the number of times Score() was called.
   size_t& Scores() { return scores; }
 
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

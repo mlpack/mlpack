@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_DESCENT_HEURISTIC_IMPL_HPP
 
 #include "r_tree_descent_heuristic.hpp"
 
@@ -32,14 +32,17 @@ template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
                                                        const arma::vec& point)
 {
-  double minScore = DBL_MAX;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;
-  double bestVol = 0.0;
+  ElemType bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    double v1 = 1.0;
-    double v2 = 1.0;
+    ElemType v1 = 1.0;
+    ElemType v2 = 1.0;
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();
@@ -73,14 +76,17 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
     const TreeType* insertedNode)
 {
-  double minScore = DBL_MAX;
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  ElemType minScore = std::numeric_limits<ElemType>::max();
   int bestIndex = 0;
-  double bestVol = 0.0;
+  ElemType bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    double v1 = 1.0;
-    double v2 = 1.0;
+    ElemType v1 = 1.0;
+    ElemType v2 = 1.0;
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();

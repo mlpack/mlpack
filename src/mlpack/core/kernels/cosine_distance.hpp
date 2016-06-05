@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
-#define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#ifndef MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#define MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 
 #include <mlpack/core.hpp>
 
@@ -62,7 +62,7 @@ class KernelTraits<CosineDistance>
  public:
   //! The cosine kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  
+
   //! The cosine kernel doesn't include a squared distance.
   static const bool UsesSquaredDistance = false;
 };

@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_EMST_DTB_STAT_HPP
-#define __MLPACK_METHODS_EMST_DTB_STAT_HPP
+#ifndef MLPACK_METHODS_EMST_DTB_STAT_HPP
+#define MLPACK_METHODS_EMST_DTB_STAT_HPP
 
 #include <mlpack/core.hpp>
 
@@ -103,4 +103,4 @@ class DTBStat
 } // namespace emst
 } // namespace mlpack
 
-#endif // __MLPACK_METHODS_EMST_DTB_STAT_HPP
+#endif // MLPACK_METHODS_EMST_DTB_STAT_HPP

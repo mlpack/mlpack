@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
-#define __MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
+#ifndef MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
+#define MLPACK_CORE_KERNELS_KERNEL_TRAITS_HPP
 
 namespace mlpack {
 namespace kernel {
@@ -41,7 +41,7 @@ class KernelTraits
    * If true, then the kernel is normalized: K(x, x) = K(y, y) = 1 for all x.
    */
   static const bool IsNormalized = false;
-  
+
   /**
    * If true, then the kernel include a squared distance, ||x - y||^2 .
    */

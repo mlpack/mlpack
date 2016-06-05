@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
 
@@ -57,11 +57,18 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename BoundMetricType> class BoundType = bound::HRectBound,
+         template<typename BoundMetricType, typename...> class BoundType =
+            bound::HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
             class SplitType = MidpointSplit>
 class BinarySpaceTree
 {
+ public:
+  //! So other classes can use TreeType::Mat.
+  typedef MatType Mat;
+  //! The type of element held in MatType.
+  typedef typename MatType::elem_type ElemType;
+
  private:
   //! The left child node.
   BinarySpaceTree* left;
@@ -80,20 +87,17 @@ class BinarySpaceTree
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
-  double parentDistance;
+  ElemType parentDistance;
   //! The worst possible distance to the furthest descendant, cached to speed
   //! things up.
-  double furthestDescendantDistance;
+  ElemType furthestDescendantDistance;
   //! The minimum distance from the center to any edge of the bound.
-  double minimumBoundDistance;
+  ElemType minimumBoundDistance;
   //! The dataset.  If we are the root of the tree, we own the dataset and must
   //! delete it.
   MatType* dataset;
 
  public:
-  //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
-
   //! A single-tree traverser for binary space trees; see
   //! single_tree_traverser.hpp for implementation.
   template<typename RuleType>
@@ -345,7 +349,7 @@ class BinarySpaceTree
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
-  double FurthestPointDistance() const;
+  ElemType FurthestPointDistance() const;
 
   /**
    * Return the furthest possible descendant distance.  This returns the maximum
@@ -354,17 +358,17 @@ class BinarySpaceTree
    * furthest descendant distance may be less than what this method returns (but
    * it will never be greater than this).
    */
-  double FurthestDescendantDistance() const;
+  ElemType FurthestDescendantDistance() const;
 
   //! Return the minimum distance from the center of the node to any bound edge.
-  double MinimumBoundDistance() const;
+  ElemType MinimumBoundDistance() const;
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.
-  double ParentDistance() const { return parentDistance; }
+  ElemType ParentDistance() const { return parentDistance; }
   //! Modify the distance from the center of this node to the center of the
   //! parent node.
-  double& ParentDistance() { return parentDistance; }
+  ElemType& ParentDistance() { return parentDistance; }
 
   /**
    * Return the specified child (0 will be left, 1 will be right).  If the index
@@ -407,27 +411,27 @@ class BinarySpaceTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  double MinDistance(const BinarySpaceTree* other) const
+  ElemType MinDistance(const BinarySpaceTree* other) const
   {
     return bound.MinDistance(other->Bound());
   }
 
   //! Return the maximum distance to another node.
-  double MaxDistance(const BinarySpaceTree* other) const
+  ElemType MaxDistance(const BinarySpaceTree* other) const
   {
     return bound.MaxDistance(other->Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::Range RangeDistance(const BinarySpaceTree* other) const
+  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree* other) const
   {
     return bound.RangeDistance(other->Bound());
   }
 
   //! Return the minimum distance to another point.
   template<typename VecType>
-  double MinDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+  ElemType MinDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
       const
   {
     return bound.MinDistance(point);
@@ -435,8 +439,8 @@ class BinarySpaceTree
 
   //! Return the maximum distance to another point.
   template<typename VecType>
-  double MaxDistance(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+  ElemType MaxDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
       const
   {
     return bound.MaxDistance(point);
@@ -444,7 +448,7 @@ class BinarySpaceTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::Range
+  math::RangeType<ElemType>
   RangeDistance(const VecType& point,
                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {

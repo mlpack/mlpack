@@ -21,8 +21,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 #include "aug_lagrangian_function.hpp"
@@ -156,5 +156,5 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 } // namespace optimization
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 

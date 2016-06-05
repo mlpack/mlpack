@@ -20,8 +20,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
-#define __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#ifndef MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#define MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -180,4 +180,4 @@ class MeanShift
 // Include implementation.
 #include "mean_shift_impl.hpp"
 
-#endif // __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
+#endif // MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP

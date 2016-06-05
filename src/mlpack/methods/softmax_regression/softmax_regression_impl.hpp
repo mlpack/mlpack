@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
-#define __MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
+#ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
+#define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "softmax_regression.hpp"
@@ -132,7 +132,7 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
-    const arma::Row<size_t>& labels)
+    const arma::Row<size_t>& labels) const
 {
   arma::Row<size_t> predictions;
 

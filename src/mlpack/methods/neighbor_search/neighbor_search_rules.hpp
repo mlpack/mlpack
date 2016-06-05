@@ -20,10 +20,10 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
-#include "ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -109,7 +109,7 @@ class NeighborSearchRules
   size_t& Scores() { return scores; }
 
   //! Convenience typedef.
-  typedef NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get the traversal info.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -177,4 +177,4 @@ class NeighborSearchRules
 // Include implementation.
 #include "neighbor_search_rules_impl.hpp"
 
-#endif // __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP

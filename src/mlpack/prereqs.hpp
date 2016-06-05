@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_PREREQS_HPP
-#define __MLPACK_PREREQS_HPP
+#ifndef MLPACK_PREREQS_HPP
+#define MLPACK_PREREQS_HPP
 
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
@@ -29,19 +29,20 @@
 #endif
 
 // Next, standard includes.
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <float.h>
-#include <stdint.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <climits>
+#include <cfloat>
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <tuple>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 // For tgamma().
 #include <boost/math/special_functions/gamma.hpp>
@@ -79,6 +80,7 @@
   #define BOOST_PFTO
 #endif
 #include <mlpack/core/data/serialization_shim.hpp>
+#include <mlpack/core/data/serialization_template_version.hpp>
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
@@ -92,6 +94,7 @@
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
+  #define ARMA_USE_CXX11
 #endif
 
 #endif

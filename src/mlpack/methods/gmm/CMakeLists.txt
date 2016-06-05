@@ -21,28 +21,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# main executable, gmm
-add_executable(mlpack_gmm_train
-  gmm_train_main.cpp
-)
-
-# link dependencies of gmm
-target_link_libraries(mlpack_gmm_train
-  mlpack
-)
-
-add_executable(mlpack_gmm_generate
-  gmm_generate_main.cpp
-)
-target_link_libraries(mlpack_gmm_generate
-  mlpack
-)
-
-add_executable(mlpack_gmm_probability
-  gmm_probability_main.cpp
-)
-target_link_libraries(mlpack_gmm_probability
-  mlpack
-)
-
-install(TARGETS mlpack_gmm_train mlpack_gmm_generate mlpack_gmm_probability RUNTIME DESTINATION bin)
+add_cli_executable(gmm_train)
+add_cli_executable(gmm_generate)
+add_cli_executable(gmm_probability)

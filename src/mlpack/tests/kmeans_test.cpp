@@ -26,6 +26,8 @@
 #include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
 #include <mlpack/methods/kmeans/pelleg_moore_kmeans.hpp>
 #include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
+#include <mlpack/methods/kmeans/sample_initialization.hpp>
+#include <mlpack/methods/kmeans/random_partition.hpp>
 
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -78,7 +80,9 @@ arma::mat kMeansData("  0.0   0.0;" // Class 1.
  */
 BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
 {
-  KMeans<> kmeans;
+  // This test was originally written to use RandomPartition, and is left that
+  // way because RandomPartition gives better initializations here.
+  KMeans<EuclideanDistance, RandomPartition> kmeans;
 
   arma::Row<size_t> assignments;
   kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
@@ -674,6 +678,40 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
       BOOST_REQUIRE_CLOSE(naiveCentroids[i], dtnnCentroids[i], 1e-5);
+  }
+}
+
+/**
+ * Make sure that the sample initialization strategy successfully samples points
+ * from the dataset.
+ */
+BOOST_AUTO_TEST_CASE(SampleInitializationTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  const size_t clusters = 10;
+  arma::mat centroids;
+
+  SampleInitialization::Cluster(dataset, clusters, centroids);
+
+  // Check that the size of the matrix is correct.
+  BOOST_REQUIRE_EQUAL(centroids.n_cols, 10);
+  BOOST_REQUIRE_EQUAL(centroids.n_rows, 5);
+
+  // Check that each entry in the matrix is some sample from the dataset.
+  for (size_t i = 0; i < clusters; ++i)
+  {
+    // If the loop successfully terminates, j will be equal to dataset.n_cols.
+    // If not then we have found a match.
+    size_t j;
+    for (j = 0; j < dataset.n_cols; ++j)
+    {
+      const double distance = metric::EuclideanDistance::Evaluate(
+          centroids.col(i), dataset.col(j));
+      if (distance < 1e-10)
+        break;
+    }
+
+    BOOST_REQUIRE_LT(j, dataset.n_cols);
   }
 }
 

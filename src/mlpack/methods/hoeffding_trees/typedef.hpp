@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_TYPEDEF_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_TYPEDEF_HPP
+#ifndef MLPACK_METHODS_HOEFFDING_TREES_TYPEDEF_HPP
+#define MLPACK_METHODS_HOEFFDING_TREES_TYPEDEF_HPP
 
 #include "streaming_decision_tree.hpp"
 #include "hoeffding_tree.hpp"

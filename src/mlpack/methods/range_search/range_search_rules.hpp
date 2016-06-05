@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
 
-#include "../neighbor_search/ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace range {
@@ -111,7 +111,7 @@ class RangeSearchRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

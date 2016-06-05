@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
 
 #include <mlpack/core.hpp>
 
@@ -33,38 +33,49 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
+template <typename TreeType>
 class RStarTreeSplit
 {
  public:
+  //! Default constructor
+  RStarTreeSplit();
+
+  //! Construct this with the specified node.
+  RStarTreeSplit(const TreeType *node);
+
+  //! Create a copy of the other.split.
+  RStarTreeSplit(const TreeType &other);
+
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  template<typename TreeType>
-  static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  template<typename TreeType>
-  static bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
  private:
   /**
    * Class to allow for faster sorting.
    */
+  template<typename ElemType>
   struct SortStruct
   {
-    double d;
+    ElemType d;
     int n;
   };
 
   /**
    * Comparator for sorting with SortStruct.
    */
-  static bool StructComp(const SortStruct& s1, const SortStruct& s2)
+  template<typename ElemType>
+  static bool StructComp(const SortStruct<ElemType>& s1,
+                         const SortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;
   }
@@ -72,8 +83,14 @@ class RStarTreeSplit
   /**
    * Insert a node into another node.
    */
-  template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
+
+ public:
+  /**
+   * Serialize the split.
+   */
+  template<typename Archive>
+  void Serialize(Archive &, const unsigned int /* version */) { };
 };
 
 } // namespace tree

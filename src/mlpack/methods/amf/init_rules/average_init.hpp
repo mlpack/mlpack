@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
-#define __MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
+#ifndef MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
+#define MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
 
 #include <mlpack/core.hpp>
 
@@ -76,7 +76,7 @@ class AverageInitialization
 
     avgV = sqrt(((avgV / (n * m)) - min) / r);
 
-    // Intialize to random values.
+    // Initialize to random values.
     W.randu(n, r);
     H.randu(r, m);
 

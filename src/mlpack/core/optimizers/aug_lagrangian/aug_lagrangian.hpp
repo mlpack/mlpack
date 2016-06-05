@@ -22,8 +22,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
-#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
+#define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
@@ -154,5 +154,5 @@ class AugLagrangian
 
 #include "aug_lagrangian_impl.hpp"
 
-#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 

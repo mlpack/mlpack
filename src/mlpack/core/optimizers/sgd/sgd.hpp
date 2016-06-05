@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
+#define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/core.hpp>
 
@@ -46,7 +46,7 @@ namespace optimization {
  * is chosen according to \f$ j \f$ (the iteration number).  The SGD class
  * supports either scanning through each of the \f$ n \f$ functions \f$ f_i(A)
  * \f$ linearly, or in a random sequence.  The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations -- or when a full sequence of
+ * \f$ reaches the maximum number of iterations---or when a full sequence of
  * updates through each of the \f$ n \f$ functions \f$ f_i(A) \f$ produces an
  * improvement within a certain tolerance \f$ \epsilon \f$.  That is,
  *
@@ -87,7 +87,12 @@ class SGD
 {
  public:
   /**
-   * Construct the SGD optimizer with the given function and parameters.
+   * Construct the SGD optimizer with the given function and parameters.  The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.

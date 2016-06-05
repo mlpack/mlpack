@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
+#define MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
 
 #include <mlpack/core.hpp>
 

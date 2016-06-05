@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_TESTS_SERIALIZATION_HPP
-#define __MLPACK_TESTS_SERIALIZATION_HPP
+#ifndef MLPACK_TESTS_SERIALIZATION_HPP
+#define MLPACK_TESTS_SERIALIZATION_HPP
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_iarchive.hpp>
@@ -35,6 +35,80 @@
 #include "old_boost_test_definitions.hpp"
 
 namespace mlpack {
+
+// Test function for loading and saving Armadillo objects.
+template<typename CubeType,
+         typename IArchiveType,
+         typename OArchiveType>
+void TestArmadilloSerialization(arma::Cube<CubeType>& x)
+{
+  // First save it.
+  std::ofstream ofs("test", std::ios::binary);
+  OArchiveType o(ofs);
+
+  bool success = true;
+  try
+  {
+    o << BOOST_SERIALIZATION_NVP(x);
+  }
+  catch (boost::archive::archive_exception& e)
+  {
+    success = false;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+  ofs.close();
+
+  // Now load it.
+  arma::Cube<CubeType> orig(x);
+  success = true;
+  std::ifstream ifs("test", std::ios::binary);
+  IArchiveType i(ifs);
+
+  try
+  {
+    i >> BOOST_SERIALIZATION_NVP(x);
+  }
+  catch (boost::archive::archive_exception& e)
+  {
+    success = false;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+
+  BOOST_REQUIRE_EQUAL(x.n_rows, orig.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_cols, orig.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_elem_slice, orig.n_elem_slice);
+  BOOST_REQUIRE_EQUAL(x.n_slices, orig.n_slices);
+  BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
+
+  for(size_t slice = 0; slice != x.n_slices; ++slice){
+	auto const &orig_slice = orig.slice(slice);
+	auto const &x_slice = x.slice(slice);
+    for (size_t i = 0; i < x.n_cols; ++i){
+      for (size_t j = 0; j < x.n_rows; ++j){
+        if (double(orig_slice(j, i)) == 0.0)
+          BOOST_REQUIRE_SMALL(double(x_slice(j, i)), 1e-8);
+        else
+          BOOST_REQUIRE_CLOSE(double(orig_slice(j, i)), double(x_slice(j, i)), 1e-8);
+	  }
+	}
+  }
+
+  remove("test");
+}
+
+// Test all serialization strategies.
+template<typename CubeType>
+void TestAllArmadilloSerialization(arma::Cube<CubeType>& x)
+{
+  TestArmadilloSerialization<CubeType, boost::archive::xml_iarchive,
+      boost::archive::xml_oarchive>(x);
+  TestArmadilloSerialization<CubeType, boost::archive::text_iarchive,
+      boost::archive::text_oarchive>(x);
+  TestArmadilloSerialization<CubeType, boost::archive::binary_iarchive,
+      boost::archive::binary_oarchive>(x);
+}
 
 // Test function for loading and saving Armadillo objects.
 template<typename MatType,

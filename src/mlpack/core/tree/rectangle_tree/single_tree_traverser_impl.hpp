@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
   */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
 
 #include "single_tree_traverser.hpp"
 
@@ -35,7 +35,7 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType,
+         template<typename> class SplitType,
          typename DescentType>
 template<typename RuleType>
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
@@ -47,7 +47,7 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType,
+         template<typename> class SplitType,
          typename DescentType>
 template<typename RuleType>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::

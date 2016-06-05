@@ -5,33 +5,40 @@
 # also defined, but not for general use are
 #  LAPACK_LIBRARY, where to find the LAPACK library.
 
-SET(LAPACK_NAMES ${LAPACK_NAMES} lapack)
-FIND_LIBRARY(LAPACK_LIBRARY
+set(LAPACK_NAMES ${LAPACK_NAMES} lapack)
+
+# Check ATLAS paths preferentially, using this necessary hack (I love CMake).
+find_library(LAPACK_LIBRARY
   NAMES ${LAPACK_NAMES}
-  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
+  PATHS /usr/lib64/atlas /usr/lib/atlas /usr/local/lib64/atlas /usr/local/lib/atlas
+  NO_DEFAULT_PATH)
+
+find_library(LAPACK_LIBRARY
+  NAMES ${LAPACK_NAMES}
+  PATHS /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib
   )
 
-IF (LAPACK_LIBRARY)
-  SET(LAPACK_LIBRARIES ${LAPACK_LIBRARY})
-  SET(LAPACK_FOUND "YES")
-ELSE (LAPACK_LIBRARY)
-  SET(LAPACK_FOUND "NO")
-ENDIF (LAPACK_LIBRARY)
+if (LAPACK_LIBRARY)
+  set(LAPACK_LIBRARIES ${LAPACK_LIBRARY})
+  set(LAPACK_FOUND "YES")
+else ()
+  set(LAPACK_FOUND "NO")
+endif ()
 
 
-IF (LAPACK_FOUND)
-   IF (NOT LAPACK_FIND_QUIETLY)
-      MESSAGE(STATUS "Found a LAPACK library: ${LAPACK_LIBRARIES}")
-   ENDIF (NOT LAPACK_FIND_QUIETLY)
-ELSE (LAPACK_FOUND)
-   IF (LAPACK_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find a LAPACK library")
-   ENDIF (LAPACK_FIND_REQUIRED)
-ENDIF (LAPACK_FOUND)
+if (LAPACK_FOUND)
+   if (NOT LAPACK_FIND_QUIETLY)
+      message(STATUS "Found LAPACK: ${LAPACK_LIBRARIES}")
+   endif ()
+else ()
+   if (LAPACK_FIND_REQUIRED)
+      message(FATAL_ERROR "Could not find LAPACK")
+   endif ()
+endif ()
 
 # Deprecated declarations.
-GET_FILENAME_COMPONENT (NATIVE_LAPACK_LIB_PATH ${LAPACK_LIBRARY} PATH)
+get_filename_component (NATIVE_LAPACK_LIB_PATH ${LAPACK_LIBRARY} PATH)
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   LAPACK_LIBRARY
   )

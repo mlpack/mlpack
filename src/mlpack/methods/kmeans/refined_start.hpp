@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_KMEANS_REFINED_START_HPP
-#define __MLPACK_METHODS_KMEANS_REFINED_START_HPP
+#ifndef MLPACK_METHODS_KMEANS_REFINED_START_HPP
+#define MLPACK_METHODS_KMEANS_REFINED_START_HPP
 
 #include <mlpack/core.hpp>
 
@@ -58,7 +58,23 @@ class RefinedStart
 
   /**
    * Partition the given dataset into the given number of clusters according to
-   * the random sampling scheme outlined in Bradley and Fayyad's paper.
+   * the random sampling scheme outlined in Bradley and Fayyad's paper, and
+   * return centroids.
+   *
+   * @tparam MatType Type of data (arma::mat or arma::sp_mat).
+   * @param data Dataset to partition.
+   * @param clusters Number of clusters to split dataset into.
+   * @param centroids Matrix to store centroids into.
+   */
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t clusters,
+               arma::mat& centroids) const;
+
+  /**
+   * Partition the given dataset into the given number of clusters according to
+   * the random sampling scheme outlined in Bradley and Fayyad's paper, and
+   * return point assignments.
    *
    * @tparam MatType Type of data (arma::mat or arma::sp_mat).
    * @param data Dataset to partition.

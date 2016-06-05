@@ -23,6 +23,7 @@
 #include "logistic_regression.hpp"
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -53,16 +54,23 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "When a model is being trained, there are many options.  L2 regularization "
     "(to prevent overfitting) can be specified with the -l option, and the "
     "optimizer used to train the model can be specified with the --optimizer "
-    "option.  Available options are 'sgd' (stochastic gradient descent) and "
-    "'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the"
-    " optimizer; the --max_iterations parameter specifies the maximum number of"
-    " allowed iterations, and the --tolerance (-e) parameter specifies the "
-    "tolerance for convergence.  For the SGD optimizer, the --step_size "
-    "parameter controls the step size taken at each iteration by the optimizer."
-    "  If the objective function for your data is oscillating between Inf and "
-    "0, the step size is probably too large.  There are more parameters for the"
-    " SGD and L-BFGS optimizers, but the C++ interface must be used to access "
-    "these."
+    "option.  Available options are 'sgd' (stochastic gradient descent), "
+    "'lbfgs' (the L-BFGS optimizer), and 'minibatch-sgd' (minibatch stochastic "
+    "gradient descent).  There are also various parameters for the optimizer; "
+    "the --max_iterations parameter specifies the maximum number of allowed "
+     "iterations, and the --tolerance (-e) parameter specifies the tolerance "
+    "for convergence.  For the SGD and mini-batch SGD optimizers, the "
+    "--step_size parameter controls the step size taken at each iteration by "
+    "the optimizer.  The batch size for mini-batch SGD is controlled with the "
+    "--batch_size (-b) parameter.  If the objective function for your data is "
+    "oscillating between Inf and 0, the step size is probably too large.  There"
+    " are more parameters for the optimizers, but the C++ interface must be "
+    "used to access these."
+    "\n\n"
+    "For SGD, an iteration refers to a single point, and for mini-batch SGD, an"
+    " iteration refers to a single batch.  So to take a single pass over the "
+    "dataset with SGD, --max_iterations should be set to the number of points "
+    "in the dataset."
     "\n\n"
     "Optionally, the model can be used to predict the responses for another "
     "matrix of data points, if --test_file is specified.  The --test_file "
@@ -88,7 +96,9 @@ PARAM_STRING("optimizer", "Optimizer to use for training ('lbfgs' or 'sgd').",
 PARAM_DOUBLE("tolerance", "Convergence tolerance for optimizer.", "e", 1e-10);
 PARAM_INT("max_iterations", "Maximum iterations for optimizer (0 indicates no "
     "limit).", "n", 10000);
-PARAM_DOUBLE("step_size", "Step size for SGD optimizer.", "s", 0.01);
+PARAM_DOUBLE("step_size", "Step size for SGD and mini-batch SGD optimizers.",
+    "s", 0.01);
+PARAM_INT("batch_size", "Batch size for mini-batch SGD.", "b", 50);
 
 // Model loading/saving.
 PARAM_STRING("input_model_file", "File containing existing model (parameters).",
@@ -99,7 +109,10 @@ PARAM_STRING("output_model_file", "File to save trained logistic regression "
 // Testing.
 PARAM_STRING("test_file", "File containing test dataset.", "T", "");
 PARAM_STRING("output_file", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "");
+    "where the predictions for the test set will be saved.", "o", "");
+PARAM_STRING("output_probabilities_file", "If --test_file is specified, this "
+    "file is where the class probabilities for the test set will be saved.",
+    "p", "");
 PARAM_DOUBLE("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -115,11 +128,14 @@ int main(int argc, char** argv)
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const double stepSize = CLI::GetParam<double>("step_size");
+  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const string inputModelFile = CLI::GetParam<string>("input_model");
-  const string outputModelFile = CLI::GetParam<string>("output_model");
+  const string inputModelFile = CLI::GetParam<string>("input_model_file");
+  const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
   const string outputFile = CLI::GetParam<string>("output_file");
+  const string outputProbabilitiesFile =
+      CLI::GetParam<string>("output_probabilities_file");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
 
   // One of inputFile and modelFile must be specified.
@@ -129,9 +145,9 @@ int main(int argc, char** argv)
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  if (outputFile.empty() && !trainingFile.empty())
-    Log::Warn << "--output_model not given; trained model will not be saved."
-        << endl;
+  if (outputModelFile.empty() && !trainingFile.empty())
+    Log::Warn << "--output_model_file not given; trained model will not be "
+        << "saved." << endl;
 
   // Tolerance needs to be positive.
   if (tolerance < 0.0)
@@ -139,8 +155,10 @@ int main(int argc, char** argv)
         << endl;
 
   // Optimizer has to be L-BFGS or SGD.
-  if (optimizerType != "lbfgs" && optimizerType != "sgd")
-    Log::Fatal << "--optimizer must be 'lbfgs' or 'sgd'." << endl;
+  if (optimizerType != "lbfgs" && optimizerType != "sgd" &&
+      optimizerType != "minibatch-sgd")
+    Log::Fatal << "--optimizer must be 'lbfgs', 'sgd', or 'minibatch-sgd'."
+        << endl;
 
   // Lambda must be positive.
   if (lambda < 0.0)
@@ -152,13 +170,18 @@ int main(int argc, char** argv)
     Log::Fatal << "Decision boundary (--decision_boundary) must be between 0.0 "
         << "and 1.0 (received " << decisionBoundary << ")." << endl;
 
-  if ((stepSize < 0.0) && (optimizerType == "sgd"))
+  if ((stepSize < 0.0) &&
+      (optimizerType == "sgd" || optimizerType == "minibatch-sgd"))
     Log::Fatal << "Step size (--step_size) must be positive (received "
         << stepSize << ")." << endl;
 
   if (CLI::HasParam("step_size") && optimizerType == "lbfgs")
     Log::Warn << "Step size (--step_size) ignored because 'sgd' optimizer is "
         << "not being used." << endl;
+
+  if (CLI::HasParam("batch_size") && optimizerType != "minibatch-sgd")
+    Log::Warn << "Batch size (--batch_size) ignored because 'minibatch-sgd' "
+        << "optimizer is not being used." << endl;
 
   // These are the matrices we might use.
   arma::mat regressors;
@@ -237,6 +260,18 @@ int main(int argc, char** argv)
       // This will train the model.
       model.Train(lbfgsOpt);
     }
+    else if (optimizerType == "minibatch-sgd")
+    {
+      MiniBatchSGD<LogisticRegressionFunction<>> mbsgdOpt(lrf);
+      mbsgdOpt.BatchSize() = batchSize;
+      mbsgdOpt.Tolerance() = tolerance;
+      mbsgdOpt.StepSize() = stepSize;
+      mbsgdOpt.MaxIterations() = maxIterations;
+      Log::Info << "Training model with mini-batch SGD optimizer (batch size "
+          << batchSize << ")." << endl;
+
+      model.Train(mbsgdOpt);
+    }
   }
 
   if (!testFile.empty())
@@ -245,13 +280,24 @@ int main(int argc, char** argv)
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    Log::Info << "Predicting classes of points in '" << testFile << "'."
-        << endl;
-    model.Predict(testSet, predictions, decisionBoundary);
-
-    // Save the results, if necessary.
     if (!outputFile.empty())
+    {
+      Log::Info << "Predicting classes of points in '" << testFile << "'."
+          << endl;
+      model.Classify(testSet, predictions, decisionBoundary);
+
       data::Save(outputFile, predictions, false);
+    }
+
+    if (!outputProbabilitiesFile.empty())
+    {
+      Log::Info << "Calculating class probabilities of points in '" << testFile
+          << "'." << endl;
+      arma::mat probabilities;
+      model.Classify(testSet, probabilities);
+
+      data::Save(outputProbabilitiesFile, probabilities, false);
+    }
   }
 
   if (!outputModelFile.empty())

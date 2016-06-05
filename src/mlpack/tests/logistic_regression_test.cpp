@@ -604,7 +604,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<L_BFGS>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -616,7 +617,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -643,14 +644,15 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<SGD>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -663,7 +665,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -818,6 +820,156 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
   BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
     BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-5);
+}
+
+/**
+ * Test multi-point classification (Classify()).
+ */
+BOOST_AUTO_TEST_CASE(ClassifyTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<>(data, responses);
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  arma::Row<size_t> predictions;
+  lr.Classify(data, predictions);
+
+  BOOST_REQUIRE_GE((double) arma::accu(predictions == responses), 900);
+}
+
+/**
+ * Test that single-point classification gives the same results as multi-point
+ * classification.
+ */
+BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<>(data, responses);
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  arma::Row<size_t> predictions;
+  lr.Classify(data, predictions);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    size_t pred = lr.Classify(data.col(i));
+
+    BOOST_REQUIRE_EQUAL(pred, predictions[i]);
+  }
+}
+
+/**
+ * Test that giving point probabilities works.
+ */
+BOOST_AUTO_TEST_CASE(ClassifyProbabilitiesTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  lr.Train<>(data, responses);
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  arma::mat probabilities;
+  lr.Classify(data, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, 2);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(probabilities(0, i) + probabilities(1, i), 1.0, 1e-5);
+
+    // 10% tolerance.
+    if (responses[i] == 0)
+      BOOST_REQUIRE_CLOSE(probabilities(0, i), 1.0, 10.0);
+    else
+      BOOST_REQUIRE_CLOSE(probabilities(1, i), 1.0, 10.0);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

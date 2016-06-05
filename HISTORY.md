@@ -1,5 +1,66 @@
+### mlpack 2.0.2
+###### 2016-??-??
+  * Added the function LSHSearch::Projections(), which returns an arma::cube
+    with each projection table in a slice (#663).  Instead of Projection(i), you
+    should now use Projections().slice(i).
+
+  * A new constructor has been added to LSHSearch that creates objects using
+    projection tables provided in an arma::cube (#663).
+
+  * Handle zero-variance dimensions in DET (#515).
+
+  * Add MiniBatchSGD optimizer (src/mlpack/core/optimizers/minibatch_sgd/) and
+    allow its use in mlpack_logistic_regression and mlpack_nca programs.
+
+  * Add better backtrace support from Grzegorz Krajewski for Log::Fatal messages
+    when compiled with debugging and profiling symbols.  This requires libbfd
+    and libdl to be present during compilation.
+
+  * CosineTree test fix from Mikhail Lozhnikov (#358).
+
+  * Fixed HMM initial state estimation (#600).
+
+  * Changed versioning macros __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR,
+    and __MLPACK_VERSION_PATCH to MLPACK_VERSION_MAJOR, MLPACK_VERSION_MINOR,
+    and MLPACK_VERSION_PATCH.  The old names will remain in place until
+    mlpack 3.0.0.
+
+  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
+    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
+    3.0.0.
+
+  * Add --random_initialization option to mlpack_hmm_train, for use when no
+    labels are provided.
+
+### mlpack 2.0.1
+###### 2016-02-04
+  * Fix CMake to properly detect when MKL is being used with Armadillo.
+
+  * Minor parameter handling fixes to mlpack_logistic_regression (#504, #505).
+
+  * Properly install arma_config.hpp.
+
+  * Memory handling fixes for Hoeffding tree code.
+
+  * Add functions that allow changing training-time parameters to HoeffdingTree
+    class.
+
+  * Fix infinite loop in sparse coding test.
+
+  * Documentation spelling fixes (#501).
+
+  * Properly handle covariances for Gaussians with large condition number
+    (#496), preventing GMMs from filling with NaNs during training (and also
+    HMMs that use GMMs).
+
+  * CMake fixes for finding LAPACK and BLAS as Armadillo dependencies when ATLAS
+    is used.
+
+  * CMake fix for projects using mlpack's CMake configuration from elsewhere
+    (#512).
+
 ### mlpack 2.0.0
-###### 2015-12-23
+###### 2015-12-24
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
     open a bug or get in touch with us; it would not be hard for us to
@@ -47,6 +108,10 @@
 
   * Add HoeffdingTree and mlpack_hoeffding_tree, an implementation of the
     streaming decision tree methodology from Domingos and Hulten in 2000.
+
+### mlpack 1.0.12
+###### 2015-01-07
+  * Switch to 3-clause BSD license (from LGPL).
 
 ### mlpack 1.0.11
 ###### 2014-12-11

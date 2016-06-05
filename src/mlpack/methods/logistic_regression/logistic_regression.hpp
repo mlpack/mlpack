@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
-#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
+#ifndef MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
+#define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
@@ -167,6 +167,8 @@ class LogisticRegression
    * the decision boundary, the response is taken to be 1; otherwise, it is 0.
    * By default the decision boundary is 0.5.
    *
+   * This method is deprecated---you should use Classify() instead.
+   *
    * @param predictors Input predictors.
    * @param responses Vector to put output predictions of responses into.
    * @param decisionBoundary Decision boundary (default 0.5).
@@ -174,6 +176,45 @@ class LogisticRegression
   void Predict(const MatType& predictors,
                arma::Row<size_t>& responses,
                const double decisionBoundary = 0.5) const;
+
+  /**
+   * Classify the given point.  The predicted label is returned.  Optionally,
+   * specify the decision boundary; logistic regression returns a value between
+   * 0 and 1.  If the value is greater than the decision boundary, the response
+   * is taken to be 1; otherwise, it is 0.  By default the decision boundary is
+   * 0.5.
+   *
+   * @param point Point to classify.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   * @return Predicted label of point.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point,
+                  const double decisionBoundary = 0.5) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * Optionally, specify the decision boundary; logistic regression returns a
+   * value between 0 and 1.  If the value is greater than the decision boundary,
+   * the response is taken to be 1; otherwise, it is 0.  By default the decision
+   * boundary is 0.5.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   */
+  void Classify(const MatType& dataset,
+                arma::Row<size_t>& labels,
+                const double decisionBoundary = 0.5) const;
+
+  /**
+   * Classify the given points, returning class probabilities for each point.
+   *
+   * @param dataset Set of points to classify.
+   * @param probabilities Class probabilities for each point (output).
+   */
+  void Classify(const MatType& dataset,
+                arma::mat& probabilities) const;
 
   /**
    * Compute the accuracy of the model on the given predictors and responses,
@@ -221,4 +262,4 @@ class LogisticRegression
 // Include implementation.
 #include "logistic_regression_impl.hpp"
 
-#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
+#endif // MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP

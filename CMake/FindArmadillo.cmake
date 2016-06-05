@@ -60,10 +60,10 @@ if(ARMADILLO_INCLUDE_DIR)
     # WARNING: The number of spaces before the version name is not one.
     string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_armadillo_HEADER_CONTENTS}")
 
-  endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
+  endif()
 
   set(ARMADILLO_VERSION_STRING "${ARMADILLO_VERSION_MAJOR}.${ARMADILLO_VERSION_MINOR}.${ARMADILLO_VERSION_PATCH}")
-endif (ARMADILLO_INCLUDE_DIR)
+endif ()
 
 
 #======================
@@ -130,8 +130,7 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         set(HAVE_LAPACK true)
         set(HAVE_BLAS   true)
       endif ()
-    endif ((NOT "${ARMA_USE_LAPACK}" STREQUAL "") AND
-           (NOT "${ARMA_USE_BLAS}" STREQUAL ""))
+    endif ()
 
     # If we haven't found BLAS, try.
     if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
@@ -148,7 +147,7 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         if (CBLAS_FOUND)
           message(STATUS "Warning: both OpenBLAS and ATLAS have been found; "
               "ATLAS will not be used.")
-        endif (CBLAS_FOUND)
+        endif ()
         message(STATUS "Using OpenBLAS for BLAS: ${OpenBLAS_LIBRARIES}")
 
         set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${OpenBLAS_LIBRARIES}")
@@ -166,7 +165,7 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
         set(HAVE_BLAS true)
       endif ()
-    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
+    endif ()
 
     # If we haven't found LAPACK, try.
     if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
@@ -190,19 +189,19 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
         set(HAVE_LAPACK true)
       endif ()
-    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
+    endif ()
 
-    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
       message(FATAL_ERROR "Cannot find LAPACK library, but ARMA_USE_LAPACK is "
           "set. Try specifying LAPACK libraries manually by setting the "
           "LAPACK_LIBRARY variable.")
-    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+    endif ()
 
-    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
       message(FATAL_ERROR "Cannot find BLAS library, but ARMA_USE_BLAS is set. "
           "Try specifying BLAS libraries manually by setting the BLAS_LIBRARY "
           "variable.")
-    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+    endif ()
 
     # Search for ARPACK (or replacement).
     if (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
@@ -214,10 +213,10 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         message(FATAL_ERROR "ARMA_USE_ARPACK is defined in "
             "armadillo_bits/config.hpp, but ARPACK cannot be found.  Try "
             "specifying ARPACK_LIBRARY.")
-      endif (NOT ARPACK_FOUND)
+      endif ()
 
       set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ARPACK_LIBRARY}")
-    endif (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
+    endif ()
 
     # Search for HDF5 (or replacement).
     if (NOT "${ARMA_USE_HDF5}" STREQUAL "")
@@ -251,9 +250,9 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 
       set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}" "${HDF5_INCLUDE_DIRS}")
       set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${HDF5_LIBRARIES}")
-    endif (NOT "${ARMA_USE_HDF5}" STREQUAL "")
+    endif ()
 
-  else("${ARMA_USE_WRAPPER}" STREQUAL "")
+  else()
     # Some older versions still require linking against HDF5 since they did not
     # wrap libhdf5.  This was true for versions older than 4.300.
     if(NOT "${ARMA_USE_HDF5}" STREQUAL "" AND
@@ -322,11 +321,11 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
       set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
     endif()
 
-  endif("${ARMA_USE_WRAPPER}" STREQUAL "")
-else(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+  endif()
+else()
   message(FATAL_ERROR "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp not "
       "found!  Cannot determine what to link against.")
-endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+endif()
 
 if (ARMA_NEED_LIBRARY)
   # UNIX paths are standard, no need to write.
@@ -341,13 +340,13 @@ if (ARMA_NEED_LIBRARY)
     REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
     VERSION_VAR ARMADILLO_VERSION_STRING)
   # version_var fails with cmake < 2.8.4.
-else (ARMA_NEED_LIBRARY)
+else ()
   # Checks 'REQUIRED', 'QUIET' and versions.
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Armadillo
     REQUIRED_VARS ARMADILLO_INCLUDE_DIR
     VERSION_VAR ARMADILLO_VERSION_STRING)
-endif (ARMA_NEED_LIBRARY)
+endif ()
 
 if (ARMADILLO_FOUND)
   # Also include support include directories.
@@ -355,11 +354,11 @@ if (ARMADILLO_FOUND)
   # Also include support libraries to link against.
   if (ARMA_NEED_LIBRARY)
     set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${SUPPORT_LIBRARIES})
-  else (ARMA_NEED_LIBRARY)
+  else ()
     set(ARMADILLO_LIBRARIES ${SUPPORT_LIBRARIES})
-  endif (ARMA_NEED_LIBRARY)
+  endif ()
   message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
-endif (ARMADILLO_FOUND)
+endif ()
 
 
 # Hide internal variables

@@ -60,7 +60,7 @@ The output file contains an edge list representation of the MST in an
 points and the third column is the edge weight.  The edges are sorted in order
 of increasing weight.
 
-Below are several examples of simple usage (and the resultant output).  The 
+Below are several examples of simple usage (and the resultant output).  The
 \c -v option is used so that verbose output is given.  Further documentation on
 each individual option can be found by typing
 
@@ -125,7 +125,8 @@ algorithm for timing and comparison purposes, using the \c --naive option.
 
 @section dtb_emsttut The 'DualTreeBoruvka' class
 
-The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka algorithm.
+The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka
+algorithm.
 
 The class has two constructors: the first takes the data set, constructs the
 tree (where the type of tree constructed is the TreeType template parameter),

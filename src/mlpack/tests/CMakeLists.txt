@@ -2,8 +2,8 @@
 add_executable(mlpack_test
   mlpack_test.cpp
   adaboost_test.cpp
-  allkfn_test.cpp
-  allknn_test.cpp
+  adam_test.cpp
+  ada_delta_test.cpp
   allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
@@ -21,7 +21,9 @@ add_executable(mlpack_test
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
+  kfn_test.cpp
   kmeans_test.cpp
+  knn_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
@@ -37,8 +39,10 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   mean_shift_test.cpp
   metric_test.cpp
+  minibatch_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
+  network_util_test.cpp
   nmf_test.cpp
   pca_test.cpp
   perceptron_test.cpp
@@ -57,6 +61,7 @@ add_executable(mlpack_test
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
+  split_data_test.cpp
   termination_policy_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
@@ -65,6 +70,7 @@ add_executable(mlpack_test
   svd_incremental_test.cpp
   nystroem_method_test.cpp
   armadillo_svd_test.cpp
+  recurrent_network_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
@@ -82,4 +88,10 @@ add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E tar xjpf mnist_first250_training_4s_and_9s.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+)
+
+# For 'make test'.
+add_test (NAME mlpack_test
+  COMMAND mlpack_test "--log_level=test_suite" # Set UTF runtime param
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
 )

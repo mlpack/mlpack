@@ -1,8 +1,9 @@
 /**
- * @file allknn_main.cpp
+w
+ * @file kfn_main.cpp
  * @author Ryan Curtin
  *
- * Implementation of the AllkNN executable.  Allows some number of standard
+ * Implementation of the KFN executable.  Allows some number of standard
  * options.
  *
  * This file is part of mlpack 2.0.0.
@@ -21,7 +22,6 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
 
 #include <string>
 #include <fstream>
@@ -38,23 +38,22 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 
 // Information about the program itself.
-PROGRAM_INFO("k-Nearest-Neighbors",
-    "This program will calculate the k-nearest-neighbors of a set of "
-    "points using kd-trees or cover trees (cover tree support is experimental "
-    "and may be slow). You may specify a separate set of "
-    "reference points and query points, or just a reference set which will be "
-    "used as both the reference and query set."
+PROGRAM_INFO("All K-Furthest-Neighbors",
+    "This program will calculate the all k-furthest-neighbors of a set of "
+    "points. You may specify a separate set of reference points and query "
+    "points, or just a reference set which will be used as both the reference "
+    "and query set."
     "\n\n"
-    "For example, the following will calculate the 5 nearest neighbors of each"
+    "For example, the following will calculate the 5 furthest neighbors of each"
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
     "neighbors in the file 'neighbors.csv':"
     "\n\n"
-    "$ allknn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
-    "  --neighbors_file=neighbors.csv"
+    "$ mlpack_kfn --k=5 --reference_file=input.csv "
+    "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
     "\n\n"
     "The output files are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "
-    "reference set which is the i'th nearest neighbor from the point in the "
+    "reference set which is the i'th furthest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
     "corresponds to the distance between those two points.");
 
@@ -65,22 +64,21 @@ PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained kNN model.", "m",
+PARAM_STRING("input_model_file", "File containing pre-trained kFN model.", "m",
     "");
-PARAM_STRING("output_model_file", "If specified, the kNN model will be saved "
-    "to the given file.", "M", "");
+PARAM_STRING("output_model_file", "If specified, the kFN model will be saved to"
+    " the given file.", "M", "");
 
-// The user may specify a query file of query points and a number of nearest
+// The user may specify a query file of query points and a number of furthest
 // neighbors to search for.
 PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
+PARAM_INT("k", "Number of furthest neighbors to find.", "k", 0);
 
-// The user may specify the type of tree to use, and a few parameters for tree
+// The user may specify the type of tree to use, and a few pararmeters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'ball'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, and R* trees).", "l", 20);
+    "'x', 'ball'.", "t", "kd");
+PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -88,10 +86,10 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "S");
+    "dual-tree search).", "s");
 
 // Convenience typedef.
-typedef NSModel<NearestNeighborSort> KNNModel;
+typedef NSModel<FurthestNeighborSort> KFNModel;
 
 int main(int argc, char *argv[])
 {
@@ -139,26 +137,24 @@ int main(int argc, char *argv[])
   if (CLI::HasParam("k") &&
       !(CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")))
     Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
-        << "so the nearest neighbor search results will not be saved!" << endl;
+        << "so the furthest neighbor search results will not be saved!" << endl;
 
   // If the user specifies output files but no k, they should be warned.
   if ((CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")) &&
       !CLI::HasParam("k"))
-    Log::Warn << "An output file for nearest neighbor search is given ("
-        << "--neighbors_file or --distances_file), but nearest neighbor search "
-        << "is not being performed because k (--k) is not specified!  No "
+    Log::Warn << "An output file for furthest neighbor search is given ("
+        << "--neighbors_file or --distances_file), but furthest neighbor search"
+        << " is not being performed because k (--k) is not specified!  No "
         << "results will be saved." << endl;
 
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
   if (lsInt < 1)
-  {
-    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
-        "than 0." << endl;
-  }
+    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater than 0."
+        << endl;
 
   // We either have to load the reference data, or we have to load the model.
-  NSModel<NearestNeighborSort> knn;
+  NSModel<FurthestNeighborSort> kfn;
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
   if (CLI::HasParam("reference_file"))
@@ -168,47 +164,48 @@ int main(int argc, char *argv[])
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
-    int tree = 0;
+    KFNModel::TreeTypes tree = KFNModel::KD_TREE;
     if (treeType == "kd")
-      tree = KNNModel::KD_TREE;
+      tree = KFNModel::KD_TREE;
     else if (treeType == "cover")
-      tree = KNNModel::COVER_TREE;
+      tree = KFNModel::COVER_TREE;
     else if (treeType == "r")
-      tree = KNNModel::R_TREE;
+      tree = KFNModel::R_TREE;
     else if (treeType == "r-star")
-      tree = KNNModel::R_STAR_TREE;
+      tree = KFNModel::R_STAR_TREE;
     else if (treeType == "ball")
-      tree = KNNModel::BALL_TREE;
+      tree = KFNModel::BALL_TREE;
+    else if (treeType == "x")
+      tree = KFNModel::X_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
 
-    knn.TreeType() = tree;
-    knn.RandomBasis() = randomBasis;
+    kfn.TreeType() = tree;
+    kfn.RandomBasis() = randomBasis;
 
     arma::mat referenceSet;
     data::Load(referenceFile, referenceSet, true);
 
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
+        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
     // Load the model from file.
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
+    data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
 
-    Log::Info << "Loaded kNN model from '" << inputModelFile << "' (trained on "
-        << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
+    Log::Info << "Loaded kFN model from '" << inputModelFile << "' (trained on "
+        << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
         << endl;
 
     // Adjust singleMode and naive if necessary.
-    knn.SingleMode() = CLI::HasParam("single_mode");
-    knn.Naive() = CLI::HasParam("naive");
-    knn.LeafSize() = size_t(lsInt);
+    kfn.SingleMode() = CLI::HasParam("single_mode");
+    kfn.Naive() = CLI::HasParam("naive");
+    kfn.LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -228,27 +225,25 @@ int main(int argc, char *argv[])
     // Sanity check on k value: must be greater than 0, must be less than the
     // number of reference points.  Since it is unsigned, we only test the upper
     // bound.
-    if (k > knn.Dataset().n_cols)
+    if (k > kfn.Dataset().n_cols)
     {
-      Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
-      Log::Fatal << "than or equal to the number of reference points (";
-      Log::Fatal << knn.Dataset().n_cols << ")." << endl;
+      Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
+          << "than or equal to the number of reference points ("
+          << kfn.Dataset().n_cols << ")." << endl;
     }
 
     // Naive mode overrides single mode.
     if (singleMode && naive)
-    {
       Log::Warn << "--single_mode ignored because --naive is present." << endl;
-    }
 
     // Now run the search.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
     if (CLI::HasParam("query_file"))
-      knn.Search(std::move(queryData), k, neighbors, distances);
+      kfn.Search(std::move(queryData), k, neighbors, distances);
     else
-      knn.Search(k, neighbors, distances);
+      kfn.Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output, if desired.
@@ -260,7 +255,7 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model_file"))
   {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "knn_model", knn);
+    const string outputModelFile = CLI::GetParam<string>("output_model_File");
+    data::Save(outputModelFile, "kfn_model", kfn);
   }
 }

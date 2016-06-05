@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
-#define __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#ifndef MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#define MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
 
 #include <mlpack/core.hpp>
 
@@ -50,4 +50,4 @@ class FirstPointIsRoot
 } // namespace tree
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
+#endif // MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP

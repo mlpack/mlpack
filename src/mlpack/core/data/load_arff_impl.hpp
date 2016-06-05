@@ -19,11 +19,13 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
-#define __MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
+#define MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
+
+#include <boost/algorithm/string.hpp>
 
 namespace mlpack {
 namespace data {
@@ -174,6 +176,14 @@ void LoadARFF(const std::string& filename,
     std::stringstream token;
     for (Tokenizer::iterator it = tok.begin(); it != tok.end(); ++it)
     {
+      // Check that we are not too many columns in.
+      if (col >= matrix.n_rows)
+      {
+        std::stringstream error;
+        error << "Too many columns in line " << (headerLines + row) << ".";
+        throw std::runtime_error(error.str());
+      }
+
       // What should this token be?
       if (info.Type(col) == Datatype::categorical)
       {
@@ -196,11 +206,14 @@ void LoadARFF(const std::string& filename,
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.
             std::stringstream error;
-            if (token.str() == "?")
-              error << "missing values ('?') not supported ";
+            std::string tokenStr = token.str();
+            boost::trim(tokenStr);
+            if (tokenStr == "?")
+              error << "Missing values ('?') not supported, ";
             else
-              error << "parse error ";
-            error << "at line " << (headerLines + row) << " token " << col;
+              error << "Parse error ";
+            error << "at line " << (headerLines + row) << " token " << col
+                << ": \"" << tokenStr << "\".";
             throw std::runtime_error(error.str());
           }
         }

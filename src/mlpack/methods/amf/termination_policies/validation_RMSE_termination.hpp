@@ -34,7 +34,7 @@ namespace amf
  * The input data matrix is divided into 2 sets, training set and validation set.
  * Entries of validation set are nullifed in the input matrix. Termination
  * criterion is met when increase in validation set RMSe value drops below the
- * given tolerance. To accomodate spikes certain number of successive validation
+ * given tolerance. To accommodate spikes certain number of successive validation
  * RMSE drops are accepted. This upper imit on successive drops can be adjusted
  * with reverseStepCount. Secondary termination criterion terminates algorithm
  * when iteration count goes above the threshold.

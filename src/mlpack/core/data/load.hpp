@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_HPP
-#define __MLPACK_CORE_DATA_LOAD_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_HPP
+#define MLPACK_CORE_DATA_LOAD_HPP
 
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.

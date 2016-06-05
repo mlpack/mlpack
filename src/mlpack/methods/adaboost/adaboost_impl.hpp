@@ -33,8 +33,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
-#define __MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
+#ifndef MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
+#define MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
 
 #include "adaboost.hpp"
 
@@ -88,7 +88,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
 
   // crt is the cumulative rt value for terminating the optimization when rt is
   // changing by less than the tolerance.
-  double rt, crt, alphat = 0.0, zt;
+  double rt, crt = 0.0, alphat = 0.0, zt;
 
   ztProduct = 1.0;
 

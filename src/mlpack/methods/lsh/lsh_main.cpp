@@ -127,10 +127,11 @@ int main(int argc, char *argv[])
   }
 
   if ((CLI::HasParam("query_file") && !CLI::HasParam("k")) ||
-      (!CLI::HasParam("query_file") && CLI::HasParam("k")))
+      (!CLI::HasParam("query_file") && !CLI::HasParam("reference_file") &&
+       CLI::HasParam("k")))
   {
-    Log::Fatal << "Both --query_file and --k must be specified if search is to "
-        << "be done!" << endl;
+    Log::Fatal << "Both --query_file or --reference_file and --k must be "
+        << "specified if search is to be done!" << endl;
   }
 
   if (CLI::HasParam("input_model_file") && CLI::HasParam("k") &&

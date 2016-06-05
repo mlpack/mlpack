@@ -13,6 +13,7 @@ developers who want to use and contribute to mlpack but are not sure where to
 start.
 
  - \ref build
+ - \ref formatdoc
  - \ref matrices
  - \ref iodoc
  - \ref timer
@@ -21,8 +22,8 @@ start.
 @section method_tut Method-specific Tutorials
 
 These tutorials introduce the various methods mlpack offers, aimed at users who
-simply want to use the methods mlpack offers.  These tutorials start with simple
-examples and progress to complex, extensible uses.
+want to get started quickly.  These tutorials start with simple examples and
+progress to complex, extensible uses.
 
  - \ref nstutorial
  - \ref lrtutorial
@@ -32,4 +33,17 @@ examples and progress to complex, extensible uses.
  - \ref fmkstutorial
  - \ref emst_tutorial
  - \ref amftutorial
+ - \ref cftutorial
+
+@section policy_tut Policy Class Documentation
+
+mlpack uses templates to achieve its genericity and flexibility.  Some of the
+template types used by mlpack are common across multiple machine learning
+algorithms.  The links below provide documentation for some of these common
+types.
+
+ - \ref metrics
+ - \ref kernels
+ - \ref trees
+
 */

@@ -21,10 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
-#define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
-
-#include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
+#ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
+#define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
 
 namespace mlpack {
 namespace kmeans {

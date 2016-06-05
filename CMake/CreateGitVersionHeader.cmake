@@ -9,21 +9,21 @@ execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # Get the current version, if it exists.
-if(EXISTS ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
-  file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
+  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp
       _OLD_GITVERSION_CONTENTS)
   string(REGEX REPLACE ".*return \"mlpack git-([0-9a-f]+)\".*" "\\1"
       OLD_GIT_REVISION ${_OLD_GITVERSION_CONTENTS})
-else(EXISTS ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
+else()
   set(OLD_GIT_REVISION "notfound")
-endif(EXISTS ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
+endif()
 
 if("${OLD_GIT_REVISION}" STREQUAL "${NEW_GIT_REVISION}")
   message(STATUS "gitversion.hpp is already up to date.")
-else("${OLD_GIT_REVISION}" STREQUAL "${NEW_GIT_REVISION}")
+else()
   # Remove the old version.
-  file(REMOVE ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
-  file(WRITE ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp
+  file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp)
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp
       "return \"mlpack git-${NEW_GIT_REVISION}\";\n")
   message(STATUS "Updated gitversion.hpp.")
-endif("${OLD_GIT_REVISION}" STREQUAL "${NEW_GIT_REVISION}")
+endif()

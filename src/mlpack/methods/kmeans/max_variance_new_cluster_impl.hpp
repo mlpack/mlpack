@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
+#ifndef MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
+#define MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
 
 // Just in case it has not been included.
 #include "max_variance_new_cluster.hpp"
@@ -48,6 +48,11 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Now find the cluster with maximum variance.
   arma::uword maxVarCluster = 0;
   variances.max(maxVarCluster);
+
+  // If the cluster with maximum variance has variance of 0, then we can't
+  // continue.  All the points are the same.
+  if (variances[maxVarCluster] == 0.0)
+    return 0;
 
   // Now, inside this cluster, find the point which is furthest away.
   size_t furthestPoint = data.n_cols;

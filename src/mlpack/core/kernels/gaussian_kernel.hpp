@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
-#define __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
+#ifndef MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
+#define MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -89,9 +89,9 @@ class GaussianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * std::pow(t, 2.0));
   }
-  
+
   /**
-   * Evaluation of the gradient of Gaussian kernel 
+   * Evaluation of the gradient of Gaussian kernel
    * given the distance between two points.
    *
    * @param t The distance between the two points the kernel is evaluated on.
@@ -101,7 +101,7 @@ class GaussianKernel
   double Gradient(const double t) const {
     return 2 * t * gamma * exp(gamma * std::pow(t, 2.0));
   }
-  
+
   /**
    * Evaluation of the gradient of Gaussian kernel
    * given the squared distance between two points.

@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
-#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core.hpp>
 
@@ -152,4 +152,4 @@ class LovaszThetaSDP
 } // namespace optimization
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP

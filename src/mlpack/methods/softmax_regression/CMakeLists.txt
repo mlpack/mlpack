@@ -16,10 +16,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_softmax_regression
-  softmax_regression_main.cpp
-)
-target_link_libraries(mlpack_softmax_regression
-  mlpack
-)
-install(TARGETS mlpack_softmax_regression RUNTIME DESTINATION bin)
+add_cli_executable(softmax_regression)

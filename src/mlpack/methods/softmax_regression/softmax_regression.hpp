@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
-#define __MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
+#ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
+#define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
@@ -136,7 +136,8 @@ class SoftmaxRegression
    * @param testData Matrix of data points using which predictions are made.
    * @param labels Vector of labels associated with the data.
    */
-  double ComputeAccuracy(const arma::mat& testData, const arma::Row<size_t>& labels);
+  double ComputeAccuracy(const arma::mat& testData,
+                         const arma::Row<size_t>& labels) const;
 
   /**
    * Train the softmax regression model with the given optimizer.

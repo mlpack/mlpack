@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
-#define __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
+#define MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "normalize_labels.hpp"

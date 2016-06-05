@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
-#define __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
+#ifndef MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
+#define MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
 
 #include <boost/version.hpp>
 

@@ -47,13 +47,13 @@ double EpanechnikovKernel::Evaluate(const double distance) const
 }
 
 /**
- * Evaluate gradient of the kernel not for two points 
+ * Evaluate gradient of the kernel not for two points
  * but for a numerical value.
  */
 double EpanechnikovKernel::Gradient(const double distance) const {
   if (std::abs(bandwidth) < std::abs(distance)) {
     return 0;
-  } else if (std::abs(bandwidth > std::abs(distance))) {
+  } else if (std::abs(bandwidth) > std::abs(distance)) {
     return -2 * inverseBandwidthSquared * distance;
   } else {
     // The gradient doesn't exist.

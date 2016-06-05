@@ -251,6 +251,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   std::vector<arma::mat> observations;
   size_t obsNum = 250; // Number of observations.
   size_t obsLen = 500; // Number of elements in each observation.
+  size_t stateZeroStarts = 0; // Number of times we start in state 0.
   for (size_t i = 0; i < obsNum; i++)
   {
     arma::mat observation(1, obsLen);
@@ -264,9 +265,15 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
       double r = math::Random();
 
       if (r <= 0.5)
+      {
+        if (obs == 0)
+          ++stateZeroStarts;
         state = 0;
+      }
       else
+      {
         state = 1;
+      }
 
       // Now set the observation.
       r = math::Random();
@@ -296,9 +303,12 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
 
   hmm.Train(observations);
 
+  // Calculate true probability of class 0 at the start.
+  double prob = double(stateZeroStarts) / observations.size();
+
   // Only require 2.5% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], prob, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 1.0 - prob, 2.5);
 
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);
@@ -382,7 +392,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   // Make sure the initial weights are fine.  They should be equal (or close).
   for (size_t row = 0; row < hmm.Transition().n_rows; ++row)
-    BOOST_REQUIRE_SMALL(hmm.Initial()[row] - 1.0 / 3.0, 0.07);
+    BOOST_REQUIRE_SMALL(hmm.Initial()[row] - 1.0 / 3.0, 0.1);
 
   // We can't use % tolerance here because percent error increases as the actual
   // value gets very small.  So, instead, we just ensure that every value is no
@@ -390,7 +400,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   for (size_t row = 0; row < hmm.Transition().n_rows; row++)
     for (size_t col = 0; col < hmm.Transition().n_cols; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - transition(row, col),
-          0.02);
+          0.025);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
   {
@@ -400,7 +410,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
       arma::vec obs(1);
       obs[0] = row;
       BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          emission[col].Probability(obs), 0.02);
+          emission[col].Probability(obs), 0.07);
     }
   }
 }
@@ -756,16 +766,16 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - hmm2.Transition()(row,
-          col), 0.03);
+          col), 0.04);
 
   // Check that each Gaussian is the same.
   for (size_t em = 0; em < 3; em++)
   {
     // Check that the mean is the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(0) -
-        hmm2.Emission()[em].Mean()(0), 0.09);
+        hmm2.Emission()[em].Mean()(0), 0.1);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(1) -
-        hmm2.Emission()[em].Mean()(1), 0.09);
+        hmm2.Emission()[em].Mean()(1), 0.1);
 
     // Check that the covariances are the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(0, 0) -

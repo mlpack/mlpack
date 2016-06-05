@@ -25,6 +25,7 @@ set(SOURCES
   random_partition.hpp
   refined_start.hpp
   refined_start_impl.hpp
+  sample_initialization.hpp
 )
 
 # Add directory name to sources.
@@ -36,11 +37,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# The main K-Means executable.
-add_executable(mlpack_kmeans
-  kmeans_main.cpp
-)
-target_link_libraries(mlpack_kmeans
-  mlpack
-)
-install(TARGETS mlpack_kmeans RUNTIME DESTINATION bin)
+add_cli_executable(kmeans)

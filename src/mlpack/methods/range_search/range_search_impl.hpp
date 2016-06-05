@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
-#define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
+#ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
+#define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
 
 // Just in case it hasn't been included.
 #include "range_search.hpp"

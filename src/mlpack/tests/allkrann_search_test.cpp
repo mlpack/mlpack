@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::mat copy(dataset);
 
   AllkRANN moveknn(std::move(copy));
-  AllkRANN allknn(dataset);
+  AllkRANN knn(dataset);
 
   BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
   BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::Mat<size_t> moveNeighbors, neighbors;
 
   moveknn.Search(1, moveNeighbors, moveDistances);
-  allknn.Search(1, neighbors, distances);
+  knn.Search(1, neighbors, distances);
 
   BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
   BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Build all the possible models.
-  KNNModel models[8];
+  KNNModel models[10];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
@@ -649,13 +649,15 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
   models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
   models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
+  models[8] = KNNModel(KNNModel::TreeTypes::X_TREE, false);
+  models[9] = KNNModel(KNNModel::TreeTypes::X_TREE, true);
 
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
   for (size_t j = 0; j < 3; ++j)
   {
-    for (size_t i = 0; i < 8; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);

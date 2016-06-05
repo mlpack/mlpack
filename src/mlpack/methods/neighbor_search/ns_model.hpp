@@ -22,8 +22,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
@@ -62,11 +62,12 @@ class NSModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
-    BALL_TREE
+    BALL_TREE,
+    X_TREE
   };
 
  private:
-  int treeType;
+  TreeTypes treeType;
   size_t leafSize;
 
   // For random projections.
@@ -90,13 +91,14 @@ class NSModel
   NSType<tree::RTree>* rTreeNS;
   NSType<tree::RStarTree>* rStarTreeNS;
   NSType<tree::BallTree>* ballTreeNS;
+  NSType<tree::XTree>* xTreeNS;
 
  public:
   /**
    * Initialize the NSModel with the given type and whether or not a random
    * basis should be used.
    */
-  NSModel(int treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   //! Clean memory, if necessary.
   ~NSModel();
@@ -118,8 +120,8 @@ class NSModel
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
 
-  int TreeType() const { return treeType; }
-  int& TreeType() { return treeType; }
+  TreeTypes TreeType() const { return treeType; }
+  TreeTypes& TreeType() { return treeType; }
 
   bool RandomBasis() const { return randomBasis; }
   bool& RandomBasis() { return randomBasis; }

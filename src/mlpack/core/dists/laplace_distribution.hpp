@@ -20,8 +20,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
-#define __MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 
 namespace mlpack {
 namespace distribution {

@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
+#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
+#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
 
 // In case it hasn't been included yet.
 #include "../binary_space_tree.hpp"
@@ -118,7 +118,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using BallTree = BinarySpaceTree<MetricType,
                                  StatisticType,
                                  MatType,
-                                 bound::HRectBound,
+                                 bound::BallBound,
                                  MidpointSplit>;
 
 /**
@@ -147,7 +147,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           StatisticType,
                                           MatType,
-                                          bound::HRectBound,
+                                          bound::BallBound,
                                           MeanSplit>;
 
 } // namespace tree

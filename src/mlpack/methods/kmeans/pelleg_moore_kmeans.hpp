@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
+#ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
+#define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "pelleg_moore_kmeans_statistic.hpp"

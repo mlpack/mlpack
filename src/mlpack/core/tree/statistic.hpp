@@ -21,8 +21,8 @@
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MLPACK_CORE_TREE_STATISTIC_HPP
-#define __MLPACK_CORE_TREE_STATISTIC_HPP
+#ifndef MLPACK_CORE_TREE_STATISTIC_HPP
+#define MLPACK_CORE_TREE_STATISTIC_HPP
 
 namespace mlpack {
 namespace tree {
@@ -58,4 +58,4 @@ class EmptyStatistic
 } // namespace tree
 } // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_STATISTIC_HPP
+#endif // MLPACK_CORE_TREE_STATISTIC_HPP

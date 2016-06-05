@@ -19,14 +19,13 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
-#define __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
+#ifndef MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
+#define MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
 
 #include "map"
@@ -63,7 +62,7 @@ template<bool UseKernel, typename KernelType, typename MatType>
 double MeanShift<UseKernel, KernelType, MatType>::
 EstimateRadius(const MatType& data, double ratio)
 {
-  neighbor::AllkNN neighborSearch(data);
+  neighbor::KNN neighborSearch(data);
 
   /**
    * For each point in dataset, select nNeighbors nearest points and get
@@ -272,7 +271,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   }
 
   // Assign centroids to each point.
-  neighbor::AllkNN neighborSearcher(centroids);
+  neighbor::KNN neighborSearcher(centroids);
   arma::mat neighborDistances;
   arma::Mat<size_t> resultingNeighbors;
   neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);

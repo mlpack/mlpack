@@ -32,8 +32,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_EMST_DTB_HPP
-#define __MLPACK_METHODS_EMST_DTB_HPP
+#ifndef MLPACK_METHODS_EMST_DTB_HPP
+#define MLPACK_METHODS_EMST_DTB_HPP
 
 #include "dtb_stat.hpp"
 #include "edge_pair.hpp"
@@ -220,4 +220,4 @@ class DualTreeBoruvka
 
 #include "dtb_impl.hpp"
 
-#endif // __MLPACK_METHODS_EMST_DTB_HPP
+#endif // MLPACK_METHODS_EMST_DTB_HPP

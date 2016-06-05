@@ -21,8 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_UTIL_CLI_HPP
-#define __MLPACK_CORE_UTIL_CLI_HPP
+#ifndef MLPACK_CORE_UTIL_CLI_HPP
+#define MLPACK_CORE_UTIL_CLI_HPP
 
 #include <list>
 #include <iostream>
@@ -438,8 +438,8 @@ struct ParamData
  * The flag (boolean) type automatically defaults to false; it is specified
  * merely as a flag on the command line (no '=true' is required).
  *
- * Here is an example of a few parameters being defined; this is for the AllkNN
- * executable (methods/neighbor_search/allknn_main.cpp):
+ * Here is an example of a few parameters being defined; this is for the KNN
+ * executable (methods/neighbor_search/knn_main.cpp):
  *
  * @code
  * PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -735,15 +735,6 @@ class CLI
    * @return The alias associated with value.
    */
   static std::string AliasReverseLookup(const std::string& value);
-
-#ifdef _WIN32
-  /**
-   * Converts a FILETIME structure to an equivalent timeval structure.
-   * Only necessary on windows platforms.
-   * @param tv Valid timeval structure.
-   */
-  void FileTimeToTimeVal(timeval* tv);
-#endif
 
   /**
    * Checks that all required parameters have been specified on the command

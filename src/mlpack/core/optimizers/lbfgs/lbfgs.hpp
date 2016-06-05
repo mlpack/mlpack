@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/core.hpp>
 
@@ -273,5 +273,5 @@ class L_BFGS
 
 #include "lbfgs_impl.hpp"
 
-#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
