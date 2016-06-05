@@ -41,10 +41,6 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
 @endcode
 
-If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
-Debian older than Jessie, you will have to compile Armadillo from source.  See
-the README.txt distributed with Armadillo for more information.
-
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
