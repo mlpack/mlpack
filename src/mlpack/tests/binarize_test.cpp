@@ -44,26 +44,6 @@ BOOST_AUTO_TEST_CASE(BinarizeThreshold)
 {
   mat input(10, 10, fill::randu); // fill input with randome Number
   mat constMat(10, 10);
-  math::RandomSeed((size_t) std::time(NULL));
-  double threshold = math::Random(); // random number threshold
-  constMat.fill(threshold);
-
-  umat answer = input > constMat;
-
-  // Binarize every values inside the matrix with threshold of 0;
-  Binarize(input, threshold);
-
-  CheckAnswer(input, answer);
-}
-
-/**
- * The same test as above, but on a larger dataset.
- */
-BOOST_AUTO_TEST_CASE(BinarizeThresholdLargerTest)
-{
-  mat input(10, 500, fill::randu); // fill input with randome Number
-  mat constMat(10, 500);
-  math::RandomSeed((size_t) std::time(NULL));
   double threshold = math::Random(); // random number threshold
   constMat.fill(threshold);
 

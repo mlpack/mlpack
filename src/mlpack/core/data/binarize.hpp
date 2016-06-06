@@ -66,8 +66,38 @@ template<typename T>
 void Binarize(arma::Mat<T>& input,
               const double threshold)
 {
-  for (size_t i = 0; i < input.n_rows; ++i)
-    Binarize(input, threshold, i);
+  for (size_t i = 0; i < input.n_cols; ++i)
+  {
+    for (size_t j = 0; j < input.n_rows; ++j)
+    {
+      if (input(i, j) > threshold)
+        input(i, j) = 1;
+      else
+        input(i, j) = 0;
+    }
+  }
+ }
+
+template<typename T>
+void Binarize(const arma::Mat<T>& input,
+              arma::Mat<T>& output,
+              const double threshold)
+{
+  for (size_t i = 0; i < input.n_cols; ++i)
+  {
+    output.row(i) =
+        arma::conv_to<arma::Mat<T>>::from(input.row(i) > threshold);
+  }
+}
+
+template<typename T>
+void Binarize(const arma::Mat<T>& input,
+              arma::Mat<T>& output,
+              const double threshold,
+              const size_t dimension)
+{
+   output.row(dimension) =
+      arma::conv_to<arma::Mat<T>>::from(input.row(dimension) > threshold);
 }
 
 } // namespace data
