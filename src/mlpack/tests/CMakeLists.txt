@@ -31,6 +31,7 @@ add_executable(mlpack_test
   kmeans_test.cpp
   knn_test.cpp
   krann_search_test.cpp
+  aknn_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
