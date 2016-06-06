@@ -1134,6 +1134,50 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
   remove("test.csv");
 }
 
+BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "200-DM, 1, 1" << endl;
+  f << "1, 1, 1" << endl;
+  f << "1, 1, 1" << endl;
+  f << "1, 1, 1" << endl;
+  f.close();
+
+  // Load the test CSV.
+  arma::umat matrix;
+  DatasetInfo info;
+  data::Load("test.csv", matrix, info, true);
+
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+
+  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
+  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(0, 3), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 3), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 3), 1);
+
+  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+
+  BOOST_REQUIRE_EQUAL(info.MapString("200-DM", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 1);
+
+  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "200-DM");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
+
+  remove("test.csv");
+}
+
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
 {
   fstream f;
@@ -1359,6 +1403,51 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
   remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
+{
+    fstream f;
+    f.open("test.csv", fstream::out);
+    f << " 200-DM ,   1  , 1  " << endl;
+    f << "  1 , 1  , 1  " << endl;
+    f << "  1  ,   1  ,  1  " << endl;
+    f << "  1  , 1  , 1  " << endl;
+    f.close();
+
+    // Load the test CSV.
+    arma::umat matrix;
+    DatasetInfo info;
+    data::Load("test.csv", matrix, info, true, false); // No transpose.
+
+    BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
+    BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+
+    BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
+    BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
+    BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
+    BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
+    BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
+    BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
+    BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
+    BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
+    BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
+    BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
+    BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
+    BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+
+    BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+    BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+    BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+    BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+
+    BOOST_REQUIRE_EQUAL(info.MapString("200-DM", 1), 0);
+    BOOST_REQUIRE_EQUAL(info.MapString("1", 1), 1);
+
+    BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
+    BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
+
+    remove("test.csv");
 }
 
 /**
