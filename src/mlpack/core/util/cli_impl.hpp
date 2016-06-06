@@ -28,7 +28,7 @@ namespace mlpack {
  *   unless the parameter is specified.
  */
 template<typename T>
-void CLI::Add(const std::string& path,
+void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
               bool required)
@@ -36,10 +36,10 @@ void CLI::Add(const std::string& path,
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId = alias.length() ? identifier + "," + alias : identifier;
 
   // Add the alias, if necessary
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost program_options.
   desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
@@ -51,16 +51,16 @@ void CLI::Add(const std::string& path,
   T tmp = T();
 
   data.desc = description;
-  data.name = path;
+  data.name = identifier;
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
 }
 
 // We specialize this in cli.cpp.
@@ -73,7 +73,7 @@ bool& CLI::GetParam<bool>(const std::string& identifier);
  *   more or less valid value is returned.
  *
  * @tparam T The type of the parameter.
- * @param identifier The full pathname of the parameter.
+ * @param identifier The full name of the parameter.
  *
  * @return The value of the parameter.  Use CLI::CheckValue to determine if it's
  *     valid.

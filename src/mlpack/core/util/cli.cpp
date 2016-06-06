@@ -100,18 +100,18 @@ CLI::~CLI()
  * @param alias An alias for the parameter.
  * @param required Indicates if parameter must be set on command line.
  */
-void CLI::Add(const std::string& path,
-             const std::string& description,
-             const std::string& alias,
-             bool required)
+void CLI::Add(const std::string& identifier,
+              const std::string& description,
+              const std::string& alias,
+              bool required)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
   // Must make use of boost option name syntax.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId = alias.length() ? identifier + "," + alias : identifier;
 
   // Deal with a required alias.
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost::program_options.
   desc.add_options()(progOptId.c_str(), description.c_str());
@@ -122,15 +122,15 @@ void CLI::Add(const std::string& path,
   ParamData data;
   data.desc = description;
   data.tname = "";
-  data.name = path;
+  data.name = identifier;
   data.isFlag = false;
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
 
   return;
 }
@@ -155,8 +155,8 @@ void CLI::AddAlias(const std::string& alias, const std::string& original)
  * @brief Adds a flag parameter to CLI.
  */
 void CLI::AddFlag(const std::string& identifier,
-                 const std::string& description,
-                 const std::string& alias)
+                  const std::string& description,
+                  const std::string& alias)
 {
   // Reuse functionality from Add().
   Add(identifier, description, alias, false);
