@@ -144,7 +144,7 @@ void Binarize(const arma::Mat<T>& input,
               const double threshold,
               const size_t dimension)
 {
-  output.copy_size(input);
+  output(input);
 
   for (size_t i = 0; i < input.n_cols; ++i)
   {
