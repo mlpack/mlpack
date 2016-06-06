@@ -17,7 +17,7 @@ add_executable(mlpack_test
   det_test.cpp
   distribution_test.cpp
   emst_test.cpp
-#  fastmks_test.cpp
+  fastmks_test.cpp
   feedforward_network_test.cpp
   gmm_test.cpp
   hmm_test.cpp
@@ -63,7 +63,7 @@ add_executable(mlpack_test
   sgd_test.cpp
   serialization.hpp
   serialization.cpp
- # serialization_test.cpp
+  serialization_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
