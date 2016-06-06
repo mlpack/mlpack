@@ -187,6 +187,8 @@ private:
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
+	  //parse the numbers from a line(ex : 1,2,3,4), if the parser find the number
+	  //it will execute the setNum function
       const bool allNumber =
           qi::parse(begin, line.end(), numRule[setNum] % ",");
       //input like 2-200 or 2DM will make the parser fail,
@@ -288,6 +290,8 @@ private:
       row = 0;
       progress = 0;
       const size_t oldSize = mapCols.size();
+	  //parse number of characters from a line, it will execute setNum if it is number,
+	  //else execute setCharClass, "|" means "if not a, then b"
       const bool canParse = qi::parse(begin, line.end(),
                                       (numRule[setNum] | charRule[setCharClass]) % ",");
       //std::cout<<std::endl;
