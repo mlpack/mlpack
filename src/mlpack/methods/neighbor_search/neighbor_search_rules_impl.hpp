@@ -344,6 +344,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 
   double worstDistance = SortPolicy::BestDistance();
   double bestDistance = SortPolicy::WorstDistance();
+  double bestPointDistance = SortPolicy::WorstDistance();
+  double auxDistance = SortPolicy::WorstDistance();
 
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
@@ -351,32 +353,42 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
     const double distance = distances(distances.n_rows - 1, queryNode.Point(i));
     if (SortPolicy::IsBetter(worstDistance, distance))
       worstDistance = distance;
-    if (SortPolicy::IsBetter(distance, bestDistance))
-      bestDistance = distance;
+    if (SortPolicy::IsBetter(distance, bestPointDistance))
+      bestPointDistance = distance;
   }
 
-  // Add triangle inequality adjustment to best distance.  It is possible this
-  // could be tighter for some certain types of trees.
-  bestDistance = SortPolicy::CombineWorst(bestDistance,
-      queryNode.FurthestPointDistance() +
-      queryNode.FurthestDescendantDistance());
+  auxDistance = bestPointDistance;
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double firstBound = queryNode.Child(i).Stat().FirstBound();
-    const double adjustment = std::max(0.0,
-        queryNode.FurthestDescendantDistance() -
-        queryNode.Child(i).FurthestDescendantDistance());
-    const double adjustedSecondBound = SortPolicy::CombineWorst(
-        queryNode.Child(i).Stat().SecondBound(), 2 * adjustment);
+    const double auxBound = queryNode.Child(i).Stat().AuxBound();
 
     if (SortPolicy::IsBetter(worstDistance, firstBound))
       worstDistance = firstBound;
-    if (SortPolicy::IsBetter(adjustedSecondBound, bestDistance))
-      bestDistance = adjustedSecondBound;
+    if (SortPolicy::IsBetter(auxBound, auxDistance))
+      auxDistance = auxBound;
   }
+
+  // Add triangle inequality adjustment to best distance.  It is possible this
+  // could be tighter for some certain types of trees.
+  bestDistance = SortPolicy::CombineWorst(auxDistance,
+      2 * queryNode.FurthestDescendantDistance());
+
+  // Add triangle inequality adjustment to best distance of points in node.
+  bestPointDistance = SortPolicy::CombineWorst(bestPointDistance,
+      queryNode.FurthestPointDistance() +
+      queryNode.FurthestDescendantDistance());
+
+  if (SortPolicy::IsBetter(bestPointDistance, bestDistance))
+    bestDistance = bestPointDistance;
+
+  // At this point:
+  // worstDistance holds the value of B_1(N_q).
+  // bestDistance holds the value of B_2(N_q).
+  // auxDistance holds the value of B_aux(N_q).
 
   // Now consider the parent bounds.
   if (queryNode.Parent() != NULL)
@@ -405,6 +417,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   // Cache bounds for later.
   queryNode.Stat().FirstBound() = worstDistance;
   queryNode.Stat().SecondBound() = bestDistance;
+  queryNode.Stat().AuxBound() = auxDistance;
 
   if (SortPolicy::IsBetter(worstDistance, bestDistance))
     return worstDistance;
