@@ -432,16 +432,8 @@ bool Load(const std::string& filename,
                   std::stringstream sstr;
                   arma::arma_ostream::print_elem(sstr, matrix.at(i, col),
                       false);
-                  if(sstr.str() == "")
-                  {
-                    eT newVal = info.MapString(sstr.str(), col);
-                    matrix.at(i, col) = nan("");
-                  }
-                  else
-                  {
-                    eT newVal = info.MapString(sstr.str(), col);
-                    matrix.at(i, col) = newVal;
-                  }
+                  eT newVal = info.MapString(sstr.str(), col);
+                  matrix.at(i, col) = newVal;
                 }
               }
               else

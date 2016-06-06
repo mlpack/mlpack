@@ -9,7 +9,6 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/core.hpp>
-#include <cmath>
 
 namespace mlpack {
 namespace data {
@@ -32,7 +31,7 @@ void Imputer(arma::Mat<T>& input,
 {
   Log::Info << "impute using " << strategy << " strategy" << std::endl;
 
-  double mappedValue = info.UnmapValue(missingValue, dimension);
+  size_t mappedValue = info.UnmapValue(missingValue, dimension);
   arma::mat stats;
 
   if (strategy == "mean")
@@ -46,12 +45,10 @@ void Imputer(arma::Mat<T>& input,
 
   for (size_t i = 0; i < input.n_cols; ++i)
   {
-    if (std::isnan(input(dimension, i)) ||
-        input(dimension, i) == mappedValue)
+    if (input(dimension, i) == mappedValue)
     {
       // just for demo,
-      Log::Info << "demodemo" << std::endl;
-      input(dimension, i) = 9999; //stats(0, i);
+      input(dimension, i) = stats(0, i);
     }
   }
 }

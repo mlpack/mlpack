@@ -9,7 +9,6 @@
 
 // In case it hasn't already been included.
 #include "dataset_info.hpp"
-#include <cmath>
 
 namespace mlpack {
 namespace data {
@@ -22,27 +21,20 @@ inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
 }
 
 // Map the string to a numeric id.
-inline double DatasetInfo::MapString(const std::string& string,
+inline size_t DatasetInfo::MapString(const std::string& string,
                                      const size_t dimension)
 {
   // If this condition is true, either we have no mapping for the given string
   // or we have no mappings for the given dimension at all.  In either case,
   // we create a mapping.
-  if (string == "")
-  {
-    typedef boost::bimap<std::string, double>::value_type PairType;
-    double nan = std::nan("");
-    maps[dimension].first.insert(PairType(string, nan));
-    return nan;
-  }
-  else if (maps.count(dimension) == 0 ||
+  if (maps.count(dimension) == 0 ||
       maps[dimension].first.left.count(string) == 0)
   {
     // This string does not exist yet.
     size_t& numMappings = maps[dimension].second;
     if (numMappings == 0)
       types[dimension] = Datatype::categorical;
-    typedef boost::bimap<std::string, double>::value_type PairType;
+    typedef boost::bimap<std::string, size_t>::value_type PairType;
     maps[dimension].first.insert(PairType(string, numMappings));
     return numMappings++;
   }
@@ -54,9 +46,8 @@ inline double DatasetInfo::MapString(const std::string& string,
 }
 
 // Return the string corresponding to a value in a given dimension.
-inline const std::string& DatasetInfo::UnmapString(
-    const size_t value,
-    const size_t dimension)
+inline const std::string& DatasetInfo::UnmapString(const size_t value,
+                                                   const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.right.count(value) == 0)
@@ -71,9 +62,8 @@ inline const std::string& DatasetInfo::UnmapString(
 }
 
 // Return the value corresponding to a string in a given dimension.
-inline double DatasetInfo::UnmapValue(
-    const std::string& string,
-    const size_t dimension)
+inline size_t DatasetInfo::UnmapValue(const std::string& string,
+                                      const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.left.count(string) == 0)

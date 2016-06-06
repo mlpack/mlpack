@@ -54,7 +54,7 @@ class DatasetInfo
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
-  double MapString(const std::string& string, const size_t dimension);
+  size_t MapString(const std::string& string, const size_t dimension);
 
   /**
    * Return the string that corresponds to a given value in a given dimension.
@@ -75,7 +75,7 @@ class DatasetInfo
    * @param string Mapped string for value.
    * @param dimension Dimension to unmap string from.
    */
-  double UnmapValue(const std::string& string, const size_t dimension);
+  size_t UnmapValue(const std::string& string, const size_t dimension);
 
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
@@ -112,7 +112,7 @@ class DatasetInfo
 
   //! Mappings from strings to integers.  Map entries will only exist for
   //! dimensions that are categorical.
-  std::unordered_map<size_t, std::pair<boost::bimap<std::string, double>,
+  std::unordered_map<size_t, std::pair<boost::bimap<std::string, size_t>,
       size_t>> maps;
 
 };
