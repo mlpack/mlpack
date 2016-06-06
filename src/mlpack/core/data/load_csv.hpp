@@ -86,7 +86,8 @@ public:
     //parse % "," means you want to parse string like "1,2,3,apple"(noticed it without last comma)
 
     //qi::raw restrict the automatic conversion of boost::spirit, without it, spirit parser
-    //will try to convert the string to std::string, this would cause memory allocation
+    //will try to convert the string to std::string, this may cause memory allocation(if small string 
+	//optimization fail).
     //After we wrap the parser with qi::raw, the attribute(the data accepted by functor) will
     //become boost::iterator_range, this could save a tons of memory allocations
     qi::parse(begin, end, qi::raw[*~qi::char_(",\r\n")][findColSize] % ",");
