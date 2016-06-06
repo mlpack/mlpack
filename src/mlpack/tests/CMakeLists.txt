@@ -28,6 +28,7 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
+  akfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
   krann_search_test.cpp
