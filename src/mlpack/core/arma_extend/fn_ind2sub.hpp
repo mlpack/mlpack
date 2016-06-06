@@ -1,5 +1,6 @@
   
-  #if (ARMA_VERSION_MAJOR < 6 && ARMA_VERSION_MINOR < 399)
+  #if (ARMA_VERSION_MAJOR < 6 || \
+    (ARMA_VERSION_MAJOR == 6 && ARMA_VERSION_MINOR < 399))
   inline
   uvec
   ind2sub(const SizeMat& s, const uword i)
