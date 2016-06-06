@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
     kfn->Search(dataset, 15, neighborsTree, distancesTree);
 
     for (size_t i = 0; i < neighborsTree.n_elem; i++)
-      BOOST_REQUIRE_CLOSE(distancesTree(i), distancesNaive(i), epsilon * 100);
+      REQUIRE_RELATIVE_ERR(distancesTree(i), distancesNaive(i), epsilon);
 
     // Clean the memory.
     delete kfn;
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   kfn.Search(15, neighborsTree, distancesTree);
 
   for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 5);
+    REQUIRE_RELATIVE_ERR(distancesTree[i], distancesNaive[i], 0.05);
 }
 
 /**
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   kfn.Search(15, neighborsTree, distancesTree);
 
   for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 5);
+    REQUIRE_RELATIVE_ERR(distancesTree[i], distancesNaive[i], 0.05);
 }
 
 /**
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   coverTreeSearch.Search(data, 15, coverTreeNeighbors, coverTreeDistances);
 
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 5);
+    REQUIRE_RELATIVE_ERR(coverTreeDistances[i], naiveDistances[i], 0.05);
 }
 
 /**
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   coverTreeSearch.Search(dataset, 15, coverTreeNeighbors, coverTreeDistances);
 
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 5);
+    REQUIRE_RELATIVE_ERR(coverTreeDistances[i], naiveDistances[i], 0.05);
 }
 
 /**
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   ballTreeSearch.Search(data, 15, ballNeighbors, ballDistances);
 
   for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(ballDistances(i), naiveDistances(i), 5);
+    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
 }
 
 /**
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   ballTreeSearch.Search(15, ballNeighbors, ballDistances);
 
   for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(ballDistances(i), naiveDistances(i), 5);
+    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

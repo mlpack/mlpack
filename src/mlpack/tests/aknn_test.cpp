@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
     knn->Search(dataset, 15, neighborsTree, distancesTree);
 
     for (size_t i = 0; i < neighborsTree.n_elem; i++)
-      BOOST_REQUIRE_CLOSE(distancesTree(i), distancesNaive(i), epsilon * 100);
+      REQUIRE_RELATIVE_ERR(distancesTree(i), distancesNaive(i), epsilon);
 
     // Clean the memory.
     delete knn;
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   knn.Search(15, neighborsTree, distancesTree);
 
   for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(distancesTree(i), distancesNaive(i), 5);
+    REQUIRE_RELATIVE_ERR(distancesTree(i), distancesNaive(i), 0.05);
 }
 
 /**
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   knn.Search(15, neighborsTree, distancesTree);
 
   for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 5);
+    REQUIRE_RELATIVE_ERR(distancesTree[i], distancesNaive[i], 0.05);
 }
 
 /**
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   coverTreeSearch.Search(data, 15, coverTreeNeighbors, coverTreeDistances);
 
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 5);
+    REQUIRE_RELATIVE_ERR(coverTreeDistances[i], naiveDistances[i], 0.05);
 }
 
 /**
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   coverTreeSearch.Search(&referenceTree, 15, coverNeighbors, coverDistances);
 
   for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(coverDistances[i], naiveDistances[i], 5);
+    REQUIRE_RELATIVE_ERR(coverDistances[i], naiveDistances[i], 0.05);
 }
 
 /**
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   ballTreeSearch.Search(data, 15, ballNeighbors, ballDistances);
 
   for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(ballDistances(i), naiveDistances(i), 5);
+    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
 }
 
 /**
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   ballTreeSearch.Search(15, ballNeighbors, ballDistances);
 
   for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(ballDistances(i), naiveDistances(i), 5);
+    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
 }
 
 // Make sure sparse nearest neighbors works with kd trees.
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
 
   for (size_t i = 0; i < naiveNeighbors.n_cols; ++i)
     for (size_t j = 0; j < naiveNeighbors.n_rows; ++j)
-      BOOST_REQUIRE_CLOSE(naiveDistances(j, i), sparseDistances(j, i), 5);
+      REQUIRE_RELATIVE_ERR(sparseDistances(j, i), naiveDistances(j, i), 0.05);
 }
 
 // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
-        BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 5);
+        REQUIRE_RELATIVE_ERR(distances[k], baselineDistances[k], 0.05);
     }
   }
 }
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
-        BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 5);
+        REQUIRE_RELATIVE_ERR(distances[k], baselineDistances[k], 0.05);
     }
   }
 }
