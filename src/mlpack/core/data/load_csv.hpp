@@ -187,14 +187,10 @@ private:
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
-	  //parse the numbers from a line(ex : 1,2,3,4), if the parser find the number
-	  //it will execute the setNum function
-      const bool allNumber =
-          qi::parse(begin, line.end(), numRule[setNum] % ",");
-      //input like 2-200 or 2DM will make the parser fail,
-      //so we have to make sure col == inout.n_cols, else parse
-      //the input line again
-      if(!allNumber || col != inout.n_cols)
+      //parse the numbers from a line(ex : 1,2,3,4), if the parser find the number
+      //it will execute the setNum function
+      qi::parse(begin, line.end(), numRule[setNum] % ",");
+      if(col != inout.n_cols)
       {
         begin = line.begin();
         col = 0;
@@ -293,7 +289,7 @@ private:
 	  //parse number of characters from a line, it will execute setNum if it is number,
 	  //else execute setCharClass, "|" means "if not a, then b"
       const bool canParse = qi::parse(begin, line.end(),
-                                      (numRule[setNum] | charRule[setCharClass]) % ",");
+                                      (numRule[setNum] | (charRule)[setCharClass]) % ",");
       //std::cout<<std::endl;
       if(!canParse)
       {
@@ -323,10 +319,25 @@ private:
     //qi::omit can omit the attributes of spirit, every parser of spirit
     //has attribute(the type will pass into actions(functor))
     //if you do not omit it, the attribute combine with attribute may
-    //change the attribute
+    //change the attribute    
+
+    //input like 2-200 or 2DM will make the parser fail,
+    //so we use "look ahead parser--&" to make sure next
+    //character is "," or end of line(eof) or end of file(eoi)
+    //looks ahead parser will not consume any input or generate
+    //any attribute
 
     //"-" means one or zero(same as "-" of EBNF)
-    return qi::skip(qi::char_(" "))[elemParser] >> -qi::omit[*qi::char_(" ")];
+    if(extension == "csv" || extension == "txt")
+    {
+      return qi::skip(qi::char_(" "))[elemParser] >> -qi::omit[*qi::char_(" ")]
+          >> &(qi::lit(",") | qi::eol | qi::eoi);
+    }
+    else
+    {
+      return qi::skip(qi::char_(" "))[elemParser] >> -qi::omit[*qi::char_(" ")]
+          >> &(qi::lit("\t") | qi::eol | qi::eoi);
+    }
   }
 
   boost::spirit::qi::rule<std::string::iterator, iter_type()> CreateCharRule() const
