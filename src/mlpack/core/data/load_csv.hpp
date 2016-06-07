@@ -87,7 +87,7 @@ public:
 
     //qi::raw restrict the automatic conversion of boost::spirit, without it, spirit parser
     //will try to convert the string to std::string, this may cause memory allocation(if small string
-  //optimization fail).
+    //optimization fail).
     //After we wrap the parser with qi::raw, the attribute(the data accepted by functor) will
     //become boost::iterator_range, this could save a tons of memory allocations
     qi::parse(begin, end, qi::raw[*~qi::char_(",\r\n")][findColSize] % ",");
@@ -338,11 +338,11 @@ private:
 
     if(extension == "csv" || extension == "txt")
     {
-      return qi::raw[*~qi::char_(" ,\r\n")];
+      return qi::raw[*~qi::char_(",\r\n")];
     }
     else
     {
-      return qi::raw[*~qi::char_(" \t\r\n")];
+      return qi::raw[*~qi::char_("\t\r\n")];
     }
   }
 
