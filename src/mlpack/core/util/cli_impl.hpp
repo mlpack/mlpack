@@ -43,10 +43,15 @@ void CLI::Add(const std::string& identifier,
               const std::string& alias,
               bool required)
 {
+  // Temporary outstream object for detecting duplicate identifiers
   util::PrefixedOutStream outstr(std::cerr,
         BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+  // identifier and alias maps
   gmap_t& gmap = GetSingleton().globalValues;
   amap_t& amap = GetSingleton().aliasValues;
+
+  // if found in current map, print fatal error and terminat program.
   if (gmap.count(identifier))
     outstr << "Parameter --" << identifier << "(-" << alias << ") "
            << "is defined multiple times with same identifiers." << std::endl;
