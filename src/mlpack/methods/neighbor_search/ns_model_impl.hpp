@@ -416,9 +416,8 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
 
   Log::Info << "Searching for " << k;
   if (Epsilon() != 0)
-    Log::Info << " approximate nearest neighbors (e=" << Epsilon() << ") with ";
-  else
-    Log::Info << " nearest neighbors with ";
+    Log::Info << " approximate (e=" << Epsilon() << ")";
+  Log::Info << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
@@ -437,7 +436,10 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
-  Log::Info << "Searching for " << k << " nearest neighbors with ";
+  Log::Info << "Searching for " << k;
+  if (Epsilon() != 0)
+    Log::Info << " approximate (e=" << Epsilon() << ")";
+  Log::Info << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())

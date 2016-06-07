@@ -1,8 +1,8 @@
 /**
- * @file nearest_neighbor_rules_impl.hpp
+ * @file neighbor_search_rules_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of NearestNeighborRules.
+ * Implementation of NeighborSearchRules.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
