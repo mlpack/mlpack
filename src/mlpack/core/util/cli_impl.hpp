@@ -9,9 +9,19 @@
 
 // In case it has not already been included.
 #include "cli.hpp"
+#include "prefixedoutstream.hpp"
 
 // Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
+
+// Color code escape sequences.
+#ifndef _WIN32
+  #define BASH_RED "\033[0;31m"
+  #define BASH_CLEAR "\033[0m"
+#else
+  #define BASH_RED ""
+  #define BASH_CLEAR ""
+#endif
 
 namespace mlpack {
 
@@ -33,10 +43,21 @@ void CLI::Add(const std::string& identifier,
               const std::string& alias,
               bool required)
 {
+  util::PrefixedOutStream outstr(std::cerr,
+        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+  gmap_t& gmap = GetSingleton().globalValues;
+  amap_t& amap = GetSingleton().aliasValues;
+  if (gmap.count(identifier))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same identifiers." << std::endl;
+  if (amap.count(alias))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same alias." << std::endl;
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
-  std::string progOptId = alias.length() ? identifier + "," + alias : identifier;
+  std::string progOptId =
+          alias.length() ? identifier + "," + alias : identifier;
 
   // Add the alias, if necessary
   AddAlias(alias, identifier);
@@ -45,8 +66,6 @@ void CLI::Add(const std::string& identifier,
   desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
-  gmap_t& gmap = GetSingleton().globalValues;
-
   ParamData data;
   T tmp = T();
 
