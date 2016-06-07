@@ -27,7 +27,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  *http://theboostcpplibraries.com/boost.spirit for quick review.
  */
 class LoadCSV
-{      
+{
 public:
   explicit LoadCSV(std::string file, bool fatal = false) :
     extension(Extension(file)),
@@ -86,8 +86,8 @@ public:
     //parse % "," means you want to parse string like "1,2,3,apple"(noticed it without last comma)
 
     //qi::raw restrict the automatic conversion of boost::spirit, without it, spirit parser
-    //will try to convert the string to std::string, this may cause memory allocation(if small string 
-	//optimization fail).
+    //will try to convert the string to std::string, this may cause memory allocation(if small string
+  //optimization fail).
     //After we wrap the parser with qi::raw, the attribute(the data accepted by functor) will
     //become boost::iterator_range, this could save a tons of memory allocations
     qi::parse(begin, end, qi::raw[*~qi::char_(",\r\n")][findColSize] % ",");
@@ -182,20 +182,21 @@ private:
                                            row));
     };
 
-    qi::rule<std::string::iterator, T()> numRule = CreateNumRule<T>();
-    qi::rule<std::string::iterator, iter_type()> charRule = CreateCharRule();
+    auto numRule = CreateNumRule<T>();
+    auto charRule = CreateCharRule();
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
       //parse the numbers from a line(ex : 1,2,3,4), if the parser find the number
       //it will execute the setNum function
-      qi::parse(begin, line.end(), numRule[setNum] % ",");
+      qi::phrase_parse(begin, line.end(), numRule[setNum] % ",", ascii::space);
       if(col != inout.n_cols)
       {
         begin = line.begin();
         col = 0;
-        const bool canParse = qi::parse(begin, line.end(),
-                                        charRule[setCharClass] % ",");
+        const bool canParse = qi::phrase_parse(begin, line.end(),
+                                               charRule[setCharClass] % ",",
+                                               ascii::space);
         if(!canParse)
         {
           throw std::runtime_error("LoadCSV cannot parse categories");
@@ -231,9 +232,6 @@ private:
   {
     using namespace boost::spirit;
 
-    //static size_t loop = 0;
-    //std::cout<<"loop "<<loop++<<std::endl;
-
     size_t row = 0;
     size_t col = 0;
     size_t progress = 0;
@@ -242,7 +240,6 @@ private:
     inFile.seekg(0, std::ios::beg);
     auto setNum = [&](T val)
     {
-      //std::cout<<"val(" <<val<<"),";
       if(mapCols.find(progress) != std::end(mapCols))
       {
         inout(row, col) =
@@ -259,7 +256,6 @@ private:
     {
       if(mapCols.find(progress) != std::end(mapCols))
       {
-        //std::cout<<"nstr("<<std::string(iter.begin(), iter.end())<<"),";
         std::string str(iter.begin(), iter.end());
         if(str == "\t")
         {
@@ -271,26 +267,24 @@ private:
       }
       else
       {
-        //std::cout<<"str("<<std::string(iter.begin(), iter.end())<<"),";
         mapCols.insert(progress);
-        //TODO : find a way to stop parsing from here
       }
       ++progress; ++row;
     };
 
-    qi::rule<std::string::iterator, T()> numRule = CreateNumRule<T>();
-    qi::rule<std::string::iterator, iter_type()> charRule = CreateCharRule();
+    auto numRule = CreateNumRule<T>();
+    auto charRule = CreateCharRule();
     while(std::getline(inFile, line))
     {
       auto begin = line.begin();
       row = 0;
       progress = 0;
       const size_t oldSize = mapCols.size();
-	  //parse number of characters from a line, it will execute setNum if it is number,
-	  //else execute setCharClass, "|" means "if not a, then b"
-      const bool canParse = qi::parse(begin, line.end(),
-                                      (numRule[setNum] | (charRule)[setCharClass]) % ",");
-      //std::cout<<std::endl;
+      //parse number of characters from a line, it will execute setNum if it is number,
+      //else execute setCharClass, "|" means "if not a, then b"
+      const bool canParse = qi::phrase_parse(begin, line.end(),
+                                             (numRule[setNum] | charRule[setCharClass]) % ",",
+                                             ascii::space);
       if(!canParse)
       {
         throw std::runtime_error("LoadCSV cannot parse categories");
@@ -306,7 +300,8 @@ private:
   }
 
   template<typename T>
-  boost::spirit::qi::rule<std::string::iterator, T()> CreateNumRule() const
+  boost::spirit::qi::rule<std::string::iterator, T(), boost::spirit::ascii::space_type>
+  CreateNumRule() const
   {
     using namespace boost::spirit;
 
@@ -319,40 +314,35 @@ private:
     //qi::omit can omit the attributes of spirit, every parser of spirit
     //has attribute(the type will pass into actions(functor))
     //if you do not omit it, the attribute combine with attribute may
-    //change the attribute    
+    //change the attribute
 
     //input like 2-200 or 2DM will make the parser fail,
     //so we use "look ahead parser--&" to make sure next
     //character is "," or end of line(eof) or end of file(eoi)
     //looks ahead parser will not consume any input or generate
     //any attribute
-
-    //"-" means one or zero(same as "-" of EBNF)
     if(extension == "csv" || extension == "txt")
     {
-      return qi::skip(qi::char_(" "))[elemParser] >> -qi::omit[*qi::char_(" ")]
-          >> &(qi::lit(",") | qi::eol | qi::eoi);
+      return elemParser >> &(qi::lit(",") | qi::eol | qi::eoi);
     }
     else
     {
-      return qi::skip(qi::char_(" "))[elemParser] >> -qi::omit[*qi::char_(" ")]
-          >> &(qi::lit("\t") | qi::eol | qi::eoi);
+      return elemParser >> &(qi::lit("\t") | qi::eol | qi::eoi);
     }
   }
 
-  boost::spirit::qi::rule<std::string::iterator, iter_type()> CreateCharRule() const
+  boost::spirit::qi::rule<std::string::iterator, iter_type(), boost::spirit::ascii::space_type>
+  CreateCharRule() const
   {
     using namespace boost::spirit;
 
     if(extension == "csv" || extension == "txt")
     {
-      return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" ,\r\n")]
-          >> -qi::omit[*qi::char_(" ")];
+      return qi::raw[*~qi::char_(" ,\r\n")];
     }
     else
     {
-      return -qi::omit[*qi::char_(" ")] >> qi::raw[*~qi::char_(" \t\r\n")]
-          >> -qi::omit[*qi::char_(" ")];
+      return qi::raw[*~qi::char_(" \t\r\n")];
     }
   }
 
