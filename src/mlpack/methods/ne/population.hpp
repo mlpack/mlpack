@@ -46,7 +46,6 @@ class Population {
   // Next genome id.
   unsigned int aNextGenomeId;
 
-
 };
 
 }  // namespace ne

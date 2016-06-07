@@ -52,13 +52,14 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   // Create a neuron gene.
   ActivationFuncType actFuncType = SIGMOID;
   NeuronType neuronType = INPUT;
-  NeuronGene neuronGene(1, neuronType, actFuncType, 0);
+  NeuronGene neuronGene(1, neuronType, actFuncType, 0, 0);
 
   // Test parametric constructor and access functions.
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 1);
   BOOST_REQUIRE_EQUAL(neuronGene.Type(), INPUT);
   BOOST_REQUIRE_EQUAL(neuronGene.ActFuncType(), SIGMOID);
-  BOOST_REQUIRE_EQUAL(neuronGene.Depth(), 0);
+  BOOST_REQUIRE_EQUAL(neuronGene.aInput, 0);
+  BOOST_REQUIRE_EQUAL(neuronGene.aActivation, 0);
 
   // Test set function
   neuronGene.ActFuncType(RELU);
@@ -69,7 +70,7 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   BOOST_REQUIRE_EQUAL(neuronGene2.Id(), 1);
 
   // Test operator =.
-  NeuronGene neuronGene3(11, neuronType, actFuncType, 0);
+  NeuronGene neuronGene3(11, neuronType, actFuncType, 0, 0);
   neuronGene = neuronGene3;
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 11);
 

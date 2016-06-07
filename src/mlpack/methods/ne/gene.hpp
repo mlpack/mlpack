@@ -146,16 +146,14 @@ class NeuronGene {
     aActFuncType = actFuncType;
   }
 
-  // Get depth.
-  unsigned int Depth() const { return aDepth; }
-
   // Operator =.
   NeuronGene& operator =(const NeuronGene& neuronGene) {
     if (this != &neuronGene) {
   	  aId = neuronGene.aId;
   	  aType = neuronGene.aType;
   	  aActFuncType = neuronGene.aActFuncType;
-  	  aDepth = neuronGene.aDepth;
+  	  aInput = neuronGene.aInput;
+      aActivation = neuronGene.aActivation;
     }
     
     return *this;
@@ -170,9 +168,6 @@ class NeuronGene {
 
   // Activation function type.
   ActivationFuncType aActFuncType;
-
-  // Depth in neural network
-  unsigned int aDepth;
 
 };
 
