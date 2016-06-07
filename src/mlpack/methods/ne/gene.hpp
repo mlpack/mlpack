@@ -107,6 +107,12 @@ class LinkGene {
  */
 class NeuronGene {
  public:
+  // Input sum.
+  double aInput;
+
+  // Activation.
+  double aActivation;
+
   // Default constructor.
   NeuronGene() {}
 
@@ -114,11 +120,13 @@ class NeuronGene {
   NeuronGene(unsigned int id,
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
-  	         unsigned int depth):
+  	         double input,
+             double activation):
     aId(id),
     aType(type),
     aActFuncType(actFuncType),
-    aDepth(depth)
+    aInput(input),
+    aActivation(activation)
   {}
 
   // Copy constructor.
@@ -126,7 +134,8 @@ class NeuronGene {
   	aId = neuronGene.aId;
   	aType = neuronGene.aType;
   	aActFuncType = neuronGene.aActFuncType;
-  	aDepth = neuronGene.aDepth;
+  	aInput = neuronGene.aInput;
+    aActivation = neuronGene.aActivation;
   }
 
   // Destructor.
