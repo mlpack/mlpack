@@ -1,19 +1,23 @@
 #include <mlpack/core.hpp>
-//#include <mlpack/methods/edge_boxes/structured_tree.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 BOOST_AUTO_TEST_SUITE(ind2sub_test);
 
 /**
- * This tests handles the case wherein only one class exists in the input
- * labels.  It checks whether the only class supplied was the only class
- * predicted.
+ * This test checks whether ind2sub and sub2ind are 
+ * compiled successfully and that they function properly.
  */
 BOOST_AUTO_TEST_CASE(ind2sub_test)
 {
-  arma::mat A = arma::randu(5,5);
-  arma::uvec u = arma::ind2sub(arma::size(A), 3);
-  u.print();
+  arma::mat A = arma::randu(4,5);
+  size_t index = 13;
+  arma::uvec u = arma::ind2sub(arma::size(A), index);
+  
+  BOOST_REQUIRE_EQUAL(u(0), index % A.n_rows);
+  BOOST_REQUIRE_EQUAL(u(1), index / A.n_rows);
+
+  index = arma::sub2ind(arma::size(A), u(0), u(1));
+  BOOST_REQUIRE_EQUAL(index, u(0) + u(1) * A.n_rows);
 }
 BOOST_AUTO_TEST_SUITE_END();
+
