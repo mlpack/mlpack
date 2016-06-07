@@ -18,8 +18,8 @@ build_script:
   - ps: cp C:\projects\mlpack\boost_random-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - ps: cp C:\projects\mlpack\boost_serialization-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - ps: cp C:\projects\mlpack\boost_unit_test_framework-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - appveyor DownloadFile http://sourceforge.net/projects/arma/files/armadillo-6.500.5.tar.gz
-  - 7z x armadillo-6.500.5.tar.gz -so | 7z x -si -ttar > nul
+  - if not exist armadillo.tar.gz appveyor DownloadFile "http://sourceforge.net/projects/arma/files/armadillo-6.500.5.tar.gz" -FileName armadillo.tar.gz
+  - 7z x armadillo.tar.gz -so | 7z x -si -ttar > nul
   - cd armadillo-6.500.5 && mkdir build && cd build
   - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo" -DBUILD_SHARED_LIBS=OFF ..
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\armadillo-6.500.5\build\armadillo.sln" /m /verbosity:quiet /p:Configuration=Release;Platform=x64'
@@ -39,6 +39,10 @@ notifications:
   on_build_success: true
   on_build_failure: true
   on_build_status_changed: true
+
+cache:
+  - packages -> **\packages.config
+  - armadillo.tar.gz -> appveyor.yaml
 
 # All plans have maximum build job execution time of 60 minutes. But right, now
 # the machine takes 30 minutes to build the code and at least 50 minutes to run
