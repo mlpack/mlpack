@@ -35,6 +35,6 @@ These tutorials introduce the various methods mlpack offers, aimed at users who 
 
 mlpack uses templates to achieve its genericity and flexibility. Some of the template types used by mlpack are common across multiple machine learning algorithms. The links below provide documentation for some of these common types.
 
-[The MetricType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=metrics.html)
-[The KernelType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=kernels.html)
-[The TreeType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=trees.html)
+* [The MetricType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=metrics.html)
+* [The KernelType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=kernels.html)
+* [The TreeType policy in mlpack](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=trees.html)
