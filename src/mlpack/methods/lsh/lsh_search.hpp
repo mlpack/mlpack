@@ -143,7 +143,8 @@ class LSHSearch
               const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              const size_t numTablesToSearch = 0);
+              const size_t numTablesToSearch = 0,
+              size_t T = 0);
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
@@ -166,7 +167,8 @@ class LSHSearch
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              const size_t numTablesToSearch = 0);
+              const size_t numTablesToSearch = 0,
+              size_t T = 0);
 
   /**
    * Serialize the LSH model.
@@ -229,7 +231,8 @@ class LSHSearch
   template<typename VecType>
   void ReturnIndicesFromTable(const VecType& queryPoint,
                               arma::uvec& referenceIndices,
-                              size_t numTablesToSearch) const;
+                              size_t numTablesToSearch,
+                              const size_t T) const;
 
   /**
    * This is a helper function that computes the distance of the query to the
@@ -285,6 +288,14 @@ class LSHSearch
                       const size_t pos,
                       const size_t neighbor,
                       const double distance) const;
+
+  /**
+  TODO: Document this
+  */
+  void GetAdditionalProbingBins(const arma::vec &queryCode,
+                            const arma::vec &queryCodeNotFloored,
+                            const size_t T,
+                            arma::mat &additionalProbingBins) const;
 
   //! Reference dataset.
   const arma::mat* referenceSet;
