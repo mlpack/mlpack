@@ -14,8 +14,8 @@
 
 // In case it hasn't already been included.
 #include "load.hpp"
-#include "extension.hpp"
 #include "load_csv.hpp"
+#include "extension.hpp"
 
 #include <exception>
 #include <algorithm>
