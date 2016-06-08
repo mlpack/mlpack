@@ -182,11 +182,11 @@ int main(int argc, char *argv[])
         Log::Info << "Loaded query data from '" << queryFile << "' ("
             << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
       }
-      allkann.Search(queryData, k, neighbors, distances, numProbes);
+      allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
     {
-      allkann.Search(k, neighbors, distances, numProbes);
+      allkann.Search(k, neighbors, distances, 0, numProbes);
     }
   }
 

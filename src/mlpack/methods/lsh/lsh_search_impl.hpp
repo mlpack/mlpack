@@ -597,7 +597,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   for (size_t i = 0; i < numTablesToSearch; i++)
     queryCodesNotFloored.unsafe_col(i) = projections.slice(i).t() * queryPoint;
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
-  allProjInTables /= hashWidth;
+  allProjInTables = queryCodesNotFloored/hashWidth;
 
   // Compute the hash value of each key of the query into a bucket of the
   // 'secondHashTable' using the 'secondHashWeights'.
@@ -612,7 +612,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   arma::mat hashMat;
   if (T > 0)
   {
-    hashMat.set_size(T, numTablesToSearch);
+    hashMat.zeros(T, numTablesToSearch);
 
     for (size_t i = 0; i < numTablesToSearch; ++i)
     {
@@ -625,6 +625,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
       // map the probing bin to second hash table bins
       hashMat.col(i) = additionalProbingBins.t() * secondHashWeights;
+
       for (size_t p = 0; p < T; ++p)
         hashMat(p, i) = (double) ((size_t) hashMat(p, i) % secondHashSize);
     }
@@ -638,7 +639,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.set_size(1, numTablesToSearch);
     hashMat.row(0) = hashVec;
   }
-
 
   // Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;
@@ -703,7 +703,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // Allocate space for the query's potential neighbors.
     arma::uvec refPointsConsideredSmall;
     refPointsConsideredSmall.zeros(maxNumPoints);
-    std::cout<<"unique"<<std::endl;
 
     // Retrieve candidates.
     size_t start = 0;
