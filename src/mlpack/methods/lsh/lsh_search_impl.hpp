@@ -639,7 +639,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.row(0) = hashVec;
   }
 
-  std::cout<<hashMat<<std::endl;
 
   // Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;
@@ -694,7 +693,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     }
 
     // Only keep reference points found in at least one bucket.
-    std::cout<<"find"<<std::endl;
     referenceIndices = arma::find(refPointsConsidered > 0);
     return;
   }
