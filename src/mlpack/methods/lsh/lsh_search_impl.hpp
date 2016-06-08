@@ -555,11 +555,16 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     arma::Mat<size_t> tmpSecondHashTable;
     ar & CreateNVP(tmpSecondHashTable, "secondHashTable");
 
+    // The old secondHashTable was stored in row-major format, so we transpose
+    // it.
+    tmpSecondHashTable = tmpSecondHashTable.t();
+
     secondHashTable.resize(tmpSecondHashTable.n_cols);
     for (size_t i = 0; i < tmpSecondHashTable.n_cols; ++i)
     {
       // Find length of each column.  We know we are at the end of the list when
       // the value referenceSet->n_cols is seen.
+
       size_t len = 0;
       for ( ; len < tmpSecondHashTable.n_rows; ++len)
         if (tmpSecondHashTable(len, i) == referenceSet->n_cols)
@@ -599,29 +604,24 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (version == 0)
   {
     // The vector was stored in the old uncompressed form.  So we need to shrink
-    // it.
+    // it.  But we can't do that until we have bucketRowInHashTable, so we also
+    // have to load that.
     arma::Col<size_t> tmpBucketContentSize;
     ar & CreateNVP(tmpBucketContentSize, "bucketContentSize");
+    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
 
     // Compress into a smaller vector by just dropping all of the zeros.
     bucketContentSize.set_size(secondHashTable.size());
-    size_t loc = 0;
     for (size_t i = 0; i < tmpBucketContentSize.n_elem; ++i)
-    {
       if (tmpBucketContentSize[i] > 0)
-        bucketContentSize[loc++] = tmpBucketContentSize[i];
-
-      // Terminate early, if we can.
-      if (loc == bucketContentSize.n_elem)
-        break;
-    }
+        bucketContentSize[bucketRowInHashTable[i]] = tmpBucketContentSize[i];
   }
   else
   {
     ar & CreateNVP(bucketContentSize, "bucketContentSize");
+    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
   }
 
-  ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
   ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
 }
 
