@@ -639,6 +639,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.row(0) = hashVec;
   }
 
+  std::cout<<hashMat<<std::endl;
 
   // Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;
@@ -693,6 +694,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     }
 
     // Only keep reference points found in at least one bucket.
+    std::cout<<"find"<<std::endl;
     referenceIndices = arma::find(refPointsConsidered > 0);
     return;
   }
@@ -703,6 +705,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // Allocate space for the query's potential neighbors.
     arma::uvec refPointsConsideredSmall;
     refPointsConsideredSmall.zeros(maxNumPoints);
+    std::cout<<"unique"<<std::endl;
 
     // Retrieve candidates.
     size_t start = 0;
@@ -710,7 +713,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
-        size_t hashInd = (size_t) hashVec[i]; // Find the query's bucket.
+        size_t hashInd = (size_t) hashMat(p, i); // Find the query's bucket.
 
         if (bucketContentSize[hashInd] > 0)
         {
@@ -719,7 +722,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
           assert(tableRow < secondHashSize);
           assert(tableRow < secondHashTable.n_rows);
 
-          // This for-loop could be replaced with a vector slice (TODO).
           // Store all secondHashTable points in the candidates set.
           for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
             refPointsConsideredSmall(start++) = secondHashTable(tableRow, j);
