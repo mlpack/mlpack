@@ -9,7 +9,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 
 #include <boost/spirit/include/qi.hpp>
 
