@@ -21,7 +21,7 @@ class KillEmptyClusters
 {
  public:
   //! Default constructor required by EmptyClusterPolicy policy.
-  AllowEmptyClusters() { }
+  KillEmptyClusters() { }
 
   /**
    * This function sets an empty cluster found during k-means to all DBL_MAX
@@ -52,6 +52,7 @@ class KillEmptyClusters
   {
     // Kill the empty cluster.
     newCentroids.col(emptyCluster).fill(DBL_MAX);
+    return 0; // No points were changed.
   }
 
   //! Serialize the empty cluster policy (nothing to do).

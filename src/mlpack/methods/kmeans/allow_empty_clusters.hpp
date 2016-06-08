@@ -52,6 +52,7 @@ class AllowEmptyClusters
   {
     // Take the last iteration's centroid.
     newCentroids.col(emptyCluster) = oldCentroids.col(emptyCluster);
+    return 0; // No points were changed.
   }
 
   //! Serialize the empty cluster policy (nothing to do).
