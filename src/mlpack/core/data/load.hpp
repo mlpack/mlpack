@@ -20,6 +20,7 @@
 
 #include "format.hpp"
 #include "dataset_mapper.hpp"
+#include "load_csv.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
