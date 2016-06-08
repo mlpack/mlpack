@@ -16,8 +16,9 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
     "constant.");
 
 PARAM_STRING_REQ("input_file", "Filename of input dataset.", "i");
-PARAM_STRING_REQ("output_file", "Filename to save unfolded dataset to.", "o");
 PARAM_INT_REQ("new_dim", "New dimensionality of dataset.", "d");
+
+PARAM_STRING("output_file", "Filename to save unfolded dataset to.", "o", "");
 PARAM_INT("num_neighbors", "Number of nearest neighbors to consider while "
     "unfolding.", "k", 5);
 
@@ -35,6 +36,10 @@ int main(int argc, char **argv)
   const string outputFile = CLI::GetParam<string>("output_file");
   const int newDim = CLI::GetParam<int>("new_dim");
   const int numNeighbors = CLI::GetParam<int>("num_neighbors");
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified;"
+      << "no results will be saved!" << endl;
 
   RandomSeed(time(NULL));
 
@@ -65,5 +70,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  data::Save(outputFile, output, true);
+  if (CLI::HasParam("output_file"))
+    data::Save(outputFile, output, true);
 }

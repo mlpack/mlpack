@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
     // seems more likely that these will be stored with one response per line
     // (one per row).  So we should not transpose upon loading.
     const string responsesFile = CLI::GetParam<string>("responses_file");
-    mat matY; // /yFWill be a vector.
+    mat matY; // Will be a vector.
     data::Load(responsesFile, matY, true, false);
 
     // Make sure y is oriented the right way.
