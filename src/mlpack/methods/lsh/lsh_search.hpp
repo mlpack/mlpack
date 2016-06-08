@@ -197,7 +197,8 @@ class LSHSearch
   size_t BucketSize() const { return bucketSize; }
 
   //! Get the second hash table.
-  const arma::Mat<size_t>& SecondHashTable() const { return secondHashTable; }
+  const std::vector<arma::Col<size_t>>& SecondHashTable() const
+      { return secondHashTable; }
 
   //! Get the projection tables.
   const arma::cube& Projections() { return projections; }
@@ -314,8 +315,9 @@ class LSHSearch
   //! The bucket size of the second hash.
   size_t bucketSize;
 
-  //! The final hash table; should be (< secondHashSize) x bucketSize.
-  arma::Mat<size_t> secondHashTable;
+  //! The final hash table; should be (< secondHashSize) vectors each with
+  //! (<= bucketSize) elements.
+  std::vector<arma::Col<size_t>> secondHashTable;
 
   //! The number of elements present in each hash bucket; should be
   //! secondHashSize.
