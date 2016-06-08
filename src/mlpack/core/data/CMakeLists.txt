@@ -5,9 +5,9 @@ set(SOURCES
   dataset_info_impl.hpp
   extension.hpp
   format.hpp
-  load.hpp
   load_csv.hpp
   load_csv.cpp
+  load.hpp  
   load_impl.hpp
   load_arff.hpp
   load_arff_impl.hpp
