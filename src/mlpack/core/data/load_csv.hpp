@@ -7,12 +7,12 @@
 #ifndef MLPACK_CORE_DATA_LOAD_CSV_HPP
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
+#include <boost/spirit/include/qi.hpp>
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
 
-#include <boost/spirit/include/qi.hpp>
-
-#include <unordered_set>
+#include <set>
 #include <string>
 
 #include "format.hpp"
