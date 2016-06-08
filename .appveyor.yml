@@ -5,19 +5,19 @@ configuration: Release
 os: Visual Studio 2015
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install boost_unit_test_framework-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install boost_program_options-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install boost_random-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install boost_serialization-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install boost_math_c99-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}"
-  - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+  - ps: nuget install boost_unit_test_framework-vc140 -o .\packages
+  - ps: nuget install boost_program_options-vc140 -o .\packages
+  - ps: nuget install boost_random-vc140 -o .\packages
+  - ps: nuget install boost_serialization-vc140 -o .\packages
+  - ps: nuget install boost_math_c99-vc140 -o .\packages
+  - ps: nuget install OpenBLAS -o .\packages
 build_script:
   - mkdir boost_libs
-  - ps: cp C:\projects\mlpack\boost_program_options-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - ps: cp C:\projects\mlpack\boost_math_c99-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - ps: cp C:\projects\mlpack\boost_random-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - ps: cp C:\projects\mlpack\boost_serialization-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - ps: cp C:\projects\mlpack\boost_unit_test_framework-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
+  - ps: cp .\packages\boost_program_options-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
+  - ps: cp .\packages\boost_math_c99-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
+  - ps: cp .\packages\boost_random-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
+  - ps: cp .\packages\boost_serialization-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
+  - ps: cp .\packages\boost_unit_test_framework-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - if not exist armadillo.tar.gz appveyor DownloadFile "http://sourceforge.net/projects/arma/files/armadillo-6.500.5.tar.gz" -FileName armadillo.tar.gz
   - 7z x armadillo.tar.gz -so | 7z x -si -ttar > nul
   - cd armadillo-6.500.5 && mkdir build && cd build
@@ -41,7 +41,7 @@ notifications:
   on_build_status_changed: true
 
 cache:
-  - packages -> **\packages.config
+  - packages -> appveyor.yaml
   - armadillo.tar.gz -> appveyor.yaml
 
 # All plans have maximum build job execution time of 60 minutes. But right, now
