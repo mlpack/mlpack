@@ -8,7 +8,7 @@
 #include <mlpack/methods/mean_shift/mean_shift.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::meanshift;

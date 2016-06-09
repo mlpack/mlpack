@@ -1,12 +1,11 @@
 /**
- * @file old_boost_test_definitions.hpp
+ * @file test_tools.hpp
  * @author Ryan Curtin
  *
- * Ancient Boost.Test versions don't act how we expect.  This file includes the
- * things we need to fix that.
+ * This file includes some useful macros for tests.
  */
-#ifndef MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
-#define MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
+#ifndef MLPACK_TESTS_TEST_TOOLS_HPP
+#define MLPACK_TESTS_TEST_TOOLS_HPP
 
 #include <boost/version.hpp>
 

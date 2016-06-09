@@ -6,7 +6,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>

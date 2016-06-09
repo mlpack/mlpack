@@ -9,7 +9,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/methods/range_search/rs_model.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::range;
