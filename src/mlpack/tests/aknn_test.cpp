@@ -241,7 +241,9 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
     REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
 }
 
-// Make sure sparse nearest neighbors works with kd trees.
+/**
+ * Make sure sparse nearest neighbors works with kd trees.
+ */
 BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
 {
   // The dimensionality of these datasets must be high so that the probability
@@ -274,8 +276,10 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
       REQUIRE_RELATIVE_ERR(sparseDistances(j, i), naiveDistances(j, i), 0.05);
 }
 
-// Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
-// results.
+/**
+ * Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+ * results.
+ */
 BOOST_AUTO_TEST_CASE(KNNModelTest)
 {
   typedef NSModel<NearestNeighborSort> KNNModel;
@@ -335,8 +339,10 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   }
 }
 
-// Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
-// results, in the case where the reference set is the same as the query set.
+/**
+ * Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+ * results, in the case where the reference set is the same as the query set.
+ */
 BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
 {
   typedef NSModel<NearestNeighborSort> KNNModel;

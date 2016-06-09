@@ -888,7 +888,9 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   }
 }
 
-// Make sure sparse nearest neighbors works with kd trees.
+/**
+ * Make sure sparse nearest neighbors works with kd trees.
+ */
 BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
 {
   // The dimensionality of these datasets must be high so that the probability
