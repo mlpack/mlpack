@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE(ComputeRecallTest)
     2 << arma::endr << 
     3 << arma::endr << 
     4 << arma::endr << 
-    7 << arma::endr << 
+    6 << arma::endr << 
     7 << arma::endr;
 
   BOOST_REQUIRE_CLOSE(lsh.ComputeRecall(base, q2), 0.6, 0.0001);
