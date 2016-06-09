@@ -7,9 +7,12 @@
 #ifndef MLPACK_METHODS_NE_POPULATION_HPP
 #define MLPACK_METHODS_NE_POPULATION_HPP
 
+#include <cstddef>
+
 #include <mlpack/core.hpp>
 
-#include "gene.hpp"
+#include "link_gene.hpp"
+#include "neuron_gene.hpp"
 #include "genome.hpp"
 
 namespace mlpack {
@@ -20,22 +23,38 @@ namespace ne {
  */
 class Population {
  public:
-  // Default constructor.
-  Population() {}
+  // Genomes.
+  std::vector<Genome> aGenomes;
 
   // Parametric constructor.
+  Population(Genome& seedGenome) {
 
-  // Copy constructor.
+  }
 
   // Destructor.
   ~Population() {}
 
+  // Set/get best fitness.
+  double& BestFitness() { return aBestFitness; }
+
+  // Set best fitness to be the minimum of all genomes' fitness.
+  void SetBestFitness() {
+    if (aGenomes.size() == 0) 
+      return;
+
+    aBestFitness = aGenomes[0].Fitness();
+    for (size_t i=0; i<aGenomes.size(); ++i) {
+      if (aGenomes[i].Fitness() < bestFitness) {
+        aBestFitness = aGenomes[i].Fitness();
+      }
+    }
+  }
+
+
  private:
-  // Genomes.
-  std::vector<Genome> aGenomes;
 
   // Number of Genomes.
-  unsigned int aNumGenome;
+  size_t aNumGenome;
 
   // Best fitness.
   double aBestFitness;
@@ -44,7 +63,7 @@ class Population {
   Genome aBestGenome;
 
   // Next genome id.
-  unsigned int aNextGenomeId;
+  size_t aNextGenomeId;
 
 };
 

@@ -1,11 +1,13 @@
 /**
- * @file gene.hpp
+ * @file neuron_gene.hpp
  * @author Bang Liu
  *
- * Definition of the LinkGene and NeuronGene class.
+ * Definition of the NeuronGene class.
  */
 #ifndef MLPACK_METHODS_NE_GENE_HPP
 #define MLPACK_METHODS_NE_GENE_HPP
+
+#include <cstddef>
 
 #include <mlpack/core.hpp>
 
@@ -34,75 +36,6 @@ enum ActivationFuncType {
 };
 
 /**
- * This class defines a link gene.
- */
-class LinkGene {
- public:
-  // Default constructor.
-  LinkGene() {}
-
-  // Parametric constructor.
-  LinkGene(unsigned int fromNeuronId,
-  	       unsigned int toNeuronId,
-  	       unsigned int innovationId,
-  	       double weight):
-    aFromNeuronId(fromNeuronId),
-    aToNeuronId(toNeuronId),
-    aInnovationId(innovationId),
-    aWeight(weight)
-  {}
-
-  // Copy constructor.
-  LinkGene(const LinkGene& linkGene) {
-  	aFromNeuronId = linkGene.aFromNeuronId;
-  	aToNeuronId = linkGene.aToNeuronId;
-  	aInnovationId = linkGene.aInnovationId;
-  	aWeight = linkGene.aWeight;
-  }
-
-  // Destructor.
-  ~LinkGene() {}
-
-  // Get aFromNeuronId.
-  unsigned int FromNeuronId() const { return aFromNeuronId; }
-
-  // Get aToNeuronId.
-  unsigned int ToNeuronId() const { return aToNeuronId; }
-
-  // Get aInnovationId.
-  unsigned int InnovationId() const { return aInnovationId; }
-
-  // Set aWeight.
-  void Weight(double weight) { aWeight = weight; }
-
-  // Get aWeight.
-  double Weight() const { return aWeight; }
-
-  // Operator =.
-  LinkGene& operator =(const LinkGene& linkGene) {
-    if (this != &linkGene) {
-  	  aFromNeuronId = linkGene.aFromNeuronId;
-  	  aToNeuronId = linkGene.aToNeuronId;
-  	  aInnovationId = linkGene.aInnovationId;
-  	  aWeight = linkGene.aWeight;
-    }
-    
-    return *this;
-  }
-
- private:
-  // The IDs of neurons connected by this link.
-  unsigned int aFromNeuronId, aToNeuronId;
-
-  // Link weight.
-  double aWeight;
-
-  // Link innovation ID.
-  unsigned int aInnovationId;
- 
-};
-
-/**
  * This class defines a neuron gene.
  */
 class NeuronGene {
@@ -117,7 +50,7 @@ class NeuronGene {
   NeuronGene() {}
 
   // Parametric constructor.
-  NeuronGene(unsigned int id,
+  NeuronGene(size_t id,
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
   	         double input,
@@ -142,7 +75,7 @@ class NeuronGene {
   ~NeuronGene() {}
 
   // Get neuron id.
-  unsigned int Id() const { return aId; }
+  size_t Id() const { return aId; }
 
   // Get neuron type.
   NeuronType Type() const { return aType; }
@@ -170,7 +103,7 @@ class NeuronGene {
 
  private:
   // Neuron id.
-  unsigned int aId;
+  size_t aId;
 
   // Neuron type.
   NeuronType aType;

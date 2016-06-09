@@ -7,12 +7,17 @@
 #ifndef MLPACK_METHODS_NE_GENOME_HPP
 #define MLPACK_METHODS_NE_GENOME_HPP
 
+#include <cstddef>
 #include <cassert>
 #include <map>
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
-#include "gene.hpp"
+#include "link_gene.hpp"
+#include "neuron_gene.hpp"
 #include "utils.hpp"
 
 namespace mlpack {
@@ -28,12 +33,12 @@ class Genome {
   Genome() {}
   
   // Parametric constructor.
-  Genome(unsigned int id,
-  	     std::vector<NeuronGene> neuronGenes,
-         std::vector<LinkGene> linkGenes,
-         unsigned int numInput,
-         unsigned int numOutput,
-         unsigned int depth,
+  Genome(size_t id,
+  	     const std::vector<NeuronGene>& neuronGenes,
+         const std::vector<LinkGene>& linkGenes,
+         size_t numInput,
+         size_t numOutput,
+         size_t depth,
          double fitness):
     aId(id),
     aNeuronGenes(neuronGenes),
@@ -59,48 +64,45 @@ class Genome {
   ~Genome() {}
 
   // Get genome id.
-  unsigned int Id() const { return aId; }
+  size_t Id() const { return aId; }
 
   // Get input length.
-  unsigned int NumInput() const { return aNumInput; }
+  size_t NumInput() const { return aNumInput; }
 
   // Set input length.
-  void NumInput(unsigned int numInput) { aNumInput = numInput; }
+  void NumInput(size_t numInput) { aNumInput = numInput; }
 
   // Get output length.
-  unsigned int NumOutput() const { return aNumOutput; }
+  size_t NumOutput() const { return aNumOutput; }
 
   // Set output length.
-  void NumOutput(unsigned int numOutput) { aNumOutput = numOutput; }
+  void NumOutput(size_t numOutput) { aNumOutput = numOutput; }
 
   // Get depth.
-  unsigned int Depth() const { return aDepth; }
+  size_t Depth() const { return aDepth; }
 
   // Set depth.
-  void Depth(unsigned int depth) { aDepth = depth; }
+  void Depth(size_t depth) { aDepth = depth; }
 
-  // Get fitness.
-  double Fitness() const { return aFitness; }
-
-  // Set fitness.
-  void Fitness(double fitness) { aFitness = fitness; }
+  // Set/get fitness.
+  double& Fitness() { return aFitness; }
 
   // Get neuron number.
-  unsigned int NumNeuron() const {
-    return static_cast<unsigned int>(aNeuronGenes.size());
+  size_t NumNeuron() const {
+    return static_cast<size_t>(aNeuronGenes.size());
   }
   
   // Get link number.
-  unsigned int NumLink() const {
-    return static_cast<unsigned int>(aLinkGenes.size());
+  size_t NumLink() const {
+    return static_cast<size_t>(aLinkGenes.size());
   }
 
   // Whether specified neuron id exist in this genome.
-  bool HasNeuronId(unsigned int id) const {
+  bool HasNeuronId(size_t id) const {
     assert(id > 0);
     assert(NumNeuron() > 0);
 
-    for (unsigned int i=0; i<NumNeuron(); ++i) {
+    for (size_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].aId == id) {
         return true;
       }
@@ -110,10 +112,10 @@ class Genome {
   }
 
   // Get neuron by id.
-  NeuronGene GetNeuronById(unsigned int id) {
+  NeuronGene GetNeuronById(size_t id) {
     assert(HasNeuronId(id));
 
-    for (unsigned int i=0; i<NumNeuron(); ++i) {
+    for (size_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].aId == id) {
         return aNeuronGenes[i];
       }
@@ -121,8 +123,8 @@ class Genome {
   }
 
   // Get neuron index by id.
-  unsigned int GetNeuronIndex(unsigned int id) const {
-    for(unsigned int i=0; i < NumNeuron(); ++i) {
+  size_t GetNeuronIndex(size_t id) const {
+    for(size_t i=0; i < NumNeuron(); ++i) {
         if (aNeuronGenes[i].Id() == id) {
             return i;
         }
@@ -132,12 +134,12 @@ class Genome {
   }
 
   // Calculate Neuron depth.
-  unsigned int NeuronDepth(unsigned int id) {
+  size_t NeuronDepth(size_t id) {
     // TODO: if contains loop in network.
 
     // Find all links that output to this neuron id.
     std::vector<int> inputLinksIndex;
-    for (unsigned int i=0; i<NumLink(); ++i) {
+    for (size_t i=0; i<NumLink(); ++i) {
       if (aLinkGenes[i].ToNeuronId() == id) {
         inputLinksIndex.push_back(i);
       }
@@ -149,19 +151,19 @@ class Genome {
     }
 
     // Recursively get neuron depth.
-    std::vector<unsigned int> depths(inputLinksIndex.size());
-    for (unsigned int i=0; i<inputLinksIndex.size(); ++i) {
+    std::vector<size_t> depths(inputLinksIndex.size());
+    for (size_t i=0; i<inputLinksIndex.size(); ++i) {
       depths[i] = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId());
     }
-    unsigned int maxInputDepth = *(std::max_element(std::begin(depths),
+    size_t maxInputDepth = *(std::max_element(std::begin(depths),
                                  std::end(depths)));
     return (maxInputDepth + 1);
   }
 
   // Calculate Genome depth.
   // It is the max depth of all output neuron genes.
-  unsigned int GenomeDepth() {
-    unsigned int numNeuron = NumNeuron();
+  size_t GenomeDepth() {
+    size_t numNeuron = NumNeuron();
 
     // If empty genome.
     if (numNeuron == 0) {
@@ -176,17 +178,17 @@ class Genome {
     }
     
     // Find all OUTPUT neuron id.
-    std::vector<unsigned int> outputNeuronsId;
-    for (unsigned int i=0; i<NumNeuron(); ++i) {
+    std::vector<size_t> outputNeuronsId;
+    for (size_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Type() == OUTPUT) {
         outputNeuronsId.push_back(aNeuronGenes[i].Id());
       }
     }
 
     // Get max depth of all output neurons.
-    unsigned int genomeDepth = 0;
-    for (unsigned int i=0; i<outputNeuronsId.size(); ++i) {
-      unsigned int outputNeuronDepth = NeuronDepth(outputNeuronsId[i]);
+    size_t genomeDepth = 0;
+    for (size_t i=0; i<outputNeuronsId.size(); ++i) {
+      size_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i]);
       if (outputNeuronDepth > genomeDepth) {
         genomeDepth = outputNeuronDepth;
       }
@@ -198,7 +200,7 @@ class Genome {
 
   // Set neurons' input and output to zero.
   void Flush() {
-    for (unsigned int i=0; i<aNeuronGenes.size(); ++i) {
+    for (size_t i=0; i<aNeuronGenes.size(); ++i) {
       aNeuronGenes[i].aActivation = 0;
       aNeuronGenes[i].aInput = 0;
     }
@@ -207,23 +209,23 @@ class Genome {
   // Activate genome. The last dimension of input is always 1 for bias. 0 means no bias.
   void Activate(std::vector<double>& input) {
     assert(input.size() == aNumInput);
-    Flush();
+    //Flush();
 
     // Set inputs.
-    for (unsigned int i=0; i<aNumInput; ++i) {
+    for (size_t i=0; i<aNumInput; ++i) {
       aNeuronGenes[i].aActivation = input[i];  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
     }
 
     // Construct neuron id: index dictionary.
-    std::map<unsigned int, unsigned int> neuronIdToIndex;
-    for (unsigned int i=0; i<NumNeuron(); ++i) {
-      neuronIdToIndex.insert(std::pair<unsigned int, unsigned int>(aNeuronGenes[i].Id(), i));
+    std::map<size_t, size_t> neuronIdToIndex;
+    for (size_t i=0; i<NumNeuron(); ++i) {
+      neuronIdToIndex.insert(std::pair<size_t, size_t>(aNeuronGenes[i].Id(), i));
     }
 
     // Activate layer by layer.
-    for (unsigned int i=0; i<aDepth; ++i) {
+    for (size_t i=0; i<aDepth; ++i) {
       // Loop links to calculate neurons' input sum.
-      for (unsigned int j=0; j<aLinkGenes.size(); ++j) {
+      for (size_t j=0; j<aLinkGenes.size(); ++j) {
         aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].ToNeuronId())].aInput +=
           aLinkGenes[j].Weight() * aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].FromNeuronId())].aActivation;
       }
@@ -234,15 +236,18 @@ class Genome {
         aNeuronGenes[j].aInput = 0;
 
         double y = 0;
-        switch (aNeuronGenes[j].Type()) { // TODO: revise the implementation.
-          case SIGMOID:                   // TODO: more cases.
-            y = sigmoid(x);
+        switch (aNeuronGenes[j].Type()) { // TODO: more cases.
+          case SIGMOID:                   
+            y = LogisticFunction::fn(x);
+            break;
+          case TANH:
+            y = TanhFunction::fn(x);
             break;
           case RELU:
-            y = relu(x);
+            y = RectifierFunction::fn(x);
             break;
           default:
-            y = sigmoid(x);
+            y = LogisticFunction::fn(x);
             break;
         }
         aNeuronGenes[j].aActivation = y;
@@ -258,6 +263,59 @@ class Genome {
     }
     return output;
   }
+
+  // Set random link weights between [lo, hi].
+  void RandomizeLinkWeights(const double lo, const double hi) {
+    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+      double weight = mlpack::math::Random(lo, hi);
+      aLinkGenes[i].Weight(weight); 
+    }
+  }
+
+  // Soft mutation: add a random value chosen from
+  // initialization prob distribution with probability p.
+  // TODO: here we use uniform distribution.
+  // Can we use exponential distribution?
+  void MutateWeightsBiased(double mutateProb) {
+    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+      double p = mlpack::math::Random();  // rand 0~1
+      if (p < mutateProb) {
+        double deltaW = mlpack::math::Random(-1, 1);  // TODO: make it tunable: gaussian, param, exp-dist...
+        double oldW = aLinkGenes[i].Weight();
+        aLinkGenes[i].Weight(oldW + deltaW);
+      }
+    }
+  }
+
+  // Hard mutation: replace with a random value chosen from
+  // initialization prob distribution with probability p.
+  // TODO: here we use uniform distribution.
+  // Can we use exponential distribution?
+  void MutateWeightsUnbiased(double mutateProb) {
+    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+      double p = mlpack::math::Random();
+      if (p < mutateProb) {
+        double weight = mlpack::math::Random(-1, 1); // TODO: make it tunable: gaussian, param, exp-dist...
+        aLinkGenes[i].Weight(weight);
+      }
+    }
+  }
+
+  // Randomly select weights from one parent genome.
+  Genome CrossoverWeights(Genome& genomeDad) {
+    Genome childGenome(genomeDad);
+    for (size_t i=0; i<aLinkGenes.size(); ++i) { // assume genome are the same structure.
+      double t = mlpack::math::RandNormal();
+      if (t>0) {  // prob = 0.5
+        childGenome.aLinkGenes[i].Weight(aLinkGenes[i].Weight());
+      }
+    }
+
+    return childGenome;  // It need to set genome id based on its population's max id.
+    // TODO: check this works well.
+  }
+
+  // TODO: More potential operators to search genome.
 
   // Operator =.
   Genome& operator =(const Genome& genome) {
@@ -276,7 +334,7 @@ class Genome {
 
  private:
   // Genome id.
-  unsigned int aId;
+  size_t aId;
 
   // Neurons.
   std::vector<NeuronGene> aNeuronGenes;
@@ -285,13 +343,13 @@ class Genome {
   std::vector<LinkGene> aLinkGenes;
 
   // Input length (include bias). 
-  unsigned int aNumInput;
+  size_t aNumInput;
 
   // Output length.
-  unsigned int aNumOutput;
+  size_t aNumOutput;
 
   // Network maximum depth.
-  unsigned int aDepth;
+  size_t aDepth;
 
   // Genome fitness.
   double aFitness;

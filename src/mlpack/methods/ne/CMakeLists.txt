@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   gene.hpp
+  genome.hpp
 )
 
 # Add directory name to sources.

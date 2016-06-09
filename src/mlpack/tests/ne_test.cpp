@@ -4,8 +4,11 @@
  *
  * Test file for NE (Neural Evolution).
  */
+#include <cstddef>
+
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ne/gene.hpp>
+#include <mlpack/methods/ne/link_gene.hpp>
+#include <mlpack/methods/ne/neuron_gene.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
