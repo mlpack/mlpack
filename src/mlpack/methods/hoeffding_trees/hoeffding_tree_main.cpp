@@ -37,9 +37,9 @@ PROGRAM_INFO("Hoeffding trees",
     "A test file may be specified with the --test_file (-T) option, and if "
     "performance numbers are desired for that test set, labels may be specified"
     " with the --test_labels_file (-L) option.  Predictions for each test point"
-    " will be stored in the file specified by --output_predictions_file (-p) and "
+    " will be stored in the file specified by --predictions_file (-p) and "
     "probabilities for each predictions will be stored in the file specified by"
-    " the --output_probabilities_file (-P) option.");
+    " the --probabilities_file (-P) option.");
 
 PARAM_STRING("training_file", "Training dataset file.", "t", "");
 PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
@@ -56,9 +56,9 @@ PARAM_STRING("output_model_file", "File to save trained tree to.", "M", "");
 
 PARAM_STRING("test_file", "File of testing data.", "T", "");
 PARAM_STRING("test_labels_file", "Labels of test data.", "L", "");
-PARAM_STRING("output_predictions_file", "File to output label predictions for"
+PARAM_STRING("predictions_file", "File to output label predictions for"
     "test data into.", "p", "");
-PARAM_STRING("output_probabilities_file", "In addition to predicting labels, "
+PARAM_STRING("probabilities_file", "In addition to predicting labels, "
     "provide prediction probabilities in this file.", "P", "");
 
 PARAM_STRING("numeric_split_strategy", "The splitting strategy to use for "
@@ -90,18 +90,18 @@ int main(int argc, char** argv)
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
-  const string outputPredictionsFile =
-      CLI::GetParam<string>("output_predictions_file");
-  const string outputProbabilitiesFile =
-      CLI::GetParam<string>("output_probabilities_file");
+  const string predictionsFile =
+      CLI::GetParam<string>("predictions_file");
+  const string probabilitiesFile =
+      CLI::GetParam<string>("probabilities_file");
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((CLI::HasParam("output_predictions_file") ||
-       CLI::HasParam("output_probabilities_file")) &&
+  if ((CLI::HasParam("predictions_file") ||
+       CLI::HasParam("probabilities_file")) &&
        !CLI::HasParam("test_file"))
-    Log::Fatal << "--test_file must be specified if --output_predictions_file or "
-        << "--output_probabilities_file is specified." << endl;
+    Log::Fatal << "--test_file must be specified if --predictions_file or "
+        << "--probabilities_file is specified." << endl;
 
   if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "One of --training_file or --input_model_file must be "
@@ -180,10 +180,10 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
-  const string outputPredictionsFile =
-      CLI::GetParam<string>("output_predictions_file");
-  const string outputProbabilitiesFile =
-      CLI::GetParam<string>("output_probabilities_file");
+  const string predictionsFile =
+      CLI::GetParam<string>("predictions_file");
+  const string probabilitiesFile =
+      CLI::GetParam<string>("probabilities_file");
   bool batchTraining = CLI::HasParam("batch_mode");
   const size_t passes = (size_t) CLI::GetParam<int>("passes");
   if (passes > 1)
@@ -317,11 +317,11 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
           100.0 << ")." << endl;
     }
 
-    if (CLI::HasParam("output_predictions_file"))
-      data::Save(outputPredictionsFile, predictions);
+    if (CLI::HasParam("predictions_file"))
+      data::Save(predictionsFile, predictions);
 
-    if (CLI::HasParam("output_probabilities_file"))
-      data::Save(outputProbabilitiesFile, probabilities);
+    if (CLI::HasParam("probabilities_file"))
+      data::Save(probabilitiesFile, probabilities);
   }
 
   // Check the accuracy on the training set.

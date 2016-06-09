@@ -29,8 +29,8 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "\n\n"
     "The program is also able to evaluate a model on test data.  A test dataset"
     " can be specified with the --test_data (-T) option.  Class predictions "
-    "will be saved in the file specified with the --output_predictions_file (-p) "
-    "option.  If labels are specified for the test data, with the --test_labels_file"
+    "will be saved in the file specified with the --predictions_file (-p) "
+    "option.  If labels are specified for the test data, with the --test_labels"
     " (-L) option, then the program will print the accuracy of the predictions "
     "on the given test set and its corresponding labels.");
 
@@ -41,16 +41,16 @@ PARAM_STRING("labels_file", "A file containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row", "l", "");
 
 // Model loading/saving.
-PARAM_STRING("input_model_file_file", "File containing existing model (parameters).",
+PARAM_STRING("input_model_file", "File containing existing model (parameters).",
     "m", "");
-PARAM_STRING("output_model_file_file", "File to save trained softmax regression "
+PARAM_STRING("output_model_file", "File to save trained softmax regression "
     "model to.", "M", "");
 
 // Testing.
 PARAM_STRING("test_data", "File containing test dataset.", "T", "");
-PARAM_STRING("output_predictions_file", "File to save predictions for test dataset "
+PARAM_STRING("predictions_file", "File to save predictions for test dataset "
     "into.", "p", "");
-PARAM_STRING("test_labels_file", "File containing test labels.", "L", "");
+PARAM_STRING("test_labels", "File containing test labels.", "L", "");
 
 // Softmax configuration options.
 PARAM_INT("max_iterations", "Maximum number of iterations before termination.",
@@ -73,7 +73,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 // Test the accuracy of the model.
 template<typename Model>
 void TestPredictAcc(const string& testFile,
-                    const string& outputPredictionsFile,
+                    const string& predictionsFile,
                     const string& testLabels,
                     const size_t numClasses,
                     const Model& model);
@@ -97,10 +97,10 @@ int main(int argc, char** argv)
   const std::string inputModelFile =
       CLI::GetParam<std::string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
+  const string testLabelsFile = CLI::GetParam<string>("test_labels");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
-  const string outputPredictionsFile =
-      CLI::GetParam<string>("output_predictions_file");
+  const string predictionsFile =
+      CLI::GetParam<string>("predictions_file");
 
   // One of inputFile and modelFile must be specified.
   if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training_file"))
@@ -117,10 +117,10 @@ int main(int argc, char** argv)
 
   // Make sure we have an output file of some sort.
   if (!CLI::HasParam("output_model_file") &&
-      !CLI::HasParam("test_labels_file") &&
-      !CLI::HasParam("output_predictions_file"))
-    Log::Warn << "None of --output_model_file, --test_labels_file, or "
-      << "--output_predictions_file are set; no results from this program "
+      !CLI::HasParam("test_labels") &&
+      !CLI::HasParam("predictions_file"))
+    Log::Warn << "None of --output_model_file, --test_labels, or "
+      << "--predictions_file are set; no results from this program "
       << " will be saved." << endl;
 
 
@@ -131,8 +131,8 @@ int main(int argc, char** argv)
                                             maxIterations);
 
   TestPredictAcc(CLI::GetParam<string>("test_data"),
-                 CLI::GetParam<string>("output_predictions_file"),
-                 CLI::GetParam<string>("test_labels_file"),
+                 CLI::GetParam<string>("predictions_file"),
+                 CLI::GetParam<string>("test_labels"),
                  sm->NumClasses(), *sm);
 
   if (CLI::HasParam("output_model_file"))
@@ -157,7 +157,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 template<typename Model>
 void TestPredictAcc(const string& testFile,
-                    const string& outputPredictionsFile,
+                    const string& predictionsFile,
                     const string& testLabelsFile,
                     size_t numClasses,
                     const Model& model)
@@ -165,19 +165,19 @@ void TestPredictAcc(const string& testFile,
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (testFile.empty() && outputPredictionsFile.empty() && testLabelsFile.empty())
+  if (testFile.empty() && predictionsFile.empty() && testLabelsFile.empty())
     return;
 
   if (!testLabelsFile.empty() && testFile.empty())
   {
-    Log::Warn << "--test_labels_file specified, but --test_file is not specified."
+    Log::Warn << "--test_labels specified, but --test_file is not specified."
         << "  The parameter will be ignored." << endl;
     return;
   }
 
-  if (!outputPredictionsFile.empty() && testFile.empty())
+  if (!predictionsFile.empty() && testFile.empty())
   {
-    Log::Warn << "--output_predictions_file specified, but --test_file is not "
+    Log::Warn << "--predictions_file specified, but --test_file is not "
         << "specified.  The parameter will be ignored." << endl;
     return;
   }
@@ -190,8 +190,8 @@ void TestPredictAcc(const string& testFile,
   model.Predict(testData, predictLabels);
 
   // Save predictions, if desired.
-  if (!outputPredictionsFile.empty())
-    data::Save(outputPredictionsFile, predictLabels);
+  if (!predictionsFile.empty())
+    data::Save(predictionsFile, predictLabels);
 
   // Calculate accuracy, if desired.
   if (!testLabelsFile.empty())
@@ -204,7 +204,7 @@ void TestPredictAcc(const string& testFile,
     if (testData.n_cols != testLabels.n_elem)
     {
       Log::Fatal << "Test data in --test_data has " << testData.n_cols
-          << " points, but labels in --test_labels_file have "
+          << " points, but labels in --test_labels have "
           << testLabels.n_elem << " labels!" << endl;
     }
 

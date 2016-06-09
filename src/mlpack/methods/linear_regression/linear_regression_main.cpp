@@ -22,13 +22,13 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     " another matrix X' (--test_file):\n\n"
     "   y' = X' * b\n\n"
     "and these predicted responses, y', are saved to a file "
-    "(--output_predictions_file).  This type of regression is related to "
+    "(--output_predictions).  This type of regression is related to "
     "least-angle regression, which mlpack implements with the 'lars' "
     "executable.");
 
 PARAM_STRING("training_file", "File containing training set X (regressors).",
     "t", "");
-PARAM_STRING("training_responses_file", "Optional file containing y "
+PARAM_STRING("training_responses", "Optional file containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r", "");
 
@@ -37,7 +37,7 @@ PARAM_STRING("input_model_file", "File containing existing model (parameters).",
 PARAM_STRING("output_model_file", "File to save trained model to.", "M", "");
 
 PARAM_STRING("test_file", "File containing X' (test regressors).", "T", "");
-PARAM_STRING("output_predictions_file", "If --test_file is specified, this "
+PARAM_STRING("output_predictions", "If --test_file is specified, this "
     "file is where the predicted responses will be saved.", "p", "");
 
 PARAM_DOUBLE("lambda", "Tikhonov regularization for ridge regression.  If 0, "
@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string outputPredictionsFile =
-    CLI::GetParam<string>("output_predictions_file");
+    CLI::GetParam<string>("output_predictions");
   const string trainingResponsesFile =
-    CLI::GetParam<string>("training_responses_file");
+    CLI::GetParam<string>("training_responses");
   const string testFile = CLI::GetParam<string>("test_file");
   const string trainFile = CLI::GetParam<string>("training_file");
   const double lambda = CLI::GetParam<double>("lambda");
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
         << "both." << endl;
   }
 
-  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions_file"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
+  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions"))
+    Log::Warn << "--test_file (-t) specified, but --output_predictions "
         << "(-o) is not; no results will be saved." << endl;
 
   // If they specified a model file, we also need a test file or we
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (!CLI::HasParam("training_responses_file"))
+    if (CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
       responses = trans(regressors.row(regressors.n_rows - 1));
@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
     Timer::Stop("prediction");
 
     // Save predictions.
-    if (CLI::HasParam("output_predictions_file"))
+    if (CLI::HasParam("output_predictions"))
       data::Save(outputPredictionsFile, predictions, true, false);
   }
 }
