@@ -493,6 +493,89 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
   }
 
 }
+
+/**
+ * Test: Create an LSHSearch object and use an increasing number of probes to
+ * search for points. Require that recall for the same object doesn't decrease
+ * with increasing number of probes. Also require that at least a few times
+ * there's some increase in recall.
+ */
+BOOST_AUTO_TEST_CASE(MultiprobeTest)
+{
+  const double epsilonIncrease = 0.05;
+  const size_t repetitions = 5; // train five objects
+
+  const size_t probeTrials = 5;
+  const size_t numProbes[probeTrials] = {0, 1, 2, 3, 4};
+
+
+  /// algorithm parameters
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+  const double hashWidth = 0;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Run classic knn on reference set
+  KNN knn(rdata);
+  arma::Mat<size_t> groundTruth;
+  arma::mat groundDistances;
+  knn.Search(qdata, k, groundTruth, groundDistances);
+  
+  bool foundIncrease = 0;
+
+  for (size_t rep; rep < repetitions; ++rep)
+  {
+    // train a model
+    LSHSearch<> multiprobeTest(
+        rdata,
+        numProj,
+        numTables,
+        hashWidth,
+        secondHashSize,
+        bucketSize);
+
+    double prevRecall = 0;
+    // search with varying number of probes
+    for (size_t p = 0; p < probeTrials; ++p)
+    {
+      arma::Mat<size_t> lshNeighbors;
+      arma::mat lshDistances; //move outside of loop for speed?
+      
+      multiprobeTest.Search(
+          qdata, 
+          k, 
+          lshNeighbors, 
+          lshDistances, 
+          0, 
+          numProbes[p]);
+
+      // compute recall
+      double recall = ComputeRecall(lshNeighbors, groundTruth); //TODO: change to LSHSearch::ComputeRecall??
+      if (p > 0)
+      {
+        // more probes should at the very least not lower recall...
+        BOOST_REQUIRE(recall >= prevRecall);
+
+        // ... and should ideally increase it a bit
+        if (recall > prevRecall + epsilonIncrease)
+         foundIncrease = true;
+        prevRecall = recall;
+      }
+    }
+  }
+
+  BOOST_REQUIRE(foundIncrease);
+}
+
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
   // This is a not very good test that simply checks that the re-trained LSH
