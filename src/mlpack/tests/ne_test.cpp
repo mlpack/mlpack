@@ -7,8 +7,14 @@
 #include <cstddef>
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/ne/utils.hpp>
+#include <mlpack/methods/ne/parameters.hpp>
+#include <mlpack/methods/ne/tasks.hpp>
 #include <mlpack/methods/ne/link_gene.hpp>
 #include <mlpack/methods/ne/neuron_gene.hpp>
+#include <mlpack/methods/ne/genome.hpp>
+#include <mlpack/methods/ne/population.hpp>
+#include <mlpack/methods/ne/cne.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -77,6 +83,85 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   neuronGene = neuronGene3;
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 11);
 
+}
+
+/**
+ * Test Genome class.
+ */
+BOOST_AUTO_TEST_CASE(NEGenomeTest)
+{
+
+}
+
+/**
+ * Test Population class.
+ */
+BOOST_AUTO_TEST_CASE(NEPopulationTest)
+{
+
+}
+
+/**
+ * Test CNE by XOR task.
+ */
+BOOST_AUTO_TEST_CASE(NECneXorTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set CNE algorithm parameters.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMutateRate = 0.2;
+  params.aCrossoverRate = 0.3;
+
+  // Construct seed genome for xor task.
+  size_t id = 0;
+  size_t numInput = 3;
+  size_t numOutput = 1;
+  size_t depth = 2;
+  double fitness = -1;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0);
+  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0, 0);
+  
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 3, 0, 0);
+  LinkGene link2(1, 3, 0, 0);
+  LinkGene link3(2, 3, 0, 0);
+  LinkGene link4(0, 4, 0, 0);
+  LinkGene link5(1, 4, 0, 0);
+  LinkGene link6(2, 4, 0, 0);
+  LinkGene link7(4, 3, 0, 0);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+  linkGenes.push_back(link7);
+
+  Genome seedGenome = Genome(0, neuronGenes, linkGenes, numInput, numOutput, depth, fitness);
+
+  // Specify task type.
+  TaskXor task;
+
+  // Construct CNE instance.
+  CNE cne(task, seedGenome, params);
+
+  // Evolve.
+  cne.Evolve();  // Judge whether XOR test passed or not by printing 
+                 // the best fitness during each generation.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

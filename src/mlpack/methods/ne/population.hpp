@@ -27,8 +27,24 @@ class Population {
   std::vector<Genome> aGenomes;
 
   // Parametric constructor.
-  Population(Genome& seedGenome) {
+  // TODO: whether randomize, random range, as parameter or not??
+  Population(Genome& seedGenome, size_t populationSize) {
+    aPopulationSize = populationSize;
+    aBestFitness = -1; // -1 denotes haven't evaluate yet.
 
+    // Create genomes from seed Genome.
+    for (size_t i=0; i<populationSize; ++i) {
+      Genome genome = seedGenome;
+      genome.Id() = i;
+      aGenomes.push_back(genome);
+    }
+
+    // Randomize genome weights.
+    for (size_t i=0; i<populationSize; ++i) {
+      aGenomes[i].RandomizeWeights(-1, 1);  
+    }
+
+    aNextGenomeId = populationSize;
   }
 
   // Destructor.
@@ -50,11 +66,10 @@ class Population {
     }
   }
 
-
  private:
 
   // Number of Genomes.
-  size_t aNumGenome;
+  size_t aPopulationSize;
 
   // Best fitness.
   double aBestFitness;

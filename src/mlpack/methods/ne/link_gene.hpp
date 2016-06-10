@@ -4,8 +4,8 @@
  *
  * Definition of the LinkGene class.
  */
-#ifndef MLPACK_METHODS_NE_GENE_HPP
-#define MLPACK_METHODS_NE_GENE_HPP
+#ifndef MLPACK_METHODS_NE_LINK_GENE_HPP
+#define MLPACK_METHODS_NE_LINK_GENE_HPP
 
 #include <cstddef>
 

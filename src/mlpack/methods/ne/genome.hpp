@@ -63,8 +63,8 @@ class Genome {
   // Destructor.
   ~Genome() {}
 
-  // Get genome id.
-  size_t Id() const { return aId; }
+  // Get/set genome id.
+  size_t& Id() { return aId; }
 
   // Get input length.
   size_t NumInput() const { return aNumInput; }
@@ -89,12 +89,12 @@ class Genome {
 
   // Get neuron number.
   size_t NumNeuron() const {
-    return static_cast<size_t>(aNeuronGenes.size());
+    return aNeuronGenes.size();
   }
   
   // Get link number.
   size_t NumLink() const {
-    return static_cast<size_t>(aLinkGenes.size());
+    return aLinkGenes.size();
   }
 
   // Whether specified neuron id exist in this genome.
@@ -246,6 +246,8 @@ class Genome {
           case RELU:
             y = RectifierFunction::fn(x);
             break;
+          case LINEAR:
+            y = x;
           default:
             y = LogisticFunction::fn(x);
             break;
@@ -265,7 +267,7 @@ class Genome {
   }
 
   // Set random link weights between [lo, hi].
-  void RandomizeLinkWeights(const double lo, const double hi) {
+  void RandomizeWeights(const double lo, const double hi) {
     for (size_t i=0; i<aLinkGenes.size(); ++i) {
       double weight = mlpack::math::Random(lo, hi);
       aLinkGenes[i].Weight(weight); 

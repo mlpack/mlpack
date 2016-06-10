@@ -1,8 +1,14 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  gene.hpp
+  link_gene.hpp
+  neuron_gene.hpp
   genome.hpp
+  population.hpp
+  cne.hpp
+  tasks.hpp
+  parameters.hpp
+  utils.hpp
 )
 
 # Add directory name to sources.

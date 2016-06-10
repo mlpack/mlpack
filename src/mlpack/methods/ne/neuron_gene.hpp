@@ -4,8 +4,8 @@
  *
  * Definition of the NeuronGene class.
  */
-#ifndef MLPACK_METHODS_NE_GENE_HPP
-#define MLPACK_METHODS_NE_GENE_HPP
+#ifndef MLPACK_METHODS_NE_NEURON_GENE_HPP
+#define MLPACK_METHODS_NE_NEURON_GENE_HPP
 
 #include <cstddef>
 
