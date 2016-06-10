@@ -104,8 +104,9 @@ template<typename MetricType,
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
-        parentNode,const size_t numMaxChildren) :
-    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : parentNode->MaxNumChildren()),
+        parentNode, const size_t numMaxChildren) :
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren :
+        parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
     children(maxNumChildren + 1),
