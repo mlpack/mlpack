@@ -73,7 +73,7 @@ class CNE {
     // Repeat
     while (generation < aMaxGeneration) {
     	// Evaluate all genomes in the population.
-      for (size_t i=0; i<aPopulation.NumGenome(); ++i) {
+      for (size_t i=0; i<aPopulation.PopulationSize(); ++i) {
         double fitness = aTask.EvalFitness(aPopulation.aGenomes[i]);
         aPopulation.aGenomes[i].Fitness() = fitness;
       }

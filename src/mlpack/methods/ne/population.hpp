@@ -26,6 +26,14 @@ class Population {
   // Genomes.
   std::vector<Genome> aGenomes;
 
+  // Default constructor.
+  Population() {
+    aPopulationSize = 0;
+    aBestFitness = DBL_MAX;
+    aBestGenome = Genome();
+    aNextGenomeId = 0;
+  }
+
   // Parametric constructor.
   // TODO: whether randomize, random range, as parameter or not??
   Population(Genome& seedGenome, size_t populationSize) {
@@ -42,6 +50,8 @@ class Population {
 
     aNextGenomeId = populationSize;
   }
+
+  size_t PopulationSize() { return aPopulationSize; }
 
   // Destructor.
   ~Population() {}

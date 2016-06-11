@@ -249,7 +249,7 @@ class Genome {
           case LINEAR:
             y = x;
           default:
-            y = LogisticFunction::fn(x);
+            y = ann::LogisticFunction::fn(x);
             break;
         }
         aNeuronGenes[j].aActivation = y;
