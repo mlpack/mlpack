@@ -23,21 +23,21 @@ BOOST_AUTO_TEST_SUITE(AKFNTest);
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
+BOOST_AUTO_TEST_CASE(AproxVsExact1)
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KFN naive(dataset, true);
-  arma::Mat<size_t> neighborsNaive;
-  arma::mat distancesNaive;
-  naive.Search(dataset, 15, neighborsNaive, distancesNaive);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   for (size_t c = 0; c < 4; c++)
   {
-    KFN* kfn;
+    KFN* akfn;
     double epsilon;
 
     switch (c)
@@ -56,107 +56,106 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
         break;
     }
 
-    kfn = new KFN(dataset, false, false, epsilon);
-
     // Now perform the actual calculation.
-    arma::Mat<size_t> neighborsTree;
-    arma::mat distancesTree;
-    kfn->Search(dataset, 15, neighborsTree, distancesTree);
+    akfn = new KFN(dataset, false, false, epsilon);
+    arma::Mat<size_t> neighborsAprox;
+    arma::mat distancesAprox;
+    akfn->Search(dataset, 15, neighborsAprox, distancesAprox);
 
-    for (size_t i = 0; i < neighborsTree.n_elem; i++)
-      REQUIRE_RELATIVE_ERR(distancesTree(i), distancesNaive(i), epsilon);
+    for (size_t i = 0; i < neighborsAprox.n_elem; i++)
+      REQUIRE_RELATIVE_ERR(distancesAprox(i), distancesExact(i), epsilon);
 
     // Clean the memory.
-    delete kfn;
+    delete akfn;
   }
 }
 
 /**
- * Test the dual-tree furthest-neighbors method with the naive method.  This
+ * Test the dual-tree furthest-neighbors method with the exact method.  This
  * uses only a reference dataset.
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
+BOOST_AUTO_TEST_CASE(AproxVsExact2)
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KFN naive(dataset, true);
-  arma::Mat<size_t> neighborsNaive;
-  arma::mat distancesNaive;
-  naive.Search(15, neighborsNaive, distancesNaive);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(15, neighborsExact, distancesExact);
 
-  KFN kfn(dataset, false, false, 0.05);
-  arma::Mat<size_t> neighborsTree;
-  arma::mat distancesTree;
-  kfn.Search(15, neighborsTree, distancesTree);
+  KFN akfn(dataset, false, false, 0.05);
+  arma::Mat<size_t> neighborsAprox;
+  arma::mat distancesAprox;
+  akfn.Search(15, neighborsAprox, distancesAprox);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesTree[i], distancesNaive[i], 0.05);
+  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesAprox[i], distancesExact[i], 0.05);
 }
 
 /**
- * Test the single-tree furthest-neighbors method with the naive method.  This
+ * Test the single-tree furthest-neighbors method with the exact method.  This
  * uses only a reference dataset.
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
+BOOST_AUTO_TEST_CASE(SingleTreeVsExact)
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KFN naive(dataset, true);
-  arma::Mat<size_t> neighborsNaive;
-  arma::mat distancesNaive;
-  naive.Search(15, neighborsNaive, distancesNaive);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(15, neighborsExact, distancesExact);
 
-  KFN kfn(dataset, false, true, 0.05);
-  arma::Mat<size_t> neighborsTree;
-  arma::mat distancesTree;
-  kfn.Search(15, neighborsTree, distancesTree);
+  KFN akfn(dataset, false, true, 0.05);
+  arma::Mat<size_t> neighborsAprox;
+  arma::mat distancesAprox;
+  akfn.Search(15, neighborsAprox, distancesAprox);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesTree[i], distancesNaive[i], 0.05);
+  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesAprox[i], distancesExact[i], 0.05);
 }
 
 /**
- * Test the cover tree single-tree furthest-neighbors method against the naive
+ * Test the cover tree single-tree furthest-neighbors method against the exact
  * method.  This uses only a random reference dataset.
  *
  * Errors are produced if the results are not according to relative error.
  */
 BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 {
-  arma::mat data;
-  data.randu(75, 1000); // 75 dimensional, 1000 points.
+  arma::mat dataset;
+  dataset.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  KFN naive(data, true);
-  arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
-  naive.Search(data, 15, naiveNeighbors, naiveDistances);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat> tree(data);
+      arma::mat> tree(dataset);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(&tree, true, 0.05);
 
-  arma::Mat<size_t> coverTreeNeighbors;
-  arma::mat coverTreeDistances;
-  coverTreeSearch.Search(data, 15, coverTreeNeighbors, coverTreeDistances);
+  arma::Mat<size_t> neighborsCoverTree;
+  arma::mat distancesCoverTree;
+  coverTreeSearch.Search(dataset, 15, neighborsCoverTree, distancesCoverTree);
 
-  for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
-    REQUIRE_RELATIVE_ERR(coverTreeDistances[i], naiveDistances[i], 0.05);
+  for (size_t i = 0; i < neighborsCoverTree.n_elem; ++i)
+    REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
 }
 
 /**
- * Test the cover tree dual-tree furthest neighbors method against the naive
+ * Test the cover tree dual-tree furthest neighbors method against the exact
  * method.
  *
  * Errors are produced if the results are not according to relative error.
@@ -166,10 +165,10 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat dataset;
   data::Load("test_data_3_1000.csv", dataset);
 
-  KFN naive(dataset, true);
-  arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
-  naive.Search(dataset, 15, naiveNeighbors, naiveDistances);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
       arma::mat> referenceTree(dataset);
@@ -177,43 +176,43 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(&referenceTree, false, 0.05);
 
-  arma::Mat<size_t> coverTreeNeighbors;
-  arma::mat coverTreeDistances;
-  coverTreeSearch.Search(dataset, 15, coverTreeNeighbors, coverTreeDistances);
+  arma::Mat<size_t> neighborsCoverTree;
+  arma::mat distancesCoverTree;
+  coverTreeSearch.Search(dataset, 15, neighborsCoverTree, distancesCoverTree);
 
-  for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
-    REQUIRE_RELATIVE_ERR(coverTreeDistances[i], naiveDistances[i], 0.05);
+  for (size_t i = 0; i < neighborsCoverTree.n_elem; ++i)
+    REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
 }
 
 /**
- * Test the ball tree single-tree furthest-neighbors method against the naive
+ * Test the ball tree single-tree furthest-neighbors method against the exact
  * method.  This uses only a random reference dataset.
  *
  * Errors are produced if the results are not according to relative error.
  */
 BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
 {
-  arma::mat data;
-  data.randu(75, 1000); // 75 dimensional, 1000 points.
+  arma::mat dataset;
+  dataset.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  KFN naive(data, true);
-  arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
-  naive.Search(data, 15, naiveNeighbors, naiveDistances);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   NeighborSearch<FurthestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(data, false, true, 0.05);
+      ballTreeSearch(dataset, false, true, 0.05);
 
-  arma::Mat<size_t> ballNeighbors;
-  arma::mat ballDistances;
-  ballTreeSearch.Search(data, 15, ballNeighbors, ballDistances);
+  arma::Mat<size_t> neighborsBallTree;
+  arma::mat distancesBallTree;
+  ballTreeSearch.Search(dataset, 15, neighborsBallTree, distancesBallTree);
 
-  for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
+  for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
+    REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
 
 /**
- * Test the ball tree dual-tree furthest neighbors method against the naive
+ * Test the ball tree dual-tree furthest neighbors method against the exact
  * method.
  *
  * Errors are produced if the results are not according to relative error.
@@ -223,19 +222,19 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   arma::mat dataset;
   data::Load("test_data_3_1000.csv", dataset);
 
-  KFN naive(dataset, true);
-  arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
-  naive.Search(15, naiveNeighbors, naiveDistances);
+  KFN exact(dataset);
+  arma::Mat<size_t> neighborsExact;
+  arma::mat distancesExact;
+  exact.Search(15, neighborsExact, distancesExact);
 
   NeighborSearch<FurthestNeighborSort, EuclideanDistance, arma::mat, BallTree>
       ballTreeSearch(dataset, false, false, 0.05);
-  arma::Mat<size_t> ballNeighbors;
-  arma::mat ballDistances;
-  ballTreeSearch.Search(15, ballNeighbors, ballDistances);
+  arma::Mat<size_t> neighborsBallTree;
+  arma::mat distancesBallTree;
+  ballTreeSearch.Search(15, neighborsBallTree, distancesBallTree);
 
-  for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
-    REQUIRE_RELATIVE_ERR(ballDistances(i), naiveDistances(i), 0.05);
+  for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
+    REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
