@@ -30,18 +30,14 @@ class Population {
   // TODO: whether randomize, random range, as parameter or not??
   Population(Genome& seedGenome, size_t populationSize) {
     aPopulationSize = populationSize;
-    aBestFitness = -1; // -1 denotes haven't evaluate yet.
+    aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
-    // Create genomes from seed Genome.
+    // Create genomes from seed Genome and randomize weight.
     for (size_t i=0; i<populationSize; ++i) {
       Genome genome = seedGenome;
       genome.Id() = i;
       aGenomes.push_back(genome);
-    }
-
-    // Randomize genome weights.
-    for (size_t i=0; i<populationSize; ++i) {
-      aGenomes[i].RandomizeWeights(-1, 1);  
+      aGenomes[i].RandomizeWeights(-1, 1);
     }
 
     aNextGenomeId = populationSize;
@@ -60,7 +56,7 @@ class Population {
 
     aBestFitness = aGenomes[0].Fitness();
     for (size_t i=0; i<aGenomes.size(); ++i) {
-      if (aGenomes[i].Fitness() < bestFitness) {
+      if (aGenomes[i].Fitness() < aBestFitness) {
         aBestFitness = aGenomes[i].Fitness();
       }
     }

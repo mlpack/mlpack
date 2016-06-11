@@ -4,8 +4,8 @@
  *
  * Definition of CNE class.
  */
-#ifndef MLPACK_METHODS_NE_POPULATION_HPP
-#define MLPACK_METHODS_NE_POPULATION_HPP
+#ifndef MLPACK_METHODS_NE_CNE_HPP
+#define MLPACK_METHODS_NE_CNE_HPP
 
 #include <cstddef>
 #include <cstdio>
@@ -26,10 +26,10 @@ namespace ne {
  * This class implements Conventional Neuro-evolution (CNE): weight
  * evolution on topologically fixed neural networks.
  */
+template<typename TaskType>
 class CNE {
  public:
   // Parametric constructor.
-  template<typename TaskType>
   CNE(TaskType task, Genome& seedGenome, Parameters& params) {
     aTask = task;
     aSeedGenome = seedGenome;
@@ -65,22 +65,22 @@ class CNE {
   }
 
   // Evolution of population.
-  void Evolve(size_t maxGeneration, TaskType& task) {
+  void Evolve() {
     // Generate initial population at random.
     size_t generation = 0;
     InitPopulation();
     
     // Repeat
-    while (generation < maxGeneration) {
+    while (generation < aMaxGeneration) {
     	// Evaluate all genomes in the population.
       for (size_t i=0; i<aPopulation.NumGenome(); ++i) {
-        double fitness = task.EvalFitness(aPopulation.aGenomes[i]);
+        double fitness = aTask.EvalFitness(aPopulation.aGenomes[i]);
         aPopulation.aGenomes[i].Fitness() = fitness;
       }
       aPopulation.SetBestFitness();
 
     	// Output some information.
-      printf("Best fitness: %f\n", aPopulation.BestFitness())
+      printf("Best fitness: %f\n", aPopulation.BestFitness());
 
     	// Reproduce next generation.
       Reproduce();
@@ -115,7 +115,7 @@ class CNE {
 }  // namespace ne
 }  // namespace mlpack
 
-#endif
+#endif  // MLPACK_METHODS_NE_CNE_HPP
 
 
 

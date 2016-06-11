@@ -116,4 +116,4 @@ class NeuronGene {
 }  // namespace ne
 }  // namespace mlpack
 
-#endif  // MLPACK_METHODS_NE_GENE_HPP
+#endif  // MLPACK_METHODS_NE_NEURON_GENE_HPP

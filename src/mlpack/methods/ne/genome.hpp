@@ -103,7 +103,7 @@ class Genome {
     assert(NumNeuron() > 0);
 
     for (size_t i=0; i<NumNeuron(); ++i) {
-      if (aNeuronGenes[i].aId == id) {
+      if (aNeuronGenes[i].Id() == id) {
         return true;
       }
     }
@@ -116,7 +116,7 @@ class Genome {
     assert(HasNeuronId(id));
 
     for (size_t i=0; i<NumNeuron(); ++i) {
-      if (aNeuronGenes[i].aId == id) {
+      if (aNeuronGenes[i].Id() == id) {
         return aNeuronGenes[i];
       }
     }
@@ -231,20 +231,20 @@ class Genome {
       }
 
       // Loop neurons to calculate neurons' activation.
-      for (unsigned in j=aNumInput; j<aNeuronGenes.size(); ++j) {
+      for (size_t j=aNumInput; j<aNeuronGenes.size(); ++j) {
         double x = aNeuronGenes[j].aInput;  // TODO: consider bias. Difference?
         aNeuronGenes[j].aInput = 0;
 
         double y = 0;
         switch (aNeuronGenes[j].Type()) { // TODO: more cases.
           case SIGMOID:                   
-            y = LogisticFunction::fn(x);
+            y = ann::LogisticFunction::fn(x);
             break;
           case TANH:
-            y = TanhFunction::fn(x);
+            y = ann::TanhFunction::fn(x);
             break;
           case RELU:
-            y = RectifierFunction::fn(x);
+            y = ann::RectifierFunction::fn(x);
             break;
           case LINEAR:
             y = x;

@@ -86,4 +86,4 @@ class LinkGene {
 }  // namespace ne
 }  // namespace mlpack
 
-#endif  // MLPACK_METHODS_NE_GENE_HPP
+#endif  // MLPACK_METHODS_NE_LINK_GENE_HPP

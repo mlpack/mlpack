@@ -60,7 +60,7 @@ int RandInt(int x, int y) {
 }
 
 // Return a random float between [0, 1]
-double RandFloat(double x, double y) {
+double RandFloat() {
   boost::random::uniform_01<> dist;
   return dist(rng);
   

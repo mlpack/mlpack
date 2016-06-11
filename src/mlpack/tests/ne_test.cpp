@@ -154,10 +154,10 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   Genome seedGenome = Genome(0, neuronGenes, linkGenes, numInput, numOutput, depth, fitness);
 
   // Specify task type.
-  TaskXor task;
+  TaskXor<ann::MeanSquaredErrorFunction> task;
 
   // Construct CNE instance.
-  CNE cne(task, seedGenome, params);
+  CNE<TaskXor<ann::MeanSquaredErrorFunction>> cne(task, seedGenome, params);
 
   // Evolve.
   cne.Evolve();  // Judge whether XOR test passed or not by printing 

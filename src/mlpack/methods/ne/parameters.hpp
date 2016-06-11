@@ -35,3 +35,5 @@ class Parameters {
 
 }  // namespace ne
 }  // namespace mlpack
+
+#endif  // MLPACK_METHODS_NE_PARAMETERS_HPP
