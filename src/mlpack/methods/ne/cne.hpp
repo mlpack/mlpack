@@ -80,7 +80,7 @@ class CNE {
       aPopulation.SetBestFitness();
 
     	// Output some information.
-      printf("Best fitness: %f\n", aPopulation.BestFitness());
+      printf("Generation: %d\tBest fitness: %f\n", generation, aPopulation.BestFitness());
 
     	// Reproduce next generation.
       Reproduce();

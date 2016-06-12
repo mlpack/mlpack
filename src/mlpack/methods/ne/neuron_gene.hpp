@@ -63,7 +63,7 @@ class NeuronGene {
   {}
 
   // Copy constructor.
-  NeuronGene(NeuronGene& neuronGene) {
+  NeuronGene(const NeuronGene& neuronGene) {
   	aId = neuronGene.aId;
   	aType = neuronGene.aType;
   	aActFuncType = neuronGene.aActFuncType;

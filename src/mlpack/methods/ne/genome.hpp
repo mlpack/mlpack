@@ -260,7 +260,7 @@ class Genome {
   // Get output vector.
   std::vector<double> Output() {
     std::vector<double> output;
-    for (int i=0; i<aNumOutput; ++i) {  // TODO: it relies on the sequence. Good?
+    for (size_t i=0; i<aNumOutput; ++i) {  // TODO: it relies on the sequence. Good?
       output.push_back(aNeuronGenes[aNumInput + i].aActivation);
     }
     return output;

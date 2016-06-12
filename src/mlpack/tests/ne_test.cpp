@@ -59,9 +59,7 @@ BOOST_AUTO_TEST_CASE(NELinkGeneTest)
 BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
 {
   // Create a neuron gene.
-  ActivationFuncType actFuncType = SIGMOID;
-  NeuronType neuronType = INPUT;
-  NeuronGene neuronGene(1, neuronType, actFuncType, 0, 0);
+  NeuronGene neuronGene(1, INPUT, SIGMOID, 0, 0);
 
   // Test parametric constructor and access functions.
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 1);
@@ -79,7 +77,7 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   BOOST_REQUIRE_EQUAL(neuronGene2.Id(), 1);
 
   // Test operator =.
-  NeuronGene neuronGene3(11, neuronType, actFuncType, 0, 0);
+  NeuronGene neuronGene3(11, INPUT, SIGMOID, 0, 0);
   neuronGene = neuronGene3;
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 11);
 
@@ -113,6 +111,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   params.aPopulationSize = 500;
   params.aMutateRate = 0.2;
   params.aCrossoverRate = 0.3;
+  params.aMaxGeneration = 100;
 
   // Construct seed genome for xor task.
   size_t id = 0;
@@ -128,7 +127,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   NeuronGene biasGene(2, BIAS, LINEAR, 0, 0);
   NeuronGene outputGene(3, OUTPUT, SIGMOID, 0, 0);
   NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0, 0);
-  
+
   neuronGenes.push_back(inputGene1);
   neuronGenes.push_back(inputGene2);
   neuronGenes.push_back(biasGene);
