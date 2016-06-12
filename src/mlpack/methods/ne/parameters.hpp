@@ -28,8 +28,15 @@ class Parameters {
   // Mutation rate.
   double aMutateRate;
 
+  // Mutate size.
+  double aMutateSize;
+
   // Crossover rate.
   double aCrossoverRate;
+
+  // Elite percentage.
+  double aElitePercentage;
+
 
 };
 

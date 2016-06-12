@@ -72,6 +72,14 @@ class Population {
     }
   }
 
+  // Sort genomes by fitness. First is best.
+  static bool CompareGenome(Genome lg, Genome rg) {
+    return (lg.Fitness() < rg.Fitness());
+  }
+  bool SortPopulation() {
+    std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);
+  }
+
  private:
 
   // Number of Genomes.

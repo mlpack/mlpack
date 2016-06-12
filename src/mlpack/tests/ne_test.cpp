@@ -109,9 +109,11 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   // Set CNE algorithm parameters.
   Parameters params;
   params.aPopulationSize = 500;
-  params.aMutateRate = 0.2;
-  params.aCrossoverRate = 0.3;
-  params.aMaxGeneration = 100;
+  params.aMutateRate = 0.1;
+  params.aMutateSize = 0.02;
+  params.aElitePercentage = 0.2;
+  //params.aCrossoverRate = 0.3;
+  params.aMaxGeneration = 1000;
 
   // Construct seed genome for xor task.
   size_t id = 0;

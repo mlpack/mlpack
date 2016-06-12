@@ -36,7 +36,9 @@ class CNE {
     aPopulationSize = params.aPopulationSize;
     aMaxGeneration = params.aMaxGeneration;
     aMutateRate = params.aMutateRate;
+    aMutateSize = params.aMutateSize;
     aCrossoverRate = params.aCrossoverRate;
+    aElitePercentage = params.aElitePercentage;
   }
 
   // Destructor.
@@ -55,13 +57,27 @@ class CNE {
   // form G(i + 1).
   void Reproduce() {
     // Sort population by fitness
+    aPopulation.SortPopulation();
 
-    // Select two parents by fitness and generate two children
+    // Select parents from elite genomes and crossover.
+    size_t numElite = floor(aElitePercentage * aPopulationSize);
+    size_t numDrop = floor((aPopulationSize - numElite) / 2) * 2;  // Make sure even number.
+    numElite = aPopulationSize - numDrop;
 
-    // Replace two worst by two children
+    for (size_t i=numElite; i<aPopulationSize; ++i) {
+      // Randomly select two parents from elite genomes.
+      size_t idx1 = RandInt(0, numElite);
+      size_t idx2 = RandInt(0, numElite);
 
-    // Mutate population, keep the best.
-    
+      // Crossover to get two children genomes.
+      Genome::CrossoverWeights(aPopulation.aGenomes[idx1], aPopulation.aGenomes[idx2],
+                       aPopulation.aGenomes[i], aPopulation.aGenomes[i+1]);
+    }
+
+    // Keep the best genome and mutate the rests.
+    for (size_t i=1; i<aPopulationSize; ++i) {
+      aPopulation.aGenomes[i].MutateWeightsBiased(aMutateRate, aMutateSize);
+    }
   }
 
   // Evolution of population.
@@ -80,7 +96,7 @@ class CNE {
       aPopulation.SetBestFitness();
 
     	// Output some information.
-      printf("Generation: %d\tBest fitness: %f\n", generation, aPopulation.BestFitness());
+      printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
 
     	// Reproduce next generation.
       Reproduce();
@@ -95,11 +111,11 @@ class CNE {
   // Seed genome. It is used for init population.
   Genome aSeedGenome;
 
-  // Population size.
-  size_t aPopulationSize;
-
   // Population to evolve.
   Population aPopulation;
+
+  // Population size.
+  size_t aPopulationSize;
 
   // Max number of generation to evolve.
   size_t aMaxGeneration;
@@ -107,8 +123,14 @@ class CNE {
   // Mutation rate.
   double aMutateRate;
 
+  // Mutate size. For normal distribution, it is mutate variance.
+  double aMutateSize;
+
   // Crossover rate.
   double aCrossoverRate;
+
+  // Elite percentage.
+  double aElitePercentage;
 
 };
 

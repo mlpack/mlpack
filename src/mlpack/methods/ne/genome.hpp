@@ -278,11 +278,11 @@ class Genome {
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution.
   // Can we use exponential distribution?
-  void MutateWeightsBiased(double mutateProb) {
+  void MutateWeightsBiased(double mutateProb, double mutateSize) {
     for (size_t i=0; i<aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();  // rand 0~1
       if (p < mutateProb) {
-        double deltaW = mlpack::math::Random(-1, 1);  // TODO: make it tunable: gaussian, param, exp-dist...
+        double deltaW = mlpack::math::RandNormal(0, mutateSize);  // TODO: make it tunable: gaussian, param, exp-dist...
         double oldW = aLinkGenes[i].Weight();
         aLinkGenes[i].Weight(oldW + deltaW);
       }
@@ -293,27 +293,35 @@ class Genome {
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution.
   // Can we use exponential distribution?
-  void MutateWeightsUnbiased(double mutateProb) {
+  void MutateWeightsUnbiased(double mutateProb, double mutateSize) {
     for (size_t i=0; i<aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();
       if (p < mutateProb) {
-        double weight = mlpack::math::Random(-1, 1); // TODO: make it tunable: gaussian, param, exp-dist...
+        double weight = mlpack::math::RandNormal(0, mutateSize); // TODO: make it tunable: gaussian, param, exp-dist...
         aLinkGenes[i].Weight(weight);
       }
     }
   }
 
   // Randomly select weights from one parent genome.
-  Genome CrossoverWeights(Genome& genomeDad) {
-    Genome childGenome(genomeDad);
-    for (size_t i=0; i<aLinkGenes.size(); ++i) { // assume genome are the same structure.
+  static void CrossoverWeights(Genome& momGenome, 
+                        Genome& dadGenome, 
+                        Genome& child1Genome, 
+                        Genome& child2Genome) {
+    child1Genome = momGenome;
+    child2Genome = dadGenome;
+    for (size_t i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
       double t = mlpack::math::RandNormal();
       if (t>0) {  // prob = 0.5
-        childGenome.aLinkGenes[i].Weight(aLinkGenes[i].Weight());
+        child1Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
+        child2Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
+      } else {
+        child1Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
+        child2Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
       }
     }
 
-    return childGenome;  // It need to set genome id based on its population's max id.
+    // NOTICE: child genomes need to set genome id based on its population's max id.
     // TODO: check this works well.
   }
 
