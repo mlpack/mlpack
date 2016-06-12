@@ -2,7 +2,7 @@
  * @file dataset_info_impl.hpp
  * @author Ryan Curtin
  *
- * An implementation of the DatasetInfo class.
+ * An implementation of the DatasetMapper<MapPolicy> class.
  */
 #ifndef MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
 #define MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
@@ -14,46 +14,33 @@ namespace mlpack {
 namespace data {
 
 // Default constructor.
-inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
+template<typename MapPolicy>
+inline DatasetMapper<MapPolicy>::DatasetMapper(const size_t dimensionality) :
     types(dimensionality, Datatype::numeric)
 {
   // Nothing to initialize.
 }
 
 // Map the string to a numeric id.
-inline size_t DatasetInfo::MapString(const std::string& string,
-                                     const size_t dimension)
+template<typename MapPolicy>
+inline typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::MapString(
+                                                    const std::string& string,
+                                                    const size_t dimension)
 {
-  // If this condition is true, either we have no mapping for the given string
-  // or we have no mappings for the given dimension at all.  In either case,
-  // we create a mapping.
-  if (maps.count(dimension) == 0 ||
-      maps[dimension].first.left.count(string) == 0)
-  {
-    // This string does not exist yet.
-    size_t& numMappings = maps[dimension].second;
-    if (numMappings == 0)
-      types[dimension] = Datatype::categorical;
-    typedef boost::bimap<std::string, size_t>::value_type PairType;
-    maps[dimension].first.insert(PairType(string, numMappings));
-    return numMappings++;
-  }
-  else
-  {
-    // This string already exists in the mapping.
-    return maps[dimension].first.left.at(string);
-  }
+  return policy.template MapString<MapType>(maps, string, dimension);
 }
 
 // Return the string corresponding to a value in a given dimension.
-inline const std::string& DatasetInfo::UnmapString(const size_t value,
-                                                   const size_t dimension)
+template<typename MapPolicy>
+inline const std::string& DatasetMapper<MapPolicy>::UnmapString(
+                                                    const size_t value,
+                                                    const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.right.count(value) == 0)
   {
     std::ostringstream oss;
-    oss << "DatasetInfo::UnmapString(): value '" << value << "' unknown for "
+    oss << "DatasetMapper<MapPolicy>::UnmapString(): value '" << value << "' unknown for "
         << "dimension " << dimension;
     throw std::invalid_argument(oss.str());
   }
@@ -62,15 +49,17 @@ inline const std::string& DatasetInfo::UnmapString(const size_t value,
 }
 
 // Return the value corresponding to a string in a given dimension.
-inline size_t DatasetInfo::UnmapValue(const std::string& string,
-                                      const size_t dimension)
+template<typename MapPolicy>
+inline const typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::UnmapValue(
+                                                    const std::string& string,
+                                                    const size_t dimension) const
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.left.count(string) == 0)
   {
     std::ostringstream oss;
-    oss << "DatasetInfo::UnmapValue(): string '" << string << "' unknown for "
-        << "dimension " << dimension;
+    oss << "DatasetMapper<MapPolicy>::UnmapValue(): string '" << string
+        << "' unknown for dimension " << dimension;
     throw std::invalid_argument(oss.str());
   }
 
@@ -78,7 +67,8 @@ inline size_t DatasetInfo::UnmapValue(const std::string& string,
 }
 
 // Get the type of a particular dimension.
-inline Datatype DatasetInfo::Type(const size_t dimension) const
+template<typename MapPolicy>
+inline Datatype DatasetMapper<MapPolicy>::Type(const size_t dimension) const
 {
   if (dimension >= types.size())
   {
@@ -91,7 +81,8 @@ inline Datatype DatasetInfo::Type(const size_t dimension) const
   return types[dimension];
 }
 
-inline Datatype& DatasetInfo::Type(const size_t dimension)
+template<typename MapPolicy>
+inline Datatype& DatasetMapper<MapPolicy>::Type(const size_t dimension)
 {
   if (dimension >= types.size())
     types.resize(dimension + 1, Datatype::numeric);
@@ -99,12 +90,14 @@ inline Datatype& DatasetInfo::Type(const size_t dimension)
   return types[dimension];
 }
 
-inline size_t DatasetInfo::NumMappings(const size_t dimension) const
+template<typename MapPolicy>
+inline size_t DatasetMapper<MapPolicy>::NumMappings(const size_t dimension) const
 {
   return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
 }
 
-inline size_t DatasetInfo::Dimensionality() const
+template<typename MapPolicy>
+inline size_t DatasetMapper<MapPolicy>::Dimensionality() const
 {
   return types.size();
 }

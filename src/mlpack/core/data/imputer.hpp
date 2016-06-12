@@ -14,54 +14,74 @@ namespace mlpack {
 namespace data {
 
 /**
- * Given an input dataset, replace missing values with .
+ * This class implements a way to replace target values. It is dependent on the
+ * user defined Strategy and Mapper used to hold dataset's information.
  *
- * @param input Input dataset to apply imputation.
- * @param info DatasetInfo object that holds informations about the dataset.
- * @param string User-defined missing value
- * @param dimension.
+ * @tparam Option of imputation strategy.
+ * @tparam Mapper that is used to hold dataset information.
+ * @tparam primitive type of input and output's armadillo matrix.
  */
+template<typename Strategy, typename Mapper, typename T>
+class Imputer
+{
+ private:
+  Strategy strat;
+ public:
+  Imputer()
+  {
+    // nothing to initialize
+  }
 
-template<typename T>
-void Imputer(arma::Mat<T>& input,
-             DatasetInfo& info,
-             const std::string& missingValue,
+  /**
+  * Given an input dataset, replace missing values with given imputation
+  * strategy.
+  *
+  * @param input Input dataset to apply imputation.
+  * @param output
+  * @oaran targetValue
+  * @param mapper DatasetInfo object that holds informations about the dataset.
+  * @param dimension.
+  * @param transpose.
+  */
+  void Impute(const arma::Mat<T> &input,
+             arma::Mat<T> &output,
+             const Mapper &mapper,
+             const std::string &targetValue,
              const size_t dimension,
-             const std::string& strategy)
-{
-  Log::Info << "impute using " << strategy << " strategy" << std::endl;
-
-  size_t mappedValue = info.UnmapValue(missingValue, dimension);
-  arma::mat stats;
-
-  if (strategy == "mean")
+             const bool transpose = true)
   {
-    stats = arma::mean(input); // mean of columns
-  }
-  else if (strategy == "median")
-  {
-    stats = arma::median(input);
-  }
-
-  for (size_t i = 0; i < input.n_cols; ++i)
-  {
-    if (input(dimension, i) == mappedValue)
+    auto mappedValue = mapper.UnmapValue(targetValue, dimension);
+    Log::Info << "<<Imputer start>>" << std::endl;
+    Log::Info << "<>mapped value<>: " << mappedValue << std::endl;
+    if(transpose)
     {
-      // just for demo,
-      input(dimension, i) = stats(0, i);
+      output.set_size(input.n_rows, input.n_cols);
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (input(dimension, i) == 0.0)
+        {
+          // users can specify the imputation strategies likes
+          // mean, mode, etc using the class'es template parameter: Strategy.
+          Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
+          strat.template Impute<T>(input, output, dimension, i);
+        }
+      }
     }
+    else
+    {
+      output.set_size(input.n_cols, input.n_rows);
+      for (size_t i = 0; i < input.n_cols; ++i)
+      {
+        if (input(i, dimension) == mappedValue)
+        {
+          Log::Info << "<<IMPUTER NON TRANSPOSE>>" << std::endl;
+          strat.template Impute<T>(input, output, i, dimension);
+        }
+      }
+    }
+    Log::Info << "<imputer end>" << std::endl;
   }
-}
-
-template<typename T>
-void Imputer(arma::Mat<T>& input,
-             DatasetInfo& info,
-             const std::string& missingValue,
-             const size_t dimension)
-{
-  std::string strategy = "mean"; // default strategy
-  Imputer(input, info, missingValue, dimension, strategy);
-}
+}; // class Imputer
 
 } // namespace data
 } // namespace mlpack
