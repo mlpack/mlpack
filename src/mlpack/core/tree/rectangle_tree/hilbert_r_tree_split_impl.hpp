@@ -36,12 +36,12 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   TreeType* parent = tree->Parent();
   size_t iTree = 0;
-  for(iTree = 0;parent->Children()[iTree] != tree; iTree++);
+  for (iTree = 0;parent->Children()[iTree] != tree; iTree++);
 
   // Try to find splitOrder cooperating siblings in order to redistribute
   // points among them and avoid split.
   size_t firstSibling,lastSibling;
-  if(FindCooperatingSiblings(parent, iTree, firstSibling, lastSibling))
+  if (FindCooperatingSiblings(parent, iTree, firstSibling, lastSibling))
   {
     RedistributePointsEvenly(parent, firstSibling, lastSibling);
     return;
@@ -53,7 +53,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   size_t iNewSibling = (iTree + splitOrder < parent->NumChildren() ?
                         iTree + splitOrder : parent->NumChildren());
 
-  for(size_t i = parent->NumChildren(); i > iNewSibling ; i--)
+  for (size_t i = parent->NumChildren(); i > iNewSibling ; i--)
     parent->Children()[i] = parent->Children()[i-1];
 
   parent->NumChildren()++;
@@ -71,7 +71,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   //  Redistribute the points among (splitOrder+1) cooperating siblings evenly.
   RedistributePointsEvenly(parent, firstSibling, lastSibling);
 
-  if(parent->NumChildren() == parent->MaxNumChildren() + 1)
+  if (parent->NumChildren() == parent->MaxNumChildren() + 1)
     HilbertRTreeSplit::SplitNonLeafNode(parent, relevels);
 
 }
@@ -100,12 +100,12 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
   TreeType* parent = tree->Parent();
 
   size_t iTree = 0;
-  for(iTree = 0;parent->Children()[iTree] != tree; iTree++);
+  for (iTree = 0;parent->Children()[iTree] != tree; iTree++);
 
   // Try to find splitOrder cooperating siblings in order to redistribute
   // children among them and avoid split.
   size_t firstSibling,lastSibling;
-  if(FindCooperatingSiblings(parent, iTree, firstSibling, lastSibling))
+  if (FindCooperatingSiblings(parent, iTree, firstSibling, lastSibling))
   {
     RedistributeNodesEvenly(parent, firstSibling, lastSibling);
     return false;
@@ -117,7 +117,7 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
   size_t iNewSibling = (iTree + splitOrder < parent->NumChildren() ?
                         iTree + splitOrder : parent->NumChildren());
 
-  for(size_t i = parent->NumChildren(); i > iNewSibling ; i--)
+  for (size_t i = parent->NumChildren(); i > iNewSibling ; i--)
     parent->Children()[i] = parent->Children()[i-1];
 
   parent->NumChildren()++;
@@ -136,7 +136,7 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
   //  Redistribute children among (splitOrder+1) cooperating siblings evenly.
   RedistributeNodesEvenly(parent, firstSibling, lastSibling);
 
-  if(parent->NumChildren() == parent->MaxNumChildren() + 1)
+  if (parent->NumChildren() == parent->MaxNumChildren() + 1)
     HilbertRTreeSplit::SplitNonLeafNode(parent, relevels);
   return false;
 }
@@ -152,25 +152,25 @@ bool HilbertRTreeSplit::FindCooperatingSiblings(TreeType *parent, size_t iTree,
   size_t iUnderfullSibling;
 
   //  Try to find empty space among cooperating siblings.
-  if(parent->Children()[iTree]->NumChildren() != 0)
+  if (parent->Children()[iTree]->NumChildren() != 0)
   {
-    for(iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
-      if(parent->Children()[iUnderfullSibling]->NumChildren() <
+    for (iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
+      if (parent->Children()[iUnderfullSibling]->NumChildren() <
          parent->Children()[iUnderfullSibling]->MaxNumChildren() - 1)
         break;
   }
   else
   {
-    for(iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
-      if(parent->Children()[iUnderfullSibling]->NumPoints() <
+    for (iUnderfullSibling = start; iUnderfullSibling < end; iUnderfullSibling++)
+      if (parent->Children()[iUnderfullSibling]->NumPoints() <
          parent->Children()[iUnderfullSibling]->MaxLeafSize() - 1)
         break;
   }
 
-  if(iUnderfullSibling == end)  //  All nodes are full.
+  if (iUnderfullSibling == end)  //  All nodes are full.
     return false;
 
-  if(iUnderfullSibling > iTree)
+  if (iUnderfullSibling > iTree)
   {
     lastSibling = (iTree + splitOrder-1 < parent->NumChildren() ?
                    iTree + splitOrder-1 : parent->NumChildren() - 1);
@@ -200,7 +200,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t numChildren = 0;
   size_t numChildrenPerNode,numRestChildren;
 
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
     numChildren += parent->Children()[i]->NumChildren();
 
   numChildrenPerNode = numChildren / (lastSibling - firstSibling + 1);
@@ -210,9 +210,9 @@ RedistributeNodesEvenly(const TreeType *parent,
 
   // Copy children's children in order to redistribute them.
   size_t iChild = 0;
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
   {
-    for(size_t j = 0; j < parent->Children()[i]->NumChildren(); j++)
+    for (size_t j = 0; j < parent->Children()[i]->NumChildren(); j++)
     {
       children[iChild] = parent->Children()[i]->Children()[j];
       iChild++;
@@ -220,20 +220,20 @@ RedistributeNodesEvenly(const TreeType *parent,
   }
 
   iChild = 0;
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     // Since we redistribute children of a sibling we should
     // recalculate the bound.
     parent->Children()[i]->Bound().Clear();
 
-    for(size_t j = 0; j < numChildrenPerNode; j++)
+    for (size_t j = 0; j < numChildrenPerNode; j++)
     {
       parent->Children()[i]->Bound() |=  children[iChild]->Bound();
       parent->Children()[i]->Children()[j] = children[iChild];
       children[iChild]->Parent() = parent->Children()[i];
       iChild++;
     }
-    if(numRestChildren > 0)
+    if (numRestChildren > 0)
     {
       parent->Children()[i]->Bound() |=  children[iChild]->Bound();
       parent->Children()[i]->Children()[numChildrenPerNode] = children[iChild];
@@ -262,7 +262,7 @@ RedistributePointsEvenly(TreeType *parent,
   size_t numPoints = 0;
   size_t numPointsPerNode,numRestPoints;
 
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
     numPoints += parent->Children()[i]->NumPoints();
 
   numPointsPerNode = numPoints / (lastSibling - firstSibling + 1);
@@ -274,9 +274,9 @@ RedistributePointsEvenly(TreeType *parent,
 
   // Copy children's points in order to redistribute them.
   size_t iPoint = 0;
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
   {
-    for(size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
+    for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
     {
       points[iPoint] = parent->Children()[i]->Points()[j];
       tmp.col(iPoint) = parent->Children()[i]->LocalDataset().col(j);
@@ -285,21 +285,21 @@ RedistributePointsEvenly(TreeType *parent,
   }
 
   iPoint = 0;
-  for(size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     // Since we redistribute points of a sibling we should
     // recalculate the bound.
     parent->Children()[i]->Bound().Clear();
 
     size_t j;
-    for(j = 0; j < numPointsPerNode; j++)
+    for (j = 0; j < numPointsPerNode; j++)
     {
       parent->Children()[i]->Bound() |= tmp.col(iPoint);
       parent->Children()[i]->Points()[j] = points[iPoint];
       parent->Children()[i]->LocalDataset().col(j) = tmp.col(iPoint);
       iPoint++;
     }
-    if(numRestPoints > 0)
+    if (numRestPoints > 0)
     {
       parent->Children()[i]->Bound() |= tmp.col(iPoint);
       parent->Children()[i]->Points()[j] = points[iPoint];
@@ -320,7 +320,7 @@ RedistributePointsEvenly(TreeType *parent,
 
   TreeType* root = parent;
 
-  while(root != NULL)
+  while (root != NULL)
   {
     root->AuxiliaryInfo().HilbertValue().UpdateLargestValue(root);
     root = root->Parent();

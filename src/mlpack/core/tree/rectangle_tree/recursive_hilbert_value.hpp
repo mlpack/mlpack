@@ -70,7 +70,7 @@ class RecursiveHilbertValue
       invertResult(false),
       recursionLevel(0)
     {
-      for(size_t i = 0; i < dim; i++)
+      for (size_t i = 0; i < dim; i++)
       {
         Lo[i] = std::numeric_limits<TreeElemType>::lowest();
         Hi[i] = std::numeric_limits<TreeElemType>::max();

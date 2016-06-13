@@ -296,7 +296,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    if(!auxiliaryInfo.HandlePointInsertion(this,point))
+    if (!auxiliaryInfo.HandlePointInsertion(this, point))
     {
       localDataset->col(count) = dataset->col(point);
       points[count++] = point;
@@ -307,7 +307,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this,point);
+  auxiliaryInfo.HandlePointInsertion(this, point);
   const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, lvls);
 }
@@ -334,7 +334,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    if(!auxiliaryInfo.HandlePointInsertion(this,point))
+    if (!auxiliaryInfo.HandlePointInsertion(this, point))
     {
       localDataset->col(count) = dataset->col(point);
       points[count++] = point;
@@ -345,7 +345,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this,point);
+  auxiliaryInfo.HandlePointInsertion(this, point);
   const size_t descentNode = DescentType::ChooseDescentNode(this,point);
   children[descentNode]->InsertPoint(point, relevels);
 }
@@ -374,7 +374,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    if(!auxiliaryInfo.HandlePointInsertion(this,point))
+    if (!auxiliaryInfo.HandlePointInsertion(this, point))
     {
       localDataset->col(count) = point;
       points[count++] = dataset->n_cols;
@@ -385,7 +385,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this,point);
+  auxiliaryInfo.HandlePointInsertion(this, point);
   const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, lvls);
 }
@@ -412,7 +412,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    if(!auxiliaryInfo.HandlePointInsertion(this,point))
+    if (!auxiliaryInfo.HandlePointInsertion(this, point))
     {
       localDataset->col(count) = point;
       points[count++] = dataset->n_cols;
@@ -423,8 +423,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this,point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this,point);
+  auxiliaryInfo.HandlePointInsertion(this, point);
+  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -452,7 +452,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   bound |= node->Bound();
   if (level == TreeDepth())
   {
-    if(!auxiliaryInfo.HandleNodeInsertion(this,node,true))
+    if (!auxiliaryInfo.HandleNodeInsertion(this, node, true))
     {
       children[numChildren++] = node;
       node->Parent() = this;
@@ -461,7 +461,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
   else
   {
-    auxiliaryInfo.HandleNodeInsertion(this,node,false);
+    auxiliaryInfo.HandleNodeInsertion(this, node, false);
     const size_t descentNode = DescentType::ChooseDescentNode(this, node);
     children[descentNode]->InsertNode(node, level, relevels);
   }
@@ -497,7 +497,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     {
       if (points[i] == point)
       {
-        if(!auxiliaryInfo.HandlePointDeletion(this,i))
+        if (!auxiliaryInfo.HandlePointDeletion(this, i))
         {
           localDataset->col(i) = localDataset->col(--count); // Decrement count.
           points[i] = points[count];
@@ -537,7 +537,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     {
       if (points[i] == point)
       {
-        if(!auxiliaryInfo.HandlePointDeletion(this,i))
+        if (!auxiliaryInfo.HandlePointDeletion(this, i))
         {
           localDataset->col(i) = localDataset->col(--count);
           points[i] = points[count];
@@ -587,7 +587,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     {
       if (localDataset[i] == point)
       {
-        if(!auxiliaryInfo.HandlePointDeletion(this,i))
+        if (!auxiliaryInfo.HandlePointDeletion(this, i))
         {
           localDataset->col(i) = localDataset->col(--count); // Decrement count.
           points[i] = points[count];
@@ -627,7 +627,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     {
       if (localDataset[i] == point)
       {
-        if(!auxiliaryInfo.HandlePointDeletion(this,i))
+        if (!auxiliaryInfo.HandlePointDeletion(this, i))
         {
           localDataset->col(i) = localDataset->col(--count);
           points[i] = points[count];
@@ -665,7 +665,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     if (children[i] == node)
     {
-      if(!auxiliaryInfo.HandleNodeRemoval(this,i))
+      if (!auxiliaryInfo.HandleNodeRemoval(this, i))
       {
         children[i] = children[--numChildren]; // Decrement numChildren.
       }
@@ -960,7 +960,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (parent->Children()[i] == this)
       {
         // Decrement numChildren.
-        if(!auxiliaryInfo.HandleNodeRemoval(parent,i))
+        if (!auxiliaryInfo.HandleNodeRemoval(parent, i))
         {
           parent->Children()[i] = parent->Children()[--parent->NumChildren()];
         }
@@ -990,7 +990,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
        // Reinsert the points at the root node.
         for (size_t j = 0; j < count; j++)
-          if(points[j] < dataset->n_cols)
+          if (points[j] < dataset->n_cols)
             root->InsertPoint(points[j], relevels);
           else
             root->InsertPoint(localDataset[j], relevels);
@@ -1016,7 +1016,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (parent->Children()[j] == this)
         {
           // Decrement numChildren.
-          if(!auxiliaryInfo.HandleNodeRemoval(parent,j))
+          if (!auxiliaryInfo.HandleNodeRemoval(parent,j))
           {
             parent->Children()[j] = parent->Children()[--parent->NumChildren()];
           }
@@ -1064,7 +1064,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       RectangleTree* child = children[0];
 
       // Required for the X tree.
-      if(child->NumChildren() > maxNumChildren)
+      if (child->NumChildren() > maxNumChildren)
       {
         maxNumChildren = child->MaxNumChildren();
         children.resize(maxNumChildren+1);

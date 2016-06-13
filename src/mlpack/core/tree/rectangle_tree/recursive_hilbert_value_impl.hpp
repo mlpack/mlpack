@@ -28,16 +28,16 @@ RecursiveHilbertValue(const TreeType* tree) :
     ownsLargestValue(false),
     hasLargestValue(false)
 {
-  if(!tree->Parent()) //  This is the root node
+  if (!tree->Parent()) //  This is the root node
     ownsLargestValue = true;
-  else if(tree->Parent()->Children()[0]->IsLeaf())
+  else if (tree->Parent()->Children()[0]->IsLeaf())
   {
     // This is a leaf node
     assert(tree->Parent()->NumChildren() > 0);
     ownsLargestValue = true;
   }
     
-  if(ownsLargestValue)
+  if (ownsLargestValue)
   {
     largestValue =  new arma::Col<TreeElemType>(tree->LocalDataset().n_rows);
   }
@@ -56,7 +56,7 @@ RecursiveHilbertValue(const RecursiveHilbertValue& other) :
 template<typename TreeElemType>
 RecursiveHilbertValue<TreeElemType>::~RecursiveHilbertValue()
 {
-  if(ownsLargestValue)
+  if (ownsLargestValue)
     delete largestValue;
 }
 
@@ -78,11 +78,11 @@ int RecursiveHilbertValue<TreeElemType>::
 CompareValues(const RecursiveHilbertValue& val1,
               const RecursiveHilbertValue& val2)
 {
-  if(!val1.hasLargestValue && val2.hasLargestValue)
+  if (!val1.hasLargestValue && val2.hasLargestValue)
     return -1;
-  else if(val1.hasLargestValue && !val2.hasLargestValue)
+  else if (val1.hasLargestValue && !val2.hasLargestValue)
     return 1;
-  else if(!val1.hasLargestValue && !val2.hasLargestValue)
+  else if (!val1.hasLargestValue && !val2.hasLargestValue)
     return 0;
 
   return ComparePoints(*val1.LargestValue(),
@@ -93,9 +93,9 @@ template<typename TreeElemType>
 int RecursiveHilbertValue<TreeElemType>::
 CompareWith(const RecursiveHilbertValue& val) const
 {
-  if(!hasLargestValue)
+  if (!hasLargestValue)
     return -1;
-  return CompareValues(*this,val);
+  return CompareValues(*this, val);
 }
 
 template<typename TreeElemType>
@@ -104,7 +104,7 @@ int RecursiveHilbertValue<TreeElemType>::
 CompareWith(const VecType& point,
             typename boost::enable_if<IsVector<VecType>>* ) const
 {
-  if(!hasLargestValue)
+  if (!hasLargestValue)
     return -1;
   return ComparePoints(*largestValue, point);
 }
@@ -132,7 +132,7 @@ ComparePoints(const VecType1& pt1, const VecType2& pt2,
   comp.center += comp.vec;
 
   // Get bits in order to use the Gray code
-  for(size_t i = 0; i < pt1.n_rows; i++)
+  for (size_t i = 0; i < pt1.n_rows; i++)
   {
     size_t j = comp.permutation[i];
     comp.bits[i] = (pt1(j) > comp.center(j) && !comp.inversion[j]) ||
@@ -143,44 +143,44 @@ ComparePoints(const VecType1& pt1, const VecType2& pt2,
   }
 
   // Gray encode
-  for(size_t i = 1; i < pt1.n_rows; i++)
+  for (size_t i = 1; i < pt1.n_rows; i++)
   {
     comp.bits[i] ^= comp.bits[i-1];
     comp.bits2[i] ^= comp.bits2[i-1];
   }
 
-  if(comp.invertResult)
+  if (comp.invertResult)
   {
-    for(size_t i = 0; i < pt1.n_rows; i++)
+    for (size_t i = 0; i < pt1.n_rows; i++)
     {
       comp.bits[i] = !comp.bits[i];
       comp.bits2[i] = !comp.bits2[i];
     }
   }
 
-  for(size_t i = 0; i < pt1.n_rows; i++)
+  for (size_t i = 0; i < pt1.n_rows; i++)
   {
-    if(comp.bits[i] < comp.bits2[i])
+    if (comp.bits[i] < comp.bits2[i])
       return -1;
-    if(comp.bits[i] > comp.bits2[i])
+    if (comp.bits[i] > comp.bits2[i])
       return 1;
   }
 
-  if(comp.recursionLevel >= recursionDepth)
+  if (comp.recursionLevel >= recursionDepth)
     return 0;
 
   comp.recursionLevel++;
 
-  if(comp.bits[pt1.n_rows-1])
+  if (comp.bits[pt1.n_rows-1])
     comp.invertResult = !comp.invertResult;
 
   // Since the Hilbert curve is continuous we should permutate and intend
   // coordinate axes depending on the position of the point
-  for(size_t i = 0; i < pt1.n_rows; i++)
+  for (size_t i = 0; i < pt1.n_rows; i++)
   {
     size_t j = comp.permutation[i];
     size_t j0 = comp.permutation[0];
-    if((pt1(j) > comp.center(j) && !comp.inversion[j]) ||
+    if ((pt1(j) > comp.center(j) && !comp.inversion[j]) ||
        (pt1(j) <= comp.center(j) && !comp.inversion[j]))
       comp.inversion[j0] = !comp.inversion[j0];
     else
@@ -193,15 +193,15 @@ ComparePoints(const VecType1& pt1, const VecType2& pt2,
   }
 
   // Choose an appropriate subhypercube
-  for(size_t i = 0; i < pt1.n_rows; i++)
+  for (size_t i = 0; i < pt1.n_rows; i++)
   {
-    if(pt1(i) > comp.center(i))
+    if (pt1(i) > comp.center(i))
       comp.Lo(i) = comp.center(i);
     else
       comp.Hi(i) = comp.center(i);
   }
 
-  return ComparePoints(pt1,pt2,comp);
+  return ComparePoints(pt1, pt2, comp);
 }
 
 template<typename TreeElemType>
@@ -210,14 +210,14 @@ size_t RecursiveHilbertValue<TreeElemType>::
 InsertPoint(TreeType* node, const VecType& point,
                                  typename boost::enable_if<IsVector<VecType>>* )
 {
-  if(node->IsLeaf())
+  if (node->IsLeaf())
   {
     size_t i;
 
-    for(i = 0; i < node->NumPoints(); i++)
-      if(ComparePoints(node->LocalDataset().col(i), point) > 0)
+    for (i = 0; i < node->NumPoints(); i++)
+      if (ComparePoints(node->LocalDataset().col(i), point) > 0)
         break;
-    if(i == node->NumPoints())
+    if (i == node->NumPoints())
       *largestValue = point;
 
     hasLargestValue = true;
@@ -225,7 +225,7 @@ InsertPoint(TreeType* node, const VecType& point,
     // Propogate changes of the largest Hilbert value downward
     TreeType* root = node->Parent();
 
-    while(root != NULL)
+    while (root != NULL)
     {
       root->AuxiliaryInfo().HilbertValue().LargestValue() = largestValue;
       root->AuxiliaryInfo().HilbertValue().hasLargestValue = true;
@@ -244,7 +244,7 @@ template<typename TreeElemType>
 template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
-  if(CompareWith(node->AuxiliaryInfo().HilbertValue()) < 0)
+  if (CompareWith(node->AuxiliaryInfo().HilbertValue()) < 0)
   {
     largestValue = node->AuxiliaryInfo().HilbertValue().LargestValue();
     hasLargestValue = true;
@@ -256,12 +256,12 @@ template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::
 DeletePoint(TreeType* node, const size_t localIndex)
 {
-  if(node->NumPoints() <= 1)
+  if (node->NumPoints() <= 1)
   {
     hasLargestValue = false;
     return;
   }
-  if(localIndex + 1 == node->NumPoints())
+  if (localIndex + 1 == node->NumPoints())
     *largestValue = node->LocalDataset()[localIndex-1];
   
 }
@@ -271,12 +271,12 @@ template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::
 RemoveNode(TreeType* node, const size_t nodeIndex)
 {
-  if(node->NumChildren() <= 1)
+  if (node->NumChildren() <= 1)
   {
     hasLargestValue = false;
     return;
   }
-  if(nodeIndex + 1 == node->NumChildren())
+  if (nodeIndex + 1 == node->NumChildren())
     largestValue = node->Children()[nodeIndex-1]->AuxiliaryInfo.HilbertValue().LargestValue();
 
 }
@@ -301,7 +301,7 @@ template<typename TreeElemType>
 template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::UpdateLargestValue(TreeType* node)
 {
-  if(!node->IsLeaf())
+  if (!node->IsLeaf())
   {
     largestValue = (node->NumChildren() > 0 ?
                     node->Children()[node->NumChildren() - 1]->AuxiliaryInfo().HilbertValue().LargestValue() : NULL);
@@ -315,7 +315,7 @@ template<typename TreeType>
 void RecursiveHilbertValue<TreeElemType>::
 UpdateHilbertValues(TreeType* parent, size_t firstSibling,  size_t lastSibling)
 {
-  for(size_t i = firstSibling; i<= lastSibling; i++)
+  for (size_t i = firstSibling; i<= lastSibling; i++)
   {
     RecursiveHilbertValue<TreeElemType> &value =
                           parent->Children()[i]->AuxiliaryInfo().HilbertValue();

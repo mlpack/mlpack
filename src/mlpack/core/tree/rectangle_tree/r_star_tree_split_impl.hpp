@@ -53,7 +53,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     // We sort the points by decreasing distance to the centroid of the bound.
     // We then remove the first p entries and reinsert them at the root.
     TreeType* root = tree;
-    while(root->Parent() != NULL)
+    while (root->Parent() != NULL)
       root = root->Parent();
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
@@ -82,7 +82,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       localDataset.col(i) =
                       tree->LocalDataset().col(sorted[sorted.size() - 1 - i].n);
 
-      if(tree->Points()[sorted[sorted.size() - 1 - i].n] <
+      if (tree->Points()[sorted[sorted.size() - 1 - i].n] <
          tree->Dataset().n_cols)
         root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
             relevels);
@@ -102,7 +102,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < p; i++)
     {
       // We reverse the order again to reinsert the closest points first.
-      if(pointIndices[p - 1 - i] < tree->Dataset().n_cols)
+      if (pointIndices[p - 1 - i] < tree->Dataset().n_cols)
         root->InsertPoint(pointIndices[p - 1 - i], relevels);
       else
         root->InsertPoint(localDataset[p - 1 - i], relevels);
@@ -243,14 +243,14 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     {
       if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
       {
-        if(tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
+        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
           treeOne->InsertPoint(tree->Points()[sorted[i].n]);
         else
           treeOne->InsertPoint(tree->LocalDataset()[sorted[i].n]);
       }
       else
       {
-        if(tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
+        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
           treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
         else
           treeTwo->InsertPoint(tree->LocalDataset()[sorted[i].n]);
@@ -263,14 +263,14 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     {
       if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
       {
-        if(tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
+        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
           treeOne->InsertPoint(tree->Points()[sorted[i].n]);
         else
           treeOne->InsertPoint(tree->LocalDataset()[sorted[i].n]);
       }
       else
       {
-        if(tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
+        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
           treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
         else
           treeTwo->InsertPoint(tree->LocalDataset()[sorted[i].n]);
