@@ -17,18 +17,25 @@ namespace data {
 class MeanStrategy
 {
  public:
-  typedef size_t impute_type_t;
 
-  template <typename T>
-  void Impute(const arma::Mat<T> &input,
-              arma::Mat<T> &output,
+  template <typename MatType>
+  void Impute(const MatType &input,
+              MatType &output,
               const size_t dimension,
-              const size_t index)
+              const size_t index,
+              const bool transpose = true)
   {
-    output(dimension, index) = 99;
-    cout << "IMPUTE CALLED MEAN MAP POLICY" << endl;
-
-  }
+    if (transpose)
+    {
+      MatType meanMat = arma::mean(input, 1);
+      output(dimension, index) = meanMat(dimension);
+    }
+    else
+    {
+      MatType meanMat = arma::mean(input, 0);
+      output(index, dimension) = meanMat(index);
+    }
+ }
 };
 
 } // namespace data

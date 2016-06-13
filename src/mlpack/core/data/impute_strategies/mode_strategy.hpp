@@ -17,14 +17,13 @@ namespace data {
 class ModeStrategy
 {
  public:
-  typedef size_t impute_type_t;
-
   template <typename T>
   void Impute(const arma::Mat<T> &input,
               arma::Mat<T> &output,
               const size_t dimension,
               const size_t index)
   {
+    // considering use of arma::hist()
     output(dimension, index) = 99;
     cout << "IMPUTE CALLED CUSTOM MAP STRATEGY" << endl;
 

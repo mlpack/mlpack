@@ -21,7 +21,7 @@ namespace data {
  * @tparam Mapper that is used to hold dataset information.
  * @tparam primitive type of input and output's armadillo matrix.
  */
-template<typename Strategy, typename Mapper, typename T>
+template<typename MatType, typename Mapper, typename Strategy = CustomStrategy>
 class Imputer
 {
  private:
@@ -43,8 +43,8 @@ class Imputer
   * @param dimension.
   * @param transpose.
   */
-  void Impute(const arma::Mat<T> &input,
-             arma::Mat<T> &output,
+  void Impute(const MatType &input,
+             MatType &output,
              const Mapper &mapper,
              const std::string &targetValue,
              const size_t dimension,
@@ -55,7 +55,6 @@ class Imputer
     Log::Info << "<>mapped value<>: " << mappedValue << std::endl;
     if(transpose)
     {
-      output.set_size(input.n_rows, input.n_cols);
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
@@ -64,7 +63,7 @@ class Imputer
           // users can specify the imputation strategies likes
           // mean, mode, etc using the class'es template parameter: Strategy.
           Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
-          strat.template Impute<T>(input, output, dimension, i);
+          strat.template Impute<MatType>(input, output, dimension, i, transpose);
         }
         else
         {
@@ -74,18 +73,73 @@ class Imputer
     }
     else
     {
-      output.set_size(input.n_cols, input.n_rows);
       for (size_t i = 0; i < input.n_cols; ++i)
       {
+        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
         if (input(i, dimension) == mappedValue)
         {
           Log::Info << "<<IMPUTER NON TRANSPOSE>>" << std::endl;
-          strat.template Impute<T>(input, output, i, dimension);
+          strat.template Impute<T>(input, output, i, dimension, transpose);
+        }
+        else {
+          Log::Info << "<not equal>" << std::endl;
         }
       }
     }
     Log::Info << "<imputer end>" << std::endl;
   }
+
+  /**
+  * This overload of Impute() lets users to define custom value that
+  * can be replaced with the target value.
+  */
+  template <typename T>
+  void Impute(const arma::Mat<T> &input,
+              arma::Mat<T> &output,
+              const Mapper &mapper,
+              const std::string &targetValue,
+              const T &customValue,
+              const size_t dimension,
+              const bool transpose = true)
+  {
+    auto mappedValue = mapper.UnmapValue(targetValue, dimension);
+    Log::Info << "<<CUSTOM Imputer start>>" << std::endl;
+    Log::Info << "<>mapped value<>: " << mappedValue << std::endl;
+    if(transpose)
+    {
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
+        if (input(dimension, i) == mappedValue)
+        {
+          // replace the target value to custom value
+          Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
+          output(dimension, i) = customValue;
+        }
+        else
+        {
+          Log::Info << "<not equal>" << std::endl;
+        }
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < input.n_cols; ++i)
+      {
+        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
+        if (input(i, dimension) == mappedValue)
+        {
+          Log::Info << "<<IMPUTER NON TRANSPOSE>>" << std::endl;
+          output(i, dimension) = customValue;
+        }
+        else {
+          Log::Info << "<not equal>" << std::endl;
+        }
+      }
+    }
+    Log::Info << "<CUSTOM imputer end>" << std::endl;
+  }
+
 }; // class Imputer
 
 } // namespace data

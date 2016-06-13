@@ -21,7 +21,9 @@ inline DatasetMapper<MapPolicy>::DatasetMapper(const size_t dimensionality) :
   // Nothing to initialize.
 }
 
-// Map the string to a numeric id.
+
+// When we want to insert value into the map,
+// we could use the policy to map the string
 template<typename MapPolicy>
 inline typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::MapString(
                                                     const std::string& string,
@@ -40,8 +42,8 @@ inline const std::string& DatasetMapper<MapPolicy>::UnmapString(
   if (maps[dimension].first.right.count(value) == 0)
   {
     std::ostringstream oss;
-    oss << "DatasetMapper<MapPolicy>::UnmapString(): value '" << value << "' unknown for "
-        << "dimension " << dimension;
+    oss << "DatasetMapper<MapPolicy>::UnmapString(): value '" << value
+        << "' unknown for dimension " << dimension;
     throw std::invalid_argument(oss.str());
   }
 

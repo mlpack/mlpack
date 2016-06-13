@@ -16,9 +16,13 @@ PROGRAM_INFO("Imputer", "This "
     "imputation strategies for missing data.");
 
 PARAM_STRING_REQ("input_file", "File containing data,", "i");
-PARAM_STRING("missing_value", "User defined missing value", "m", "")
-PARAM_INT("feature", "the feature to be analyzed", "f", 0);
 PARAM_STRING("output_file", "File to save output", "o", "");
+PARAM_STRING("missing_value", "User defined missing value", "m", "")
+PARAM_STRING("map_policy", "mapping policy to be used while loading", "p", "")
+PARAM_STRING("map_to", "custom_strategy option. map to something else", "t", "")
+PARAM_STRING("impute_strategy", "imputation strategy to be applied", "s", "")
+PARAM_DOUBLE("custom_value", "user_defined custom value", "c", "")
+PARAM_INT("feature", "the feature to apply imputation", "f", 0);
 
 using namespace mlpack;
 using namespace arma;
@@ -32,70 +36,39 @@ int main(int argc, char** argv)
   const string inputFile = CLI::GetParam<string>("input_file");
   const string missingValue = CLI::GetParam<string>("missing_value");
   const string outputFile = CLI::GetParam<string>("output_file");
-  //const size_t featureNumber = (size_t) CLI::GetParam<int>("feature");
+  const size_t feature = (size_t) CLI::GetParam<int>("feature");
 
-  arma::mat data;
+  arma::mat input;
   data::DatasetInfo info;
 
-  data::Load(inputFile, data, info,  true, false);
-  //Log::Debug << "<before change>" << endl;
-  //Log::Info << data << endl;
-
-  //Log::Info << "dataset info: " << endl;
-  //for (size_t i = 0; i < data.n_rows; ++i)
-  //{
-    //Log::Info << info.NumMappings(i) << " mappings in dimension "
-        //<< i << "." << endl;
-  //}
-
-  //Log::Info << "Loading feature: " << featureNumber << endl;
-  //data::Imputer(data, info, missingValue, featureNumber);
-
-  //Log::Debug << "<after change>" << endl;
-  //Log::Info << data << endl;
-/****************************/
-
-  Log::Info << "<><><><>Start<><><><>" << endl;
-
-  arma::Mat<double> input(data);
-  arma::Mat<double> output(data);
-
-  //data::DefaultMapPolicy policy;
-  std::string missValue = "hello";
-  data::DatasetInfo richinfo(input.n_rows);
-  size_t dimension = 0;
+  data::Load(inputFile, input, info,  true, true);
 
   Log::Info << input << endl;
 
-  Log::Info << "hello is mapped to: "<< richinfo.MapString("hello", dimension) << endl;
-  Log::Info << "dude is mapped to" << richinfo.MapString("dude", dimension) << endl;
-
-  for (size_t i = 0; i < data.n_rows; ++i)
+  for (size_t i = 0; i < input.n_rows; ++i)
   {
-    Log::Info << richinfo.NumMappings(i) << " mappings in dimension "
+    Log::Info << info.NumMappings(i) << " mappings in feature "
         << i << "." << endl;
   }
+
+  arma::Mat<double> output(input);
 
   data::Imputer<
     data::MeanStrategy,
     data::DatasetInfo,
     double> impu;
 
-  impu.Impute(input, output, richinfo, missValue, dimension);
+  impu.Impute(input, output, info, missingValue, feature);
 
   Log::Info << "input::" << endl;
   Log::Info << input << endl;
   Log::Info << "output::" << endl;
   Log::Info << output << endl;
 
-  Log::Info << "<><><><>END<><><><>" << endl;
-
-/****************************/
-
   if (!outputFile.empty())
   {
     Log::Info << "Saving model to '" << outputFile << "'." << endl;
-    data::Save(outputFile, data, false);
+    data::Save(outputFile, output, false);
   }
 }
 

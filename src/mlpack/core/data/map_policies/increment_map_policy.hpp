@@ -4,8 +4,8 @@
  *
  * Default increment map policy for dataset info.
  */
-#ifndef MLPACK_CORE_DATA_MAP_POLICY_HPP
-#define MLPACK_CORE_DATA_MAP_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_MAP_POLICY_HPP
+#define MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_MAP_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <unordered_map>
@@ -19,7 +19,7 @@ namespace data {
 
 /**
  * This class is used to map strings to incrementing unsigned integers (size_t).
- * First string to be mapped will be mapped to 0, next to 1 and so on.
+ * First string to be mapped will be mapped to 0, next to 1, 2, and so on.
  */
 class IncrementMapPolicy
 {
@@ -31,7 +31,6 @@ class IncrementMapPolicy
                        const std::string& string,
                        const size_t dimension)
   {
-    Log::Info << "DEFAULT MAP POLICY MAPSTRING" << string << dimension << endl;
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
@@ -52,7 +51,7 @@ class IncrementMapPolicy
       return maps[dimension].first.left.at(string);
     }
   }
-}; // class DefaultMapPolicy
+}; // class IncrementMapPolicy
 
 } // namespace data
 } // namespace mlpack

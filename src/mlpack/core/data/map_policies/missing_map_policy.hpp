@@ -4,8 +4,8 @@
  *
  * Missing map policy for dataset info.
  */
-#ifndef MLPACK_CORE_DATA_MISSING_MAP_POLICY_HPP
-#define MLPACK_CORE_DATA_MISSING_MAP_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_MAP_POLICIES_MISSING_MAP_POLICY_HPP
+#define MLPACK_CORE_DATA_MAP_POLICIES_MISSING_MAP_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <unordered_map>
@@ -18,8 +18,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * This class is used to map strings to incrementing unsigned integers (size_t).
- * First string to be mapped will be mapped to 0, next to 1 and so on.
+ * Same as increment map policy so far.
  */
 class MissingMapPolicy
 {

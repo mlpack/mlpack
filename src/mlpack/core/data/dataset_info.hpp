@@ -36,6 +36,8 @@ enum Datatype : bool /* bool is all the precision we need for two types */
  * by data::Load(), and store the type of each dimension (Datatype::numeric or
  * Datatype::categorical) as well as mappings from strings to unsigned integers
  * and vice versa.
+ *
+ * @tparam MapPolicy Mapping policy used to specify MapString();
  */
 template <typename MapPolicy>
 class DatasetMapper
@@ -57,7 +59,7 @@ class DatasetMapper
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
-   typename MapPolicy::map_type_t MapString(const std::string& string,
+  typename MapPolicy::map_type_t MapString(const std::string& string,
                                             const size_t dimension);
 
   /**
@@ -127,6 +129,7 @@ class DatasetMapper
   MapPolicy policy;
 };
 
+// Use typedef to provide backward compatibility
 using DatasetInfo = DatasetMapper<data::IncrementMapPolicy>;
 
 } // namespace data

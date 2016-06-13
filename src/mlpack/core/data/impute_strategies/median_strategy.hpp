@@ -18,17 +18,24 @@ namespace data {
 class MedianStrategy
 {
  public:
-  typedef size_t impute_type_t;
 
-  template <typename T>
-  void Impute(const arma::Mat<T> &input,
-              arma::Mat<T> &output,
+  template <typename MatType>
+  void Impute(const MatType &input,
+              MatType &output,
               const size_t dimension,
-              const size_t index)
+              const size_t index,
+              const bool transpose = true)
   {
-    output(dimension, index) = 99;
-    cout << "IMPUTE CALLED MEDIAN MAP POLICY" << endl;
-
+    if (transpose)
+    {
+      MatType medianMat = arma::median(input, 1);
+      output(dimension, index) = medianMat(dimension);
+    }
+    else
+    {
+      MatType medianMat = arma::median(input, 0);
+      output(index, dimension) = medianMat(index);
+    }
   }
 };
 
