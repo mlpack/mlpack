@@ -618,6 +618,8 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     {
       // construct this table's probing sequence of length T
       arma::mat additionalProbingBins;
+      //arma::vec dummyBins;
+      //dummyBins.zeros(T, 1);
       GetAdditionalProbingBins(allProjInTables.unsafe_col(i),
                                 queryCodesNotFloored.unsafe_col(i),
                                 T,
@@ -625,7 +627,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
       // map the probing bin to second hash table bins
       hashMat.col(i) = additionalProbingBins.t() * secondHashWeights;
-
+      //hashMat.col(i) = dummyBins;
       for (size_t p = 0; p < T; ++p)
         hashMat(p, i) = (double) ((size_t) hashMat(p, i) % secondHashSize);
     }
@@ -639,6 +641,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.set_size(1, numTablesToSearch);
     hashMat.row(0) = hashVec;
   }
+  std::cout<<hashMat<<std::endl;
 
   // Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;
