@@ -19,7 +19,7 @@ namespace data {
 
 /**
  * This class is used to map strings to incrementing unsigned integers (size_t).
- * First string to be mapped will be mapped to 0, next to 1, 2, and so on.
+ * First string to be mapped will be mapped to 0, next to 1 and so on.
  */
 class IncrementMapPolicy
 {

@@ -9,6 +9,7 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/data/impute_strategies/custom_strategy.hpp>
 
 namespace mlpack {
 namespace data {
@@ -21,7 +22,7 @@ namespace data {
  * @tparam Mapper that is used to hold dataset information.
  * @tparam primitive type of input and output's armadillo matrix.
  */
-template<typename MatType, typename Mapper, typename Strategy = CustomStrategy>
+template<typename MatType, typename Mapper, typename Strategy = data::CustomStrategy>
 class Imputer
 {
  private:
@@ -50,24 +51,18 @@ class Imputer
              const size_t dimension,
              const bool transpose = true)
   {
+    // find mapped value inside current mapper
     auto mappedValue = mapper.UnmapValue(targetValue, dimension);
-    Log::Info << "<<Imputer start>>" << std::endl;
-    Log::Info << "<>mapped value<>: " << mappedValue << std::endl;
+
     if(transpose)
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
         if (input(dimension, i) == mappedValue)
         {
           // users can specify the imputation strategies likes
           // mean, mode, etc using the class'es template parameter: Strategy.
-          Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
           strat.template Impute<MatType>(input, output, dimension, i, transpose);
-        }
-        else
-        {
-          Log::Info << "<not equal>" << std::endl;
         }
       }
     }
@@ -75,18 +70,12 @@ class Imputer
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
         if (input(i, dimension) == mappedValue)
         {
-          Log::Info << "<<IMPUTER NON TRANSPOSE>>" << std::endl;
-          strat.template Impute<T>(input, output, i, dimension, transpose);
-        }
-        else {
-          Log::Info << "<not equal>" << std::endl;
+          strat.template Impute<MatType>(input, output, i, dimension, transpose);
         }
       }
     }
-    Log::Info << "<imputer end>" << std::endl;
   }
 
   /**
@@ -102,23 +91,17 @@ class Imputer
               const size_t dimension,
               const bool transpose = true)
   {
+    // find mapped value inside current mapper
     auto mappedValue = mapper.UnmapValue(targetValue, dimension);
-    Log::Info << "<<CUSTOM Imputer start>>" << std::endl;
-    Log::Info << "<>mapped value<>: " << mappedValue << std::endl;
+
     if(transpose)
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
         if (input(dimension, i) == mappedValue)
         {
           // replace the target value to custom value
-          Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
           output(dimension, i) = customValue;
-        }
-        else
-        {
-          Log::Info << "<not equal>" << std::endl;
         }
       }
     }
@@ -126,18 +109,12 @@ class Imputer
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
         if (input(i, dimension) == mappedValue)
         {
-          Log::Info << "<<IMPUTER NON TRANSPOSE>>" << std::endl;
           output(i, dimension) = customValue;
-        }
-        else {
-          Log::Info << "<not equal>" << std::endl;
         }
       }
     }
-    Log::Info << "<CUSTOM imputer end>" << std::endl;
   }
 
 }; // class Imputer

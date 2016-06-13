@@ -21,7 +21,7 @@ PARAM_STRING("missing_value", "User defined missing value", "m", "")
 PARAM_STRING("map_policy", "mapping policy to be used while loading", "p", "")
 PARAM_STRING("map_to", "custom_strategy option. map to something else", "t", "")
 PARAM_STRING("impute_strategy", "imputation strategy to be applied", "s", "")
-PARAM_DOUBLE("custom_value", "user_defined custom value", "c", "")
+PARAM_DOUBLE("custom_value", "user_defined custom value", "c", 0.0)
 PARAM_INT("feature", "the feature to apply imputation", "f", 0);
 
 using namespace mlpack;
@@ -54,9 +54,9 @@ int main(int argc, char** argv)
   arma::Mat<double> output(input);
 
   data::Imputer<
-    data::MeanStrategy,
+    arma::Mat<double>,
     data::DatasetInfo,
-    double> impu;
+    data::MeanStrategy> impu;
 
   impu.Impute(input, output, info, missingValue, feature);
 

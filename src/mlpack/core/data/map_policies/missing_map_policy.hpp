@@ -30,7 +30,6 @@ class MissingMapPolicy
                        const std::string& string,
                        const size_t dimension)
   {
-    Log::Info << "MISSING MAP POLICY MAPSTRING" << string << dimension << endl;
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
