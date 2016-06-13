@@ -49,7 +49,7 @@ struct NSModelName<FurthestNeighborSort>
   static const std::string Name() { return "furthest_neighbor_search_model"; }
 };
 
-class SearchKVisitor : public boost::static_visitor<void>
+class MonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
    const size_t k;
@@ -60,12 +60,12 @@ class SearchKVisitor : public boost::static_visitor<void>
    template<typename NSType>
    void operator()(NSType *ns) const;
 
-   SearchKVisitor(const size_t k,
-                  arma::Mat<size_t>& neighbors,
-                  arma::mat& distances);
+   MonoSearchVisitor(const size_t k,
+                     arma::Mat<size_t>& neighbors,
+                     arma::mat& distances);
 };
 
-class SearchVisitor : public boost::static_visitor<void>
+class BiSearchVisitor : public boost::static_visitor<void>
 {
  private:
    const arma::mat& querySet;
@@ -90,11 +90,11 @@ class SearchVisitor : public boost::static_visitor<void>
    template<typename SortPolicy>
    void operator()(NSType<SortPolicy,tree::BallTree> *ns) const;
 
-   SearchVisitor(const arma::mat& querySet,
-                 const size_t k,
-                 arma::Mat<size_t>& neighbors,
-                 arma::mat& distances,
-                 const size_t leafSize);
+   BiSearchVisitor(const arma::mat& querySet,
+                   const size_t k,
+                   arma::Mat<size_t>& neighbors,
+                   arma::mat& distances,
+                   const size_t leafSize);
 };
 
 class TrainVisitor : public boost::static_visitor<void>

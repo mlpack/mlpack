@@ -16,16 +16,16 @@
 namespace mlpack {
 namespace neighbor {
 
-SearchKVisitor::SearchKVisitor(const size_t k,
-                               arma::Mat<size_t>& neighbors,
-                               arma::mat& distances) :
+MonoSearchVisitor::MonoSearchVisitor(const size_t k,
+                                     arma::Mat<size_t>& neighbors,
+                                     arma::mat& distances) :
     k(k),
     neighbors(neighbors),
     distances(distances)
 {}
 
 template<typename NSType>
-void SearchKVisitor::operator()(NSType *ns) const
+void MonoSearchVisitor::operator()(NSType *ns) const
 {
   if (ns)
     return ns->Search(k, neighbors, distances);
@@ -33,11 +33,11 @@ void SearchKVisitor::operator()(NSType *ns) const
 }
 
 
-SearchVisitor::SearchVisitor(const arma::mat& querySet,
-                             const size_t k,
-                             arma::Mat<size_t>& neighbors,
-                             arma::mat& distances,
-                             const size_t leafSize) :
+BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
+                                 const size_t k,
+                                 arma::Mat<size_t>& neighbors,
+                                 arma::mat& distances,
+                                 const size_t leafSize) :
     querySet(querySet),
     k(k),
     neighbors(neighbors),
@@ -49,7 +49,7 @@ template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void SearchVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
+void BiSearchVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
 {
   if (ns)
     return ns->Search(querySet, k, neighbors, distances);
@@ -57,7 +57,7 @@ void SearchVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
 }
 
 template<typename SortPolicy>
-void SearchVisitor::operator()(NSType<SortPolicy,tree::KDTree> *ns) const
+void BiSearchVisitor::operator()(NSType<SortPolicy,tree::KDTree> *ns) const
 {
   if (ns)
     return SearchLeaf(ns);
@@ -65,7 +65,7 @@ void SearchVisitor::operator()(NSType<SortPolicy,tree::KDTree> *ns) const
 }
 
 template<typename SortPolicy>
-void SearchVisitor::operator()(NSType<SortPolicy,tree::BallTree> *ns) const
+void BiSearchVisitor::operator()(NSType<SortPolicy,tree::BallTree> *ns) const
 {
   if (ns)
     return SearchLeaf(ns);
@@ -73,7 +73,7 @@ void SearchVisitor::operator()(NSType<SortPolicy,tree::BallTree> *ns) const
 }
 
 template<typename NSType>
-void SearchVisitor::SearchLeaf(NSType *ns) const
+void BiSearchVisitor::SearchLeaf(NSType *ns) const
 {
   if (!ns->Naive() && !ns->SingleMode())
   {
@@ -374,7 +374,7 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-  SearchVisitor search(querySet, k, neighbors, distances, leafSize);
+  BiSearchVisitor search(querySet, k, neighbors, distances, leafSize);
   boost::apply_visitor(search, nSearch);
 }
 
@@ -392,7 +392,7 @@ void NSModel<SortPolicy>::Search(const size_t k,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-  SearchKVisitor search(k, neighbors, distances);
+  MonoSearchVisitor search(k, neighbors, distances);
   boost::apply_visitor(search, nSearch);
 }
 
