@@ -474,6 +474,80 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   positions.rows(numProj, 2 * numProj - 1) =
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
 
+  // optimization: no need to create heap for 1 or 2 codes
+  if (T == 1)
+  {
+    // special case: 1 code only
+    // simply find location of minimum score, generate 1 perturbation vector,
+    // and add its code to additionalProbingBins column 0
+
+    // find location and value of smallest element of scores vector
+    double minscore = scores[0];
+    size_t minloc = 0;
+    for (size_t s = 0; s < 2 * numProj; ++s)
+    {
+      if (minscore > scores[s])
+      {
+        minscore = scores[s];
+        minloc = s;
+      }
+    }
+    
+    // add or subtract 1 to dimension corresponding to minimum score
+    additionalProbingBins(positions[minloc], 0) += actions[minloc];
+    
+    // done - only 1 code was needed
+    return;
+  }
+
+  if (T == 2)
+  {
+    // special case: 2 codes only
+    // The second perturbation vector still can't comprise of more than one
+    // change in the bin codes. This is because of the way perturbation vectors
+    // are generated: First we create the one with the smallest score (Ao) and
+    // then we either add 1 extra dimension to it (Ae) or shift it by one (As).
+    // Since As contains the second smallest score, and Ae contains both the
+    // smallest and the second smallest, it's obvious that score(Ae) >
+    // score(As). Therefore the second perturbation vector is ALWAYS the vector
+    // containing only the second-lowest scoring perturbation.
+    
+
+    // First, find location of minimum score, generate 1 perturbation vector,
+    // and add its code to additionalProbingBins column 0, like in T==1.
+
+    // find location and value of smallest element of scores vector
+    double minscore = scores[0];
+    size_t minloc = 0;
+    for (size_t s = 1; s < 2 * numProj; ++s)
+    {
+      if (minscore > scores[s])
+      {
+        minscore = scores[s];
+        minloc = s;
+      }
+    }
+    
+    // add or subtract 1 to dimension corresponding to minimum score
+    additionalProbingBins(positions[minloc], 0) += actions[minloc];
+
+    // Now, find location of second smallest score and generate one more vector.
+    
+    double minscore2 = scores[0];
+    size_t minloc2 = 0;
+    for (size_t s = 0; s < 2 * numProj; ++s) // here we can't start from 0
+    {
+      if ( minscore2 > scores[s] && scores[s] > minscore) //second smallest
+      {
+        minscore2 = scores[s];
+        minloc2 = s;
+      }
+    }
+
+    // add or subtract 1 to second smallest score
+    additionalProbingBins(positions[minloc2], 1) += actions[minloc2];
+  }
+
   // sort everything in increasing order
   arma::Col<long long unsigned int> sortidx = arma::sort_index(scores);
   scores = scores(sortidx);
@@ -641,7 +715,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.set_size(1, numTablesToSearch);
     hashMat.row(0) = hashVec;
   }
-  std::cout<<hashMat<<std::endl;
 
   // Count number of points hashed in the same bucket as the query
   size_t maxNumPoints = 0;

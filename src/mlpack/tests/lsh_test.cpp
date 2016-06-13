@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   
   bool foundIncrease = 0;
 
-  for (size_t rep; rep < repetitions; ++rep)
+  for (size_t rep = 0; rep < repetitions; ++rep)
   {
     // train a model
     LSHSearch<> multiprobeTest(
