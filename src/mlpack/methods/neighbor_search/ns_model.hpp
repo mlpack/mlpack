@@ -13,11 +13,23 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
-
+#include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
 namespace mlpack {
 namespace neighbor {
+
+template<typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+using NSType = NeighborSearch<SortPolicy,
+                              metric::EuclideanDistance,
+                              arma::mat,
+                              TreeType,
+                              TreeType<metric::EuclideanDistance,
+                                  NeighborSearchStat<SortPolicy>,
+                                  arma::mat>::template DualTreeTraverser>;
 
 template<typename SortPolicy>
 struct NSModelName
@@ -35,6 +47,121 @@ template<>
 struct NSModelName<FurthestNeighborSort>
 {
   static const std::string Name() { return "furthest_neighbor_search_model"; }
+};
+
+class SearchKVisitor : public boost::static_visitor<void>
+{
+ private:
+   const size_t k;
+   arma::Mat<size_t>& neighbors;
+   arma::mat& distances;
+
+ public:
+   template<typename NSType>
+   void operator()(NSType *ns) const;
+
+   SearchKVisitor(const size_t k,
+                  arma::Mat<size_t>& neighbors,
+                  arma::mat& distances);
+};
+
+class SearchVisitor : public boost::static_visitor<void>
+{
+ private:
+   const arma::mat& querySet;
+   const size_t k;
+   arma::Mat<size_t>& neighbors;
+   arma::mat& distances;
+   const size_t leafSize;
+
+   template<typename NSType>
+   void SearchLeaf(NSType *ns) const;
+
+ public:
+   template<typename SortPolicy,
+            template<typename TreeMetricType,
+                     typename TreeStatType,
+                     typename TreeMatType> class TreeType>
+   void operator()(NSType<SortPolicy,TreeType> *ns) const;
+
+   template<typename SortPolicy>
+   void operator()(NSType<SortPolicy,tree::KDTree> *ns) const;
+
+   template<typename SortPolicy>
+   void operator()(NSType<SortPolicy,tree::BallTree> *ns) const;
+
+   SearchVisitor(const arma::mat& querySet,
+                 const size_t k,
+                 arma::Mat<size_t>& neighbors,
+                 arma::mat& distances,
+                 const size_t leafSize);
+};
+
+class TrainVisitor : public boost::static_visitor<void>
+{
+ private:
+   arma::mat&& referenceSet;
+   size_t leafSize;
+
+   template<typename NSType>
+   void TrainLeaf(NSType* ns) const;
+
+ public:
+   template<typename SortPolicy,
+            template<typename TreeMetricType,
+                     typename TreeStatType,
+                     typename TreeMatType> class TreeType>
+   void operator()(NSType<SortPolicy,TreeType> *ns) const;
+
+   template<typename SortPolicy>
+   void operator()(NSType<SortPolicy,tree::KDTree> *ns) const;
+
+   template<typename SortPolicy>
+   void operator()(NSType<SortPolicy,tree::BallTree> *ns) const;
+
+   TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
+};
+
+class SingleModeVisitor : public boost::static_visitor<bool&>
+{
+ public:
+   template<typename NSType>
+   bool& operator()(NSType *ns) const;
+};
+
+class NaiveVisitor : public boost::static_visitor<bool&>
+{
+ public:
+   template<typename NSType>
+   bool& operator()(NSType *ns) const;
+};
+
+class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
+{
+ public:
+   template<typename NSType>
+   const arma::mat& operator()(NSType *ns) const;
+};
+
+class DeleteVisitor : public boost::static_visitor<void>
+{
+ public:
+   template<typename NSType>
+   void operator()(NSType *ns) const;
+};
+
+template<typename Archive>
+class SerializeVisitor : public boost::static_visitor<void>
+{
+ private:
+   Archive& ar;
+   const std::string& name;
+
+ public:
+   template<typename NSType>
+   void operator()(NSType *ns) const;
+
+   SerializeVisitor(Archive& ar, const std::string& name);
 };
 
 template<typename SortPolicy>
@@ -59,24 +186,12 @@ class NSModel
   bool randomBasis;
   arma::mat q;
 
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using NSType = NeighborSearch<SortPolicy,
-                                metric::EuclideanDistance,
-                                arma::mat,
-                                TreeType,
-                                TreeType<metric::EuclideanDistance,
-                                    NeighborSearchStat<SortPolicy>,
-                                    arma::mat>::template DualTreeTraverser>;
-
-  // Only one of these pointers will be non-NULL.
-  NSType<tree::KDTree>* kdTreeNS;
-  NSType<tree::StandardCoverTree>* coverTreeNS;
-  NSType<tree::RTree>* rTreeNS;
-  NSType<tree::RStarTree>* rStarTreeNS;
-  NSType<tree::BallTree>* ballTreeNS;
-  NSType<tree::XTree>* xTreeNS;
+  boost::variant<NSType<SortPolicy, tree::KDTree>*,
+                 NSType<SortPolicy, tree::StandardCoverTree>*,
+                 NSType<SortPolicy, tree::RTree>*,
+                 NSType<SortPolicy, tree::RStarTree>*,
+                 NSType<SortPolicy, tree::BallTree>*,
+                 NSType<SortPolicy, tree::XTree>*> nSearch;
 
  public:
   /**

@@ -27,8 +27,7 @@ namespace neighbor /** Neighbor-search routines.  These include
                     * searches. */ {
 
 // Forward declaration.
-template<typename SortPolicy>
-class NSModel;
+class TrainVisitor;
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
@@ -308,7 +307,7 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  friend class NSModel<SortPolicy>;
+  friend class TrainVisitor;
 }; // class NeighborSearch
 
 } // namespace neighbor
