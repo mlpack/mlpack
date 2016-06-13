@@ -62,7 +62,7 @@ class XTreeSplit
    * Comparator for sorting with sortStruct.
    */
   template<typename ElemType>
-  static bool structComp(const sortStruct<ElemType>& s1, 
+  static bool structComp(const sortStruct<ElemType>& s1,
                          const sortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;

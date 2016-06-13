@@ -664,8 +664,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),tree->MaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),tree->MaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(), tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), tree->MaxNumChildren());
 
   // Now as per the X-tree paper, we ensure that this split was good enough.
   bool useMinOverlapSplit = false;

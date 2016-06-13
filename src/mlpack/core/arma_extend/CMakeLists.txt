@@ -3,6 +3,7 @@
 set(SOURCES
   arma_extend.hpp
   fn_ccov.hpp
+  fn_ind2sub.hpp
   glue_ccov_meat.hpp
   glue_ccov_proto.hpp
   hdf5_misc.hpp
