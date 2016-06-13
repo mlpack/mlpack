@@ -19,7 +19,6 @@ PARAM_STRING_REQ("input_file", "File containing data,", "i");
 PARAM_STRING("output_file", "File to save output", "o", "");
 PARAM_STRING("missing_value", "User defined missing value", "m", "")
 PARAM_STRING("map_policy", "mapping policy to be used while loading", "p", "")
-PARAM_STRING("map_to", "custom_strategy option. map to something else", "t", "")
 PARAM_STRING("impute_strategy", "imputation strategy to be applied", "s", "")
 PARAM_DOUBLE("custom_value", "user_defined custom value", "c", 0.0)
 PARAM_INT("feature", "the feature to apply imputation", "f", 0);
@@ -34,9 +33,22 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   const string inputFile = CLI::GetParam<string>("input_file");
-  const string missingValue = CLI::GetParam<string>("missing_value");
   const string outputFile = CLI::GetParam<string>("output_file");
+  const string missingValue = CLI::GetParam<string>("missing_value");
+  const string mapPolicy = CLI::GetParam<string>("map_policy");
+  const string imputeStrategy = CLI::GetParam<string>("impute_strategy");
+  const double customValue = CLI::GetParam<double>("custom_value");
   const size_t feature = (size_t) CLI::GetParam<int>("feature");
+
+  // warn if user did not specify output_file
+  if (!CLI::HasParam("output_file"))
+    Log::Warn << "--output_file is not specified, no "
+              << "results from this program will be saved!" << endl;
+
+  if (CLI::HasParam("custom_value") && !CLI::HasParam("impute_strategy"))
+    Log::Warm << "--custom_value is specified without --impute_strategy "
+              << "automatically setting --impute_strategy to CustomStrategy"
+              << endl;
 
   arma::mat input;
   data::DatasetInfo info;
