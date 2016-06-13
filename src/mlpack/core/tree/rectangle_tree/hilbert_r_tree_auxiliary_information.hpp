@@ -47,11 +47,6 @@ class HilbertRTreeAuxiliaryInformation
    */
   bool HandlePointInsertion(TreeType* node, const size_t point);
 
-  template<typename VecType>
-  bool HandlePointInsertion(TreeType* node, const VecType& point,
-                             typename boost::enable_if<IsVector<VecType>>* = 0);
-
-  
   /**
    * The Hilbert R tree requires to insert nodes according to their
    * Hilbert value. This method should take care of it.

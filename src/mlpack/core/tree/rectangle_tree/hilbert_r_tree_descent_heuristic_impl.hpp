@@ -28,19 +28,6 @@ ChooseDescentNode(const TreeType* node, const size_t point)
 
 template<typename TreeType>
 size_t HilbertRTreeDescentHeuristic::
-ChooseDescentNode(const TreeType* node, const arma::vec& point)
-{
-  size_t bestIndex = 0;
-
-  for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
-    if (node->Children()[bestIndex]->AuxiliaryInfo().HilbertValue().CompareWithCachedPoint(point) > 0)
-      break;
-
-  return bestIndex;
-}
-
-template<typename TreeType>
-size_t HilbertRTreeDescentHeuristic::
 ChooseDescentNode(const TreeType* node, const TreeType* insertedNode)
 {
   size_t bestIndex = 0;

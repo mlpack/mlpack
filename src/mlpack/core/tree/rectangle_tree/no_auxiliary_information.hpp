@@ -27,10 +27,6 @@ class NoAuxiliaryInformation
   {
     return false;
   }
-  bool HandlePointInsertion(TreeType* , const arma::vec& )
-  {
-    return false;
-  }
 
   /**
    * Some tree types require to save some properties at the insertion process.

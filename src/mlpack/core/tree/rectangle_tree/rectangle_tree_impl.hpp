@@ -45,8 +45,6 @@ RectangleTree(const MatType& data,
     dataset(new MatType(data)),
     ownsDataset(true),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(arma::zeros<MatType>(data.n_rows,
-                                                  maxLeafSize + 1))),
     auxiliaryInfo(this)
 {
   stat = StatisticType(*this);
@@ -86,8 +84,6 @@ RectangleTree(MatType&& data,
     dataset(new MatType(std::move(data))),
     ownsDataset(true),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(arma::zeros<MatType>(dataset->n_rows,
-                                                  maxLeafSize + 1))),
     auxiliaryInfo(this)
 {
   stat = StatisticType(*this);
@@ -126,8 +122,6 @@ RectangleTree(
     dataset(&parentNode->Dataset()),
     ownsDataset(false),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(arma::zeros<MatType>(parentNode->Bound().Dim(),
-                                                  maxLeafSize + 1))),
     auxiliaryInfo(this)
 {
   stat = StatisticType(*this);
@@ -162,7 +156,6 @@ RectangleTree(
     dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
     ownsDataset(deepCopy),
     points(other.Points()),
-    localDataset(NULL),
     auxiliaryInfo(other.auxiliaryInfo)
 {
   if (deepCopy)
@@ -170,21 +163,11 @@ RectangleTree(
     if (numChildren > 0)
     {
       for (size_t i = 0; i < numChildren; i++)
-      {
         children[i] = new RectangleTree(*(other.Children()[i]));
-      }
-    }
-    else
-    {
-      localDataset = new MatType(other.LocalDataset());
     }
   }
   else
-  {
     children = other.Children();
-    arma::mat& otherData = const_cast<arma::mat&>(other.LocalDataset());
-    localDataset = &otherData;
-  }
 }
 
 /**
@@ -229,7 +212,6 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (ownsDataset)
     delete dataset;
 
-  delete localDataset;
 }
 
 /**
@@ -268,7 +250,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
     NullifyData()
 {
-  localDataset = NULL;
   auxiliaryInfo.NullifyData();
 }
 
@@ -297,10 +278,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (numChildren == 0)
   {
     if (!auxiliaryInfo.HandlePointInsertion(this, point))
-    {
-      localDataset->col(count) = dataset->col(point);
       points[count++] = point;
-    }
+
     SplitNode(lvls);
     return;
   }
@@ -335,10 +314,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (numChildren == 0)
   {
     if (!auxiliaryInfo.HandlePointInsertion(this, point))
-    {
-      localDataset->col(count) = dataset->col(point);
       points[count++] = point;
-    }
+
     SplitNode(relevels);
     return;
   }
@@ -347,84 +324,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // to which we recurse.
   auxiliaryInfo.HandlePointInsertion(this, point);
   const size_t descentNode = DescentType::ChooseDescentNode(this,point);
-  children[descentNode]->InsertPoint(point, relevels);
-}
-
-/**
- * Recurse through the tree and insert the point at the leaf node chosen
- * by the heuristic.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-    InsertPoint(const arma::vec &point)
-{
-  // Expand the bound regardless of whether it is a leaf node.
-  bound |= point;
-
-  std::vector<bool> lvls(TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
-
-  // If this is a leaf node, we stop here and add the point.
-  if (numChildren == 0)
-  {
-    if (!auxiliaryInfo.HandlePointInsertion(this, point))
-    {
-      localDataset->col(count) = point;
-      points[count++] = dataset->n_cols;
-    }
-    SplitNode(lvls);
-    return;
-  }
-
-  // If it is not a leaf node, we use the DescentHeuristic to choose a child
-  // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this, point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
-  children[descentNode]->InsertPoint(point, lvls);
-}
-
-/**
- * Inserts a point into the tree, tracking which levels have been inserted into.
- * The point will be copied to the data matrix of the leaf node where it is
- * finally inserted, but we pass by reference since it may be passed many times
- * before it actually reaches a leaf.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-    InsertPoint(const arma::vec &point, std::vector<bool>& relevels)
-{
-  // Expand the bound regardless of whether it is a leaf node.
-  bound |= point;
-
-  // If this is a leaf node, we stop here and add the point.
-  if (numChildren == 0)
-  {
-    if (!auxiliaryInfo.HandlePointInsertion(this, point))
-    {
-      localDataset->col(count) = point;
-      points[count++] = dataset->n_cols;
-    }
-    SplitNode(relevels);
-    return;
-  }
-
-  // If it is not a leaf node, we use the DescentHeuristic to choose a child
-  // to which we recurse.
-  auxiliaryInfo.HandlePointInsertion(this, point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -498,10 +397,8 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (points[i] == point)
       {
         if (!auxiliaryInfo.HandlePointDeletion(this, i))
-        {
-          localDataset->col(i) = localDataset->col(--count); // Decrement count.
-          points[i] = points[count];
-        }
+          points[i] = points[--count];
+
         // This function wil ensure that minFill is satisfied.
         CondenseTree(dataset->col(point), lvls, true);
         return true;
@@ -538,10 +435,8 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (points[i] == point)
       {
         if (!auxiliaryInfo.HandlePointDeletion(this, i))
-        {
-          localDataset->col(i) = localDataset->col(--count);
-          points[i] = points[count];
-        }
+          points[i] = points[--count];
+
         // This function will ensure that minFill is satisfied.
         CondenseTree(dataset->col(point), relevels, true);
         return true;
@@ -557,95 +452,6 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   return false;
 }
 
-/**
- * Recurse through the tree to remove the point.  Once we find the point, we
- * shrink the rectangles if necessary.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-    DeletePoint(const arma::vec &point)
-{
-  // It is possible that this will cause a reinsertion, so we need to handle the
-  // levels properly.
-  RectangleTree* root = this;
-  while (root->Parent() != NULL)
-    root = root->Parent();
-
-  std::vector<bool> lvls(root->TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
-
-  if (numChildren == 0)
-  {
-    for (size_t i = 0; i < count; i++)
-    {
-      if (localDataset[i] == point)
-      {
-        if (!auxiliaryInfo.HandlePointDeletion(this, i))
-        {
-          localDataset->col(i) = localDataset->col(--count); // Decrement count.
-          points[i] = points[count];
-        }
-        // This function wil ensure that minFill is satisfied.
-        CondenseTree(point, lvls, true);
-        return true;
-      }
-    }
-  }
-
-  for (size_t i = 0; i < numChildren; i++)
-    if (children[i]->Bound().Contains(point))
-      if (children[i]->DeletePoint(point, lvls))
-        return true;
-
-  return false;
-}
-
-/**
- * Recurse through the tree to remove the point.  Once we find the point, we
- * shrink the rectangles if necessary.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-    DeletePoint(const arma::vec &point, std::vector<bool>& relevels)
-{
-  if (numChildren == 0)
-  {
-    for (size_t i = 0; i < count; i++)
-    {
-      if (localDataset[i] == point)
-      {
-        if (!auxiliaryInfo.HandlePointDeletion(this, i))
-        {
-          localDataset->col(i) = localDataset->col(--count);
-          points[i] = points[count];
-        }
-        // This function will ensure that minFill is satisfied.
-        CondenseTree(point, relevels, true);
-        return true;
-      }
-    }
-  }
-
-  for (size_t i = 0; i < numChildren; i++)
-    if (children[i]->Bound().Contains(point))
-      if (children[i]->DeletePoint(point, relevels))
-        return true;
-
-  return false;
-}
 
 /**
  * Recurse through the tree to remove the node.  Once we find the node, we
@@ -928,8 +734,7 @@ RectangleTree() :
     minLeafSize(0),
     parentDistance(0.0),
     dataset(NULL),
-    ownsDataset(false),
-    localDataset(NULL)
+    ownsDataset(false)
 {
   // Nothing to do.
 }
@@ -990,10 +795,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
        // Reinsert the points at the root node.
         for (size_t j = 0; j < count; j++)
-          if (points[j] < dataset->n_cols)
-            root->InsertPoint(points[j], relevels);
-          else
-            root->InsertPoint(localDataset[j], relevels);
+          root->InsertPoint(points[j], relevels);
 
         // This will check the minFill of the parent.
         parent->CondenseTree(point, relevels, usePoint);
@@ -1081,7 +883,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       {
         // In case the tree has a height of two.
         points[i] = child->Points()[i];
-        localDataset->col(i) = child->LocalDataset().col(i);
       }
 
       auxiliaryInfo.Copy(this,child);
@@ -1126,8 +927,8 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         ElemType min = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < count; j++)
         {
-          if (localDataset->col(j)[i] < min)
-            min = localDataset->col(j)[i];
+          if (dataset->col(points[j])[i] < min)
+            min = dataset->col(points[j])[i];
         }
 
         if (bound[i].Lo() < min)
@@ -1145,8 +946,8 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         ElemType max = std::numeric_limits<ElemType>::lowest();
         for (size_t j = 0; j < count; j++)
         {
-          if (localDataset->col(j)[i] > max)
-            max = localDataset->col(j)[i];
+          if (dataset->col(points[j])[i] > max)
+            max = dataset->col(points[j])[i];
         }
 
         if (bound[i].Hi() > max)
@@ -1264,8 +1065,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     if (ownsDataset && dataset)
       delete dataset;
 
-    if (localDataset)
-      delete localDataset;
   }
 
   ar & CreateNVP(maxNumChildren, "maxNumChildren");
@@ -1300,7 +1099,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     ownsDataset = true;
 
   ar & CreateNVP(points, "points");
-  ar & CreateNVP(localDataset, "localDataset");
   ar & CreateNVP(auxiliaryInfo, "auxiliaryInfo");
 
   // Because 'children' holds mlpack types (that have Serialize()), we can't use

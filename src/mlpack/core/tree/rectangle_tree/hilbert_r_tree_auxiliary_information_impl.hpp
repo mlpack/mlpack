@@ -62,52 +62,15 @@ HandlePointInsertion(TreeType* node, const size_t point)
 
     // Move points
     for (size_t i = node->NumPoints(); i > pos; i--)
-    {
       node->Points()[i] = node->Points()[i-1];
-      node->LocalDataset().col(i) = node->LocalDataset().col(i-1);
-    }
     // Insert the point
     node->Points()[pos] = point;
-    node->LocalDataset().col(pos) = node->Dataset().col(point);
     node->Count()++;
   }
   else
   {
     // Calculate the Hilbert value
     hilbertValue.InsertPoint(node, node->Dataset().col(point));
-  }
-
-  return true;
-}
-
-template<typename TreeType,
-         template<typename> class HilbertValueType>
-template<typename VecType>
-bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HandlePointInsertion (TreeType* node, const VecType& point,
-                                  typename boost::enable_if<IsVector<VecType>>*)
-{
-  if (node->IsLeaf())
-  {
-    // Get the position at which the point should be inserted
-    // Update the largest Hilbert value of the node
-    size_t pos = hilbertValue.InsertPoint(node, point);
-
-    // Move points
-    for (size_t i = node->NumPoints(); i > pos; i--)
-    {
-      node->Points()[i] = node->Points()[i-1];
-      node->LocalDataset().col(i) = node->LocalDataset().col(i-1);
-    }
-    // Insert the point
-    node->Points()[pos] = node->Dataset().n_cols;
-    node->LocalDataset().col(pos) = point;
-    node->Count()++;
-  }
-  else
-  {
-    // Calculate the Hilbert value
-    hilbertValue.InsertPoint(node, point);
   }
 
   return true;
@@ -156,10 +119,8 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   hilbertValue.DeletePoint(node,localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
-  {
     node->Points()[i-1] = node->Points()[i];
-    node->LocalDataset()->col(i-1) = node->LocalDataset()->col(i);
-  }
+
   node->NumPoints()--;
   return true;
 }

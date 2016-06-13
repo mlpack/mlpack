@@ -168,7 +168,8 @@ void RTreeSplit::GetPointSeeds(const TreeType *tree,int& iRet, int& jRet)
     for (size_t j = i + 1; j < tree->Count(); j++)
     {
       const typename TreeType::ElemType score = arma::prod(arma::abs(
-          tree->LocalDataset().col(i) - tree->LocalDataset().col(j)));
+          tree->Dataset().col(tree->Point(i)) -
+          tree->Dataset().col(tree->Point(j))));
 
       if (score > worstPairScore)
       {
@@ -242,16 +243,12 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
   if (intI > intJ)
   {
     oldTree->Points()[intI] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->LocalDataset().col(intI) = oldTree->LocalDataset().col(end);
     oldTree->Points()[intJ] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->LocalDataset().col(intJ) = oldTree->LocalDataset().col(end);
   }
   else
   {
     oldTree->Points()[intJ] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->LocalDataset().col(intJ) = oldTree->LocalDataset().col(end);
     oldTree->Points()[intI] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->LocalDataset().col(intI) = oldTree->LocalDataset().col(end);
   }
 
   size_t numAssignedOne = 1;
@@ -293,7 +290,7 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
       ElemType newVolTwo = 1.0;
       for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
-        ElemType c = oldTree->LocalDataset().col(index)[i];
+        ElemType c = oldTree->Dataset().col(oldTree->Point(index))[i];
         newVolOne *= treeOne->Bound()[i].Contains(c) ?
             treeOne->Bound()[i].Width() : (c < treeOne->Bound()[i].Lo() ?
             (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
@@ -337,7 +334,6 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
     }
 
     oldTree->Points()[bestIndex] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->LocalDataset().col(bestIndex) = oldTree->LocalDataset().col(end);
   }
 
   // See if we need to satisfy the minimum fill.

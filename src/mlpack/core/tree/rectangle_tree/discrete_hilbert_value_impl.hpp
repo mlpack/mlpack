@@ -41,7 +41,7 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
     numValues(0),
     valueToInsert(tree->Parent() ? 
                 tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert() :
-                new arma::Col<HilbertElemType>(tree->LocalDataset().n_rows)),
+                new arma::Col<HilbertElemType>(tree->Dataset().n_rows)),
     ownsValueToInsert(tree->Parent() ? false : true)
 {
   // Calculate the Hilbert value for all points
@@ -56,7 +56,7 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
     
   if (ownsLocalDataset)
   {
-    localDataset =  new arma::Mat<HilbertElemType>(tree->LocalDataset().n_rows,
+    localDataset =  new arma::Mat<HilbertElemType>(tree->Dataset().n_rows,
                                             tree->MaxLeafSize() + 1);
   }
 

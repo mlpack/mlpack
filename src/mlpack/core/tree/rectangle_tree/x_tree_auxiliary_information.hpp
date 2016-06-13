@@ -50,10 +50,6 @@ class XTreeAuxiliaryInformation
     return false;
   }
 
-  bool HandlePointInsertion(TreeType* , const arma::vec&)
-  {
-    return false;
-  }
   /**
    * Some tree types require to save some properties at the insertion process.
    * This method should return false if it does not handle the process.

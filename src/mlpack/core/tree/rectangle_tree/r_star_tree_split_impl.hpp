@@ -68,44 +68,26 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].d = tree->Metric().Evaluate(center,
-          tree->LocalDataset().col(i));
+          tree->Dataset().col(tree->Point(i)));
       sorted[i].n = i;
     }
 
     std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
     std::vector<size_t> pointIndices(p);
-    arma::Mat<ElemType> localDataset(tree->Dataset().n_rows, p);
+
     for (size_t i = 0; i < p; i++)
     {
       // We start from the end of sorted.
       pointIndices[i] = tree->Points()[sorted[sorted.size() - 1 - i].n];
-      localDataset.col(i) =
-                      tree->LocalDataset().col(sorted[sorted.size() - 1 - i].n);
 
-      if (tree->Points()[sorted[sorted.size() - 1 - i].n] <
-         tree->Dataset().n_cols)
-        root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
-            relevels);
-      else
-      {
-        tree->Count()--;
-        tree->LocalDataset().col(sorted[sorted.size() - 1 - i].n) =
-                                        tree->LocalDataset().col(tree->Count());
-        tree->Points()[sorted[sorted.size() - 1 - i].n] =
-                                                  tree->Points()[tree->Count()];
-        // This function will ensure that minFill is satisfied.
-        tree->CondenseTree(localDataset.col(i), relevels, true);
-        
-      }
+      root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
+          relevels);
     }
 
     for (size_t i = 0; i < p; i++)
     {
       // We reverse the order again to reinsert the closest points first.
-      if (pointIndices[p - 1 - i] < tree->Dataset().n_cols)
-        root->InsertPoint(pointIndices[p - 1 - i], relevels);
-      else
-        root->InsertPoint(localDataset[p - 1 - i], relevels);
+      root->InsertPoint(pointIndices[p - 1 - i], relevels);
     }
 
     return;
@@ -124,7 +106,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     std::vector<SortStruct<ElemType>> sorted(tree->Count());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->LocalDataset().col(i)[j];
+      sorted[i].d = tree->Dataset().col(tree->Point(i))[j];
       sorted[i].n = i;
     }
 
@@ -160,25 +142,25 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        minG1[k] = maxG1[k] = tree->LocalDataset().col(sorted[0].n)[k];
+        minG1[k] = maxG1[k] = tree->Dataset().col(tree->Point(sorted[0].n))[k];
         minG2[k] = maxG2[k] =
-            tree->LocalDataset().col(sorted[sorted.size() - 1].n)[k];
+            tree->Dataset().col(tree->Point(sorted[sorted.size() - 1].n))[k];
 
         for (size_t l = 1; l < tree->Count() - 1; l++)
         {
           if (l < cutOff)
           {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG1[k])
-              minG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG1[k])
-              maxG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
+            if (tree->Dataset().col(tree->Point(sorted[l].n))[k] < minG1[k])
+              minG1[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
+            else if (tree->Dataset().col(tree->Point(sorted[l].n))[k] > maxG1[k])
+              maxG1[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
           }
           else
           {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG2[k])
-              minG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG2[k])
-              maxG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
+            if (tree->Dataset().col(tree->Point(sorted[l].n))[k] < minG2[k])
+              minG2[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
+            else if (tree->Dataset().col(tree->Point(sorted[l].n))[k] > maxG2[k])
+              maxG2[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
           }
         }
       }
@@ -228,7 +210,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
   std::vector<SortStruct<ElemType>> sorted(tree->Count());
   for (size_t i = 0; i < sorted.size(); i++)
   {
-    sorted[i].d = tree->LocalDataset().col(i)[bestAxis];
+    sorted[i].d = tree->Dataset().col(tree->Point(i))[bestAxis];
     sorted[i].n = i;
   }
 
@@ -242,19 +224,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
-      {
-        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
-          treeOne->InsertPoint(tree->Points()[sorted[i].n]);
-        else
-          treeOne->InsertPoint(tree->LocalDataset()[sorted[i].n]);
-      }
+        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
       else
-      {
-        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
-          treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
-        else
-          treeTwo->InsertPoint(tree->LocalDataset()[sorted[i].n]);
-      }
+        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
     }
   }
   else
@@ -262,19 +234,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
-      {
-        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
-          treeOne->InsertPoint(tree->Points()[sorted[i].n]);
-        else
-          treeOne->InsertPoint(tree->LocalDataset()[sorted[i].n]);
-      }
+        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
       else
-      {
-        if (tree->Points()[sorted[i].n] < tree->Dataset().n_cols)
-          treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
-        else
-          treeTwo->InsertPoint(tree->LocalDataset()[sorted[i].n]);
-      }
+        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
     }
   }
 

@@ -39,7 +39,7 @@ RecursiveHilbertValue(const TreeType* tree) :
     
   if (ownsLargestValue)
   {
-    largestValue =  new arma::Col<TreeElemType>(tree->LocalDataset().n_rows);
+    largestValue =  new arma::Col<TreeElemType>(tree->Dataset().n_rows);
   }
 }
 
@@ -215,7 +215,7 @@ InsertPoint(TreeType* node, const VecType& point,
     size_t i;
 
     for (i = 0; i < node->NumPoints(); i++)
-      if (ComparePoints(node->LocalDataset().col(i), point) > 0)
+      if (ComparePoints(node->Dataset().col(node->Point(i)), point) > 0)
         break;
     if (i == node->NumPoints())
       *largestValue = point;
@@ -262,7 +262,7 @@ DeletePoint(TreeType* node, const size_t localIndex)
     return;
   }
   if (localIndex + 1 == node->NumPoints())
-    *largestValue = node->LocalDataset()[localIndex-1];
+    *largestValue = node->Dataset()[node->Point(localIndex-1)];
   
 }
 
@@ -322,7 +322,8 @@ UpdateHilbertValues(TreeType* parent, size_t firstSibling,  size_t lastSibling)
 
     assert(parent->Children()[i]->NumPoints() > 0);
 
-    *value.LargestValue() = parent->Children()[i]->LocalDataset().col(parent->Children()[i]->NumPoints() - 1);
+    TreeType *child = parent->Children()[i];
+    *value.LargestValue() = child->Dataset().col(child->Point(child->NumPoints() - 1));
     value.hasLargestValue = true;
   }
 

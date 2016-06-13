@@ -158,10 +158,10 @@ void CheckExactContainment(const TreeType& tree)
       double max = -1.0 * DBL_MAX;
       for(size_t j = 0; j < tree.Count(); j++)
       {
-        if (tree.LocalDataset().col(j)[i] < min)
-          min = tree.LocalDataset().col(j)[i];
-        if (tree.LocalDataset().col(j)[i] > max)
-          max = tree.LocalDataset().col(j)[i];
+        if (tree.Dataset().col(tree.Points()[j])[i] < min)
+          min = tree.Dataset().col(tree.Points()[j])[i];
+        if (tree.Dataset().col(tree.Points()[j])[i] > max)
+          max = tree.Dataset().col(tree.Points()[j])[i];
       }
       BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
       BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
@@ -216,46 +216,6 @@ BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
   TreeType tree(dataset, 20, 6, 5, 2, 0);
   CheckContainment(tree);
   CheckExactContainment(tree);
-}
-
-/**
- * A function to ensure that the dataset for the tree, and the datasets stored
- * in each leaf node are in sync.
- * @param tree The tree to check.
- */
-template<typename TreeType>
-void CheckSync(const TreeType& tree)
-{
-  if (tree.IsLeaf())
-  {
-    for (size_t i = 0; i < tree.Count(); i++)
-    {
-      for (size_t j = 0; j < tree.LocalDataset().n_rows; j++)
-      {
-        BOOST_REQUIRE_EQUAL(tree.LocalDataset().col(i)[j],
-                            tree.Dataset().col(tree.Points()[i])[j]);
-      }
-    }
-  }
-  else
-  {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
-      CheckSync(*tree.Children()[i]);
-  }
-}
-
-// Test to ensure that the dataset used by the whole tree (and the traversers)
-// is in sync with the datasets stored in each leaf node.
-BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync)
-{
-  arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
-
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
-  CheckSync(tree);
 }
 
 /**
@@ -417,7 +377,6 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 - numIter);
 
   CheckContainment(tree);
-  CheckSync(tree);
   CheckExactContainment(tree);
 
   // Single-tree search.
@@ -500,7 +459,6 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
   CheckContainment(tree);
-  CheckSync(tree);
   CheckExactContainment(tree);
 
   // Now we will compare the output of the R Tree vs the output of a naive
@@ -549,7 +507,6 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
-  CheckSync(rTree);
   CheckContainment(rTree);
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
@@ -595,7 +552,6 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
-  CheckSync(xTree);
   CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
@@ -637,7 +593,6 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertRTreeTraverserTest)
 
   BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
 
-  CheckSync(hilbertRTree);
   CheckContainment(hilbertRTree);
   CheckExactContainment(hilbertRTree);
   CheckHierarchy(hilbertRTree);
@@ -708,13 +663,13 @@ void CheckHilbertOrdering(TreeType* tree)
     for(size_t i = 0; i < tree->NumPoints() - 1; i++)
       BOOST_REQUIRE_LE(
               tree->AuxiliaryInfo().HilbertValue().ComparePoints(
-                      tree->LocalDataset().col(i),
-                      tree->LocalDataset().col(i+1)),
+                      tree->Dataset().col(tree->Points()[i]),
+                      tree->Dataset().col(tree->Points()[i+1])),
               0);
 
     BOOST_REQUIRE_EQUAL(
                   tree->AuxiliaryInfo().HilbertValue().CompareWith(
-                      tree->LocalDataset().col(tree->NumPoints() - 1)),
+                      tree->Dataset().col(tree->Points()[tree->NumPoints() - 1])),
                   0);
   }
   else

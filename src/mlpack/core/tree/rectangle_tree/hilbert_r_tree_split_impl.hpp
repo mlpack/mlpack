@@ -269,19 +269,13 @@ RedistributePointsEvenly(TreeType *parent,
   numRestPoints = numPoints % (lastSibling - firstSibling + 1);
 
   std::vector<size_t> points(numPoints);
-  arma::Mat<typename TreeType::ElemType> tmp(parent->Child(firstSibling).LocalDataset().n_rows,
-                                    numPoints);
 
   // Copy children's points in order to redistribute them.
   size_t iPoint = 0;
   for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
-    {
-      points[iPoint] = parent->Children()[i]->Points()[j];
-      tmp.col(iPoint) = parent->Children()[i]->LocalDataset().col(j);
-      iPoint++;
-    }
+      points[iPoint++] = parent->Children()[i]->Points()[j];
   }
 
   iPoint = 0;
@@ -294,16 +288,14 @@ RedistributePointsEvenly(TreeType *parent,
     size_t j;
     for (j = 0; j < numPointsPerNode; j++)
     {
-      parent->Children()[i]->Bound() |= tmp.col(iPoint);
+      parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
       parent->Children()[i]->Points()[j] = points[iPoint];
-      parent->Children()[i]->LocalDataset().col(j) = tmp.col(iPoint);
       iPoint++;
     }
     if (numRestPoints > 0)
     {
-      parent->Children()[i]->Bound() |= tmp.col(iPoint);
+      parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
       parent->Children()[i]->Points()[j] = points[iPoint];
-      parent->Children()[i]->LocalDataset().col(j) = tmp.col(iPoint);
       parent->Children()[i]->Count() = numPointsPerNode + 1;
       numRestPoints--;
       iPoint++;
