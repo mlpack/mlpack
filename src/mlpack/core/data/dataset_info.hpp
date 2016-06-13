@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <boost/bimap.hpp>
 
-#include "map_policies/default_map_policy.hpp"
+#include "map_policies/increment_map_policy.hpp"
 
 namespace mlpack {
 namespace data {
@@ -79,7 +79,7 @@ class DatasetMapper
    * @param string Mapped string for value.
    * @param dimension Dimension to unmap string from.
    */
-  const typename MapPolicy::map_type_t UnmapValue(const std::string& string,
+  typename MapPolicy::map_type_t UnmapValue(const std::string& string,
                                             const size_t dimension) const;
 
   //! Return the type of a given dimension (numeric or categorical).
@@ -127,7 +127,7 @@ class DatasetMapper
   MapPolicy policy;
 };
 
-using DatasetInfo = DatasetMapper<data::DefaultMapPolicy>;
+using DatasetInfo = DatasetMapper<data::IncrementMapPolicy>;
 
 } // namespace data
 } // namespace mlpack

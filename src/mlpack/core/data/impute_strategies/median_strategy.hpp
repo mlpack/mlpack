@@ -1,10 +1,11 @@
 /**
- * @file mode_strategy.hpp
+ * @file median_strategy.hpp
  * @author Keon Kim
  *
  */
-#ifndef MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MODE_STRATEGY_HPP
-#define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MODE_STRATEGY_HPP
+#ifndef MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEDIAN_STRATEGY_HPP
+#define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEDIAN_STRATEGY_HPP
+
 
 #include <mlpack/core.hpp>
 
@@ -14,7 +15,7 @@ using namespace std;
 namespace mlpack {
 namespace data {
 
-class ModeStrategy
+class MedianStrategy
 {
  public:
   typedef size_t impute_type_t;
@@ -26,7 +27,7 @@ class ModeStrategy
               const size_t index)
   {
     output(dimension, index) = 99;
-    cout << "IMPUTE CALLED CUSTOM MAP STRATEGY" << endl;
+    cout << "IMPUTE CALLED MEDIAN MAP POLICY" << endl;
 
   }
 };

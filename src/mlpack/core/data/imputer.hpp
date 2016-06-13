@@ -58,12 +58,17 @@ class Imputer
       output.set_size(input.n_rows, input.n_cols);
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(dimension, i) == 0.0)
+        Log::Info << "<Track> input=>  " << input(dimension, i) << "  mappedValue=> "<< mappedValue << std::endl;
+        if (input(dimension, i) == mappedValue)
         {
           // users can specify the imputation strategies likes
           // mean, mode, etc using the class'es template parameter: Strategy.
           Log::Info << "<<IMPUTER TRANSPOSE>>" << std::endl;
           strat.template Impute<T>(input, output, dimension, i);
+        }
+        else
+        {
+          Log::Info << "<not equal>" << std::endl;
         }
       }
     }

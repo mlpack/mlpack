@@ -1,7 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  impute_mean.hpp
+  mean_strategy.hpp
+  mode_strategy.hpp
+  median_strategy.hpp
+  custom_strategy.hpp
 )
 
 # Add directory name to sources.

@@ -50,20 +50,21 @@ inline const std::string& DatasetMapper<MapPolicy>::UnmapString(
 
 // Return the value corresponding to a string in a given dimension.
 template<typename MapPolicy>
-inline const typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::UnmapValue(
+inline typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::UnmapValue(
                                                     const std::string& string,
                                                     const size_t dimension) const
 {
+  return 0;
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.left.count(string) == 0)
-  {
-    std::ostringstream oss;
-    oss << "DatasetMapper<MapPolicy>::UnmapValue(): string '" << string
-        << "' unknown for dimension " << dimension;
-    throw std::invalid_argument(oss.str());
-  }
+  //if (maps[dimension].first.left.count(string) == 0)
+  //{
+    //std::ostringstream oss;
+    //oss << "DatasetMapper<MapPolicy>::UnmapValue(): string '" << string
+        //<< "' unknown for dimension " << dimension;
+    //throw std::invalid_argument(oss.str());
+  //}
 
-  return maps[dimension].first.left.at(string);
+  //return maps[dimension].first.left.at(string);
 }
 
 // Get the type of a particular dimension.

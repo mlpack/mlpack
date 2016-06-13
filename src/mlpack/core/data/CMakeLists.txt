@@ -16,7 +16,6 @@ set(SOURCES
   serialization_shim.hpp
   split_data.hpp
   imputer.hpp
-  dataset_info_rich.hpp
 )
 
 # add directory name to sources

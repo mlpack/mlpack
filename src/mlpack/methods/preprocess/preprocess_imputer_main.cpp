@@ -8,8 +8,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_info.hpp>
-#include <mlpack/core/data/map_policies/default_map_policy.hpp>
-#include <mlpack/core/data/impute_strategies/impute_mean.hpp>
+#include <mlpack/core/data/map_policies/increment_map_policy.hpp>
+#include <mlpack/core/data/impute_strategies/mean_strategy.hpp>
 
 PROGRAM_INFO("Imputer", "This "
     "utility takes an any type of data and provides "
@@ -58,7 +58,8 @@ int main(int argc, char** argv)
   Log::Info << "<><><><>Start<><><><>" << endl;
 
   arma::Mat<double> input(data);
-  arma::Mat<double> output;
+  arma::Mat<double> output(data);
+
   //data::DefaultMapPolicy policy;
   std::string missValue = "hello";
   data::DatasetInfo richinfo(input.n_rows);
@@ -76,7 +77,7 @@ int main(int argc, char** argv)
   }
 
   data::Imputer<
-    data::ImputeMean,
+    data::MeanStrategy,
     data::DatasetInfo,
     double> impu;
 

@@ -1,8 +1,8 @@
 /**
- * @file increment_num_policy.hpp
+ * @file increment_map_policy.hpp
  * @author Keon Kim
  *
- * Default increment num policy for dataset info.
+ * Default increment map policy for dataset info.
  */
 #ifndef MLPACK_CORE_DATA_MAP_POLICY_HPP
 #define MLPACK_CORE_DATA_MAP_POLICY_HPP
@@ -21,7 +21,7 @@ namespace data {
  * This class is used to map strings to incrementing unsigned integers (size_t).
  * First string to be mapped will be mapped to 0, next to 1 and so on.
  */
-class DefaultMapPolicy
+class IncrementMapPolicy
 {
  public:
   typedef size_t map_type_t;
