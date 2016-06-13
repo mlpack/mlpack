@@ -45,10 +45,16 @@ int main(int argc, char** argv)
     Log::Warn << "--output_file is not specified, no "
               << "results from this program will be saved!" << endl;
 
-  if (CLI::HasParam("custom_value") && !CLI::HasParam("impute_strategy"))
-    Log::Warm << "--custom_value is specified without --impute_strategy "
-              << "automatically setting --impute_strategy to CustomStrategy"
+  if (CLI::HasParam("custom_value") && !(imputeStrategy == "custom"))
+  {
+    Log::Warn << "--custom_value is specified without --impute_strategy, "
+              << "--impute_strategy is automatically set to CustomStrategy."
               << endl;
+  }
+
+  if ((imputeStrategy == "custom") && !CLI::HasParam("custom_value"))
+    Log::Fatal << "--custom_value must be specified when using "
+               << "'custom' strategy" << endl;
 
   arma::mat input;
   data::DatasetInfo info;
@@ -65,13 +71,27 @@ int main(int argc, char** argv)
 
   arma::Mat<double> output(input);
 
-  data::Imputer<
-    arma::Mat<double>,
-    data::DatasetInfo,
-    data::MeanStrategy> impu;
 
-  impu.Impute(input, output, info, missingValue, feature);
+  if (imputeStrategy == "custom")
+  {
+    data::Imputer<arma::Mat<double>,
+                  data::DatasetInfo,
+                  data::CustomStrategy> impu;
+    impu.template Impute<double>(input,
+                                 output,
+                                 info,
+                                 missingValue,
+                                 customValue,
+                                 feature);
+  }
+  else
+  {
+    data::Imputer<arma::Mat<double>,
+                data::DatasetInfo,
+                data::MeanStrategy> impu;
 
+    impu.Impute(input, output, info, missingValue, feature);
+  }
   Log::Info << "input::" << endl;
   Log::Info << input << endl;
   Log::Info << "output::" << endl;
