@@ -17,42 +17,49 @@ using namespace mlpack::data;
 
 BOOST_AUTO_TEST_SUITE(BinarizeTest);
 
-/**
- * Compare the binarized data with answer.
- *
- * @param input The original data set before Binarize.
- * @param answer The data want to compare with the input.
- */
-void CheckAnswer(const mat& input,
-                 const umat& answer)
+BOOST_AUTO_TEST_CASE(BinerizeOneDimension)
 {
-  for (size_t i = 0; i < input.n_cols; ++i)
-  {
-    const mat& lhsCol = input.col(i);
-    const umat& rhsCol = answer.col(i);
-    for (size_t j = 0; j < lhsCol.n_rows; ++j)
-    {
-      if (std::abs(rhsCol(j)) < 1e-5)
-        BOOST_REQUIRE_SMALL(lhsCol(j), 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(lhsCol(j), rhsCol(j), 1e-5);
-    }
-  }
+  mat input;
+  input << 1 << 2 << 3 << endr
+        << 4 << 5 << 6 << endr // this row will be tested
+        << 7 << 8 << 9;
+
+  mat output;
+  const double threshold = 5.0;
+  const size_t dimension = 1;
+  Binarize<double>(input, output, threshold, dimension);
+
+  BOOST_REQUIRE_CLOSE(output(0, 0), 1, 1e-5); // 1
+  BOOST_REQUIRE_CLOSE(output(0, 1), 2, 1e-5); // 2
+  BOOST_REQUIRE_CLOSE(output(0, 2), 3, 1e-5); // 3
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5); // 4 target
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5); // 5 target
+  BOOST_REQUIRE_CLOSE(output(1, 2), 1, 1e-5); // 6 target
+  BOOST_REQUIRE_CLOSE(output(2, 0), 7, 1e-5); // 7
+  BOOST_REQUIRE_CLOSE(output(2, 1), 8, 1e-5); // 8
+  BOOST_REQUIRE_CLOSE(output(2, 2), 9, 1e-5); // 9
 }
 
-BOOST_AUTO_TEST_CASE(BinarizeThreshold)
+BOOST_AUTO_TEST_CASE(BinerizeAll)
 {
-  mat input(10, 10, fill::randu); // fill input with randome Number
-  mat constMat(10, 10);
-  double threshold = math::Random(); // random number threshold
-  constMat.fill(threshold);
+  mat input;
+  input << 1 << 2 << 3 << endr
+        << 4 << 5 << 6 << endr // this row will be tested
+        << 7 << 8 << 9;
 
-  umat answer = input > constMat;
+  mat output;
+  const double threshold = 5.0;
+  Binarize<double>(input, output, threshold);
 
-  // Binarize every values inside the matrix with threshold of 0;
-  Binarize(input, threshold);
-
-  CheckAnswer(input, answer);
+  BOOST_REQUIRE_SMALL(output(0, 0), 1e-5); // 1
+  BOOST_REQUIRE_SMALL(output(0, 1), 1e-5); // 2
+  BOOST_REQUIRE_SMALL(output(0, 2), 1e-5); // 3
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5); // 4
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5); // 5
+  BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5); // 6
+  BOOST_REQUIRE_CLOSE(output(2, 0), 1.0, 1e-5); // 7
+  BOOST_REQUIRE_CLOSE(output(2, 1), 1.0, 1e-5); // 8
+  BOOST_REQUIRE_CLOSE(output(2, 2), 1.0, 1e-5); // 9
 }
 
 BOOST_AUTO_TEST_SUITE_END();

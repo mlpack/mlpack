@@ -1,6 +1,6 @@
 /**
  * @file preprocess_split_main.cpp
- * @author Keon Woo Kim
+ * @author Keon Kim
  *
  * split data CLI executable
  */
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
   {
     trainingFile = "train_" + inputFile;
     Log::Warn << "You did not specify --training_file, so the training set file"
-        << " name will be automatically set to '" << trainingFile << "'." 
+        << " name will be automatically set to '" << trainingFile << "'."
         << endl;
   }
   if (testFile.empty())
