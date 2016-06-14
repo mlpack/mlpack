@@ -53,13 +53,20 @@ int main(int argc, char** argv)
 
   // if custom value is specified, and imputation strategy is not,
   // set imputation strategy to "custom"
-  if (CLI::HasParam("custom_value") && !(imputeStrategy == "custom"))
+  if (CLI::HasParam("custom_value") && !CLI::HasParam("impute_strategy"))
   {
     imputeStrategy = "custom";
     Log::Warn << "--custom_value is specified without --impute_strategy, "
               << "--impute_strategy is automatically set to 'custom'."
               << endl;
   }
+
+  // custom value and any other impute strategies cannot be specified at
+  // the same time.
+  if (CLI::HasParam("custom_value") && CLI::HasParam("impute_strategy") &&
+      imputeStrategy != "custom")
+    Log::Fatal << "--custom_value cannot be specified with "
+                 << "impute strategies excluding 'custom' strategy" << endl;
 
   // custom_value must be specified when using "custom" imputation strategy
   if ((imputeStrategy == "custom") && !CLI::HasParam("custom_value"))
@@ -98,10 +105,9 @@ int main(int argc, char** argv)
     Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
               << "'." << endl;
 
-    Imputer<arma::Mat<double>, Mapper, CustomStrategy> impu;
+    Imputer<arma::Mat<double>, Mapper, CustomStrategy> impu(info);
     impu.template Impute<double>(input,
                                  output,
-                                 info,
                                  missingValue,
                                  customValue,
                                  feature);
@@ -111,8 +117,8 @@ int main(int argc, char** argv)
     Log::Info << "Replacing all '" << missingValue << "' with '" << imputeStrategy
             << "'." << endl;
 
-    Imputer<arma::Mat<double>, Mapper, MeanStrategy> impu;
-    impu.Impute(input, output, info, missingValue, feature);
+    Imputer<arma::Mat<double>, Mapper, MeanStrategy> impu(info);
+    impu.Impute(input, output, missingValue, feature);
   }
 
   // for testing purpose

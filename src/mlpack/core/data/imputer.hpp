@@ -25,12 +25,20 @@ namespace data {
 template<typename MatType, typename Mapper, typename Strategy>
 class Imputer
 {
- private:
-  Strategy strat;
  public:
-  Imputer()
+  Imputer(Mapper mapper, bool transpose =true):
+    mapper(std::move(mapper)),
+    transpose(transpose)
   {
-    // nothing to initialize
+    // nothing to initialize here
+  }
+
+  Imputer(Strategy strat, Mapper mapper, bool traspose = true):
+    strat(std::move(strat)),
+    mapper(std::move(mapper)),
+    transpose(transpose)
+  {
+    // nothing to initialize here
   }
 
   /**
@@ -45,11 +53,9 @@ class Imputer
   * @param transpose.
   */
   void Impute(const MatType &input,
-             MatType &output,
-             Mapper &mapper,
-             const std::string &targetValue,
-             const size_t dimension,
-             const bool transpose = true)
+              MatType &output,
+              const std::string &targetValue,
+              const size_t dimension)
   {
     // find mapped value inside current mapper
     auto mappedValue = mapper.UnmapValue(targetValue, dimension);
@@ -85,11 +91,9 @@ class Imputer
   template <typename T>
   void Impute(const arma::Mat<T> &input,
               arma::Mat<T> &output,
-              Mapper &mapper,
               const std::string &targetValue,
               const T &customValue,
-              const size_t dimension,
-              const bool transpose = true)
+              const size_t dimension)
   {
     // find mapped value inside current mapper
     auto mappedValue = mapper.UnmapValue(targetValue, dimension);
@@ -116,6 +120,28 @@ class Imputer
       }
     }
   }
+
+  //! Get the strategy
+  const Strategy& Strategy() const { return strat }
+
+  //! Modify the given strategy (be careful!)
+  Strategy& Strategy() { return strat }
+
+  //! Get the mapper
+  const Mapper& Mapper() const { return mapper }
+
+  //! Modify the given mapper (be careful!)
+  Mapper& Mapper() { return mapper }
+
+ private:
+  // Imputation Strategy
+  Strategy strat;
+
+  // DatasetMapper<MapPolicy>
+  Mapper mapper;
+
+  // save transpose as a member variable since it is rarely changed.
+  bool transpose;
 
 }; // class Imputer
 
