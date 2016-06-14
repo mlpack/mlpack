@@ -9,6 +9,8 @@
 
 #include <mlpack/core.hpp>
 
+using std::cout; using std::endl; //TODO: remove
+
 namespace mlpack {
 namespace neighbor {
 
@@ -436,9 +438,11 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   if (T == 0)
     return;
 
+
+
   // Each column of additionalProbingBins is the code of a bin.
   additionalProbingBins.set_size(numProj, T);
-
+  
   // Copy the query's code, then add/subtract according to perturbations
   for (size_t c = 0; c < T; ++c)
     additionalProbingBins.col(c) = queryCode;
@@ -475,34 +479,10 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
 
   // optimization: no need to create heap for 1 or 2 codes
-  if (T == 1)
+  if (T <= 2)
   {
-    // special case: 1 code only
-    // simply find location of minimum score, generate 1 perturbation vector,
-    // and add its code to additionalProbingBins column 0
 
-    // find location and value of smallest element of scores vector
-    double minscore = scores[0];
-    size_t minloc = 0;
-    for (size_t s = 0; s < 2 * numProj; ++s)
-    {
-      if (minscore > scores[s])
-      {
-        minscore = scores[s];
-        minloc = s;
-      }
-    }
-    
-    // add or subtract 1 to dimension corresponding to minimum score
-    additionalProbingBins(positions[minloc], 0) += actions[minloc];
-    
-    // done - only 1 code was needed
-    return;
-  }
-
-  if (T == 2)
-  {
-    // special case: 2 codes only
+    // special case: 1 or 2 codes only
     // The second perturbation vector still can't comprise of more than one
     // change in the bin codes. This is because of the way perturbation vectors
     // are generated: First we create the one with the smallest score (Ao) and
@@ -514,7 +494,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     
 
     // First, find location of minimum score, generate 1 perturbation vector,
-    // and add its code to additionalProbingBins column 0, like in T==1.
+    // and add its code to additionalProbingBins column 0.
 
     // find location and value of smallest element of scores vector
     double minscore = scores[0];
@@ -530,6 +510,8 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     
     // add or subtract 1 to dimension corresponding to minimum score
     additionalProbingBins(positions[minloc], 0) += actions[minloc];
+    if (T == 1)
+      return; //done if asked for only 1 code
 
     // Now, find location of second smallest score and generate one more vector.
     
@@ -537,15 +519,17 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     size_t minloc2 = 0;
     for (size_t s = 0; s < 2 * numProj; ++s) // here we can't start from 0
     {
-      if ( minscore2 > scores[s] && scores[s] > minscore) //second smallest
+      if ( minscore2 > scores[s] && s != minloc) //second smallest
       {
         minscore2 = scores[s];
         minloc2 = s;
       }
     }
 
-    // add or subtract 1 to second smallest score
+    // add or subtract 1 to create second-lowest scoring vector
     additionalProbingBins(positions[minloc2], 1) += actions[minloc2];
+    return;
+    
   }
 
   // sort everything in increasing order
@@ -556,8 +540,8 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
 
   // Theory:
-  // From the paper: This is the part that creates the probing sequence
-  // A probing sequence is a sequence of T probing bins where query's
+  // From the paper: This is the part that creates the probing sequence.
+  // A probing sequence is a sequence of T probing bins where a query's
   // neighbors are most likely to be. Likelihood is dependent only on a bin's
   // score, which is the sum of scores of all dimension-action pairs, so we
   // need to calculate the T smallest sums of scores that are not conflicting.
@@ -671,12 +655,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   for (size_t i = 0; i < numTablesToSearch; i++)
     queryCodesNotFloored.unsafe_col(i) = projections.slice(i).t() * queryPoint;
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
-  allProjInTables = queryCodesNotFloored/hashWidth;
+  allProjInTables = arma::floor(queryCodesNotFloored/hashWidth);
 
   // Compute the hash value of each key of the query into a bucket of the
   // 'secondHashTable' using the 'secondHashWeights'.
-  arma::rowvec hashVec = secondHashWeights.t() * arma::floor(allProjInTables);
+  arma::rowvec hashVec = secondHashWeights.t() * allProjInTables;
 
+  // mod and floor hashVec to compute 2nd-level codes
   for (size_t i = 0; i < hashVec.n_elem; i++)
     hashVec[i] = (double) ((size_t) hashVec[i] % secondHashSize);
 

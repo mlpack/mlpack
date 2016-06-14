@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
       if (p > 0)
       {
         // more probes should at the very least not lower recall...
-        BOOST_REQUIRE(recall >= prevRecall);
+        BOOST_REQUIRE_GE(recall, prevRecall);
 
         // ... and should ideally increase it a bit
         if (recall > prevRecall + epsilonIncrease)
@@ -574,6 +574,66 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   }
 
   BOOST_REQUIRE(foundIncrease);
+}
+
+/**
+ * Test: This is a deterministic test that verifies multiprobe LSH works
+ * correctly. To do this, we generate a query , q1, that will end up
+ * outside of the bucket of its nearest neighbors in C1. The neighbors will be
+ * found only by searching additional probing bins.
+ *
+ * We verify this actually is the case.
+ */
+BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
+{
+  // generate known deterministic clusters of points
+  const size_t N = 40;
+  arma::mat rdata;
+  GetPointset(N, rdata);
+
+  const int k = N/2;
+  const double hashWidth = 1;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+
+  // 1 table, projections on orthonormal plane
+  arma::cube projections(2, 2, 1);
+  projections(0, 0, 0) = 1;
+  projections(1, 0, 0) = 0;
+  projections(0, 1, 0) = 0;
+  projections(1, 1, 0) = 1;
+
+  // construct LSH object with given tables
+  LSHSearch<> lshTest(rdata, projections,
+                      hashWidth, secondHashSize, bucketSize);
+
+  // get offset of each projection dimension. Since projection table is I(2),
+  // offsets will map to offsets of actual dimensions. This is to enforce that
+  // q1 and q4 are right outside the bounding boxes of C1 and C4 respectively.
+  arma::mat offsets = lshTest.Offsets();
+
+
+  // two points near the clusters but outside their bins. q1's lowest scoring
+  // perturbation vector will map to C1 cluster's bin. q4's two-lowest scoring
+  // vectors will map to empty bins, and its third vector will map to C4.
+  arma::mat q1;
+  q1 << 1.1 << arma::endr << 3.3; // vector [1.1, 3.3]
+  q1 += offsets;
+
+  arma::mat q4;
+  q4 << 3.3 << arma::endr << 1.1; // vector [3.3, 1.1]
+  q4 += offsets;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Test that q1 simple search comes up empty
+  lshTest.Search(q1, k, neighbors, distances);
+  BOOST_REQUIRE( arma::all(neighbors.col(0) == N) );
+
+  // Searching with 3 additional probing bins should find neighbors
+  lshTest.Search(q1, k, neighbors, distances, 0, 3);
+  BOOST_REQUIRE( arma::all(neighbors.col(0) == N || neighbors.col(0) < 10) );
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
