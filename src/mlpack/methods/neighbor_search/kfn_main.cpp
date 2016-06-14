@@ -72,6 +72,8 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "s");
+PARAM_DOUBLE("epsilon", "If specified, will do approximate furthest neighbor "
+    "search with given relative error. Must be in the range [0,1).", "e", 0);
 PARAM_DOUBLE("percentage", "If specified, will do approximate furthest neighbor"
     " search. Must be in the range (0,1] (decimal form). Resultant neighbors "
     "will be at least (p*100) % of the distance as the true furthest neighbor.",
@@ -142,11 +144,23 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater than 0."
         << endl;
 
+  // Sanity check on epsilon.
+  double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0 || epsilon >= 1)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be in the range "
+        << "[0,1)." << endl;
+
   // Sanity check on percentage.
   const double percentage = CLI::GetParam<double>("percentage");
   if (percentage <= 0 || percentage > 1)
-    Log::Fatal << "Invalid percentage: " << percentage
-        << ".  Must be in the range (0,1] (decimal form)."<< endl;
+    Log::Fatal << "Invalid percentage: " << percentage << ".  Must be in the "
+        << "range (0,1] (decimal form)." << endl;
+
+  if (CLI::HasParam("percentage") && CLI::HasParam("epsilon"))
+    Log::Fatal << "Cannot provide both epsilon and percentage." << endl;
+
+  if (CLI::HasParam("percentage"))
+    epsilon = 1 - percentage;
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<FurthestNeighborSort> kfn;
@@ -186,7 +200,7 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
-        1 - percentage);
+        epsilon);
   }
   else
   {
@@ -202,7 +216,7 @@ int main(int argc, char *argv[])
     kfn.SingleMode() = CLI::HasParam("single_mode");
     kfn.Naive() = CLI::HasParam("naive");
     kfn.LeafSize() = size_t(lsInt);
-    kfn.Epsilon() = 1 - percentage;
+    kfn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.
