@@ -1,11 +1,11 @@
 /**
- * @file increment_map_policy.hpp
+ * @file missing_policy.hpp
  * @author Keon Kim
  *
- * Default increment map policy for dataset info.
+ * Missing map policy for dataset info.
  */
-#ifndef MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_MAP_POLICY_HPP
-#define MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_MAP_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_MAP_POLICIES_MISSING_POLICY_HPP
+#define MLPACK_CORE_DATA_MAP_POLICIES_MISSING_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <unordered_map>
@@ -17,17 +17,25 @@ using namespace std;
 namespace mlpack {
 namespace data {
 
+// TODO: move this to somewhere else so that it can be reused.
+enum Datatype : bool /* bool is all the precision we need for two types */
+{
+  numeric = 0,
+  categorical = 1
+};
+
+
 /**
- * This class is used to map strings to incrementing unsigned integers (size_t).
- * First string to be mapped will be mapped to 0, next to 1 and so on.
+ * Same as increment map policy so far.
  */
-class IncrementMapPolicy
+class MissingPolicy
 {
  public:
   typedef size_t map_type_t;
 
   template <typename MapType>
   map_type_t MapString(MapType& maps,
+                       std::vector<Datatype>& types,
                        const std::string& string,
                        const size_t dimension)
   {
@@ -51,7 +59,7 @@ class IncrementMapPolicy
       return maps[dimension].first.left.at(string);
     }
   }
-}; // class IncrementMapPolicy
+}; // class MissingPolicy
 
 } // namespace data
 } // namespace mlpack

@@ -2,9 +2,9 @@
  * @file dataset_info.hpp
  * @author Ryan Curtin
  *
- * Defines the DatasetInfo class, which holds information about a dataset.  This
- * is useful when the dataset contains categorical non-numeric features that
- * needs to be mapped to categorical numeric features.
+ * Defines the DatasetMapper class, which holds information about a dataset.
+ * This is useful when the dataset contains categorical non-numeric features
+ * that needs to be mapped to categorical numeric features.
  */
 #ifndef MLPACK_CORE_DATA_DATASET_INFO_HPP
 #define MLPACK_CORE_DATA_DATASET_INFO_HPP
@@ -13,29 +13,29 @@
 #include <unordered_map>
 #include <boost/bimap.hpp>
 
-#include "map_policies/increment_map_policy.hpp"
+#include "map_policies/increment_policy.hpp"
 
 namespace mlpack {
 namespace data {
 
 /**
- * The Datatype enum specifies the types of data mlpack algorithms can use.  The
- * vast majority of mlpack algorithms can only use numeric data (i.e.
+ * The Datatype enum specifies the types of data mlpack algorithms can use.
+ * The vast majority of mlpack algorithms can only use numeric data (i.e.
  * float/double/etc.), but some algorithms can use categorical data, specified
- * via this Datatype enum and the DatasetInfo class.
+ * via this Datatype enum and the DatasetMapper class.
  */
-enum Datatype : bool /* bool is all the precision we need for two types */
-{
-  numeric = 0,
-  categorical = 1
-};
+/*enum Datatype : bool [> bool is all the precision we need for two types <]*/
+/*{*/
+  /*numeric = 0,*/
+  /*categorical = 1*/
+/*};*/
 
 /**
  * Auxiliary information for a dataset, including mappings to/from strings and
- * the datatype of each dimension.  DatasetInfo objects are optionally produced
- * by data::Load(), and store the type of each dimension (Datatype::numeric or
- * Datatype::categorical) as well as mappings from strings to unsigned integers
- * and vice versa.
+ * the datatype of each dimension.  DatasetMapper objects are optionally
+ * produced by data::Load(), and store the type of each dimension
+ * (Datatype::numeric or Datatype::categorical) as well as mappings from strings
+ * to unsigned integers and vice versa.
  *
  * @tparam MapPolicy Mapping policy used to specify MapString();
  */
@@ -44,9 +44,9 @@ class DatasetMapper
 {
  public:
   /**
-   * Create the DatasetInfo object with the given dimensionality.  Note that the
-   * dimensionality cannot be changed later; you will have to create a new
-   * DatasetInfo object.
+   * Create the DatasetMapper object with the given dimensionality.  Note that
+   * the dimensionality cannot be changed later; you will have to create a new
+   * DatasetMapper object.
    */
   DatasetMapper(const size_t dimensionality = 0);
 
@@ -82,7 +82,7 @@ class DatasetMapper
    * @param dimension Dimension to unmap string from.
    */
   typename MapPolicy::map_type_t UnmapValue(const std::string& string,
-                                            const size_t dimension) const;
+                                            const size_t dimension);
 
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
@@ -96,7 +96,7 @@ class DatasetMapper
   size_t NumMappings(const size_t dimension) const;
 
   /**
-   * Get the dimensionality of the DatasetInfo object (that is, how many
+   * Get the dimensionality of the DatasetMapper object (that is, how many
    * dimensions it has information for).  If this object was created by a call
    * to mlpack::data::Load(), then the dimensionality will be the same as the
    * number of rows (dimensions) in the dataset.
@@ -117,12 +117,12 @@ class DatasetMapper
   //! Types of each dimension.
   std::vector<Datatype> types;
 
-  //! Mappings from strings to integers.  Map entries will only exist for
-  //! dimensions that are categorical.
-  typedef std::unordered_map<size_t,
-            std::pair<
-              boost::bimap<std::string, typename MapPolicy::map_type_t>,
-              size_t>> MapType;
+  // BiMapType definition
+  using BiMapType = boost::bimap<std::string, typename MapPolicy::map_type_t>;
+
+  // Mappings from strings to integers.
+  // Map entries will only exist for dimensions that are categorical.
+  using MapType = std::unordered_map<size_t, std::pair<BiMapType, size_t>>;
 
   MapType maps;
 
@@ -130,7 +130,7 @@ class DatasetMapper
 };
 
 // Use typedef to provide backward compatibility
-using DatasetInfo = DatasetMapper<data::IncrementMapPolicy>;
+using DatasetInfo = DatasetMapper<data::IncrementPolicy>;
 
 } // namespace data
 } // namespace mlpack

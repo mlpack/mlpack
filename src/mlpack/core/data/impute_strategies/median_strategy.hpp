@@ -2,6 +2,7 @@
  * @file median_strategy.hpp
  * @author Keon Kim
  *
+ * Definition and Implementation of the MedianStrategy class.
  */
 #ifndef MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEDIAN_STRATEGY_HPP
 #define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEDIAN_STRATEGY_HPP

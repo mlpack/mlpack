@@ -8,7 +8,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_info.hpp>
-#include <mlpack/core/data/map_policies/increment_map_policy.hpp>
+#include <mlpack/core/data/map_policies/increment_policy.hpp>
 #include <mlpack/core/data/impute_strategies/mean_strategy.hpp>
 
 PROGRAM_INFO("Imputer", "This "
@@ -26,6 +26,7 @@ PARAM_INT("feature", "the feature to apply imputation", "f", 0);
 using namespace mlpack;
 using namespace arma;
 using namespace std;
+using namespace data;
 
 int main(int argc, char** argv)
 {
@@ -36,47 +37,68 @@ int main(int argc, char** argv)
   const string outputFile = CLI::GetParam<string>("output_file");
   const string missingValue = CLI::GetParam<string>("missing_value");
   const string mapPolicy = CLI::GetParam<string>("map_policy");
-  const string imputeStrategy = CLI::GetParam<string>("impute_strategy");
   const double customValue = CLI::GetParam<double>("custom_value");
   const size_t feature = (size_t) CLI::GetParam<int>("feature");
+  string imputeStrategy = CLI::GetParam<string>("impute_strategy");
+
+  // missing value should be specified
+  if (!CLI::HasParam("missing_value"))
+    Log::Fatal << "--missing_value must be specified in order to perform "
+               << "any imputation strategies." << endl;
 
   // warn if user did not specify output_file
   if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file is not specified, no "
               << "results from this program will be saved!" << endl;
 
+  // if custom value is specified, and imputation strategy is not,
+  // set imputation strategy to "custom"
   if (CLI::HasParam("custom_value") && !(imputeStrategy == "custom"))
   {
+    imputeStrategy = "custom";
     Log::Warn << "--custom_value is specified without --impute_strategy, "
-              << "--impute_strategy is automatically set to CustomStrategy."
+              << "--impute_strategy is automatically set to 'custom'."
               << endl;
   }
 
+  // custom_value must be specified when using "custom" imputation strategy
   if ((imputeStrategy == "custom") && !CLI::HasParam("custom_value"))
     Log::Fatal << "--custom_value must be specified when using "
                << "'custom' strategy" << endl;
 
   arma::mat input;
-  data::DatasetInfo info;
+  // DatasetInfo holds how the DatasetMapper should map the values.
+  // can be specified by passing map_policy classes as template parameters
+  // ex) DatasetMapper<IncrementPolicy> info;
+  using Mapper = DatasetMapper<IncrementPolicy>;
+  Mapper info;
 
-  data::Load(inputFile, input, info,  true, true);
+  Load(inputFile, input, info,  true, true);
 
+  // for testing purpose
   Log::Info << input << endl;
 
+  // print how many mapping exist in each features
   for (size_t i = 0; i < input.n_rows; ++i)
   {
     Log::Info << info.NumMappings(i) << " mappings in feature "
         << i << "." << endl;
   }
 
+
   arma::Mat<double> output(input);
 
 
+  Log::Info << "Performing '" << imputeStrategy << "' imputation strategy "
+            << "to feature '" << feature <<"' of '" << inputFile << "'."
+            << endl;
+
   if (imputeStrategy == "custom")
   {
-    data::Imputer<arma::Mat<double>,
-                  data::DatasetInfo,
-                  data::CustomStrategy> impu;
+    Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
+              << "'." << endl;
+
+    Imputer<arma::Mat<double>, Mapper, CustomStrategy> impu;
     impu.template Impute<double>(input,
                                  output,
                                  info,
@@ -86,12 +108,14 @@ int main(int argc, char** argv)
   }
   else
   {
-    data::Imputer<arma::Mat<double>,
-                data::DatasetInfo,
-                data::MeanStrategy> impu;
+    Log::Info << "Replacing all '" << missingValue << "' with '" << imputeStrategy
+            << "'." << endl;
 
+    Imputer<arma::Mat<double>, Mapper, MeanStrategy> impu;
     impu.Impute(input, output, info, missingValue, feature);
   }
+
+  // for testing purpose
   Log::Info << "input::" << endl;
   Log::Info << input << endl;
   Log::Info << "output::" << endl;
@@ -100,7 +124,7 @@ int main(int argc, char** argv)
   if (!outputFile.empty())
   {
     Log::Info << "Saving model to '" << outputFile << "'." << endl;
-    data::Save(outputFile, output, false);
+    Save(outputFile, output, false);
   }
 }
 

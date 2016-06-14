@@ -22,7 +22,7 @@ namespace data {
  * @tparam Mapper that is used to hold dataset information.
  * @tparam primitive type of input and output's armadillo matrix.
  */
-template<typename MatType, typename Mapper, typename Strategy = data::CustomStrategy>
+template<typename MatType, typename Mapper, typename Strategy>
 class Imputer
 {
  private:
@@ -46,7 +46,7 @@ class Imputer
   */
   void Impute(const MatType &input,
              MatType &output,
-             const Mapper &mapper,
+             Mapper &mapper,
              const std::string &targetValue,
              const size_t dimension,
              const bool transpose = true)
@@ -85,7 +85,7 @@ class Imputer
   template <typename T>
   void Impute(const arma::Mat<T> &input,
               arma::Mat<T> &output,
-              const Mapper &mapper,
+              Mapper &mapper,
               const std::string &targetValue,
               const T &customValue,
               const size_t dimension,

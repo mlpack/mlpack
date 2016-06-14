@@ -1,11 +1,11 @@
 /**
- * @file missing_map_policy.hpp
+ * @file increment_policy.hpp
  * @author Keon Kim
  *
- * Missing map policy for dataset info.
+ * Default increment maping policy for dataset info.
  */
-#ifndef MLPACK_CORE_DATA_MAP_POLICIES_MISSING_MAP_POLICY_HPP
-#define MLPACK_CORE_DATA_MAP_POLICIES_MISSING_MAP_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP
+#define MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <unordered_map>
@@ -17,16 +17,25 @@ using namespace std;
 namespace mlpack {
 namespace data {
 
+enum Datatype : bool /* bool is all the precision we need for two types */
+{
+  numeric = 0,
+  categorical = 1
+};
+
+
 /**
- * Same as increment map policy so far.
+ * This class is used to map strings to incrementing unsigned integers (size_t).
+ * First string to be mapped will be mapped to 0, next to 1 and so on.
  */
-class MissingMapPolicy
+class IncrementPolicy
 {
  public:
   typedef size_t map_type_t;
 
   template <typename MapType>
   map_type_t MapString(MapType& maps,
+                       std::vector<Datatype>& types,
                        const std::string& string,
                        const size_t dimension)
   {
@@ -38,8 +47,8 @@ class MissingMapPolicy
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
-      //if (numMappings == 0)
-        //types[dimension] = Datatype::categorical;
+      if (numMappings == 0)
+        types[dimension] = Datatype::categorical;
       typedef boost::bimap<std::string, size_t>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
       return numMappings++;
@@ -50,7 +59,7 @@ class MissingMapPolicy
       return maps[dimension].first.left.at(string);
     }
   }
-}; // class IncrementMapPolicy
+}; // class IncrementPolicy
 
 } // namespace data
 } // namespace mlpack

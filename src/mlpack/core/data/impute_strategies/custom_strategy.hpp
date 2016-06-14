@@ -2,6 +2,7 @@
  * @file custom_strategy.hpp
  * @author Keon Kim
  *
+ * Definition and Implementation of the empty CustomStrategy class.
  */
 #ifndef MLPACK_CORE_DATA_IMPUTE_STRATEGIES_CUSTOM_STRATEGY_HPP
 #define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_CUSTOM_STRATEGY_HPP
