@@ -205,8 +205,9 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     secondHashBinCounts[secondHashVectors[i]]++;
 
   // Enforce the maximum bucket size.
-  secondHashBinCounts.transform([bucketSize](size_t val)
-      { return std::min(val, bucketSize); });
+  const size_t effectiveBucketSize = (bucketSize == 0) ? SIZE_MAX : bucketSize;
+  secondHashBinCounts.transform([effectiveBucketSize](size_t val)
+      { return std::min(val, effectiveBucketSize); });
 
   const size_t numRowsInTable = arma::accu(secondHashBinCounts > 0);
   bucketContentSize.zeros(numRowsInTable);

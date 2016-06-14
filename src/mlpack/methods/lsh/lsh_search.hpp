@@ -50,10 +50,9 @@ class LSHSearch
    * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points and the set of queries.
-   * @param numProj Number of projections in each hash table (anything between
-   *     10-50 might be a decent choice).
-   * @param numTables Total number of hash tables (anything between 10-20
-   *     should suffice).
+   * @param projections Cube of projection tables. For a cube of size (a, b, c)
+   *     we set numProj = a, numTables = c. b is the reference set
+   *     dimensionality.
    * @param hashWidth The width of hash for every table. If 0 (the default) is
    *     provided, then the hash width is automatically obtained by computing
    *     the average pairwise distance of 25 pairs.  This should be a reasonable
@@ -61,8 +60,9 @@ class LSHSearch
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
-   *     the maximum number of points that can be hashed into single bucket.
-   *     Default values are already provided here.
+   *     the maximum number of points that can be hashed into single bucket.  A
+   *     value of 0 indicates that there is no limit (so the second hash table
+   *     can be arbitrarily large---be careful!).
    */
   LSHSearch(const arma::mat& referenceSet,
             const arma::cube& projections,
@@ -76,9 +76,10 @@ class LSHSearch
    * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points and the set of queries.
-   * @param projections Cube of projection tables. For a cube of size (a, b, c)
-   *     we set numProj = a, numTables = c. b is the reference set
-   *     dimensionality.
+   * @param numProj Number of projections in each hash table (anything between
+   *     10-50 might be a decent choice).
+   * @param numTables Total number of hash tables (anything between 10-20
+   *     should suffice).
    * @param hashWidth The width of hash for every table. If 0 (the default) is
    *     provided, then the hash width is automatically obtained by computing
    *     the average pairwise distance of 25 pairs.  This should be a reasonable
@@ -86,8 +87,9 @@ class LSHSearch
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
-   *     the maximum number of points that can be hashed into single bucket.
-   *     Default values are already provided here.
+   *     the maximum number of points that can be hashed into single bucket.  A
+   *     value of 0 indicates that there is no limit (so the second hash table
+   *     can be arbitrarily large---be careful!).
    */
   LSHSearch(const arma::mat& referenceSet,
             const size_t numProj,
@@ -108,9 +110,28 @@ class LSHSearch
   ~LSHSearch();
 
   /**
-   * Train the LSH model on the given dataset.  If a correct vector is not
-   * provided, this means building new hash tables. Otherwise, we use the ones
-   * provided by the user.
+   * Train the LSH model on the given dataset.  If a correctly-sized projection
+   * cube is not provided, this means building new hash tables. Otherwise, we
+   * use the projections provided by the user.
+   *
+   * @param referenceSet Set of reference points and the set of queries.
+   * @param numProj Number of projections in each hash table (anything between
+   *     10-50 might be a decent choice).
+   * @param numTables Total number of hash tables (anything between 10-20
+   *     should suffice).
+   * @param hashWidth The width of hash for every table. If 0 (the default) is
+   *     provided, then the hash width is automatically obtained by computing
+   *     the average pairwise distance of 25 pairs.  This should be a reasonable
+   *     upper bound on the nearest-neighbor distance in general.
+   * @param secondHashSize The size of the second hash table. This should be a
+   *     large prime number.
+   * @param bucketSize The size of the bucket in the second hash table. This is
+   *     the maximum number of points that can be hashed into single bucket.  A
+   *     value of 0 indicates that there is no limit (so the second hash table
+   *     can be arbitrarily large---be careful!).
+   * @param projections Cube of projection tables. For a cube of size (a, b, c)
+   *     we set numProj = a, numTables = c. b is the reference set
+   *     dimensionality.
    */
   void Train(const arma::mat& referenceSet,
              const size_t numProj,
