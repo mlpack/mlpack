@@ -25,7 +25,7 @@ inline DatasetMapper<MapPolicy>::DatasetMapper(const size_t dimensionality) :
 // When we want to insert value into the map,
 // we could use the policy to map the string
 template<typename MapPolicy>
-inline typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::MapString(
+inline typename MapPolicy::mapped_type DatasetMapper<MapPolicy>::MapString(
                                                     const std::string& string,
                                                     const size_t dimension)
 {
@@ -52,7 +52,7 @@ inline const std::string& DatasetMapper<MapPolicy>::UnmapString(
 
 // Return the value corresponding to a string in a given dimension.
 template<typename MapPolicy>
-inline typename MapPolicy::map_type_t DatasetMapper<MapPolicy>::UnmapValue(
+inline typename MapPolicy::mapped_type DatasetMapper<MapPolicy>::UnmapValue(
                                                     const std::string& string,
                                                     const size_t dimension)
 {

@@ -10,19 +10,12 @@
 #include <mlpack/core.hpp>
 #include <unordered_map>
 #include <boost/bimap.hpp>
-
+#include <mlpack/core/data/map_policies/datatype.hpp>
 
 using namespace std;
 
 namespace mlpack {
 namespace data {
-
-enum Datatype : bool /* bool is all the precision we need for two types */
-{
-  numeric = 0,
-  categorical = 1
-};
-
 
 /**
  * This class is used to map strings to incrementing unsigned integers (size_t).
@@ -31,10 +24,10 @@ enum Datatype : bool /* bool is all the precision we need for two types */
 class IncrementPolicy
 {
  public:
-  typedef size_t map_type_t;
+  typedef size_t mapped_type;
 
   template <typename MapType>
-  map_type_t MapString(MapType& maps,
+  mapped_type MapString(MapType& maps,
                        std::vector<Datatype>& types,
                        const std::string& string,
                        const size_t dimension)

@@ -10,6 +10,7 @@
 #include <mlpack/core.hpp>
 #include <unordered_map>
 #include <boost/bimap.hpp>
+#include <mlpack/core/data/map_policies/datatype.hpp>
 
 
 using namespace std;
@@ -17,24 +18,16 @@ using namespace std;
 namespace mlpack {
 namespace data {
 
-// TODO: move this to somewhere else so that it can be reused.
-enum Datatype : bool /* bool is all the precision we need for two types */
-{
-  numeric = 0,
-  categorical = 1
-};
-
-
 /**
  * Same as increment map policy so far.
  */
 class MissingPolicy
 {
  public:
-  typedef size_t map_type_t;
+  typedef size_t mapped_type;
 
   template <typename MapType>
-  map_type_t MapString(MapType& maps,
+  mapped_type MapString(MapType& maps,
                        std::vector<Datatype>& types,
                        const std::string& string,
                        const size_t dimension)

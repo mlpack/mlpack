@@ -1,8 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  increment__policy.hpp
-  missing__policy.hpp
+  increment_policy.hpp
+  missing_policy.hpp
 )
 
 # Add directory name to sources.
