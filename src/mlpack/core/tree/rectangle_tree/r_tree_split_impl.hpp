@@ -14,24 +14,6 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType>
-RTreeSplit<TreeType>::RTreeSplit()
-{
-
-}
-
-template<typename TreeType>
-RTreeSplit<TreeType>::RTreeSplit(const TreeType *)
-{
-
-}
-
-template<typename TreeType>
-RTreeSplit<TreeType>::RTreeSplit(const TreeType &)
-{
-
-}
-
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -39,7 +21,8 @@ RTreeSplit<TreeType>::RTreeSplit(const TreeType &)
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void RTreeSplit<TreeType>::SplitLeafNode(TreeType* tree,
+                                         std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -103,7 +86,8 @@ void RTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool RTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
+                                            std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -175,7 +159,9 @@ bool RTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
  * The indices of these points will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit<TreeType>::GetPointSeeds(const TreeType *tree,int& iRet, int& jRet)
+void RTreeSplit<TreeType>::GetPointSeeds(const TreeType* tree,
+                                         int& iRet,
+                                         int& jRet)
 {
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
@@ -203,7 +189,9 @@ void RTreeSplit<TreeType>::GetPointSeeds(const TreeType *tree,int& iRet, int& jR
  * indices of the bounds will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit<TreeType>::GetBoundSeeds(const TreeType *tree,int& iRet, int& jRet)
+void RTreeSplit<TreeType>::GetBoundSeeds(const TreeType* tree,
+                                         int& iRet,
+                                         int& jRet)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -235,10 +223,10 @@ void RTreeSplit<TreeType>::GetBoundSeeds(const TreeType *tree,int& iRet, int& jR
 
 template<typename TreeType>
 void RTreeSplit<TreeType>::AssignPointDestNode(TreeType* oldTree,
-                                     TreeType* treeOne,
-                                     TreeType* treeTwo,
-                                     const int intI,
-                                     const int intJ)
+                                               TreeType* treeOne,
+                                               TreeType* treeTwo,
+                                               const int intI,
+                                               const int intJ)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -376,10 +364,10 @@ void RTreeSplit<TreeType>::AssignPointDestNode(TreeType* oldTree,
 
 template<typename TreeType>
 void RTreeSplit<TreeType>::AssignNodeDestNode(TreeType* oldTree,
-                                    TreeType* treeOne,
-                                    TreeType* treeTwo,
-                                    const int intI,
-                                    const int intJ)
+                                              TreeType* treeOne,
+                                              TreeType* treeTwo,
+                                              const int intI,
+                                              const int intJ)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -540,7 +528,8 @@ void RTreeSplit<TreeType>::AssignNodeDestNode(TreeType* oldTree,
  * numberOfChildren.
  */
 template<typename TreeType>
-void RTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree,
+                                              TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;

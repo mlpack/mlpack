@@ -11,6 +11,7 @@ set(SOURCES
   elkan_kmeans_impl.hpp
   hamerly_kmeans.hpp
   hamerly_kmeans_impl.hpp
+  kill_empty_clusters.hpp
   kmeans.hpp
   kmeans_impl.hpp
   max_variance_new_cluster.hpp
