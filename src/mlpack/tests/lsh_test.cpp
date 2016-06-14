@@ -609,20 +609,15 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 
   // get offset of each projection dimension. Since projection table is I(2),
   // offsets will map to offsets of actual dimensions. This is to enforce that
-  // q1 and q4 are right outside the bounding boxes of C1 and C4 respectively.
+  // q1 is right outside the bounding box of C1.
   arma::mat offsets = lshTest.Offsets();
 
 
   // two points near the clusters but outside their bins. q1's lowest scoring
-  // perturbation vector will map to C1 cluster's bin. q4's two-lowest scoring
-  // vectors will map to empty bins, and its third vector will map to C4.
+  // perturbation vectors will map to C1 cluster's bins.
   arma::mat q1;
   q1 << 1.1 << arma::endr << 3.3; // vector [1.1, 3.3]
   q1 += offsets;
-
-  arma::mat q4;
-  q4 << 3.3 << arma::endr << 1.1; // vector [3.3, 1.1]
-  q4 += offsets;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
