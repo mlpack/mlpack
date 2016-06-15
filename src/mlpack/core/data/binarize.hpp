@@ -47,10 +47,10 @@ void Binarize(const arma::Mat<T>& input,
   #pragma omp parallel for
   for (size_t i = 0; i < totalElems; ++i)
   {
-    if (inPtr[i] < threshold)
-      outPtr[i] = 0;
-    else
+    if (inPtr[i] > threshold)
       outPtr[i] = 1;
+    else
+      outPtr[i] = 0;
   }
 }
 
