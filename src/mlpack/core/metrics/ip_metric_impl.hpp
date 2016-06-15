@@ -44,8 +44,9 @@ IPMetric<KernelType>::~IPMetric()
 
 template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
-inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
-                                             const Vec2Type& b)
+inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
+    const Vec1Type& a,
+    const Vec2Type& b)
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
@@ -71,8 +72,9 @@ void IPMetric<KernelType>::Serialize(Archive& ar,
 // the Euclidean distance.
 template<>
 template<typename Vec1Type, typename Vec2Type>
-inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
-                                                       const Vec2Type& b)
+inline typename Vec1Type::elem_type IPMetric<kernel::LinearKernel>::Evaluate(
+    const Vec1Type& a,
+    const Vec2Type& b)
 {
   return metric::LMetric<2, true>::Evaluate(a, b);
 }

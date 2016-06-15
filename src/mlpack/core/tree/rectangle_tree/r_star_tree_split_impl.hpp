@@ -15,25 +15,6 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType>
-RStarTreeSplit<TreeType>::RStarTreeSplit()
-{
-
-}
-
-template<typename TreeType>
-RStarTreeSplit<TreeType>::RStarTreeSplit(const TreeType *)
-{
-
-}
-
-template<typename TreeType>
-RStarTreeSplit<TreeType>::RStarTreeSplit(const TreeType &)
-{
-
-}
-
-
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -288,7 +269,8 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
+                                                std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -691,7 +673,8 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>
  * numberOfChildren.
  */
 template<typename TreeType>
-void RStarTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RStarTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree,
+                                                  TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;
