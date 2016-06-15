@@ -143,7 +143,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
   if (numClasses == 0)
   {
     const set<size_t> unique_labels(begin(trainLabels),
-                                         end(trainLabels));
+                                    end(trainLabels));
     return unique_labels.size();
   }
   else
@@ -233,9 +233,9 @@ void TestPredictAcc(const string& testFile,
 
 template<typename Model>
 unique_ptr<Model> TrainSoftmax(const string& trainingFile,
-                                    const string& labelsFile,
-                                    const string& inputModelFile,
-                                    const size_t maxIterations)
+                               const string& labelsFile,
+                               const string& inputModelFile,
+                               const size_t maxIterations)
 {
   using namespace mlpack;
 
