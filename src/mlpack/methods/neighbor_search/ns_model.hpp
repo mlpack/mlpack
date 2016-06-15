@@ -52,116 +52,122 @@ struct NSModelName<FurthestNeighborSort>
 class MonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
-   const size_t k;
-   arma::Mat<size_t>& neighbors;
-   arma::mat& distances;
+  const size_t k;
+  arma::Mat<size_t>& neighbors;
+  arma::mat& distances;
 
  public:
-   template<typename NSType>
-   void operator()(NSType *ns) const;
+  template<typename NSType>
+  void operator()(NSType *ns) const;
 
-   MonoSearchVisitor(const size_t k,
-                     arma::Mat<size_t>& neighbors,
-                     arma::mat& distances);
+  MonoSearchVisitor(const size_t k,
+                    arma::Mat<size_t>& neighbors,
+                    arma::mat& distances);
 };
 
+template<typename SortPolicy>
 class BiSearchVisitor : public boost::static_visitor<void>
 {
  private:
-   const arma::mat& querySet;
-   const size_t k;
-   arma::Mat<size_t>& neighbors;
-   arma::mat& distances;
-   const size_t leafSize;
+  const arma::mat& querySet;
+  const size_t k;
+  arma::Mat<size_t>& neighbors;
+  arma::mat& distances;
+  const size_t leafSize;
 
-   template<typename NSType>
-   void SearchLeaf(NSType *ns) const;
+  template<typename NSType>
+  void SearchLeaf(NSType* ns) const;
 
  public:
-   template<typename SortPolicy,
-            template<typename TreeMetricType,
-                     typename TreeStatType,
-                     typename TreeMatType> class TreeType>
-   void operator()(NSType<SortPolicy,TreeType> *ns) const;
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using NSTypeT = NSType<SortPolicy, TreeType>;
 
-   template<typename SortPolicy>
-   void operator()(NSType<SortPolicy,tree::KDTree> *ns) const;
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(NSTypeT<TreeType>* ns) const;
 
-   template<typename SortPolicy>
-   void operator()(NSType<SortPolicy,tree::BallTree> *ns) const;
+  void operator()(NSTypeT<tree::KDTree>* ns) const;
 
-   BiSearchVisitor(const arma::mat& querySet,
-                   const size_t k,
-                   arma::Mat<size_t>& neighbors,
-                   arma::mat& distances,
-                   const size_t leafSize);
+  void operator()(NSTypeT<tree::BallTree>* ns) const;
+
+  BiSearchVisitor(const arma::mat& querySet,
+                  const size_t k,
+                  arma::Mat<size_t>& neighbors,
+                  arma::mat& distances,
+                  const size_t leafSize);
 };
 
+template<typename SortPolicy>
 class TrainVisitor : public boost::static_visitor<void>
 {
  private:
-   arma::mat&& referenceSet;
-   size_t leafSize;
+  arma::mat&& referenceSet;
+  size_t leafSize;
 
-   template<typename NSType>
-   void TrainLeaf(NSType* ns) const;
+  template<typename NSType>
+  void TrainLeaf(NSType* ns) const;
 
  public:
-   template<typename SortPolicy,
-            template<typename TreeMetricType,
-                     typename TreeStatType,
-                     typename TreeMatType> class TreeType>
-   void operator()(NSType<SortPolicy,TreeType> *ns) const;
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using NSTypeT = NSType<SortPolicy, TreeType>;
 
-   template<typename SortPolicy>
-   void operator()(NSType<SortPolicy,tree::KDTree> *ns) const;
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(NSTypeT<TreeType>* ns) const;
 
-   template<typename SortPolicy>
-   void operator()(NSType<SortPolicy,tree::BallTree> *ns) const;
+  void operator()(NSTypeT<tree::KDTree>* ns) const;
 
-   TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
+  void operator()(NSTypeT<tree::BallTree>* ns) const;
+
+  TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
 };
 
 class SingleModeVisitor : public boost::static_visitor<bool&>
 {
  public:
-   template<typename NSType>
-   bool& operator()(NSType *ns) const;
+  template<typename NSType>
+  bool& operator()(NSType *ns) const;
 };
 
 class NaiveVisitor : public boost::static_visitor<bool&>
 {
  public:
-   template<typename NSType>
-   bool& operator()(NSType *ns) const;
+  template<typename NSType>
+  bool& operator()(NSType *ns) const;
 };
 
 class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 {
  public:
-   template<typename NSType>
-   const arma::mat& operator()(NSType *ns) const;
+  template<typename NSType>
+  const arma::mat& operator()(NSType *ns) const;
 };
 
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
-   template<typename NSType>
-   void operator()(NSType *ns) const;
+  template<typename NSType>
+  void operator()(NSType *ns) const;
 };
 
 template<typename Archive>
 class SerializeVisitor : public boost::static_visitor<void>
 {
  private:
-   Archive& ar;
-   const std::string& name;
+  Archive& ar;
+  const std::string& name;
 
  public:
-   template<typename NSType>
-   void operator()(NSType *ns) const;
+  template<typename NSType>
+  void operator()(NSType *ns) const;
 
-   SerializeVisitor(Archive& ar, const std::string& name);
+  SerializeVisitor(Archive& ar, const std::string& name);
 };
 
 template<typename SortPolicy>

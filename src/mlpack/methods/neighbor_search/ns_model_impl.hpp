@@ -32,12 +32,12 @@ void MonoSearchVisitor::operator()(NSType *ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-
-BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
-                                 const size_t k,
-                                 arma::Mat<size_t>& neighbors,
-                                 arma::mat& distances,
-                                 const size_t leafSize) :
+template<typename SortPolicy>
+BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
+                                             const size_t k,
+                                             arma::Mat<size_t>& neighbors,
+                                             arma::mat& distances,
+                                             const size_t leafSize) :
     querySet(querySet),
     k(k),
     neighbors(neighbors),
@@ -45,11 +45,11 @@ BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
     leafSize(leafSize)
 {}
 
-template<typename SortPolicy,
-         template<typename TreeMetricType,
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void BiSearchVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
 {
   if (ns)
     return ns->Search(querySet, k, neighbors, distances);
@@ -57,7 +57,7 @@ void BiSearchVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
 }
 
 template<typename SortPolicy>
-void BiSearchVisitor::operator()(NSType<SortPolicy,tree::KDTree> *ns) const
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
 {
   if (ns)
     return SearchLeaf(ns);
@@ -65,15 +65,16 @@ void BiSearchVisitor::operator()(NSType<SortPolicy,tree::KDTree> *ns) const
 }
 
 template<typename SortPolicy>
-void BiSearchVisitor::operator()(NSType<SortPolicy,tree::BallTree> *ns) const
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 {
   if (ns)
     return SearchLeaf(ns);
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+template<typename SortPolicy>
 template<typename NSType>
-void BiSearchVisitor::SearchLeaf(NSType *ns) const
+void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType *ns) const
 {
   if (!ns->Naive() && !ns->SingleMode())
   {
@@ -99,16 +100,18 @@ void BiSearchVisitor::SearchLeaf(NSType *ns) const
 }
 
 
-TrainVisitor::TrainVisitor(arma::mat&& referenceSet, const size_t leafSize) :
+template<typename SortPolicy>
+TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
+                                       const size_t leafSize) :
     referenceSet(std::move(referenceSet)),
     leafSize(leafSize)
 {}
 
-template<typename SortPolicy,
-         template<typename TreeMetricType,
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void TrainVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
 {
   if (ns)
     return ns->Train(std::move(referenceSet));
@@ -116,7 +119,7 @@ void TrainVisitor::operator()(NSType<SortPolicy,TreeType> *ns) const
 }
 
 template<typename SortPolicy>
-void TrainVisitor::operator ()(NSType<SortPolicy,tree::KDTree> *ns) const
+void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -124,15 +127,16 @@ void TrainVisitor::operator ()(NSType<SortPolicy,tree::KDTree> *ns) const
 }
 
 template<typename SortPolicy>
-void TrainVisitor::operator ()(NSType<SortPolicy,tree::BallTree> *ns) const
+void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+template<typename SortPolicy>
 template<typename NSType>
-void TrainVisitor::TrainLeaf(NSType* ns) const
+void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
 {
   if (ns->Naive())
     ns->Train(std::move(referenceSet));
@@ -345,7 +349,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
   }
 
-  TrainVisitor tn(std::move(referenceSet),leafSize);
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet),leafSize);
   boost::apply_visitor(tn, nSearch);
 
   if (!naive)
@@ -374,7 +378,8 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-  BiSearchVisitor search(querySet, k, neighbors, distances, leafSize);
+  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
+      leafSize);
   boost::apply_visitor(search, nSearch);
 }
 

@@ -27,6 +27,7 @@ namespace neighbor /** Neighbor-search routines.  These include
                     * searches. */ {
 
 // Forward declaration.
+template<typename SortPolicy>
 class TrainVisitor;
 
 /**
@@ -307,7 +308,7 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  friend class TrainVisitor;
+  friend class TrainVisitor<SortPolicy>;
 }; // class NeighborSearch
 
 } // namespace neighbor
