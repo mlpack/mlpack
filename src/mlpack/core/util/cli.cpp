@@ -105,7 +105,7 @@ void CLI::Add(const std::string& identifier,
 
   // Must make use of boost option name syntax.
   std::string progOptId =
-          alias.length() ? identifier + "," + alias : identifier;
+      alias.length() ? identifier + "," + alias : identifier;
 
   // Deal with a required alias.
   AddAlias(alias, identifier);

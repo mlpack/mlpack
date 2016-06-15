@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified;"
-      << "no results will be saved!" << endl;
+        << "no results will be saved!" << endl;
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
@@ -50,6 +50,6 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm.Random();
 
-  if(CLI::HasParam("output_file"))
+  if (CLI::HasParam("output_file"))
     data::Save(CLI::GetParam<string>("output_file"), samples);
 }

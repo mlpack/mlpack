@@ -14,15 +14,6 @@
 // Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
 
-// Color code escape sequences.
-#ifndef _WIN32
-  #define BASH_RED "\033[0;31m"
-  #define BASH_CLEAR "\033[0m"
-#else
-  #define BASH_RED ""
-  #define BASH_CLEAR ""
-#endif
-
 namespace mlpack {
 
 /**
@@ -43,15 +34,27 @@ void CLI::Add(const std::string& identifier,
               const std::string& alias,
               bool required)
 {
-  // Temporary outstream object for detecting duplicate identifiers
+  // Temporarily define color code escape sequences.
+  #ifndef _WIN32
+    #define BASH_RED "\033[0;31m"
+    #define BASH_CLEAR "\033[0m"
+  #else
+    #define BASH_RED ""
+    #define BASH_CLEAR ""
+  #endif
+
+  // Temporary outstream object for detecting duplicate identifiers.
   util::PrefixedOutStream outstr(std::cerr,
         BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 
-  // identifier and alias maps
+  #undef BASH_RED
+  #undef BASH_CLEAR
+
+  // Define identifier and alias maps.
   gmap_t& gmap = GetSingleton().globalValues;
   amap_t& amap = GetSingleton().aliasValues;
 
-  // if found in current map, print fatal error and terminate the program.
+  // If found in current map, print fatal error and terminate the program.
   if (gmap.count(identifier))
     outstr << "Parameter --" << identifier << "(-" << alias << ") "
            << "is defined multiple times with same identifiers." << std::endl;

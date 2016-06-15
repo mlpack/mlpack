@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 
   if (CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
-      << "saved!" << endl;
+        << "saved!" << endl;
 
   arma::mat dataPoints;
   data::Load(inputFile, dataPoints, true);

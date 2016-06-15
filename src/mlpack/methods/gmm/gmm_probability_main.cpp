@@ -21,7 +21,8 @@ PROGRAM_INFO("GMM Probability Calculator",
 PARAM_STRING_REQ("input_model_file", "File containing input GMM.", "m");
 PARAM_STRING_REQ("input_file", "File containing points.", "i");
 
-PARAM_STRING("output_file", "File to save calculated probabilities to.", "o", "");
+PARAM_STRING("output_file", "File to save calculated probabilities to.", "o",
+    "");
 
 int main(int argc, char** argv)
 {
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified;"
-      << "no results will be saved!" << endl;
+        << "no results will be saved!" << endl;
 
   // Get the GMM and the points.
   GMM gmm;

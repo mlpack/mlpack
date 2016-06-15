@@ -126,7 +126,6 @@ int main(int argc, char** argv)
   if (CLI::HasParam("test_file") && !CLI::HasParam("output_file"))
     Log::Fatal << "--output_file must be specified with --test_file" << endl;
 
-
   // Now, load our model, if there is one.
   Perceptron<>* p = NULL;
   Col<size_t> mappings;

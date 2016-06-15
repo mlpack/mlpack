@@ -72,11 +72,13 @@ int main(int argc, char** argv)
   {
     if (!CLI::HasParam("training_labels_file"))
     {
-      Log::Fatal << "You did not specify --training_labels_file" << endl;
+      Log::Fatal << "--training_labels_file (-l) must be specified if "
+          << "--input_labels (-l) is specified!" << endl;
     }
     if (!CLI::HasParam("test_labels_file"))
     {
-      Log::Fatal << "You did not specify --test_labels_fil" << endl;
+      Log::Fatal << "--test_labels_file (-L) must be specified if "
+          << "--input_labels (-I) is specified!" << endl;
     }
   }
   else
@@ -85,7 +87,7 @@ int main(int argc, char** argv)
         CLI::HasParam("test_labels_file"))
     {
       Log::Fatal << "When specifying --training_labels_file or "
-          << "--test_labels_file, you must also specify --input_labels. "
+          << "--test_labels_file, you must also specify --input_labels."
           << endl;
     }
   }
