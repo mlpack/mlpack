@@ -127,21 +127,24 @@ int main(int argc, char** argv)
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // We must either load a model or train a model.
-  if (inputModelFile == "" && trainingDataFile == "")
+  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training_file"))
     Log::Fatal << "Either an input model must be specified with "
         << "--input_model_file or training data must be given "
         << "(--training_file)!" << endl;
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  if (outputModelFile == "" && testDataFile == "")
+  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("test_file"))
     Log::Warn << "Output will not be saved!  (Neither --test_file nor "
         << "--output_model_file are specified.)" << endl;
+
+  if (CLI::HasParam("test_file") && !CLI::HasParam("output_file"))
+    Log::Fatal << "--output_file must be specified with --test_file" << endl;
 
   // Now, load our model, if there is one.
   Perceptron<>* p = NULL;
   Col<size_t> mappings;
-  if (inputModelFile != "")
+  if (CLI::HasParam("input_model_file"))
   {
     Log::Info << "Loading saved perceptron from model file '" << inputModelFile
         << "'." << endl;
@@ -154,7 +157,7 @@ int main(int argc, char** argv)
   }
 
   // Next, load the training data and labels (if they have been given).
-  if (trainingDataFile != "")
+  if (CLI::HasParam("training_file"))
   {
     Log::Info << "Training perceptron on dataset '" << trainingDataFile;
     if (labelsFile != "")
@@ -232,7 +235,7 @@ int main(int argc, char** argv)
   }
 
   // Now, the training procedure is complete.  Do we have any test data?
-  if (testDataFile != "")
+  if (CLI::HasParam("test_file"))
   {
     Log::Info << "Classifying dataset '" << testDataFile << "'." << endl;
     mat testData;
@@ -260,7 +263,7 @@ int main(int argc, char** argv)
   }
 
   // Lastly, do we need to save the output model?
-  if (outputModelFile != "")
+  if (CLI::HasParam("output_model_file"))
   {
     PerceptronModel pm(*p, mappings);
     data::Save(outputModelFile, "perceptron_model", pm);

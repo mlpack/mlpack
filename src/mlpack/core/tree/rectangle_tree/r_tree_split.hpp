@@ -37,37 +37,37 @@ template<typename TreeType>
 class RTreeSplit
 {
  public:
-  //! Default constructor
-  RTreeSplit();
+  //! Default constructor.
+  RTreeSplit() { }
 
   //! Construct this with the specified node.
-  RTreeSplit(const TreeType *node);
+  RTreeSplit(const TreeType* /* node */) { }
 
-  //! Create a copy of the other.split.
-  RTreeSplit(const TreeType &other);
+  //! Create a copy of the other split.
+  RTreeSplit(const TreeType& /* other */) { }
 
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
    */
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
  private:
   /**
    * Get the seeds for splitting a leaf node.
    */
-  static void GetPointSeeds(const TreeType *tree,int& i, int& j);
+  static void GetPointSeeds(const TreeType* tree, int& i, int& j);
 
   /**
    * Get the seeds for splitting a non-leaf node.
    */
-  static void GetBoundSeeds(const TreeType *tree,int& i, int& j);
+  static void GetBoundSeeds(const TreeType* tree, int& i, int& j);
 
   /**
    * Assign points to the two new nodes.

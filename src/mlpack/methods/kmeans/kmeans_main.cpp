@@ -23,6 +23,7 @@
 
 #include "kmeans.hpp"
 #include "allow_empty_clusters.hpp"
+#include "kill_empty_clusters.hpp"
 #include "refined_start.hpp"
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
@@ -57,8 +58,19 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "('hamerly'), the dual-tree k-means algorithm ('dualtree'), and the "
     "dual-tree k-means algorithm using the cover tree ('dualtree-covertree')."
     "\n\n"
+    "The behavior for when an empty cluster is encountered can be modified with"
+    " the --allow_empty_clusters (-e) option.  When this option is specified "
+    "and there is a cluster owning no points at the end of an iteration, that "
+    "cluster's centroid will simply remain in its position from the previous "
+    "iteration. If the --kill_empty_clusters (-E) option is specified, then "
+    "when a cluster owns no points at the end of an iteration, the cluster "
+    "centroid is simply filled with DBL_MAX, killing it and effectively "
+    "reducing k for the rest of the computation.  Note that the default option "
+    "when neither empty cluster option is specified can be time-consuming to "
+    "calculate; therefore, specifying -e or -E will often accelerate runtime."
+    "\n\n"
     "As of October 2014, the --overclustering option has been removed.  If you "
-    "want this support back, let us know -- file a bug at "
+    "want this support back, let us know---file a bug at "
     "https://github.com/mlpack/mlpack/ or get in touch through another means.");
 
 // Required options.
@@ -76,7 +88,9 @@ PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
     " be written to the given file.", "C", "");
 
 // k-means configuration options.
-PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be created.", "e");
+PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be persist.", "e");
+PARAM_FLAG("kill_empty_clusters", "Remove empty clusters when they occur.",
+    "E");
 PARAM_FLAG("labels_only", "Only output labels into output file.", "l");
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
     "terminates.", "m", 1000);
@@ -150,8 +164,14 @@ int main(int argc, char** argv)
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
-  if (CLI::HasParam("allow_empty_clusters"))
+  if (CLI::HasParam("allow_empty_clusters") &&
+      CLI::HasParam("kill_empty_clusters"))
+    Log::Fatal << "Only one of --allow_empty_clusters (-e) or "
+        << "--kill_empty_clusters (-E) may be specified!" << endl;
+  else if (CLI::HasParam("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
+  else if (CLI::HasParam("kill_empty_clusters"))
+    FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(ipp);
   else
     FindLloydStepType<InitialPartitionPolicy, MaxVarianceNewCluster>(ipp);
 }

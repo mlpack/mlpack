@@ -51,23 +51,23 @@ class XTreeSplit
   XTreeSplit();
 
   //! Construct this with the specified node.
-  XTreeSplit(const TreeType *node);
+  XTreeSplit(const TreeType* node);
 
   //! Create a copy of the other.split.
-  XTreeSplit(const TreeType &other);
+  XTreeSplit(const TreeType& other);
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * The X tree requires that the tree records it's "split history".  To make
@@ -113,7 +113,7 @@ class XTreeSplit
    * Comparator for sorting with sortStruct.
    */
   template<typename ElemType>
-  static bool structComp(const sortStruct<ElemType>& s1, 
+  static bool structComp(const sortStruct<ElemType>& s1,
                          const sortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;
@@ -133,7 +133,6 @@ class XTreeSplit
   const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
   //! Modify the split history of the node assosiated with this object.
   SplitHistoryStruct& SplitHistory() { return splitHistory; }
-
 
   /**
    * Serialize the split.

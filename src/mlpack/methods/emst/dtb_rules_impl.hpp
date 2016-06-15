@@ -108,31 +108,6 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
 }
 
 template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
-                                             TreeType& referenceNode,
-                                             const double baseCaseResult)
-{
-  // I don't really understand the last argument here
-  // It just gets passed in the distance call, otherwise this function
-  // is the same as the one above.
-  size_t queryComponentIndex = connections.Find(queryIndex);
-
-  // If the query belongs to the same component as all of the references,
-  // then prune.
-  if (queryComponentIndex == referenceNode.Stat().ComponentMembership())
-    return DBL_MAX;
-
-  const arma::vec queryPoint = dataSet.unsafe_col(queryIndex);
-  const double distance = referenceNode.MinDistance(queryPoint,
-                                                    baseCaseResult);
-
-  // If all the points in the reference node are farther than the candidate
-  // nearest neighbor for the query's component, we prune.
-  return (neighborsDistances[queryComponentIndex] < distance) ? DBL_MAX :
-      distance;
-}
-
-template<typename MetricType, typename TreeType>
 double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
                                                TreeType& /* referenceNode */,
                                                const double oldScore)
@@ -156,27 +131,6 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
 
   ++scores;
   const double distance = queryNode.MinDistance(&referenceNode);
-  const double bound = CalculateBound(queryNode);
-
-  // If all the points in the reference node are farther than the candidate
-  // nearest neighbor for all queries in the node, we prune.
-  return (bound < distance) ? DBL_MAX : distance;
-}
-
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
-                                             TreeType& referenceNode,
-                                             const double baseCaseResult)
-{
-  // If all the queries belong to the same component as all the references
-  // then we prune.
-  if ((queryNode.Stat().ComponentMembership() >= 0) &&
-      (queryNode.Stat().ComponentMembership() ==
-           referenceNode.Stat().ComponentMembership()))
-    return DBL_MAX;
-
-  ++scores;
-  const double distance = queryNode.MinDistance(referenceNode, baseCaseResult);
   const double bound = CalculateBound(queryNode);
 
   // If all the points in the reference node are farther than the candidate

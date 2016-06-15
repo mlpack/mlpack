@@ -72,6 +72,17 @@ class NeighborSearchStat
       auxBound(SortPolicy::WorstDistance()),
       lastDistance(0.0) { }
 
+  /**
+   * Reset statistic parameters to initial values.
+   */
+  void Reset()
+  {
+    firstBound = SortPolicy::WorstDistance();
+    secondBound = SortPolicy::WorstDistance();
+    auxBound = SortPolicy::WorstDistance();
+    lastDistance = 0.0;
+  }
+
   //! Get the first bound.
   double FirstBound() const { return firstBound; }
   //! Modify the first bound.

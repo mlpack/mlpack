@@ -26,7 +26,6 @@
 
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/string_util.hpp>
 #include <queue>
 
 namespace mlpack {

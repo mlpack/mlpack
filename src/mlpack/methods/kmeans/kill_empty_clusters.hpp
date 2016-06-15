@@ -4,24 +4,9 @@
  *
  * This very simple policy is used when K-Means is allowed to return empty
  * clusters.
- *
- * This file is part of mlpack 2.0.0.
- *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
-#define MLPACK_METHODS_KMEANS_ALLOW_EMPTY_CLUSTERS_HPP
+#ifndef __MLPACK_METHODS_KMEANS_KILL_EMPTY_CLUSTERS_HPP
+#define __MLPACK_METHODS_KMEANS_KILL_EMPTY_CLUSTERS_HPP
 
 #include <mlpack/core.hpp>
 
@@ -29,18 +14,18 @@ namespace mlpack {
 namespace kmeans {
 
 /**
- * Policy which allows K-Means to create empty clusters without any error being
- * reported.
+ * Policy which allows K-Means to "kill" empty clusters without any error being
+ * reported.  This means the centroids will be filled with DBL_MAX.
  */
-class AllowEmptyClusters
+class KillEmptyClusters
 {
  public:
   //! Default constructor required by EmptyClusterPolicy policy.
-  AllowEmptyClusters() { }
+  KillEmptyClusters() { }
 
   /**
-   * This function allows empty clusters to persist simply by leaving the empty
-   * cluster in its last position.
+   * This function sets an empty cluster found during k-means to all DBL_MAX
+   * (i.e. an invalid "dead" cluster).
    *
    * @tparam MatType Type of data (arma::mat or arma::spmat).
    * @param data Dataset on which clustering is being performed.
@@ -59,14 +44,14 @@ class AllowEmptyClusters
   static inline force_inline size_t EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
-      const arma::mat& oldCentroids,
+      const arma::mat& /* oldCentroids */,
       arma::mat& newCentroids,
       arma::Col<size_t>& /* clusterCounts */,
       MetricType& /* metric */,
       const size_t /* iteration */)
   {
-    // Take the last iteration's centroid.
-    newCentroids.col(emptyCluster) = oldCentroids.col(emptyCluster);
+    // Kill the empty cluster.
+    newCentroids.col(emptyCluster).fill(DBL_MAX);
     return 0; // No points were changed.
   }
 

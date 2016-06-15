@@ -61,7 +61,7 @@ class IPMetric
    * @return Distance between the two points in kernel space.
    */
   template<typename VecTypeA, typename VecTypeB>
-  double Evaluate(const VecTypeA& a, const VecTypeB& b);
+  typename VecTypeA::elem_type Evaluate(const VecTypeA& a, const VecTypeB& b);
 
   //! Get the kernel.
   const KernelType& Kernel() const { return *kernel; }

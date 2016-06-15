@@ -170,8 +170,6 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     if (counts[c] > 0)
       newCentroids.col(c) /= counts[c];
-    else
-      newCentroids.col(c).fill(DBL_MAX); // Fill with invalid value.
 
     moveDistances(c) = metric.Evaluate(newCentroids.col(c), centroids.col(c));
     cNorm += std::pow(moveDistances(c), 2.0);

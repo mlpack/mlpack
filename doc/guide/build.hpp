@@ -5,7 +5,9 @@
 mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
-and installed.
+and installed on most Linux and UNIX-like systems (including OS X).  If you want
+to build mlpack on Windows, see <a
+href="http://keon.io/mlpack-on-windows.html">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 
@@ -38,10 +40,6 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
 @endcode
-
-If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
-Debian older than Jessie, you will have to compile Armadillo from source.  See
-the README.txt distributed with Armadillo for more information.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 

@@ -18,6 +18,7 @@ add_executable(mlpack_test
   gmm_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  ind2sub_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp

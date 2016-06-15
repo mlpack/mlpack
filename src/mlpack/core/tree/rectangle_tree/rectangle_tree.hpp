@@ -169,7 +169,7 @@ class RectangleTree
    * @param numMaxChildren The max number of child nodes (used in x-trees).
    */
   explicit RectangleTree(RectangleTree* parentNode,
-                const size_t numMaxChildren = 0);
+                         const size_t numMaxChildren = 0);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can

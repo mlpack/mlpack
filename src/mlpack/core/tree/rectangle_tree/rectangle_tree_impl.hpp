@@ -27,7 +27,6 @@
 
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/string_util.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -120,8 +119,9 @@ template<typename MetricType,
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
-        parentNode,const size_t numMaxChildren) :
-    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : parentNode->MaxNumChildren()),
+        parentNode, const size_t numMaxChildren) :
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren :
+        parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
     children(maxNumChildren + 1),

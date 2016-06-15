@@ -31,10 +31,8 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
 
 PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
-PARAM_STRING("output_ic", "File to save independent components to.", "o",
-    "output_ic.csv");
-PARAM_STRING("output_unmixing", "File to save unmixing matrix to.", "u",
-    "output_unmixing.csv");
+PARAM_STRING_REQ("output_ic", "File to save independent components to.", "o");
+PARAM_STRING_REQ("output_unmixing", "File to save unmixing matrix to.", "u");
 
 PARAM_DOUBLE("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);

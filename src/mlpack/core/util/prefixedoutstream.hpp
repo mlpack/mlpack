@@ -34,7 +34,6 @@
 #include <boost/type_traits.hpp>
 
 #include <mlpack/core/util/sfinae_utility.hpp>
-#include <mlpack/core/util/string_util.hpp>
 
 namespace mlpack {
 namespace util {

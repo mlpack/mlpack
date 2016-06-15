@@ -76,11 +76,7 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
   double residual = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
-    if (counts[c] == 0)
-    {
-      newCentroids.col(c).fill(DBL_MAX); // Should have happened anyway I think.
-    }
-    else
+    if (counts[c] > 0)
     {
       newCentroids.col(c) /= counts(c);
       residual += std::pow(metric.Evaluate(centroids.col(c),

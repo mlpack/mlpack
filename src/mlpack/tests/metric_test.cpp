@@ -59,10 +59,10 @@ BOOST_AUTO_TEST_CASE(L2MetricTest)
   arma::vec b1(5);
   b1.randn();
 
-  arma::Col<size_t> a2(5);
+  arma::vec a2(5);
   a2 << 1 << 2 << 1 << 0 << 5;
 
-  arma::Col<size_t> b2(5);
+  arma::vec b2(5);
   b2 << 2 << 5 << 2 << 0 << 1;
 
   EuclideanDistance lMetric;
