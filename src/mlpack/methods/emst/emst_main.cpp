@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
   const string outputFile= CLI::GetParam<string>("output_file");
 
   if (CLI::HasParam("output_file"))
-    Log::Warn << "--output_file (-o) is not specified;"
-      << "no results will be saved!" << endl;
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+      << "saved!" << endl;
 
   arma::mat dataPoints;
   data::Load(inputFile, dataPoints, true);

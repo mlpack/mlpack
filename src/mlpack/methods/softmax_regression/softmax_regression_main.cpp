@@ -80,10 +80,10 @@ void TestPredictAcc(const string& testFile,
 
 // Build the softmax model given the parameters.
 template<typename Model>
-std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
-                                    const string& labelsFile,
-                                    const string& inputModelFile,
-                                    const size_t maxIterations);
+unique_ptr<Model> TrainSoftmax(const string& trainingFile,
+                               const string& labelsFile,
+                               const string& inputModelFile,
+                               const size_t maxIterations);
 
 int main(int argc, char** argv)
 {
@@ -91,16 +91,13 @@ int main(int argc, char** argv)
 
   CLI::ParseCommandLine(argc, argv);
 
-  const std::string trainingFile = CLI::GetParam<std::string>("training_file");
-  const std::string labelsFile = CLI::GetParam<std::string>("labels_file");
-
-  const std::string inputModelFile =
-      CLI::GetParam<std::string>("input_model_file");
+  const string trainingFile = CLI::GetParam<string>("training_file");
+  const string labelsFile = CLI::GetParam<string>("labels_file");
+  const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testLabelsFile = CLI::GetParam<string>("test_labels");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
-  const string predictionsFile =
-      CLI::GetParam<string>("predictions_file");
+  const string predictionsFile = CLI::GetParam<string>("predictions_file");
 
   // One of inputFile and modelFile must be specified.
   if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training_file"))
@@ -120,12 +117,12 @@ int main(int argc, char** argv)
       !CLI::HasParam("test_labels") &&
       !CLI::HasParam("predictions_file"))
     Log::Warn << "None of --output_model_file, --test_labels, or "
-      << "--predictions_file are set; no results from this program "
-      << " will be saved." << endl;
+        << "--predictions_file are set; no results from this program will be "
+        << "saved." << endl;
 
 
   using SM = regression::SoftmaxRegression<>;
-  std::unique_ptr<SM> sm = TrainSoftmax<SM>(trainingFile,
+  unique_ptr<SM> sm = TrainSoftmax<SM>(trainingFile,
                                             labelsFile,
                                             inputModelFile,
                                             maxIterations);
@@ -136,7 +133,7 @@ int main(int argc, char** argv)
                  sm->NumClasses(), *sm);
 
   if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<std::string>("output_model_file"),
+    data::Save(CLI::GetParam<string>("output_model_file"),
         "softmax_regression_model", *sm, true);
 }
 
@@ -145,8 +142,8 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 {
   if (numClasses == 0)
   {
-    const std::set<size_t> unique_labels(std::begin(trainLabels),
-                                         std::end(trainLabels));
+    const set<size_t> unique_labels(begin(trainLabels),
+                                         end(trainLabels));
     return unique_labels.size();
   }
   else
@@ -208,8 +205,8 @@ void TestPredictAcc(const string& testFile,
           << testLabels.n_elem << " labels!" << endl;
     }
 
-    std::vector<size_t> bingoLabels(numClasses, 0);
-    std::vector<size_t> labelSize(numClasses, 0);
+    vector<size_t> bingoLabels(numClasses, 0);
+    vector<size_t> labelSize(numClasses, 0);
     for (arma::uword i = 0; i != predictLabels.n_elem; ++i)
     {
       if (predictLabels(i) == testLabels(i))
@@ -235,7 +232,7 @@ void TestPredictAcc(const string& testFile,
 }
 
 template<typename Model>
-std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
+unique_ptr<Model> TrainSoftmax(const string& trainingFile,
                                     const string& labelsFile,
                                     const string& inputModelFile,
                                     const size_t maxIterations)
@@ -244,7 +241,7 @@ std::unique_ptr<Model> TrainSoftmax(const string& trainingFile,
 
   using SRF = regression::SoftmaxRegressionFunction;
 
-  std::unique_ptr<Model> sm;
+  unique_ptr<Model> sm;
   if (!inputModelFile.empty())
   {
     sm.reset(new Model(0, 0, false));

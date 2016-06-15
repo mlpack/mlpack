@@ -77,8 +77,8 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   if (CLI::HasParam("output_file"))
-    Log::Warn << "--output_file (-o) is not specified;"
-      << "no results will be saved!" << endl;
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

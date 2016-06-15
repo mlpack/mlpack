@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string outputPredictionsFile =
-    CLI::GetParam<string>("output_predictions");
+      CLI::GetParam<string>("output_predictions");
   const string trainingResponsesFile =
-    CLI::GetParam<string>("training_responses");
+      CLI::GetParam<string>("training_responses");
   const string testFile = CLI::GetParam<string>("test_file");
   const string trainFile = CLI::GetParam<string>("training_file");
   const double lambda = CLI::GetParam<double>("lambda");
