@@ -179,7 +179,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     if (counts[c] == 0)
     {
-      newCentroids.col(c).fill(DBL_MAX);
       clusterDistances[c] = 0;
     }
     else

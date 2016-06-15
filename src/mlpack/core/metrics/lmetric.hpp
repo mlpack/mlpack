@@ -75,7 +75,8 @@ class LMetric
    * @return Distance between vectors a and b.
    */
   template<typename VecTypeA, typename VecTypeB>
-  static double Evaluate(const VecTypeA& a, const VecTypeB& b);
+  static typename VecTypeA::elem_type Evaluate(const VecTypeA& a,
+                                               const VecTypeB& b);
 
   //! Serialize the metric (nothing to do).
   template<typename Archive>
