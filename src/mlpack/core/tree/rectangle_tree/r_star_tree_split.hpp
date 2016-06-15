@@ -22,27 +22,27 @@ template <typename TreeType>
 class RStarTreeSplit
 {
  public:
-  //! Default constructor
-  RStarTreeSplit();
+  //! Default constructor.
+  RStarTreeSplit() { }
 
   //! Construct this with the specified node.
-  RStarTreeSplit(const TreeType *node);
+  RStarTreeSplit(const TreeType* /* node */) { }
 
   //! Create a copy of the other.split.
-  RStarTreeSplit(const TreeType &other);
+  RStarTreeSplit(const TreeType& /* other */) { }
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
  private:
   /**
