@@ -65,7 +65,8 @@ PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing in the "
     "hash width for its use.", "H", 0.0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
-PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
+PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
+    "hash; 0 indicates no limit (so the table can be arbitrarily large!).", "B",
     500);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 

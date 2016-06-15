@@ -132,8 +132,6 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     if (counts(c) > 0)
       newCentroids.col(c) /= counts(c);
-    else
-      newCentroids.col(c).fill(DBL_MAX); // Empty cluster.
 
     // Calculate movement.
     const double movement = metric.Evaluate(centroids.col(c),
