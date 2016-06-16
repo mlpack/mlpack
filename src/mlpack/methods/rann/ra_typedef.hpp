@@ -35,32 +35,55 @@ namespace mlpack {
 namespace neighbor {
 
 /**
- * The AllkRANN class is the all-k-rank-approximate-nearest-neighbors method.
- * It returns squared L2 distances (squared Euclidean distances) for each of the
- * k rank-approximate nearest-neighbors.  Squared distances are used because
- * they are slightly faster than non-squared distances (they have one fewer call
- * to sqrt()).
+ * The KRANN class is the k-rank-approximate-nearest-neighbors method.  It
+ * returns L2 distances for each of the k rank-approximate nearest-neighbors.
  *
  * The approximation is controlled with two parameters (see allkrann_main.cpp)
  * which can be specified at search time. So the tree building is done only once
  * while the search can be performed multiple times with different approximation
  * levels.
+ */
+typedef RASearch<> KRANN;
+
+/**
+ * The KRAFN class is the k-rank-approximate-farthest-neighbors method.  It
+ * returns L2 distances for each of the k rank-approximate farthest-neighbors.
+ *
+ * The approximation is controlled with two parameters (see allkrann_main.cpp)
+ * which can be specified at search time. So the tree building is done only once
+ * while the search can be performed multiple times with different approximation
+ * levels.
+ */
+typedef RASearch<FurthestNeighborSort> KRAFN;
+
+/**
+ * @deprecated
+ * The AllkRANN class is the all-k-rank-approximate-nearest-neighbors method.  It
+ * returns L2 distances for each of the k rank-approximate nearest-neighbors.
+ *
+ * The approximation is controlled with two parameters (see allkrann_main.cpp)
+ * which can be specified at search time. So the tree building is done only once
+ * while the search can be performed multiple times with different approximation
+ * levels.
+ *
+ * This typedef will be removed in mlpack 3.0.0; use the KRANN typedef instead.
  */
 typedef RASearch<> AllkRANN;
 
 /**
+ * @deprecated
  * The AllkRAFN class is the all-k-rank-approximate-farthest-neighbors method.
- * It returns squared L2 distances (squared Euclidean distances) for each of the
- * k rank-approximate farthest-neighbors.  Squared distances are used because
- * they are slightly faster than  non-squared distances (they have one fewer
- * call to sqrt()).
+ * It returns L2 distances for each of the k rank-approximate
+ * farthest-neighbors.
  *
  * The approximation is controlled with two parameters (see allkrann_main.cpp)
  * which can be specified at search time. So the tree building is done only once
  * while the search can be performed multiple times with different approximation
  * levels.
+ *
+ * This typedef will be removed in mlpack 3.0.0; use the KRANN typedef instead.
  */
-typedef RASearch<FurthestNeighborSort> AllkRAFN;
+typedef RASearch<> AllkRAFN;
 
 } // namespace neighbor
 } // namespace mlpack

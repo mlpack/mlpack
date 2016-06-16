@@ -37,9 +37,9 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(AllkRANNTest);
+BOOST_AUTO_TEST_SUITE(KRANNTest);
 
-// Test the correctness and guarantees of AllkRANN when in naive mode.
+// Test the correctness and guarantees of KRANN when in naive mode.
 BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
 {
   arma::Mat<size_t> neighbors;
@@ -577,8 +577,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
   arma::mat copy(dataset);
 
-  AllkRANN moveknn(std::move(copy));
-  AllkRANN knn(dataset);
+  KRANN moveknn(std::move(copy));
+  KRANN knn(dataset);
 
   BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
   BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
 
   // Do it in tree mode, and in naive mode.
-  AllkRANN knn;
+  KRANN knn;
   knn.Train(std::move(dataset));
 
   arma::mat distances;

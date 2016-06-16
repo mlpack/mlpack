@@ -66,7 +66,6 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkrann
  * - mlpack_cf
  * - mlpack_decision_stump
  * - mlpack_det
@@ -84,6 +83,7 @@
  * - mlpack_kfn
  * - mlpack_kmeans
  * - mlpack_knn
+ * - mlpack_krann
  * - mlpack_lars
  * - mlpack_linear_regression
  * - mlpack_local_coordinate_coding

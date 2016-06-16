@@ -2,7 +2,7 @@
  * @file allkrann_main.cpp
  * @author Parikshit Ram
  *
- * Implementation of the AllkRANN executable.  Allows some number of standard
+ * Implementation of the kRANN executable.  Allows some number of standard
  * options.
  *
  * This file is part of mlpack 2.0.2.
@@ -33,7 +33,7 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Rank-Approximate-Nearest-Neighbors",
+PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
