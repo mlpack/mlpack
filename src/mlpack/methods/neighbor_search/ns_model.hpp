@@ -58,7 +58,7 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 
  public:
   template<typename NSType>
-  void operator()(NSType *ns) const;
+  void operator()(NSType* ns) const;
 
   MonoSearchVisitor(const size_t k,
                     arma::Mat<size_t>& neighbors,
@@ -132,7 +132,7 @@ class SingleModeVisitor : public boost::static_visitor<bool&>
 {
  public:
   template<typename NSType>
-  bool& operator()(NSType *ns) const;
+  bool& operator()(NSType* ns) const;
 };
 
 class NaiveVisitor : public boost::static_visitor<bool&>
@@ -220,15 +220,19 @@ class NSModel
   bool SingleMode() const;
   bool& SingleMode();
 
+  //! Expose naiveMode.
   bool Naive() const;
   bool& Naive();
 
+  //! Expose leafSize.
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
 
+  //! Expose treeType.
   TreeTypes TreeType() const { return treeType; }
   TreeTypes& TreeType() { return treeType; }
 
+  //! Expose randomBasis.
   bool RandomBasis() const { return randomBasis; }
   bool& RandomBasis() { return randomBasis; }
 

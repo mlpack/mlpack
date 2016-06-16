@@ -74,7 +74,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 
 template<typename SortPolicy>
 template<typename NSType>
-void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType *ns) const
+void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 {
   if (!ns->Naive() && !ns->SingleMode())
   {
@@ -156,7 +156,7 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
 
 
 template<typename NSType>
-bool& SingleModeVisitor::operator()(NSType *ns) const
+bool& SingleModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
     return ns->SingleMode();
@@ -165,7 +165,7 @@ bool& SingleModeVisitor::operator()(NSType *ns) const
 
 
 template<typename NSType>
-bool& NaiveVisitor::operator()(NSType *ns) const
+bool& NaiveVisitor::operator()(NSType* ns) const
 {
   if (ns)
     return ns->Naive();
@@ -174,7 +174,7 @@ bool& NaiveVisitor::operator()(NSType *ns) const
 
 
 template<typename NSType>
-const arma::mat& ReferenceSetVisitor::operator()(NSType *ns) const
+const arma::mat& ReferenceSetVisitor::operator()(NSType* ns) const
 {
   if (ns)
     return ns->ReferenceSet();
@@ -183,7 +183,7 @@ const arma::mat& ReferenceSetVisitor::operator()(NSType *ns) const
 
 
 template<typename NSType>
-void DeleteVisitor::operator()(NSType *ns) const
+void DeleteVisitor::operator()(NSType* ns) const
 {
   if (ns)
     delete ns;
@@ -199,7 +199,7 @@ SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
 
 template<typename Archive>
 template<typename NSType>
-void SerializeVisitor<Archive>::operator()(NSType *ns) const
+void SerializeVisitor<Archive>::operator()(NSType* ns) const
 {
   ar & data::CreateNVP(ns, name);
 }
@@ -349,7 +349,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
   }
 
-  TrainVisitor<SortPolicy> tn(std::move(referenceSet),leafSize);
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
   boost::apply_visitor(tn, nSearch);
 
   if (!naive)
