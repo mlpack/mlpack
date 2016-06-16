@@ -25,9 +25,9 @@
     and MLPACK_VERSION_PATCH.  The old names will remain in place until
     mlpack 3.0.0.
 
-  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
-    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
-    3.0.0.
+  * Renamed mlpack_allknn, mlpack_allkfn, and mlpack_allkrann to mlpack_knn,
+    mlpack_kfn, and mlpack_krann.  The mlpack_allknn, mlpack_allkfn, and
+    mlpack_allkrann programs will remain as copies until mlpack 3.0.0.
 
   * Add --random_initialization option to mlpack_hmm_train, for use when no
     labels are provided.
