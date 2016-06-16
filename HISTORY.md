@@ -1,11 +1,13 @@
 ### mlpack 2.0.2
-###### 2016-??-??
+###### 2016-06-16
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).
 
   * A new constructor has been added to LSHSearch that creates objects using
     projection tables provided in an arma::cube (#663).
+
+  * LSHSearch projection tables refactored for speed (#675).
 
   * Handle zero-variance dimensions in DET (#515).
 

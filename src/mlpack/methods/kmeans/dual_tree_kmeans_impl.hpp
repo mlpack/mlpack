@@ -7,7 +7,7 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
  * mlpack is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

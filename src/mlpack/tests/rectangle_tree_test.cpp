@@ -6,7 +6,7 @@
  * correctly and that subsequent changes don't break anything.  Because it's
  * only used to test the trees, it is slow.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
  * mlpack is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

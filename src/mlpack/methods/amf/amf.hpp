@@ -10,7 +10,7 @@
  * known techniques such as incremental SVD, NMF, and batch-learning SVD can be
  * derived.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
  * mlpack is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

@@ -7,7 +7,7 @@
  * Perceptrons are simple single-layer binary classifiers, which solve linearly
  * separable problems with a linear decision boundary.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
  * mlpack is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

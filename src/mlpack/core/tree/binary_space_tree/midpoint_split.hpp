@@ -7,7 +7,7 @@
  * tree node into two parts using the midpoint of the values in a certain
  * dimension.  The dimension to split on is the dimension with maximum variance.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
  * mlpack is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
