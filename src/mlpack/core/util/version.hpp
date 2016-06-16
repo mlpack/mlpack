@@ -28,13 +28,13 @@
 // with higher number than the most recent release.
 #define MLPACK_VERSION_MAJOR 2
 #define MLPACK_VERSION_MINOR 0
-#define MLPACK_VERSION_PATCH "x"
+#define MLPACK_VERSION_PATCH 2
 
 // Reverse compatibility; these macros will be removed in future versions of
 // mlpack (3.0.0 and newer)!
 #define __MLPACK_VERSION_MAJOR 2
 #define __MLPACK_VERSION_MINOR 0
-#define __MLPACK_VERSION_PATCH "x"
+#define __MLPACK_VERSION_PATCH 2
 
 // The name of the version (for use by --version).
 namespace mlpack {
