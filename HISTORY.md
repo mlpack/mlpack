@@ -34,6 +34,9 @@
   * Add --random_initialization option to mlpack_hmm_train, for use when no
     labels are provided.
 
+  * Add --kill_empty_clusters option to mlpack_kmeans and KillEmptyClusters
+    policy for the KMeans class (#595, #596).
+
 ### mlpack 2.0.1
 ###### 2016-02-04
   * Fix CMake to properly detect when MKL is being used with Armadillo.
