@@ -763,6 +763,96 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertValueTest)
   BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,point2), 1);
 }
 
+template<typename TreeType>
+void CheckOverlap(TreeType* tree)
+{
+  bool success = true;
+
+  for (size_t i = 0; i < tree->NumChildren(); i++)
+  {
+    success = true;
+
+    for (size_t j = 0; j < tree->NumChildren(); j++)
+    {
+      if (j == i)
+        continue;
+      success = false;
+      for (size_t k = 0; k < tree->Bound().Dim(); k++)
+      {
+        if (tree->Children()[i]->Bound()[k].Lo() >= tree->Children()[j]->Bound()[k].Hi() ||
+            tree->Children()[j]->Bound()[k].Lo() >= tree->Children()[i]->Bound()[k].Hi())
+        {
+          success = true;
+          break;
+        }
+      }
+      if (!success)
+        break;
+    }
+    if (success)
+      break;
+  }
+  assert(success == true);
+
+  for (size_t i = 0; i < tree->NumChildren(); i++)
+    CheckOverlap(tree->Children()[i]);
+}
+
+BOOST_AUTO_TEST_CASE(RPlusTreeOverlapTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef RPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckOverlap(&rPlusTree);
+}
+
+
+BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
+{
+  arma::mat dataset;
+
+  const int numP = 1000;
+
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  typedef RPlusTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> TreeType;
+  TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
+
+  // Nearest neighbor search with the X tree.
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat, RPlusTree >
+      knn1(&rPlusTree, true);
+
+  BOOST_REQUIRE_EQUAL(rPlusTree.NumDescendants(), numP);
+
+  CheckContainment(rPlusTree);
+  CheckExactContainment(rPlusTree);
+  CheckHierarchy(rPlusTree);
+  CheckOverlap(&rPlusTree);
+
+  knn1.Search(5, neighbors1, distances1);
+
+  // Nearest neighbor search the naive way.
+  KNN knn2(dataset, true, true);
+
+  knn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
 BOOST_AUTO_TEST_CASE(RTreeSplitTest)

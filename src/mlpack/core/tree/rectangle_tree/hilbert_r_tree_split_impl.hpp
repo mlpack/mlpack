@@ -18,6 +18,8 @@ template<typename TreeType>
 void HilbertRTreeSplit::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
+  if (tree->Count() <= tree->MaxLeafSize())
+    return;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.

@@ -694,8 +694,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (numChildren == 0)
   {
     // Check to see if we are full.
-    if (count <= maxLeafSize)
-      return; // We don't need to split.
+//    if (count <= maxLeafSize)
+//      return; // We don't need to split.
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.

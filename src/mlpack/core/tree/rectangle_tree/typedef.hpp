@@ -125,6 +125,13 @@ using DiscreteHilbertRTree = RectangleTree<MetricType,
                             HilbertRTreeDescentHeuristic,
                             DiscreteHilbertRTreeAuxiliaryInformation>;
 
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPlusTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            RPlusTreeSplit,
+                            RPlusTreeDescentHeuristic,
+                            NoAuxiliaryInformation>;
 
 } // namespace tree
 } // namespace mlpack
