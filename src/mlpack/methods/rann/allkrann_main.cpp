@@ -73,7 +73,7 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search options.
 PARAM_DOUBLE("tau", "The allowed rank-error in terms of the percentile of "
-             "the data.", "t", 5);
+             "the data.", "T", 5);
 PARAM_DOUBLE("alpha", "The desired success probability.", "a", 0.95);
 PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
            "N");
