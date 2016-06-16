@@ -155,6 +155,24 @@ class DiscreteHilbertValue
   void UpdateHilbertValues(TreeType* parent, size_t firstSibling,
                            size_t lastSibling);
 
+  /**
+   * Calculate the Hilbert value of the point pt.
+   * @param pt The point for which the Hilbert value should be calculated.
+   */
+  template<typename VecType>
+  static arma::Col<HilbertElemType> CalculateValue(const VecType& pt,
+                             typename boost::enable_if<IsVector<VecType>>* = 0);
+
+  /**
+   * Compare two Hilbert values. It returns 1 if the first value is greater than
+   * the second one, -1 if the first value is less than the second one and
+   * 0 if the values are equal. This method does not compute the Hilbert values.
+   * @param value1 The first value.
+   * @param value2 The second value.
+   */
+  static int CompareValues(const arma::Col<HilbertElemType>& value1,
+                           const arma::Col<HilbertElemType>& value2);
+
   //! Return the number of values
   size_t NumValues() const
   { return numValues; }
@@ -191,23 +209,6 @@ class DiscreteHilbertValue
   //! Indicates that the node owns the valueToInsert 
   bool ownsValueToInsert;
 
-  /**
-   * Calculate the Hilbert value of the point pt.
-   * @param pt The point for which the Hilbert value should be calculated.
-   */
-  template<typename VecType>
-  static arma::Col<HilbertElemType> CalculateValue(const VecType& pt,
-                             typename boost::enable_if<IsVector<VecType>>* = 0);
-
-  /**
-   * Compare two Hilbert values. It returns 1 if the first value is greater than
-   * the second one, -1 if the first value is less than the second one and
-   * 0 if the values are equal. This method does not compute the Hilbert values.
-   * @param value1 The first value.
-   * @param value2 The second value.
-   */
-  static int CompareValues(const arma::Col<HilbertElemType>& value1,
-                           const arma::Col<HilbertElemType>& value2);
   /**
    * Returns true if the node has the largest Hilbert value.
    */

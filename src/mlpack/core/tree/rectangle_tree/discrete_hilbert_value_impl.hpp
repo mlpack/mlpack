@@ -95,6 +95,9 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
     VecElemType normalizedVal = std::frexp(pt(i),&e);
     bool sgn = std::signbit(normalizedVal);
 
+    if (pt(i) == 0)
+      e = std::numeric_limits<VecElemType>::min_exponent;
+
     if (sgn)
       normalizedVal = -normalizedVal;
 
@@ -104,17 +107,27 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
       e = std::numeric_limits<VecElemType>::min_exponent;
       normalizedVal /= tmp;
     }
+
     //  Extract the mantissa
     HilbertElemType tmp = (HilbertElemType)1 << numMantBits;
-    res(i) = std::floor(normalizedVal / tmp);
+    res(i) = std::floor(normalizedVal * tmp);
+
     //  Add the exponent
+    assert(res(i) < ((HilbertElemType)1 << numMantBits));
     res(i) |= ((HilbertElemType)(e - std::numeric_limits<VecElemType>::min_exponent)) << numMantBits;
 
+    assert(res(i) < ((HilbertElemType)1 << (order - 1)) - 1);
     // Negative values should be inverted
     if (sgn)
+    {
       res(i) = ((HilbertElemType)1 << (order - 1)) - 1 - res(i);
+      assert((res(i) >> (order - 1)) == 0);
+    }
     else
+    {
       res(i) |= (HilbertElemType)1 << (order - 1);
+      assert((res(i) >> (order - 1)) == 1);
+    }
   }
 
   HilbertElemType M = (HilbertElemType)1 << (order - 1);
@@ -161,9 +174,9 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
       size_t bit = (i * pt.n_rows + j) % order;
       size_t row = (i * pt.n_rows + j) / order;
 
-      rearrangedResult(row) |= (res(j) & (1 << i)) >> (i - bit);
+      rearrangedResult(row) |= (((res(j) >> (order - 1 - i)) & 1) << (order - 1 - bit));
     }
-      
+
   return rearrangedResult;
 }
 
