@@ -100,7 +100,7 @@ PARAM_FLAG("all_user_recommendations", "Generate recommendations for all "
     "users.", "A");
 PARAM_STRING("output_file","File to save output recommendations to.", "o", "");
 PARAM_INT("recommendations", "Number of recommendations to generate for each "
-    "query user.", "n", 5);
+    "query user.", "c", 5);
 
 PARAM_INT("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
