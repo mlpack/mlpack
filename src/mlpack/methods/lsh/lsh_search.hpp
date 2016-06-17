@@ -19,7 +19,23 @@
  *  organization={ACM}
  * }
  *
+ * Additionally, the class implements Multiprobe LSH, which improves 
+ * approximation results during the search for approximate nearest neighbors.
+ * The Multiprobe LSH algorithm was presented in the paper:
+ *
+ * @inproceedings{Lv2007multiprobe,
+ *  tile={Multi-probe LSH: efficient indexing for high-dimensional similarity
+ *  search},
+ *  author={Lv, Qin and Josephson, William and Wang, Zhe and Charikar, Moses and
+ *  Li, Kai},
+ *  booktitle={Proceedings of the 33rd international conference on Very large
+ *  data bases},
+ *  year={2007},
+ *  pages={950--961}
+ * }
+ *
  */
+
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 
@@ -235,6 +251,10 @@ class LSHSearch
    * @param referenceIndices The list of neighbor candidates obtained from
    *    hashing the query into all the hash tables and eventually into
    *    multiple buckets of the second hash table.
+   * @param numTablesToSearch The number of tables to perform the search in. If
+   * 0, all tables are searched.
+   * @param T The number of additional probing bins for multiprobe LSH. If 0,
+   * single-probe is used.
    */
   template<typename VecType>
   void ReturnIndicesFromTable(const VecType& queryPoint,
@@ -298,7 +318,18 @@ class LSHSearch
                       const double distance) const;
 
   /**
-  TODO: Document this
+   * This function implements the core idea behind Multiprobe LSH. It is called
+   * by ReturnIndicesFromTables when T > 0. Given a query's code and its
+   * projection location, GetAdditionalProbingBins will calculate the T most
+   * likely alternative bin codes (other than queryCode) where a query's
+   * neighbors might be found in.
+   *
+   * @param queryCode vector containing the numProj-dimensional query code.
+   * @param queryCodeNotFloored vector containing the projection location of the
+   * query.
+   * @param T number of additional probing bins.
+   * @param additionalProbingBins matrix. Each column will hold one additional
+   * bin.
   */
   void GetAdditionalProbingBins(const arma::vec &queryCode,
                             const arma::vec &queryCodeNotFloored,
