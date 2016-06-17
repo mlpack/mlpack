@@ -198,23 +198,6 @@ class DeleteVisitor : public boost::static_visitor<void>
 };
 
 /**
- * SerializeVisitor serializes the given NSType instance.
- */
-template<typename Archive>
-class SerializeVisitor : public boost::static_visitor<void>
-{
- private:
-  Archive& ar;
-  const std::string& name;
-
- public:
-  template<typename NSType>
-  void operator()(NSType *ns) const;
-
-  SerializeVisitor(Archive& ar, const std::string& name);
-};
-
-/**
  * The NSModel class provides an easy way to serialize a model, abstracts away
  * the different types of trees, and also reflects the NeighborSearch API.
  *

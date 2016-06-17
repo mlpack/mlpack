@@ -13,6 +13,8 @@
 // In case it hasn't been included yet.
 #include "ns_model.hpp"
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace neighbor {
 
@@ -200,22 +202,6 @@ void DeleteVisitor::operator()(NSType* ns) const
     delete ns;
 }
 
-//! Save parameters for serialization.
-template<typename Archive>
-SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
-                                            const std::string& name) :
-    ar(ar),
-    name(name)
-{}
-
-//! Serialize the given NSType instance.
-template<typename Archive>
-template<typename NSType>
-void SerializeVisitor<Archive>::operator()(NSType* ns) const
-{
-  ar & data::CreateNVP(ns, name);
-}
-
 /**
  * Initialize the NSModel with the given type and whether or not a random
  * basis should be used.
@@ -235,6 +221,27 @@ NSModel<SortPolicy>::~NSModel()
   boost::apply_visitor(DeleteVisitor(), nSearch);
 }
 
+/**
+ * Non-intrusive serialization for Neighbor Search class. We need this
+ * definition because we are going to use the serialize function for boost
+ * variant, which will look for a serialize function for its member types.
+ */
+template<typename Archive,
+         typename SortPolicy,
+         typename MetrType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class TraversalType>
+void serialize(
+    Archive& ar,
+    NeighborSearch<SortPolicy, MetrType, MatType, TreeType, TraversalType>& ns,
+    const unsigned int version)
+{
+  ns.Serialize(ar, version);
+}
+
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
@@ -249,10 +256,8 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  // We'll only need to serialize one of the kNN objects, based on the type.
   const std::string& name = NSModelName<SortPolicy>::Name();
-  SerializeVisitor<Archive> s(ar, name);
-  boost::apply_visitor(s, nSearch);
+  ar & data::CreateNVP(nSearch, name);
 }
 
 //! Expose the dataset.
