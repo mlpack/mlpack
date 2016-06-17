@@ -19,6 +19,9 @@
 namespace mlpack {
 namespace neighbor {
 
+/**
+ * Alias template for euclidean neighbor search.
+ */
 template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
@@ -49,6 +52,10 @@ struct NSModelName<FurthestNeighborSort>
   static const std::string Name() { return "furthest_neighbor_search_model"; }
 };
 
+/**
+ * MonoSearchVisitor executes a monochromatic neighbor search on the given
+ * NSType. We don't make any difference for different instantiations of NSType.
+ */
 class MonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
@@ -65,6 +72,12 @@ class MonoSearchVisitor : public boost::static_visitor<void>
                     arma::mat& distances);
 };
 
+/**
+ * BiSearchVisitor executes a bichromatic neighbor search on the given NSType.
+ * We use template specialization to differenciate those tree types that
+ * accept leafSize as a parameter. In these cases, before doing neighbor search,
+ * a query tree with proper leafSize is built from the querySet.
+ */
 template<typename SortPolicy>
 class BiSearchVisitor : public boost::static_visitor<void>
 {
@@ -75,22 +88,27 @@ class BiSearchVisitor : public boost::static_visitor<void>
   arma::mat& distances;
   const size_t leafSize;
 
+  //! Bichromatic neighbor search on the given NSType considering the leafSize.
   template<typename NSType>
   void SearchLeaf(NSType* ns) const;
 
  public:
+  //! Alias template necessary for visual c++ compiler.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   using NSTypeT = NSType<SortPolicy, TreeType>;
 
+  //! Default Bichromatic neighbor search on the given NSType instance.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(NSTypeT<TreeType>* ns) const;
 
+  //! Bichromatic neighbor search on the given NSType specialized for KDTrees.
   void operator()(NSTypeT<tree::KDTree>* ns) const;
 
+  //! Bichromatic neighbor search on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
   BiSearchVisitor(const arma::mat& querySet,
@@ -100,6 +118,12 @@ class BiSearchVisitor : public boost::static_visitor<void>
                   const size_t leafSize);
 };
 
+/**
+ * TrainVisitor sets the reference set to a new reference set on the given
+ * NSType. We use template specialization to differenciate those tree types that
+ * accept leafSize as a parameter. In these cases, a reference tree with proper
+ * leafSize is built from the referenceSet.
+ */
 template<typename SortPolicy>
 class TrainVisitor : public boost::static_visitor<void>
 {
@@ -107,27 +131,35 @@ class TrainVisitor : public boost::static_visitor<void>
   arma::mat&& referenceSet;
   size_t leafSize;
 
+  //! Train on the given NSType considering the leafSize.
   template<typename NSType>
   void TrainLeaf(NSType* ns) const;
 
  public:
+  //! Alias template necessary for visual c++ compiler.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   using NSTypeT = NSType<SortPolicy, TreeType>;
 
+  //! Default Train on the given NSType instance.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(NSTypeT<TreeType>* ns) const;
 
+  //! Train on the given NSType specialized for KDTrees.
   void operator()(NSTypeT<tree::KDTree>* ns) const;
 
+  //! Train on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
   TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
 };
 
+/**
+ * SingleModeVisitor exposes the SingleMode method of the given NSType.
+ */
 class SingleModeVisitor : public boost::static_visitor<bool&>
 {
  public:
@@ -135,6 +167,9 @@ class SingleModeVisitor : public boost::static_visitor<bool&>
   bool& operator()(NSType* ns) const;
 };
 
+/**
+ * NaiveVisitor exposes the Naive method of the given NSType.
+ */
 class NaiveVisitor : public boost::static_visitor<bool&>
 {
  public:
@@ -142,6 +177,9 @@ class NaiveVisitor : public boost::static_visitor<bool&>
   bool& operator()(NSType *ns) const;
 };
 
+/**
+ * ReferenceSetVisitor exposes the referenceSet of the given NSType.
+ */
 class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 {
  public:
@@ -149,6 +187,9 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
   const arma::mat& operator()(NSType *ns) const;
 };
 
+/**
+ * DeleteVisitor deletes the given NSType instance.
+ */
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
@@ -156,6 +197,9 @@ class DeleteVisitor : public boost::static_visitor<void>
   void operator()(NSType *ns) const;
 };
 
+/**
+ * SerializeVisitor serializes the given NSType instance.
+ */
 template<typename Archive>
 class SerializeVisitor : public boost::static_visitor<void>
 {
@@ -170,10 +214,17 @@ class SerializeVisitor : public boost::static_visitor<void>
   SerializeVisitor(Archive& ar, const std::string& name);
 };
 
+/**
+ * The NSModel class provides an easy way to serialize a model, abstracts away
+ * the different types of trees, and also reflects the NeighborSearch API.
+ *
+ * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
+ */
 template<typename SortPolicy>
 class NSModel
 {
  public:
+  //! Enum type to identify each accepted tree type.
   enum TreeTypes
   {
     KD_TREE,
@@ -185,13 +236,21 @@ class NSModel
   };
 
  private:
+  //! Tree type considered for neighbor search.
   TreeTypes treeType;
+
+  //! For tree types that accept the maxLeafSize parameter.
   size_t leafSize;
 
-  // For random projections.
+  //! For random projections.
   bool randomBasis;
   arma::mat q;
 
+  /**
+   * nSearch holds an instance of the NeigborSearch class for the current
+   * treeType. It is initialized every time BuildModel is executed.
+   * We access to the contained value through the visitor classes defined above.
+   */
   boost::variant<NSType<SortPolicy, tree::KDTree>*,
                  NSType<SortPolicy, tree::StandardCoverTree>*,
                  NSType<SortPolicy, tree::RTree>*,
@@ -248,11 +307,12 @@ class NSModel
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
-  //! Perform neighbor search.
+  //! Perform monochromatic neighbor search.
   void Search(const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
+  //! Return a string representation of the current tree type.
   std::string TreeName() const;
 };
 

@@ -16,6 +16,7 @@
 namespace mlpack {
 namespace neighbor {
 
+//! Save parameters for monochromatic neighbor search.
 MonoSearchVisitor::MonoSearchVisitor(const size_t k,
                                      arma::Mat<size_t>& neighbors,
                                      arma::mat& distances) :
@@ -24,6 +25,7 @@ MonoSearchVisitor::MonoSearchVisitor(const size_t k,
     distances(distances)
 {}
 
+//! Monochromatic neighbor search on the given NSType instance.
 template<typename NSType>
 void MonoSearchVisitor::operator()(NSType *ns) const
 {
@@ -32,6 +34,7 @@ void MonoSearchVisitor::operator()(NSType *ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Save parameters for bichromatic neighbor search.
 template<typename SortPolicy>
 BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
                                              const size_t k,
@@ -45,6 +48,7 @@ BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
     leafSize(leafSize)
 {}
 
+//! Default Bichromatic neighbor search on the given NSType instance.
 template<typename SortPolicy>
 template<template<typename TreeMetricType,
                   typename TreeStatType,
@@ -56,6 +60,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search on the given NSType specialized for KDTrees.
 template<typename SortPolicy>
 void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
 {
@@ -64,6 +69,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search on the given NSType specialized for BallTrees.
 template<typename SortPolicy>
 void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 {
@@ -72,6 +78,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
 void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
@@ -99,7 +106,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
     ns->Search(querySet, k, neighbors, distances);
 }
 
-
+//! Save parameters for Train.
 template<typename SortPolicy>
 TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
                                        const size_t leafSize) :
@@ -107,6 +114,7 @@ TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
     leafSize(leafSize)
 {}
 
+//! Default Train on the given NSType instance.
 template<typename SortPolicy>
 template<template<typename TreeMetricType,
                   typename TreeStatType,
@@ -118,6 +126,7 @@ void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Train on the given NSType specialized for KDTrees.
 template<typename SortPolicy>
 void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
 {
@@ -126,6 +135,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Train on the given NSType specialized for BallTrees.
 template<typename SortPolicy>
 void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 {
@@ -134,6 +144,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Train on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
 void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
@@ -154,7 +165,7 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   }
 }
 
-
+//! Expose the SingleMode method of the given NSType.
 template<typename NSType>
 bool& SingleModeVisitor::operator()(NSType* ns) const
 {
@@ -163,7 +174,7 @@ bool& SingleModeVisitor::operator()(NSType* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-
+//! Expose the Naive method of the given NSType.
 template<typename NSType>
 bool& NaiveVisitor::operator()(NSType* ns) const
 {
@@ -172,7 +183,7 @@ bool& NaiveVisitor::operator()(NSType* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-
+//! Expose the referenceSet of the given NSType.
 template<typename NSType>
 const arma::mat& ReferenceSetVisitor::operator()(NSType* ns) const
 {
@@ -181,7 +192,7 @@ const arma::mat& ReferenceSetVisitor::operator()(NSType* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-
+//! Clean memory, if necessary.
 template<typename NSType>
 void DeleteVisitor::operator()(NSType* ns) const
 {
@@ -189,7 +200,7 @@ void DeleteVisitor::operator()(NSType* ns) const
     delete ns;
 }
 
-
+//! Save parameters for serialization.
 template<typename Archive>
 SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
                                             const std::string& name) :
@@ -197,6 +208,7 @@ SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
     name(name)
 {}
 
+//! Serialize the given NSType instance.
 template<typename Archive>
 template<typename NSType>
 void SerializeVisitor<Archive>::operator()(NSType* ns) const
@@ -243,6 +255,7 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
   boost::apply_visitor(s, nSearch);
 }
 
+//! Expose the dataset.
 template<typename SortPolicy>
 const arma::mat& NSModel<SortPolicy>::Dataset() const
 {
@@ -262,6 +275,7 @@ bool& NSModel<SortPolicy>::SingleMode()
   return boost::apply_visitor(SingleModeVisitor(), nSearch);
 }
 
+//! Expose Naive.
 template<typename SortPolicy>
 bool NSModel<SortPolicy>::Naive() const
 {
