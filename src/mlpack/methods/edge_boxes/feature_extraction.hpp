@@ -16,6 +16,8 @@ namespace structured_tree {
 template <typename MatType = arma::mat, typename CubeType = arma::cube>
 class StructuredForests
 {
+ private:
+  FeatureParameters params;
 
  public:
 
@@ -23,23 +25,23 @@ class StructuredForests
 
   std::map<std::string, size_t> options;
   
-  StructuredForests(const std::map<std::string, size_t> inMap);
-  
-  MatType LoadData(MatType const &images, MatType const &boundaries,\
-     MatType const &segmentations);
+  void StructuredForests(FeatureParameters F);   
+/*  MatType LoadData(MatType const &images, MatType const &boundaries,\
+     MatType const &segmentations);*/
 
   void PrepareData(MatType const &InputData);
 
-  arma::vec GetFeatureDimension();
+  void GetFeatureDimension(arma::vec &FtrDim);
   
-  arma::vec DistanceTransform1D(arma::vec const &f, const size_t n,\
-                                 const double inf);
+  void DistanceTransform1D(const arma::vec& f, const size_t n,\
+                           const double inf, arma::vec& d);
   
-  void DistanceTransform2D(MatType &im, const double inf);
+  void DistanceTransform2D(MatType &Im, const double inf);
   
-  MatType DistanceTransformImage(MatType const &im, double on);
-  
-  arma::field<CubeType> GetFeatures(MatType const &image, arma::umat &loc);
+  void DistanceTransformImage(const MatType& Im, double on, MatType& Out);
+
+  void GetFeatures(const MatType &Image, arma::umat &loc, 
+            CubeType& RegFtr, CubeType& SSFtr);
   
   CubeType CopyMakeBorder(CubeType const &InImage, size_t top, 
                size_t left, size_t bottom, size_t right);

@@ -65,6 +65,9 @@ class FeatureParameters
 
   void Fraction(double value) { fraction = value; }
   double Fraction() const { return fraction; }
+
+  void NumTree(double value) { numTree = value; }
+  double NumTree() const { return numTree; }
  
  private:
   size_t numImages;
@@ -77,12 +80,14 @@ class FeatureParameters
   size_t grdNormRad;
   size_t regSmoothRad;
   size_t ssSmoothRad;
+  double fraction;
   size_t pSize;
   size_t gSize;
   size_t numCell;
   size_t numPos;
   size_t numNeg;
-  double numCell;
+  size_t numCell;
+  size_t numTree;
 };
  
 }

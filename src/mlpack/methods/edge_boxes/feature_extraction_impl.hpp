@@ -1,11 +1,11 @@
 /**
- * @file feature_extraction_impl.hpp
+ * @file feature_extraction_Impl.hpp
  * @author Nilay Jain
  *
  * Implementation of feature extraction methods.
  */
-#ifndef MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_IMPL_HPP
-#define MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_IMPL_HPP
+#ifndef MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_ImPL_HPP
+#define MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_ImPL_HPP
 
 
 #include "feature_extraction.hpp"
@@ -14,90 +14,98 @@
 namespace mlpack {
 namespace structured_tree {
 
+/**
+ * Constructor: stores all the parameters in an object
+ * of feature_parameters class.
+ */
 template<typename MatType, typename CubeType>
 StructuredForests<MatType, CubeType>::
-StructuredForests() 
+StructuredForests(FeatureParameters F) 
 {
   // to do.
+  params = F; 
+  //check if this works. 
+  std::cout << params.numImages << std::endl;
 }
 
+/*
 template<typename MatType, typename CubeType>
 MatType StructuredForests<MatType, CubeType>::
-LoadData(MatType const &images, MatType const &boundaries,\
+LoadData(MatType const &Images, MatType const &boundaries,\
      MatType const &segmentations)
 {
-  const size_t num_images = this->options["num_images"];
-  const size_t row_size = this->options["row_size"];
-  const size_t col_size = this->options["col_size"];
-  MatType input_data(num_images * row_size * 5, col_size);
+  const size_t num_Images = this->params.num_Images;
+  const size_t rowSize = this->params.rowSize;
+  const size_t colSize = this->params.colSize;
+  MatType input_data(num_Images * rowSize * 5, colSize);
   // we store the input data as follows: 
-  // images (3), boundaries (1), segmentations (1).
-  size_t loop_iter = num_images * 5;
+  // Images (3), boundaries (1), segmentations (1).
+  size_t loop_iter = num_Images * 5;
   size_t row_idx = 0;
   size_t col_i = 0, col_s = 0, col_b = 0;
   for(size_t i = 0; i < loop_iter; ++i)
   {
     if (i % 5 == 4)
     {
-      input_data.submat(row_idx, 0, row_idx + row_size - 1,\
-        col_size - 1) = MatType(segmentations.colptr(col_s),\
-                                  col_size, row_size).t();
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(segmentations.colptr(col_s),\
+                                  colSize, rowSize).t();
       ++col_s;
     }
     else if (i % 5 == 3)
     {
-      input_data.submat(row_idx, 0, row_idx + row_size - 1,\
-        col_size - 1) = MatType(boundaries.colptr(col_b),\
-                                  col_size, row_size).t();
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(boundaries.colptr(col_b),\
+                                  colSize, rowSize).t();
       ++col_b;
     }
     else
     {
-      input_data.submat(row_idx, 0, row_idx + row_size - 1,\
-        col_size - 1) = MatType(images.colptr(col_i),
-                                  col_size, row_size).t();
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(Images.colptr(col_i),
+                                  colSize, rowSize).t();
       ++col_i;  
     }
-    row_idx += row_size;
+    row_idx += rowSize;
   }
   return input_data;
 } 
+*/
 
+/**
+ * Get DImensions of Features
+ * @param FtrDIm Output vector that contains the result 
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-GetFeatureDimension(arma::vec &FtrDim)
+GetFeatureDImension(arma::vec &FtrDIm)
 {
-  /*
-  shrink: amount to shrink channels
-  p_size: size of image patches
-  n_cell: number of self similarity cells
-  n_orient: number of orientations per gradient scale
-  */
-  FtrDim = arma::vec(2);
+  FtrDIm = arma::vec(2);
 
-  const size_t shrink = this->options["shrink"];
-  const size_t p_size = this->options["p_size"];
-  const size_t n_cell = this->options["n_cell"];
-  const size_t rgbd = this->options["rgbd"];
-  const size_t n_orient = this->options["n_orient"];
-  /*
-  n_color_ch: number of color channels
-  n_grad_ch: number of gradient channels
-  n_ch: total number of channels
-  */
-  size_t n_color_ch;
-  if (this->options["rgbd"] == 0)
-    n_color_ch = 3;
+  const size_t shrink = this->params.shrink;
+  const size_t pSize = this->params.pSize;
+  const size_t numCell = this->params.numCell;
+  const size_t rgbd = this->params.rgbd;
+  const size_t numOrient = this->params.numOrient;
+  
+  size_t nColorCh;
+  if (this->params.rgbd == 0)
+    nColorCh = 3;
   else
-    n_color_ch = 4;
+    nColorCh = 4;
 
-  const size_t n_grad_ch = 2 * (1 + n_orient);
-
-  const size_t n_ch = n_color_ch + n_grad_ch;
-  FtrDim[0] = std::pow((p_size / shrink) , 2) * n_ch;
-  FtrDim[1] = std::pow(n_cell , 2) * (std::pow (n_cell, 2) - 1) / 2 * n_ch;
+  const size_t nCh = nColorCh + 2 * (1 + numOrient);
+  FtrDIm[0] = std::pow((pSize / shrink) , 2) * nCh;
+  FtrDIm[1] = std::pow(numCell , 2) * (std::pow (numCell, 2) - 1) / 2 * nCh;
 }
 
+/**
+ * Computes distance transform of 1D vector f.
+ * @param f input vector whose distance transform is to be found.
+ * @param n size of the Output vector to be made.
+ * @param inf a large double value.
+ * @param d Output vector which stores distance transform of f.
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 DistanceTransform1D(const arma::vec& f, const size_t n, const double inf,
@@ -134,42 +142,62 @@ DistanceTransform1D(const arma::vec& f, const size_t n, const double inf,
   return d;
 }
 
+/**
+ * Computes distance transform of a 2D array
+ * @param Im input array whose distance transform is to be found.
+ * @param inf a large double value.
+ */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-DistanceTransform2D(MatType &im, const double inf)
+DistanceTransform2D(MatType &Im, const double inf)
 {
-  arma::vec f(std::max(im.n_rows, im.n_cols));
+  arma::vec f(std::max(Im.n_rows, Im.n_cols));
   // transform along columns
-  for (size_t x = 0; x < im.n_cols; ++x)
+  for (size_t x = 0; x < Im.n_cols; ++x)
   {
-    f.subvec(0, im.n_rows - 1) = im.col(x);
+    f.subvec(0, Im.n_rows - 1) = Im.col(x);
     arma::vec d;
-    this->DistanceTransform1D(f, im.n_rows, inf, d);
-    im.col(x) = d;
+    this->DistanceTransform1D(f, Im.n_rows, inf, d);
+    Im.col(x) = d;
   }
 
   // transform along rows
-  for (size_t y = 0; y < im.n_rows; y++)
+  for (size_t y = 0; y < Im.n_rows; y++)
   {
-    f.subvec(0, im.n_cols - 1) = im.row(y).t();
+    f.subvec(0, Im.n_cols - 1) = Im.row(y).t();
     arma::vec d;
-    this->DistanceTransform1D(f, im.n_cols, inf, d);
-    im.row(y) = d.t();
+    this->DistanceTransform1D(f, Im.n_cols, inf, d);
+    Im.row(y) = d.t();
   }
 }
 
-/* euclidean distance transform of binary image using squared distance */
+/**
+ * euclidean distance transform of binary Image using squared distance
+ * @param Im Input binary Image whose distance transform is to be found.
+ * @param on if on == 1, 1 is taken as boundaries and vice versa.
+ * @param Out Output Image.
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-DistanceTransformImage(const MatType& im, double on, MatType& out)
+DistanceTransformImage(const MatType& Im, double on, MatType& Out)
 {
   //need a large value but not infinity.
   double inf = 999999.99;
-  MatType out = MatType(im.n_rows, im.n_cols, arma::fill::zeros);
-  out.elem( find(im != on) ).fill(inf);
-  this->DistanceTransform2D(out, inf);
+  MatType Out = MatType(Im.n_rows, Im.n_cols, arma::fill::zeros);
+  Out.elem( find(Im != on) ).fill(inf);
+  this->DistanceTransform2D(Out, inf);
 }
 
+/**
+ * Makes a reflective border around an Image.
+ * @param InImage Image which we have to make border around.
+ * @param top border length at top.
+ * @param left border length at left.
+ * @param bottom border length at bottom.
+ * @param right border length at right.
+ * @param OutImage Output Image. 
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 CopyMakeBorder(const CubeType& InImage, size_t top, 
@@ -211,6 +239,11 @@ CopyMakeBorder(const CubeType& InImage, size_t top,
   }
 }
 
+/**
+ * Converts an Image in RGB color space to LUV color space.
+ * @param InImage Input Image in RGB color space.
+ * @param OutImage Ouptut Image in LUV color space.
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 RGB2LUV(const CubeType& InImage, CubeType OutImage)
@@ -255,12 +288,6 @@ RGB2LUV(const CubeType& InImage, CubeType OutImage)
     xyz.slice(0)(i) = 0.430574 * r + 0.341550 * g + 0.178325 * b;
     xyz.slice(1)(i) = 0.222015 * r + 0.706655 * g + 0.071330 * b;
     xyz.slice(2)(i) = 0.020183 * r + 0.129553 * g + 0.939180 * b;
-  
-  /*
-    xyz.slice(0)(i) = 0.430574 * r + 0.341550 * g + 0.178325 * b;
-    xyz.slice(1)(i) = 0.222015 * r + 0.706655 * g + 0.129553 * b;
-    xyz.slice(2)(i) = 0.020183 * r + 0.071330 * g + 0.939180 * b;
-  */
   }
 
   MatType nz(InImage.n_rows, InImage.n_cols);
@@ -283,7 +310,14 @@ RGB2LUV(const CubeType& InImage, CubeType OutImage)
               - 13 * 0.468331) + 134 * maxi;
 }
 
-/*implement this function in a column major order.*/
+/**
+ * Resizes the Image to the given size using Bilinear Interpolation
+ * @param src Input Image
+ * @param height Height of Output Image.
+ * @param width Width Out Output Image.
+ * @param dst Output Image resized to (height, width)
+ */
+/*Implement this function in a column major order.*/
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 BilinearInterpolation(MatType const &src,
@@ -315,9 +349,16 @@ BilinearInterpolation(MatType const &src,
   }
 }
 
+/**
+ * Applies a separable linear filter to an Image
+ * @param InOutImage Input/Output Contains the input Image, The final filtered Image is
+ *          stored in this param.
+ * @param kernel Input Kernel vector to be applied on Image.
+ * @param radius amount, the Image should be padded before applying filter.
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-SepFilter2D(CubeType &InOutImage, arma::vec &kernel, size_t radius)
+SepFilter2D(CubeType &InOutImage, const arma::vec& kernel, const size_t radius)
 {
   CubeType OutImage;
   this->CopyMakeBorder(InOutImage, radius, radius, radius, radius, OutImage);
@@ -342,9 +383,14 @@ SepFilter2D(CubeType &InOutImage, arma::vec &kernel, size_t radius)
 
 }
 
+/**
+ * Applies a triangle filter on an Image.
+ * @param InImage Input/Output Image on which filter is applied.
+ * @param radius Decides the size of kernel to be applied on Image.
+ */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-ConvTriangle(CubeType &InImage, size_t radius)
+ConvTriangle(CubeType &InImage, const size_t radius)
 {
   if (radius == 0)
   {
@@ -390,7 +436,7 @@ MaxAndLoc(CubeType &mag, arma::umat &Location, CubeType& MaxVal) const
     for(size_t j = 0; j < mag.n_cols; ++j)
     {
       /*can use -infinity here*/
-      double max =  std::numeric_limits<double>::min();
+      double max =  std::numeric_lImits<double>::min();
       for(size_t k = 0; k < mag.n_slices; ++k)
       {
         if(mag(i, j, k) > max)
@@ -410,7 +456,7 @@ Gradient(const CubeType &InImage,
          MatType &Magnitude,
          MatType &Orientation)
 {
-  const size_t grd_norm_rad = this->options["grd_norm_rad"];
+  const size_t grdNormRad = this->params.grdNormRad;
   CubeType dx(InImage.n_rows, InImage.n_cols, InImage.n_slices), 
              dy(InImage.n_rows, InImage.n_cols, InImage.n_slices);
 
@@ -420,7 +466,7 @@ Gradient(const CubeType &InImage,
   /*
   From MATLAB documentation:
   [FX,FY] = gradient(F), where F is a matrix, returns the 
-  x and y components of the two-dimensional numerical gradient. 
+  x and y components of the two-dImensional numerical gradient. 
   FX corresponds to ∂F/∂x, the differences in x (horizontal) direction. 
   FY corresponds to ∂F/∂y, the differences in the y (vertical) direction.
   */ 
@@ -468,13 +514,13 @@ Gradient(const CubeType &InImage,
 
   arma::umat Location(InImage.n_rows, InImage.n_cols);
   this->MaxAndLoc(mag, Location, Magnitude);
-  if(grd_norm_rad != 0)
+  if(grdNormRad != 0)
   {
     //we have to do this ugly thing, or override ConvTriangle
     // and sepFilter2D methods.
     CubeType mag2(InImage.n_rows, InImage.n_cols, 1);
     mag2.slice(0) = Magnitude;
-    this->ConvTriangle(mag2, grd_norm_rad);
+    this->ConvTriangle(mag2, grdNormRad);
     Magnitude = Magnitude / (mag2.slice(0) + 0.01);
   }
   MatType dx_mat(dx.n_rows, dx.n_cols),\
@@ -510,15 +556,15 @@ Histogram(const MatType& Magnitude,
 {
   //i don't think this function can be vectorized.
 
-  //n_orient: number of orientations per gradient scale
-  const size_t n_orient = this->options["n_orient"];
-  //size of HistArr: n_rbin * n_cbin * n_orient . . . (create in caller...)
+  //numOrient: number of orientations per gradient scale
+  const size_t numOrient = this->params.numOrient;
+  //size of HistArr: n_rbin * n_cbin * numOrient . . . (create in caller...)
   const size_t n_rbin = (Magnitude.n_rows + downscale - 1) / downscale;
   const size_t n_cbin = (Magnitude.n_cols + downscale - 1) / downscale;
   double o_range, o;
-  o_range = arma::datum::pi / n_orient;
+  o_range = arma::datum::pi / numOrient;
 
-  HistArr = CubeType(n_rbin, n_cbin, n_orient);
+  HistArr = CubeType(n_rbin, n_cbin, numOrient);
   HistArr.zeros();
 
   size_t r, c, o1, o2;
@@ -532,14 +578,14 @@ Histogram(const MatType& Magnitude,
       if( interp != 0)
       {
         o = Orientation(i, j) / o_range;
-        o1 = ((size_t) o) % n_orient;
-        o2 = (o1 + 1) % n_orient;
+        o1 = ((size_t) o) % numOrient;
+        o2 = (o1 + 1) % numOrient;
         HistArr(r, c, o1) += Magnitude(i, j) * (1 + (int)o - o);
         HistArr(r, c, o2) += Magnitude(i, j) * (o - (int) o);
       }
       else
       {
-        o1 = (size_t) (Orientation(i, j) / o_range + 0.5) % n_orient;
+        o1 = (size_t) (Orientation(i, j) / o_range + 0.5) % numOrient;
         HistArr(r, c, o1) += Magnitude(i, j);
       }
     }
@@ -558,10 +604,10 @@ GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch, CubeType &ss_ch)
   CubeType luv;
   this->RGB2LUV(InImage, luv);
   
-  const size_t shrink = this->options["shrink"];
-  const size_t n_orient = this->options["n_orient"];
-  const size_t grd_smooth_rad = this->options["grd_smooth_rad"];
-  const size_t grd_norm_rad = this->options["grd_norm_rad"];
+  const size_t shrink = this->params.shrink;
+  const size_t numOrient = this->params.numOrient;
+  const size_t grdSmoothRad = this->params.grdSmoothRad;
+  const size_t grdNormRad = this->params.grdNormRad;
   const size_t num_channels = 13;
   const size_t rsize = luv.n_rows / shrink;
   const size_t csize = luv.n_cols / shrink;
@@ -578,7 +624,7 @@ GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch, CubeType &ss_ch)
   
   while(scale <= 1.0)
   {
-    CubeType img( (luv.n_rows * scale),
+    CubeType Img( (luv.n_rows * scale),
                    (luv.n_cols * scale),
                    luv.n_slices );
 
@@ -586,10 +632,10 @@ GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch, CubeType &ss_ch)
     {
       this->BilinearInterpolation(luv.slice(slice_idx), 
             (luv.n_rows * scale), (luv.n_cols * scale) 
-            img.slice(slice_idx));
+            Img.slice(slice_idx));
     }
     
-    CubeType OutImage = this->ConvTriangle(img, grd_smooth_rad); 
+    CubeType OutImage = this->ConvTriangle(Img, grdSmoothRad); 
     
     MatType Magnitude(InImage.n_rows, InImage.n_cols),
              Orientation(InImage.n_rows, InImage.n_cols);
@@ -611,22 +657,22 @@ GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch, CubeType &ss_ch)
   }
   
   //cout << "size of channels: " << arma::size(channels) << endl;
-  double reg_smooth_rad, ss_smooth_rad;
-  reg_smooth_rad = this->options["reg_smooth_rad"] / (double) shrink;
-  ss_smooth_rad = this->options["ss_smooth_rad"] / (double) shrink;
+  double regSmoothRad, ssSmoothRad;
+  regSmoothRad = this->params.regSmoothRad / (double) shrink;
+  ssSmoothRad = this->params.ssSmoothRad / (double) shrink;
 
 
 
 
-  if (reg_smooth_rad > 1.0)
-    reg_ch = this->ConvTriangle(channels, (size_t) (std::round(reg_smooth_rad)) );
+  if (regSmoothRad > 1.0)
+    reg_ch = this->ConvTriangle(channels, (size_t) (std::round(regSmoothRad)) );
   else
-    reg_ch = this->ConvTriangle(channels, reg_smooth_rad);
+    reg_ch = this->ConvTriangle(channels, regSmoothRad);
 
-  if (ss_smooth_rad > 1.0)
-    ss_ch = this->ConvTriangle(channels, (size_t) (std::round(ss_smooth_rad)) );
+  if (ssSmoothRad > 1.0)
+    ss_ch = this->ConvTriangle(channels, (size_t) (std::round(ssSmoothRad)) );
   else
-    ss_ch = this->ConvTriangle(channels, ss_smooth_rad);
+    ss_ch = this->ConvTriangle(channels, ssSmoothRad);
 
 }
 
@@ -635,12 +681,12 @@ void StructuredForests<MatType, CubeType>::
 ViewAsWindows(const CubeType& channels, arma::umat const &loc,
               CubeType& features)
 {
-  // 500 for pos_loc, and 500 for neg_loc.
+  // 500 for posLoc, and 500 for negLoc.
   // channels = 160, 240, 13.
   features = CubeType(16, 16, 1000 * 13);
   const size_t patchSize = 16;
   const size_t p = patchSize / 2;
-  //increase the channel boundary to protect error against image boundaries.
+  //increase the channel boundary to protect error against Image boundaries.
   CubeType inc_ch;
   this->CopyMakeBorder(channels, p, p, p, p, inc_ch);
   for (size_t i = 0, channel = 0; i < loc.n_rows; ++i)
@@ -678,14 +724,14 @@ Rearrange(CubeType const &channels, CubeType& ch)
   }
 }
 
-// returns 256 * 1000 * 13 dimension features.
+// returns 256 * 1000 * 13 dImension features.
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 GetRegFtr(const CubeType& channels,const arma::umat& loc
           CubeType& RegFtr)
 {
-  int shrink = this->options["shrink"];
-  int p_size = this->options["p_size"] / shrink;
+  int shrink = this->params.shrink;
+  int pSize = this->params.pSize / shrink;
   CubeType wind;
   this->ViewAsWindows(channels, loc, wind);
   this->Rearrange(wind, RegFtr);
@@ -694,15 +740,15 @@ GetRegFtr(const CubeType& channels,const arma::umat& loc
 template<typename MatType, typename CubeType>
 CubeType StructuredForests<MatType, CubeType>::
 PDist(const CubeType& features, const arma::uvec& grid_pos,
-      CubeType& output)
+      CubeType& Output)
 {
   // size of DestArr: 
   // InImage.n_rows * (InImage.n_rows - 1)/2 * InImage.n_slices
   //find nC2 differences, for locations in the grid_pos.
-  //python: input: (716, 256, 13) --->(716, 25, 13) ; output: (716, 300, 13).
-  //input features : 256,1000,13; output: 300, 1000, 13
+  //python: input: (716, 256, 13) --->(716, 25, 13) ; Output: (716, 300, 13).
+  //input features : 256,1000,13; Output: 300, 1000, 13
 
-  output = CubeType(300, 1000, 13);
+  Output = CubeType(300, 1000, 13);
   for(size_t k = 0; k < features.n_slices; ++k)
   {
     size_t r_idx = 0;
@@ -710,7 +756,7 @@ PDist(const CubeType& features, const arma::uvec& grid_pos,
     {
       for(size_t j = i + 1; j < grid_pos.n_elem; ++j) //loop length : 25
       {
-        output.slice(k).row(r_idx) = features.slice(k).row(grid_pos(i))
+        Output.slice(k).row(r_idx) = features.slice(k).row(grid_pos(i))
                                     - features.slice(k).row(grid_pos(j));
         ++r_idx;
       }
@@ -718,32 +764,32 @@ PDist(const CubeType& features, const arma::uvec& grid_pos,
   }
 }
 
-//returns 300,1000,13 dimension features.
+//returns 300,1000,13 dImension features.
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 GetSSFtr(CubeType const &channels, arma::umat const &loc
           CubeType SSFtr)
 {
-  const size_t shrink = this->options["shrink"];
-  const size_t p_size = this->options["p_size"] / shrink;
+  const size_t shrink = this->params.shrink;
+  const size_t pSize = this->params.pSize / shrink;
 
-  //n_cell: number of self similarity cells
-  const size_t n_cell = this->options["n_cell"];
-  const size_t half_cell_size = (size_t) round(p_size / (2.0 * n_cell));
+  //numCell: number of self sImilarity cells
+  const size_t numCell = this->params.numCell;
+  const size_t half_cell_size = (size_t) round(pSize / (2.0 * numCell));
 
-  arma::uvec g_pos(n_cell);
-  for(size_t i = 0; i < n_cell; ++i)
+  arma::uvec g_pos(numCell);
+  for(size_t i = 0; i < numCell; ++i)
   {
-    g_pos(i) = (size_t)round( (i + 1) * (p_size + 2 * half_cell_size \
-                     - 1) / (n_cell + 1.0) - half_cell_size);
+    g_pos(i) = (size_t)round( (i + 1) * (pSize + 2 * half_cell_size \
+                     - 1) / (numCell + 1.0) - half_cell_size);
   }
-  arma::uvec grid_pos(n_cell * n_cell);
+  arma::uvec grid_pos(numCell * numCell);
   size_t k = 0;
-  for(size_t i = 0; i < n_cell; ++i)
+  for(size_t i = 0; i < numCell; ++i)
   {
-    for(size_t j = 0; j < n_cell; ++j)
+    for(size_t j = 0; j < numCell; ++j)
     {
-      grid_pos(k) = g_pos(i) * p_size + g_pos(j);
+      grid_pos(k) = g_pos(i) * pSize + g_pos(j);
       ++k;
     }
   }
@@ -757,33 +803,33 @@ GetSSFtr(CubeType const &channels, arma::umat const &loc
 
 template<typename MatType, typename CubeType>
 void <CubeType> StructuredForests<MatType, CubeType>::
-GetFeatures(const MatType &image, arma::umat &loc, 
+GetFeatures(const MatType &Image, arma::umat &loc, 
             CubeType& RegFtr, CubeType& SSFtr)
 {
-  const size_t row_size = this->options["row_size"];
-  const size_t col_size = this->options["col_size"];
-  const size_t bottom = (4 - (image.n_rows / 3) % 4) % 4;
-  const size_t right = (4 - image.n_cols % 4) % 4;
+  const size_t rowSize = this->params.rowSize;
+  const size_t colSize = this->params.colSize;
+  const size_t bottom = (4 - (Image.n_rows / 3) % 4) % 4;
+  const size_t right = (4 - Image.n_cols % 4) % 4;
   //cout << "Botttom = " << bottom << " right = " << right << endl;
 
-  CubeType InImage(image.n_rows / 3, image.n_cols, 3);
+  CubeType InImage(Image.n_rows / 3, Image.n_cols, 3);
 
   for(size_t i = 0; i < 3; ++i)
   {
-    InImage.slice(i) = image.submat(i * row_size, 0, \
-                      (i + 1) * row_size - 1, col_size - 1);
+    InImage.slice(i) = Image.submat(i * rowSize, 0, \
+                      (i + 1) * rowSize - 1, colSize - 1);
   }
   
   CubeType OutImage;
   this->CopyMakeBorder(InImage, 0, 0, bottom, right, OutImage);
 
   const size_t num_channels = 13;
-  const size_t shrink = this->options["shrink"];
+  const size_t shrink = this->params.shrink;
   const size_t rsize = OutImage.n_rows / shrink;
   const size_t csize = OutImage.n_cols / shrink;
 
-  /* this part gives double free or corruption out error
-     when executed for a second time */
+  /* this part gives double free or corruption Out error
+     when executed for a second tIme */
   CubeType reg_ch = CubeType(rsize, csize, num_channels);
   CubeType ss_ch = CubeType(rsize, csize, num_channels);
   this->GetShrunkChannels(InImage, reg_ch, ss_ch);
@@ -794,99 +840,92 @@ GetFeatures(const MatType &image, arma::umat &loc,
   this->GetSSFtr(ss_ch, loc, SSFtr);
 }
 
+/**
+ * This functions prepares the data, 
+ * and extracts features, structured labels.
+ * @param: 
+ */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-PrepareData(MatType const &InputData)
+PrepareData(const MatType& Images, const MatType& Boundaries,\
+            const MatType& Segmentations)
 {
-  const size_t num_images = this->options["num_images"];
-  const size_t n_tree = this->options["n_tree"];
-  const size_t n_pos = this->options["n_pos"];
-  const size_t n_neg = this->options["n_neg"];
-  const double fraction = 0.25;
-  const size_t p_size = this->options["p_size"];
-  const size_t g_size = this->options["g_size"];
-  const size_t shrink = this->options["shrink"];
-  const size_t row_size = this->options["row_size"];
-  const size_t col_size = this->options["col_size"];
-  // p_rad = radius of image patches.
-  // g_rad = radius of ground truth patches.
-  const size_t p_rad = p_size / 2, g_rad = g_size / 2;
+  const size_t numImages = this->params.numImages;
+  const size_t numTree = this->params.numTree;
+  const size_t numPos = this->params.numPos;
+  const size_t numNeg = this->params.numNeg;
+  const double fraction = this->params.fraction;
+  const size_t pSize = this->params.pSize;
+  const size_t gSize = this->params.gSize;
+  const size_t shrink = this->params.shrink;
+  const size_t rowSize = this->params.rowSize;
+  const size_t colSize = this->params.colSize;
+  // pRad = radius of Image patches.
+  // gRad = radius of ground truth patches.
+  const size_t pRad = pSize / 2, gRad = gSize / 2;
   
-  arma::vec FtrDim;
-  this->GetFeatureDimension(FtrDim);
-  const size_t n_ftr_dim = FtrDim(0) + FtrDim(1);
-  const size_t n_smp_ftr_dim = (size_t)(n_ftr_dim * fraction);
+  arma::vec FtrDIm;
+  this->GetFeatureDImension(FtrDIm);
+  const size_t nFtrDIm = FtrDIm(0) + FtrDIm(1);
+  const size_t nSmpFtrDIm = (size_t)(nFtrDIm * fraction);
 
-  for(size_t i = 0; i < n_tree; ++i)
+  for(size_t i = 0; i < numTree; ++i)
   {
-    //implement the logic for if data already exists.
-    MatType ftrs = arma::zeros(n_pos + n_neg, n_smp_ftr_dim);
+    //Implement the logic for if data already exists.
+    MatType ftrs = arma::zeros(numPos + numNeg, nSmpFtrDIm);
 
     //effectively a 3d array. . .
-    MatType lbls = arma::zeros( g_size * g_size, (n_pos + n_neg ));
+    MatType lbls = arma::zeros( gSize * gSize, (numPos + numNeg ));
     // still to be done: store features and labels calculated 
     // in the loop and store it in these Matrices.
     // Could use some suggestions for this.
 
-    size_t loop_iter = num_images * 5;
-    for(size_t j = 0; j < loop_iter; j += 5)
+    size_t loop_iter = num_Images;
+    for(size_t j = 0; j < loop_iter; ++j)
     {
-      MatType img, bnds, segs;
-      img = InputData.submat(j * row_size, 0, (j + 3) * row_size - 1, col_size - 1);
-      bnds = InputData.submat( (j + 3) * row_size, 0, \
-                        (j + 4) * row_size - 1, col_size - 1 );
-      segs = InputData.submat( (j + 4) * row_size, 0, \
-                        (j + 5) * row_size - 1, col_size - 1 );
+      MatType Img, bnds, segs;
+      Img = Images.submat(j * rowSize, 0, (j + 3) * rowSize - 1, colSize - 1);
+      bnds = Boundaries.submat( j * rowSize, 0, \
+                        j * rowSize - 1, colSize - 1 );
+      segs = Segmentations.submat( j * rowSize, 0, \
+                        j * rowSize - 1, colSize - 1 );
 
-      MatType mask = arma::zeros(row_size, col_size);
-      for(size_t b = 0; b < mask.n_cols; b = b + shrink)
-        for(size_t a = 0; a < mask.n_rows; a = a + shrink)
-          mask(a, b) = 1;
-      mask.col(p_rad - 1).fill(0);
-      mask.row( (mask.n_rows - 1) - (p_rad - 1) ).fill(0);
-      mask.submat(0, 0, mask.n_rows - 1, p_rad - 1).fill(0);
-      mask.submat(0, mask.n_cols - p_rad, mask.n_rows - 1, 
+      MatType mask(rowSize, colSize, arma::fill::ones);
+      mask.col(pRad - 1).fill(0);
+      mask.row( (mask.n_rows - 1) - (pRad - 1) ).fill(0);
+      mask.submat(0, 0, mask.n_rows - 1, pRad - 1).fill(0);
+      mask.submat(0, mask.n_cols - pRad, mask.n_rows - 1, 
                   mask.n_cols - 1).fill(0);
 
       // number of positive or negative patches per ground truth.
-      //int n_patches_per_gt = (int) (ceil( (float)n_pos / num_images ));
-      const size_t n_patches_per_gt = 500;
-      //cout << "n_patches_per_gt = " << n_patches_per_gt << endl;
+
+      const size_t nPatchesPerGt = 500;
       MatType dis;
       this->DistanceTransformImage(bnds, 1, dis)
-      dis = arma::sqrt(dis);
-      //dis.transform( [](double val, const int& g_rad) { return (double)(val < g_rad); } );
-      //dis2.transform( [](double val, const int& g_rad) { return (double)(val >= g_rad); } );
-      //dis.elem( arma::find(dis >= g_rad) ).zeros();
-      //dis2.elem( arma::find(dis < g_rad) ).zeros();
-      
+      dis = arma::sqrt(dis);      
 
-      arma::uvec pos_loc = arma::find( (dis < g_rad) % mask );
-      arma::uvec neg_loc = arma::find( (dis >= g_rad) % mask );
+      arma::uvec posLoc = arma::find( (dis < gRad) % mask );
+      arma::uvec negLoc = arma::find( (dis >= gRad) % mask );
 
-      pos_loc = arma::shuffle(pos_loc);
-      neg_loc = arma::shuffle(neg_loc);
+      posLoc = arma::shuffle(posLoc);
+      negLoc = arma::shuffle(negLoc);
 
-      arma::umat loc(n_patches_per_gt * 2, 2);
-      //cout << "pos_loc size: " << arma::size(pos_loc) << " neg_loc size: " << arma::size(neg_loc) << endl;
-      //cout << "n_patches_per_gt = " << n_patches_per_gt << endl;
-      for(size_t i = 0; i < n_patches_per_gt; ++i)
+      arma::umat loc(nPatchesPerGt * 2, 2);
+
+      for(size_t i = 0; i < nPatchesPerGt; ++i)
       {
-        loc.row(i) = arma::ind2sub(arma::size(dis.n_rows, dis.n_cols), pos_loc(i) ).t();
-        //cout << "pos_loc: " << loc(i, 0) << ", " << loc(i, 1) << endl;
+        loc.row(i) = arma::ind2sub(arma::size(dis.n_rows, dis.n_cols), posLoc(i) ).t();
+        //cout << "posLoc: " << loc(i, 0) << ", " << loc(i, 1) << endl;
       }
 
-      for(size_t i = n_patches_per_gt; i < 2 * n_patches_per_gt; ++i)
+      for(size_t i = nPatchesPerGt; i < 2 * nPatchesPerGt; ++i)
       {
-        loc.row(i) = arma::ind2sub(arma::size(dis.n_rows, dis.n_cols), neg_loc(i) ).t();
-        //cout << "neg_loc: " << loc(i, 0) << ", " << loc(i, 1) << endl;
+        loc.row(i) = arma::ind2sub(arma::size(dis.n_rows, dis.n_cols), negLoc(i - nPatchesPerGt) ).t();
       }
       
-      // cout << "num patches = " << n_patches_per_gt << " num elements + = " << pos_loc.n_elem\
-      //  << " num elements - = " << neg_loc.n_elem << " dis.size " << dis.n_elem << endl;
-
       CubeType SSFtr, RegFtr;
-      arma::field<CubeType> F = this->GetFeatures(img, loc);
+      this->GetFeatures(Img, loc, RegFtr, SSFtr);
       //randomly sample 70 values each from reg_ftr and ss_ftr.
       /*
       CubeType ftr(140, 1000, 13);
@@ -895,22 +934,22 @@ PrepareData(MatType const &InputData)
       arma::uvec rs = r.shuffle();
       arma::uvec ss = s.shuffle();
       */
-      MatType lbl(g_size * g_size, 1000);
+      MatType lbl(gSize * gSize, 1000);
       CubeType s(segs.n_rows, segs.n_cols, 1);
       
       // have to do this or we can overload the CopyMakeBorder to support MatType.
       s.slice(0) = segs;
       CubeType in_segs;
-      this->CopyMakeBorder(s, g_rad, 
-                           g_rad, g_rad, g_rad, in_segs);
+      this->CopyMakeBorder(s, gRad, 
+                           gRad, gRad, gRad, in_segs);
 
       for(size_t i = 0; i < loc.n_rows; ++i)
       {
         size_t x = loc(i, 0); size_t y = loc(i, 1);
         //cout << "x, y = " << x << " " << y << endl;
         lbl.col(i) = arma::vectorise(in_segs.slice(0)\
-                    .submat((x + g_rad) - g_rad, (y + g_rad) - g_rad,\
-                     (x + g_rad) + g_rad - 1, (y + g_rad) + g_rad - 1));
+                    .submat((x + gRad) - gRad, (y + gRad) - gRad,\
+                     (x + gRad) + gRad - 1, (y + gRad) + gRad - 1));
       }
     }
   }
@@ -939,7 +978,7 @@ Discretize(MatType const &labels, size_t n_class, size_t n_sample)
     for (size_t j = 0; j < zs.n_rows; ++i)
       zs(i, j) = (labels(i, z1(j)) == labels(i, z2(j))) ? 1 : 0;
   }
-  zs -= arma::mean(zs, 1); // calculate mean about cols. n_col = 256.
+  zs -= arma::mean(zs, 1); // calculate mean abOut cols. n_col = 256.
   if ( arma::find(zs).n_elem == 0 )
   {
     labels.fill(ones);
@@ -948,7 +987,7 @@ Discretize(MatType const &labels, size_t n_class, size_t n_sample)
   {
     //find most representative segs
   }
-  // discretize zs by discretizing pca dimensions
+  // discretize zs by discretizing pca dImensions
   size_t d = min(5, n_sample, (size_t)floor(log(n_class, 2)));
   zs = pca();
 
