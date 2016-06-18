@@ -45,8 +45,7 @@ PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
 PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
 PARAM_STRING("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_model_file", "File to save trained HMM to.", "o",
-    "output_hmm.xml");
+PARAM_STRING("output_model_file", "File to save trained HMM to.", "o", "");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
 PARAM_FLAG("random_initialization", "Initialize emissions and transition "
@@ -88,7 +87,7 @@ struct Train
             << endl;
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
-    if (labelsFile != "")
+    if (CLI::HasParam("labels_file"))
     {
       // Do we have multiple label files to load?
       char lineBuf[1024];
@@ -271,7 +270,7 @@ int main(int argc, char** argv)
   }
 
   // If we have a model file, we can autodetect the type.
-  if (modelFile != "")
+  if (CLI::HasParam("model_file"))
   {
     LoadHMMAndPerformAction<Train>(modelFile, &trainSeq);
   }
