@@ -635,13 +635,6 @@ class CLI
    */
   static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
 
- /**
-   * Parses a stream for arguments.
-   *
-   * @param stream The stream to be parsed.
-   */
-  static void ParseStream(std::istream& stream);
-
   /**
    * Print out the current hierarchy.
    */
@@ -673,7 +666,7 @@ class CLI
   //! Values of the options given by user.
   po::variables_map vmap;
 
-  //! Pathnames of required options.
+  //! Identifier names of required options.
   std::list<std::string> requiredOptions;
 
   //! Map of global values.
@@ -727,15 +720,6 @@ class CLI
    * program is terminated.
    */
   static void RequiredOptions();
-
-  /**
-   * Cleans up input pathnames, rendering strings such as /foo/bar
-   * and foo/bar/ equivalent inputs.
-   *
-   * @param str Input string.
-   * @return Sanitized string.
-   */
-  static std::string SanitizeString(const std::string& str);
 
   /**
    * Parses the values given on the command line, overriding any default values.
