@@ -40,8 +40,11 @@ class IncrementPolicy
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
+
+      // change type of the feature to categorical
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
+
       typedef boost::bimap<std::string, size_t>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
       return numMappings++;

@@ -9,7 +9,10 @@
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_info.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>
-#include <mlpack/core/data/impute_strategies/mean_strategy.hpp>
+#include <mlpack/core/data/imputation_methods/mean_imputation.hpp>
+#include <mlpack/core/data/imputation_methods/median_imputation.hpp>
+#include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
+#include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
 PROGRAM_INFO("Imputer", "This "
     "utility takes an any type of data and provides "
@@ -44,12 +47,12 @@ int main(int argc, char** argv)
   // missing value should be specified
   if (!CLI::HasParam("missing_value"))
     Log::Fatal << "--missing_value must be specified in order to perform "
-               << "any imputation strategies." << endl;
+        << "any imputation strategies." << endl;
 
   // warn if user did not specify output_file
   if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file is not specified, no "
-              << "results from this program will be saved!" << endl;
+        << "results from this program will be saved!" << endl;
 
   // if custom value is specified, and imputation strategy is not,
   // set imputation strategy to "custom"
@@ -57,8 +60,7 @@ int main(int argc, char** argv)
   {
     imputeStrategy = "custom";
     Log::Warn << "--custom_value is specified without --impute_strategy, "
-              << "--impute_strategy is automatically set to 'custom'."
-              << endl;
+        << "--impute_strategy is automatically set to 'custom'." << endl;
   }
 
   // custom value and any other impute strategies cannot be specified at
@@ -66,19 +68,19 @@ int main(int argc, char** argv)
   if (CLI::HasParam("custom_value") && CLI::HasParam("impute_strategy") &&
       imputeStrategy != "custom")
     Log::Fatal << "--custom_value cannot be specified with "
-                 << "impute strategies excluding 'custom' strategy" << endl;
+        << "impute strategies excluding 'custom' strategy" << endl;
 
   // custom_value must be specified when using "custom" imputation strategy
   if ((imputeStrategy == "custom") && !CLI::HasParam("custom_value"))
     Log::Fatal << "--custom_value must be specified when using "
-               << "'custom' strategy" << endl;
+        << "'custom' strategy" << endl;
 
   arma::mat input;
   // DatasetInfo holds how the DatasetMapper should map the values.
   // can be specified by passing map_policy classes as template parameters
   // ex) DatasetMapper<IncrementPolicy> info;
-  using Mapper = DatasetMapper<IncrementPolicy>;
-  Mapper info;
+  using MapperType = DatasetMapper<IncrementPolicy>;
+  MapperType info;
 
   Load(inputFile, input, info,  true, true);
 
@@ -88,36 +90,30 @@ int main(int argc, char** argv)
   // print how many mapping exist in each features
   for (size_t i = 0; i < input.n_rows; ++i)
   {
-    Log::Info << info.NumMappings(i) << " mappings in feature "
-        << i << "." << endl;
+    Log::Info << info.NumMappings(i) << " mappings in feature " << i << "."
+        << endl;
   }
-
 
   arma::Mat<double> output(input);
 
 
   Log::Info << "Performing '" << imputeStrategy << "' imputation strategy "
-            << "to feature '" << feature <<"' of '" << inputFile << "'."
-            << endl;
+      << "on feature '" << feature << endl;
 
+  // custom strategy only
   if (imputeStrategy == "custom")
   {
     Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
-              << "'." << endl;
-
-    Imputer<arma::Mat<double>, Mapper, CustomStrategy> impu(info);
-    impu.template Impute<double>(input,
-                                 output,
-                                 missingValue,
-                                 customValue,
-                                 feature);
+        << "'." << endl;
+    Imputer<double, MapperType, CustomImputation<double>> impu(info);
+    impu.Impute(input, output, missingValue, customValue, feature);
   }
   else
   {
-    Log::Info << "Replacing all '" << missingValue << "' with '" << imputeStrategy
-            << "'." << endl;
+    Log::Info << "Replacing all '" << missingValue << "' with '"
+        << imputeStrategy << "'." << endl;
 
-    Imputer<arma::Mat<double>, Mapper, MeanStrategy> impu(info);
+    Imputer<double, MapperType, MeanImputation<double>> impu(info);
     impu.Impute(input, output, missingValue, feature);
   }
 

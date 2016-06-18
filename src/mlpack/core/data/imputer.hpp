@@ -9,36 +9,35 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/impute_strategies/custom_strategy.hpp>
 
 namespace mlpack {
 namespace data {
 
 /**
  * This class implements a way to replace target values. It is dependent on the
- * user defined Strategy and Mapper used to hold dataset's information.
+ * user defined StrategyType and MapperType used to hold dataset's information.
  *
  * @tparam Option of imputation strategy.
- * @tparam Mapper that is used to hold dataset information.
+ * @tparam MapperType that is used to hold dataset information.
  * @tparam primitive type of input and output's armadillo matrix.
  */
-template<typename MatType, typename Mapper, typename Strategy>
+template<typename T, typename MapperType, typename StrategyType>
 class Imputer
 {
  public:
-  Imputer(Mapper mapper, bool transpose =true):
+  Imputer(MapperType mapper, bool transpose = true):
     mapper(std::move(mapper)),
     transpose(transpose)
   {
-    // nothing to initialize here
+  // nothing to initialize here
   }
 
-  Imputer(Strategy strat, Mapper mapper, bool traspose = true):
-    strat(std::move(strat)),
+  Imputer(MapperType mapper, StrategyType strategy, bool transpose = true):
+    strategy(std::move(strategy)),
     mapper(std::move(mapper)),
     transpose(transpose)
   {
-    // nothing to initialize here
+  // nothing to initialize here
   }
 
   /**
@@ -52,93 +51,47 @@ class Imputer
   * @param dimension.
   * @param transpose.
   */
-  void Impute(const MatType &input,
-              MatType &output,
-              const std::string &targetValue,
+  void Impute(const arma::Mat<T>& input,
+              arma::Mat<T>& output,
+              const std::string& missingValue,
               const size_t dimension)
   {
-    // find mapped value inside current mapper
-    auto mappedValue = mapper.UnmapValue(targetValue, dimension);
-
-    if(transpose)
-    {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        if (input(dimension, i) == mappedValue)
-        {
-          // users can specify the imputation strategies likes
-          // mean, mode, etc using the class'es template parameter: Strategy.
-          strat.template Impute<MatType>(input, output, dimension, i, transpose);
-        }
-      }
-    }
-    else
-    {
-      for (size_t i = 0; i < input.n_cols; ++i)
-      {
-        if (input(i, dimension) == mappedValue)
-        {
-          strat.template Impute<MatType>(input, output, i, dimension, transpose);
-        }
-      }
-    }
+    T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
+    strategy.Apply(input, output, mappedValue, dimension, transpose);
   }
 
   /**
   * This overload of Impute() lets users to define custom value that
   * can be replaced with the target value.
   */
-  template <typename T>
-  void Impute(const arma::Mat<T> &input,
-              arma::Mat<T> &output,
-              const std::string &targetValue,
-              const T &customValue,
+  void Impute(const arma::Mat<T>& input,
+              arma::Mat<T>& output,
+              const std::string& missingValue,
+              const T& customValue,
               const size_t dimension)
   {
-    // find mapped value inside current mapper
-    auto mappedValue = mapper.UnmapValue(targetValue, dimension);
-
-    if(transpose)
-    {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        if (input(dimension, i) == mappedValue)
-        {
-          // replace the target value to custom value
-          output(dimension, i) = customValue;
-        }
-      }
-    }
-    else
-    {
-      for (size_t i = 0; i < input.n_cols; ++i)
-      {
-        if (input(i, dimension) == mappedValue)
-        {
-          output(i, dimension) = customValue;
-        }
-      }
-    }
+    T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
+    strategy.Apply(input, output, mappedValue, customValue, dimension, transpose);
   }
 
   //! Get the strategy
-  const Strategy& Strategy() const { return strat }
+  const StrategyType& Strategy() const { return strategy; }
 
-  //! Modify the given strategy (be careful!)
-  Strategy& Strategy() { return strat }
+  //! Modify the given given strategy (be careful!)
+  StrategyType& Strategy() { return strategy; }
 
   //! Get the mapper
-  const Mapper& Mapper() const { return mapper }
+  const MapperType& Mapper() const { return mapper; }
 
   //! Modify the given mapper (be careful!)
-  Mapper& Mapper() { return mapper }
+  MapperType& Mapper() { return mapper; }
 
  private:
-  // Imputation Strategy
-  Strategy strat;
+  // StrategyType
+  StrategyType strategy;
 
-  // DatasetMapper<MapPolicy>
-  Mapper mapper;
+  // DatasetMapperType<MapPolicy>
+  MapperType mapper;
 
   // save transpose as a member variable since it is rarely changed.
   bool transpose;

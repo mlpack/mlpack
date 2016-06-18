@@ -19,7 +19,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Same as increment map policy so far.
+ * Same as increment map policy, but does not change type of features.
  */
 class MissingPolicy
 {
@@ -40,8 +40,7 @@ class MissingPolicy
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
-      //if (numMappings == 0)
-        //types[dimension] = Datatype::categorical;
+
       typedef boost::bimap<std::string, size_t>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
       return numMappings++;
