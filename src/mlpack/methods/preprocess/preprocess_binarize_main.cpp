@@ -2,21 +2,40 @@
  * @file preprocess_binarize_main.cpp
  * @author Keon Kim
  *
- * split data CLI executable
+ * binarize CLI executable
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
-PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
-    "and splits ");
+PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
+    "variables into either 0 or 1 given threshold. User can apply binarization "
+    "on a dimension or the whole dataset. A dimension can be specified using "
+    "--dimension (-d) option. Threshold can also be specified with the "
+    "--threshold (-t) option; The default is 0.0."
+    "\n\n"
+    "The program does not modify the original file, but instead makes a "
+    "separate file to save the binarized data; The program requires you to "
+    "specify the file name with --output_file (-o)."
+    "\n\n"
+    "For example, if we want to make all variables greater than 5 in dataset "
+    "to 1 and ones that are less than or equal to 5.0 to 0, and save the "
+    "result to result.csv, we could run"
+    "\n\n"
+    "$ mlpack_preprocess_binarize -i dataset.csv -t 5 -o result.csv"
+    "\n\n"
+    "But if we want to apply this to only the first (0th) dimension of the "
+    "dataset, we could run"
+    "\n\n"
+    "$ mlpack_preprocess_binarize -i dataset.csv -t 5 -d 0 -o result.csv");
 
 // Define parameters for data.
 PARAM_STRING_REQ("input_file", "File containing data,", "i");
 // Define optional parameters.
 PARAM_STRING("output_file", "File to save the output,", "o", "");
-PARAM_INT("feature", "File containing labels", "f", 0);
-PARAM_DOUBLE("threshold", "Ratio of test set, if not set,"
-    "the threshold defaults to 0.0", "t", 0.0);
+PARAM_INT("dimension", "Dimension to apply the binarization. If not set, the "
+    "program will binarize every dimension by default", "d", 0);
+PARAM_DOUBLE("threshold", "Threshold to be applied for binarization. If not "
+    "set, the threshold defaults to 0.0", "t", 0.0);
 
 using namespace mlpack;
 using namespace arma;
@@ -28,21 +47,21 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
   const string inputFile = CLI::GetParam<string>("input_file");
   const string outputFile = CLI::GetParam<string>("output_file");
-  const size_t feature = (size_t) CLI::GetParam<int>("feature");
+  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   const double threshold = CLI::GetParam<double>("threshold");
 
   // Check on data parameters.
-  if (!CLI::HasParam("feature"))
-    Log::Warn << "You did not specify --feature, so the program will perform "
-              << "binarize on every features." << endl;
+  if (!CLI::HasParam("dimension"))
+    Log::Warn << "You did not specify --dimension, so the program will perform "
+        << "binarize on every dimensions." << endl;
 
   if (!CLI::HasParam("threshold"))
     Log::Warn << "You did not specify --threshold, so the threhold "
-              << "will be automatically set to '0.0'." << endl;
+        << "will be automatically set to '0.0'." << endl;
 
   if (!CLI::HasParam("output_file"))
     Log::Warn << "You did not specify --output_file, so no result will be"
-              << "saved." << endl;
+        << "saved." << endl;
 
   // Load the data.
   arma::mat input;
@@ -50,9 +69,9 @@ int main(int argc, char** argv)
   data::Load(inputFile, input, true);
 
   Timer::Start("binarize");
-  if (CLI::HasParam("feature"))
+  if (CLI::HasParam("dimension"))
   {
-    data::Binarize<double>(input, output, threshold, feature);
+    data::Binarize<double>(input, output, threshold, dimension);
   }
   else
   {
@@ -60,11 +79,6 @@ int main(int argc, char** argv)
     data::Binarize<double>(input, output, threshold);
   }
   Timer::Stop("binarize");
-
-  Log::Info << "input" << endl;
-  Log::Info << input << endl;
-  Log::Info << "output" << endl;
-  Log::Info << output << endl;
 
   if (CLI::HasParam("output_file"))
     data::Save(outputFile, output, false);
