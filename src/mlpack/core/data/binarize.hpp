@@ -9,7 +9,6 @@
 #define MLPACK_CORE_DATA_BINARIZE_HPP
 
 #include <mlpack/core.hpp>
-#include <omp.h>
 
 namespace mlpack {
 namespace data {
@@ -82,9 +81,10 @@ void Binarize(const arma::Mat<T>& input,
               const size_t dimension)
 {
   output = input;
+  const int totalCols = static_cast<int>(input.n_cols);
 
   #pragma omp parallel for
-  for (int i = 0; i < input.n_cols; ++i)
+  for (int i = 0; i < totalCols; ++i)
   {
     if (input(dimension, i) > threshold)
       output(dimension, i) = 1;
