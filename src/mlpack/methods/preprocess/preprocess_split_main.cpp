@@ -1,6 +1,6 @@
 /**
  * @file preprocess_split_main.cpp
- * @author Keon Woo Kim
+ * @author Keon Kim
  *
  * split data CLI executable
  */
