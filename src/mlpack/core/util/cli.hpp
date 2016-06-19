@@ -6,20 +6,12 @@
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_CLI_HPP
 #define MLPACK_CORE_UTIL_CLI_HPP
@@ -650,13 +642,6 @@ class CLI
    */
   static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
 
- /**
-   * Parses a stream for arguments.
-   *
-   * @param stream The stream to be parsed.
-   */
-  static void ParseStream(std::istream& stream);
-
   /**
    * Print out the current hierarchy.
    */
@@ -688,7 +673,7 @@ class CLI
   //! Values of the options given by user.
   po::variables_map vmap;
 
-  //! Pathnames of required options.
+  //! Identifier names of required options.
   std::list<std::string> requiredOptions;
 
   //! Map of global values.
@@ -742,15 +727,6 @@ class CLI
    * program is terminated.
    */
   static void RequiredOptions();
-
-  /**
-   * Cleans up input pathnames, rendering strings such as /foo/bar
-   * and foo/bar/ equivalent inputs.
-   *
-   * @param str Input string.
-   * @return Sanitized string.
-   */
-  static std::string SanitizeString(const std::string& str);
 
   /**
    * Parses the values given on the command line, overriding any default values.

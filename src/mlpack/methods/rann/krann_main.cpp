@@ -2,23 +2,15 @@
  * @file allkrann_main.cpp
  * @author Parikshit Ram
  *
- * Implementation of the AllkRANN executable.  Allows some number of standard
+ * Implementation of the kRANN executable.  Allows some number of standard
  * options.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -33,7 +25,7 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Rank-Approximate-Nearest-Neighbors",
+PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
@@ -88,7 +80,7 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search options.
 PARAM_DOUBLE("tau", "The allowed rank-error in terms of the percentile of "
-             "the data.", "t", 5);
+             "the data.", "T", 5);
 PARAM_DOUBLE("alpha", "The desired success probability.", "a", 0.95);
 PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
            "N");

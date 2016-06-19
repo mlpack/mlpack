@@ -1,13 +1,20 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
-# Ensure that we have a C++11 compiler.
-include(CMake/CXX11.cmake)
-check_for_cxx11_compiler(HAS_CXX11)
-if(NOT HAS_CXX11)
-  message(FATAL_ERROR "No C++11 compiler available!")
+# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
+# done with target_compile_features() when the mlpack library target is added in
+# src/mlpack/CMakeLists.txt.
+if (${CMAKE_MAJOR_VERSION} LESS 3 OR
+    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
+  # Older versions of CMake do not support target_compile_features(), so we have
+  # to use something kind of hacky.
+  include(CMake/CXX11.cmake)
+  check_for_cxx11_compiler(HAS_CXX11)
+  if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+  endif()
+  enable_cxx11()
 endif()
-enable_cxx11()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -358,7 +365,7 @@ if (UNIX)
           mlpack_adaboost
           mlpack_kfn
           mlpack_knn
-          mlpack_allkrann
+          mlpack_krann
           mlpack_cf
           mlpack_decision_stump
           mlpack_det

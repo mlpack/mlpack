@@ -6,20 +6,12 @@
  * k-means clustering.  This may still be the best choice for small datasets or
  * datasets with very high dimensionality.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
@@ -50,10 +42,13 @@ class NaiveKMeans
 
   /**
    * Run a single iteration of the Lloyd algorithm, updating the given centroids
-   * into the newCentroids matrix.
+   * into the newCentroids matrix.  If any cluster is empty (that is, if any
+   * cluster has no points assigned to it), then the centroid associated with
+   * that cluster may be filled with invalid data (it will be corrected later).
    *
    * @param centroids Current cluster centroids.
    * @param newCentroids New cluster centroids.
+   * @param counts Number of points in each cluster at the end of the iteration.
    */
   double Iterate(const arma::mat& centroids,
                  arma::mat& newCentroids,

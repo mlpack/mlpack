@@ -4,20 +4,12 @@
  *
  * Main executable to run CF.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include <mlpack/core.hpp>
@@ -100,7 +92,7 @@ PARAM_FLAG("all_user_recommendations", "Generate recommendations for all "
     "users.", "A");
 PARAM_STRING("output_file","File to save output recommendations to.", "o", "");
 PARAM_INT("recommendations", "Number of recommendations to generate for each "
-    "query user.", "n", 5);
+    "query user.", "c", 5);
 
 PARAM_INT("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 

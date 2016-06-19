@@ -5,20 +5,12 @@
  * An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means
  * clustering.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_IMPL_HPP
@@ -76,11 +68,7 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
   double residual = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
-    if (counts[c] == 0)
-    {
-      newCentroids.col(c).fill(DBL_MAX); // Should have happened anyway I think.
-    }
-    else
+    if (counts[c] > 0)
     {
       newCentroids.col(c) /= counts(c);
       residual += std::pow(metric.Evaluate(centroids.col(c),

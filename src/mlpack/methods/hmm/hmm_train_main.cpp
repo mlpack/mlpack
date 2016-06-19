@@ -4,20 +4,12 @@
  *
  * Executable which trains an HMM and saves the trained HMM to file.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -60,8 +52,7 @@ PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
 PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
 PARAM_STRING("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_model_file", "File to save trained HMM to.", "o",
-    "output_hmm.xml");
+PARAM_STRING("output_model_file", "File to save trained HMM to.", "o", "");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
 PARAM_FLAG("random_initialization", "Initialize emissions and transition "
@@ -103,7 +94,7 @@ struct Train
             << endl;
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
-    if (labelsFile != "")
+    if (CLI::HasParam("labels_file"))
     {
       // Do we have multiple label files to load?
       char lineBuf[1024];
@@ -286,7 +277,7 @@ int main(int argc, char** argv)
   }
 
   // If we have a model file, we can autodetect the type.
-  if (modelFile != "")
+  if (CLI::HasParam("model_file"))
   {
     LoadHMMAndPerformAction<Train>(modelFile, &trainSeq);
   }

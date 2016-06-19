@@ -4,20 +4,12 @@
  *
  * Implementation of class (XTreeSplit) to split a RectangleTree.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_IMPL_HPP
@@ -38,10 +30,10 @@ XTreeSplit<TreeType>::XTreeSplit() :
 }
 
 template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType *node) :
-    normalNodeMaxNumChildren(node->Parent() ? 
-                             node->Parent()->Split().NormalNodeMaxNumChildren() :
-                             node->MaxNumChildren()),
+XTreeSplit<TreeType>::XTreeSplit(const TreeType*node) :
+    normalNodeMaxNumChildren(node->Parent() ?
+        node->Parent()->Split().NormalNodeMaxNumChildren() :
+        node->MaxNumChildren()),
     splitHistory(node->Bound().Dim())
 {
 
@@ -55,7 +47,6 @@ XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
 
 }
 
-
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -63,7 +54,8 @@ XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void XTreeSplit<TreeType>::SplitLeafNode(TreeType* tree,
+                                         std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -260,8 +252,8 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(), NormalNodeMaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), NormalNodeMaxNumChildren());
 
   // The leaf nodes should never have any overlap introduced by the above method
   // since a split axis is chosen and then points are assigned based on their
@@ -334,7 +326,8 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
+                                            std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -699,8 +692,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
 
   std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),tree->MaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),tree->MaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(), tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), tree->MaxNumChildren());
 
   // Now as per the X-tree paper, we ensure that this split was good enough.
   bool useMinOverlapSplit = false;
@@ -785,7 +778,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + NormalNodeMaxNumChildren();
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() +
+            NormalNodeMaxNumChildren();
         tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)

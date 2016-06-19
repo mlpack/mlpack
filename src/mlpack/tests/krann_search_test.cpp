@@ -4,20 +4,12 @@
  * Unit tests for the 'RASearch' class and consequently the
  * 'RASearchRules' class
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <time.h>
 #include <mlpack/core.hpp>
@@ -37,9 +29,9 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(AllkRANNTest);
+BOOST_AUTO_TEST_SUITE(KRANNTest);
 
-// Test the correctness and guarantees of AllkRANN when in naive mode.
+// Test the correctness and guarantees of KRANN when in naive mode.
 BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
 {
   arma::Mat<size_t> neighbors;
@@ -577,8 +569,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
   arma::mat copy(dataset);
 
-  AllkRANN moveknn(std::move(copy));
-  AllkRANN knn(dataset);
+  KRANN moveknn(std::move(copy));
+  KRANN knn(dataset);
 
   BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
   BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
@@ -605,7 +597,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
 
   // Do it in tree mode, and in naive mode.
-  AllkRANN knn;
+  KRANN knn;
   knn.Train(std::move(dataset));
 
   arma::mat distances;

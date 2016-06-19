@@ -7,20 +7,12 @@
  *
  * This is known to have a bug: see #368.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
@@ -51,23 +43,23 @@ class XTreeSplit
   XTreeSplit();
 
   //! Construct this with the specified node.
-  XTreeSplit(const TreeType *node);
+  XTreeSplit(const TreeType* node);
 
   //! Create a copy of the other.split.
-  XTreeSplit(const TreeType &other);
+  XTreeSplit(const TreeType& other);
 
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * The X tree requires that the tree records it's "split history".  To make
@@ -113,7 +105,7 @@ class XTreeSplit
    * Comparator for sorting with sortStruct.
    */
   template<typename ElemType>
-  static bool structComp(const sortStruct<ElemType>& s1, 
+  static bool structComp(const sortStruct<ElemType>& s1,
                          const sortStruct<ElemType>& s2)
   {
     return s1.d < s2.d;
@@ -133,7 +125,6 @@ class XTreeSplit
   const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
   //! Modify the split history of the node assosiated with this object.
   SplitHistoryStruct& SplitHistory() { return splitHistory; }
-
 
   /**
    * Serialize the split.

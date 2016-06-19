@@ -4,20 +4,12 @@
  *
  * Main executable to run PCA.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -37,10 +29,11 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "i");
 PARAM_STRING_REQ("output_file", "File to save modified dataset to.", "o");
+
 PARAM_INT("new_dimensionality", "Desired dimensionality of output dataset.  If "
     "0, no dimensionality reduction is performed.", "d", 0);
 PARAM_DOUBLE("var_to_retain", "Amount of variance to retain; should be between "
-    "0 and 1.  If 1, all variance is retained.  Overrides -d.", "V", 0);
+    "0 and 1.  If 1, all variance is retained.  Overrides -d.", "r", 0);
 
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
@@ -79,8 +72,8 @@ int main(int argc, char** argv)
   if (CLI::GetParam<double>("var_to_retain") != 0)
   {
     if (CLI::GetParam<int>("new_dimensionality") != 0)
-      Log::Warn << "New dimensionality (-d) ignored because -V was specified."
-          << endl;
+      Log::Warn << "New dimensionality (-d) ignored because --var_to_retain was"
+          << " specified." << endl;
 
     varRetained = p.Apply(dataset, CLI::GetParam<double>("var_to_retain"));
   }

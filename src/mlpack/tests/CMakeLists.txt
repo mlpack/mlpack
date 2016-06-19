@@ -2,9 +2,6 @@
 add_executable(mlpack_test
   mlpack_test.cpp
   adaboost_test.cpp
-  adam_test.cpp
-  ada_delta_test.cpp
-  allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
   cf_test.cpp
@@ -18,12 +15,14 @@ add_executable(mlpack_test
   gmm_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  ind2sub_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
+  krann_search_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
@@ -42,7 +41,6 @@ add_executable(mlpack_test
   minibatch_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  network_util_test.cpp
   nmf_test.cpp
   pca_test.cpp
   perceptron_test.cpp
@@ -70,7 +68,6 @@ add_executable(mlpack_test
   svd_incremental_test.cpp
   nystroem_method_test.cpp
   armadillo_svd_test.cpp
-  recurrent_network_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

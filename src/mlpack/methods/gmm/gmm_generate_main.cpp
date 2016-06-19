@@ -4,20 +4,12 @@
  *
  * Load a GMM from file, then generate samples from it.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include "gmm.hpp"
@@ -37,14 +29,16 @@ PROGRAM_INFO("GMM Sample Generator",
 PARAM_STRING_REQ("input_model_file", "File containing input GMM model.", "m");
 PARAM_INT_REQ("samples", "Number of samples to generate.", "n");
 
-PARAM_STRING("output_file", "File to save output samples in.", "o",
-    "output.csv");
-
+PARAM_STRING("output_file", "File to save output samples in.", "o", "");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified;"
+        << "no results will be saved!" << endl;
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
@@ -63,5 +57,6 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm.Random();
 
-  data::Save(CLI::GetParam<string>("output_file"), samples);
+  if (CLI::HasParam("output_file"))
+    data::Save(CLI::GetParam<string>("output_file"), samples);
 }

@@ -6,20 +6,12 @@
  * Compute the most probably hidden state sequence of a given observation
  * sequence for a given HMM.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -37,9 +29,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
 PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
 PARAM_INT_REQ("length", "Length of sequence to generate.", "l");
 
+PARAM_STRING("output_file", "File to save observation sequence to.", "o" ,"");
 PARAM_INT("start_state", "Starting state of sequence.", "t", 0);
-PARAM_STRING("output_file", "File to save observation sequence to.", "o",
-    "output.csv");
 PARAM_STRING("state_file", "File to save hidden state sequence to (may be left "
     "unspecified.", "S", "");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -66,6 +57,8 @@ struct Generate
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
     const size_t length = (size_t) CLI::GetParam<int>("length");
+    const string outputFile = CLI::GetParam<string>("output_file");
+    const string sequenceFile = CLI::GetParam<string>("state_file");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
@@ -76,12 +69,11 @@ struct Generate
     hmm.Generate(length, observations, sequence, startState);
 
     // Now save the output.
-    const string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, observations, true);
+    if (CLI::HasParam("output_file"))
+      data::Save(outputFile, observations, true);
 
     // Do we want to save the hidden sequence?
-    const string sequenceFile = CLI::GetParam<string>("state_file");
-    if (sequenceFile != "")
+    if (CLI::HasParam("state_file"))
       data::Save(sequenceFile, sequence, true);
   }
 };
@@ -90,6 +82,10 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

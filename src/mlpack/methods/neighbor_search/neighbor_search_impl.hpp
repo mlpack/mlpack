@@ -5,20 +5,12 @@
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
  * two specified data sets.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
@@ -653,9 +645,7 @@ Search(const size_t k,
         nodes.pop();
 
         // Reset bounds of this node.
-        node->Stat().FirstBound() = SortPolicy::WorstDistance();
-        node->Stat().SecondBound() = SortPolicy::WorstDistance();
-        node->Stat().LastDistance() = 0.0;
+        node->Stat().Reset();
 
         // Then add the children.
         for (size_t i = 0; i < node->NumChildren(); ++i)

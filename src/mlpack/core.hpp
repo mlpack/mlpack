@@ -4,20 +4,12 @@
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_HPP
 #define MLPACK_CORE_HPP
@@ -66,7 +58,6 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkrann
  * - mlpack_cf
  * - mlpack_decision_stump
  * - mlpack_det
@@ -84,6 +75,7 @@
  * - mlpack_kfn
  * - mlpack_kmeans
  * - mlpack_knn
+ * - mlpack_krann
  * - mlpack_lars
  * - mlpack_linear_regression
  * - mlpack_local_coordinate_coding
@@ -204,6 +196,10 @@
  *   - Palash Ahuja <abhor902@gmail.com>
  *   - Yannis Mentekidis <mentekid@gmail.com>
  *   - Ranjan Mondal <ranjan.rev@gmail.com>
+ *   - Mikhail Lozhnikov <lozhnikovma@gmail.com>
+ *   - Marcos Pividori <marcos.pividori@gmail.com>
+ *   - Keon Kim <kwk236@gmail.com>
+ *   - Nilay Jain <nilayjain13@gmail.com>
  */
 
 // First, include all of the prerequisites.

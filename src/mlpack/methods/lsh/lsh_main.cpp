@@ -5,20 +5,12 @@
  * This file computes the approximate nearest-neighbors using 2-stable
  * Locality-sensitive Hashing.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <time.h>
 
@@ -80,7 +72,8 @@ PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing in the "
     "hash width for its use.", "H", 0.0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
-PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
+PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
+    "hash; 0 indicates no limit (so the table can be arbitrarily large!).", "B",
     500);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 

@@ -4,26 +4,19 @@
  *
  * Implementation of templated functions of the CLI class.
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_CLI_IMPL_HPP
 #define MLPACK_CORE_UTIL_CLI_IMPL_HPP
 
 // In case it has not already been included.
 #include "cli.hpp"
+#include "prefixedoutstream.hpp"
 
 // Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
@@ -43,39 +36,65 @@ namespace mlpack {
  *   unless the parameter is specified.
  */
 template<typename T>
-void CLI::Add(const std::string& path,
+void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
               bool required)
 {
+  // Temporarily define color code escape sequences.
+  #ifndef _WIN32
+    #define BASH_RED "\033[0;31m"
+    #define BASH_CLEAR "\033[0m"
+  #else
+    #define BASH_RED ""
+    #define BASH_CLEAR ""
+  #endif
+
+  // Temporary outstream object for detecting duplicate identifiers.
+  util::PrefixedOutStream outstr(std::cerr,
+        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+  #undef BASH_RED
+  #undef BASH_CLEAR
+
+  // Define identifier and alias maps.
+  gmap_t& gmap = GetSingleton().globalValues;
+  amap_t& amap = GetSingleton().aliasValues;
+
+  // If found in current map, print fatal error and terminate the program.
+  if (gmap.count(identifier))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same identifiers." << std::endl;
+  if (amap.count(alias))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same alias." << std::endl;
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId =
+          alias.length() ? identifier + "," + alias : identifier;
 
   // Add the alias, if necessary
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost program_options.
   desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
-  gmap_t& gmap = GetSingleton().globalValues;
-
   ParamData data;
   T tmp = T();
 
   data.desc = description;
-  data.name = path;
+  data.name = identifier;
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
 }
 
 // We specialize this in cli.cpp.
@@ -88,7 +107,7 @@ bool& CLI::GetParam<bool>(const std::string& identifier);
  *   more or less valid value is returned.
  *
  * @tparam T The type of the parameter.
- * @param identifier The full pathname of the parameter.
+ * @param identifier The full name of the parameter.
  *
  * @return The value of the parameter.  Use CLI::CheckValue to determine if it's
  *     valid.

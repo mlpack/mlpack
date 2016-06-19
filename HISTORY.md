@@ -1,11 +1,13 @@
 ### mlpack 2.0.2
-###### 2016-??-??
+###### 2016-06-16
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).
 
   * A new constructor has been added to LSHSearch that creates objects using
     projection tables provided in an arma::cube (#663).
+
+  * LSHSearch projection tables refactored for speed (#675).
 
   * Handle zero-variance dimensions in DET (#515).
 
@@ -25,12 +27,15 @@
     and MLPACK_VERSION_PATCH.  The old names will remain in place until
     mlpack 3.0.0.
 
-  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
-    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
-    3.0.0.
+  * Renamed mlpack_allknn, mlpack_allkfn, and mlpack_allkrann to mlpack_knn,
+    mlpack_kfn, and mlpack_krann.  The mlpack_allknn, mlpack_allkfn, and
+    mlpack_allkrann programs will remain as copies until mlpack 3.0.0.
 
   * Add --random_initialization option to mlpack_hmm_train, for use when no
     labels are provided.
+
+  * Add --kill_empty_clusters option to mlpack_kmeans and KillEmptyClusters
+    policy for the KMeans class (#595, #596).
 
 ### mlpack 2.0.1
 ###### 2016-02-04

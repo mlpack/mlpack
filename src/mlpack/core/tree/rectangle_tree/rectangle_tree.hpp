@@ -5,20 +5,12 @@
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
  * and hilbert_r_tree).
  *
- * This file is part of mlpack 2.0.0.
+ * This file is part of mlpack 2.0.2.
  *
- * mlpack is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * mlpack is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * mlpack.  If not, see <http://www.gnu.org/licenses/>.
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
@@ -169,7 +161,7 @@ class RectangleTree
    * @param numMaxChildren The max number of child nodes (used in x-trees).
    */
   explicit RectangleTree(RectangleTree* parentNode,
-                const size_t numMaxChildren = 0);
+                         const size_t numMaxChildren = 0);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
