@@ -32,7 +32,7 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0),
   maxThreads(omp_get_max_threads()),
-  numThreadsUsed(0)
+  numThreadsUsed(1)
 {
   // Pass work to training function.
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
@@ -56,7 +56,7 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0),
   maxThreads(omp_get_max_threads()),
-  numThreadsUsed(0)
+  numThreadsUsed(1)
 {
   // Pass work to training function
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
@@ -75,7 +75,7 @@ LSHSearch<SortPolicy>::LSHSearch() :
     bucketSize(500),
     distanceEvaluations(0),
     maxThreads(omp_get_max_threads()),
-    numThreadsUsed(0)
+    numThreadsUsed(1)
 {
   // Nothing to do.
 }
@@ -549,7 +549,7 @@ Search(const size_t k,
     // Master thread updates the number of threads used
     if (i == 0 && omp_get_thread_num() == 0)
     {
-      numThreadsUsed+=omp_get_num_threads();
+      numThreadsUsed+=omp_get_num_threads(); //
       Log::Info 
         << "Using "<< numThreadsUsed << " threads to process queries." << endl;
     }
@@ -568,7 +568,12 @@ Search(const size_t k,
     // candidates.
     for (size_t j = 0; j < refIndices.n_elem; j++)
       BaseCase(i, (size_t) refIndices[j], resultingNeighbors, distances);
+
   }
+
+  // parallel region over, reset number of threads to 1
+  numThreadsUsed = omp_get_num_threads();
+
 
   Timer::Stop("computing_neighbors");
 
