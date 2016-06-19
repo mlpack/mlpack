@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         << "binarize on every dimensions." << endl;
 
   if (!CLI::HasParam("threshold"))
-    Log::Warn << "You did not specify --threshold, so the threhold "
+    Log::Warn << "You did not specify --threshold, so the threshold "
         << "will be automatically set to '0.0'." << endl;
 
   if (!CLI::HasParam("output_file"))
