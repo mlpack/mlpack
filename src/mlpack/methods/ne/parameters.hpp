@@ -19,8 +19,8 @@ namespace ne {
  */
 class Parameters {
  public:
-  // Population size.
-  size_t aPopulationSize;
+  // Species size.
+  size_t aSpeciesSize;
 
   // Number of generations to evolve.
   size_t aMaxGeneration;

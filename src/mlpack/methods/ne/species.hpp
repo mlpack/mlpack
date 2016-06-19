@@ -1,11 +1,11 @@
 /**
- * @file population.hpp
+ * @file species.hpp
  * @author Bang Liu
  *
- * Definition of Population class.
+ * Definition of Species class.
  */
-#ifndef MLPACK_METHODS_NE_POPULATION_HPP
-#define MLPACK_METHODS_NE_POPULATION_HPP
+#ifndef MLPACK_METHODS_NE_SPECIES_HPP
+#define MLPACK_METHODS_NE_SPECIES_HPP
 
 #include <cstddef>
 
@@ -19,16 +19,16 @@ namespace mlpack {
 namespace ne {
 
 /**
- * This class defines a population of genomes.
+ * This class defines a species of genomes.
  */
-class Population {
+class Species {
  public:
   // Genomes.
   std::vector<Genome> aGenomes;
 
   // Default constructor.
-  Population() {
-    aPopulationSize = 0;
+  Species() {
+    aSpeciesSize = 0;
     aBestFitness = DBL_MAX;
     aBestGenome = Genome();
     aNextGenomeId = 0;
@@ -36,25 +36,25 @@ class Population {
 
   // Parametric constructor.
   // TODO: whether randomize, random range, as parameter or not??
-  Population(Genome& seedGenome, size_t populationSize) {
-    aPopulationSize = populationSize;
+  Species(Genome& seedGenome, size_t speciesSize) {
+    aSpeciesSize = speciesSize;
     aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
     // Create genomes from seed Genome and randomize weight.
-    for (size_t i=0; i<populationSize; ++i) {
+    for (size_t i=0; i<speciesSize; ++i) {
       Genome genome = seedGenome;
-      genome.Id() = i;
+      genome.Id(i);
       aGenomes.push_back(genome);
       aGenomes[i].RandomizeWeights(-1, 1);
     }
 
-    aNextGenomeId = populationSize;
+    aNextGenomeId = speciesSize;
   }
 
-  size_t PopulationSize() { return aPopulationSize; }
+  size_t SpeciesSize() { return aSpeciesSize; }
 
   // Destructor.
-  ~Population() {}
+  ~Species() {}
 
   // Set/get best fitness.
   double& BestFitness() { return aBestFitness; }
@@ -76,14 +76,14 @@ class Population {
   static bool CompareGenome(Genome lg, Genome rg) {
     return (lg.Fitness() < rg.Fitness());
   }
-  bool SortPopulation() {
+  bool SortSpecies() {
     std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);
   }
 
  private:
 
   // Number of Genomes.
-  size_t aPopulationSize;
+  size_t aSpeciesSize;
 
   // Best fitness.
   double aBestFitness;
@@ -99,5 +99,5 @@ class Population {
 }  // namespace ne
 }  // namespace mlpack
 
-# endif  // MLPACK_METHODS_NE_POPULATION_HPP
+# endif  // MLPACK_METHODS_NE_SPECIES_HPP
 

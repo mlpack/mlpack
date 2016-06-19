@@ -15,7 +15,7 @@
 #include "link_gene.hpp"
 #include "neuron_gene.hpp"
 #include "genome.hpp"
-#include "population.hpp"
+#include "species.hpp"
 #include "tasks.hpp"
 #include "parameters.hpp"
 
@@ -33,7 +33,7 @@ class CNE {
   CNE(TaskType task, Genome& seedGenome, Parameters& params) {
     aTask = task;
     aSeedGenome = seedGenome;
-    aPopulationSize = params.aPopulationSize;
+    aSpeciesSize = params.aSpeciesSize;
     aMaxGeneration = params.aMaxGeneration;
     aMutateRate = params.aMutateRate;
     aMutateSize = params.aMutateSize;
@@ -44,59 +44,59 @@ class CNE {
   // Destructor.
   ~CNE() {}
 
-  // Initializing the population of genomes.
-  // It can use population's parametric constructor.
+  // Initializing the species of genomes.
+  // It can use species's parametric constructor.
   // Besides, adapt its own style of initialization.
-  void InitPopulation() {
-    aPopulation = Population(aSeedGenome, aPopulationSize);
+  void InitSpecies() {
+    aSpecies = Species(aSeedGenome, aSpeciesSize);
   }
 
-  // Reproduce the next population. Heart function for CNE !!!
+  // Reproduce the next species. Heart function for CNE !!!
   // Select parents from G(i) based on their fitness.
   // Apply search operators to parents and produce offspring which
   // form G(i + 1).
   void Reproduce() {
-    // Sort population by fitness
-    aPopulation.SortPopulation();
+    // Sort species by fitness
+    aSpecies.SortSpecies();
 
     // Select parents from elite genomes and crossover.
-    size_t numElite = floor(aElitePercentage * aPopulationSize);
-    size_t numDrop = floor((aPopulationSize - numElite) / 2) * 2;  // Make sure even number.
-    numElite = aPopulationSize - numDrop;
+    size_t numElite = floor(aElitePercentage * aSpeciesSize);
+    size_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
+    numElite = aSpeciesSize - numDrop;
 
-    for (size_t i=numElite; i<aPopulationSize; ++i) {
+    for (size_t i=numElite; i<aSpeciesSize; ++i) {
       // Randomly select two parents from elite genomes.
       size_t idx1 = RandInt(0, numElite);
       size_t idx2 = RandInt(0, numElite);
 
       // Crossover to get two children genomes.
-      Genome::CrossoverWeights(aPopulation.aGenomes[idx1], aPopulation.aGenomes[idx2],
-                       aPopulation.aGenomes[i], aPopulation.aGenomes[i+1]);
+      Genome::CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
+                       aSpecies.aGenomes[i], aSpecies.aGenomes[i+1]);
     }
 
     // Keep the best genome and mutate the rests.
-    for (size_t i=1; i<aPopulationSize; ++i) {
-      aPopulation.aGenomes[i].MutateWeightsBiased(aMutateRate, aMutateSize);
+    for (size_t i=1; i<aSpeciesSize; ++i) {
+      aSpecies.aGenomes[i].MutateWeightsBiased(aMutateRate, aMutateSize);
     }
   }
 
-  // Evolution of population.
+  // Evolution of species.
   void Evolve() {
-    // Generate initial population at random.
+    // Generate initial species at random.
     size_t generation = 0;
-    InitPopulation();
+    InitSpecies();
     
     // Repeat
     while (generation < aMaxGeneration) {
-    	// Evaluate all genomes in the population.
-      for (size_t i=0; i<aPopulation.PopulationSize(); ++i) {
-        double fitness = aTask.EvalFitness(aPopulation.aGenomes[i]);
-        aPopulation.aGenomes[i].Fitness() = fitness;
+    	// Evaluate all genomes in the species.
+      for (size_t i=0; i<aSpecies.SpeciesSize(); ++i) {
+        double fitness = aTask.EvalFitness(aSpecies.aGenomes[i]);
+        aSpecies.aGenomes[i].Fitness(fitness);
       }
-      aPopulation.SetBestFitness();
+      aSpecies.SetBestFitness();
 
     	// Output some information.
-      printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
+      printf("Generation: %zu\tBest fitness: %f\n", generation, aSpecies.BestFitness());
 
     	// Reproduce next generation.
       Reproduce();
@@ -108,14 +108,14 @@ class CNE {
   // Task.
   TaskType aTask;
 
-  // Seed genome. It is used for init population.
+  // Seed genome. It is used for init species.
   Genome aSeedGenome;
 
-  // Population to evolve.
-  Population aPopulation;
+  // Species to evolve.
+  Species aSpecies;
 
-  // Population size.
-  size_t aPopulationSize;
+  // Species size.
+  size_t aSpeciesSize;
 
   // Max number of generation to evolve.
   size_t aMaxGeneration;
@@ -138,6 +138,3 @@ class CNE {
 }  // namespace mlpack
 
 #endif  // MLPACK_METHODS_NE_CNE_HPP
-
-
-

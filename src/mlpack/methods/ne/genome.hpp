@@ -63,8 +63,11 @@ class Genome {
   // Destructor.
   ~Genome() {}
 
-  // Get/set genome id.
-  size_t& Id() { return aId; }
+  // Get genome id.
+  size_t Id() const { return aId; }
+
+  // Set genome id.
+  void Id(size_t id) { aId = id; }
 
   // Get input length.
   size_t NumInput() const { return aNumInput; }
@@ -84,8 +87,11 @@ class Genome {
   // Set depth.
   void Depth(size_t depth) { aDepth = depth; }
 
-  // Set/get fitness.
-  double& Fitness() { return aFitness; }
+  // Set fitness.
+  void Fitness(double fitness) { aFitness = fitness; }
+
+  // Get fitness.
+  double Fitness() const { return aFitness; }
 
   // Get neuron number.
   size_t NumNeuron() const {

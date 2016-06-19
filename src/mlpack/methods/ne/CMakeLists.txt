@@ -4,7 +4,7 @@ set(SOURCES
   link_gene.hpp
   neuron_gene.hpp
   genome.hpp
-  population.hpp
+  species.hpp
   cne.hpp
   tasks.hpp
   parameters.hpp

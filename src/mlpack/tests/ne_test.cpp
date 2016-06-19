@@ -13,7 +13,7 @@
 #include <mlpack/methods/ne/link_gene.hpp>
 #include <mlpack/methods/ne/neuron_gene.hpp>
 #include <mlpack/methods/ne/genome.hpp>
-#include <mlpack/methods/ne/population.hpp>
+#include <mlpack/methods/ne/species.hpp>
 #include <mlpack/methods/ne/cne.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -92,9 +92,9 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
 }
 
 /**
- * Test Population class.
+ * Test Species class.
  */
-BOOST_AUTO_TEST_CASE(NEPopulationTest)
+BOOST_AUTO_TEST_CASE(NESpeciesTest)
 {
 
 }
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
 
   // Set CNE algorithm parameters.
   Parameters params;
-  params.aPopulationSize = 500;
+  params.aSpeciesSize = 500;
   params.aMutateRate = 0.1;
   params.aMutateSize = 0.02;
   params.aElitePercentage = 0.2;
