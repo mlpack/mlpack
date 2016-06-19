@@ -15,6 +15,7 @@ const double fillFactorFraction = 0.5;
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+template<typename SplitPolicyType>
 class RPlusTreeSplit
 {
  public:
@@ -61,6 +62,9 @@ class RPlusTreeSplit
   template<typename TreeType>
   static void SplitNonLeafNodeAlongPartition(TreeType* tree,
       TreeType* treeOne, TreeType* treeTwo, size_t cutAxis, double cut);
+
+  template<typename TreeType>
+  static void AddFakeNodes(const TreeType* tree, TreeType* emptyTree);
 
   template<typename TreeType>
   static bool PartitionNode(const TreeType* node, size_t fillFactor,

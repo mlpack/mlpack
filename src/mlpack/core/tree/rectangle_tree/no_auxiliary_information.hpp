@@ -65,6 +65,13 @@ class NoAuxiliaryInformation
   }
 
   /**
+   * Nothing to split.
+   */
+  void SplitAuxiliaryInfo(TreeType* , TreeType* , size_t ,
+      typename TreeType::ElemType)
+  { }
+
+  /**
    * Nothing to copy.
    */
   void Copy(TreeType* , TreeType* )

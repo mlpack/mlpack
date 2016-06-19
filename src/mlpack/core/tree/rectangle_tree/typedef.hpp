@@ -129,10 +129,17 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using RPlusTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
-                            RPlusTreeSplit,
+                            RPlusTreeSplit<RPlusTreeSplitPolicy>,
                             RPlusTreeDescentHeuristic,
                             NoAuxiliaryInformation>;
 
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPlusPlusTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy>,
+                            RPlusPlusTreeDescentHeuristic,
+                            RPlusPlusTreeAuxiliaryInformation>;
 } // namespace tree
 } // namespace mlpack
 

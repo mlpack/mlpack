@@ -67,6 +67,12 @@ set(SOURCES
   rectangle_tree/r_plus_tree_descent_heuristic_impl.hpp
   rectangle_tree/r_plus_tree_split.hpp
   rectangle_tree/r_plus_tree_split_impl.hpp
+  rectangle_tree/r_plus_tree_split_policy.hpp
+  rectangle_tree/r_plus_plus_tree_descent_heuristic.hpp
+  rectangle_tree/r_plus_plus_tree_descent_heuristic_impl.hpp
+  rectangle_tree/r_plus_plus_tree_split_policy.hpp
+  rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
+  rectangle_tree/r_plus_plus_tree_auxiliary_information_impl.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp

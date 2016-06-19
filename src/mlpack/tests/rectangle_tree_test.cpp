@@ -789,10 +789,10 @@ void CheckOverlap(TreeType* tree)
       if (!success)
         break;
     }
-    if (success)
+    if (!success)
       break;
   }
-  assert(success == true);
+  BOOST_REQUIRE_EQUAL(success, true);
 
   for (size_t i = 0; i < tree->NumChildren(); i++)
     CheckOverlap(tree->Children()[i]);
@@ -852,6 +852,119 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
   }
 }
+
+template<typename TreeType>
+void CheckRPlusPlusTreeBound(const TreeType* tree)
+{
+  typedef bound::HRectBound<metric::EuclideanDistance,
+      typename TreeType::ElemType> Bound;
+
+  bool success = true;
+
+  for (size_t k = 0; k < tree->Bound().Dim(); k++)
+  {
+    BOOST_REQUIRE_LE(tree->Bound()[k].Hi(),
+        tree->AuxiliaryInfo().OuterBound()[k].Hi());
+    BOOST_REQUIRE_LE(tree->AuxiliaryInfo().OuterBound()[k].Lo(),
+        tree->Bound()[k].Lo());
+  }
+
+  if (tree->IsLeaf())
+  {
+    for (size_t i = 0; i < tree->Count(); i++)
+      BOOST_REQUIRE_EQUAL(true,
+          tree->Bound().Contains(tree->Dataset().col(tree->Points()[i])));
+
+    return;
+  }
+
+  for (size_t i = 0; i < tree->NumChildren(); i++)
+  {
+    const Bound& bound1 = tree->Children()[i]->AuxiliaryInfo().OuterBound();
+    success = true;
+
+    for (size_t j = 0; j < tree->NumChildren(); j++)
+    {
+      if (j == i)
+        continue;
+      const Bound& bound2 = tree->Children()[j]->AuxiliaryInfo().OuterBound();
+
+      success = false;
+      for (size_t k = 0; k < tree->Bound().Dim(); k++)
+      {
+        if (bound1[k].Lo() >= bound2[k].Hi() ||
+            bound2[k].Lo() >= bound1[k].Hi())
+        {
+          success = true;
+          break;
+        }
+      }
+      if (!success)
+        break;
+    }
+    if (!success)
+      break;
+  }
+  BOOST_REQUIRE_EQUAL(success, true);
+
+  for (size_t i = 0; i < tree->NumChildren(); i++)
+    CheckRPlusPlusTreeBound(tree->Children()[i]);
+}
+
+BOOST_AUTO_TEST_CASE(RPlusPlusTreeBoundTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef RPlusPlusTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckRPlusPlusTreeBound(&rPlusPlusTree);
+}
+
+BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
+{
+  arma::mat dataset;
+
+  const int numP = 1000;
+
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  typedef RPlusPlusTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> TreeType;
+  TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
+
+  // Nearest neighbor search with the X tree.
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+      arma::mat, RPlusPlusTree > knn1(&rPlusPlusTree, true);
+
+  BOOST_REQUIRE_EQUAL(rPlusPlusTree.NumDescendants(), numP);
+
+  CheckContainment(rPlusPlusTree);
+  CheckExactContainment(rPlusPlusTree);
+  CheckHierarchy(rPlusPlusTree);
+  CheckRPlusPlusTreeBound(&rPlusPlusTree);
+
+  knn1.Search(5, neighbors1, distances1);
+
+  // Nearest neighbor search the naive way.
+  KNN knn2(dataset, true, true);
+
+  knn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
