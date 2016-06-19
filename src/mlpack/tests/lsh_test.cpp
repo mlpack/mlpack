@@ -479,6 +479,45 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
   }
 }
 
+/**
+ * Test: This test verifies that parallel query processing returns correct
+ * results.
+ */
+BOOST_AUTO_TEST_CASE(ParallelQueryTest)
+{
+  // kNN and LSH parameters (use LSH default parameters).
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+
+  // Read iris training and testing data as reference and query sets.
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Where to store neighbors and distances
+  arma::Mat<size_t> sequentialNeighbors;
+  arma::Mat<size_t> parallelNeighbors;
+  arma::mat distances;
+
+  // Construct an LSH object. By default, it uses the maximum number of threads
+  LSHSearch<> lshTest(rdata, numProj, numTables); //default parameters
+  lshTest.Search(qdata, k, parallelNeighbors, distances);
+
+  // Now perform same search but with 1 thread
+  lshTest.MaxThreads(1);
+  lshTest.Search(qdata, k, sequentialNeighbors, distances);
+
+  // Require both have same results
+  double recall = ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  BOOST_REQUIRE_EQUAL(recall, 1);
+
+}
+
+
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
   // This is a not very good test that simply checks that the re-trained LSH

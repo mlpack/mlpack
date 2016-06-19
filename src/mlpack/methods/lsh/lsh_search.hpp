@@ -189,6 +189,7 @@ class LSHSearch
               arma::mat& distances,
               const size_t numTablesToSearch = 0);
 
+
   /**
    * Serialize the LSH model.
    *
@@ -235,6 +236,12 @@ class LSHSearch
   //! Get a single projection matrix.  This function is deprecated and will be
   //! removed in mlpack 2.1.0!
   const arma::mat& Projection(size_t i) { return projections.slice(i); }
+
+  //! Set the maximum number of threads the object is allowed to use
+  void MaxThreads(size_t numThreads) { maxThreads = numThreads;}
+
+  //! Return the current maxumum threads the object is allowed to use
+  size_t MaxThreads(void) const { return maxThreads; }
 
  private:
   /**
@@ -350,6 +357,13 @@ class LSHSearch
 
   //! The number of distance evaluations.
   size_t distanceEvaluations;
+
+  //! The maximum number of threads allowed.
+  size_t maxThreads;
+
+  //! The number of threads currently in use.
+  size_t numThreadsUsed;
+
 }; // class LSHSearch
 
 } // namespace neighbor

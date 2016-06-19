@@ -9,6 +9,8 @@
 
 #include <mlpack/core.hpp>
 
+using std::cout; using std::endl; //TODO: remove
+
 namespace mlpack {
 namespace neighbor {
 
@@ -28,7 +30,9 @@ LSHSearch(const arma::mat& referenceSet,
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
-  distanceEvaluations(0)
+  distanceEvaluations(0),
+  maxThreads(omp_get_max_threads()),
+  numThreadsUsed(0)
 {
   // Pass work to training function.
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
@@ -50,7 +54,9 @@ LSHSearch(const arma::mat& referenceSet,
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
-  distanceEvaluations(0)
+  distanceEvaluations(0),
+  maxThreads(omp_get_max_threads()),
+  numThreadsUsed(0)
 {
   // Pass work to training function
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
@@ -67,7 +73,9 @@ LSHSearch<SortPolicy>::LSHSearch() :
     hashWidth(0),
     secondHashSize(99901),
     bucketSize(500),
-    distanceEvaluations(0)
+    distanceEvaluations(0),
+    maxThreads(omp_get_max_threads()),
+    numThreadsUsed(0)
 {
   // Nothing to do.
 }
@@ -522,13 +530,28 @@ Search(const size_t k,
   distances.fill(SortPolicy::WorstDistance());
   resultingNeighbors.fill(referenceSet->n_cols);
 
+
   size_t avgIndicesReturned = 0;
 
   Timer::Start("computing_neighbors");
 
-  // Go through every query point sequentially.
+  // Parallelization allows us to process more than one query at a time. To
+  // control workload and thread access, we use numThreadsUsed and maxThreads to
+  // make sure we only use as many threads as the user specified.
+  #pragma omp parallel for \
+    if (numThreadsUsed <= maxThreads) \
+    num_threads (maxThreads-numThreadsUsed)\
+    shared(avgIndicesReturned, resultingNeighbors, distances) \
+    schedule(dynamic)
+  // Go through every query point.
   for (size_t i = 0; i < referenceSet->n_cols; i++)
   {
+    // Master thread updates the number of threads used
+    if (i == 0 && omp_get_thread_num() == 0)
+    {
+      numThreadsUsed+=omp_get_num_threads();
+      cout<<"Using "<<numThreadsUsed<<endl;
+    }
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
@@ -536,6 +559,8 @@ Search(const size_t k,
 
     // An informative book-keeping for the number of neighbor candidates
     // returned on average.
+    // Make atomic to avoid race conditions when multiple threads are running
+    #pragma omp atomic
     avgIndicesReturned += refIndices.n_elem;
 
     // Sequentially go through all the candidates and save the best 'k'
