@@ -550,7 +550,8 @@ Search(const size_t k,
     if (i == 0 && omp_get_thread_num() == 0)
     {
       numThreadsUsed+=omp_get_num_threads();
-      cout<<"Using "<<numThreadsUsed<<endl;
+      Log::Info 
+        << "Using "<< numThreadsUsed << " threads to process queries." << endl;
     }
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
