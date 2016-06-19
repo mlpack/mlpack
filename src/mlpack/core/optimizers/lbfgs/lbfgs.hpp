@@ -53,7 +53,7 @@ class L_BFGS
    * @param function Instance of function to be optimized.
    * @param numBasis Number of memory points to be stored (default 5).
    * @param maxIterations Maximum number of iterations for the optimization
-   *     (default 0 -- may run indefinitely).
+   *     (0 means no limit and may run indefinitely).
    * @param armijoConstant Controls the accuracy of the line search routine for
    *     determining the Armijo condition.
    * @param wolfe Parameter for detecting the Wolfe condition.
@@ -66,7 +66,7 @@ class L_BFGS
    */
   L_BFGS(FunctionType& function,
          const size_t numBasis = 10, /* same default as scipy */
-         const size_t maxIterations = 0, /* run forever */
+         const size_t maxIterations = 10000, /* many but not infinite */
          const double armijoConstant = 1e-4,
          const double wolfe = 0.9,
          const double minGradientNorm = 1e-6,
