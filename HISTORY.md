@@ -1,5 +1,5 @@
 ### mlpack 2.0.2
-###### 2016-06-16
+###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).
