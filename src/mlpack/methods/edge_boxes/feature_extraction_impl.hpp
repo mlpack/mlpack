@@ -24,51 +24,6 @@ StructuredForests(FeatureParameters F)
   params = F; 
 }
 
-/*
-template<typename MatType, typename CubeType>
-MatType StructuredForests<MatType, CubeType>::
-LoadData(MatType const &Images, MatType const &boundaries,\
-     MatType const &segmentations)
-{
-  const size_t num_Images = this->params.num_Images;
-  const size_t rowSize = this->params.RowSize();
-  const size_t colSize = this->params.ColSize();
-  MatType input_data(num_Images * rowSize * 5, colSize);
-  // we store the input data as follows: 
-  // Images (3), boundaries (1), segmentations (1).
-  size_t loop_iter = num_Images * 5;
-  size_t row_idx = 0;
-  size_t col_i = 0, col_s = 0, col_b = 0;
-  for(size_t i = 0; i < loop_iter; ++i)
-  {
-    if (i % 5 == 4)
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(segmentations.colptr(col_s),\
-                                  colSize, rowSize).t();
-      ++col_s;
-    }
-    else if (i % 5 == 3)
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(boundaries.colptr(col_b),\
-                                  colSize, rowSize).t();
-      ++col_b;
-    }
-    else
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(Images.colptr(col_i),
-                                  colSize, rowSize).t();
-      ++col_i;  
-    }
-    row_idx += rowSize;
-  }
-  return input_data;
-} 
-
-*/
-
 /**
  * Get DImensions of Features
  * @param FtrDim Output vector that contains the result 
