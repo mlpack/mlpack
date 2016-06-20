@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(NETest);
 BOOST_AUTO_TEST_CASE(NELinkGeneTest)
 {
   // Create a link gene.
-  LinkGene linkGene(1, 2, 0, 10);
+  LinkGene linkGene(1, 2, 0, 10, true);
 
   // Test parametric constructor and access functions.
   BOOST_REQUIRE_EQUAL(linkGene.FromNeuronId(), 1);
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(NELinkGeneTest)
   BOOST_REQUIRE_EQUAL(linkGene2.FromNeuronId(), 1);
 
   // Test operator =.
-  LinkGene linkGene3(1, 3, 1, 7);
+  LinkGene linkGene3(1, 3, 1, 7, true);
   linkGene = linkGene3;
   BOOST_REQUIRE_EQUAL(linkGene3.InnovationId(), 1);
 
@@ -112,7 +112,6 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   params.aMutateRate = 0.1;
   params.aMutateSize = 0.02;
   params.aElitePercentage = 0.2;
-  //params.aCrossoverRate = 0.3;
   params.aMaxGeneration = 1000;
 
   // Construct seed genome for xor task.
@@ -136,13 +135,13 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   neuronGenes.push_back(outputGene);
   neuronGenes.push_back(hiddenGene);
 
-  LinkGene link1(0, 3, 0, 0);
-  LinkGene link2(1, 3, 0, 0);
-  LinkGene link3(2, 3, 0, 0);
-  LinkGene link4(0, 4, 0, 0);
-  LinkGene link5(1, 4, 0, 0);
-  LinkGene link6(2, 4, 0, 0);
-  LinkGene link7(4, 3, 0, 0);
+  LinkGene link1(0, 3, 0, 0, true);
+  LinkGene link2(1, 3, 0, 0, true);
+  LinkGene link3(2, 3, 0, 0, true);
+  LinkGene link4(0, 4, 0, 0, true);
+  LinkGene link5(1, 4, 0, 0, true);
+  LinkGene link6(2, 4, 0, 0, true);
+  LinkGene link7(4, 3, 0, 0, true);
 
   linkGenes.push_back(link1);
   linkGenes.push_back(link2);

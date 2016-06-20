@@ -100,4 +100,3 @@ class Species {
 }  // namespace mlpack
 
 # endif  // MLPACK_METHODS_NE_SPECIES_HPP
-

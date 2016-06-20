@@ -37,7 +37,6 @@ class CNE {
     aMaxGeneration = params.aMaxGeneration;
     aMutateRate = params.aMutateRate;
     aMutateSize = params.aMutateSize;
-    aCrossoverRate = params.aCrossoverRate;
     aElitePercentage = params.aElitePercentage;
   }
 
@@ -125,9 +124,6 @@ class CNE {
 
   // Mutate size. For normal distribution, it is mutate variance.
   double aMutateSize;
-
-  // Crossover rate.
-  double aCrossoverRate;
 
   // Elite percentage.
   double aElitePercentage;

@@ -233,7 +233,9 @@ class Genome {
       // Loop links to calculate neurons' input sum.
       for (size_t j=0; j<aLinkGenes.size(); ++j) {
         aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].ToNeuronId())].aInput +=
-          aLinkGenes[j].Weight() * aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].FromNeuronId())].aActivation;
+          aLinkGenes[j].Weight() *
+          aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].FromNeuronId())].aActivation *
+          ((int) aLinkGenes[j].Enabled());
       }
 
       // Loop neurons to calculate neurons' activation.

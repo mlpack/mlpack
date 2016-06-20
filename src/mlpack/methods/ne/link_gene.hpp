@@ -26,11 +26,13 @@ class LinkGene {
   LinkGene(size_t fromNeuronId,
   	       size_t toNeuronId,
   	       size_t innovationId,
-  	       double weight):
+  	       double weight,
+           bool enabled):
     aFromNeuronId(fromNeuronId),
     aToNeuronId(toNeuronId),
     aInnovationId(innovationId),
-    aWeight(weight)
+    aWeight(weight),
+    aEnabled(enabled)
   {}
 
   // Copy constructor.
@@ -39,25 +41,41 @@ class LinkGene {
   	aToNeuronId = linkGene.aToNeuronId;
   	aInnovationId = linkGene.aInnovationId;
   	aWeight = linkGene.aWeight;
+    aEnabled = linkGene.aEnabled;
   }
 
   // Destructor.
   ~LinkGene() {}
 
+  // Set aFromNeuronId.
+  void FromNeuronId(size_t fromNeuronId) { aFromNeuronId = fromNeuronId; } 
+
   // Get aFromNeuronId.
   size_t FromNeuronId() const { return aFromNeuronId; }
 
+  // Set aToNeuronId.
+  void ToNeuronId(size_t toNeuronId) { aToNeuronId = toNeuronId; }
+
   // Get aToNeuronId.
   size_t ToNeuronId() const { return aToNeuronId; }
-
-  // Get aInnovationId.
-  size_t InnovationId() const { return aInnovationId; }
 
   // Set aWeight.
   void Weight(double weight) { aWeight = weight; }
 
   // Get aWeight.
   double Weight() const { return aWeight; }
+
+  // Set aInnovationId.
+  void InnovationId(size_t innovationId) { aInnovationId = innovationId; }
+
+  // Get aInnovationId.
+  size_t InnovationId() const { return aInnovationId; }
+
+  // Set aEnabled.
+  void Enabled(bool enabled) { aEnabled = enabled; }
+
+  // Get aEnabled.
+  bool Enabled() const { return aEnabled; }
 
   // Operator =.
   LinkGene& operator =(const LinkGene& linkGene) {
@@ -66,6 +84,7 @@ class LinkGene {
   	  aToNeuronId = linkGene.aToNeuronId;
   	  aInnovationId = linkGene.aInnovationId;
   	  aWeight = linkGene.aWeight;
+      aEnabled = linkGene.aEnabled;
     }
     
     return *this;
@@ -80,6 +99,9 @@ class LinkGene {
 
   // Link innovation ID.
   size_t aInnovationId;
+
+  // Enabled or not.
+  bool aEnabled;
  
 };
 

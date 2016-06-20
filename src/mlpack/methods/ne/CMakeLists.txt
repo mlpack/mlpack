@@ -5,6 +5,7 @@ set(SOURCES
   neuron_gene.hpp
   genome.hpp
   species.hpp
+  population.hpp
   cne.hpp
   tasks.hpp
   parameters.hpp
