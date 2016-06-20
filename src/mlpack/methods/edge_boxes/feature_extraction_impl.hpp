@@ -25,7 +25,7 @@ StructuredForests(FeatureParameters F)
 }
 
 /**
- * Get DImensions of Features
+ * Get Dimensions of Features
  * @param FtrDim Output vector that contains the result 
  */
 template<typename MatType, typename CubeType>
