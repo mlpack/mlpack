@@ -35,6 +35,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam SplitType The type of split to use when inserting points.
  * @tparam DescentType The heuristic to use when descending the tree to insert
  *    points.
+ * @tparam AuxiliaryInformationType An auxiliary information contained
+ *    in the node. This information depends on the type of the RectangleTree.
  */
 
 template<typename MetricType = metric::EuclideanDistance,
@@ -188,26 +190,23 @@ class RectangleTree
   void SoftDelete();
 
   /**
-   * Set dataset to null. Used for memory management.  Be cafeful.
+   * Nullify the auxiliary information. Used for memory management.
+   * Be cafeful.
    */
   void NullifyData();
 
   /**
-   * Inserts a point into the tree. The point will be copied to the data matrix
-   * of the leaf node where it is finally inserted, but we pass by reference
-   * since it may be passed many times before it actually reaches a leaf.
+   * Inserts a point into the tree.
    *
-   * @param point The point (arma::vec&) to be inserted.
+   * @param point The index of a point in the dataset.
    */
   void InsertPoint(const size_t point);
 
   /**
    * Inserts a point into the tree, tracking which levels have been inserted
-   * into.  The point will be copied to the data matrix of the leaf node where
-   * it is finally inserted, but we pass by reference since it may be passed
-   * many times before it actually reaches a leaf.
+   * into.
    *
-   * @param point The point (arma::vec&) to be inserted.
+   * @param point The index of a point in the dataset.
    * @param relevels The levels that have been reinserted to on this top level
    *      insertion.
    */
@@ -229,9 +228,8 @@ class RectangleTree
                   std::vector<bool>& relevels);
 
   /**
-   * Deletes a point in the tree.  The point will be removed from the data
-   * matrix of the leaf node where it is store and the bounding rectangles will
-   * be updated.  However, the point will be kept in the centeral dataset. (The
+   * Deletes a point from the treeand, updates the bounding rectangle.
+   * However, the point will be kept in the centeral dataset. (The
    * user may remove it from there if he wants, but he must not change the
    * indices of the other points.) Returns true if the point is successfully
    * removed and false if it is not.  (ie. the point is not in the tree)
@@ -239,10 +237,9 @@ class RectangleTree
   bool DeletePoint(const size_t point);
 
   /**
-   * Deletes a point in the tree, tracking levels.  The point will be removed
-   * from the data matrix of the leaf node where it is store and the bounding
-   * rectangles will be updated.  However, the point will be kept in the
-   * centeral dataset. (The user may remove it from there if he wants, but he
+   * Deletes a point from the tree, updates the bounding rectangle,
+   * tracking levels. However, the point will be kept in the centeral dataset.
+   * (The user may remove it from there if he wants, but he
    * must not change the indices of the other points.) Returns true if the point
    * is successfully removed and false if it is not.  (ie. the point is not in
    * the tree)

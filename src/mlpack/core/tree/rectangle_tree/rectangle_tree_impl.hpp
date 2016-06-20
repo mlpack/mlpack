@@ -237,7 +237,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 }
 
 /**
- * Set the local dataset to null.
+ * Nullify the auxiliary information.
  */
 template<typename MetricType,
          typename StatisticType,
@@ -292,9 +292,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
 /**
  * Inserts a point into the tree, tracking which levels have been inserted into.
- * The point will be copied to the data matrix of the leaf node where it is
- * finally inserted, but we pass by reference since it may be passed many times
- * before it actually reaches a leaf.
  */
 template<typename MetricType,
          typename StatisticType,
