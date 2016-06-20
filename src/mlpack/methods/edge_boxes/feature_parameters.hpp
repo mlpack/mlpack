@@ -16,7 +16,7 @@ class FeatureParameters
 {
  public:
 
-  FeatureParameters(); //default constructor
+  FeatureParameters(){} //default constructor
 
   void NumImages(size_t value) { numImages = value; }
   size_t NumImages() const { return numImages; }
@@ -83,7 +83,6 @@ class FeatureParameters
   double fraction;
   size_t pSize;
   size_t gSize;
-  size_t numCell;
   size_t numPos;
   size_t numNeg;
   size_t numCell;
@@ -92,3 +91,5 @@ class FeatureParameters
  
 }
 }
+#include "feature_extraction.hpp"
+#endif

@@ -6,7 +6,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <map>
 #include <mlpack/methods/edge_boxes/feature_extraction.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -66,7 +65,8 @@ void DistanceTransformTest(arma::mat& input,
                           double on, arma::mat& output,
                           StructuredForests<arma::mat, arma::cube>& SF)
 {
-  arma::mat dt_output = SF.DistanceTransformImage(input, on);
+  arma::mat dt_output;
+  SF.DistanceTransformImage(input, on, dt_output);
   Test(dt_output, output);
 } 
 
@@ -74,53 +74,71 @@ void CopyMakeBorderTest(arma::cube& input,
                               arma::cube& output,
                           StructuredForests<arma::mat, arma::cube>& SF)
 {
-  arma::cube border_output = SF.CopyMakeBorder(input, 1, 1, 1, 1);
+  arma::cube border_output;
+  SF.CopyMakeBorder(input, 1, 1, 1, 1, border_output);
   Test(border_output, output);
 }
 
 void RGB2LUVTest(arma::cube& input, arma::cube& output,
                   StructuredForests<arma::mat, arma::cube>& SF)
 {
-  arma::cube luv = SF.RGB2LUV(input);
+  double a, y0, maxi; 
+  a = std::pow(29.0, 3) / 27.0;
+  y0 = 8.0 / a;
+  maxi = 1.0 / 270.0;
+  arma::vec table(1064);
+  
+  for (size_t i = 0; i <= 1024; ++i)
+  {
+    table(i) = i / 1024.0;
+    
+    if (table(i) > y0)
+      table(i) = 116 * pow(table(i), 1.0/3.0) - 16.0;
+    else
+      table(i) = table(i) * a;
+
+    table(i) = table(i) * maxi;
+  }
+
+  for(size_t i = 1025; i < table.n_elem; ++i)
+    table(i) = table(i - 1);
+
+  arma::cube luv;
+  SF.RGB2LUV(input, luv, table);
   Test(luv, output);
 }
 
 void ConvTriangleTest(arma::cube& input, int radius,
     arma::cube& output, StructuredForests<arma::mat, arma::cube>& SF)
 {
-  arma::cube conv_out = SF.ConvTriangle(input, radius);
-  Test(conv_out, output);
+  SF.ConvTriangle(input, radius);
+  Test(input, output);
 }
 
 BOOST_AUTO_TEST_CASE(FeatureExtractionTest)
 {
-  std::map<std::string, size_t> options;
-  options["num_images"] = 2;
-  options["row_size"] = 321;
-  options["col_size"] = 481;
-  options["rgbd"] = 0;
-  options["shrink"] = 2;
-  options["n_orient"] = 4;
-  options["grd_smooth_rad"] = 0;
-  options["grd_norm_rad"] = 4;
-  options["reg_smooth_rad"] = 2;
-  options["ss_smooth_rad"] = 8;
-  options["p_size"] = 32;
-  options["g_size"] = 16;
-  options["n_cell"] = 5;
+  FeatureParameters params = FeatureParameters();
 
-  options["n_pos"] = 10000;
-  options["n_neg"] = 10000;
-  options["n_tree"] = 8;
-  options["n_class"] = 2;
-  options["min_count"] = 1;
-  options["min_child"] = 8;
-  options["max_depth"] = 64;
-  options["split"] = 0;  // we use 0 for gini, 1 for entropy, 2 for other
-  options["stride"] = 2;
-  options["sharpen"] = 2;
-  options["n_tree_eval"] = 4;
-  options["nms"] = 1;    // 1 for true, 0 for false
+  params.NumImages(2);
+  params.RowSize(321);
+  params.ColSize(481);
+  params.RGBD(0);
+  params.Shrink(2);
+  params.NumOrient(4);
+  params.GrdSmoothRad(0);
+  params.GrdNormRad(4);
+  params.RegSmoothRad(2);
+  params.SSSmoothRad(8);
+  params.Fraction(0.25);
+  params.PSize(32);
+  params.GSize(16);
+  params.NumCell(5);
+  params.NumPos(10000);
+  params.NumNeg(10000);
+  params.NumCell(5);
+  params.NumTree(8);
+  
+  StructuredForests <arma::mat, arma::cube> SF(params);
 
   arma::mat input, output;
   input << 0 << 0 << 0 << arma::endr
@@ -130,7 +148,7 @@ BOOST_AUTO_TEST_CASE(FeatureExtractionTest)
   output << 2 << 1 << 2 << arma::endr
          << 1 << 0 << 1 << arma::endr
          << 0 << 1 << 2;
-  StructuredForests<arma::mat, arma::cube> SF(options);
+
   DistanceTransformTest(input, 1, output, SF);
   
   arma::cube in1(input.n_rows, input.n_cols, 1);
@@ -184,4 +202,5 @@ out_luv.slice(2) << 0.496295 << 0.496295 << 0.496295 << arma::endr
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
 

@@ -9,7 +9,7 @@
 //#define INF 999999.9999
 //#define EPS 1E-20
 #include <mlpack/core.hpp>
-
+#include "feature_parameters.hpp"
 namespace mlpack {
 namespace structured_tree {
 
@@ -22,16 +22,15 @@ class StructuredForests
  public:
 
   static constexpr double eps = 1e-20;
-
-  std::map<std::string, size_t> options;
-  
-  void StructuredForests(FeatureParameters F);   
+ 
+  StructuredForests(FeatureParameters F);   
 /*  MatType LoadData(MatType const &images, MatType const &boundaries,\
      MatType const &segmentations);*/
 
-  void PrepareData(MatType const &InputData);
+  void PrepareData(const MatType& Images, const MatType& Boundaries,\
+            const MatType& Segmentations);
 
-  void GetFeatureDimension(arma::vec &FtrDim);
+  void GetFeatureDimension(arma::vec& FtrDim);
   
   void DistanceTransform1D(const arma::vec& f, const size_t n,\
                            const double inf, arma::vec& d);
@@ -40,45 +39,55 @@ class StructuredForests
   
   void DistanceTransformImage(const MatType& Im, double on, MatType& Out);
 
-  void GetFeatures(const MatType &Image, arma::umat &loc, 
-            CubeType& RegFtr, CubeType& SSFtr);
+  void GetFeatures(const MatType &Image, arma::umat &loc,\
+                   CubeType& RegFtr, CubeType& SSFtr,\
+                   const arma::vec& table);
   
-  CubeType CopyMakeBorder(CubeType const &InImage, size_t top, 
-               size_t left, size_t bottom, size_t right);
+  void CopyMakeBorder(const CubeType& InImage, size_t top, 
+                 size_t left, size_t bottom, size_t right,
+                 CubeType& OutImage);
   
-  void GetShrunkChannels(CubeType const &InImage, CubeType &reg_ch, CubeType &ss_ch);
+  void GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch,\
+                  CubeType &ss_ch, const arma::vec& table);
   
-  CubeType RGB2LUV(CubeType const &InImage);
+  void RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
+                   const arma::vec& table);
   
-  MatType bilinearInterpolation(MatType const &src,
-                      size_t height, size_t width);
+  void BilinearInterpolation(const MatType& src,
+                          size_t height, size_t width,
+                          MatType& dst);
   
-  CubeType sepFilter2D(CubeType &InOutImage, arma::vec &kernel,\
-                       size_t radius);
+  void SepFilter2D(CubeType &InOutImage, const arma::vec& kernel, const size_t radius);
 
-  CubeType ConvTriangle(CubeType &InImage, size_t radius);
+  void ConvTriangle(CubeType &InImage, const size_t radius);
 
-  void Gradient(CubeType const &InImage, 
-         MatType &Magnitude,
-         MatType &Orientation);
+  void Gradient(const CubeType& InImage, 
+         MatType& Magnitude,
+         MatType& Orientation);
 
-  MatType MaxAndLoc(CubeType &mag, arma::umat &Location) const;
+  void MaxAndLoc(CubeType &mag, arma::umat &Location, MatType& MaxVal) const;
 
-  CubeType Histogram(MatType const &Magnitude,
-              MatType const &Orientation, 
-              size_t downscale, size_t interp);
+  void Histogram(const MatType& Magnitude,
+            const MatType& Orientation, 
+            size_t downscale, size_t interp,
+            CubeType& HistArr);
  
-  CubeType ViewAsWindows(CubeType const &channels, arma::umat const &loc);
+  void ViewAsWindows(const CubeType& channels, const arma::umat& loc,
+                     CubeType& features);
 
-  CubeType GetRegFtr(CubeType const &channels, arma::umat const &loc);
+  void GetRegFtr(const CubeType& channels, const arma::umat& loc,
+                 CubeType& RegFtr);
 
-  CubeType GetSSFtr(CubeType const &channels, arma::umat const &loc);
+  void GetSSFtr(const CubeType& channels, const arma::umat& loc,
+                 CubeType SSFtr);
 
-  CubeType Rearrange(CubeType const &channels);
+  void Rearrange(const CubeType& channels, CubeType& ch);
 
-  CubeType PDist(CubeType const &features, arma::uvec const &grid_pos);
+  void PDist(const CubeType& features, const arma::uvec& grid_pos,
+             CubeType& Output);
 
-  //void Discretize(MatType const &lbl, size_t n_class, size_t n_sample);
+  size_t Discretize(const MatType& labels, const size_t nClass,\
+           const size_t nSample, arma::vec& DiscreteLabels);
 };
 
 
@@ -86,4 +95,5 @@ class StructuredForests
 } // namespace mlpack
 #include "feature_extraction_impl.hpp"
 #endif
+
 

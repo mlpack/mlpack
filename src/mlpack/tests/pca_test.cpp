@@ -23,7 +23,7 @@ using namespace mlpack::distribution;
  */
 BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
 {
-  mat coeff, coeff1;
+  /*mat coeff, coeff1;
   vec eigVal, eigVal1;
   mat score, score1;
 
@@ -41,7 +41,22 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
       BOOST_REQUIRE_SMALL(eigVal1[i], 1e-15);
     else
       BOOST_REQUIRE_CLOSE(eigVal[i], eigVal1[i], 0.0001);
-  }
+  }*/
+
+  mat coeff, coeff1;
+  vec eigVal, eigVal1;
+  mat score, score1;
+
+  mat data = randu<mat>(20000, 256);
+
+  PCA p;
+
+  p.Apply(data.t(), score1, eigVal1, coeff1);
+  cout << size(data.t()) << endl;
+  cout << "_____________" << endl;
+  cout << size(eigVal1) << endl;
+  cout << "______________" << endl;
+  cout << size(score1) << endl;
 }
 
 /**
@@ -199,3 +214,4 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
 
 
 BOOST_AUTO_TEST_SUITE_END();
+
