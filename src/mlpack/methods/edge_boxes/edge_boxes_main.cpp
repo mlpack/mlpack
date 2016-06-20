@@ -11,8 +11,9 @@ using namespace mlpack;
 using namespace mlpack::structured_tree;
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
+  CLI::ParseCommandLine(argc, argv);
   /*
   :param options:
   num_images: number of images in the dataset.
@@ -77,5 +78,6 @@ int main()
   cout << "PrepareData done." << endl;
   return 0;
 }
+
 
 

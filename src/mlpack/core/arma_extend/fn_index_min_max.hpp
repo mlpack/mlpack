@@ -1,4 +1,5 @@
-#if (ARMA_VERSION_MAJOR < 7 && ARMA_VERSION_MINOR < 200)
+#if (ARMA_VERSION_MAJOR < 7\
+      || (ARMA_VERSION_MAJOR == 7 && ARMA_VERSION_MINOR < 200))
 template<typename T1>
 inline
 typename arma_not_cx<typename T1::elem_type>::result

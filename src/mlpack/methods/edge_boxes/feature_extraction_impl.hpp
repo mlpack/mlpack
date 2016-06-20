@@ -24,8 +24,53 @@ StructuredForests(FeatureParameters F)
   params = F; 
 }
 
+/*
+template<typename MatType, typename CubeType>
+MatType StructuredForests<MatType, CubeType>::
+LoadData(MatType const &Images, MatType const &boundaries,\
+     MatType const &segmentations)
+{
+  const size_t num_Images = this->params.num_Images;
+  const size_t rowSize = this->params.RowSize();
+  const size_t colSize = this->params.ColSize();
+  MatType input_data(num_Images * rowSize * 5, colSize);
+  // we store the input data as follows: 
+  // Images (3), boundaries (1), segmentations (1).
+  size_t loop_iter = num_Images * 5;
+  size_t row_idx = 0;
+  size_t col_i = 0, col_s = 0, col_b = 0;
+  for(size_t i = 0; i < loop_iter; ++i)
+  {
+    if (i % 5 == 4)
+    {
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(segmentations.colptr(col_s),\
+                                  colSize, rowSize).t();
+      ++col_s;
+    }
+    else if (i % 5 == 3)
+    {
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(boundaries.colptr(col_b),\
+                                  colSize, rowSize).t();
+      ++col_b;
+    }
+    else
+    {
+      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
+        colSize - 1) = MatType(Images.colptr(col_i),
+                                  colSize, rowSize).t();
+      ++col_i;  
+    }
+    row_idx += rowSize;
+  }
+  return input_data;
+} 
+
+*/
+
 /**
- * Get Dimensions of Features
+ * Get DImensions of Features
  * @param FtrDim Output vector that contains the result 
  */
 template<typename MatType, typename CubeType>
@@ -804,7 +849,7 @@ PrepareData(const MatType& Images, const MatType& Boundaries,\
   const size_t nFtrDim = FtrDim(0) + FtrDim(1);
   const size_t nSmpFtrDim = (size_t)(nFtrDim * fraction);
 
-
+  size_t time=0;
   for(size_t i = 0; i < numTree; ++i)
   {
     //Implement the logic for if data already exists.
@@ -892,7 +937,11 @@ PrepareData(const MatType& Images, const MatType& Boundaries,\
       }
       
       CubeType SSFtr, RegFtr;
+      Timer::Start("get_features");
+
       this->GetFeatures(Img, loc, RegFtr, SSFtr, table);
+      Timer::Stop("get_features");
+
       //randomly sample 70 values each from reg_ftr and ss_ftr.
       /*
       CubeType ftr(140, 1000, 13);
@@ -907,7 +956,7 @@ PrepareData(const MatType& Images, const MatType& Boundaries,\
       // have to do this or we can overload the CopyMakeBorder to support MatType.
       s.slice(0) = segs;
       CubeType in_segs;
-      this->CopyMakeBorder(s, gRad, gRad, gRad,
+      this->CopyMakeBorder(s, gRad, gRad, gRad,\
                             gRad, in_segs);
 
       for(size_t i = 0; i < loc.n_rows; ++i)
@@ -935,6 +984,7 @@ Discretize(const MatType& labels, const size_t nClass,\
   // lbls : 20000 * 256.
   // nSample: number of samples for clustering structured labels 256
   // nClass: number of classes (clusters) for binary splits. 2
+  Timer::Start("other_discretize");
 
   arma::uvec lis1(nSample);  
   for (size_t i = 0; i < lis1.n_elem; ++i)
@@ -967,14 +1017,21 @@ Discretize(const MatType& labels, const size_t nClass,\
     // so most representative label is: labels.row(ind).
 
     // apply pca
+    Timer::Stop("other_discretize");
+    Timer::Start("pca_timer");
     MatType coeff, transformedData;
     arma::vec eigVal;
     mlpack::pca::PCA p;
     p.Apply(zs.t(), transformedData, eigVal, coeff);
     // we take only first row in transformedData (256 * 20000) as dim = 1.
+    Timer::Stop("pca_timer");
+    Timer::Start("other_discretize");
+    //std::cout << Timer::Get("pca_timer") << std::endl;
     DiscreteLabels = arma::conv_to<arma::vec>::from(transformedData.row(0).t() > 0);
+    Timer::Stop("other_discretize");
   }
   return ind;
+
 }
 } // namespace structured_tree
 } // namespace mlpack
