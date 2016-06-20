@@ -68,6 +68,8 @@ namespace arma {
 
   // index to subscript and vice versa
   #include "fn_ind2sub.hpp"
+  // to find index of min/max value
+  #include "fn_index_min_max.hpp"
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
 
