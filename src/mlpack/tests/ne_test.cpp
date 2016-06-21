@@ -120,6 +120,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   size_t numOutput = 1;
   size_t depth = 2;
   double fitness = -1;
+  double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
@@ -151,7 +152,14 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   linkGenes.push_back(link6);
   linkGenes.push_back(link7);
 
-  Genome seedGenome = Genome(0, neuronGenes, linkGenes, numInput, numOutput, depth, fitness);
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             depth,
+                             fitness,
+                             adjustedFitness);
 
   // Specify task type.
   TaskXor<ann::MeanSquaredErrorFunction> task;

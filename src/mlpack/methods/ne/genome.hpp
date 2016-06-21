@@ -39,14 +39,16 @@ class Genome {
          size_t numInput,
          size_t numOutput,
          size_t depth,
-         double fitness):
+         double fitness,
+         double adjustedFitness):
     aId(id),
     aNeuronGenes(neuronGenes),
     aLinkGenes(linkGenes),
     aNumInput(numInput),
     aNumOutput(numOutput),
     aDepth(depth),
-    aFitness(fitness)
+    aFitness(fitness),
+    aAdjustedFitness(adjustedFitness)
   {}
 
   // Copy constructor.
@@ -58,10 +60,27 @@ class Genome {
     aNumOutput = genome.aNumOutput;
     aDepth = genome.aDepth;
     aFitness = genome.aFitness;
+    aAdjustedFitness = genome.aAdjustedFitness;
   }
 
   // Destructor.
   ~Genome() {}
+
+  // Operator =.
+  Genome& operator =(const Genome& genome) {
+    if (this != &genome) {
+      aId = genome.aId;
+      aNeuronGenes = genome.aNeuronGenes;
+      aLinkGenes = genome.aLinkGenes;
+      aNumInput = genome.aNumInput;
+      aNumOutput = genome.aNumOutput;
+      aDepth = genome.aDepth;
+      aFitness = genome.aFitness;
+      aAdjustedFitness = genome.aAdjustedFitness;
+    }
+
+    return *this;
+  }
 
   // Get genome id.
   size_t Id() const { return aId; }
@@ -92,6 +111,12 @@ class Genome {
 
   // Get fitness.
   double Fitness() const { return aFitness; }
+
+  // Set adjusted fitness.
+  void AdjustedFitness(double adjustedFitness) { aAdjustedFitness = adjustedFitness; }
+
+  // Get adjusted fitness.
+  double AdjustedFitness() const { return aAdjustedFitness; }
 
   // Get neuron number.
   size_t NumNeuron() const {
@@ -335,20 +360,6 @@ class Genome {
 
   // TODO: More potential operators to search genome.
 
-  // Operator =.
-  Genome& operator =(const Genome& genome) {
-    if (this != &genome) {
-      aId = genome.aId;
-      aNeuronGenes = genome.aNeuronGenes;
-      aLinkGenes = genome.aLinkGenes;
-      aNumInput = genome.aNumInput;
-      aNumOutput = genome.aNumOutput;
-      aDepth = genome.aDepth;
-      aFitness = genome.aFitness;
-    }
-
-    return *this;
-  }
 
  private:
   // Genome id.
@@ -371,6 +382,9 @@ class Genome {
 
   // Genome fitness.
   double aFitness;
+
+  // Genome adjusted fitness.
+  double aAdjustedFitness;
 
 };
 
