@@ -37,7 +37,6 @@ class Population {
   // Sort each species' genomes based on fitness.
   void Sort();
 
- 
  private:
   // Number of species.
   size_t aNumSpecies;

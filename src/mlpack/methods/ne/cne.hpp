@@ -63,7 +63,7 @@ class CNE {
     size_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
     numElite = aSpeciesSize - numDrop;
 
-    for (size_t i=numElite; i<aSpeciesSize; ++i) {
+    for (size_t i=numElite; i<aSpeciesSize-1; ++i) {
       // Randomly select two parents from elite genomes.
       size_t idx1 = RandInt(0, numElite);
       size_t idx2 = RandInt(0, numElite);

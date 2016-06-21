@@ -7,6 +7,7 @@ set(SOURCES
   species.hpp
   population.hpp
   cne.hpp
+  neat.hpp
   tasks.hpp
   parameters.hpp
   utils.hpp
