@@ -136,7 +136,7 @@ class Genome {
         }
     }
 
-    return -1;
+    return 0;  // Id start from 1.
   }
 
   // Calculate Neuron depth.

@@ -76,7 +76,7 @@ class Species {
   static bool CompareGenome(Genome lg, Genome rg) {
     return (lg.Fitness() < rg.Fitness());
   }
-  bool SortSpecies() {
+  void SortSpecies() {
     std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);
   }
 
