@@ -414,16 +414,16 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
   if (randomBasis)
     querySet = q * querySet;
 
-  Log::Info << "Searching for " << k;
-  if (Epsilon() != 0)
-    Log::Info << " approximate (e=" << Epsilon() << ")";
-  Log::Info << " neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
   BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
       leafSize);
@@ -436,16 +436,16 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
-  Log::Info << "Searching for " << k;
-  if (Epsilon() != 0)
-    Log::Info << " approximate (e=" << Epsilon() << ")";
-  Log::Info << " neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
   MonoSearchVisitor search(k, neighbors, distances);
   boost::apply_visitor(search, nSearch);
