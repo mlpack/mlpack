@@ -503,6 +503,104 @@ BOOST_AUTO_TEST_CASE(LSHTrainTest)
   BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
 }
 
+/**
+ * Test: this verifies ComputeRecall works correctly by providing two identical
+ * vectors and requiring that Recall is equal to 1.
+ */
+BOOST_AUTO_TEST_CASE(RecallTestIdentical)
+{
+  const size_t k = 5; // 5 nearest neighbors
+  const size_t numQueries = 1;
+
+  // base = [1; 2; 3; 4; 5]
+  arma::Mat<size_t> base;
+  base.set_size(k, numQueries);
+  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+
+  // q1 = [1; 2; 3; 4; 5]. Expect recall = 1
+  arma::Mat<size_t> q1;
+  q1.set_size(k, numQueries);
+  q1.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  
+  LSHSearch<> lsh;
+  BOOST_REQUIRE_EQUAL(lsh.ComputeRecall(base, q1), 1);
+}
+
+/**
+ * Test: this verifies ComputeRecall returns correct values for partially
+ * correct found neighbors. This is important because this is a good example of
+ * how the recall and accuracy metrics differ - accuracy in this case would be
+ * 0, recall should not be
+ */
+BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
+{
+  const size_t k = 5; // 5 nearest neighbors
+  const size_t numQueries = 1;
+
+  // base = [1; 2; 3; 4; 5]
+  arma::Mat<size_t> base;
+  base.set_size(k, numQueries);
+  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+
+  // q2 = [2; 3; 4; 6; 7]. Expect recall = 0.6. This is important because this
+  // is a good example of how recall and accuracy differ. Accuracy here would
+  // be 0 but recall should not be.
+  arma::Mat<size_t> q2;
+  q2.set_size(k, numQueries);
+  q2 << 
+    2 << arma::endr << 
+    3 << arma::endr << 
+    4 << arma::endr << 
+    6 << arma::endr << 
+    7 << arma::endr;
+
+  LSHSearch<> lsh;
+  BOOST_REQUIRE_CLOSE(lsh.ComputeRecall(base, q2), 0.6, 0.0001);
+}
+
+/**
+ * Test: If given a completely wrong vector, ComputeRecall should return 0
+ */
+BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
+{
+  const size_t k = 5; // 5 nearest neighbors
+  const size_t numQueries = 1;
+
+  // base = [1; 2; 3; 4; 5]
+  arma::Mat<size_t> base;
+  base.set_size(k, numQueries);
+  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  // q3 = [6; 7; 8; 9; 10]. Expected recall = 0
+  arma::Mat<size_t> q3;
+  q3.set_size(k, numQueries);
+  q3.col(0) = arma::linspace< arma::Col<size_t> >(k + 1, 2 * k, k);
+
+  LSHSearch<> lsh;
+  BOOST_REQUIRE_EQUAL(lsh.ComputeRecall(base, q3), 0);
+}
+
+/**
+ * Test: If given a vector of wrong shape, ComputeRecall should throw an
+ * exception
+ */
+BOOST_AUTO_TEST_CASE(RecallTestException)
+{
+  const size_t k = 5; // 5 nearest neighbors
+  const size_t numQueries = 1;
+
+  // base = [1; 2; 3; 4; 5]
+  arma::Mat<size_t> base;
+  base.set_size(k, numQueries);
+  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  // verify that nonsense arguments throw exception
+  arma::Mat<size_t> q4;
+  q4.set_size(2 * k, numQueries);
+
+  LSHSearch<> lsh;
+  BOOST_REQUIRE_THROW(lsh.ComputeRecall(base, q4), std::invalid_argument);
+
+}
+
 BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
 {
   // If we create an empty LSH model and then call Search(), it should throw an
