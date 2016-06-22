@@ -12,7 +12,7 @@
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 #include <stack>

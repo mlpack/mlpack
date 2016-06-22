@@ -18,15 +18,6 @@
 namespace mlpack {
 namespace neighbor {
 
-//! Save parameters for monochromatic neighbor search.
-MonoSearchVisitor::MonoSearchVisitor(const size_t k,
-                                     arma::Mat<size_t>& neighbors,
-                                     arma::mat& distances) :
-    k(k),
-    neighbors(neighbors),
-    distances(distances)
-{}
-
 //! Monochromatic neighbor search on the given NSType instance.
 template<typename NSType>
 void MonoSearchVisitor::operator()(NSType *ns) const
@@ -185,6 +176,15 @@ bool& NaiveVisitor::operator()(NSType* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Expose the Epsilon method of the given NSType.
+template<typename NSType>
+double& EpsilonVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    return ns->Epsilon();
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Expose the referenceSet of the given NSType.
 template<typename NSType>
 const arma::mat& ReferenceSetVisitor::operator()(NSType* ns) const
@@ -293,12 +293,25 @@ bool& NSModel<SortPolicy>::Naive()
   return boost::apply_visitor(NaiveVisitor(), nSearch);
 }
 
+template<typename SortPolicy>
+double NSModel<SortPolicy>::Epsilon() const
+{
+  return boost::apply_visitor(EpsilonVisitor(), nSearch);
+}
+
+template<typename SortPolicy>
+double& NSModel<SortPolicy>::Epsilon()
+{
+  return boost::apply_visitor(EpsilonVisitor(), nSearch);
+}
+
 //! Build the reference tree.
 template<typename SortPolicy>
 void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
                                      const size_t leafSize,
                                      const bool naive,
-                                     const bool singleMode)
+                                     const bool singleMode,
+                                     const double epsilon)
 {
   // Initialize random basis if necessary.
   if (randomBasis)
@@ -348,23 +361,26 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      nSearch = new NSType<SortPolicy, tree::KDTree>(naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::KDTree>(naive, singleMode,
+          epsilon);
       break;
     case COVER_TREE:
       nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(naive,
-          singleMode);
+          singleMode, epsilon);
       break;
     case R_TREE:
-      nSearch = new NSType<SortPolicy, tree::RTree>(naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::RTree>(naive, singleMode, epsilon);
       break;
     case R_STAR_TREE:
-      nSearch = new NSType<SortPolicy, tree::RStarTree>(naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::RStarTree>(naive, singleMode,
+          epsilon);
       break;
     case BALL_TREE:
-      nSearch = new NSType<SortPolicy, tree::BallTree>(naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::BallTree>(naive, singleMode,
+          epsilon);
       break;
     case X_TREE:
-      nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode, epsilon);
       break;
   }
 
@@ -389,13 +405,16 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
   if (randomBasis)
     querySet = q * querySet;
 
-  Log::Info << "Searching for " << k << " nearest neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
   BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
       leafSize);
@@ -408,13 +427,16 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
-  Log::Info << "Searching for " << k << " nearest neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
   MonoSearchVisitor search(k, neighbors, distances);
   boost::apply_visitor(search, nSearch);

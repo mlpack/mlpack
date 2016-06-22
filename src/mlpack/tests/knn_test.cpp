@@ -10,7 +10,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/example_tree.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
@@ -888,7 +888,9 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   }
 }
 
-// Make sure sparse nearest neighbors works with kd trees.
+/**
+ * Make sure sparse nearest neighbors works with kd trees.
+ */
 BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
 {
   // The dimensionality of these datasets must be high so that the probability
