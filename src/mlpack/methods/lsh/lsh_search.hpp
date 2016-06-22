@@ -154,13 +154,15 @@ class LSHSearch
    *     available without having to build hashing for every table size.
    *     By default, this is set to zero in which case all tables are
    *     considered.
+   * @param T The number of additional probing bins to examine with multiprobe
+   *     LSH. If T = 0, classic single-probe LSH is run (default).
    */
   void Search(const arma::mat& querySet,
               const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
               const size_t numTablesToSearch = 0,
-              size_t T = 0);
+              const size_t T = 0);
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
