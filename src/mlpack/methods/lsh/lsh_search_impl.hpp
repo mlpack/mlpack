@@ -563,10 +563,10 @@ double LSHSearch<SortPolicy>::ComputeRecall(
         " must have equal size");
 
   const size_t queries = foundNeighbors.n_cols;
-  const size_t neighbors=  foundNeighbors.n_rows; //k
+  const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.
 
-  // recall is set intersection of found and real neighbors
-  double found = 0;
+  // The recall is the set intersection of found and real neighbors.
+  size_t found = 0;
   for (size_t col = 0; col < queries; ++col)
     for (size_t row = 0; row < neighbors; ++row)
       for (size_t nei = 0; nei < realNeighbors.n_rows; ++nei)
@@ -576,8 +576,7 @@ double LSHSearch<SortPolicy>::ComputeRecall(
           break;
         }
 
-  return found/realNeighbors.n_elem;
-
+  return ((double) found) / realNeighbors.n_elem;
 }
 
 template<typename SortPolicy>

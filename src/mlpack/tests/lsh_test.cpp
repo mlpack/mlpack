@@ -16,20 +16,6 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 /**
- * Computes Recall (percent of neighbors found correctly).
- */
-double ComputeRecall(
-    const arma::Mat<size_t>& lshNeighbors,
-    const arma::Mat<size_t>& groundTruth)
-{
-  const size_t queries = lshNeighbors.n_cols;
-  const size_t neigh = lshNeighbors.n_rows;
-
-  const double same = arma::accu(lshNeighbors == groundTruth);
-  return same / (static_cast<double>(queries * neigh));
-}
-
-/**
  * Generates a point set of four clusters around (0.5, 0.5),
  * (3.5, 0.5), (0.5, 3.5), (3.5, 3.5).
  */
@@ -149,7 +135,7 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
       lshTest.Search(qdata, k, lshNeighbors, lshDistances);
 
       // Compute recall for each query.
-      lValueRecall[l] = ComputeRecall(lshNeighbors, groundTruth);
+      lValueRecall[l] = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
 
       if (l > 0)
       {
@@ -221,7 +207,7 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
     lshTest.Search(qdata, k, lshNeighbors, lshDistances);
 
     // Compute recall for each query.
-    hValueRecall[h] = ComputeRecall(lshNeighbors, groundTruth);
+    hValueRecall[h] = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
 
     if (h > 0)
       BOOST_REQUIRE_GE(hValueRecall[h], hValueRecall[h - 1] - epsilon);
@@ -283,7 +269,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
     lshTest.Search(qdata, k, lshNeighbors, lshDistances);
 
     // Compute recall for each query.
-    pValueRecall[p] = ComputeRecall(lshNeighbors, groundTruth);
+    pValueRecall[p] = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
 
     // Don't check the first run; only check that increasing P decreases recall.
     if (p > 0)
@@ -339,7 +325,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
   arma::mat lshDistancesExp;
   lshTestExp.Search(qdata, k, lshNeighborsExp, lshDistancesExp);
 
-  const double recallExp = ComputeRecall(lshNeighborsExp, groundTruth);
+  const double recallExp = LSHSearch<>::ComputeRecall(lshNeighborsExp, groundTruth);
 
   // This run should have recall higher than the threshold.
   BOOST_REQUIRE_GE(recallExp, recallThreshExp);
@@ -361,7 +347,8 @@ BOOST_AUTO_TEST_CASE(RecallTest)
   arma::mat lshDistancesChp;
   lshTestChp.Search(qdata, k, lshNeighborsChp, lshDistancesChp);
 
-  const double recallChp = ComputeRecall(lshNeighborsChp, groundTruth);
+  const double recallChp = LSHSearch<>::ComputeRecall(lshNeighborsChp,
+      groundTruth);
 
   // This run should have recall lower than the threshold.
   BOOST_REQUIRE_LE(recallChp, recallThreshChp);
@@ -522,8 +509,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIdentical)
   q1.set_size(k, numQueries);
   q1.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
   
-  LSHSearch<> lsh;
-  BOOST_REQUIRE_EQUAL(lsh.ComputeRecall(base, q1), 1);
+  BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q1), 1);
 }
 
 /**
@@ -554,8 +540,7 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
     6 << arma::endr << 
     7 << arma::endr;
 
-  LSHSearch<> lsh;
-  BOOST_REQUIRE_CLOSE(lsh.ComputeRecall(base, q2), 0.6, 0.0001);
+  BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
 }
 
 /**
@@ -575,8 +560,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
   q3.set_size(k, numQueries);
   q3.col(0) = arma::linspace< arma::Col<size_t> >(k + 1, 2 * k, k);
 
-  LSHSearch<> lsh;
-  BOOST_REQUIRE_EQUAL(lsh.ComputeRecall(base, q3), 0);
+  BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q3), 0);
 }
 
 /**
@@ -596,8 +580,8 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
   arma::Mat<size_t> q4;
   q4.set_size(2 * k, numQueries);
 
-  LSHSearch<> lsh;
-  BOOST_REQUIRE_THROW(lsh.ComputeRecall(base, q4), std::invalid_argument);
+  BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
+      std::invalid_argument);
 
 }
 
