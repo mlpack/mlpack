@@ -191,20 +191,20 @@ int main(int argc, char *argv[])
   Log::Info << "Neighbors computed." << endl;
 
   // Compute recall, if desired.
-  if (CLI::HasParam("t"))
+  if (CLI::HasParam("true_neighbors_file"))
   {
-    // read specified filename
     const string trueNeighborsFile = 
-      CLI::GetParam<string>("true_neighbors_file");
+        CLI::GetParam<string>("true_neighbors_file");
 
-    // load the data
+    // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors;
     data::Load(trueNeighborsFile, trueNeighbors, true);
     Log::Info << "Loaded true neighbor indices from '" 
-      << trueNeighborsFile << "'." << endl;
+        << trueNeighborsFile << "'." << endl;
 
-    // Compute Recall and log
-    double recallPercentage = 100 * allkann.ComputeRecall(neighbors, trueNeighbors);
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
 
     Log::Info << "Recall: " << recallPercentage << endl;
   }
