@@ -18,15 +18,6 @@
 namespace mlpack {
 namespace neighbor {
 
-//! Save parameters for monochromatic neighbor search.
-MonoSearchVisitor::MonoSearchVisitor(const size_t k,
-                                     arma::Mat<size_t>& neighbors,
-                                     arma::mat& distances) :
-    k(k),
-    neighbors(neighbors),
-    distances(distances)
-{}
-
 //! Monochromatic neighbor search on the given NSType instance.
 template<typename NSType>
 void MonoSearchVisitor::operator()(NSType *ns) const

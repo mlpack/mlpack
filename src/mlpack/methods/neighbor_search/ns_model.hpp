@@ -69,7 +69,11 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 
   MonoSearchVisitor(const size_t k,
                     arma::Mat<size_t>& neighbors,
-                    arma::mat& distances);
+                    arma::mat& distances) :
+      k(k),
+      neighbors(neighbors),
+      distances(distances)
+  {};
 };
 
 /**
