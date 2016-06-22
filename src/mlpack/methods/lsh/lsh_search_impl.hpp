@@ -61,7 +61,7 @@ LSHSearch(const arma::mat& referenceSet,
 // Empty constructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::LSHSearch() :
-    referenceSet(new arma::mat()), // empty dataset
+    referenceSet(new arma::mat()), // Use an empty dataset.
     ownsSet(true),
     numProj(0),
     numTables(0),
@@ -106,8 +106,9 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
 
   if (hashWidth == 0.0) // The user has not provided any value.
   {
+    const size_t numSamples = 25;
     // Compute a heuristic hash width from the data.
-    for (size_t i = 0; i < 25; i++)
+    for (size_t i = 0; i < numSamples; i++)
     {
       size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
@@ -116,7 +117,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
           referenceSet.unsafe_col(p1), referenceSet.unsafe_col(p2)));
     }
 
-    hashWidth /= 25;
+    hashWidth /= numSamples;
   }
 
   Log::Info << "Hash width chosen as: " << hashWidth << std::endl;
@@ -132,30 +133,12 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
   secondHashWeights = arma::floor(arma::randu(numProj) *
                                   (double) secondHashSize);
 
-  // The 'secondHashTable' is initially an empty matrix of size
-  // ('secondHashSize' x 'bucketSize'). But by only filling the buckets as
-  // points land in them allows us to shrink the size of the 'secondHashTable'
-  // at the end of the hashing.
-
-  // Fill the second hash table n = referenceSet.n_cols.  This is because no
-  // point has index 'n' so the presence of this in the bucket denotes that
-  // there are no more points in this bucket.
-  secondHashTable.set_size(secondHashSize, bucketSize);
-  secondHashTable.fill(referenceSet.n_cols);
-
-  // Keep track of the size of each bucket in the hash.  At the end of hashing
-  // most buckets will be empty.
-  bucketContentSize.zeros(secondHashSize);
-
   // Instead of putting the points in the row corresponding to the bucket, we
   // chose the next empty row and keep track of the row in which the bucket
   // lies. This allows us to stack together and slice out the empty buckets at
   // the end of the hashing.
   bucketRowInHashTable.set_size(secondHashSize);
   bucketRowInHashTable.fill(secondHashSize);
-
-  // Keep track of number of non-empty rows in the 'secondHashTable'.
-  size_t numRowsInTable = 0;
 
   // Step II: The offsets for all projections in all tables.
   // Since the 'offsets' are in [0, hashWidth], we obtain the 'offsets'
@@ -184,6 +167,10 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
         "tables provided must be equal to numProj");
   }
 
+  // We will store the second hash vectors in this matrix; the second hash
+  // vector for table i will be held in row i.
+  arma::Mat<size_t> secondHashVectors(numTables, referenceSet.n_cols);
+
   for (size_t i = 0; i < numTables; i++)
   {
     // Step IV: create the 'numProj'-dimensional key for each point in each
@@ -205,58 +192,64 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
 
     // Step V: Putting the points in the 'secondHashTable' by hashing the key.
     // Now we hash every key, point ID to its corresponding bucket.
-    arma::rowvec secondHashVec = secondHashWeights.t() * arma::floor(hashMat);
+    secondHashVectors.row(i) = arma::conv_to<arma::Row<size_t>>::from(
+        secondHashWeights.t() * arma::floor(hashMat));
+  }
 
-    // This gives us the bucket for the corresponding point ID.
-    for (size_t j = 0; j < secondHashVec.n_elem; j++)
-      secondHashVec[j] = (double) ((size_t) secondHashVec[j] % secondHashSize);
+  // Normalize hashes (take modulus with secondHashSize).
+  secondHashVectors.transform([secondHashSize](size_t val)
+      { return val % secondHashSize; });
 
-    Log::Assert(secondHashVec.n_elem == referenceSet.n_cols);
+  // Now, using the hash vectors for each table, count the number of rows we
+  // have in the second hash table.
+  arma::Row<size_t> secondHashBinCounts(secondHashSize, arma::fill::zeros);
+  for (size_t i = 0; i < secondHashVectors.n_elem; ++i)
+    secondHashBinCounts[secondHashVectors[i]]++;
 
+  // Enforce the maximum bucket size.
+  const size_t effectiveBucketSize = (bucketSize == 0) ? SIZE_MAX : bucketSize;
+  secondHashBinCounts.transform([effectiveBucketSize](size_t val)
+      { return std::min(val, effectiveBucketSize); });
+
+  const size_t numRowsInTable = arma::accu(secondHashBinCounts > 0);
+  bucketContentSize.zeros(numRowsInTable);
+  secondHashTable.resize(numRowsInTable);
+
+  // Next we must assign each point in each table to the right second hash
+  // table.
+  size_t currentRow = 0;
+  for (size_t i = 0; i < numTables; ++i)
+  {
     // Insert the point in the corresponding row to its bucket in the
     // 'secondHashTable'.
-    for (size_t j = 0; j < secondHashVec.n_elem; j++)
+    for (size_t j = 0; j < secondHashVectors.n_cols; j++)
     {
       // This is the bucket number.
-      size_t hashInd = (size_t) secondHashVec[j];
+      size_t hashInd = (size_t) secondHashVectors(i, j);
       // The point ID is 'j'.
 
       // If this is currently an empty bucket, start a new row keep track of
       // which row corresponds to the bucket.
-      if (bucketContentSize[hashInd] == 0)
+      const size_t maxSize = secondHashBinCounts[hashInd];
+      if (bucketRowInHashTable[hashInd] == secondHashSize)
       {
-        // Start a new row for hash.
-        bucketRowInHashTable[hashInd] = numRowsInTable;
-        secondHashTable(numRowsInTable, 0) = j;
-
-        numRowsInTable++;
+        bucketRowInHashTable[hashInd] = currentRow;
+        secondHashTable[currentRow].set_size(maxSize);
+        currentRow++;
       }
 
-      else
-      {
-        // If bucket is already present in the 'secondHashTable', find the
-        // corresponding row and insert the point ID in this row unless the
-        // bucket is full, in which case, do nothing.
-        if (bucketContentSize[hashInd] < bucketSize)
-          secondHashTable(bucketRowInHashTable[hashInd],
-                          bucketContentSize[hashInd]) = j;
-      }
+      // If this vector in the hash table is not full, add the point.
+      const size_t index = bucketRowInHashTable[hashInd];
+      if (bucketContentSize[index] < maxSize)
+        secondHashTable[index](bucketContentSize[index]++) = j;
 
-      // Increment the count of the points in this bucket.
-      if (bucketContentSize[hashInd] < bucketSize)
-        bucketContentSize[hashInd]++;
     } // Loop over all points in the reference set.
   } // Loop over tables.
 
-  // Step VI: Condensing the 'secondHashTable'.
-  size_t maxBucketSize = 0;
-  for (size_t i = 0; i < bucketContentSize.n_elem; i++)
-    if (bucketContentSize[i] > maxBucketSize)
-      maxBucketSize = bucketContentSize[i];
-
-  Log::Info << "Final hash table size: (" << numRowsInTable << " x "
-            << maxBucketSize << ")" << std::endl;
-  secondHashTable.resize(numRowsInTable, maxBucketSize);
+  Log::Info << "Final hash table size: " << numRowsInTable << " rows, with a "
+            << "maximum length of " << arma::max(secondHashBinCounts) << ", "
+            << "totaling " << arma::accu(secondHashBinCounts) << " elements."
+            << std::endl;
 }
 
 template<typename SortPolicy>
@@ -631,7 +624,6 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
   allProjInTables = arma::floor(queryCodesNotFloored/hashWidth);
 
-
   // Compute the hash value of each key of the query into a bucket of the
   // 'secondHashTable' using the 'secondHashWeights'.
   arma::Row<size_t> hashVec = 
@@ -676,17 +668,19 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     hashMat.row(0) = hashVec;
   }
 
-  // Count number of points hashed in the same bucket as the query
+
+  // Count number of points hashed in the same bucket as the query.
   size_t maxNumPoints = 0;
-  for (size_t i = 0; i < numTablesToSearch; ++i) //For all tables
+  for (size_t i = 0; i < numTablesToSearch; ++i)
   {
     for (size_t p = 0; p < T + 1; ++p)
     {
-      size_t hashInd = (size_t) hashMat(p, i); //find query's bucket
-      maxNumPoints += bucketContentSize[hashInd]; //count bucket contents
+      const size_t hashInd = hashMat(p, i); // find query's bucket
+      const size_t tableRow = bucketRowInHashTable[hashInd];
+      if (tableRow != secondHashSize)
+        maxNumPoints += bucketContentSize[hashInd]; // count bucket contents
     }
   }
-
 
   // There are two ways to proceed here:
   // Either allocate a maxNumPoints-size vector, place all candidates, and run
@@ -713,17 +707,17 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
       {
 
         // get the sequence code
-        size_t hashInd = (size_t) hashMat(p, i);
+        size_t hashInd = hashMat(p, i);
 
         if (bucketContentSize[hashInd] > 0)
         {
           // Pick the indices in the bucket corresponding to hashInd.
           size_t tableRow = bucketRowInHashTable[hashInd];
-          assert(tableRow < secondHashSize);
-          assert(tableRow < secondHashTable.n_rows);
-
-          for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
-            refPointsConsidered[secondHashTable(tableRow, j)]++;
+          if (tableRow != secondHashSize)
+          {
+            for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
+              refPointsConsidered[ secondHashTable[tableRow](j) ]++;
+          }
         }
       }
     }
@@ -746,19 +740,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
-        size_t hashInd =  hashMat(p, i); // Find the query's bucket.
+        const size_t hashInd =  hashMat(p, i); // Find the query's bucket.
+        const size_t tableRow = bucketRowInHashTable[hashInd];
 
-        if (bucketContentSize[hashInd] > 0)
-        {
-          // tableRow hash indices corresponding to query.
-          size_t tableRow = bucketRowInHashTable[hashInd];
-          assert(tableRow < secondHashSize);
-          assert(tableRow < secondHashTable.n_rows);
-
-          // Store all secondHashTable points in the candidates set.
-          for (size_t j = 0; j < bucketContentSize[hashInd]; ++j)
-            refPointsConsideredSmall(start++) = secondHashTable(tableRow, j);
-        }
+        if (tableRow != secondHashSize)
+         // Store all secondHashTable points in the candidates set.
+         for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
+           refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
       }
     }
 
@@ -928,10 +916,10 @@ double LSHSearch<SortPolicy>::ComputeRecall(
         " must have equal size");
 
   const size_t queries = foundNeighbors.n_cols;
-  const size_t neighbors=  foundNeighbors.n_rows; //k
+  const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.
 
-  // recall is set intersection of found and real neighbors
-  double found = 0;
+  // The recall is the set intersection of found and real neighbors.
+  size_t found = 0;
   for (size_t col = 0; col < queries; ++col)
     for (size_t row = 0; row < neighbors; ++row)
       for (size_t nei = 0; nei < realNeighbors.n_rows; ++nei)
@@ -941,8 +929,7 @@ double LSHSearch<SortPolicy>::ComputeRecall(
           break;
         }
 
-  return found/realNeighbors.n_elem;
-
+  return ((double) found) / realNeighbors.n_elem;
 }
 
 template<typename SortPolicy>
@@ -968,7 +955,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (Archive::is_loading::value)
     projections.reset();
 
-  // Backward compatibility: older version of LSHSearch stored the projection
+  // Backward compatibility: older versions of LSHSearch stored the projection
   // tables in a std::vector<arma::mat>.
   if (version == 0)
   {
@@ -989,9 +976,83 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   ar & CreateNVP(secondHashSize, "secondHashSize");
   ar & CreateNVP(secondHashWeights, "secondHashWeights");
   ar & CreateNVP(bucketSize, "bucketSize");
-  ar & CreateNVP(secondHashTable, "secondHashTable");
-  ar & CreateNVP(bucketContentSize, "bucketContentSize");
-  ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+  // needs specific handling for new version
+
+  // Backward compatibility: in older versions of LSHSearch, the secondHashTable
+  // was stored as an arma::Mat<size_t>.  So we need to properly load that, then
+  // prune it down to size.
+  if (version == 0)
+  {
+    arma::Mat<size_t> tmpSecondHashTable;
+    ar & CreateNVP(tmpSecondHashTable, "secondHashTable");
+
+    // The old secondHashTable was stored in row-major format, so we transpose
+    // it.
+    tmpSecondHashTable = tmpSecondHashTable.t();
+
+    secondHashTable.resize(tmpSecondHashTable.n_cols);
+    for (size_t i = 0; i < tmpSecondHashTable.n_cols; ++i)
+    {
+      // Find length of each column.  We know we are at the end of the list when
+      // the value referenceSet->n_cols is seen.
+
+      size_t len = 0;
+      for ( ; len < tmpSecondHashTable.n_rows; ++len)
+        if (tmpSecondHashTable(len, i) == referenceSet->n_cols)
+          break;
+
+      // Set the size of the new column correctly.
+      secondHashTable[i].set_size(len);
+      for (size_t j = 0; j < len; ++j)
+        secondHashTable[i](j) = tmpSecondHashTable(j, i);
+    }
+  }
+  else
+  {
+    size_t tables;
+    if (Archive::is_saving::value)
+      tables = secondHashTable.size();
+    ar & CreateNVP(tables, "numSecondHashTables");
+
+    // Set size of second hash table if needed.
+    if (Archive::is_loading::value)
+    {
+      secondHashTable.clear();
+      secondHashTable.resize(tables);
+    }
+
+    for (size_t i = 0; i < secondHashTable.size(); ++i)
+    {
+      std::ostringstream oss;
+      oss << "secondHashTable" << i;
+      ar & CreateNVP(secondHashTable[i], oss.str());
+    }
+  }
+
+  // Backward compatibility: old versions of LSHSearch held bucketContentSize
+  // for all possible buckets (of size secondHashSize), but now we hold a
+  // compressed representation.
+  if (version == 0)
+  {
+    // The vector was stored in the old uncompressed form.  So we need to shrink
+    // it.  But we can't do that until we have bucketRowInHashTable, so we also
+    // have to load that.
+    arma::Col<size_t> tmpBucketContentSize;
+    ar & CreateNVP(tmpBucketContentSize, "bucketContentSize");
+    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+
+    // Compress into a smaller vector by just dropping all of the zeros.
+    bucketContentSize.set_size(secondHashTable.size());
+    for (size_t i = 0; i < tmpBucketContentSize.n_elem; ++i)
+      if (tmpBucketContentSize[i] > 0)
+        bucketContentSize[bucketRowInHashTable[i]] = tmpBucketContentSize[i];
+  }
+  else
+  {
+    ar & CreateNVP(bucketContentSize, "bucketContentSize");
+    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+  }
+
   ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
 }
 

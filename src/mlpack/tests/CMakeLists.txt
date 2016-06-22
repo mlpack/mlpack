@@ -5,9 +5,9 @@ add_executable(mlpack_test
   adaboost_test.cpp
   adam_test.cpp
   ada_delta_test.cpp
-  allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
+  binarize_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp
@@ -30,6 +30,7 @@ add_executable(mlpack_test
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
+  krann_search_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp

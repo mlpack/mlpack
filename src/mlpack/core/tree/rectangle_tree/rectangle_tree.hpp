@@ -154,7 +154,7 @@ class RectangleTree
    * @param numMaxChildren The max number of child nodes (used in x-trees).
    */
   explicit RectangleTree(RectangleTree* parentNode,
-                const size_t numMaxChildren = 0);
+                         const size_t numMaxChildren = 0);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
@@ -188,7 +188,7 @@ class RectangleTree
   void SoftDelete();
 
   /**
-   * Set dataset to null. Used for memory management.  Be cafeful.
+   * Set dataset to null. Used for memory management.  Be careful.
    */
   void NullifyData();
 

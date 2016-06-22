@@ -68,7 +68,8 @@ PARAM_INT("num_probes", "Number of additional probes for Multiprobe LSH"
     " If 0, traditional LSH is used.", "T", 0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
-PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
+PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
+    "hash; 0 indicates no limit (so the table can be arbitrarily large!).", "B",
     500);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
@@ -193,20 +194,20 @@ int main(int argc, char *argv[])
   Log::Info << "Neighbors computed." << endl;
 
   // Compute recall, if desired.
-  if (CLI::HasParam("t"))
+  if (CLI::HasParam("true_neighbors_file"))
   {
-    // read specified filename
     const string trueNeighborsFile = 
-      CLI::GetParam<string>("true_neighbors_file");
+        CLI::GetParam<string>("true_neighbors_file");
 
-    // load the data
+    // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors;
     data::Load(trueNeighborsFile, trueNeighbors, true);
     Log::Info << "Loaded true neighbor indices from '" 
-      << trueNeighborsFile << "'." << endl;
+        << trueNeighborsFile << "'." << endl;
 
-    // Compute Recall and log
-    double recallPercentage = 100 * allkann.ComputeRecall(neighbors, trueNeighbors);
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
 
     Log::Info << "Recall: " << recallPercentage << endl;
   }
