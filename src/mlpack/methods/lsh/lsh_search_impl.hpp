@@ -509,29 +509,27 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     additionalProbingBins.col(c) = queryCode;
 
 
-  // Calculate query point's projection position
+  // Calculate query point's projection position.
   arma::mat projection = queryCodeNotFloored;
 
-  // Use projection to calculate query's distance from hash limits
+  // Use projection to calculate query's distance from hash limits.
   arma::vec limLow = projection - queryCode * hashWidth;
   arma::vec limHigh = hashWidth - limLow;
 
-  // calculate scores = distances^2
+  // Calculate scores. score = distance^2.
   arma::vec scores(2 * numProj);
   scores.rows(0, numProj - 1) = arma::pow(limLow, 2);
   scores.rows(numProj, (2 * numProj) - 1) = arma::pow(limHigh, 2);
 
-  // actions vector shows what transformation to apply to a coordinate
+  // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
-
   actions.rows(0, numProj - 1) = // first numProj rows
     -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
-
   actions.rows(numProj, (2 * numProj) - 1) = // last numProj rows
     arma::ones< arma::Col<short int> > (numProj); // 1s
 
 
-  // acting dimension vector shows which coordinate to transform according to
+  // Acting dimension vector shows which coordinate to transform according to
   // actions described by actions vector
   arma::Col<size_t> positions(2 * numProj); // will be [0 1 2 ... 0 1 2 ...]
   positions.rows(0, numProj - 1) =
@@ -539,14 +537,14 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   positions.rows(numProj, 2 * numProj - 1) =
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
 
-  // optimization: no need to create heap for 1 or 2 codes
+  // Special case: No need to create heap for 1 or 2 codes.
   if (T <= 2)
   {
 
     // First, find location of minimum score, generate 1 perturbation vector,
     // and add its code to additionalProbingBins column 0.
 
-    // find location and value of smallest element of scores vector
+    // Find location and value of smallest element of scores vector.
     double minscore = scores[0];
     size_t minloc = 0;
     for (size_t s = 1; s < (2 * numProj); ++s)
@@ -558,21 +556,20 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       }
     }
     
-    // add or subtract 1 to dimension corresponding to minimum score
+    // Add or subtract 1 to dimension corresponding to minimum score.
     additionalProbingBins(positions[minloc], 0) += actions[minloc];
     if (T == 1)
-      return; //done if asked for only 1 code
+      return; // Done if asked for only 1 code.
 
     // Now, find location of second smallest score and generate one more vector.
     // The second perturbation vector still can't comprise of more than one
-    // change in the bin codes. This is because of the way perturbation vectors
+    // change in the bin codes, because of the way perturbation vectors
     // are generated: First we create the one with the smallest score (Ao) and
     // then we either add 1 extra dimension to it (Ae) or shift it by one (As).
     // Since As contains the second smallest score, and Ae contains both the
     // smallest and the second smallest, it's obvious that score(Ae) >
     // score(As). Therefore the second perturbation vector is ALWAYS the vector
     // containing only the second-lowest scoring perturbation.
-    
     
     double minscore2 = scores[0];
     size_t minloc2 = 0;
@@ -585,13 +582,14 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       }
     }
 
-    // add or subtract 1 to create second-lowest scoring vector
+    // Add or subtract 1 to create second-lowest scoring vector.
     additionalProbingBins(positions[minloc2], 1) += actions[minloc2];
     return;
   }
+
   // General case: more than 2 perturbation vectors require use of minheap.
 
-  // sort everything in increasing order
+  // Sort everything in increasing order.
   arma::Col<long long unsigned int> sortidx = arma::sort_index(scores);
   scores = scores(sortidx);
   actions = actions(sortidx);
@@ -599,7 +597,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
 
   // Theory:
-  // This is the part that creates the probing sequence.
   // A probing sequence is a sequence of T probing bins where a query's
   // neighbors are most likely to be. Likelihood is dependent only on a bin's
   // score, which is the sum of scores of all dimension-action pairs, so we
@@ -686,22 +683,20 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   Ao[0] = 1; // Smallest vector includes only smallest score.
 
   std::vector< std::vector<bool> > perturbationSets;
-  perturbationSets.push_back(Ao); // storage of perturbation sets
+  perturbationSets.push_back(Ao); // Storage of perturbation sets.
 
   std::priority_queue<
     std::pair<double, size_t>,        // contents: pairs of (score, index)
     std::vector<                      // container: vector of pairs
       std::pair<double, size_t>
       >,
-    std::greater< std::pair<double, size_t> > // comparator of pairs(compare scores)
+    std::greater< std::pair<double, size_t> > // comparator of pairs
   > minHeap; // our minheap
 
-  // Start by adding the lowest scoring set to the minheap
-  // std::pair<double, size_t> pair0( perturbationScore(Ao, scores), 0 );
-  // minHeap.push(pair0);
+  // Start by adding the lowest scoring set to the minheap.
   minHeap.push( std::make_pair(perturbationScore(Ao, scores), 0) );
 
-  // loop invariable: after pvec iterations, additionalProbingBins contains pvec
+  // Loop invariable: after pvec iterations, additionalProbingBins contains pvec
   // valid codes of the lowest-scoring bins (bins most likely to contain
   // neighbors of the query).
   for (size_t pvec = 0; pvec < T; ++pvec)
@@ -709,13 +704,14 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     std::vector<bool> Ai;
     do
     {
-      // get the perturbation set corresponding to the minimum score
+      // Get the perturbation set corresponding to the minimum score.
       Ai = perturbationSets[ minHeap.top().second ];
       minHeap.pop(); // .top() returns, .pop() removes
 
-      // modify Ai (shift)
+      // Shift operation on Ai (replace max with max+1).
       std::vector<bool> As = Ai;
-      if ( perturbationShift(As) && perturbationValid(As, numProj) ) // Don't add invalid sets.
+      if ( perturbationShift(As) && perturbationValid(As, numProj) )
+        // Don't add invalid sets.
       {
         perturbationSets.push_back(As); // add shifted set to sets
         minHeap.push( 
@@ -725,9 +721,10 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
             );
       }
 
-      // modify Ai (expand)
+      // Expand operation on Ai (add max+1 to set).
       std::vector<bool> Ae = Ai;
-      if ( perturbationExpand(Ae) && perturbationValid(Ae, numProj) ) // Don't add invalid sets.
+      if ( perturbationExpand(Ae) && perturbationValid(Ae, numProj) ) 
+        // Don't add invalid sets.
       {
         perturbationSets.push_back(Ae); // add expanded set to sets
         minHeap.push(
@@ -739,11 +736,11 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
     }while (! perturbationValid(Ai, numProj)  );//Discard invalid perturbations
 
-    // add perturbation vector to probing sequence if valid
-    for (size_t i = 0; i < Ai.size(); ++i)
-      additionalProbingBins(positions(i), pvec) 
-          += Ai[i] ? actions(i) : 0; // if A(i) marked, add action to probing vector
-  }
+    // Found valid perturbation set Ai. Construct perturbation vector from set.
+    for (size_t pos = 0; pos < Ai.size(); ++pos)
+      // If Ai[pos] is marked, add action to probing vector.
+      additionalProbingBins(positions(pos), pvec) 
+          += Ai[pos] ? actions(pos) : 0;   }
 }
 
 
@@ -777,48 +774,41 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
   allProjInTables = arma::floor(queryCodesNotFloored/hashWidth);
 
-  // Compute the hash value of each key of the query into a bucket of the
-  // 'secondHashTable' using the 'secondHashWeights'.
-  arma::Row<size_t> hashVec = 
-    arma::conv_to< arma::Row<size_t> >::
-    from( secondHashWeights.t() * allProjInTables ); // typecast to floor
-  // mod to compute 2nd-level codes
-  for (size_t i = 0; i < hashVec.n_elem; i++)
-    hashVec[i] = (hashVec[i] % secondHashSize);
 
-  Log::Assert(hashVec.n_elem == numTablesToSearch);
-
-  // Compute hashVectors of additional probing bins
+  // Use hashMat to store the primary probing codes and any additional codes
+  // from multiprobe LSH.
   arma::Mat<size_t> hashMat;
+  hashMat.set_size(T + 1, numTablesToSearch);
+
+  // Compute the primary hash value of each key of the query into a bucket of
+  // the secondHashTable using the secondHashWeights.
+  hashMat.row(0) = 
+    arma::conv_to< arma::Row<size_t> >:: // floor by typecasting to size_t
+    from( secondHashWeights.t() * allProjInTables );
+  // mod to compute 2nd-level codes
+  for (size_t i = 0; i < numTablesToSearch; i++)
+    hashMat(0, i) = (hashMat(0, i) % secondHashSize);
+
+  // Compute hash codes of additional probing bins
   if (T > 0)
   {
-    hashMat.zeros(T, numTablesToSearch);
-
     for (size_t i = 0; i < numTablesToSearch; ++i)
     {
-      // construct this table's probing sequence of length T
+      // Construct this table's probing sequence of length T.
       arma::mat additionalProbingBins;
       GetAdditionalProbingBins(allProjInTables.unsafe_col(i),
                                 queryCodesNotFloored.unsafe_col(i),
                                 T,
                                 additionalProbingBins);
 
-      // map the probing bin to second hash table bins
-      hashMat.col(i) = 
-        arma::conv_to< arma::Col<size_t> >::
-        from(additionalProbingBins.t() * secondHashWeights); // typecast floor
-      for (size_t p = 0; p < T; ++p)
+      // Map each probing bin to a bin in secondHashTable (just like we did for
+      // the primary hash table).
+      hashMat(arma::span(1, T), i) = // Compute code of rows 1:end of column i
+        arma::conv_to< arma::Col<size_t> >:: // floor by typecasting to size_t
+        from( secondHashWeights.t() * additionalProbingBins );
+      for (size_t p = 1; p < T + 1; ++p)
         hashMat(p, i) = (hashMat(p, i) % secondHashSize);
     }
-
-    // top row of hashMat is primary bins for each table
-    hashMat = arma::join_vert(hashVec, hashMat);
-  }
-  else
-  {
-    // if not multiprobe, hashMat is only hashVec's elements
-    hashMat.set_size(1, numTablesToSearch);
-    hashMat.row(0) = hashVec;
   }
 
 
