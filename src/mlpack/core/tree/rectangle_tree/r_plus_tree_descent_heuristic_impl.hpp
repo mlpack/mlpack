@@ -64,7 +64,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
     TreeType* tree = node;
     while (depth > 1)
     {
-      TreeType* child = new TreeType(node);
+      TreeType* child = new TreeType(tree);
 
       tree->Children()[tree->NumChildren()++] = child;
       tree = child;

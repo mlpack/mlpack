@@ -65,6 +65,10 @@ set(SOURCES
   rectangle_tree/discrete_hilbert_value_impl.hpp
   rectangle_tree/r_plus_tree_descent_heuristic.hpp
   rectangle_tree/r_plus_tree_descent_heuristic_impl.hpp
+  rectangle_tree/minimal_coverage_sweep.hpp
+  rectangle_tree/minimal_coverage_sweep_impl.hpp
+  rectangle_tree/minimal_splits_number_sweep.hpp
+  rectangle_tree/minimal_splits_number_sweep_impl.hpp
   rectangle_tree/r_plus_tree_split.hpp
   rectangle_tree/r_plus_tree_split_impl.hpp
   rectangle_tree/r_plus_tree_split_policy.hpp

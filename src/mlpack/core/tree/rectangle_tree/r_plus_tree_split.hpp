@@ -10,15 +10,15 @@
 
 #include <mlpack/core.hpp>
 
-const double fillFactorFraction = 0.5;
-
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-template<typename SplitPolicyType>
+template<typename SplitPolicyType,
+         template<typename> class SweepType>
 class RPlusTreeSplit
 {
  public:
+  typedef SplitPolicyType SplitPolicy;
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
@@ -48,45 +48,24 @@ class RPlusTreeSplit
     int n;
   };
 
-  template<typename ElemType>
-  static bool StructComp(const SortStruct<ElemType>& s1,
-                         const SortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
+  template<typename TreeType>
+  static void SplitLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
+      TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut);
 
   template<typename TreeType>
-  static void SplitLeafNodeAlongPartition(TreeType* tree,
-      TreeType* treeOne, TreeType* treeTwo, size_t cutAxis, double cut);
-
-  template<typename TreeType>
-  static void SplitNonLeafNodeAlongPartition(TreeType* tree,
-      TreeType* treeOne, TreeType* treeTwo, size_t cutAxis, double cut);
+  static void SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
+      TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut);
 
   template<typename TreeType>
   static void AddFakeNodes(const TreeType* tree, TreeType* emptyTree);
 
   template<typename TreeType>
-  static bool PartitionNode(const TreeType* node, size_t fillFactor,
-      size_t& minCutAxis, double& minCut);
-
-  template<typename TreeType>
-  static double SweepLeafNode(size_t axis, const TreeType* node,
-      size_t fillFactor, double& axisCut);
-
-  template<typename TreeType>
-  static double SweepNonLeafNode(size_t axis, const TreeType* node,
-      size_t fillFactor, double& axisCut);
+  static bool PartitionNode(const TreeType* node, size_t& minCutAxis,
+      typename TreeType::ElemType& minCut);
 
   template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 
-  template<typename TreeType>
-  static bool CheckNonLeafSweep(const TreeType* node,
-      size_t cutAxis, double cut);
-
-  template<typename TreeType>
-  static bool CheckLeafSweep(const TreeType* node, size_t cutAxis, double cut);
 };
 
 } // namespace tree

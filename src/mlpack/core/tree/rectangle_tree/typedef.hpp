@@ -129,7 +129,8 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using RPlusTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
-                            RPlusTreeSplit<RPlusTreeSplitPolicy>,
+                            RPlusTreeSplit<RPlusTreeSplitPolicy,
+                                           MinimalCoverageSweep>,
                             RPlusTreeDescentHeuristic,
                             NoAuxiliaryInformation>;
 
@@ -137,7 +138,8 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using RPlusPlusTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
-                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy>,
+                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
+                                           MinimalCoverageSweep>,
                             RPlusPlusTreeDescentHeuristic,
                             RPlusPlusTreeAuxiliaryInformation>;
 } // namespace tree

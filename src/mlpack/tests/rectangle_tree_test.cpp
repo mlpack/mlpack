@@ -137,7 +137,17 @@ void CheckContainment(const TreeType& tree)
     for (size_t i = 0; i < tree.NumChildren(); i++)
     {
       for (size_t j = 0; j < tree.Bound().Dim(); j++)
-        BOOST_REQUIRE(tree.Bound()[j].Contains(tree.Children()[i]->Bound()[j]));
+      {
+        //  All children should be covered by the parent node.
+        //  Some children can be empty (only in case of the R++ tree)
+        bool success = (tree.Children()[i]->Bound()[j].Hi() ==
+                std::numeric_limits<typename TreeType::ElemType>::lowest() &&
+                tree.Children()[i]->Bound()[j].Lo() ==
+                std::numeric_limits<typename TreeType::ElemType>::max()) ||
+            tree.Bound()[j].Contains(tree.Children()[i]->Bound()[j]);
+
+        BOOST_REQUIRE(success);
+      }
 
       CheckContainment(*(tree.Children()[i]));
     }
@@ -921,6 +931,17 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeBoundTest)
   TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
 
   CheckRPlusPlusTreeBound(&rPlusPlusTree);
+
+  typedef RectangleTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat,
+      RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalSplitsNumberSweep>,
+      RPlusPlusTreeDescentHeuristic, RPlusPlusTreeAuxiliaryInformation>
+          RPlusPlusTreeMinimalSplits;
+
+  RPlusPlusTreeMinimalSplits rPlusPlusTree2(dataset, 20, 6, 5, 2, 0);
+
+  CheckRPlusPlusTreeBound(&rPlusPlusTree2);
+
 }
 
 BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
