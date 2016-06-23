@@ -881,7 +881,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         points[i] = child->Points()[i];
       }
 
-      auxiliaryInfo.Copy(this,child);
+      auxiliaryInfo = child->AuxiliaryInfo();
 
       count = child->Count();
       child->SoftDelete();

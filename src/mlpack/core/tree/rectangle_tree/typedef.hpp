@@ -119,26 +119,14 @@ using XTree = RectangleTree<MetricType,
  * @see @ref trees, RTree, DiscreteHilbertRTree
  */
 template<typename TreeType>
-using RecursiveHilbertRTreeAuxiliaryInformation =
-      HilbertRTreeAuxiliaryInformation<TreeType,RecursiveHilbertValue>;
-
-template<typename MetricType, typename StatisticType, typename MatType>
-using RecursiveHilbertRTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            HilbertRTreeSplit,
-                            HilbertRTreeDescentHeuristic,
-                            RecursiveHilbertRTreeAuxiliaryInformation>;
-
-template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
       HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
-using DiscreteHilbertRTree = RectangleTree<MetricType,
+using HilbertRTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
-                            HilbertRTreeSplit,
+                            HilbertRTreeSplit<2>,
                             HilbertRTreeDescentHeuristic,
                             DiscreteHilbertRTreeAuxiliaryInformation>;
 

@@ -34,9 +34,6 @@ class HilbertRTreeAuxiliaryInformation
    */
   HilbertRTreeAuxiliaryInformation(const HilbertRTreeAuxiliaryInformation& other);
 
-  //! Free memory
-  ~HilbertRTreeAuxiliaryInformation();
-
   /**
    * The Hilbert R tree requires to insert points according to their
    * Hilbert value. This method should take care of it.

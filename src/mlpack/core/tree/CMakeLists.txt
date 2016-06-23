@@ -59,8 +59,6 @@ set(SOURCES
   rectangle_tree/hilbert_r_tree_split_impl.hpp
   rectangle_tree/hilbert_r_tree_auxiliary_information.hpp
   rectangle_tree/hilbert_r_tree_auxiliary_information_impl.hpp
-  rectangle_tree/recursive_hilbert_value.hpp
-  rectangle_tree/recursive_hilbert_value_impl.hpp
   rectangle_tree/discrete_hilbert_value.hpp
   rectangle_tree/discrete_hilbert_value_impl.hpp
   statistic.hpp

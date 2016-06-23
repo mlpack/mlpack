@@ -40,14 +40,6 @@ HilbertRTreeAuxiliaryInformation(const HilbertRTreeAuxiliaryInformation& other) 
 {
 
 };
-
-template<typename TreeType,
-         template<typename> class HilbertValueType>
-HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-~HilbertRTreeAuxiliaryInformation()
-{
-
-}
   
 template<typename TreeType,
          template<typename> class HilbertValueType>
@@ -156,14 +148,6 @@ UpdateAuxiliaryInfo(TreeType* node)
     return true;
   }
   return false;
-}
-
-template<typename TreeType,
-         template<typename> class HilbertValueType>
-void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-Copy(TreeType* dst, TreeType* src)
-{
-  hilbertValue.Copy(dst,src);
 }
 
 template<typename TreeType,
