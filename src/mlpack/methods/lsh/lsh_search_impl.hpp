@@ -677,8 +677,8 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     {
       const size_t hashInd = hashMat(p, i); // find query's bucket
       const size_t tableRow = bucketRowInHashTable[hashInd];
-      if (tableRow != secondHashSize)
-        maxNumPoints += bucketContentSize[hashInd]; // count bucket contents
+      if (tableRow < secondHashSize)
+        maxNumPoints += bucketContentSize[tableRow]; // count bucket contents
     }
   }
 
@@ -708,16 +708,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
         // get the sequence code
         size_t hashInd = hashMat(p, i);
+        size_t tableRow = bucketRowInHashTable[hashInd];
 
-        if (bucketContentSize[hashInd] > 0)
+        if (tableRow < secondHashSize && bucketContentSize[tableRow] > 0)
         {
           // Pick the indices in the bucket corresponding to hashInd.
-          size_t tableRow = bucketRowInHashTable[hashInd];
-          if (tableRow != secondHashSize)
-          {
-            for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-              refPointsConsidered[ secondHashTable[tableRow](j) ]++;
-          }
+          for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
+            refPointsConsidered[ secondHashTable[tableRow](j) ]++;
         }
       }
     }
@@ -743,7 +740,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         const size_t hashInd =  hashMat(p, i); // Find the query's bucket.
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
-        if (tableRow != secondHashSize)
+        if (tableRow < secondHashSize)
          // Store all secondHashTable points in the candidates set.
          for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
            refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];

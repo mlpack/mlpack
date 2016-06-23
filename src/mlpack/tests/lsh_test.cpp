@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
 
   // Cheap LSH run.
   const int hChp = 1; // Small first-level hash width.
-  const int kChp = 1000; // Large number of projections per table.
+  const int kChp = 100; // Large number of projections per table.
   const int tChp = 1; // Only one table.
   const double recallThreshChp = 0.25; // Recall threshold.
 
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
           numProbes[p]);
 
       // compute recall
-      double recall = ComputeRecall(lshNeighbors, groundTruth); //TODO: change to LSHSearch::ComputeRecall??
+      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth); //TODO: change to LSHSearch::ComputeRecall??
       if (p > 0)
       {
         // more probes should at the very least not lower recall...
