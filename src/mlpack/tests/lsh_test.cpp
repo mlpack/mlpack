@@ -601,10 +601,6 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   // Searching with 3 additional probing bins should find neighbors
   lshTest.Search(q1, k, neighbors, distances, 0, 3);
   BOOST_REQUIRE( arma::all(neighbors.col(0) == N || neighbors.col(0) < 10) );
-
-  // Demand that we do find at least 1 neighbor (not just Ns, but actuall
-  // values)
-  // BOOST_REQUIRE_GE( arma::find(neighbors.col(0) < 10).n_elem, 1);
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)

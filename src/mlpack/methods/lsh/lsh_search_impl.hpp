@@ -418,15 +418,15 @@ inline double perturbationScore(const arma::Row<char>& A,
 // replaces the largest element of a vector A with (largest element) + 1.
 inline bool perturbationShift(arma::Row<char>& A)
 {
-  size_t max_pos = 0;
-  for (size_t i = 1; i < A.n_elem; ++i)
+  size_t maxPos = 0;
+  for (size_t i = 0; i < A.n_elem; ++i)
     if (A(i) == 1) // marked true
-      max_pos=i;
+      maxPos=i;
   
-  if ( max_pos + 1 < A.n_elem) // otherwise, this is an invalid vector 
+  if ( maxPos + 1 < A.n_elem) // otherwise, this is an invalid vector 
   {
-    A(max_pos) = 0;
-    A(max_pos+1) = 1;
+    A(maxPos) = 0;
+    A(maxPos+1) = 1;
     return true; // valid
   }
   return false; // invalid
@@ -437,14 +437,15 @@ inline bool perturbationShift(arma::Row<char>& A)
 // largest_element is the largest element of A.
 inline bool perturbationExpand(arma::Row<char>& A)
 {
-  size_t max_pos = 0;
-  for (size_t i = 1; i < A.n_elem; ++i)
-    if (A(i) == 1) //marked true
-      max_pos=i;
+  // Find the last '1' in A
+  size_t maxPos = 0;
+  for (size_t i = 0; i < A.n_elem; ++i)
+    if (A(i)) //marked true
+      maxPos = i;
 
-  if ( max_pos + 1 < A.n_elem) // otherwise, this is an invalid vector
+  if ( maxPos + 1 < A.n_elem) // otherwise, this is an invalid vector
   {
-    A(max_pos+1) = 1;
+    A(maxPos+1) = 1;
     return true;
   }
   return false;
@@ -464,7 +465,7 @@ inline bool perturbationValid(const arma::Row<char>& A,
 
   if (A.n_elem > 2 * numProj)
   {
-    // Log::Assert(1 == 2);
+    Log::Assert(1 == 2);
     return false; // This should never happen
   }
 
@@ -480,12 +481,6 @@ inline bool perturbationValid(const arma::Row<char>& A,
       check[i % numProj] = true;
     else
       return false; // If dimension was seen before, set is not valid.
-
-
-    if (check[A[i] % numProj ] == 0)
-      check[A[i] % numProj ] = 1;
-    else
-      return false;
   }
 
   // If we didn't fail, set is valid.
@@ -748,7 +743,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     for (size_t i = 0; i < Ai.n_elem; ++i)
       additionalProbingBins(positions(i), pvec) 
           += Ai(i) ? actions(i) : 0; // if A(i) marked, add action to probing vector
-
   }
 }
 
@@ -902,7 +896,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         if (tableRow < secondHashSize)
          // Store all secondHashTable points in the candidates set.
          for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-           refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
+           refPointsConsideredSmall(start++) = secondHashTable[tableRow](j);
       }
     }
 
