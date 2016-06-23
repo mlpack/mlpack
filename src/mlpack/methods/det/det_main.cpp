@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
-    if (CLI::GetParam<string>("training_set_estimates_file") != "")
+    if (CLI::HasParam("training_set_estimates_file"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);

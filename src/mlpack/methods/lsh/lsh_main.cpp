@@ -48,6 +48,7 @@ PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING("true_neighbors_file", "File of real neighbors to compute recall (printed with -v).", "t", "");
 
 // We can load or save models.
 PARAM_STRING("input_model_file", "File to load LSH model from.  (Cannot be "
@@ -65,7 +66,8 @@ PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing in the "
     "hash width for its use.", "H", 0.0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
-PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
+PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
+    "hash; 0 indicates no limit (so the table can be arbitrarily large!).", "B",
     500);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
@@ -187,6 +189,25 @@ int main(int argc, char *argv[])
   }
 
   Log::Info << "Neighbors computed." << endl;
+
+  // Compute recall, if desired.
+  if (CLI::HasParam("true_neighbors_file"))
+  {
+    const string trueNeighborsFile = 
+        CLI::GetParam<string>("true_neighbors_file");
+
+    // Load the true neighbors.
+    arma::Mat<size_t> trueNeighbors;
+    data::Load(trueNeighborsFile, trueNeighbors, true);
+    Log::Info << "Loaded true neighbor indices from '" 
+        << trueNeighborsFile << "'." << endl;
+
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
+
+    Log::Info << "Recall: " << recallPercentage << endl;
+  }
 
   // Save output, if desired.
   if (CLI::HasParam("distances_file"))

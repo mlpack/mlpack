@@ -7,7 +7,7 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
@@ -1225,8 +1225,16 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
-  CheckMatrices(lsh.SecondHashTable(), xmlLsh.SecondHashTable(),
-      textLsh.SecondHashTable(), binaryLsh.SecondHashTable());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      xmlLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      textLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      binaryLsh.SecondHashTable().size());
+
+  for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
+  CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
+      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
 }
 
 // Make sure serialization works for the decision stump.

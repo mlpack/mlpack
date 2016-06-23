@@ -9,7 +9,7 @@
 #include <mlpack/methods/fastmks/fastmks_model.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
