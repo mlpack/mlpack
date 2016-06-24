@@ -15,6 +15,7 @@
 #include <mlpack/methods/ne/genome.hpp>
 #include <mlpack/methods/ne/species.hpp>
 #include <mlpack/methods/ne/cne.hpp>
+ #include <mlpack/methods/ne/neat.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -115,10 +116,10 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   params.aMaxGeneration = 1000;
 
   // Construct seed genome for xor task.
-  size_t id = 0;
-  size_t numInput = 3;
-  size_t numOutput = 1;
-  size_t depth = 2;
+  ssize_t id = 0;
+  ssize_t numInput = 3;
+  ssize_t numOutput = 1;
+  ssize_t depth = 2;
   double fitness = -1;
   double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;

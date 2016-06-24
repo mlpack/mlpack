@@ -39,16 +39,16 @@ class Population {
 
  private:
   // Number of species.
-  size_t aNumSpecies;
+  ssize_t aNumSpecies;
 
   // Number of genomes including all species.
-  size_t aPopulationSize;
+  ssize_t aPopulationSize;
 
   // Next species id.
-  size_t aNextSpeciesId;
+  ssize_t aNextSpeciesId;
 
   // Next genome id.
-  size_t aNextGenomeId;
+  ssize_t aNextGenomeId;
 
   // Best fitness.
   double aBestFitness;

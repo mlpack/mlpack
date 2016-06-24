@@ -36,12 +36,12 @@ class Species {
 
   // Parametric constructor.
   // TODO: whether randomize, random range, as parameter or not??
-  Species(Genome& seedGenome, size_t speciesSize) {
+  Species(Genome& seedGenome, ssize_t speciesSize) {
     aSpeciesSize = speciesSize;
     aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
     // Create genomes from seed Genome and randomize weight.
-    for (size_t i=0; i<speciesSize; ++i) {
+    for (ssize_t i=0; i<speciesSize; ++i) {
       Genome genome = seedGenome;
       genome.Id(i);
       aGenomes.push_back(genome);
@@ -51,7 +51,7 @@ class Species {
     aNextGenomeId = speciesSize;
   }
 
-  size_t SpeciesSize() { return aSpeciesSize; }
+  ssize_t SpeciesSize() { return aSpeciesSize; }
 
   // Destructor.
   ~Species() {}
@@ -65,7 +65,7 @@ class Species {
       return;
 
     aBestFitness = aGenomes[0].Fitness();
-    for (size_t i=0; i<aGenomes.size(); ++i) {
+    for (ssize_t i=0; i<aGenomes.size(); ++i) {
       if (aGenomes[i].Fitness() < aBestFitness) {
         aBestFitness = aGenomes[i].Fitness();
       }
@@ -83,7 +83,7 @@ class Species {
  private:
 
   // Number of Genomes.
-  size_t aSpeciesSize;
+  ssize_t aSpeciesSize;
 
   // Best fitness.
   double aBestFitness;
@@ -92,7 +92,7 @@ class Species {
   Genome aBestGenome;
 
   // Next genome id.
-  size_t aNextGenomeId;
+  ssize_t aNextGenomeId;
 
 };
 

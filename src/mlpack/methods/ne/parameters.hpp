@@ -20,10 +20,10 @@ namespace ne {
 class Parameters {
  public:
   // Species size.
-  size_t aSpeciesSize;
+  ssize_t aSpeciesSize;
 
   // Number of generations to evolve.
-  size_t aMaxGeneration;
+  ssize_t aMaxGeneration;
 
   // Mutation rate.
   double aMutateRate;

@@ -23,9 +23,9 @@ class LinkGene {
   LinkGene() {}
 
   // Parametric constructor.
-  LinkGene(size_t fromNeuronId,
-  	       size_t toNeuronId,
-  	       size_t innovationId,
+  LinkGene(ssize_t fromNeuronId,
+  	       ssize_t toNeuronId,
+  	       ssize_t innovationId,
   	       double weight,
            bool enabled):
     aFromNeuronId(fromNeuronId),
@@ -48,16 +48,16 @@ class LinkGene {
   ~LinkGene() {}
 
   // Set aFromNeuronId.
-  void FromNeuronId(size_t fromNeuronId) { aFromNeuronId = fromNeuronId; } 
+  void FromNeuronId(ssize_t fromNeuronId) { aFromNeuronId = fromNeuronId; } 
 
   // Get aFromNeuronId.
-  size_t FromNeuronId() const { return aFromNeuronId; }
+  ssize_t FromNeuronId() const { return aFromNeuronId; }
 
   // Set aToNeuronId.
-  void ToNeuronId(size_t toNeuronId) { aToNeuronId = toNeuronId; }
+  void ToNeuronId(ssize_t toNeuronId) { aToNeuronId = toNeuronId; }
 
   // Get aToNeuronId.
-  size_t ToNeuronId() const { return aToNeuronId; }
+  ssize_t ToNeuronId() const { return aToNeuronId; }
 
   // Set aWeight.
   void Weight(double weight) { aWeight = weight; }
@@ -66,10 +66,10 @@ class LinkGene {
   double Weight() const { return aWeight; }
 
   // Set aInnovationId.
-  void InnovationId(size_t innovationId) { aInnovationId = innovationId; }
+  void InnovationId(ssize_t innovationId) { aInnovationId = innovationId; }
 
   // Get aInnovationId.
-  size_t InnovationId() const { return aInnovationId; }
+  ssize_t InnovationId() const { return aInnovationId; }
 
   // Set aEnabled.
   void Enabled(bool enabled) { aEnabled = enabled; }
@@ -92,13 +92,13 @@ class LinkGene {
 
  private:
   // The IDs of neurons connected by this link.
-  size_t aFromNeuronId, aToNeuronId;
+  ssize_t aFromNeuronId, aToNeuronId;
 
   // Link weight.
   double aWeight;
 
   // Link innovation ID.
-  size_t aInnovationId;
+  ssize_t aInnovationId;
 
   // Enabled or not.
   bool aEnabled;

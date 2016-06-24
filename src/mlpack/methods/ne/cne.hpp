@@ -59,22 +59,22 @@ class CNE {
     aSpecies.SortSpecies();
 
     // Select parents from elite genomes and crossover.
-    size_t numElite = floor(aElitePercentage * aSpeciesSize);
-    size_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
+    ssize_t numElite = floor(aElitePercentage * aSpeciesSize);
+    ssize_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
     numElite = aSpeciesSize - numDrop;
 
-    for (size_t i=numElite; i<aSpeciesSize-1; ++i) {
+    for (ssize_t i=numElite; i<aSpeciesSize-1; ++i) {
       // Randomly select two parents from elite genomes.
-      size_t idx1 = RandInt(0, numElite);
-      size_t idx2 = RandInt(0, numElite);
+      ssize_t idx1 = RandInt(0, numElite);
+      ssize_t idx2 = RandInt(0, numElite);
 
       // Crossover to get two children genomes.
       Genome::CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
-                       aSpecies.aGenomes[i], aSpecies.aGenomes[i+1]);
+                               aSpecies.aGenomes[i], aSpecies.aGenomes[i+1]);
     }
 
     // Keep the best genome and mutate the rests.
-    for (size_t i=1; i<aSpeciesSize; ++i) {
+    for (ssize_t i=1; i<aSpeciesSize; ++i) {
       aSpecies.aGenomes[i].MutateWeightsBiased(aMutateRate, aMutateSize);
     }
   }
@@ -82,13 +82,13 @@ class CNE {
   // Evolution of species.
   void Evolve() {
     // Generate initial species at random.
-    size_t generation = 0;
+    ssize_t generation = 0;
     InitSpecies();
     
     // Repeat
     while (generation < aMaxGeneration) {
     	// Evaluate all genomes in the species.
-      for (size_t i=0; i<aSpecies.SpeciesSize(); ++i) {
+      for (ssize_t i=0; i<aSpecies.SpeciesSize(); ++i) {
         double fitness = aTask.EvalFitness(aSpecies.aGenomes[i]);
         aSpecies.aGenomes[i].Fitness(fitness);
       }
@@ -114,10 +114,10 @@ class CNE {
   Species aSpecies;
 
   // Species size.
-  size_t aSpeciesSize;
+  ssize_t aSpeciesSize;
 
   // Max number of generation to evolve.
-  size_t aMaxGeneration;
+  ssize_t aMaxGeneration;
 
   // Mutation rate.
   double aMutateRate;

@@ -29,16 +29,22 @@ namespace ne {
  */
 class Genome {
  public:
+  // Neurons.
+  std::vector<NeuronGene> aNeuronGenes;
+
+  // Links.
+  std::vector<LinkGene> aLinkGenes;
+
   // Default constructor.
   Genome() {}
   
   // Parametric constructor.
-  Genome(size_t id,
+  Genome(ssize_t id,
   	     const std::vector<NeuronGene>& neuronGenes,
          const std::vector<LinkGene>& linkGenes,
-         size_t numInput,
-         size_t numOutput,
-         size_t depth,
+         ssize_t numInput,
+         ssize_t numOutput,
+         ssize_t depth,
          double fitness,
          double adjustedFitness):
     aId(id),
@@ -83,28 +89,28 @@ class Genome {
   }
 
   // Get genome id.
-  size_t Id() const { return aId; }
+  ssize_t Id() const { return aId; }
 
   // Set genome id.
-  void Id(size_t id) { aId = id; }
+  void Id(ssize_t id) { aId = id; }
 
   // Get input length.
-  size_t NumInput() const { return aNumInput; }
+  ssize_t NumInput() const { return aNumInput; }
 
   // Set input length.
-  void NumInput(size_t numInput) { aNumInput = numInput; }
+  void NumInput(ssize_t numInput) { aNumInput = numInput; }
 
   // Get output length.
-  size_t NumOutput() const { return aNumOutput; }
+  ssize_t NumOutput() const { return aNumOutput; }
 
   // Set output length.
-  void NumOutput(size_t numOutput) { aNumOutput = numOutput; }
+  void NumOutput(ssize_t numOutput) { aNumOutput = numOutput; }
 
   // Get depth.
-  size_t Depth() const { return aDepth; }
+  ssize_t Depth() const { return aDepth; }
 
   // Set depth.
-  void Depth(size_t depth) { aDepth = depth; }
+  void Depth(ssize_t depth) { aDepth = depth; }
 
   // Set fitness.
   void Fitness(double fitness) { aFitness = fitness; }
@@ -119,21 +125,21 @@ class Genome {
   double AdjustedFitness() const { return aAdjustedFitness; }
 
   // Get neuron number.
-  size_t NumNeuron() const {
+  ssize_t NumNeuron() const {
     return aNeuronGenes.size();
   }
   
   // Get link number.
-  size_t NumLink() const {
+  ssize_t NumLink() const {
     return aLinkGenes.size();
   }
 
   // Whether specified neuron id exist in this genome.
-  bool HasNeuronId(size_t id) const {
+  bool HasNeuronId(ssize_t id) const {
     assert(id > 0);
     assert(NumNeuron() > 0);
 
-    for (size_t i=0; i<NumNeuron(); ++i) {
+    for (ssize_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Id() == id) {
         return true;
       }
@@ -143,10 +149,10 @@ class Genome {
   }
 
   // Get neuron by id.
-  NeuronGene GetNeuronById(size_t id) {
+  NeuronGene GetNeuronById(ssize_t id) {
     assert(HasNeuronId(id));
 
-    for (size_t i=0; i<NumNeuron(); ++i) {
+    for (ssize_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Id() == id) {
         return aNeuronGenes[i];
       }
@@ -154,23 +160,23 @@ class Genome {
   }
 
   // Get neuron index by id.
-  size_t GetNeuronIndex(size_t id) const {
-    for(size_t i=0; i < NumNeuron(); ++i) {
+  ssize_t GetNeuronIndex(ssize_t id) const {
+    for(ssize_t i=0; i < NumNeuron(); ++i) {
         if (aNeuronGenes[i].Id() == id) {
             return i;
         }
     }
 
-    return 0;  // Id start from 1.
+    return -1;  // Id start from 0.
   }
 
   // Calculate Neuron depth.
-  size_t NeuronDepth(size_t id) {
+  ssize_t NeuronDepth(ssize_t id) {
     // TODO: if contains loop in network.
 
     // Find all links that output to this neuron id.
     std::vector<int> inputLinksIndex;
-    for (size_t i=0; i<NumLink(); ++i) {
+    for (ssize_t i=0; i<NumLink(); ++i) {
       if (aLinkGenes[i].ToNeuronId() == id) {
         inputLinksIndex.push_back(i);
       }
@@ -182,19 +188,19 @@ class Genome {
     }
 
     // Recursively get neuron depth.
-    std::vector<size_t> depths(inputLinksIndex.size());
-    for (size_t i=0; i<inputLinksIndex.size(); ++i) {
+    std::vector<ssize_t> depths(inputLinksIndex.size());
+    for (ssize_t i=0; i<inputLinksIndex.size(); ++i) {
       depths[i] = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId());
     }
-    size_t maxInputDepth = *(std::max_element(std::begin(depths),
+    ssize_t maxInputDepth = *(std::max_element(std::begin(depths),
                                  std::end(depths)));
     return (maxInputDepth + 1);
   }
 
   // Calculate Genome depth.
   // It is the max depth of all output neuron genes.
-  size_t GenomeDepth() {
-    size_t numNeuron = NumNeuron();
+  ssize_t GenomeDepth() {
+    ssize_t numNeuron = NumNeuron();
 
     // If empty genome.
     if (numNeuron == 0) {
@@ -209,17 +215,17 @@ class Genome {
     }
     
     // Find all OUTPUT neuron id.
-    std::vector<size_t> outputNeuronsId;
-    for (size_t i=0; i<NumNeuron(); ++i) {
+    std::vector<ssize_t> outputNeuronsId;
+    for (ssize_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Type() == OUTPUT) {
         outputNeuronsId.push_back(aNeuronGenes[i].Id());
       }
     }
 
     // Get max depth of all output neurons.
-    size_t genomeDepth = 0;
-    for (size_t i=0; i<outputNeuronsId.size(); ++i) {
-      size_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i]);
+    ssize_t genomeDepth = 0;
+    for (ssize_t i=0; i<outputNeuronsId.size(); ++i) {
+      ssize_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i]);
       if (outputNeuronDepth > genomeDepth) {
         genomeDepth = outputNeuronDepth;
       }
@@ -231,7 +237,7 @@ class Genome {
 
   // Set neurons' input and output to zero.
   void Flush() {
-    for (size_t i=0; i<aNeuronGenes.size(); ++i) {
+    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
       aNeuronGenes[i].aActivation = 0;
       aNeuronGenes[i].aInput = 0;
     }
@@ -243,20 +249,20 @@ class Genome {
     //Flush();
 
     // Set inputs.
-    for (size_t i=0; i<aNumInput; ++i) {
+    for (ssize_t i=0; i<aNumInput; ++i) {
       aNeuronGenes[i].aActivation = input[i];  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
     }
 
     // Construct neuron id: index dictionary.
-    std::map<size_t, size_t> neuronIdToIndex;
-    for (size_t i=0; i<NumNeuron(); ++i) {
-      neuronIdToIndex.insert(std::pair<size_t, size_t>(aNeuronGenes[i].Id(), i));
+    std::map<ssize_t, ssize_t> neuronIdToIndex;
+    for (ssize_t i=0; i<NumNeuron(); ++i) {
+      neuronIdToIndex.insert(std::pair<ssize_t, ssize_t>(aNeuronGenes[i].Id(), i));
     }
 
     // Activate layer by layer.
-    for (size_t i=0; i<aDepth; ++i) {
+    for (ssize_t i=0; i<aDepth; ++i) {
       // Loop links to calculate neurons' input sum.
-      for (size_t j=0; j<aLinkGenes.size(); ++j) {
+      for (ssize_t j=0; j<aLinkGenes.size(); ++j) {
         aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].ToNeuronId())].aInput +=
           aLinkGenes[j].Weight() *
           aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].FromNeuronId())].aActivation *
@@ -264,7 +270,7 @@ class Genome {
       }
 
       // Loop neurons to calculate neurons' activation.
-      for (size_t j=aNumInput; j<aNeuronGenes.size(); ++j) {
+      for (ssize_t j=aNumInput; j<aNeuronGenes.size(); ++j) {
         double x = aNeuronGenes[j].aInput;  // TODO: consider bias. Difference?
         aNeuronGenes[j].aInput = 0;
 
@@ -293,7 +299,7 @@ class Genome {
   // Get output vector.
   std::vector<double> Output() {
     std::vector<double> output;
-    for (size_t i=0; i<aNumOutput; ++i) {  // TODO: it relies on the sequence. Good?
+    for (ssize_t i=0; i<aNumOutput; ++i) {  // TODO: it relies on the sequence. Good?
       output.push_back(aNeuronGenes[aNumInput + i].aActivation);
     }
     return output;
@@ -301,7 +307,7 @@ class Genome {
 
   // Set random link weights between [lo, hi].
   void RandomizeWeights(const double lo, const double hi) {
-    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+    for (ssize_t i=0; i<aLinkGenes.size(); ++i) {
       double weight = mlpack::math::Random(lo, hi);
       aLinkGenes[i].Weight(weight); 
     }
@@ -310,9 +316,10 @@ class Genome {
   // Soft mutation: add a random value chosen from
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution.
+  // TODO: make genome an parameter and put it into CNE??
   // Can we use exponential distribution?
   void MutateWeightsBiased(double mutateProb, double mutateSize) {
-    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+    for (ssize_t i=0; i<aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();  // rand 0~1
       if (p < mutateProb) {
         double deltaW = mlpack::math::RandNormal(0, mutateSize);  // TODO: make it tunable: gaussian, param, exp-dist...
@@ -325,9 +332,10 @@ class Genome {
   // Hard mutation: replace with a random value chosen from
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution.
+  // TODO: make genome an parameter and put it into CNE??
   // Can we use exponential distribution?
   void MutateWeightsUnbiased(double mutateProb, double mutateSize) {
-    for (size_t i=0; i<aLinkGenes.size(); ++i) {
+    for (ssize_t i=0; i<aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();
       if (p < mutateProb) {
         double weight = mlpack::math::RandNormal(0, mutateSize); // TODO: make it tunable: gaussian, param, exp-dist...
@@ -338,12 +346,12 @@ class Genome {
 
   // Randomly select weights from one parent genome.
   static void CrossoverWeights(Genome& momGenome, 
-                        Genome& dadGenome, 
-                        Genome& child1Genome, 
-                        Genome& child2Genome) {
+                               Genome& dadGenome, 
+                               Genome& child1Genome, 
+                               Genome& child2Genome) {
     child1Genome = momGenome;
     child2Genome = dadGenome;
-    for (size_t i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
+    for (ssize_t i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
       double t = mlpack::math::RandNormal();
       if (t>0) {  // prob = 0.5
         child1Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
@@ -363,22 +371,16 @@ class Genome {
 
  private:
   // Genome id.
-  size_t aId;
-
-  // Neurons.
-  std::vector<NeuronGene> aNeuronGenes;
-
-  // Links.
-  std::vector<LinkGene> aLinkGenes;
+  ssize_t aId;
 
   // Input length (include bias). 
-  size_t aNumInput;
+  ssize_t aNumInput;
 
   // Output length.
-  size_t aNumOutput;
+  ssize_t aNumOutput;
 
   // Network maximum depth.
-  size_t aDepth;
+  ssize_t aDepth;
 
   // Genome fitness.
   double aFitness;
