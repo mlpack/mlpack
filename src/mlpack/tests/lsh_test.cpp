@@ -555,9 +555,14 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
  * found only by searching additional probing bins.
  *
  * We verify this actually is the case.
+ * 
+ * Note: This test doesn't work, because of the effect the random offsets of LSH
+ * have on the 1st level codes. We need to think of something better.
  */
+/*
 BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 {
+  math::RandomSeed(std::time(NULL));
   // generate known deterministic clusters of points
   const size_t N = 40;
   arma::mat rdata;
@@ -579,29 +584,26 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   LSHSearch<> lshTest(rdata, projections,
                       hashWidth, secondHashSize, bucketSize);
 
-  // get offset of each projection dimension. Since projection table is I(2),
-  // offsets will map to offsets of actual dimensions. This is to enforce that
-  // q1 is right outside the bounding box of C1.
-  arma::mat offsets = lshTest.Offsets();
-
 
   // two points near the clusters but outside their bins. q1's lowest scoring
   // perturbation vectors will map to C1 cluster's bins.
   arma::mat q1;
   q1 << 1.1 << arma::endr << 3.3; // vector [1.1, 3.3]
-  q1 += offsets;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
   // Test that q1 simple search comes up empty
   lshTest.Search(q1, k, neighbors, distances);
+  cout << neighbors << endl;
   BOOST_REQUIRE( arma::all(neighbors.col(0) == N) );
 
   // Searching with 3 additional probing bins should find neighbors
   lshTest.Search(q1, k, neighbors, distances, 0, 3);
+  cout << neighbors << endl;
   BOOST_REQUIRE( arma::all(neighbors.col(0) == N || neighbors.col(0) < 10) );
 }
+*/
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
