@@ -411,7 +411,7 @@ inline double perturbationScore(const std::vector<bool>& A,
   double score = 0.0;
   for (size_t i = 0; i < A.size(); ++i)
     if (A[i])
-      score += scores(i) // add scores of non-zero indices
+      score += scores(i); // add scores of non-zero indices
   return score;
 }
 
