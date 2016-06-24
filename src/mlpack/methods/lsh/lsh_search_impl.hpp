@@ -605,6 +605,33 @@ Search(const size_t k,
 }
 
 template<typename SortPolicy>
+double LSHSearch<SortPolicy>::ComputeRecall(
+    const arma::Mat<size_t>& foundNeighbors,
+    const arma::Mat<size_t>& realNeighbors)
+{
+  if (foundNeighbors.n_rows != realNeighbors.n_rows ||
+      foundNeighbors.n_cols != realNeighbors.n_cols)
+    throw std::invalid_argument("LSHSearch::ComputeRecall(): matrices provided"
+        " must have equal size");
+
+  const size_t queries = foundNeighbors.n_cols;
+  const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.
+
+  // The recall is the set intersection of found and real neighbors.
+  size_t found = 0;
+  for (size_t col = 0; col < queries; ++col)
+    for (size_t row = 0; row < neighbors; ++row)
+      for (size_t nei = 0; nei < realNeighbors.n_rows; ++nei)
+        if (realNeighbors(row, col) == foundNeighbors(nei, col))
+        {
+          found++;
+          break;
+        }
+
+  return ((double) found) / realNeighbors.n_elem;
+}
+
+template<typename SortPolicy>
 template<typename Archive>
 void LSHSearch<SortPolicy>::Serialize(Archive& ar,
                                       const unsigned int version)

@@ -188,7 +188,7 @@ class RectangleTree
   void SoftDelete();
 
   /**
-   * Set dataset to null. Used for memory management.  Be cafeful.
+   * Set dataset to null. Used for memory management.  Be careful.
    */
   void NullifyData();
 

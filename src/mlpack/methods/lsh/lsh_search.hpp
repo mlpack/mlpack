@@ -191,6 +191,18 @@ class LSHSearch
 
 
   /**
+   * Compute the recall (% of neighbors found) given the neighbors returned by
+   * LSHSearch::Search and a "ground truth" set of neighbors.  The recall
+   * returned will be in the range [0, 1].
+   *
+   * @param foundNeighbors Set of neighbors to compute recall of.
+   * @param realNeighbors Set of "ground truth" neighbors to compute recall
+   *     against.
+   */
+  static double ComputeRecall(const arma::Mat<size_t>& foundNeighbors,
+                              const arma::Mat<size_t>& realNeighbors);
+
+  /**
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
