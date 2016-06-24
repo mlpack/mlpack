@@ -359,10 +359,10 @@ class LSHSearch
    * @param additionalProbingBins matrix. Each column will hold one additional
    * bin.
   */
-  void GetAdditionalProbingBins(const arma::vec &queryCode,
-                            const arma::vec &queryCodeNotFloored,
+  void GetAdditionalProbingBins(const arma::vec& queryCode,
+                            const arma::vec& queryCodeNotFloored,
                             const size_t T,
-                            arma::mat &additionalProbingBins) const;
+                            arma::mat& additionalProbingBins) const;
 
   //! Reference dataset.
   const arma::mat* referenceSet;
