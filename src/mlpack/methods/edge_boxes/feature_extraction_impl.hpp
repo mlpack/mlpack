@@ -19,10 +19,7 @@ namespace structured_tree {
  */
 template<typename MatType, typename CubeType>
 StructuredForests<MatType, CubeType>::
-StructuredForests(FeatureParameters F) 
-{
-  params = F; 
-}
+StructuredForests(FeatureParameters F) : params(F) {}
 
 /*
 template<typename MatType, typename CubeType>
@@ -973,6 +970,21 @@ PrepareData(const MatType& Images, const MatType& Boundaries,\
   }
 }
 
+template<typename MatType, typename CubeType>
+size_t StructuredForests<MatType, CubeType>::
+IndexMin(arma::vec& k)
+{
+  double s = k(0); size_t ind = 0;
+  for (size_t i = 1; i < k.n_elem; ++i)
+  {
+    if (k(i) < s)
+    {
+      s = k(i);
+      ind = i;
+    }
+  }
+  return ind;
+}
 // returns the index of the most representative label, and discretizes structured
 // label to discreet classes in matrix subLbls. (this is a vector if nClass = 2)
 template<typename MatType, typename CubeType>
@@ -1013,7 +1025,8 @@ Discretize(const MatType& labels, const size_t nClass,\
   else
   {
     //find most representative label (closest to mean)
-    ind = arma::sum(arma::abs(zs), 0).index_min();
+    arma::vec k = arma::sum(arma::abs(zs), 0);
+    ind = IndexMin(k);
     // so most representative label is: labels.row(ind).
 
     // apply pca

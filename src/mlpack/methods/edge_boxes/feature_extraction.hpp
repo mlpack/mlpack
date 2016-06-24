@@ -18,10 +18,10 @@ class StructuredForests
 {
  private:
   FeatureParameters params;
+  static constexpr double eps = 1e-20;
 
  public:
 
-  static constexpr double eps = 1e-20;
  
   StructuredForests(FeatureParameters F);   
 /*  MatType LoadData(MatType const &images, MatType const &boundaries,\
@@ -86,6 +86,8 @@ class StructuredForests
   void PDist(const CubeType& features, const arma::uvec& grid_pos,
              CubeType& Output);
 
+  size_t IndexMin(arma::vec& k);
+
   size_t Discretize(const MatType& labels, const size_t nClass,\
            const size_t nSample, arma::vec& DiscreteLabels);
 };
@@ -95,5 +97,6 @@ class StructuredForests
 } // namespace mlpack
 #include "feature_extraction_impl.hpp"
 #endif
+
 
 
