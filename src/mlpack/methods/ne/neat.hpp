@@ -97,7 +97,7 @@ class NEAT {
 
   // Check if link exist or not.
   ssize_t IsLinkExist(Genome& genome, ssize_t fromNeuronId, ssize_t toNeuronId) {
-    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {
+    for (ssize_t i=0; i<genome.NumLink(); ++i) {
       if (genome.aLinkGenes[i].FromNeuronId() == fromNeuronId &&
           genome.aLinkGenes[i].ToNeuronId() == toNeuronId) {
         return i;
@@ -156,10 +156,10 @@ class NEAT {
     if (p > mutateAddNeuronProb) return;
 
     // No link.
-    if (genome.aLinkGenes.size() == 0) return;
+    if (genome.NumLink() == 0) return;
 
     // Select link to split.
-    ssize_t linkIdx = mlpack::math::RandInt(0, genome.aLinkGenes.size());
+    ssize_t linkIdx = mlpack::math::RandInt(0, genome.NumLink());
     if (!genome.aLinkGenes[linkIdx].Enabled()) return;
 
     genome.aLinkGenes[linkIdx].Enabled(false);
@@ -215,6 +215,101 @@ class NEAT {
   }
 
   // Crossover link weights.
+  void Crossover(Genome& momGenome, Genome& dadGenome, Genome& childGenome) {
+    // Figure out which is the better genome.
+    Genome* g1 = NULL;  // Save the better one.
+    Genome* g2 = NULL;
+    if (momGenome.Fitness() < dadGenome.Fitness()) {  // NOTICE: we assume smaller is better.
+      g1 = &momGenome;
+      g2 = &dadGenome;
+    } else if (dadGenome.Fitness() < momGenome.Fitness()) {
+      g1 = &dadGenome;
+      g2 = &momGenome;
+    } else if (momGenome.NumLink() < dadGenome.NumLink()) {
+      g1 = &momGenome;
+      g2 = &dadGenome;
+    } else if (dadGenome.NumLink() < momGenome.NumLink()) {
+      g1 = &dadGenome;
+      g2 = &momGenome;
+    } else if (mlpack::math::Random() < 0.5) {
+      g1 = &momGenome;
+      g2 = &dadGenome;
+    } else {
+      g1 = &dadGenome;
+      g2 = &momGenome;
+    }
+
+    // Add input and output neuron genes to child genome.
+    for (ssize_t i=0; i<(g1->NumInput() + g1->NumOutput()); ++i) {
+      childGenome.aNeuronGenes.push_back(g1->aNeuronGenes[i]);
+    }
+
+    // Iterate to add link genes and neuron genes to child genome.
+    for (ssize_t i=0; i<g1->NumLink(); ++i) {
+      ssize_t innovId = g1->aLinkGenes[i].InnovationId();
+      ssize_t idx = g2->GetLinkIndex(innovId);
+
+      if (idx == -1 && g1->aLinkGenes[i].Enabled()) {  // exceed or not match
+        childGenome.aLinkGenes.push_back(g1->aLinkGenes[i]);
+        
+        // Add from neuron
+        ssize_t idxInChild = childGenome.GetNeuronIndex(g1->aLinkGenes[i].FromNeuronId());
+        ssize_t idxInParent = g1->GetNeuronIndex(g1->aLinkGenes[i].FromNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g1->aNeuronGenes[idxInParent]);
+        }
+
+        // Add to neuron
+        idxInChild = childGenome.GetNeuronIndex(g1->aLinkGenes[i].ToNeuronId());
+        idxInParent = g1->GetNeuronIndex(g1->aLinkGenes[i].ToNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g1->aNeuronGenes[idxInParent]);
+        }
+
+        continue;
+      }
+
+      if (idx != -1 && g1->aLinkGenes[i].Enabled() && mlpack::math::Random() < 0.5) {
+        childGenome.aLinkGenes.push_back(g1->aLinkGenes[i]);
+
+        // Add from neuron
+        ssize_t idxInChild = childGenome.GetNeuronIndex(g1->aLinkGenes[i].FromNeuronId());
+        ssize_t idxInParent = g1->GetNeuronIndex(g1->aLinkGenes[i].FromNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g1->aNeuronGenes[idxInParent]);
+        }
+
+        // Add to neuron
+        idxInChild = childGenome.GetNeuronIndex(g1->aLinkGenes[i].ToNeuronId());
+        idxInParent = g1->GetNeuronIndex(g1->aLinkGenes[i].ToNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g1->aNeuronGenes[idxInParent]);
+        }
+
+        continue;
+      }
+
+      if (idx != -1 && g1->aLinkGenes[i].Enabled() && mlpack::math::Random() >= 0.5) {
+        childGenome.aLinkGenes.push_back(g2->aLinkGenes[idx]);
+
+        // Add from neuron   TODO: make it a function?? check whether crossover is correct.
+        ssize_t idxInChild = childGenome.GetNeuronIndex(g2->aLinkGenes[idx].FromNeuronId());
+        ssize_t idxInParent = g2->GetNeuronIndex(g2->aLinkGenes[idx].FromNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g2->aNeuronGenes[idxInParent]);
+        }
+
+        // Add to neuron
+        idxInChild = childGenome.GetNeuronIndex(g2->aLinkGenes[idx].ToNeuronId());
+        idxInParent = g2->GetNeuronIndex(g2->aLinkGenes[idx].ToNeuronId());
+        if (idxInChild == -1) {
+          childGenome.aNeuronGenes.push_back(g2->aNeuronGenes[idxInParent]);
+        }
+
+        continue;
+      }
+    }
+  }
 
   // Initialize population.
 
@@ -223,9 +318,16 @@ class NEAT {
   // Evolve.
  
  private:
+  // List of link innovations.
   std::vector<LinkInnovation> aLinkInnovations;
+
+  // List of neuron innovations.
   std::vector<NeuronInnovation> aNeuronInnovations;
+
+  // Next neuron id.
   ssize_t aNextNeuronId;
+
+  // Next link id.
   ssize_t aNextLinkInnovId;
 
 };

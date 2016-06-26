@@ -170,6 +170,17 @@ class Genome {
     return -1;  // Id start from 0.
   }
 
+  // Get link index by innovation id.
+  ssize_t GetLinkIndex(ssize_t innovId) const {
+    for(ssize_t i=0; i < NumLink(); ++i) {
+        if (aLinkGenes[i].InnovationId() == innovId) {
+            return i;
+        }
+    }
+
+    return -1;  // Id start from 0.
+  }
+
   // Calculate Neuron depth.
   ssize_t NeuronDepth(ssize_t id) {
     // TODO: if contains loop in network.

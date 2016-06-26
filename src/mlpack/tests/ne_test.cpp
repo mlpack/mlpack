@@ -15,7 +15,7 @@
 #include <mlpack/methods/ne/genome.hpp>
 #include <mlpack/methods/ne/species.hpp>
 #include <mlpack/methods/ne/cne.hpp>
- #include <mlpack/methods/ne/neat.hpp>
+#include <mlpack/methods/ne/neat.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
