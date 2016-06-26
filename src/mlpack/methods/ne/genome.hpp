@@ -377,6 +377,18 @@ class Genome {
     // TODO: check this works well.
   }
 
+  // Add link.
+  void AddLink(LinkGene& linkGene) {
+    aLinkGenes.push_back(linkGene);
+  }
+
+  // Add neuron.
+  void AddHiddenNeuron(NeuronGene& neuronGene) {
+    if (neuronGene.Type() == HIDDEN) {
+      aNeuronGenes.push_back(neuronGene);
+    }
+  }
+
   // TODO: More potential operators to search genome.
 
 

@@ -28,6 +28,7 @@ class Species {
 
   // Default constructor.
   Species() {
+    aId = -1;
     aSpeciesSize = 0;
     aBestFitness = DBL_MAX;
     aBestGenome = Genome();
@@ -37,6 +38,7 @@ class Species {
   // Parametric constructor.
   // TODO: whether randomize, random range, as parameter or not??
   Species(Genome& seedGenome, ssize_t speciesSize) {
+    aId = 0;
     aSpeciesSize = speciesSize;
     aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
@@ -56,8 +58,17 @@ class Species {
   // Destructor.
   ~Species() {}
 
-  // Set/get best fitness.
-  double& BestFitness() { return aBestFitness; }
+  // Set id.
+  void Id(ssize_t id) { aId = id; }
+
+  // Get id.
+  ssize_t Id() const { return aId; }
+
+  // Set best fitness.
+  void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
+
+  // Get best fitness.
+  double BestFitness() const { return aBestFitness; }
 
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitness() {
@@ -74,13 +85,35 @@ class Species {
 
   // Sort genomes by fitness. First is best.
   static bool CompareGenome(Genome lg, Genome rg) {
-    return (lg.Fitness() < rg.Fitness());
+    if (lg.Fitness() < rg.Fitness()) {  // NOTICE: we assume smaller is better.
+      return true;
+    } else if (rg.Fitness() < lg.Fitness()) {
+      return false;
+    } else if (lg.NumLink() < rg.NumLink()) {
+      return true;
+    } else if (rg.NumLink() < lg.NumLink()) {
+      return false;
+    } else if (mlpack::math::Random() < 0.5) {
+      return true;
+    } else {
+      return false;
+    }
   }
   void SortSpecies() {
     std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);
   }
 
+  // Add new genome.
+  void AddGenome(Genome& genome) {
+    genome.Id(aNextGenomeId);  // NOTICE: thus we changed genome id when add to species.
+    aGenomes.push_back(genome);
+    ++aSpeciesSize;
+    ++aNextGenomeId;
+  }
+
  private:
+  // Id of species.
+  ssize_t aId;
 
   // Number of Genomes.
   ssize_t aSpeciesSize;
