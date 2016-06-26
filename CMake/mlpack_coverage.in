@@ -4,16 +4,16 @@ test_case=""
 
 while getopts ":t:" opt; do
   case $opt in
-    a)
+    t)
       test_case=$OPTARG
-      echo "Finding coverage with $OPTARG tests." >&2
+      echo "Finding coverage with $OPTARG tests."
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
       ;;
     :)
-      echo "Option -$OPTARG requires an argument." >&2
+      echo "Option -$OPTARG requires an argument."
       exit 1
       ;;
   esac

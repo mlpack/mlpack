@@ -91,7 +91,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     configure_file(CMake/mlpack_coverage.in mlpack_coverage)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(WARNING "Adding debug options for coverage")
     # Remove optimizations for better line coverage
     set(DEBUG ON)
