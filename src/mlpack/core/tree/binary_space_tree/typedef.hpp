@@ -135,6 +135,13 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           bound::BallBound,
                                           MeanSplit>;
 
+template<typename MetricType, typename StatisticType, typename MatType>
+using VantagePointTree = BinarySpaceTree<MetricType,
+                                          StatisticType,
+                                          MatType,
+                                          bound::BallBound,
+                                          VantagePointSplit>;
+
 } // namespace tree
 } // namespace mlpack
 

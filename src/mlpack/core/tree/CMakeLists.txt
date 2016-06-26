@@ -16,6 +16,8 @@ set(SOURCES
   binary_space_tree/midpoint_split_impl.hpp
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
+  binary_space_tree/vantage_point_split.hpp
+  binary_space_tree/vantage_point_split_impl.hpp
   binary_space_tree/traits.hpp
   binary_space_tree/typedef.hpp
   bounds.hpp
