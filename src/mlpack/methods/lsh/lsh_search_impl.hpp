@@ -12,6 +12,15 @@
 namespace mlpack {
 namespace neighbor {
 
+inline size_t CalculateMaxThreads()
+{
+  #ifdef OPENMP_FOUND
+    if (HAS_OPENMP)
+      return omp_get_max_threads();
+    return 1;
+  #endif
+  return 1;
+}
 
 // Construct the object with random tables
 template<typename SortPolicy>
@@ -31,12 +40,7 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-
-  #ifdef OPENMP_FOUND
-    maxThreads = omp_get_max_threads();
-  #else
-    maxThreads = 1;
-  #endif
+  maxThreads = CalculateMaxThreads();
   // Pass work to training function.
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize);
@@ -59,11 +63,7 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-  #ifdef OPENMP_FOUND
-    maxThreads = omp_get_max_threads();
-  #else
-    maxThreads = 1;
-  #endif
+  maxThreads = CalculateMaxThreads();
   // Pass work to training function
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize, projections);
@@ -82,11 +82,7 @@ LSHSearch<SortPolicy>::LSHSearch() :
     distanceEvaluations(0)
 {
   // Only define maxThreads. Nothing else to do.
-  #ifdef OPENMP_FOUND
-    maxThreads = omp_get_max_threads();
-  #else
-    maxThreads = 1;
-  #endif
+  maxThreads = CalculateMaxThreads();
 }
 
 // Destructor.

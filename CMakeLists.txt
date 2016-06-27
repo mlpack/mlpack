@@ -235,13 +235,17 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, the
 # flags to compile with OpenMP are returned and added.
 if (HAS_OPENMP)
-    find_package(OpenMP)
-    if (OPENMP_FOUND)
-        add_definitions(-DOPENMP_FOUND)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    endif ()
-endif ()
+  add_definitions(-DHAS_OPENMP)
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+    add_definitions(-DOPENMP_FOUND)
+    set(HAS_OPENMP "1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  else ()
+    set(HAS_OPENMP "0")
+  endif ()
+endif()
 
 # Create a 'distclean' target in case the user is using an in-source build for
 # some reason.
