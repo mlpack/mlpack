@@ -96,32 +96,37 @@ using XTree = RectangleTree<MetricType,
                             XTreeAuxiliaryInformation>;
 
 /**
- * The Hilbert R-tree, a variant of the R tree with an ordering along the Hilbert curve. This template typedef
- * satisfies the TreeType policy API.
+ * The Hilbert R-tree, a variant of the R tree with an ordering along
+ * the Hilbert curve. This template typedef satisfies the TreeType policy API.
  *
+ * @code
+ * @inproceedings{kamel1994r,
+ *   author = {Kamel, Ibrahim and Faloutsos, Christos},
+ *   title = {Hilbert R-tree: An Improved R-tree Using Fractals},
+ *   booktitle = {Proceedings of the 20th International Conference on Very Large Data Bases},
+ *   series = {VLDB '94},
+ *   year = {1994},
+ *   isbn = {1-55860-153-8},
+ *   pages = {500--509},
+ *   numpages = {10},
+ *   url = {http://dl.acm.org/citation.cfm?id=645920.673001},
+ *   acmid = {673001},
+ *   publisher = {Morgan Kaufmann Publishers Inc.},
+ *   address = {San Francisco, CA, USA}
+ * }
+ * @endcode
+ *
+ * @see @ref trees, RTree, DiscreteHilbertRTree
  */
-
-template<typename TreeType>
-using RecursiveHilbertRTreeAuxiliaryInformation =
-      HilbertRTreeAuxiliaryInformation<TreeType,RecursiveHilbertValue>;
-
-template<typename MetricType, typename StatisticType, typename MatType>
-using RecursiveHilbertRTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            HilbertRTreeSplit,
-                            HilbertRTreeDescentHeuristic,
-                            RecursiveHilbertRTreeAuxiliaryInformation>;
-
 template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
       HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
-using DiscreteHilbertRTree = RectangleTree<MetricType,
+using HilbertRTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
-                            HilbertRTreeSplit,
+                            HilbertRTreeSplit<2>,
                             HilbertRTreeDescentHeuristic,
                             DiscreteHilbertRTreeAuxiliaryInformation>;
 

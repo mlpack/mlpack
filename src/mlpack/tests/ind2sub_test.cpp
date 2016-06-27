@@ -6,7 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 BOOST_AUTO_TEST_SUITE(ind2subTest);
 

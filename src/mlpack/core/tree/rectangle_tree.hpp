@@ -28,7 +28,6 @@
 #include "rectangle_tree/hilbert_r_tree_descent_heuristic.hpp"
 #include "rectangle_tree/hilbert_r_tree_split.hpp"
 #include "rectangle_tree/hilbert_r_tree_auxiliary_information.hpp"
-#include "rectangle_tree/recursive_hilbert_value.hpp"
 #include "rectangle_tree/discrete_hilbert_value.hpp"
 #include "rectangle_tree/r_plus_tree_descent_heuristic.hpp"
 #include "rectangle_tree/r_plus_tree_split_policy.hpp"

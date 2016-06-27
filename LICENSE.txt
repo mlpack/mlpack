@@ -2,8 +2,18 @@ mlpack is provided without any warranty of fitness for any purpose.  You
 can redistribute the library and/or modify it under the terms of the 3-clause
 BSD license.  The text of the 3-clause BSD license is contained below.
 
+mlpack contains some reproductions of the source code of Armadillo, which is
+licensed under the Mozilla Public License v2.0 (MPL2).  This code is found in
+src/mlpack/core/arma_extend/ and more details on the licensing are available
+there.
+
+mlpack also contains some reproductions of the source code of Boost, which is
+licensed under the Boost Software License, version 1.0.  This code is found in
+src/mlpack/core/boost_backport/ and more details on the licensing are available
+there.
+
 ----
-Copyright (c) 2007-2014, mlpack contributors (see COPYRIGHT.txt)
+Copyright (c) 2007-2016, mlpack contributors (see COPYRIGHT.txt)
 All rights reserved.
 
 Redistribution and use of mlpack in source and binary forms, with or without

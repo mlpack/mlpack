@@ -139,11 +139,21 @@ class DiscreteHilbertValue
    */
   template<typename TreeType>
   void Copy(TreeType* dst, TreeType* src);
-  
+
+  /**
+   * Copy the local Hilbert value's pointer.
+   * @param val The DiscreteHilbertValue object from which the dataset
+   *    will be copied.
+   */
+  DiscreteHilbertValue& operator = (const DiscreteHilbertValue& val);
+
+  /**
+   * Nullify the localHilbertValues pointer in order to prevent an invalid free.
+   */
   void NullifyData();
   
   /**
-   * Update the largest Hilbert value and the local dataset.
+   * Update the largest Hilbert value and the local Hilbert values of an intermediate node.
    * The children of the node (or the points that the node contains) should be
    * arranged according to their Hilbert values.
    * @param node The node in which the information should be updated.
@@ -151,45 +161,17 @@ class DiscreteHilbertValue
   template<typename TreeType>
   void UpdateLargestValue(TreeType* node);
 
+  /**
+   * This method updates the largest Hilbert value of a leaf node and
+   * redistributes the Hilbert values of points according to their new position
+   * after the split algorithm.
+   * @param parent The parent of the node that was split.
+   * @param firstSibling The first cooperationg sibling.
+   * @param lastSibling The last cooperating sibling.
+   */
   template<typename TreeType>
-  void UpdateHilbertValues(TreeType* parent, size_t firstSibling,
+  void RedistributeHilbertValues(TreeType* parent, size_t firstSibling,
                            size_t lastSibling);
-
-  //! Return the number of values
-  size_t NumValues() const
-  { return numValues; }
-
-  //! Modify the number of values
-  size_t& NumValues()
-  { return numValues; }
-
-  //! Return the local dataset
-  const arma::Mat<HilbertElemType>* LocalDataset() const
-  { return localDataset; }
-
-  //! Modify the dataset
-  arma::Mat<HilbertElemType>*& LocalDataset() { return localDataset; }
-  
-  //! Modify the valueToInsert
-  arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
-
-  //! Modify the valueToInsert
-  const arma::Col<HilbertElemType>* ValueToInsert() const
-  { return valueToInsert; }
-
- private:
-  //! The number of bits that we can store
-  static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;
-  //! The local dataset
-  arma::Mat<HilbertElemType>* localDataset;
-  //! Indicates that the node owns the local dataset
-  bool ownsLocalDataset;
-  //! The number of values in the local dataset
-  size_t numValues;
-  //! The Hilbert value of the point that is being inserted
-  arma::Col<HilbertElemType>* valueToInsert;
-  //! Indicates that the node owns the valueToInsert 
-  bool ownsValueToInsert;
 
   /**
    * Calculate the Hilbert value of the point pt.
@@ -208,10 +190,48 @@ class DiscreteHilbertValue
    */
   static int CompareValues(const arma::Col<HilbertElemType>& value1,
                            const arma::Col<HilbertElemType>& value2);
-  /**
-   * Returns true if the node has the largest Hilbert value.
+
+  //! Return the number of values
+  size_t NumValues() const
+  { return numValues; }
+
+  //! Modify the number of values
+  size_t& NumValues()
+  { return numValues; }
+
+  //! Return the local dataset
+  const arma::Mat<HilbertElemType>* LocalHilbertValues() const
+  { return localHilbertValues; }
+
+  //! Modify the dataset
+  arma::Mat<HilbertElemType>*& LocalHilbertValues()
+  { return localHilbertValues; }
+  
+  //! Modify the valueToInsert
+  arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
+
+  //! Modify the valueToInsert
+  const arma::Col<HilbertElemType>* ValueToInsert() const
+  { return valueToInsert; }
+
+ private:
+  //! The number of bits that we can store
+  static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;
+  //! The local Hilbert values
+  arma::Mat<HilbertElemType>* localHilbertValues;
+  //! Indicates that the node owns the localHilbertValues variable
+  bool ownsLocalHilbertValues;
+  //! The number of values in the localHilbertValues dataset
+  size_t numValues;
+  /** The Hilbert value of the point that is being inserted.
+   * The pointer is the same in all nodes. The value is updated in InsertPoint()
+   * if it is invoked at the root level. This variable helps to avoid
+   * multiple computation of the Hilbert value of a point in the insertion
+   * process.
    */
-  bool HasValue() const;
+  arma::Col<HilbertElemType>* valueToInsert;
+  //! Indicates that the node owns the valueToInsert.
+  bool ownsValueToInsert;
 
  public:
   template<typename Archive>

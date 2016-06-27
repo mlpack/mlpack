@@ -17,8 +17,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  * The order of the splitting policy. The Hilbert R tree splits a node
  * on overflow, turnung splitOrder node to (splitOrder+1) nodes.
  */
-constexpr int splitOrder = 2;
 
+template<size_t splitOrder = 2>
 class HilbertRTreeSplit
 {
  public:

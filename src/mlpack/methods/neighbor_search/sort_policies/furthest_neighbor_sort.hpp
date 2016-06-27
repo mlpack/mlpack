@@ -145,6 +145,23 @@ class FurthestNeighborSort
    */
   static inline double CombineWorst(const double a, const double b)
   { return std::max(a - b, 0.0); }
+
+  /**
+   * Return the given value relaxed.
+   *
+   * @param value Value to relax.
+   * @param epsilon Relative error (non-negative).
+   *
+   * @return double Value relaxed.
+   */
+  static inline double Relax(const double value, const double epsilon)
+  {
+    if (value == 0)
+      return 0;
+    if (value == DBL_MAX || epsilon >= 1)
+      return DBL_MAX;
+    return (1 / (1 - epsilon)) * value;
+  }
 };
 
 } // namespace neighbor

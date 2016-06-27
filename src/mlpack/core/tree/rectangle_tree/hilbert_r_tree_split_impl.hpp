@@ -14,8 +14,9 @@
 namespace mlpack {
 namespace tree {
 
+template<size_t splitOrder>
 template<typename TreeType>
-void HilbertRTreeSplit::
+void HilbertRTreeSplit<splitOrder>::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   if (tree->Count() <= tree->MaxLeafSize())
@@ -32,7 +33,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    HilbertRTreeSplit::SplitLeafNode(copy, relevels);
+    SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -74,12 +75,13 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   RedistributePointsEvenly(parent, firstSibling, lastSibling);
 
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    HilbertRTreeSplit::SplitNonLeafNode(parent, relevels);
+    SplitNonLeafNode(parent, relevels);
 
 }
 
+template<size_t splitOrder>
 template<typename TreeType>
-bool HilbertRTreeSplit::
+bool HilbertRTreeSplit<splitOrder>::
 SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
@@ -95,7 +97,7 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    HilbertRTreeSplit::SplitNonLeafNode(copy, relevels);
+    SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -139,12 +141,13 @@ SplitNonLeafNode(TreeType* tree,std::vector<bool>& relevels)
   RedistributeNodesEvenly(parent, firstSibling, lastSibling);
 
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    HilbertRTreeSplit::SplitNonLeafNode(parent, relevels);
+    SplitNonLeafNode(parent, relevels);
   return false;
 }
 
+template<size_t splitOrder>
 template<typename TreeType>
-bool HilbertRTreeSplit::FindCooperatingSiblings(TreeType *parent, size_t iTree,
+bool HilbertRTreeSplit<splitOrder>::FindCooperatingSiblings(TreeType *parent, size_t iTree,
                                       size_t &firstSibling, size_t &lastSibling)
 {
   size_t start = (iTree > splitOrder-1 ? iTree - splitOrder + 1 : 0);
@@ -194,8 +197,9 @@ bool HilbertRTreeSplit::FindCooperatingSiblings(TreeType *parent, size_t iTree,
   return true;
 }
 
+template<size_t splitOrder>
 template<typename TreeType>
-void HilbertRTreeSplit::
+void HilbertRTreeSplit<splitOrder>::
 RedistributeNodesEvenly(const TreeType *parent,
                         size_t firstSibling, size_t lastSibling)
 {
@@ -256,8 +260,9 @@ RedistributeNodesEvenly(const TreeType *parent,
   }
 }
 
+template<size_t splitOrder>
 template<typename TreeType>
-void HilbertRTreeSplit::
+void HilbertRTreeSplit<splitOrder>::
 RedistributePointsEvenly(TreeType *parent,
                          size_t firstSibling, size_t lastSibling)
 {
@@ -310,7 +315,7 @@ RedistributePointsEvenly(TreeType *parent,
            parent->Children()[i]->MaxLeafSize());
   }
   // Fix the largest Hilbert values of the siblings.
-  parent->AuxiliaryInfo().HilbertValue().UpdateHilbertValues(parent, firstSibling, lastSibling);
+  parent->AuxiliaryInfo().HilbertValue().RedistributeHilbertValues(parent, firstSibling, lastSibling);
 
   TreeType* root = parent;
 
