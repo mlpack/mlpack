@@ -14,22 +14,22 @@ namespace mlpack {
 namespace tree {
 
 /**
- * When descending a Rectangle tree to insert a point, we need to have a way to
+ * When descending a RectangleTree to insert a point, we need to have a way to
  * choose a child node when the point isn't enclosed by any of them.  This
- * heuristic is used to do so.
+ * heuristic is used to do so using the rules for the R* tree.
  */
 class RStarTreeDescentHeuristic
 {
  public:
   /**
-   * Evaluate the node using a hueristic.  The heuristic guarantees two things:
+   * Evaluate the node using a heuristic.  The heuristic guarantees two things:
    *
-   * 1.  If point is contained in (or on) bound, the value returned is zero.
-   * 2.  If the point is not contained in (or on) bound, the value returned is
-   *     greater than zero.
+   * 1. If point is contained in (or on) bound, the value returned is zero.
+   * 2. If the point is not contained in (or on) bound, the value returned is
+   *    greater than zero.
    *
    * @param bound The bound used for the node that is being evaluated.
-   * @param point The number of the point that is being inserted.
+   * @param point The index of the point that is being inserted.
    */
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* node, const size_t point);

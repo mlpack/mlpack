@@ -20,9 +20,7 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue() :
     numValues(0),
     valueToInsert(NULL),
     ownsValueToInsert(false)
-{
-
-}
+{ }
 
 template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>::~DiscreteHilbertValue()
@@ -39,40 +37,39 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
     localHilbertValues(NULL),
     ownsLocalHilbertValues(false),
     numValues(0),
-    valueToInsert(tree->Parent() ? 
-                tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert() :
-                new arma::Col<HilbertElemType>(tree->Dataset().n_rows)),
+    valueToInsert(tree->Parent() ?
+        tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert() :
+        new arma::Col<HilbertElemType>(tree->Dataset().n_rows)),
     ownsValueToInsert(tree->Parent() ? false : true)
 {
-  // Calculate the Hilbert value for all points
-  if (!tree->Parent()) //  This is the root node
+  // Calculate the Hilbert value for all points.
+  if (!tree->Parent()) // This is the root node.
     ownsLocalHilbertValues = true;
   else if (tree->Parent()->Children()[0]->IsLeaf())
   {
-    // This is a leaf node
+    // This is a leaf node.
     assert(tree->Parent()->NumChildren() > 0);
     ownsLocalHilbertValues = true;
   }
-    
+
   if (ownsLocalHilbertValues)
   {
-    localHilbertValues =  new arma::Mat<HilbertElemType>(tree->Dataset().n_rows,
-                                            tree->MaxLeafSize() + 1);
+    localHilbertValues = new arma::Mat<HilbertElemType>(tree->Dataset().n_rows,
+        tree->MaxLeafSize() + 1);
   }
-
 }
 
 template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>::
 DiscreteHilbertValue(const DiscreteHilbertValue& other) :
-    localHilbertValues(const_cast<arma::Mat<HilbertElemType>*>(other.LocalHilbertValues())),
+    localHilbertValues(
+        const_cast<arma::Mat<HilbertElemType>*>(other.LocalHilbertValues())),
     ownsLocalHilbertValues(other.ownsLocalHilbertValues),
     numValues(other.NumValues()),
-    valueToInsert(const_cast<arma::Col<HilbertElemType>*>(other.ValueToInsert())),
+    valueToInsert(
+        const_cast<arma::Col<HilbertElemType>*>(other.ValueToInsert())),
     ownsValueToInsert(false)
-{
-
-}
+{ }
 
 template<typename TreeElemType>
 template<typename VecType>
@@ -82,11 +79,12 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
 {
   typedef typename VecType::elem_type VecElemType;
   arma::Col<HilbertElemType> res(pt.n_rows);
-  // The number of bits for the exponent
-  const int numExpBits =
-             std::ceil(std::log2(std::numeric_limits<VecElemType>::max_exponent -
-                      std::numeric_limits<VecElemType>::min_exponent + 1.0));
-  // The number of bits for the mantissa
+  // Calculate the number of bits for the exponent.
+  const int numExpBits = std::ceil(std::log2(
+      std::numeric_limits<VecElemType>::max_exponent -
+      std::numeric_limits<VecElemType>::min_exponent + 1.0));
+
+  // Calculate the number of bits for the mantissa.
   const int numMantBits = order - numExpBits - 1;
 
   for (size_t i = 0; i < pt.n_rows; i++)
@@ -103,46 +101,50 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
 
     if (e < std::numeric_limits<VecElemType>::min_exponent)
     {
-      HilbertElemType tmp = 1 << (std::numeric_limits<VecElemType>::min_exponent - e);
+      HilbertElemType tmp =
+          1 << (std::numeric_limits<VecElemType>::min_exponent - e);
+
       e = std::numeric_limits<VecElemType>::min_exponent;
       normalizedVal /= tmp;
     }
 
-    //  Extract the mantissa
-    HilbertElemType tmp = (HilbertElemType)1 << numMantBits;
+    // Extract the mantissa.
+    HilbertElemType tmp = (HilbertElemType) 1 << numMantBits;
     res(i) = std::floor(normalizedVal * tmp);
 
-    //  Add the exponent
-    assert(res(i) < ((HilbertElemType)1 << numMantBits));
-    res(i) |= ((HilbertElemType)(e - std::numeric_limits<VecElemType>::min_exponent)) << numMantBits;
+    // Add the exponent.
+    assert(res(i) < ((HilbertElemType) 1 << numMantBits));
+    res(i) |= ((HilbertElemType)
+        (e - std::numeric_limits<VecElemType>::min_exponent)) << numMantBits;
 
-    assert(res(i) < ((HilbertElemType)1 << (order - 1)) - 1);
-    // Negative values should be inverted
+    assert(res(i) < ((HilbertElemType) 1 << (order - 1)) - 1);
+
+    // Negative values should be inverted.
     if (sgn)
     {
-      res(i) = ((HilbertElemType)1 << (order - 1)) - 1 - res(i);
+      res(i) = ((HilbertElemType) 1 << (order - 1)) - 1 - res(i);
       assert((res(i) >> (order - 1)) == 0);
     }
     else
     {
-      res(i) |= (HilbertElemType)1 << (order - 1);
+      res(i) |= (HilbertElemType) 1 << (order - 1);
       assert((res(i) >> (order - 1)) == 1);
     }
   }
 
-  HilbertElemType M = (HilbertElemType)1 << (order - 1);
+  HilbertElemType M = (HilbertElemType) 1 << (order - 1);
 
   // Since the Hilbert curve is continuous we should permutate and intend
-  // coordinate axes depending on the position of the point
+  // coordinate axes depending on the position of the point.
   for (HilbertElemType Q = M; Q > 1; Q >>= 1)
   {
     HilbertElemType P = Q - 1;
 
     for (size_t i = 0; i < pt.n_rows; i++)
     {
-      if (res(i) & Q)  // Invert
+      if (res(i) & Q) // Invert.
         res(0) ^= P;
-      else            // Permutate
+      else // Permutate.
       {
         HilbertElemType t = (res(0) ^ res(i)) & P;
         res(0) ^= t;
@@ -151,22 +153,22 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
     }
   }
 
-  // Gray encode
+  // Gray encode.
   for (size_t i = 1; i < pt.n_rows; i++)
-    res(i) ^= res(i-1);
+    res(i) ^= res(i - 1);
 
   HilbertElemType t = 0;
 
-  // Some coordinate axes should be inverted
+  // Some coordinate axes should be inverted.
   for (HilbertElemType Q = M; Q > 1; Q >>= 1)
-    if ( res(pt.n_rows - 1) & Q)
+    if (res(pt.n_rows - 1) & Q)
       t ^= Q - 1;
 
   for (size_t i = 0; i < pt.n_rows; i++)
     res(i) ^= t;
 
-  // We should rearrange bits in order to compare two Hilbert values faster
-  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows,arma::fill::zeros);
+  // We should rearrange bits in order to compare two Hilbert values faster.
+  arma::Col<HilbertElemType> rearrangedResult(pt.n_rows, arma::fill::zeros);
 
   for (size_t i = 0; i < order; i++)
     for (size_t j = 0; j < pt.n_rows; j++)
@@ -174,7 +176,8 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
       size_t bit = (i * pt.n_rows + j) % order;
       size_t row = (i * pt.n_rows + j) / order;
 
-      rearrangedResult(row) |= (((res(j) >> (order - 1 - i)) & 1) << (order - 1 - bit));
+      rearrangedResult(row) |= (((res(j) >> (order - 1 - i)) & 1) <<
+          (order - 1 - bit));
     }
 
   return rearrangedResult;
@@ -185,7 +188,7 @@ int DiscreteHilbertValue<TreeElemType>::
 CompareValues(const arma::Col<HilbertElemType>& value1,
               const arma::Col<HilbertElemType>& value2)
 {
-  for (size_t i = 0;i < value1.n_rows; i++)
+  for (size_t i = 0; i < value1.n_rows; i++)
   {
     if (value1(i) > value2(i))
       return 1;
@@ -201,7 +204,8 @@ CompareValues(const arma::Col<HilbertElemType>& value1,
 template<typename TreeElemType>
 template<typename VecType1, typename VecType2>
 int DiscreteHilbertValue<TreeElemType>::
-ComparePoints(const VecType1& pt1, const VecType2& pt2, 
+ComparePoints(const VecType1& pt1,
+              const VecType2& pt2,
               typename boost::enable_if<IsVector<VecType1>>*,
               typename boost::enable_if<IsVector<VecType2>>*)
 {
@@ -257,23 +261,24 @@ CompareWithCachedPoint(const VecType& ,
   if (numValues == 0)
     return -1;
 
-  return CompareValues(localHilbertValues->col(numValues - 1),*valueToInsert);
+  return CompareValues(localHilbertValues->col(numValues - 1), *valueToInsert);
 }
 
 template<typename TreeElemType>
 template<typename TreeType, typename VecType>
 size_t DiscreteHilbertValue<TreeElemType>::
-InsertPoint(TreeType *node, const VecType& pt,
-                            typename boost::enable_if<IsVector<VecType>>*)
+InsertPoint(TreeType *node,
+            const VecType& pt,
+            typename boost::enable_if<IsVector<VecType>>*)
 {
   size_t i = 0;
 
-  // All point are inserted to the root node
+  // All points are inserted to the root node.
   if (!node->Parent())
     *valueToInsert = CalculateValue(pt);
   if (node->IsLeaf())
   {
-    // Find an appropriate place
+    // Find an appropriate place.
     for (i = 0; i < numValues; i++)
       if (CompareValues(localHilbertValues->col(i), *valueToInsert) > 0)
         break;
@@ -283,7 +288,7 @@ InsertPoint(TreeType *node, const VecType& pt,
 
     localHilbertValues->col(i) = *valueToInsert;
     numValues++;
-    // Propogate changes of the largest Hilbert value downward
+    // Propagate changes of the largest Hilbert value downward.
     TreeType* root = node->Parent();
 
     while (root != NULL)
@@ -292,7 +297,6 @@ InsertPoint(TreeType *node, const VecType& pt,
 
       root = root->Parent();
     }
-
   }
 
   return i;
@@ -303,7 +307,7 @@ template<typename TreeType>
 void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
   DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
-  
+
   if (CompareWith(node,val) < 0)
   {
     localHilbertValues = val.LocalHilbertValues();
@@ -319,7 +323,7 @@ DeletePoint(TreeType* node, const size_t localIndex)
 
   // Delete the Hilbert value from the local dataset
   for (size_t i = numValues - 1; i > localIndex; i--)
-    localHilbertValues->col(i-1) = localHilbertValues->col(i);
+    localHilbertValues->col(i - 1) = localHilbertValues->col(i);
 
   numValues--;
 }
@@ -338,11 +342,12 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
   if (nodeIndex + 1 == node->NumChildren())
   {
     // Update the largest Hilbert value if the value exists
-    TreeType* child = node->Children()[nodeIndex-1];
+    TreeType* child = node->Children()[nodeIndex - 1];
     if (child->AuxiliaryInfo.HilbertValue().NumValues() != 0)
     {
       numValues = child->AuxiliaryInfo.HilbertValue().NumValues();
-      localHilbertValues = child->AuxiliaryInfo.HilbertValue().LocalHilbertValues();
+      localHilbertValues =
+          child->AuxiliaryInfo.HilbertValue().LocalHilbertValues();
     }
     else
     {
@@ -354,7 +359,7 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
 
 template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
-operator = (const DiscreteHilbertValue& val)
+operator=(const DiscreteHilbertValue& val)
 {
   localHilbertValues = const_cast<arma::Mat<HilbertElemType>* >
       (val.LocalHilbertValues());
@@ -377,32 +382,34 @@ void DiscreteHilbertValue<TreeElemType>::UpdateLargestValue(TreeType* node)
   if (!node->IsLeaf())
   {
     // Update the largest Hilbert value
-    localHilbertValues = node->Children()[node->NumChildren()-1]->AuxiliaryInfo().HilbertValue().LocalHilbertValues();
-    numValues = node->Children()[node->NumChildren()-1]->AuxiliaryInfo().HilbertValue().NumValues();
+    localHilbertValues = node->Children()[node->NumChildren() -
+        1]->AuxiliaryInfo().HilbertValue().LocalHilbertValues();
+    numValues = node->Children()[node->NumChildren() -
+        1]->AuxiliaryInfo().HilbertValue().NumValues();
   }
 }
 
 template<typename TreeElemType>
 template<typename TreeType>
-void DiscreteHilbertValue<TreeElemType>::
-RedistributeHilbertValues(TreeType* parent, size_t firstSibling, size_t lastSibling)
+void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
+    TreeType* parent,
+    const size_t firstSibling,
+    const size_t lastSibling)
 {
-  //  We should update the local dataset if points were redistributed
-  
+  // We need to update the local dataset if points were redistributed.
   size_t numPoints = 0;
-
-  for (size_t i = firstSibling; i<= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; i++)
     numPoints += parent->Children()[i]->NumPoints();
 
-  // Copy the local datasets
-  arma::Mat<HilbertElemType> tmp(localHilbertValues->n_rows,numPoints);
+  // Copy the local Hilbert values.
+  arma::Mat<HilbertElemType> tmp(localHilbertValues->n_rows, numPoints);
 
   size_t iPoint = 0;
   for (size_t i = firstSibling; i<= lastSibling; i++)
   {
     DiscreteHilbertValue<TreeElemType> &value =
-                          parent->Children()[i]->AuxiliaryInfo().HilbertValue();
-    
+        parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+
     for (size_t j = 0; j < value.NumValues(); j++)
     {
       tmp.col(iPoint) = value.LocalHilbertValues()->col(j);
@@ -413,12 +420,12 @@ RedistributeHilbertValues(TreeType* parent, size_t firstSibling, size_t lastSibl
 
   iPoint = 0;
 
-  //  Redistribute the Hilbert values
-  for (size_t i = firstSibling; i<= lastSibling; i++)
+  // Redistribute the Hilbert values.
+  for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     DiscreteHilbertValue<TreeElemType> &value =
-                          parent->Children()[i]->AuxiliaryInfo().HilbertValue();
-    
+        parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+
     for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
     {
       value.LocalHilbertValues()->col(j) = tmp.col(iPoint);
@@ -428,7 +435,6 @@ RedistributeHilbertValues(TreeType* parent, size_t firstSibling, size_t lastSibl
   }
 
   assert(iPoint == numPoints);
-
 }
 
 template<typename TreeElemType>

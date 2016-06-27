@@ -29,7 +29,7 @@ class RTreeDescentHeuristic
    *    is greater than zero.
    *
    * @param node The node that is being evaluated.
-   * @param point The number of the point that is being inserted.
+   * @param point The index of the point that is being inserted.
    */
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* node, const size_t point);

@@ -15,9 +15,12 @@ template<typename TreeType>
 class NoAuxiliaryInformation
 {
  public:
+  //! Construct the auxiliary information object.
   NoAuxiliaryInformation() { };
-  NoAuxiliaryInformation(const TreeType* ) { };
-  NoAuxiliaryInformation(const TreeType& ) { };
+  //! Construct the auxiliary information object.
+  NoAuxiliaryInformation(const TreeType* /* node */) { };
+  //! Construct the auxiliary information object.
+  NoAuxiliaryInformation(const TreeType& /* node */) { };
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -25,6 +28,7 @@ class NoAuxiliaryInformation
    * the tree in order to perform the insertion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node in which the point is being inserted.
    * @param point The global number of the point being inserted.
    */
@@ -39,12 +43,15 @@ class NoAuxiliaryInformation
    * the tree in order to perform the insertion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node in which the nodeToInsert is being inserted.
    * @param nodeToInsert The node being inserted.
    * @param insertionLevel The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
-  bool HandleNodeInsertion(TreeType* , TreeType* ,bool)
+  bool HandleNodeInsertion(TreeType* /* node */,
+                           TreeType* /* nodeToInsert */,
+                           bool /* insertionLevel */)
   {
     return false;
   }
@@ -55,10 +62,11 @@ class NoAuxiliaryInformation
    * the tree in order to perform the deletion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node from which the point is being deleted.
    * @param localIndex The local index of the point being deleted.
    */
-  bool HandlePointDeletion(TreeType* , const size_t)
+  bool HandlePointDeletion(TreeType* /* node */, const size_t /* localIndex */)
   {
     return false;
   }
@@ -69,10 +77,11 @@ class NoAuxiliaryInformation
    * the tree in order to perform the deletion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node from which the node is being deleted.
    * @param nodeIndex The local index of the node being deleted.
    */
-  bool HandleNodeRemoval(TreeType* , const size_t)
+  bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */)
   {
     return false;
   }
@@ -81,9 +90,10 @@ class NoAuxiliaryInformation
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
    * returned, the update will be propogated upward.
+   *
    * @param node The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType* )
+  bool UpdateAuxiliaryInfo(TreeType* /* node */)
   {
     return false;
   }
@@ -93,7 +103,6 @@ class NoAuxiliaryInformation
    */
   void NullifyData()
   { }
-
 
   /**
    * Serialize the information.

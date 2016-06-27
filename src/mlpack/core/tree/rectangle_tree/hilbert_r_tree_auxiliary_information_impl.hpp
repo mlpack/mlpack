@@ -2,9 +2,8 @@
  * @file hilbert_r_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
- * Implementation of the HilbertRTreeAuxiliaryInformation class,
- * a class that provides some Hilbert r-tree specific information
- * about the nodes.
+ * Implementation of the HilbertRTreeAuxiliaryInformation class, a class that
+ * provides some Hilbert r-tree specific information about the nodes.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
@@ -14,33 +13,27 @@
 namespace mlpack {
 namespace tree {
 
-
 template<typename TreeType,
          template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HilbertRTreeAuxiliaryInformation()
-{
-
-};
+{ }
 
 template<typename TreeType,
          template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HilbertRTreeAuxiliaryInformation(const TreeType* node) :
     hilbertValue(node)
-{
-
-};
+{ }
 
 template<typename TreeType,
          template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HilbertRTreeAuxiliaryInformation(const HilbertRTreeAuxiliaryInformation& other) :
+HilbertRTreeAuxiliaryInformation(
+    const HilbertRTreeAuxiliaryInformation& other) :
     hilbertValue(other.HilbertValue())
-{
+{ }
 
-};
-  
 template<typename TreeType,
          template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
@@ -48,20 +41,21 @@ HandlePointInsertion(TreeType* node, const size_t point)
 {
   if (node->IsLeaf())
   {
-    // Get the position at which the point should be inserted
-    // Update the largest Hilbert value of the node
+    // Get the position at which the point should be inserted, and then update
+    // the largest Hilbert value of the node.
     size_t pos = hilbertValue.InsertPoint(node, node->Dataset().col(point));
 
-    // Move points
+    // Move points.
     for (size_t i = node->NumPoints(); i > pos; i--)
-      node->Points()[i] = node->Points()[i-1];
-    // Insert the point
+      node->Points()[i] = node->Points()[i - 1];
+
+    // Insert the point.
     node->Points()[pos] = point;
     node->Count()++;
   }
   else
   {
-    // Calculate the Hilbert value
+    // Calculate the Hilbert value.
     hilbertValue.InsertPoint(node, node->Dataset().col(point));
   }
 
@@ -85,19 +79,19 @@ HandleNodeInsertion(TreeType* node, TreeType* nodeToInsert, bool insertionLevel)
                  nodeToInsert->AuxiliaryInfo().HilbertValue()) < 0)
           break;
 
-    // Move nodes
+    // Move nodes.
     for (size_t i = node->NumChildren(); i > pos; i--)
-      node->Children()[i] = node->Children()[i-1];
+      node->Children()[i] = node->Children()[i - 1];
 
-    // Insert the node
+    // Insert the node.
     node->Children()[pos] = nodeToInsert;
     nodeToInsert->Parent() = node;
 
-    // Update the largest Hilbert value
+    // Update the largest Hilbert value.
     hilbertValue.InsertNode(nodeToInsert);
   }
   else
-    hilbertValue.InsertNode(nodeToInsert); //  Update LHV
+    hilbertValue.InsertNode(nodeToInsert); // Update the largest Hilbert value.
 
   return true;
 }
@@ -107,11 +101,11 @@ template<typename TreeType,
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandlePointDeletion(TreeType* node, const size_t localIndex)
 {
-  // Update the largest Hilbert value
+  // Update the largest Hilbert value.
   hilbertValue.DeletePoint(node,localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
-    node->Points()[i-1] = node->Points()[i];
+    node->Points()[i - 1] = node->Points()[i];
 
   node->NumPoints()--;
   return true;
@@ -122,11 +116,11 @@ template<typename TreeType,
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
 {
-  // Update the largest Hilbert value
+  // Update the largest Hilbert value.
   hilbertValue.RemoveNode(node,nodeIndex);
 
   for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
-    node->Children()[i-1] = node->Children()[i];
+    node->Children()[i - 1] = node->Children()[i];
 
   node->NumChildren()--;
   return true;
@@ -140,11 +134,10 @@ UpdateAuxiliaryInfo(TreeType* node)
   if (node->IsLeaf())  //  Should already be updated
     return true;
 
-  TreeType *child = node->Children()[node->NumChildren()-1];
+  TreeType* child = node->Children()[node->NumChildren() - 1];
   if (hilbertValue.CompareWith(child->AuxiliaryInfo().hilbertValue()) < 0)
   {
     hilbertValue.Copy(node,child);
-//    hilbertValue = child->AuxiliaryInfo().hilbertValue();
     return true;
   }
   return false;

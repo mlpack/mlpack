@@ -11,6 +11,10 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The XTreeAuxiliaryInformation class provides information specific to X trees
+ * for each node in a RectangleTree.
+ */
 template<typename TreeType>
 class XTreeAuxiliaryInformation
 {
@@ -23,50 +27,57 @@ class XTreeAuxiliaryInformation
 
   /**
    * Construct this whith the specified node.
+   *
    * @param node The node that stores this auxiliary information.
    */
   XTreeAuxiliaryInformation(const TreeType* node) :
-    normalNodeMaxNumChildren(node->Parent() ? 
-                    node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren() :
-                    node->MaxNumChildren()),
-    splitHistory(node->Bound().Dim())
+      normalNodeMaxNumChildren(node->Parent() ?
+          node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren() :
+          node->MaxNumChildren()),
+      splitHistory(node->Bound().Dim())
   { };
 
   /**
    * Create an auxiliary information object by copying from the other node.
+   *
    * @param other The node from which the information will be copied.
    */
   XTreeAuxiliaryInformation(const TreeType& other) :
-    normalNodeMaxNumChildren(other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
-    splitHistory(other.AuxiliaryInfo().SplitHistory())
+      normalNodeMaxNumChildren(
+          other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
+      splitHistory(other.AuxiliaryInfo().SplitHistory())
   { };
 
   /**
    * Some tree types require to save some properties at the insertion process.
-   * This method allows the auxiliary information the option of manipulating
-   * the tree in order to perform the insertion process. If the auxiliary
+   * This method allows the auxiliary information the option of manipulating the
+   * tree in order to perform the insertion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node in which the point is being inserted.
    * @param point The global number of the point being inserted.
    */
-  bool HandlePointInsertion(TreeType* , const size_t)
+  bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
   {
     return false;
   }
 
   /**
    * Some tree types require to save some properties at the insertion process.
-   * This method allows the auxiliary information the option of manipulating
-   * the tree in order to perform the insertion process. If the auxiliary
+   * This method allows the auxiliary information the option of manipulating the
+   * tree in order to perform the insertion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
+   *
    * @param node The node in which the nodeToInsert is being inserted.
    * @param nodeToInsert The node being inserted.
    * @param insertionLevel The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
-  bool HandleNodeInsertion(TreeType* , TreeType *,bool)
+  bool HandleNodeInsertion(TreeType* /* node */,
+                           TreeType* /* nodeToInsert */,
+                           bool /* insertionLevel */)
   {
     return false;
   }
