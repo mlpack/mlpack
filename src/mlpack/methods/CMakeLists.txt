@@ -24,7 +24,7 @@ set(DIRS
   det
   emst
   edge_boxes
-#  fastmks
+  fastmks
   gmm
   hmm
   hoeffding_trees
