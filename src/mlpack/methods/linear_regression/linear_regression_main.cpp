@@ -22,22 +22,23 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     " another matrix X' (--test_file):\n\n"
     "   y' = X' * b\n\n"
     "and these predicted responses, y', are saved to a file "
-    "(--output_predictions).  This type of regression is related to least-angle"
-    " regression, which mlpack implements with the 'lars' executable.");
+    "(--output_predictions).  This type of regression is related to "
+    "least-angle regression, which mlpack implements with the 'lars' "
+    "executable.");
 
 PARAM_STRING("training_file", "File containing training set X (regressors).",
     "t", "");
-PARAM_STRING("training_responses", "Optional file containing y (responses). If "
-    "not given, the responses are assumed to be the last row of the input "
-    "file.", "r", "");
+PARAM_STRING("training_responses", "Optional file containing y "
+    "(responses). If not given, the responses are assumed to be the last row "
+    "of the input file.", "r", "");
 
 PARAM_STRING("input_model_file", "File containing existing model (parameters).",
     "m", "");
 PARAM_STRING("output_model_file", "File to save trained model to.", "M", "");
 
 PARAM_STRING("test_file", "File containing X' (test regressors).", "T", "");
-PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "p", "predictions.csv");
+PARAM_STRING("output_predictions", "If --test_file is specified, this "
+    "file is where the predicted responses will be saved.", "p", "");
 
 PARAM_DOUBLE("lambda", "Tikhonov regularization for ridge regression.  If 0, "
     "the method reduces to linear regression.", "l", 0.0);
@@ -54,10 +55,12 @@ int main(int argc, char* argv[])
 
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string outputPredictions = CLI::GetParam<string>("output_predictions");
-  const string responseName = CLI::GetParam<string>("training_responses");
-  const string testName = CLI::GetParam<string>("test_file");
-  const string trainName = CLI::GetParam<string>("training_file");
+  const string outputPredictionsFile =
+      CLI::GetParam<string>("output_predictions");
+  const string trainingResponsesFile =
+      CLI::GetParam<string>("training_responses");
+  const string testFile = CLI::GetParam<string>("test_file");
+  const string trainFile = CLI::GetParam<string>("training_file");
   const double lambda = CLI::GetParam<double>("lambda");
 
   mat regressors;
@@ -69,16 +72,16 @@ int main(int argc, char* argv[])
   bool computeModel = false;
 
   // We want to determine if an input file XOR model file were given.
-  if (trainName.empty()) // The user specified no input file.
+  if (!CLI::HasParam("training_file"))
   {
-    if (inputModelFile.empty()) // The user specified no model file; error.
+    if (!CLI::HasParam("input_model_file"))
       Log::Fatal << "You must specify either --input_file or --model_file."
           << endl;
     else // The model file was specified, no problems.
       computeModel = false;
   }
   // The user specified an input file but no model file, no problems.
-  else if (inputModelFile.empty())
+  else if (!CLI::HasParam("input_model_file"))
     computeModel = true;
   // The user specified both an input file and model file.
   // This is ambiguous -- which model should we use? A generated one or given
@@ -89,9 +92,13 @@ int main(int argc, char* argv[])
         << "both." << endl;
   }
 
+  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions"))
+    Log::Warn << "--test_file (-t) specified, but --output_predictions "
+        << "(-o) is not; no results will be saved." << endl;
+
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
-  if (!computeModel && testName.empty())
+  if (!computeModel && !CLI::HasParam("test_file"))
   {
     Log::Fatal << "When specifying --model_file, you must also specify "
         << "--test_file." << endl;
@@ -106,11 +113,11 @@ int main(int argc, char* argv[])
   if (computeModel)
   {
     Timer::Start("load_regressors");
-    data::Load(trainName, regressors, true);
+    data::Load(trainFile, regressors, true);
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (responseName.empty())
+    if (CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
       responses = trans(regressors.row(regressors.n_rows - 1));
@@ -120,7 +127,7 @@ int main(int argc, char* argv[])
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      data::Load(responseName, responses, true);
+      data::Load(trainingResponsesFile, responses, true);
       Timer::Stop("load_responses");
 
       if (responses.n_rows == 1)
@@ -139,12 +146,12 @@ int main(int argc, char* argv[])
     Timer::Stop("regression");
 
     // Save the parameters.
-    if (!outputModelFile.empty())
+    if (CLI::HasParam("output_model_file"))
       data::Save(outputModelFile, "linearRegressionModel", lr);
   }
 
   // Did we want to predict, too?
-  if (!testName.empty())
+  if (CLI::HasParam("test_file"))
   {
     // A model file was passed in, so load it.
     if (!computeModel)
@@ -157,14 +164,14 @@ int main(int argc, char* argv[])
     // Load the test file data.
     arma::mat points;
     Timer::Start("load_test_points");
-    data::Load(testName, points, true);
+    data::Load(testFile, points, true);
     Timer::Stop("load_test_points");
 
     // Ensure that test file data has the right number of features.
     if ((lr.Parameters().n_elem - 1) != points.n_rows)
     {
       Log::Fatal << "The model was trained on " << lr.Parameters().n_elem - 1
-          << "-dimensional data, but the test points in '" << testName
+          << "-dimensional data, but the test points in '" << testFile
           << "' are " << points.n_rows << "-dimensional!" << endl;
     }
 
@@ -175,6 +182,7 @@ int main(int argc, char* argv[])
     Timer::Stop("prediction");
 
     // Save predictions.
-    data::Save(outputPredictions, predictions, true, false);
+    if (CLI::HasParam("output_predictions"))
+      data::Save(outputPredictionsFile, predictions, true, false);
   }
 }

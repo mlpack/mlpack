@@ -20,10 +20,12 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -35,10 +37,12 @@ DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
                                       RectangleTree& referenceNode)
 {

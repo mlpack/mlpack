@@ -12,7 +12,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
@@ -158,10 +158,10 @@ void CheckExactContainment(const TreeType& tree)
       double max = -1.0 * DBL_MAX;
       for(size_t j = 0; j < tree.Count(); j++)
       {
-        if (tree.LocalDataset().col(j)[i] < min)
-          min = tree.LocalDataset().col(j)[i];
-        if (tree.LocalDataset().col(j)[i] > max)
-          max = tree.LocalDataset().col(j)[i];
+        if (tree.Dataset().col(tree.Point(j))[i] < min)
+          min = tree.Dataset().col(tree.Points()[j])[i];
+        if (tree.Dataset().col(tree.Point(j))[i] > max)
+          max = tree.Dataset().col(tree.Points()[j])[i];
       }
       BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
       BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
@@ -216,46 +216,6 @@ BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
   TreeType tree(dataset, 20, 6, 5, 2, 0);
   CheckContainment(tree);
   CheckExactContainment(tree);
-}
-
-/**
- * A function to ensure that the dataset for the tree, and the datasets stored
- * in each leaf node are in sync.
- * @param tree The tree to check.
- */
-template<typename TreeType>
-void CheckSync(const TreeType& tree)
-{
-  if (tree.IsLeaf())
-  {
-    for (size_t i = 0; i < tree.Count(); i++)
-    {
-      for (size_t j = 0; j < tree.LocalDataset().n_rows; j++)
-      {
-        BOOST_REQUIRE_EQUAL(tree.LocalDataset().col(i)[j],
-                            tree.Dataset().col(tree.Points()[i])[j]);
-      }
-    }
-  }
-  else
-  {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
-      CheckSync(*tree.Children()[i]);
-  }
-}
-
-// Test to ensure that the dataset used by the whole tree (and the traversers)
-// is in sync with the datasets stored in each leaf node.
-BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync)
-{
-  arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
-
-  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-
-  TreeType tree(dataset, 20, 6, 5, 2, 0);
-  CheckSync(tree);
 }
 
 /**
@@ -417,7 +377,6 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 - numIter);
 
   CheckContainment(tree);
-  CheckSync(tree);
   CheckExactContainment(tree);
 
   // Single-tree search.
@@ -500,7 +459,6 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
   CheckContainment(tree);
-  CheckSync(tree);
   CheckExactContainment(tree);
 
   // Now we will compare the output of the R Tree vs the output of a naive
@@ -549,7 +507,6 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
-  CheckSync(rTree);
   CheckContainment(rTree);
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
@@ -568,10 +525,8 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   }
 }
 
-
 // A test to ensure that the SingleTreeTraverser is working correctly by
 // comparing its results to the results of a naive search.
-//* This is known to not work: see #368.
 BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 {
   arma::mat dataset;
@@ -589,13 +544,11 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   TreeType xTree(dataset, 20, 6, 5, 2, 0);
 
   // Nearest neighbor search with the X tree.
-
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat, XTree >
-      knn1(&xTree, true);
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      XTree> knn1(&xTree, true);
 
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
-  CheckSync(xTree);
   CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
@@ -612,6 +565,266 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
   }
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
+{
+  arma::mat dataset;
+
+  const int numP = 1000;
+
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  // Nearest neighbor search with the Hilbert R tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      HilbertRTree> knn1(&hilbertRTree, true);
+
+  BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
+
+  CheckContainment(hilbertRTree);
+  CheckExactContainment(hilbertRTree);
+  CheckHierarchy(hilbertRTree);
+
+  knn1.Search(5, neighbors1, distances1);
+
+  // Nearest neighbor search the naive way.
+  KNN knn2(dataset, true, true);
+
+  knn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
+template<typename TreeType>
+void CheckHilbertOrdering(const TreeType& tree)
+{
+  if (tree.IsLeaf())
+  {
+    for (size_t i = 0; i < tree.NumPoints() - 1; i++)
+      BOOST_REQUIRE_LE(tree.AuxiliaryInfo().HilbertValue().ComparePoints(
+          tree.Dataset().col(tree.Point(i)),
+          tree.Dataset().col(tree.Point(i + 1))),
+          0);
+
+    BOOST_REQUIRE_EQUAL(tree.AuxiliaryInfo().HilbertValue().CompareWith(
+        tree.Dataset().col(tree.Points()[tree.NumPoints() - 1])),
+        0);
+  }
+  else
+  {
+    for (size_t i = 0; i < tree.NumChildren() - 1; i++)
+      BOOST_REQUIRE_LE(tree.AuxiliaryInfo().HilbertValue().CompareValues(
+          tree.Child(i).AuxiliaryInfo().HilbertValue(),
+          tree.Child(i + 1).AuxiliaryInfo().HilbertValue()),
+          0);
+
+    BOOST_REQUIRE_EQUAL(tree.AuxiliaryInfo().HilbertValue().CompareWith(
+        tree.Child(tree.NumChildren() - 1).AuxiliaryInfo().HilbertValue()),
+        0);
+
+    for (size_t i = 0; i < tree.NumChildren(); i++)
+      CheckHilbertOrdering(tree.Child(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTreeOrderingTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckHilbertOrdering(hilbertRTree);
+}
+
+template<typename TreeType>
+void CheckDiscreteHilbertValueSync(const TreeType& tree)
+{
+  typedef DiscreteHilbertValue<typename TreeType::ElemType>
+      HilbertValue;
+  typedef typename HilbertValue::HilbertElemType HilbertElemType;
+
+  if (tree.IsLeaf())
+  {
+    const HilbertValue& value = tree.AuxiliaryInfo().HilbertValue();
+
+    for (size_t i = 0; i < tree.NumPoints(); i++)
+    {
+      arma::Col<HilbertElemType> pointValue =
+          HilbertValue::CalculateValue(tree.Dataset().col(tree.Points()[i]));
+
+      const int equal = HilbertValue::CompareValues(
+          value.LocalHilbertValues()->col(i), pointValue);
+
+      BOOST_REQUIRE_EQUAL(equal, 0);
+    }
+  }
+  else
+    for (size_t i = 0; i < tree.NumChildren(); i++)
+      CheckDiscreteHilbertValueSync(tree.Child(i));
+}
+
+BOOST_AUTO_TEST_CASE(DiscreteHilbertValueSyncTest)
+{
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+  TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
+
+  CheckDiscreteHilbertValueSync(hilbertRTree);
+}
+
+BOOST_AUTO_TEST_CASE(DiscreteHilbertValueTest)
+{
+  arma::vec point01(1);
+  arma::vec point02(1);
+
+  point01[0] = -DBL_MAX;
+  point02[0] = DBL_MAX;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = -DBL_MAX;
+  point02[0] = -100;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = -100;
+  point02[0] = -1;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = -1;
+  point02[0] = -std::numeric_limits<double>::min();
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = -std::numeric_limits<double>::min();
+  point02[0] = 0;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = 0;
+  point02[0] = std::numeric_limits<double>::min();
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = std::numeric_limits<double>::min();
+  point02[0] = 1;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = 1;
+  point02[0] = 100;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  point01[0] = 100;
+  point02[0] = DBL_MAX;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point01,
+                                                                  point02), -1);
+
+  arma::vec point1(2);
+  arma::vec point2(2);
+
+  point1[0] = -DBL_MAX;
+  point1[1] = -DBL_MAX;
+
+  point2[0] = 0;
+  point2[1] = 0;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,
+                                                                  point2), -1);
+
+  point1[0] = -1;
+  point1[1] = -1;
+
+  point2[0] = 1;
+  point2[1] = -1;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,
+                                                                  point2), -1);
+
+  point1[0] = -1;
+  point1[1] = -1;
+
+  point2[0] = -1;
+  point2[1] = 1;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,
+                                                                  point2), -1);
+
+  point1[0] = -DBL_MAX + 1;
+  point1[1] = -DBL_MAX + 1;
+
+  point2[0] = -1;
+  point2[1] = -1;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,
+                                                                  point2), -1);
+
+  point1[0] = DBL_MAX * 0.75;
+  point1[1] = DBL_MAX * 0.75;
+
+  point2[0] = DBL_MAX * 0.25;
+  point2[1] = DBL_MAX * 0.25;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point1,
+                                                                  point2), 1);
+
+  arma::vec point3(4);
+  arma::vec point4(4);
+
+  point3[0] = -DBL_MAX;
+  point3[1] = -DBL_MAX;
+  point3[2] = -DBL_MAX;
+  point3[3] = -DBL_MAX;
+
+  point4[0] = 1.0;
+  point4[1] = 1.0;
+  point4[2] = 1.0;
+  point4[3] = 1.0;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point3,
+                                                                  point4), -1);
+
+  point3[0] = -DBL_MAX;
+  point3[1] = DBL_MAX;
+  point3[2] = DBL_MAX;
+  point3[3] = DBL_MAX;
+
+  point4[0] = DBL_MAX;
+  point4[1] = DBL_MAX;
+  point4[2] = DBL_MAX;
+  point4[3] = DBL_MAX;
+
+  BOOST_REQUIRE_EQUAL(DiscreteHilbertValue<double>::ComparePoints(point3,
+                                                                  point4), -1);
 }
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low

@@ -11,7 +11,7 @@
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace arma;
 using namespace mlpack::optimization;

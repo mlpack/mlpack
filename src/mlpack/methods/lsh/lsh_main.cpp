@@ -48,6 +48,7 @@ PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING("true_neighbors_file", "File of real neighbors to compute recall (printed with -v).", "t", "");
 
 // We can load or save models.
 PARAM_STRING("input_model_file", "File to load LSH model from.  (Cannot be "
@@ -188,6 +189,25 @@ int main(int argc, char *argv[])
   }
 
   Log::Info << "Neighbors computed." << endl;
+
+  // Compute recall, if desired.
+  if (CLI::HasParam("true_neighbors_file"))
+  {
+    const string trueNeighborsFile = 
+        CLI::GetParam<string>("true_neighbors_file");
+
+    // Load the true neighbors.
+    arma::Mat<size_t> trueNeighbors;
+    data::Load(trueNeighborsFile, trueNeighbors, true);
+    Log::Info << "Loaded true neighbor indices from '" 
+        << trueNeighborsFile << "'." << endl;
+
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
+
+    Log::Info << "Recall: " << recallPercentage << endl;
+  }
 
   // Save output, if desired.
   if (CLI::HasParam("distances_file"))
