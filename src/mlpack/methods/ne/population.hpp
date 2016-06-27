@@ -85,15 +85,15 @@ class Population {
   void AddSpecies(Species& species) {
     aSpecies.push_back(species);
     aPopulationSize += species.SpeciesSize();
-    ++aNumSpecies;
+    ++aNumSpecies;  // TODO: do we really need numSpecies? Maybe NumSpecies() is enough.
     ++aNextSpeciesId;
   }
 
-  // Separates the population into species based on compatibility distance
-  void Speciate();
-
-  // Sort each species' genomes based on fitness.
-  void Sort();
+  // Remove species.
+  void RemoveSpecies(ssize_t idx) {
+    aSpecies.erase(aSpecies.begin() + idx);
+    --aNumSpecies;
+  }
 
  private:
   // Number of species.

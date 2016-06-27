@@ -181,6 +181,27 @@ class Genome {
     return -1;  // Id start from 0.
   }
 
+  // Whether link exist and enabled.
+  bool ContainEnabledLink(ssize_t innovId) const {
+    for(ssize_t i=0; i < NumLink(); ++i) {
+        if (aLinkGenes[i].InnovationId() == innovId &&
+            aLinkGenes[i].Enabled()) {
+            return true;
+        }
+    }
+    return false;
+  }
+
+  // Whether link exist.
+  bool ContainLink(ssize_t innovId) const {
+    for(ssize_t i=0; i < NumLink(); ++i) {
+        if (aLinkGenes[i].InnovationId() == innovId) {
+            return true;
+        }
+    }
+    return false;
+  }
+
   // Calculate Neuron depth.
   ssize_t NeuronDepth(ssize_t id) {
     // TODO: if contains loop in network.

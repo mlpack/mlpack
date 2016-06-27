@@ -29,6 +29,7 @@ class Species {
   // Default constructor.
   Species() {
     aId = -1;
+    aStaleAge = -1;
     aSpeciesSize = 0;
     aBestFitness = DBL_MAX;
     aBestGenome = Genome();
@@ -39,6 +40,7 @@ class Species {
   // TODO: whether randomize, random range, as parameter or not??
   Species(Genome& seedGenome, ssize_t speciesSize) {
     aId = 0;
+    aStaleAge = 0;
     aSpeciesSize = speciesSize;
     aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
@@ -63,6 +65,12 @@ class Species {
 
   // Get id.
   ssize_t Id() const { return aId; }
+
+  // Set age.
+  void StaleAge(ssize_t staleAge) { aStaleAge = staleAge; }
+
+  // Get age.
+  ssize_t StaleAge() const { return aStaleAge; }
 
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
@@ -114,6 +122,9 @@ class Species {
  private:
   // Id of species.
   ssize_t aId;
+
+  // Stale age (how many generations that its best fitness doesn't improve) of species.
+  ssize_t aStaleAge;
 
   // Number of Genomes.
   ssize_t aSpeciesSize;

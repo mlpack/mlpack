@@ -218,6 +218,9 @@ class NEAT {
   // Crossover link weights.
   // NOTICE: assume momGenome is the better genome.
   // NOTICE: assume childGenome is empty.
+  // NOTICE: in the NEAT paper, disabled links also can crossover, calculate distance, etc.
+  // Is it really a good idea???
+  // If not, we will need to change CrossoverLinkAndNeuron, and Disjoint, and WeightDiff.
   void CrossoverLinkAndNeuron(Genome& momGenome, Genome& dadGenome, Genome& childGenome) {
     // Add input and output neuron genes to child genome.
     for (ssize_t i=0; i<(momGenome.NumInput() + momGenome.NumOutput()); ++i) {
@@ -226,10 +229,12 @@ class NEAT {
 
     // Iterate to add link genes and neuron genes to child genome.
     for (ssize_t i=0; i<momGenome.NumLink(); ++i) {
-      ssize_t innovId = momGenome.aLinkGenes[i].InnovationId();
+      ssize_t innovId = momGenome.aLinkGenes[i].InnovationId();      
       ssize_t idx = dadGenome.GetLinkIndex(innovId);
+      bool linkContainedInDad = (idx != -1);
+      double randNum = mlpack::math::Random();
 
-      if (idx == -1 && momGenome.aLinkGenes[i].Enabled()) {  // exceed or disjoint
+      if (!linkContainedInDad) {  // exceed or disjoint
         childGenome.AddLink(momGenome.aLinkGenes[i]);
         
         // Add from neuron
@@ -249,7 +254,7 @@ class NEAT {
         continue;
       }
 
-      if (idx != -1 && momGenome.aLinkGenes[i].Enabled() && mlpack::math::Random() < 0.5) {
+      if (linkContainedInDad && randNum < 0.5) {
         childGenome.AddLink(momGenome.aLinkGenes[i]);
 
         // Add from neuron
@@ -269,7 +274,7 @@ class NEAT {
         continue;
       }
 
-      if (idx != -1 && momGenome.aLinkGenes[i].Enabled() && mlpack::math::Random() >= 0.5) {
+      if (linkContainedInDad && randNum >= 0.5) {
         childGenome.AddLink(dadGenome.aLinkGenes[idx]);
 
         // Add from neuron   TODO: make it a function?? check whether crossover is correct.
@@ -307,16 +312,16 @@ class NEAT {
 
     for (ssize_t i=0; i<genome1.NumLink(); ++i) {
       ssize_t innovId = genome1.aLinkGenes[i].InnovationId();
-      ssize_t idx = genome2.GetLinkIndex(innovId);
-      if (idx == -1 && genome1.aLinkGenes[i].Enabled()) {
+      bool linkContainedInGenome2 = genome2.ContainLink(innovId);
+      if (!linkContainedInGenome2) {
         ++numDisjoint;
-      }
+      } 
     }
 
     for (ssize_t i=0; i<genome2.NumLink(); ++i) {
       ssize_t innovId = genome2.aLinkGenes[i].InnovationId();
-      ssize_t idx = genome1.GetLinkIndex(innovId);
-      if (idx == -1 && genome2.aLinkGenes[i].Enabled()) {
+      bool linkContainedInGenome1 = genome1.ContainLink(innovId);
+      if (!linkContainedInGenome1) {
         ++numDisjoint;
       }
     }
@@ -334,7 +339,8 @@ class NEAT {
     for (ssize_t i=0; i<genome1.NumLink(); ++i) {
       ssize_t innovId = genome1.aLinkGenes[i].InnovationId();
       ssize_t idx = genome2.GetLinkIndex(innovId);
-      if (idx != -1 && genome1.aLinkGenes[i].Enabled()) {
+      bool linkContainedInGenome2 = (idx != -1);
+      if (linkContainedInGenome2) {
         deltaW += std::abs(genome1.aLinkGenes[i].Weight() - genome2.aLinkGenes[idx].Weight());
         ++coincident;
       }
@@ -371,18 +377,28 @@ class NEAT {
     Species newSpecies = Species();
     newSpecies.AddGenome(genome);
     newSpecies.Id(aPopulation.NextSpeciesId());  // NOTICE: changed species id.
+    newSpecies.StaleAge(0);
     aPopulation.AddSpecies(newSpecies);
   }
 
+  // Remove stale species.
+  void RemoveStaleSpecies(Population& population, ssize_t staleAgeThreshold) {
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      if (population.aSpecies[i].StaleAge() > staleAgeThreshold) {
+        population.RemoveSpecies(i);
+      }
+    }
+  }
+
   // Set adjusted fitness.
-  void AdjustFitness() {
-    for (ssize_t i=0; i<aPopulation.NumSpecies(); ++i) {
-      if (aPopulation.aSpecies[i].SpeciesSize() > 0) {
-        for (ssize_t j=0; j<aPopulation.aSpecies[i].SpeciesSize(); ++j) {
-          double fitness = aPopulation.aSpecies[i].aGenomes[j].Fitness();
-          ssize_t speciesSize = aPopulation.aSpecies[i].SpeciesSize();
+  void AdjustFitness(Population& population) {
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      if (population.aSpecies[i].SpeciesSize() > 0) {
+        for (ssize_t j=0; j<population.aSpecies[i].SpeciesSize(); ++j) {
+          double fitness = population.aSpecies[i].aGenomes[j].Fitness();
+          ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
           double adjustedFitness = fitness / speciesSize;
-          aPopulation.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
+          population.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
         }
       }
     }
@@ -404,12 +420,15 @@ class NEAT {
   }
 
   // Evolve.
+  void Evolve() {
+
+  }
  
  private:
   // Task.
   TaskType aTask;
 
-  // Seed genome. It is used for init species.
+  // Seed genome. It is used for init population.
   Genome aSeedGenome;
 
   // Population to evolve.
@@ -441,6 +460,9 @@ class NEAT {
 
   // Threshold for judge whether belong to same species.
   double aCompatThreshold;
+
+  // Threshold for species stale age.
+  ssize_t aStaleAgeThreshold;
 
 };
 
