@@ -284,7 +284,7 @@ RedistributePointsEvenly(TreeType* parent,
   for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
-      points[iPoint++] = parent->Children()[i]->Points()[j];
+      points[iPoint++] = parent->Children()[i]->Point(j);
   }
 
   iPoint = 0;
@@ -298,13 +298,13 @@ RedistributePointsEvenly(TreeType* parent,
     for (j = 0; j < numPointsPerNode; j++)
     {
       parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
-      parent->Children()[i]->Points()[j] = points[iPoint];
+      parent->Children()[i]->Point(j) = points[iPoint];
       iPoint++;
     }
     if (numRestPoints > 0)
     {
       parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
-      parent->Children()[i]->Points()[j] = points[iPoint];
+      parent->Children()[i]->Point(j) = points[iPoint];
       parent->Children()[i]->Count() = numPointsPerNode + 1;
       numRestPoints--;
       iPoint++;

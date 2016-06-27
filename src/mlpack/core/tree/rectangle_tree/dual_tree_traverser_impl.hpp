@@ -67,14 +67,14 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       // Restore the traversal information.
       rule.TraversalInfo() = traversalInfo;
-      const double childScore = rule.Score(queryNode.Points()[query],
+      const double childScore = rule.Score(queryNode.Point(query),
           referenceNode);
 
       if (childScore == DBL_MAX)
         continue;  // We don't require a search in this reference node.
 
       for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
-        rule.BaseCase(queryNode.Points()[query], referenceNode.Points()[ref]);
+        rule.BaseCase(queryNode.Point(query), referenceNode.Point(ref));
 
       numBaseCases += referenceNode.Count();
     }

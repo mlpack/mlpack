@@ -49,7 +49,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   if (referenceNode.IsLeaf())
   {
     for (size_t i = 0; i < referenceNode.Count(); i++)
-      rule.BaseCase(queryIndex, referenceNode.Points()[i]);
+      rule.BaseCase(queryIndex, referenceNode.Point(i));
 
     return;
   }

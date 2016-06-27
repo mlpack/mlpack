@@ -328,11 +328,6 @@ class RectangleTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
-  //! Get the points vector for this node.
-  const std::vector<size_t>& Points() const { return points; }
-  //! Modify the points vector for this node.  Be careful!
-  std::vector<size_t>& Points() { return points; }
-
   //! Get the metric which the tree uses.
   MetricType Metric() const { return MetricType(); }
 
@@ -424,7 +419,10 @@ class RectangleTree
    *
    * @param index Index of point for which a dataset index is wanted.
    */
-  size_t Point(const size_t index) const;
+  const size_t& Point(const size_t index) const { return points[index]; }
+
+  //! Modify the index of a particular point in this node.
+  size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const RectangleTree* other) const
