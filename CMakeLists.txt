@@ -234,9 +234,8 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, and the
 # user has not specified that OpenMP should not be used, flags to compile with 
-# OpenMP are returned and added and the HAS_OPENMP will be set to 1. If OpenMP
-# is found but the user asked for it not to be used, HAS_OPENMP will be set to
-# 0. 
+# OpenMP are returned and added and the HAS_OPENMP is set to 1. If OpenMP is 
+# found but the user asked for it not to be used, HAS_OPENMP will be set to 0. 
 # This way we can skip calls to functions defined in omp.h with code like:
 # if(HAS_OPENMP) {omp related stuff}
 if (HAS_OPENMP)
@@ -248,7 +247,10 @@ if (HAS_OPENMP)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   else ()
     set(HAS_OPENMP "0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
   endif ()
+else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif()
 
 # Create a 'distclean' target in case the user is using an in-source build for
