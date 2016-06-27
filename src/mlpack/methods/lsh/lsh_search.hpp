@@ -270,7 +270,7 @@ class LSHSearch
   template<typename VecType>
   void ReturnIndicesFromTable(const VecType& queryPoint,
                               arma::uvec& referenceIndices,
-                              size_t numTablesToSearch) const;
+                              size_t numTablesToSearch);
 
   /**
    * This is a helper function that computes the distance of the query to the

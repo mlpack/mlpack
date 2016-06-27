@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
   lshTest.Search(qdata, k, sequentialNeighbors, distances);
 
   // Require both have same results
-  double recall = ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 
@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   lshTest.Search(k, sequentialNeighbors, distances);
 
   // Require both have same results
-  double recall = ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 

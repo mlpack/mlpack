@@ -14,6 +14,16 @@ using std::cout; using std::endl; //TODO: remove
 namespace mlpack {
 namespace neighbor {
 
+// Simple small function to set threads to 1 if OpenMP is not used
+inline size_t DefineMaxThreads()
+{
+  #ifdef _OPENMP
+    return omp_get_max_threads();
+  #else
+    return 1;
+  #endif
+}
+
 // Construct the object with random tables
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::
@@ -31,7 +41,7 @@ LSHSearch(const arma::mat& referenceSet,
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
   distanceEvaluations(0),
-  maxThreads(omp_get_max_threads()),
+  maxThreads(DefineMaxThreads()),
   numThreadsUsed(1)
 {
   // Pass work to training function.
@@ -344,7 +354,7 @@ template<typename VecType>
 void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     const VecType& queryPoint,
     arma::uvec& referenceIndices,
-    size_t numTablesToSearch) const
+    size_t numTablesToSearch)
 {
   // Decide on the number of tables to look into.
   if (numTablesToSearch == 0) // If no user input is given, search all.
@@ -406,18 +416,37 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     arma::Col<size_t> refPointsConsidered;
     refPointsConsidered.zeros(referenceSet->n_cols);
 
-    for (size_t i = 0; i < hashVec.n_elem; ++i)
+    // Define the number of threads used to process this.
+    size_t numThreadsUsed = std::min(maxThreads, numTablesToSearch);
+
+    // Parallelization: By default nested parallelism is off, so this won't be
+    // parallel. The user might turn nested parallelism on if (for example) they
+    // have a query-by-query processing scheme and so processing more than one
+    // query at the same time doesn't make sense for them.
+
+    #pragma omp parallel for \
+    num_threads (numThreadsUsed) \
+    shared (hashVec, refPointsConsidered) \
+    schedule(dynamic)
+    for (size_t i = 0; i < numTablesToSearch; ++i)
     {
+
       const size_t hashInd = (size_t) hashVec[i];
       const size_t tableRow = bucketRowInHashTable[hashInd];
 
       // Pick the indices in the bucket corresponding to 'hashInd'.
       if (tableRow != secondHashSize)
+      {
         for (size_t j = 0; j < bucketContentSize[tableRow]; j++)
+        {
+          #pragma omp atomic
           refPointsConsidered[secondHashTable[tableRow](j)]++;
+        }
+      }
     }
 
     // Only keep reference points found in at least one bucket.
+    // TODO: maybe write parallel implementation of this?
     referenceIndices = arma::find(refPointsConsidered > 0);
     return;
   }
@@ -431,6 +460,19 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
     // Retrieve candidates.
     size_t start = 0;
+
+    // Define the number of threads used to process this.
+    size_t numThreadsUsed = std::min(maxThreads, numTablesToSearch);
+
+    // Parallelization: By default nested parallelism is off, so this won't be
+    // parallel. The user might turn nested parallelism on if (for example) they
+    // have a query-by-query processing scheme and so processing more than one
+    // query at the same time doesn't make sense for them.
+
+    #pragma omp parallel for \
+    num_threads (numThreadsUsed) \
+    shared (hashVec, refPointsConsideredSmall, start) \
+    schedule(dynamic)
     for (size_t i = 0; i < numTablesToSearch; ++i) // For all tables
     {
       const size_t hashInd = (size_t) hashVec[i]; // Find the query's bucket.
@@ -438,11 +480,19 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
       // Store all secondHashTable points in the candidates set.
       if (tableRow != secondHashSize)
+      { 
         for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-          refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
+        {
+          #pragma omp critical
+          {
+            refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
+          }
+        }
+      }
     }
 
     // Only keep unique candidates.
+    // TODO: again main bottleneck is here. Parallelize?
     referenceIndices = arma::unique(refPointsConsideredSmall);
     return;
   }
@@ -489,25 +539,16 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
   Timer::Start("computing_neighbors");
 
-  // Parallelization allows us to process more than one query at a time. To
-  // control workload and thread access, we use numThreadsUsed and maxThreads to
-  // make sure we only use as many threads as the user specified.
+  // Parallelization to process more than one query at a time.
+  // use as many threads possible but not more than allowed number
+  size_t numThreadsUsed = std::min( (arma::uword) maxThreads, querySet.n_cols );
   #pragma omp parallel for \
-    if (numThreadsUsed <= maxThreads) \
-    num_threads (maxThreads-numThreadsUsed)\
+    num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
-
   // Go through every query point.
   for (size_t i = 0; i < querySet.n_cols; i++)
   {
-    // Master thread updates the number of threads used
-    if (i == 0 && omp_get_thread_num() == 0)
-    {
-      numThreadsUsed+=omp_get_num_threads();
-      Log::Info 
-        << "Using "<< numThreadsUsed << " threads to process queries." << endl;
-    }
 
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
@@ -526,8 +567,6 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
       BaseCase(i, (size_t) refIndices[j], querySet, resultingNeighbors,
           distances);
   }
-  // parallel region over, reset number of threads to 1
-  numThreadsUsed = omp_get_num_threads();
 
   Timer::Stop("computing_neighbors");
 
@@ -556,24 +595,16 @@ Search(const size_t k,
 
   Timer::Start("computing_neighbors");
 
-  // Parallelization allows us to process more than one query at a time. To
-  // control workload and thread access, we use numThreadsUsed and maxThreads to
-  // make sure we only use as many threads as the user specified.
+  // Parallelization to process more than one query at a time.
+  // use as many threads possible but not more than allowed number
+  size_t numThreadsUsed = std::min( (arma::uword) maxThreads, referenceSet->n_cols );
   #pragma omp parallel for \
-    if (numThreadsUsed <= maxThreads) \
-    num_threads (maxThreads-numThreadsUsed)\
+    num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
   // Go through every query point.
   for (size_t i = 0; i < referenceSet->n_cols; i++)
   {
-    // Master thread updates the number of threads used
-    if (i == 0 && omp_get_thread_num() == 0)
-    {
-      numThreadsUsed+=omp_get_num_threads();
-      Log::Info 
-        << "Using "<< numThreadsUsed << " threads to process queries." << endl;
-    }
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
@@ -591,10 +622,6 @@ Search(const size_t k,
       BaseCase(i, (size_t) refIndices[j], resultingNeighbors, distances);
 
   }
-
-  // parallel region over, reset number of threads to 1
-  numThreadsUsed = omp_get_num_threads();
-
 
   Timer::Stop("computing_neighbors");
 

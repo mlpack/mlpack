@@ -18,15 +18,16 @@ endif()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" ON)
-option(PROFILE "Compile with profiling information" ON)
+option(DEBUG "Compile with debugging information." ON)
+option(PROFILE "Compile with profiling information." ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+option(HAS_OPENMP "Use OpenMP for parallel execution." OFF)
 
 enable_testing()
 
@@ -115,6 +116,11 @@ endif()
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
+endif()
+
+# If the user has an OpenMP-enabled compiler, turn OpenMP on
+if (HAS_OPENMP)
+  add_definitions(-DHAS_OPENMP)
 endif()
 
 # Now, find the libraries we need to compile against.  Several variables can be
