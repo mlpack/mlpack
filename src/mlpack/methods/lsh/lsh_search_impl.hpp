@@ -12,13 +12,18 @@
 namespace mlpack {
 namespace neighbor {
 
+// If OpenMP was not found by the compiler and it was used in compiling mlpack,
+// then we can get more than one thread.
 inline size_t CalculateMaxThreads()
 {
-  #ifdef OPENMP_FOUND
-    if (HAS_OPENMP)
+  // User asked for OpenMP to be used, check if we could find it.
+  #ifdef HAS_OPENMP
+    if (HAS_OPENMP) // We found it. Use all cores.
       return omp_get_max_threads();
-    return 1;
+    return 1; // We didn't find it. Use 1 core.
   #endif
+  
+  // User asked for OpenMP to not be used. Use 1 core.
   return 1;
 }
 

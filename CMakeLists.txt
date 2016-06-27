@@ -232,13 +232,17 @@ endif ()
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, the
-# flags to compile with OpenMP are returned and added.
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, and the
+# user has not specified that OpenMP should not be used, flags to compile with 
+# OpenMP are returned and added and the HAS_OPENMP will be set to 1. If OpenMP
+# is found but the user asked for it not to be used, HAS_OPENMP will be set to
+# 0. 
+# This way we can skip calls to functions defined in omp.h with code like:
+# if(HAS_OPENMP) {omp related stuff}
 if (HAS_OPENMP)
   add_definitions(-DHAS_OPENMP)
   find_package(OpenMP)
   if (OPENMP_FOUND)
-    add_definitions(-DOPENMP_FOUND)
     set(HAS_OPENMP "1")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
