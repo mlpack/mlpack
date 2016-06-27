@@ -22,9 +22,9 @@ PARAM_STRING_REQ("input_file", "File containing data,", "i");
 PARAM_STRING("output_file", "File to save output", "o", "");
 PARAM_STRING("missing_value", "User defined missing value", "m", "")
 PARAM_STRING("map_policy", "mapping policy to be used while loading", "p", "")
-PARAM_STRING("impute_strategy", "imputation strategy to be applied", "s", "")
+PARAM_STRING("strategy", "imputation strategy to be applied", "s", "")
 PARAM_DOUBLE("custom_value", "user_defined custom value", "c", 0.0)
-PARAM_INT("feature", "the feature to apply imputation", "f", 0);
+PARAM_INT("dimension", "the dimension to apply imputation", "d", 0);
 
 using namespace mlpack;
 using namespace arma;
@@ -41,8 +41,8 @@ int main(int argc, char** argv)
   const string missingValue = CLI::GetParam<string>("missing_value");
   const string mapPolicy = CLI::GetParam<string>("map_policy");
   const double customValue = CLI::GetParam<double>("custom_value");
-  const size_t feature = (size_t) CLI::GetParam<int>("feature");
-  string imputeStrategy = CLI::GetParam<string>("impute_strategy");
+  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
+  string strategy = CLI::GetParam<string>("strategy");
 
   // missing value should be specified
   if (!CLI::HasParam("missing_value"))
@@ -54,11 +54,15 @@ int main(int argc, char** argv)
     Log::Warn << "--output_file is not specified, no "
         << "results from this program will be saved!" << endl;
 
+  // warn if user did not specify dimension
+  if (!CLI::HasParam("dimension"))
+    Log::Warn << "--dimension is required to be specified!" << endl;
+
   // if custom value is specified, and imputation strategy is not,
   // set imputation strategy to "custom"
   if (CLI::HasParam("custom_value") && !CLI::HasParam("impute_strategy"))
   {
-    imputeStrategy = "custom";
+    strategy = "custom";
     Log::Warn << "--custom_value is specified without --impute_strategy, "
         << "--impute_strategy is automatically set to 'custom'." << endl;
   }
@@ -66,12 +70,12 @@ int main(int argc, char** argv)
   // custom value and any other impute strategies cannot be specified at
   // the same time.
   if (CLI::HasParam("custom_value") && CLI::HasParam("impute_strategy") &&
-      imputeStrategy != "custom")
+      strategy != "custom")
     Log::Fatal << "--custom_value cannot be specified with "
         << "impute strategies excluding 'custom' strategy" << endl;
 
   // custom_value must be specified when using "custom" imputation strategy
-  if ((imputeStrategy == "custom") && !CLI::HasParam("custom_value"))
+  if ((strategy == "custom") && !CLI::HasParam("custom_value"))
     Log::Fatal << "--custom_value must be specified when using "
         << "'custom' strategy" << endl;
 
@@ -87,34 +91,51 @@ int main(int argc, char** argv)
   // for testing purpose
   Log::Info << input << endl;
 
-  // print how many mapping exist in each features
+  // print how many mapping exist in each dimensions
   for (size_t i = 0; i < input.n_rows; ++i)
   {
-    Log::Info << info.NumMappings(i) << " mappings in feature " << i << "."
+    Log::Info << info.NumMappings(i) << " mappings in dimension " << i << "."
         << endl;
   }
 
   arma::Mat<double> output(input);
 
 
-  Log::Info << "Performing '" << imputeStrategy << "' imputation strategy "
-      << "on feature '" << feature << endl;
+  Log::Info << "Performing '" << strategy << "' imputation strategy "
+      << "on dimension '" << dimension << endl;
 
   // custom strategy only
-  if (imputeStrategy == "custom")
+  if (strategy == "custom")
   {
     Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
         << "'." << endl;
     Imputer<double, MapperType, CustomImputation<double>> impu(info);
-    impu.Impute(input, output, missingValue, customValue, feature);
+    impu.Impute(input, output, missingValue, customValue, dimension);
   }
   else
   {
     Log::Info << "Replacing all '" << missingValue << "' with '"
-        << imputeStrategy << "'." << endl;
+        << strategy << "' strategy." << endl;
 
-    Imputer<double, MapperType, MeanImputation<double>> impu(info);
-    impu.Impute(input, output, missingValue, feature);
+    if (strategy == "mean")
+    {
+      Imputer<double, MapperType, MeanImputation<double>> impu(info);
+      impu.Impute(input, output, missingValue, dimension);
+    }
+    else if (strategy == "median")
+    {
+      Imputer<double, MapperType, MedianImputation<double>> impu(info);
+      impu.Impute(input, output, missingValue, dimension);
+    }
+    else if (strategy == "listwise")
+    {
+      Imputer<double, MapperType, ListwiseDeletion<double>> impu(info);
+      impu.Impute(input, output, missingValue, dimension);
+    }
+    else
+    {
+      Log::Warn << "You did not choose any imputation strategy" << endl;
+    }
   }
 
   // for testing purpose

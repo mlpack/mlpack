@@ -33,7 +33,7 @@ class ListwiseDeletion
 
     if (transpose)
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      for (size_t i = 0; i < input.n_cols; ++i)
       {
          if (input(dimension, i) == mappedValue)
          {
@@ -43,11 +43,11 @@ class ListwiseDeletion
     }
     else
     {
-      for (size_t i = 0; i < input.n_cols; ++i)\
+      for (size_t i = 0; i < input.n_rows; ++i)\
       {
-        if (input(dimension, i) == mappedValue)
+        if (input(i, dimension) == mappedValue)
         {
-          output.shed_col(i);
+          output.shed_col(dimension);
         }
       }
     }

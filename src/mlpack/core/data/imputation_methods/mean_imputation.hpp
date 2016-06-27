@@ -30,37 +30,40 @@ class MeanImputation
     // initiate output
     output = input;
 
-    double sum;
+    double sum = 0;
     size_t elems = 0; // excluding nan or missing target
 
     using PairType = std::pair<size_t, size_t>;
     // dimensions and indexes are saved as pairs inside this vector.
     std::vector<PairType> targets;
 
+
     // calculate number of elements and sum of them excluding mapped value or
     // nan. while doing that, remember where mappedValue or NaN exists.
     if (transpose)
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      Log::Debug << "transpose mean imputation" << std::endl;
+      for (size_t i = 0; i < input.n_cols; ++i)
       {
-        if (input(i, dimension) == mappedValue)
+        if (input(dimension, i) == mappedValue)
         {
-          targets.push_back(std::make_pair(i, dimension));
+          targets.emplace_back(dimension, i);
         }
         else
         {
           elems++;
-          sum += input(i, dimension);
+          sum += input(dimension, i);
         }
       }
     }
     else
     {
-      for (size_t i = 0; i < input.n_cols; ++i)
+      Log::Debug << "un-transpose mean imputation" << std::endl;
+      for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(dimension, i) == mappedValue)
+        if (input(i, dimension) == mappedValue)
         {
-          targets.push_back(std::make_pair(dimension, i));
+          targets.emplace_back(i, dimension);
         }
         else
         {
@@ -69,18 +72,16 @@ class MeanImputation
         }
       }
     }
-
+    Log::Debug << "sum: " << sum << std::endl;
+    Log::Debug << "elems: " << elems << std::endl;
     // calculate mean;
-    double mean = sum / elems;
+    const double mean = sum / elems;
 
     // Now replace the calculated mean to the missing variables
     // It only needs to loop through targets vector, not the whole matrix.
     for (const PairType& target : targets)
     {
-      if (input(target.first, target.second) == mappedValue)
-      {
-        output(target.first, target.second) = mean;
-      }
+      output(target.first, target.second) = mean;
     }
   }
 }; // class MeanImputation
