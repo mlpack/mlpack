@@ -668,7 +668,7 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
           HilbertValue::CalculateValue(tree.Dataset().col(tree.Points()[i]));
 
       const int equal = HilbertValue::CompareValues(
-          value.LocalHilbertValues().col(i), pointValue);
+          value.LocalHilbertValues()->col(i), pointValue);
 
       BOOST_REQUIRE_EQUAL(equal, 0);
     }
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertValueSyncTest)
       NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
   TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
 
-  CheckDiscreteHilbertValueSync(&hilbertRTree);
+  CheckDiscreteHilbertValueSync(hilbertRTree);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHilbertValueTest)
