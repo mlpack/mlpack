@@ -6,8 +6,6 @@
  */
 #ifndef MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_HPP
 #define MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_HPP
-//#define INF 999999.9999
-//#define EPS 1E-20
 #include <mlpack/core.hpp>
 #include "feature_parameters.hpp"
 namespace mlpack {
@@ -18,14 +16,11 @@ class StructuredForests
 {
  private:
   FeatureParameters params;
-  static constexpr double eps = 1e-20;
 
  public:
 
  
-  StructuredForests(FeatureParameters F);   
-/*  MatType LoadData(MatType const &images, MatType const &boundaries,\
-     MatType const &segmentations);*/
+  StructuredForests(FeatureParameters F);
 
   void PrepareData(const MatType& Images, const MatType& Boundaries,\
             const MatType& Segmentations);
@@ -54,12 +49,16 @@ class StructuredForests
                    const arma::vec& table);
   
   void BilinearInterpolation(const MatType& src,
-                          size_t height, size_t width,
-                          MatType& dst);
+                            const size_t height, 
+                            const size_t width,
+                            MatType& dst);
   
-  void SepFilter2D(CubeType &InOutImage, const arma::vec& kernel, const size_t radius);
+  void Convolution(CubeType &InOutImage, const MatType& Filter, const size_t radius);
 
   void ConvTriangle(CubeType &InImage, const size_t radius);
+
+  void ConvTriangle2(CubeType& InImage, const size_t radius, CubeType& Output);
+
 
   void Gradient(const CubeType& InImage, 
          MatType& Magnitude,
@@ -68,9 +67,10 @@ class StructuredForests
   void MaxAndLoc(CubeType &mag, arma::umat &Location, MatType& MaxVal) const;
 
   void Histogram(const MatType& Magnitude,
-            const MatType& Orientation, 
-            size_t downscale, size_t interp,
-            CubeType& HistArr);
+                 const MatType& Orientation, 
+                 const size_t downscale,
+                 const size_t interp,
+                 CubeType& HistArr);
  
   void ViewAsWindows(const CubeType& channels, const arma::umat& loc,
                      CubeType& features);

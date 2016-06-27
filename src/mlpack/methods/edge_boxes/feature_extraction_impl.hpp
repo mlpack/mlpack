@@ -10,6 +10,8 @@
 
 #include "feature_extraction.hpp"
 #include <mlpack/methods/pca/pca.hpp>
+
+using namespace mlpack::ann;
 namespace mlpack {
 namespace structured_tree {
 
@@ -21,53 +23,8 @@ template<typename MatType, typename CubeType>
 StructuredForests<MatType, CubeType>::
 StructuredForests(FeatureParameters F) : params(F) {}
 
-/*
-template<typename MatType, typename CubeType>
-MatType StructuredForests<MatType, CubeType>::
-LoadData(MatType const &Images, MatType const &boundaries,\
-     MatType const &segmentations)
-{
-  const size_t num_Images = this->params.num_Images;
-  const size_t rowSize = this->params.RowSize();
-  const size_t colSize = this->params.ColSize();
-  MatType input_data(num_Images * rowSize * 5, colSize);
-  // we store the input data as follows: 
-  // Images (3), boundaries (1), segmentations (1).
-  size_t loop_iter = num_Images * 5;
-  size_t row_idx = 0;
-  size_t col_i = 0, col_s = 0, col_b = 0;
-  for(size_t i = 0; i < loop_iter; ++i)
-  {
-    if (i % 5 == 4)
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(segmentations.colptr(col_s),\
-                                  colSize, rowSize).t();
-      ++col_s;
-    }
-    else if (i % 5 == 3)
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(boundaries.colptr(col_b),\
-                                  colSize, rowSize).t();
-      ++col_b;
-    }
-    else
-    {
-      input_data.submat(row_idx, 0, row_idx + rowSize - 1,\
-        colSize - 1) = MatType(Images.colptr(col_i),
-                                  colSize, rowSize).t();
-      ++col_i;  
-    }
-    row_idx += rowSize;
-  }
-  return input_data;
-} 
-
-*/
-
 /**
- * Get DImensions of Features
+ * Get Dimensions of Features
  * @param FtrDim Output vector that contains the result 
  */
 template<typename MatType, typename CubeType>
@@ -80,13 +37,7 @@ GetFeatureDimension(arma::vec& FtrDim)
   const size_t pSize = this->params.PSize();
   const size_t numCell = this->params.NumCell();
   const size_t numOrient = this->params.NumOrient();
-  
-  size_t nColorCh;
-  if (this->params.RGBD() == 0)
-    nColorCh = 3;
-  else
-    nColorCh = 4;
-
+  const size_t nColorCh = params.RGBD() == 0 ? 3 : 4;
   const size_t nCh = nColorCh + 2 * (1 + numOrient);
   FtrDim[0] = std::pow((pSize / shrink) , 2) * nCh;
   FtrDim[1] = std::pow(numCell , 2) * (std::pow (numCell, 2) - 1) / 2 * nCh;
@@ -169,6 +120,10 @@ DistanceTransform2D(MatType &Im, const double inf)
  * @param Im Input binary Image whose distance transform is to be found.
  * @param on if on == 1, 1 is taken as boundaries and vice versa.
  * @param Out Output Image.
+ * This is the discription of the paper which discribes the approach 
+ * for this algorithm : Distance Transforms of Sampled Functions,
+ * P. Felzenszwalb, D. Huttenlocher
+ * Theory of Computing, Vol. 8, No. 19, September 2012
  */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
@@ -252,7 +207,7 @@ RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
 
   //see how to calculate this efficiently. numpy.dot does this.
   CubeType xyz(InImage.n_rows, InImage.n_cols, rgb2xyz.n_cols);
-
+  /*
   for (size_t i = 0; i < InImage.slice(0).n_elem; ++i)
   {
     double r = InImage.slice(0)(i);
@@ -263,6 +218,15 @@ RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
     xyz.slice(1)(i) = 0.222015 * r + 0.706655 * g + 0.071330 * b;
     xyz.slice(2)(i) = 0.020183 * r + 0.129553 * g + 0.939180 * b;
   }
+  */
+
+
+  xyz.slice(0) = 0.430574 * InImage.slice(0) + 0.341550 * InImage.slice(1)\
+                 + 0.178325 * InImage.slice(2);
+  xyz.slice(1) = 0.222015 * InImage.slice(0) + 0.706655 * InImage.slice(1)\
+                 + 0.071330 * InImage.slice(2);
+  xyz.slice(2) = 0.020183 * InImage.slice(0) + 0.129553 * InImage.slice(1)\
+                 + 0.939180 * InImage.slice(2);
   MatType nz(InImage.n_rows, InImage.n_cols);
 
   nz = 1.0 / ( xyz.slice(0) + (15 * xyz.slice(1) ) + 
@@ -293,7 +257,8 @@ RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 BilinearInterpolation(const MatType& src,
-                      size_t height, size_t width,
+                      const size_t height, 
+                      const size_t width,
                       MatType& dst)
 {
   dst = MatType(height, width);
@@ -330,15 +295,14 @@ BilinearInterpolation(const MatType& src,
  */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
-SepFilter2D(CubeType &InOutImage, const arma::vec& kernel, const size_t radius)
+Convolution(CubeType &InOutImage, const MatType& Filter, const size_t radius)
 {
   CubeType OutImage;
   this->CopyMakeBorder(InOutImage, radius, radius, radius, radius, OutImage);
 
   arma::vec row_res, col_res;
   // reverse InOutImage and OutImage to avoid making an extra matrix.
-  // InImage is renamed to InOutImage in this function for this reason only.  
-  MatType k_mat = kernel * kernel.t();
+  // InImage is renamed to InOutImage in this function for this reason only.
   for(size_t k = 0; k < OutImage.n_slices; ++k)
   {
     for(size_t j = radius; j < OutImage.n_cols - radius; ++j)
@@ -348,7 +312,7 @@ SepFilter2D(CubeType &InOutImage, const arma::vec& kernel, const size_t radius)
         InOutImage(i - radius, j - radius, k) = 
             arma::accu(OutImage.slice(k)\
             .submat(i - radius, j - radius,\
-              i + radius, j + radius) % k_mat);
+              i + radius, j + radius) % Filter);
       }
     }
   }
@@ -373,8 +337,8 @@ ConvTriangle(CubeType &InImage, const size_t radius)
     const double p = 12.0 / radius / (radius + 2) - 2;
     arma::vec kernel = {1, p, 1};
     kernel /= (p + 2);
-    
-    this->SepFilter2D(InImage, kernel, radius);
+    MatType Filter = kernel * kernel.t();
+    this->Convolution(InImage, Filter, radius);
   }
   else
   {
@@ -390,7 +354,8 @@ ConvTriangle(CubeType &InImage, const size_t radius)
       kernel(i) = r--;
 
     kernel /= std::pow(radius + 1, 2);
-    this->SepFilter2D(InImage, kernel, radius);
+    MatType Filter = kernel * kernel.t();
+    this->Convolution(InImage, Filter, radius);
   }
 }
 
@@ -408,7 +373,7 @@ MaxAndLoc(CubeType& mag, arma::umat& Location, MatType& MaxVal) const
     for(size_t j = 0; j < mag.n_cols; ++j)
     {
       /*can use -infinity here*/
-      double max =  std::numeric_limits<double>::min();
+      double max = -DBL_MAX;
       for(size_t k = 0; k < mag.n_slices; ++k)
       {
         if(mag(i, j, k) > max)
@@ -423,7 +388,7 @@ MaxAndLoc(CubeType& mag, arma::umat& Location, MatType& MaxVal) const
 }
 
 /**
- * Computes Gradient, Magnitude & Orientation.
+ * Computes Gradient, Magnitude & Orientation of the Edges.
  */
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
@@ -432,53 +397,22 @@ Gradient(const CubeType& InImage,
          MatType& Orientation)
 {
   const size_t grdNormRad = this->params.GrdNormRad();
-  CubeType dx(InImage.n_rows, InImage.n_cols, InImage.n_slices), 
-             dy(InImage.n_rows, InImage.n_cols, InImage.n_slices);
 
-  dx.zeros();
-  dy.zeros();
+  // calculate gradients using sobel filter.
+  CubeType dx = InImage; 
+  CubeType dy = InImage;
 
-  /*
-  From MATLAB documentation:
-  [FX,FY] = gradient(F), where F is a matrix, returns the 
-  x and y components of the two-dImensional numerical gradient. 
-  FX corresponds to ∂F/∂x, the differences in x (horizontal) direction. 
-  FY corresponds to ∂F/∂y, the differences in the y (vertical) direction.
-  */ 
+  MatType gx, gy;
+  gx << -1 << 0 << 1 << arma::endr
+     << -2 << 0 << 2 << arma::endr
+     << -1 << 0 << 1;
 
+  gy << -1 << -2 << -1 << arma::endr
+     << 0 << 0 << 0 << arma::endr
+     << 1 << 2 << 1;
 
-  /*
-  gradient calculates the central difference for interior data points.
-  For example, consider a matrix with unit-spaced data, A, that has 
-  horizontal gradient G = gradient(A). The interior gradient values, G(:,j), are:
-
-  G(:,j) = 0.5*(A(:,j+1) - A(:,j-1));
-  where j varies between 2 and N-1, where N is size(A,2).
-
-  The gradient values along the edges of the matrix are calculated with single-sided differences, so that
-
-  G(:,1) = A(:,2) - A(:,1);
-  G(:,N) = A(:,N) - A(:,N-1);
-  
-  The spacing between points in each direction is assumed to be one.
-  */
-  for (size_t i = 0; i < InImage.n_slices; ++i)
-  {
-    dx.slice(i).col(0) = InImage.slice(i).col(1) - InImage.slice(i).col(0);
-    dx.slice(i).col(InImage.n_cols - 1) = InImage.slice(i).col(InImage.n_cols - 1)
-                                        - InImage.slice(i).col(InImage.n_cols - 2);
-
-    for (size_t j = 1; j < InImage.n_cols-1; j++)
-      dx.slice(i).col(j) = 0.5 * ( InImage.slice(i).col(j+1) - InImage.slice(i).col(j) ); 
-
-    // do same for dy.
-    dy.slice(i).row(0) = InImage.slice(i).row(1) - InImage.slice(i).row(0);
-    dy.slice(i).row(InImage.n_rows - 1) = InImage.slice(i).row(InImage.n_rows - 1)
-                                        - InImage.slice(i).row(InImage.n_rows - 2);
-
-    for (size_t j = 1; j < InImage.n_rows-1; j++)
-      dy.slice(i).row(j) = 0.5 * ( InImage.slice(i).row(j+1) - InImage.slice(i).row(j) );
-  }  
+  Convolution(dx, gx, 2);
+  Convolution(dy, gy, 2);
 
   CubeType mag(InImage.n_rows, InImage.n_cols, InImage.n_slices);
   for (size_t i = 0; i < InImage.n_slices; ++i)
@@ -491,7 +425,7 @@ Gradient(const CubeType& InImage,
   this->MaxAndLoc(mag, Location, Magnitude);
   if(grdNormRad != 0)
   {
-    //we have to do this or override ConvTriangle and SepFilter2D methods.
+    //we have to do this or override ConvTriangle and Convolution methods.
     CubeType mag2(InImage.n_rows, InImage.n_cols, 1);
     mag2.slice(0) = Magnitude;
     this->ConvTriangle(mag2, grdNormRad);
@@ -527,8 +461,9 @@ Gradient(const CubeType& InImage,
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 Histogram(const MatType& Magnitude,
-          const MatType& Orientation, 
-          size_t downscale, size_t interp,
+          const MatType& Orientation,
+          const size_t downscale,
+          const size_t interp,
           CubeType& HistArr)
 {
 
@@ -568,9 +503,7 @@ Histogram(const MatType& Magnitude,
   }
 
   HistArr = HistArr / downscale;
-
-  for (size_t i = 0; i < HistArr.n_slices; ++i)
-    HistArr.slice(i) = arma::square(HistArr.slice(i));
+  HistArr = arma::square(HistArr);
 }
 
 /**
@@ -615,7 +548,6 @@ GetShrunkChannels(const CubeType& InImage, CubeType& reg_ch,\
             (luv.n_rows * scale), (luv.n_cols * scale), 
             Img.slice(slice_idx));
     }
-    
     this->ConvTriangle(Img, grdSmoothRad); 
     MatType Magnitude(InImage.n_rows, InImage.n_cols),
              Orientation(InImage.n_rows, InImage.n_cols);
@@ -646,11 +578,14 @@ GetShrunkChannels(const CubeType& InImage, CubeType& reg_ch,\
 
   if (regSmoothRad > 1.0)
     this->ConvTriangle(channels, (size_t) (std::round(regSmoothRad)) );
+
   else
     this->ConvTriangle(channels, regSmoothRad);
+  
 
   if (ssSmoothRad > 1.0)
     this->ConvTriangle(channels, (size_t) (std::round(ssSmoothRad)) );
+  
   else
     this->ConvTriangle(channels, ssSmoothRad);
 
@@ -889,13 +824,9 @@ PrepareData(const MatType& Images, const MatType& Boundaries,\
       Img = MatType(Images.colptr(col_i), colSize, rowSize * 3).t() / 255;
       col_i += 3;
       //Img = Images.submat((j * 3) * rowSize, 0, ((j * 3) + 3) * rowSize - 1, colSize - 1);
-      //bnds = Boundaries.submat( j * rowSize, 0, \
-                        j * rowSize - 1, colSize - 1 );
       
       bnds = MatType(Boundaries.colptr(col_b), colSize, rowSize).t();
       col_b++;
-      //segs = Segmentations.submat( j * rowSize, 0, \
-                        j * rowSize - 1, colSize - 1 );
 
       segs = MatType(Segmentations.colptr(col_s), colSize, rowSize).t();
       col_s++;
@@ -1025,7 +956,7 @@ Discretize(const MatType& labels, const size_t nClass,\
   else
   {
     //find most representative label (closest to mean)
-    arma::vec k = arma::sum(arma::abs(zs), 0);
+    arma::vec k = arma::sum(arma::abs(zs), 0).t();
     ind = IndexMin(k);
     // so most representative label is: labels.row(ind).
 

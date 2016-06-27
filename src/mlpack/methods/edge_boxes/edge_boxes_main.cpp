@@ -46,7 +46,6 @@ int main(int argc, char** argv)
   */
 
   FeatureParameters params = FeatureParameters();
-
   params.NumImages(2);
   params.RowSize(321);
   params.ColSize(481);
