@@ -447,10 +447,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // Only keep reference points found in at least one bucket. If OpenMP is
     // found, do it in parallel
     #ifdef _OPENMP
+      // TODO: change this to our own function?
       referenceIndices = arma::find(refPointsConsidered > 0);
       return;
     #else
-      referenceIndices = OmpFind(refPointsConsideredSmall);
+      referenceIndices = arma::find(refPointsConsidered > 0);
       return;
     #endif
   }
@@ -497,10 +498,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
     // Only keep unique candidates. If OpenMP is found, do it in parallel.
     #ifdef _OPENMP
+      // TODO: change this to our own function?
       referenceIndices = arma::unique(refPointsConsideredSmall);
       return;
     #else
-      referenceIndices = OmpUnique(refPointsConsideredSmall);
+      referenceIndices = arma::unique(refPointsConsideredSmall);
       return;
     #endif
   }
