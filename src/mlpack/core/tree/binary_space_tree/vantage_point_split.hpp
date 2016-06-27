@@ -2,6 +2,8 @@
  * @file vantage_point_split.hpp
  * @author Mikhail Lozhnikov
  *
+ * Definition of class VantagePointSplit, a class that splits a binary space
+ * partitioning into two parts using the distance to a certain vantage point.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
@@ -17,6 +19,7 @@ class VantagePointSplit
  public:
   typedef typename MatType::elem_type ElemType;
   /**
+   * Split the node according to the distance to a vantage point.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
@@ -33,6 +36,7 @@ class VantagePointSplit
                         size_t& splitCol);
 
   /**
+   * Split the node according to the distance to a vantage point.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
@@ -51,13 +55,16 @@ class VantagePointSplit
                         size_t& splitCol,
                         std::vector<size_t>& oldFromNew);
  private:
-  static const size_t maxNumSamples = 1000;
+  /**
+   * The maximum number of samples used for vantage point estimation and for
+   * estimation of the median.
+   */
+  static const size_t maxNumSamples = 100;
 
   template<typename StructElemType>
   struct SortStruct
   {
     size_t point;
-    size_t n;
     ElemType dist;
   };
 
@@ -68,33 +75,115 @@ class VantagePointSplit
     return (s1.dist < s2.dist);
   };
 
+  /**
+   * Select the best vantage point i.e. the point with the largest second moment
+   * of the distance from a number of random node points to the vantage point.
+   * Firstly this methods selects no more than maxNumSamples random points.
+   * Then it evaluates each point i.e. calcilates the corresponding second
+   * moment and selects the point with the largest moment. Each random point
+   * belongs to the node.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param vantagePoint The index of the vantage point in the dataset.
+   * @param mu The median value of distance form the vantage point to
+   * a number of random points.
+   */
   static void SelectVantagePoint(const BoundType& bound, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu);
 
+  /**
+   * Find no more then max(numSamples, upperBound) random samples i.e.
+   * random points that belong to the node. Each sample belongs to
+   * the interval [begin, begin + upperBound)
+   *
+   * @param distinctSamples The vector of samples indices.
+   * @param numSamples Maximum number of samples.
+   * @param begin The least index.
+   * @param upperBound The upper bound of indices.
+   */
   static void GetDistinctSamples(arma::uvec& distinctSamples,
       const size_t numSamples, const size_t begin, const size_t upperBound);
 
+  /**
+   * Get the median value of the distance from a certain vantage point to a
+   * number of samples.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param samples The indices of random samples.
+   * @param vantagePoint The vantage point.
+   * @param mu The median value.
+   */
   static void GetMedian(const BoundType& bound, const MatType& data,
       const arma::uvec& samples,  const size_t vantagePoint, ElemType& mu);
 
+  /**
+   * Calculate the second moment of the distance from a certain vantage point to
+   * a number of random samples.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param samples The indices of random samples.
+   * @param vantagePoint The vantage point.
+   */
   static ElemType GetSecondMoment(const BoundType& bound, const MatType& data,
       const arma::uvec& samples,  const size_t vantagePoint);
 
-  static bool IsContainedInBall(const BoundType& bound, const MatType& mat,
-      const size_t vantagePoint, const size_t point, const ElemType mu);
+  /**
+   * This method returns true if a point should be assigned to the left subtree
+   * i.e. the distance from the point to the vantage point is less then
+   * the median value. Otherwise it returns false.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param vantagePoint The vantage point.
+   * @param point The point that is being assigned.
+   * @param mu The median value.
+   */
+  template<typename VecType>
+  static bool AssignToLeftSubtree(const BoundType& bound, const MatType& mat,
+      const VecType& vantagePoint, const size_t point, const ElemType mu);
 
+  /**
+   * Perform split according to the median value and the vantage point.
+   * 
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param vantagePoint The vantage point.
+   * @param mu The median value.
+   */
+  template<typename VecType>
   static size_t PerformSplit(const BoundType& bound,
                              MatType& data,
                              const size_t begin,
                              const size_t count,
-                             const size_t vantagePoint,
+                             const VecType& vantagePoint,
                              const ElemType mu);
 
+  /**
+   * Perform split according to the median value and the vantage point.
+   * 
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param vantagePoint The vantage point.
+   * @param mu The median value.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  template<typename VecType>
   static size_t PerformSplit(const BoundType& bound,
                              MatType& data,
                              const size_t begin,
                              const size_t count,
-                             const size_t vantagePoint,
+                             const VecType& vantagePoint,
                              const ElemType mu,
                              std::vector<size_t>& oldFromNew);
 };
