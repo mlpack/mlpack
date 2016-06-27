@@ -86,16 +86,17 @@ if(BUILD_WITH_COVERAGE)
       message(FATAL_ERROR "gcov not found! Aborting...")
     endif()
 
-    if(NOT LCOV)
-      message(FATAL_ERROR "lcov not found! Aborting...")
-    endif()
-
-    configure_file(CMake/mlpack_coverage.in mlpack_coverage)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(WARNING "Adding debug options for coverage")
     # Remove optimizations for better line coverage
     set(DEBUG ON)
-    add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
+
+    if(LCOV)
+      configure_file(CMake/mlpack_coverage.in mlpack_coverage)
+      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
+    else()
+      message(WARNING "'lcov' not found, local coverage report is disabled. Install 'lcov' and rerun cmake to generate local coverage report.")
+    endif()
   else()
     message(FATAL_ERROR "Coverage will only work with GNU environment.")
   endif()

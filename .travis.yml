@@ -16,7 +16,7 @@ install:
 script:
   - travis_wait 30 ./bin/mlpack_test -p --run_test=BinarizeTest
 after_success:
-  - cd build && coveralls -E '.*(CMakeFiles|tests).*'
+  - coveralls -E '.*(CMakeFiles|tests).*'
 notifications:
   email:
     - mlpack-git@cc.gatech.edu
