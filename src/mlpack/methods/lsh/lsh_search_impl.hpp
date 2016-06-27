@@ -9,20 +9,9 @@
 
 #include <mlpack/core.hpp>
 
-using std::cout; using std::endl; //TODO: remove
-
 namespace mlpack {
 namespace neighbor {
 
-// Simple small function to set threads to 1 if OpenMP is not used
-inline size_t DefineMaxThreads()
-{
-  #ifdef _OPENMP
-    return omp_get_max_threads();
-  #else
-    return 1;
-  #endif
-}
 
 // Construct the object with random tables
 template<typename SortPolicy>
@@ -40,10 +29,14 @@ LSHSearch(const arma::mat& referenceSet,
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
-  distanceEvaluations(0),
-  maxThreads(DefineMaxThreads()),
-  numThreadsUsed(1)
+  distanceEvaluations(0)
 {
+
+  #ifdef _OPENMP
+    maxThreads = omp_get_max_threads();
+  #else
+    maxThreads = 1;
+  #endif
   // Pass work to training function.
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize);
@@ -64,10 +57,13 @@ LSHSearch(const arma::mat& referenceSet,
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
-  distanceEvaluations(0),
-  maxThreads(omp_get_max_threads()),
-  numThreadsUsed(1)
+  distanceEvaluations(0)
 {
+  #ifdef _OPENMP
+    maxThreads = omp_get_max_threads();
+  #else
+    maxThreads = 1;
+  #endif
   // Pass work to training function
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize, projections);
@@ -83,11 +79,14 @@ LSHSearch<SortPolicy>::LSHSearch() :
     hashWidth(0),
     secondHashSize(99901),
     bucketSize(500),
-    distanceEvaluations(0),
-    maxThreads(omp_get_max_threads()),
-    numThreadsUsed(1)
+    distanceEvaluations(0)
 {
-  // Nothing to do.
+  // Only define maxThreads. Nothing else to do.
+  #ifdef _OPENMP
+    maxThreads = omp_get_max_threads();
+  #else
+    maxThreads = 1;
+  #endif
 }
 
 // Destructor.
@@ -445,10 +444,15 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
       }
     }
 
-    // Only keep reference points found in at least one bucket.
-    // TODO: maybe write parallel implementation of this?
-    referenceIndices = arma::find(refPointsConsidered > 0);
-    return;
+    // Only keep reference points found in at least one bucket. If OpenMP is
+    // found, do it in parallel
+    #ifdef _OPENMP
+      referenceIndices = arma::find(refPointsConsidered > 0);
+      return;
+    #else
+      referenceIndices = OmpFind(refPointsConsideredSmall);
+      return;
+    #endif
   }
   else
   {
@@ -491,10 +495,14 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
       }
     }
 
-    // Only keep unique candidates.
-    // TODO: again main bottleneck is here. Parallelize?
-    referenceIndices = arma::unique(refPointsConsideredSmall);
-    return;
+    // Only keep unique candidates. If OpenMP is found, do it in parallel.
+    #ifdef _OPENMP
+      referenceIndices = arma::unique(refPointsConsideredSmall);
+      return;
+    #else
+      referenceIndices = OmpUnique(refPointsConsideredSmall);
+      return;
+    #endif
   }
 }
 
@@ -611,8 +619,8 @@ Search(const size_t k,
     ReturnIndicesFromTable(referenceSet->col(i), refIndices, numTablesToSearch);
 
     // An informative book-keeping for the number of neighbor candidates
-    // returned on average.
-    // Make atomic to avoid race conditions when multiple threads are running
+    // returned on average. Make atomic to avoid race conditions when multiple
+    // threads are running.
     #pragma omp atomic
     avgIndicesReturned += refIndices.n_elem;
 
