@@ -27,7 +27,7 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-option(HAS_OPENMP "Use OpenMP for parallel execution." OFF)
+option(HAS_OPENMP "Use OpenMP for parallel execution, if available" ON)
 
 enable_testing()
 
@@ -116,11 +116,6 @@ endif()
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
-endif()
-
-# If the user has an OpenMP-enabled compiler, turn OpenMP on
-if (HAS_OPENMP)
-  add_definitions(-DHAS_OPENMP)
 endif()
 
 # Now, find the libraries we need to compile against.  Several variables can be
@@ -239,10 +234,13 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, the
 # flags to compile with OpenMP are returned and added.
-find_package(OpenMP)
-if (OPENMP_FOUND)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+if (HAS_OPENMP)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        add_definitions(-DOPENMP_FOUND)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    endif ()
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for

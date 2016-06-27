@@ -32,7 +32,7 @@ LSHSearch(const arma::mat& referenceSet,
   distanceEvaluations(0)
 {
 
-  #ifdef _OPENMP
+  #ifdef OPENMP_FOUND
     maxThreads = omp_get_max_threads();
   #else
     maxThreads = 1;
@@ -59,7 +59,7 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-  #ifdef _OPENMP
+  #ifdef OPENMP_FOUND
     maxThreads = omp_get_max_threads();
   #else
     maxThreads = 1;
@@ -82,7 +82,7 @@ LSHSearch<SortPolicy>::LSHSearch() :
     distanceEvaluations(0)
 {
   // Only define maxThreads. Nothing else to do.
-  #ifdef _OPENMP
+  #ifdef OPENMP_FOUND
     maxThreads = omp_get_max_threads();
   #else
     maxThreads = 1;
@@ -446,7 +446,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
     // Only keep reference points found in at least one bucket. If OpenMP is
     // found, do it in parallel
-    #ifdef _OPENMP
+    #ifdef OPENMP_FOUND
       // TODO: change this to our own function?
       referenceIndices = arma::find(refPointsConsidered > 0);
       return;
@@ -497,7 +497,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     }
 
     // Only keep unique candidates. If OpenMP is found, do it in parallel.
-    #ifdef _OPENMP
+    #ifdef OPENMP_FOUND
       // TODO: change this to our own function?
       referenceIndices = arma::unique(refPointsConsideredSmall);
       return;
