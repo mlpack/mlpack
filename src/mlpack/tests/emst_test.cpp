@@ -6,7 +6,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/emst/dtb.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 #include <mlpack/core/tree/cover_tree.hpp>
 
