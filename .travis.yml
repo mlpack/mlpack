@@ -10,10 +10,13 @@ before_install:
   - export CXX=g++-4.8
   - printenv
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
+  - pip install --user cpp-coveralls
 install:
-  - mkdir build && cd build && cmake -DDEBUG=OFF -DPROFILE=OFF .. && make -j4
+  - mkdir build && cd build && cmake -DBUILD_WITH_COVERAGE=ON .. && make -j4
 script:
-  - travis_wait 30 ./bin/mlpack_test -p
+  - travis_wait 30 ./bin/mlpack_test -p --run_test=BinarizeTest
+after_success:
+  - cd build && coveralls -E '.*(CMakeFiles|tests).*'
 notifications:
   email:
     - mlpack-git@cc.gatech.edu
