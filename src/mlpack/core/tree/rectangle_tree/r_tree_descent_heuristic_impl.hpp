@@ -15,7 +15,7 @@ namespace tree {
 
 template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
-                                                       const arma::vec& point)
+                                                       const size_t point)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -31,11 +31,11 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
     for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
     {
       v1 *= node->Children()[i]->Bound()[j].Width();
-      v2 *= node->Children()[i]->Bound()[j].Contains(point[j]) ?
+      v2 *= node->Children()[i]->Bound()[j].Contains(node->Dataset().col(point)[j]) ?
           node->Children()[i]->Bound()[j].Width() :
-          (node->Children()[i]->Bound()[j].Hi() < point[j] ?
-              (point[j] - node->Children()[i]->Bound()[j].Lo()) :
-              (node->Children()[i]->Bound()[j].Hi() - point[j]));
+          (node->Children()[i]->Bound()[j].Hi() < node->Dataset().col(point)[j] ?
+              (node->Dataset().col(point)[j] - node->Children()[i]->Bound()[j].Lo()) :
+              (node->Children()[i]->Bound()[j].Hi() - node->Dataset().col(point)[j]));
     }
 
     assert(v2 - v1 >= 0);

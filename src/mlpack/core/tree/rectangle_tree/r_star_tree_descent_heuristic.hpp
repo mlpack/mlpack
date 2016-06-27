@@ -29,10 +29,10 @@ class RStarTreeDescentHeuristic
    *     greater than zero.
    *
    * @param bound The bound used for the node that is being evaluated.
-   * @param point The point that is being inserted.
+   * @param point The number of the point that is being inserted.
    */
   template<typename TreeType>
-  static size_t ChooseDescentNode(const TreeType* node, const arma::vec& point);
+  static size_t ChooseDescentNode(const TreeType* node, const size_t point);
 
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* node,
