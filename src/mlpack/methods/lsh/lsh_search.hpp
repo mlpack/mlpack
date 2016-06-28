@@ -373,9 +373,6 @@ class LSHSearch
   //! The maximum number of threads allowed.
   size_t maxThreads;
 
-  //! The number of threads currently in use.
-  size_t numThreadsUsed;
-
 }; // class LSHSearch
 
 } // namespace neighbor
