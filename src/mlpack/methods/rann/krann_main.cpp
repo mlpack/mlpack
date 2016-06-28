@@ -64,7 +64,7 @@ PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', or "
-    "'x', 'r-star'.", "t", "kd");
+    "'x', 'r-star', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
@@ -172,9 +172,11 @@ int main(int argc, char *argv[])
       tree = RANNModel::R_STAR_TREE;
     else if (treeType == "x")
       tree = RANNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = RANNModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star' and 'x'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x' and 'hilbert-r'." << endl;
 
     rann.TreeType() = tree;
     rann.RandomBasis() = randomBasis;

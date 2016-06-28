@@ -135,9 +135,9 @@ UpdateAuxiliaryInfo(TreeType* node)
     return true;
 
   TreeType* child = node->Children()[node->NumChildren() - 1];
-  if (hilbertValue.CompareWith(child->AuxiliaryInfo().hilbertValue()) < 0)
+  if (hilbertValue.CompareWith(child->AuxiliaryInfo().HilbertValue()) < 0)
   {
-    hilbertValue.Copy(node,child);
+    hilbertValue = node->AuxiliaryInfo().HilbertValue();
     return true;
   }
   return false;

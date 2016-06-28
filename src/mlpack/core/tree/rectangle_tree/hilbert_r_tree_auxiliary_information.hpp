@@ -91,14 +91,6 @@ class HilbertRTreeAuxiliaryInformation
    */
   bool UpdateAuxiliaryInfo(TreeType* node);
 
-  /**
-   * Copy the auxiliary information from one node to another.
-   *
-   * @param dst The node to which the information is being copied.
-   * @param src The node from which the information is being copied.
-   */
-  void Copy(TreeType* dst, TreeType* src);
-
   //! Clear memory.
   void NullifyData();
 

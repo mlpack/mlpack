@@ -70,7 +70,7 @@ PARAM_DOUBLE("min", "Lower bound in range.", "L", 0.0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
+    "'x', 'ball', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
@@ -173,9 +173,11 @@ int main(int argc, char *argv[])
       tree = RSModel::BALL_TREE;
     else if (treeType == "x")
       tree = RSModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = RSModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball' and 'hilbert-r'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;
