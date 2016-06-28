@@ -101,8 +101,8 @@ CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
 
     if (e < std::numeric_limits<VecElemType>::min_exponent)
     {
-      HilbertElemType tmp =
-          1 << (std::numeric_limits<VecElemType>::min_exponent - e);
+      HilbertElemType tmp = (HilbertElemType) 1 <<
+          (std::numeric_limits<VecElemType>::min_exponent - e);
 
       e = std::numeric_limits<VecElemType>::min_exponent;
       normalizedVal /= tmp;
