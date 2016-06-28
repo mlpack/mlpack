@@ -497,26 +497,6 @@ class RectangleTree
 
  private:
   /**
-   * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.  TO BE REMOVED
-   */
-  RectangleTree(const size_t begin,
-                const size_t count,
-                bound::HRectBound<MetricType> bound,
-                StatisticType stat,
-                const int maxLeafSize = 20) :
-      begin(begin),
-      count(count),
-      bound(bound),
-      stat(stat),
-      maxLeafSize(maxLeafSize) { }
-
-  RectangleTree* CopyMe()
-  {
-    return new RectangleTree(begin, count, bound, stat, maxLeafSize);
-  }
-
-  /**
    * Splits the current node, recursing up the tree.
    *
    * @param relevels Vector to track which levels have been inserted to.
