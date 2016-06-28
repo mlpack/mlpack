@@ -6,7 +6,6 @@ set(SOURCES
   extension.hpp
   format.hpp
   load_csv.hpp
-  load_csv.cpp
   load.hpp  
   load_impl.hpp
   load_arff.hpp
