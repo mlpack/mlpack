@@ -9,7 +9,6 @@
 
 #include <mlpack/core.hpp>
 
-
 namespace mlpack {
 namespace neighbor {
 
@@ -358,7 +357,7 @@ bool LSHSearch<SortPolicy>::PerturbationShift(std::vector<bool>& A) const
   if ( maxPos + 1 < A.size()) // otherwise, this is an invalid vector 
   {
     A[maxPos] = 0;
-    A[maxPos+1] = 1;
+    A[maxPos + 1] = 1;
     return true; // valid
   }
   return false; // invalid
@@ -374,7 +373,7 @@ bool LSHSearch<SortPolicy>::PerturbationExpand(std::vector<bool>& A) const
     if (A[i]) // marked true
       maxPos = i;
 
-  if ( maxPos + 1 < A.size()) // otherwise, this is an invalid vector
+  if (maxPos + 1 < A.size()) // otherwise, this is an invalid vector
   {
     A[maxPos + 1] = 1;
     return true;
@@ -402,12 +401,11 @@ bool LSHSearch<SortPolicy>::PerturbationValid(
       continue;
 
     // If dimesnion is unseen thus far, mark it as seen.
-    if ( check[i % numProj] == false )
+    if (check[i % numProj] == false)
       check[i % numProj] = true;
     else
       return false; // If dimension was seen before, set is not valid.
   }
-
   // If we didn't fail, set is valid.
   return true;
 }
@@ -415,10 +413,10 @@ bool LSHSearch<SortPolicy>::PerturbationValid(
 // Compute additional probing bins for a query
 template<typename SortPolicy>
 void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
-                            const arma::vec& queryCode,
-                            const arma::vec& queryCodeNotFloored,
-                            const size_t T,
-                            arma::mat& additionalProbingBins) const
+    const arma::vec& queryCode,
+    const arma::vec& queryCodeNotFloored,
+    const size_t T,
+    arma::mat& additionalProbingBins) const
 {
 
   // No additional bins requested. Our work is done.
@@ -448,15 +446,15 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
-  actions.rows(0, numProj - 1) = // first numProj rows
+  actions.rows(0, numProj - 1) = // First numProj rows.
     -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
-  actions.rows(numProj, (2 * numProj) - 1) = // last numProj rows
+  actions.rows(numProj, (2 * numProj) - 1) = // Last numProj rows.
     arma::ones< arma::Col<short int> > (numProj); // 1s
 
 
   // Acting dimension vector shows which coordinate to transform according to
-  // actions described by actions vector
-  arma::Col<size_t> positions(2 * numProj); // will be [0 1 2 ... 0 1 2 ...]
+  // actions (actions are described by actions vector above).
+  arma::Col<size_t> positions(2 * numProj); // Will be [0 1 2 ... 0 1 2 ...].
   positions.rows(0, numProj - 1) =
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
   positions.rows(numProj, 2 * numProj - 1) =
@@ -465,7 +463,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   // Special case: No need to create heap for 1 or 2 codes.
   if (T <= 2)
   {
-
     // First, find location of minimum score, generate 1 perturbation vector,
     // and add its code to additionalProbingBins column 0.
 
@@ -500,7 +497,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     size_t minloc2 = 0;
     for (size_t s = 0; s < (2 * numProj); ++s) // here we can't start from 1
     {
-      if ( minscore2 > scores[s] && s != minloc) //second smallest
+      if (minscore2 > scores[s] && s != minloc) //second smallest
       {
         minscore2 = scores[s];
         minloc2 = s;
@@ -515,7 +512,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   // General case: more than 2 perturbation vectors require use of minheap.
 
   // Sort everything in increasing order.
-  arma::Col<long long unsigned int> sortidx = arma::sort_index(scores);
+  arma::uvec sortidx = arma::sort_index(scores);
   scores = scores(sortidx);
   actions = actions(sortidx);
   positions = positions(sortidx);
@@ -568,39 +565,37 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
       // Shift operation on Ai (replace max with max+1).
       std::vector<bool> As = Ai;
-      if ( PerturbationShift(As) && PerturbationValid(As) )
+      if (PerturbationShift(As) && PerturbationValid(As))
         // Don't add invalid sets.
       {
         perturbationSets.push_back(As); // add shifted set to sets
-        minHeap.push( 
-            std::make_pair(
-              PerturbationScore(As, scores), 
-              perturbationSets.size() - 1)
+        minHeap.push(
+            std::make_pair(PerturbationScore(As, scores), 
+            perturbationSets.size() - 1)
             );
       }
 
       // Expand operation on Ai (add max+1 to set).
       std::vector<bool> Ae = Ai;
-      if ( PerturbationExpand(Ae) && PerturbationValid(Ae)  ) 
+      if (PerturbationExpand(Ae) && PerturbationValid(Ae)) 
         // Don't add invalid sets.
       {
         perturbationSets.push_back(Ae); // add expanded set to sets
         minHeap.push(
-            std::make_pair(
-              PerturbationScore(Ae, scores),
-              perturbationSets.size() - 1)
+            std::make_pair(PerturbationScore(Ae, scores),
+            perturbationSets.size() - 1)
             );
       }
 
-    }while (! PerturbationValid(Ai)  );//Discard invalid perturbations
+    } while (!PerturbationValid(Ai));//Discard invalid perturbations
 
     // Found valid perturbation set Ai. Construct perturbation vector from set.
     for (size_t pos = 0; pos < Ai.size(); ++pos)
       // If Ai[pos] is marked, add action to probing vector.
       additionalProbingBins(positions(pos), pvec) 
-          += Ai[pos] ? actions(pos) : 0;   }
+          += Ai[pos] ? actions(pos) : 0;
+  }
 }
-
 
 template<typename SortPolicy>
 template<typename VecType>
@@ -630,8 +625,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   for (size_t i = 0; i < numTablesToSearch; i++)
     queryCodesNotFloored.unsafe_col(i) = projections.slice(i).t() * queryPoint;
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
-  allProjInTables = arma::floor(queryCodesNotFloored/hashWidth);
-
+  allProjInTables = arma::floor(queryCodesNotFloored / hashWidth);
 
   // Use hashMat to store the primary probing codes and any additional codes
   // from multiprobe LSH.
@@ -640,14 +634,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
   // Compute the primary hash value of each key of the query into a bucket of
   // the secondHashTable using the secondHashWeights.
-  hashMat.row(0) = 
-    arma::conv_to< arma::Row<size_t> >:: // floor by typecasting to size_t
-    from( secondHashWeights.t() * allProjInTables );
-  // mod to compute 2nd-level codes
+  hashMat.row(0) = arma::conv_to<arma::Row<size_t>> // Floor by typecasting
+      ::from(secondHashWeights.t() * allProjInTables);
+  // Mod to compute 2nd-level codes.
   for (size_t i = 0; i < numTablesToSearch; i++)
     hashMat(0, i) = (hashMat(0, i) % secondHashSize);
 
-  // Compute hash codes of additional probing bins
+  // Compute hash codes of additional probing bins.
   if (T > 0)
   {
     for (size_t i = 0; i < numTablesToSearch; ++i)
@@ -704,19 +697,16 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
     for (size_t i = 0; i < numTablesToSearch; ++i) // for all tables
     {
-      for (size_t p = 0; p < T + 1; ++p) // for entire probing sequence
+      for (size_t p = 0; p < T + 1; ++p) // For entire probing sequence.
       {
-
         // get the sequence code
         size_t hashInd = hashMat(p, i);
         size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize && bucketContentSize[tableRow] > 0)
-        {
           // Pick the indices in the bucket corresponding to hashInd.
           for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
             refPointsConsidered[ secondHashTable[tableRow](j) ]++;
-        }
       }
     }
 
@@ -795,19 +785,18 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   // If the user requested more than the available number of additional probing
   // bins, set Teffective to maximum T. Maximum T is 2^numProj - 1
   size_t Teffective = T;
-  if (T > ( (size_t) ( (1 << numProj) - 1) ) )
+  if (T > ((size_t) ((1 << numProj) - 1)))
   {
-    Teffective = ( 1 << numProj ) - 1;
-    Log::Warn << "Requested " << T << 
-      " additional bins are more than theoretical maximum. Using " <<
-      Teffective << " instead." << std::endl;
+    Teffective = (1 << numProj) - 1;
+    Log::Warn << "Requested " << T << " additional bins are more than "
+        << "theoretical maximum. Using " << Teffective << " instead." 
+        << std::endl;
   }
 
   // If the user set multiprobe, log it
-  if (T > 0)
-    Log::Info << "Running multiprobe LSH with " << Teffective <<
-      " additional probing bins per table per query."<< std::endl;
-
+  if (Teffective > 0)
+    Log::Info << "Running multiprobe LSH with " << Teffective 
+        <<" additional probing bins per table per query." << std::endl;
 
   size_t avgIndicesReturned = 0;
 
@@ -859,12 +848,12 @@ Search(const size_t k,
   // If the user requested more than the available number of additional probing
   // bins, set Teffective to maximum T. Maximum T is 2^numProj - 1
   size_t Teffective = T;
-  if (T > ( (size_t) ( (1 << numProj) - 1) ) )
+  if (T > ((size_t) ((1 << numProj) - 1)))
   {
-    Teffective = ( 1 << numProj ) - 1;
-    Log::Warn << "Requested " << T << 
-      " additional bins are more than theoretical maximum. Using " <<
-      Teffective << " instead." << std::endl;
+    Teffective = (1 << numProj) - 1;
+    Log::Warn << "Requested " << T << " additional bins are more than "
+        << "theoretical maximum. Using " << Teffective << " instead." 
+        << std::endl;
   }
 
   // If the user set multiprobe, log it

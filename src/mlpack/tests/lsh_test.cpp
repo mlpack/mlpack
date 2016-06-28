@@ -16,8 +16,13 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 /**
- * Generates a point set of four clusters around (0.5, 0.5),
- * (3.5, 0.5), (0.5, 3.5), (3.5, 3.5).
+ * Generates a point set of four clusters:
+ * -C1 around (0.5, 3.5),
+ * -C2 around (3.5, 3.5),
+ * -C3 around (0.5, 0.5),
+ * -C4 around (3.5, 3.5).
+ *
+ * It then merges these clusters into one set, rdata.
  */
 void GetPointset(const size_t N, arma::mat& rdata)
 {
@@ -506,40 +511,30 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
 
   for (size_t rep = 0; rep < repetitions; ++rep)
   {
-    // train a model
-    LSHSearch<> multiprobeTest(
-        rdata,
-        numProj,
-        numTables,
-        hashWidth,
-        secondHashSize,
-        bucketSize);
+    // Train a model.
+    LSHSearch<> multiprobeTest(rdata, numProj, numTables, hashWidth, 
+        secondHashSize, bucketSize);
 
     double prevRecall = 0;
-    // search with varying number of probes
+    // Search with varying number of probes.
     for (size_t p = 0; p < probeTrials; ++p)
     {
       arma::Mat<size_t> lshNeighbors;
-      arma::mat lshDistances; //move outside of loop for speed?
+      arma::mat lshDistances;
       
-      multiprobeTest.Search(
-          qdata, 
-          k, 
-          lshNeighbors, 
-          lshDistances, 
-          0, 
+      multiprobeTest.Search(qdata, k, lshNeighbors, lshDistances, 0, 
           numProbes[p]);
 
-      // compute recall
-      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth); //TODO: change to LSHSearch::ComputeRecall??
+      // Compute recall of this run.
+      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth); 
       if (p > 0)
       {
-        // more probes should at the very least not lower recall...
+        // More probes should at the very least not lower recall...
         BOOST_REQUIRE_GE(recall, prevRecall);
 
-        // ... and should ideally increase it a bit
+        // ... and should ideally increase it a bit.
         if (recall > prevRecall + epsilonIncrease)
-         foundIncrease = true;
+          foundIncrease = true;
         prevRecall = recall;
       }
     }
@@ -563,7 +558,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
 BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 {
   math::RandomSeed(std::time(NULL));
-  // generate known deterministic clusters of points
+  // Generate known deterministic clusters of points.
   const size_t N = 40;
   arma::mat rdata;
   GetPointset(N, rdata);
@@ -573,19 +568,18 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   const int secondHashSize = 99901;
   const int bucketSize = 500;
 
-  // 1 table, projections on orthonormal plane
+  // 1 table, projections on orthonormal plane.
   arma::cube projections(2, 2, 1);
   projections(0, 0, 0) = 1;
   projections(1, 0, 0) = 0;
   projections(0, 1, 0) = 0;
   projections(1, 1, 0) = 1;
 
-  // construct LSH object with given tables
+  // Construct LSH object with given tables.
   LSHSearch<> lshTest(rdata, projections,
                       hashWidth, secondHashSize, bucketSize);
 
-
-  // two points near the clusters but outside their bins. q1's lowest scoring
+  // Two points near the clusters but outside their bins. q1's lowest scoring
   // perturbation vectors will map to C1 cluster's bins.
   arma::mat q1;
   q1 << 1.1 << arma::endr << 3.3; // vector [1.1, 3.3]
@@ -593,15 +587,15 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  // Test that q1 simple search comes up empty
+  // Test that q1 simple search comes up empty.
   lshTest.Search(q1, k, neighbors, distances);
   cout << neighbors << endl;
-  BOOST_REQUIRE( arma::all(neighbors.col(0) == N) );
+  BOOST_REQUIRE(arma::all(neighbors.col(0) == N));
 
-  // Searching with 3 additional probing bins should find neighbors
+  // Searching with 3 additional probing bins should find neighbors.
   lshTest.Search(q1, k, neighbors, distances, 0, 3);
   cout << neighbors << endl;
-  BOOST_REQUIRE( arma::all(neighbors.col(0) == N || neighbors.col(0) < 10) );
+  BOOST_REQUIRE(arma::all(neighbors.col(0) == N || neighbors.col(0) < 10));
 }
 */
 
