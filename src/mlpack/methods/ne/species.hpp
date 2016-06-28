@@ -55,10 +55,23 @@ class Species {
     aNextGenomeId = speciesSize;
   }
 
-  ssize_t SpeciesSize() { return aSpeciesSize; }
-
   // Destructor.
   ~Species() {}
+
+  // Operator =.
+  Species& operator =(const Species& species) {
+    if (this != &species) {
+      aId = species.aId;
+      aStaleAge = species.aStaleAge;
+      aSpeciesSize = species.aSpeciesSize;
+      aBestFitness = species.aBestFitness;
+      aBestGenome = species.aBestGenome;
+      aNextGenomeId = species.aNextGenomeId;
+      aGenomes = species.aGenomes;
+    }
+
+    return *this;
+  }
 
   // Set id.
   void Id(ssize_t id) { aId = id; }
@@ -71,6 +84,12 @@ class Species {
 
   // Get age.
   ssize_t StaleAge() const { return aStaleAge; }
+
+  // Set species size.
+  void SpeciesSize(ssize_t speciesSize) { aSpeciesSize = speciesSize; }
+
+  // Get species size.
+  ssize_t SpeciesSize() const { return aSpeciesSize; }
 
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
@@ -107,7 +126,7 @@ class Species {
       return false;
     }
   }
-  void SortSpecies() {
+  void SortGenomes() {
     std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);
   }
 

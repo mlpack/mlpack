@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdio>
+#include <numeric>
 
 #include <mlpack/core.hpp>
 
@@ -332,6 +333,7 @@ class NEAT {
   }
 
   // Measure two genomes' weight difference.
+  // TODO: what if one or two weights are disabled? 0 or still the weight?
   double WeightDiff(Genome& genome1, Genome& genome2) {
     double deltaW = 0;
     ssize_t coincident = 0;
@@ -364,11 +366,11 @@ class NEAT {
   }
 
   // Add genome to existing species or create new species.
-  void AddGenomeToSpecies(Genome& genome) {
-    for (ssize_t i=0; i<aPopulation.NumSpecies(); ++i) {
-      if (aPopulation.aSpecies[i].SpeciesSize() > 0) {
-        if (IsSameSpecies(aPopulation.aSpecies[i].aGenomes[0], genome)) {  // each first genome in species is the representative genome.
-          aPopulation.aSpecies[i].AddGenome(genome);
+  void AddGenomeToSpecies(Population& population, Genome& genome) {
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      if (population.aSpecies[i].SpeciesSize() > 0) {
+        if (IsSameSpecies(population.aSpecies[i].aGenomes[0], genome)) {  // each first genome in species is the representative genome.
+          population.aSpecies[i].AddGenome(genome);
           return;
         }
       }
@@ -376,21 +378,23 @@ class NEAT {
 
     Species newSpecies = Species();
     newSpecies.AddGenome(genome);
-    newSpecies.Id(aPopulation.NextSpeciesId());  // NOTICE: changed species id.
+    newSpecies.Id(population.NextSpeciesId());  // NOTICE: changed species id.
     newSpecies.StaleAge(0);
-    aPopulation.AddSpecies(newSpecies);
+    population.AddSpecies(newSpecies);
   }
 
   // Remove stale species.
-  void RemoveStaleSpecies(Population& population, ssize_t staleAgeThreshold) {
+  void RemoveStaleSpecies(Population& population) {
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
-      if (population.aSpecies[i].StaleAge() > staleAgeThreshold) {
+      if (population.aSpecies[i].StaleAge() > aStaleAgeThreshold) {
         population.RemoveSpecies(i);
       }
     }
   }
 
   // Set adjusted fitness.
+  // NOTICE: we assume fitness have already evaluated before adjust it.
+  // Maybe we can add some flag or other way to judge whether is evaluated or not.
   void AdjustFitness(Population& population) {
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
       if (population.aSpecies[i].SpeciesSize() > 0) {
@@ -405,8 +409,87 @@ class NEAT {
   }
 
   // Distribute genomes into species.
-  void Speciate() {
+  void Speciate(Population& population) {
+    population.aSpecies.clear();
 
+    for (ssize_t i=0; i<population.aGenomes.size(); ++i) {
+      AddGenomeToSpecies(population, population.aGenomes[i]);
+    }
+  }
+
+  // Calculate species' average rank in population.
+  std::vector<double> CalcSpeciesAverageRank(Population& population) {
+    population.AggregateGenomes();
+    population.SortGenomes();
+    std::vector<double> speciesAverageRank;
+
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      double averageRank = 0;
+      ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
+
+      for (ssize_t j=0; j<speciesSize; ++j) {
+        averageRank += population.GetGenomeIndex(population.aSpecies[i].aGenomes[j].Id());
+      }
+
+      averageRank = averageRank / speciesSize;  // smaller is better.
+      speciesAverageRank.push_back(averageRank);
+    }
+
+    return speciesAverageRank;
+  }
+
+  // Remove weak species.
+  void RemoveWeakSpecies(Population& population) {
+    std::vector<double> speciesAverageRank = CalcSpeciesAverageRank(population);
+    double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
+
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      double weak = (std::floor(speciesAverageRank[i] * population.PopulationSize() / totalAverageRank)
+                    > 1);
+      if (weak) {
+        population.RemoveSpecies(i);
+      }
+    }
+  }
+
+  // Remove a portion weak genomes in each species
+  void cullSpecies(Population& population, double percentageToRemove) {
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      population.aSpecies[i].SortGenomes();
+      ssize_t numRemove = std::floor(population.aSpecies[i].SpeciesSize() * percentageToRemove);
+      while (numRemove > 0) {
+        population.aSpecies[i].pop_back();
+        --numRemove;
+      }
+    }
+  }
+
+  // Only keep the best genome in each species.
+  void cullSpeciesToOne(Population& population) {
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      population.aSpecies[i].SortGenomes();
+      ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
+      if (speciesSize > 0) {
+        Genome bestGenome = population.aSpecies[i].aGenomes[0];
+        population.aSpecies[i].aGenomes.clear();
+        population.aSpecies[i].aGenomes.push_back(bestGenome);
+      }
+    }
+  }
+
+  // Breed child for a species.
+  // NOTICE: can have different ways to breed a child.
+  void BreedChild(Species& species, Genome& childGenome, double crossoverProb) {
+    double p = mlpack::math::Random();
+    if (p < crossoverProb) {
+      ssize_t speciesSize = species.aGenomes.size();
+      ssize_t idx1 = mlpack::math::RandInt(0, speciesSize);
+      ssize_t idx2 = mlpack::math::RandInt(0, speciesSize);
+      Crossover(species.aGenomes[idx1], species.aGenomes[idx2], childGenome);
+    } else {
+      ssize_t idx = mlpack::math::RandInt(0, speciesSize);
+      childGenome = species.aGenomes[idx];
+    }
   }
 
   // Initialize population.
@@ -463,6 +546,9 @@ class NEAT {
 
   // Threshold for species stale age.
   ssize_t aStaleAgeThreshold;
+
+  // Crossover rate.
+  double aCrossoverRate;
 
 };
 
