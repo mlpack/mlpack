@@ -47,10 +47,10 @@ HandlePointInsertion(TreeType* node, const size_t point)
 
     // Move points.
     for (size_t i = node->NumPoints(); i > pos; i--)
-      node->Points()[i] = node->Points()[i - 1];
+      node->Point(i) = node->Point(i - 1);
 
     // Insert the point.
-    node->Points()[pos] = point;
+    node->Point(pos) = point;
     node->Count()++;
   }
   else
@@ -105,7 +105,7 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   hilbertValue.DeletePoint(node,localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
-    node->Points()[i - 1] = node->Points()[i];
+    node->Point(i - 1) = node->Point(i);
 
   node->NumPoints()--;
   return true;

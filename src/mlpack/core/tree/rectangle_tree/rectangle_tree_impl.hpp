@@ -154,7 +154,7 @@ RectangleTree(
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
     ownsDataset(deepCopy),
-    points(other.Points()),
+    points(other.points),
     auxiliaryInfo(other.auxiliaryInfo)
 {
   if (deepCopy)
@@ -660,21 +660,6 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 }
 
 /**
- * Return the index of a particular point contained in this node.
- */
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType,
-         template<typename> class AuxiliaryInformationType>
-inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
-         DescentType, AuxiliaryInformationType>::Point(const size_t index) const
-{
-  return points[index];
-}
-
-/**
  * Split the tree.  This calls the SplitType code to split a node.  This method
  * should only be called on a leaf node.
  */
@@ -878,7 +863,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       for (size_t i = 0; i < child->Count(); i++)
       {
         // In case the tree has a height of two.
-        points[i] = child->Points()[i];
+        points[i] = child->Point(i);
       }
 
       auxiliaryInfo = child->AuxiliaryInfo();
