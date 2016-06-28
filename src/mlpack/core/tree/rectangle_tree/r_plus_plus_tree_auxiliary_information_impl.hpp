@@ -29,6 +29,7 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
                tree->Parent()->AuxiliaryInfo().OuterBound() :
                tree->Bound().Dim())
 {
+  // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
     for (size_t k = 0; k < outerBound.Dim(); k++)
     {
@@ -39,75 +40,73 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
 
 template<typename  TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
-RPlusPlusTreeAuxiliaryInformation(const RPlusPlusTreeAuxiliaryInformation& other) :
+RPlusPlusTreeAuxiliaryInformation(
+    const RPlusPlusTreeAuxiliaryInformation& other) :
     outerBound(other.OuterBound())
 {
 
 }
 
 template<typename  TreeType>
-bool RPlusPlusTreeAuxiliaryInformation<TreeType>::
-HandlePointInsertion(TreeType* , const size_t )
+bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointInsertion(
+    TreeType* /* node */, const size_t /* point */)
 {
   return false;
 }
 
 template<typename  TreeType>
-bool RPlusPlusTreeAuxiliaryInformation<TreeType>::
-HandleNodeInsertion(TreeType* , TreeType* ,bool)
+bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandleNodeInsertion(
+    TreeType* /* node */,
+    TreeType* /* nodeToInsert */,
+    bool /* insertionLevel */)
 {
   assert(false);
   return false;
 }
 
 template<typename  TreeType>
-bool RPlusPlusTreeAuxiliaryInformation<TreeType>::
-HandlePointDeletion(TreeType* , const size_t)
+bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointDeletion(
+    TreeType* /* node */, const size_t /* localIndex */)
 {
   return false;
 }
 
 template<typename  TreeType>
-bool RPlusPlusTreeAuxiliaryInformation<TreeType>::
-HandleNodeRemoval(TreeType* , const size_t)
+bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandleNodeRemoval(
+    TreeType* /* node */, const size_t /* nodeIndex */)
 {
   return false;
 }
 
 template<typename  TreeType>
-bool RPlusPlusTreeAuxiliaryInformation<TreeType>::
-UpdateAuxiliaryInfo(TreeType* )
+bool RPlusPlusTreeAuxiliaryInformation<TreeType>::UpdateAuxiliaryInfo(
+    TreeType* /* node */)
 {
   return false;
 }
 
 template<typename  TreeType>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-SplitAuxiliaryInfo(TreeType* treeOne, TreeType* treeTwo, size_t axis,
-    typename TreeType::ElemType cut)
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
+    TreeType* treeOne,
+    TreeType* treeTwo,
+    const size_t axis,
+    const typename TreeType::ElemType cut)
 {
   typedef bound::HRectBound<metric::EuclideanDistance, ElemType> Bound;
   Bound& treeOneBound = treeOne->AuxiliaryInfo().OuterBound();
   Bound& treeTwoBound = treeTwo->AuxiliaryInfo().OuterBound();
 
+  // Copy the maximum bounding rectangle
   treeOneBound = outerBound;
   treeTwoBound = outerBound;
 
+  // Set proper limits
   treeOneBound[axis].Hi() = cut;
   treeTwoBound[axis].Lo() = cut;
 }
 
-
 template<typename  TreeType>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-Copy(TreeType* dst, const TreeType* src)
-{
-  dst.OuterBound() = src.OuterBound();
-}
-
-template<typename  TreeType>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-NullifyData()
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
 {
 
 }

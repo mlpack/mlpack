@@ -2,8 +2,8 @@
  * @file r_plus_tree_descent_heuristic.hpp
  * @author Mikhail Lozhnikov
  *
- * Definition of RPlusTreeDescentHeuristic, a class that chooses the best child of a
- * node in an R tree when inserting a new point.
+ * Definition of RPlusTreeDescentHeuristic, a class that chooses the best child
+ * of a node in an R+ tree when inserting a new point.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP
@@ -36,8 +36,8 @@ class RPlusTreeDescentHeuristic
    * @param insertedNode The node that is being inserted.
    */
   template<typename TreeType>
-  static size_t ChooseDescentNode(const TreeType* node,
-                                  const TreeType* insertedNode);
+  static size_t ChooseDescentNode(const TreeType* /* node */,
+                                  const TreeType* /*insertedNode */);
 
 };
 

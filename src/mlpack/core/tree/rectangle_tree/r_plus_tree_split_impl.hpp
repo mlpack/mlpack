@@ -24,12 +24,16 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   if (tree->Count() == 1)
   {
+    // Check if an intermediate node was added during the insertion process.
+    // i.e. we couldn't enlarge a node of the R+ tree. So, one of intermediate
+    // nodes may be overflowed.
     TreeType* node = tree->Parent();
 
     while (node != NULL)
     {
       if (node->NumChildren() == node->MaxNumChildren() + 1)
       {
+        // Split the overflowed node.
         RPlusTreeSplit::SplitNonLeafNode(node,relevels);
         return;
       }
@@ -60,6 +64,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   size_t cutAxis;
   typename TreeType::ElemType cut;
 
+  // Try to find a partiotion of the node.
   if ( !PartitionNode(tree, cutAxis, cut))
     return;
 
@@ -72,6 +77,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   treeTwo->MinLeafSize() = 0;
   treeTwo->MinNumChildren() = 0;
 
+  // Split the node into two new nodes.
   SplitLeafNodeAlongPartition(tree, treeOne, treeTwo, cutAxis, cut);
 
   TreeType* parent = tree->Parent();
@@ -81,12 +87,16 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   assert(i < parent->NumChildren());
 
+  // Remove the node from the tree.
   parent->Children()[i] = parent->Children()[--parent->NumChildren()];
 
+  // Insert two new nodes to the tree.
   InsertNodeIntoTree(parent, treeOne);
   InsertNodeIntoTree(parent, treeTwo);
 
   assert(parent->NumChildren() <= parent->MaxNumChildren() + 1);
+
+  // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
     RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
 
@@ -118,6 +128,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   size_t cutAxis;
   typename TreeType::ElemType cut;
 
+  // Try to find a partiotion of the node.
   if ( !PartitionNode(tree, cutAxis, cut))
     return false;
 
@@ -130,6 +141,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   treeTwo->MinLeafSize() = 0;
   treeTwo->MinNumChildren() = 0;
 
+  // Split the node into two new nodes.
   SplitNonLeafNodeAlongPartition(tree, treeOne, treeTwo, cutAxis, cut);
 
   TreeType* parent = tree->Parent();
@@ -139,8 +151,10 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   assert(i < parent->NumChildren());
 
+  // Remove the node from the tree.
   parent->Children()[i] = parent->Children()[--parent->NumChildren()];
 
+  // Insert two new nodes to the tree.
   InsertNodeIntoTree(parent, treeOne);
   InsertNodeIntoTree(parent, treeTwo);
 
@@ -148,6 +162,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   assert(parent->NumChildren() <= parent->MaxNumChildren() + 1);
   
+  // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
     RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
 
@@ -157,22 +172,27 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
-SplitLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
-    TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut)
+void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
+    TreeType* tree,
+    TreeType* treeOne,
+    TreeType* treeTwo,
+    const size_t cutAxis,
+    const typename TreeType::ElemType cut)
 {
+  // Split the auxiliary information.
   tree->AuxiliaryInfo().SplitAuxiliaryInfo(treeOne, treeTwo, cutAxis, cut);
 
+  // Insert points into the corresponding subtree.
   for (size_t i = 0; i < tree->NumPoints(); i++)
   {
     if (tree->Dataset().col(tree->Point(i))[cutAxis] <= cut)
     {
-      treeOne->Points()[treeOne->Count()++] = tree->Point(i);
+      treeOne->Point(treeOne->Count()++) = tree->Point(i);
       treeOne->Bound() |= tree->Dataset().col(tree->Point(i));
     }
     else
     {
-      treeTwo->Points()[treeTwo->Count()++] = tree->Point(i);
+      treeTwo->Point(treeTwo->Count()++) = tree->Point(i);
       treeTwo->Bound() |= tree->Dataset().col(tree->Point(i));
     }
   }
@@ -186,12 +206,17 @@ SplitLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
-SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
-    TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut)
+void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
+    TreeType* tree,
+    TreeType* treeOne,
+    TreeType* treeTwo,
+    const size_t cutAxis,
+    const typename TreeType::ElemType cut)
 {
+  // Split the auxiliary information.
   tree->AuxiliaryInfo().SplitAuxiliaryInfo(treeOne, treeTwo, cutAxis, cut);
 
+  // Insert children into the corresponding subtree.
   for (size_t i = 0; i < tree->NumChildren(); i++)
   {
     TreeType* child = tree->Children()[i];
@@ -209,6 +234,7 @@ SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
     }
     else
     {
+      // The child should be split (i.e. the partition divides its bound).
       TreeType* childOne = new TreeType(treeOne);
       TreeType* childTwo = new TreeType(treeTwo);
       treeOne->MinLeafSize() = 0;
@@ -216,6 +242,7 @@ SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
       treeTwo->MinLeafSize() = 0;
       treeTwo->MinNumChildren() = 0;
 
+      // Propagate the split downward.
       if (child->IsLeaf())
         SplitLeafNodeAlongPartition(child, childOne, childTwo, cutAxis, cut);
       else
@@ -230,6 +257,7 @@ SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
 
   assert(treeOne->NumChildren() + treeTwo->NumChildren() != 0);
 
+  // Add a fake subtree if one of the subtrees is empty.
   if (treeOne->NumChildren() == 0)
     AddFakeNodes(treeTwo, treeOne);
   else if (treeTwo->NumChildren() == 0)
@@ -245,20 +273,13 @@ template<typename TreeType>
 void RPlusTreeSplit<SplitPolicyType, SweepType>::
 AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
 {
-  size_t numDescendantNodes = 1;
+  size_t numDescendantNodes = tree->TreeDepth() - 1;
 
-  TreeType* node = tree->Children()[0];
-
-  while (!node->IsLeaf())
-  {
-    numDescendantNodes++;
-    node = node->Children()[0];
-  }
-
-  node = emptyTree;
+  TreeType* node = emptyTree;
   for (size_t i = 0; i < numDescendantNodes; i++)
   {
     TreeType* child = new TreeType(node);
+    node->Children()[node->NumChildren()++] = child;
 
     node = child;
   }
@@ -273,14 +294,17 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
 {
   if ((node->NumChildren() <= fillFactor && !node->IsLeaf()) ||
       (node->Count() <= fillFactor && node->IsLeaf()))
-    return false;
+    return false; // No partition required.
 
-  typedef typename SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
+  // Define the type of the sweep cost.
+  typedef typename
+      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
       SweepCostType;
 
   SweepCostType minCost = std::numeric_limits<SweepCostType>::max();
   minCutAxis = node->Bound().Dim();
 
+  // Find the sweep with a minimal cost.
   for (size_t k = 0; k < node->Bound().Dim(); k++)
   {
     typename TreeType::ElemType cut;

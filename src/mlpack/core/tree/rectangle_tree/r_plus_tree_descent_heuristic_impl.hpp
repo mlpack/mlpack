@@ -22,12 +22,16 @@ ChooseDescentNode(TreeType* node, const size_t point)
   size_t bestIndex = 0;
   bool success;
 
+  // Try to find a node that contains the point.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    if (node->Children()[bestIndex]->Bound().Contains(node->Dataset().col(point)))
+    if (node->Children()[bestIndex]->Bound().Contains(
+        node->Dataset().col(point)))
       return bestIndex;
   }
 
+  // No one node contains the point. Try to enlarge a node in such a way, that
+  // the resulting node do not overlap other nodes.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
     bound::HRectBound<metric::EuclideanDistance, ElemType> bound =
@@ -41,26 +45,31 @@ ChooseDescentNode(TreeType* node, const size_t point)
       if (j == bestIndex)
         continue;
       success = false;
+      // Two nodes overlap if and only if there are no dimension in which
+      // they do not overlap each other.
       for (size_t k = 0; k < node->Bound().Dim(); k++)
       {
         if (bound[k].Lo() >= node->Children()[j]->Bound()[k].Hi() ||
             node->Children()[j]->Bound()[k].Lo() >= bound[k].Hi())
         {
+          // We found the dimension in which these nodes do not overlap
+          // each other.
           success = true;
           break;
         }
       }
-      if (!success)
+      if (!success) // These two nodes overlap each other.
         break;
     }
-    if (success)
+    if (success) // We found two nodes that do no overlap each other.
       break;
   }
 
-  if (!success)
+  if (!success) // We could not find two nodes that do no overlap each other.
   {
     size_t depth = node->TreeDepth();
 
+    // Create a new node into which we will insert the point.
     TreeType* tree = node;
     while (depth > 1)
     {
@@ -79,14 +88,13 @@ ChooseDescentNode(TreeType* node, const size_t point)
 }
 
 template<typename TreeType>
-size_t RPlusTreeDescentHeuristic::
-ChooseDescentNode(const TreeType* node, const TreeType* insertedNode)
+size_t RPlusTreeDescentHeuristic::ChooseDescentNode(
+    const TreeType* /* node */, const TreeType* /*insertedNode */)
 {
-  size_t bestIndex = 0;
-
+  // Should never be used.
   assert(false);
 
-  return bestIndex;
+  return 0;
 }
 
 

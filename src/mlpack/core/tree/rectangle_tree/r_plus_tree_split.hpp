@@ -13,6 +13,13 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+/**
+ * The RPlusTreeSplit class performs the split process of a node on overflow.
+ *
+ * @tparam SplitPolicyType The class that helps to determine the subtree into
+ *    which we should insert a child node.
+ * @tparam SweepType The class that sweeps a node along an axis.
+ */
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 class RPlusTreeSplit
@@ -37,32 +44,75 @@ class RPlusTreeSplit
   template<typename TreeType>
   static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
-
-
  private:
-
-  template<typename ElemType>
-  struct SortStruct
-  {
-    ElemType d;
-    int n;
-  };
-
+  /**
+   * Split a leaf node along an axis.
+   *
+   * @param tree The node that is being split into two new nodes.
+   * @param treeOne The first subtree of two resulting subtrees.
+   * @param treeOne The second subtree of two resulting subtrees.
+   * @param cutAxis The axis along which the node is being split.
+   * @param cut The coordinate at which the node is being split.
+   */
   template<typename TreeType>
-  static void SplitLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
-      TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut);
+  static void SplitLeafNodeAlongPartition(
+      TreeType* tree,
+      TreeType* treeOne,
+      TreeType* treeTwo,
+      const size_t cutAxis,
+      const typename TreeType::ElemType cut);
 
+  /**
+   * Split a non-leaf node along an axis. This method propagates the split
+   * downward up to a leaf node if necessary.
+   *
+   * @param tree The node that is being split into two new nodes.
+   * @param treeOne The first subtree of two resulting subtrees.
+   * @param treeOne The second subtree of two resulting subtrees.
+   * @param cutAxis The axis along which the node is being split.
+   * @param cut The coordinate at which the node is being split.
+   */
   template<typename TreeType>
-  static void SplitNonLeafNodeAlongPartition(TreeType* tree, TreeType* treeOne,
-      TreeType* treeTwo, size_t cutAxis, typename TreeType::ElemType cut);
+  static void SplitNonLeafNodeAlongPartition(
+      TreeType* tree,
+      TreeType* treeOne,
+      TreeType* treeTwo,
+      const size_t cutAxis,
+      const typename TreeType::ElemType cut);
 
+  /**
+   * This method should be invoked in order to make the tree balanced if
+   * one of two resulting subtrees is empty after the split process
+   * (i.e. the subtree contains no children).
+   * The method convert the empty node into an empty subtree (increase the node
+   * in depth).
+   *
+   * @param tree One of two subtrees that is not empty.
+   * @param emptyTree The empty subtree.
+   */
   template<typename TreeType>
   static void AddFakeNodes(const TreeType* tree, TreeType* emptyTree);
 
+  /**
+   * Partition a node using SweepType. This method invokes
+   * SweepType::Sweep(Non)LeafNode() for each dimension and chooses the
+   * best one. The method returns false if the node needn't partitioning.
+   * Overwise, the method returns true. If the method failed in finding
+   * an acceptable partition, the minCutAxis will be equal to the number of
+   * dimensions.
+   *
+   * @param node The node that is being split.
+   * @param minCutAxis The axis along which the node will be split.
+   * @param minCut The coordinate at which the node will be split.
+   */
   template<typename TreeType>
-  static bool PartitionNode(const TreeType* node, size_t& minCutAxis,
-      typename TreeType::ElemType& minCut);
+  static bool PartitionNode(const TreeType* node,
+                            size_t& minCutAxis,
+                            typename TreeType::ElemType& minCut);
 
+  /**
+   * Insert a node into another node.
+   */
   template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 
