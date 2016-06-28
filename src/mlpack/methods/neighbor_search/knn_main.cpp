@@ -63,7 +63,7 @@ PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
+    "'x', 'ball', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
@@ -172,9 +172,11 @@ int main(int argc, char *argv[])
       tree = KNNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KNNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KNNModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball' and 'hilbert-r'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
