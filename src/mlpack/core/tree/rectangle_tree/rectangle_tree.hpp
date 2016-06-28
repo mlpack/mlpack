@@ -419,9 +419,10 @@ class RectangleTree
    *
    * @param index Index of point for which a dataset index is wanted.
    */
-  const size_t& Point(const size_t index) const { return points[index]; }
+  size_t Point(const size_t index) const { return points[index]; }
 
-  //! Modify the index of a particular point in this node.
+  //! Modify the index of a particular point in this node.  Be very careful when
+  //! you do this!  You may make the tree invalid.
   size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
