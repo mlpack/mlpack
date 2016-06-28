@@ -539,31 +539,28 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
       }
     }
   }
-
   BOOST_REQUIRE(foundIncrease);
 }
 
 /**
  * Test: This is a deterministic test that verifies multiprobe LSH works
- * correctly. To do this, we generate a query , q1, that will end up
- * outside of the bucket of its nearest neighbors in C1. The neighbors will be
- * found only by searching additional probing bins.
- *
- * We verify this actually is the case.
- * 
- * Note: This test doesn't work, because of the effect the random offsets of LSH
- * have on the 1st level codes. We need to think of something better.
+ * correctly. To do this, we generate two queries, q1 and q2. q1 is hashed 
+ * directly under cluster C2, q2 is hashed in C2's center. 
+ * We verify that:
+ * 1) q1 should have no neighbors without multiprobe.
+ * 2) q1 should have neighbors only from C2 with 1 additional probe.
+ * 3) q2 should have all neighbors found with 3 additional probes.
  */
-/*
 BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 {
   math::RandomSeed(std::time(NULL));
+
   // Generate known deterministic clusters of points.
   const size_t N = 40;
   arma::mat rdata;
   GetPointset(N, rdata);
 
-  const int k = N/2;
+  const int k = N/4;
   const double hashWidth = 1;
   const int secondHashSize = 99901;
   const int bucketSize = 500;
@@ -579,25 +576,43 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   LSHSearch<> lshTest(rdata, projections,
                       hashWidth, secondHashSize, bucketSize);
 
-  // Two points near the clusters but outside their bins. q1's lowest scoring
-  // perturbation vectors will map to C1 cluster's bins.
+  const arma::mat offsets = lshTest.Offsets();
+  
+  // Construct q1 so it is hashed directly under C2.
   arma::mat q1;
-  q1 << 1.1 << arma::endr << 3.3; // vector [1.1, 3.3]
+  q1 << 3.9 << arma::endr << 2.99;
+  q1-= offsets;
+
+  // Construct q2 so it is hashed near the center of C2.
+  arma::mat q2;
+  q2 << 3.6 << arma::endr << 3.6;
+  q2-= offsets;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
   // Test that q1 simple search comes up empty.
   lshTest.Search(q1, k, neighbors, distances);
-  cout << neighbors << endl;
   BOOST_REQUIRE(arma::all(neighbors.col(0) == N));
 
-  // Searching with 3 additional probing bins should find neighbors.
-  lshTest.Search(q1, k, neighbors, distances, 0, 3);
-  cout << neighbors << endl;
-  BOOST_REQUIRE(arma::all(neighbors.col(0) == N || neighbors.col(0) < 10));
+  // Test that q1 search with 1 additional probe returns some C2 points.
+  lshTest.Search(q1, k, neighbors, distances, 0, 1);
+  BOOST_REQUIRE(arma::all(
+        neighbors.col(0) == N ||
+        (neighbors.col(0) >= 10 && neighbors.col(0) < 20)));
+
+  // Test that q2 simple search returns some C2 points.
+  lshTest.Search(q2, k, neighbors, distances);
+  BOOST_REQUIRE(arma::all(
+      neighbors.col(0) == N || 
+      (neighbors.col(0) >= 10 && neighbors.col(0) < 20)));
+
+  // Test that q2 with 3 additional probes returns all C2 points.
+  lshTest.Search(q2, k, neighbors, distances, 0, 3);
+  BOOST_REQUIRE(arma::all(
+      neighbors.col(0) >= 10 && neighbors.col(0) < 20));
 }
-*/
+
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
