@@ -77,7 +77,7 @@ std::vector<arma::vec*> GetAllPointsInTree(const TreeType& tree)
   {
     for (size_t i = 0; i < tree.Count(); i++)
     {
-      arma::vec* c = new arma::vec(tree.Dataset().col(tree.Points()[i]));
+      arma::vec* c = new arma::vec(tree.Dataset().col(tree.Point(i)));
       vec.push_back(c);
     }
   }
@@ -130,7 +130,7 @@ void CheckContainment(const TreeType& tree)
   {
     for (size_t i = 0; i < tree.Count(); i++)
       BOOST_REQUIRE(tree.Bound().Contains(
-          tree.Dataset().unsafe_col(tree.Points()[i])));
+          tree.Dataset().unsafe_col(tree.Point(i))));
   }
   else
   {
@@ -169,9 +169,9 @@ void CheckExactContainment(const TreeType& tree)
       for(size_t j = 0; j < tree.Count(); j++)
       {
         if (tree.Dataset().col(tree.Point(j))[i] < min)
-          min = tree.Dataset().col(tree.Points()[j])[i];
+          min = tree.Dataset().col(tree.Point(j))[i];
         if (tree.Dataset().col(tree.Point(j))[i] > max)
-          max = tree.Dataset().col(tree.Points()[j])[i];
+          max = tree.Dataset().col(tree.Point(j))[i];
       }
       BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
       BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
@@ -629,7 +629,7 @@ void CheckHilbertOrdering(const TreeType& tree)
           0);
 
     BOOST_REQUIRE_EQUAL(tree.AuxiliaryInfo().HilbertValue().CompareWith(
-        tree.Dataset().col(tree.Points()[tree.NumPoints() - 1])),
+        tree.Dataset().col(tree.Point(tree.NumPoints() - 1))),
         0);
   }
   else
@@ -675,7 +675,7 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
     for (size_t i = 0; i < tree.NumPoints(); i++)
     {
       arma::Col<HilbertElemType> pointValue =
-          HilbertValue::CalculateValue(tree.Dataset().col(tree.Points()[i]));
+          HilbertValue::CalculateValue(tree.Dataset().col(tree.Point(i)));
 
       const int equal = HilbertValue::CompareValues(
           value.LocalHilbertValues()->col(i), pointValue);

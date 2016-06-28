@@ -328,11 +328,6 @@ class RectangleTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
-  //! Get the points vector for this node.
-  const std::vector<size_t>& Points() const { return points; }
-  //! Modify the points vector for this node.  Be careful!
-  std::vector<size_t>& Points() { return points; }
-
   //! Get the metric which the tree uses.
   MetricType Metric() const { return MetricType(); }
 
@@ -424,7 +419,11 @@ class RectangleTree
    *
    * @param index Index of point for which a dataset index is wanted.
    */
-  size_t Point(const size_t index) const;
+  size_t Point(const size_t index) const { return points[index]; }
+
+  //! Modify the index of a particular point in this node.  Be very careful when
+  //! you do this!  You may make the tree invalid.
+  size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const RectangleTree* other) const
@@ -496,26 +495,6 @@ class RectangleTree
   static bool HasSelfChildren() { return false; }
 
  private:
-  /**
-   * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.  TO BE REMOVED
-   */
-  RectangleTree(const size_t begin,
-                const size_t count,
-                bound::HRectBound<MetricType> bound,
-                StatisticType stat,
-                const int maxLeafSize = 20) :
-      begin(begin),
-      count(count),
-      bound(bound),
-      stat(stat),
-      maxLeafSize(maxLeafSize) { }
-
-  RectangleTree* CopyMe()
-  {
-    return new RectangleTree(begin, count, bound, stat, maxLeafSize);
-  }
-
   /**
    * Splits the current node, recursing up the tree.
    *

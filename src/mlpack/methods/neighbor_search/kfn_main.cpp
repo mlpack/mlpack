@@ -62,7 +62,7 @@ PARAM_INT("k", "Number of furthest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few pararmeters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
+    "'x', 'ball', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
@@ -186,9 +186,11 @@ int main(int argc, char *argv[])
       tree = KFNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KFNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KFNModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball' and 'hilbert-r'." << endl;
 
     kfn.TreeType() = tree;
     kfn.RandomBasis() = randomBasis;

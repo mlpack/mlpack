@@ -201,10 +201,10 @@ void RTreeSplit::GetBoundSeeds(const TreeType *tree,int& iRet, int& jRet)
       ElemType score = 1.0;
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        const ElemType hiMax = std::max(tree->Children()[i]->Bound()[k].Hi(),
-                                        tree->Children()[j]->Bound()[k].Hi());
-        const ElemType loMin = std::min(tree->Children()[i]->Bound()[k].Lo(),
-                                        tree->Children()[j]->Bound()[k].Lo());
+        const ElemType hiMax = std::max(tree->Child(i).Bound()[k].Hi(),
+                                        tree->Child(j).Bound()[k].Hi());
+        const ElemType loMin = std::min(tree->Child(i).Bound()[k].Lo(),
+                                        tree->Child(j).Bound()[k].Lo());
         score *= (hiMax - loMin);
       }
 
@@ -237,20 +237,20 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
   treeOne->Count() = 0;
   treeTwo->Count() = 0;
 
-  treeOne->InsertPoint(oldTree->Points()[intI]);
-  treeTwo->InsertPoint(oldTree->Points()[intJ]);
+  treeOne->InsertPoint(oldTree->Point(intI));
+  treeTwo->InsertPoint(oldTree->Point(intJ));
 
   // If intJ is the last point in the tree, we need to switch the order so that
   // we remove the correct points.
   if (intI > intJ)
   {
-    oldTree->Points()[intI] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->Points()[intJ] = oldTree->Points()[--end]; // Decrement end.
+    oldTree->Point(intI) = oldTree->Point(--end); // Decrement end.
+    oldTree->Point(intJ) = oldTree->Point(--end); // Decrement end.
   }
   else
   {
-    oldTree->Points()[intJ] = oldTree->Points()[--end]; // Decrement end.
-    oldTree->Points()[intI] = oldTree->Points()[--end]; // Decrement end.
+    oldTree->Point(intJ) = oldTree->Point(--end); // Decrement end.
+    oldTree->Point(intI) = oldTree->Point(--end); // Decrement end.
   }
 
   size_t numAssignedOne = 1;
@@ -326,16 +326,16 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
     // to the appropriate rectangle.
     if (bestRect == 1)
     {
-      treeOne->InsertPoint(oldTree->Points()[bestIndex]);
+      treeOne->InsertPoint(oldTree->Point(bestIndex));
       numAssignedOne++;
     }
     else
     {
-      treeTwo->InsertPoint(oldTree->Points()[bestIndex]);
+      treeTwo->InsertPoint(oldTree->Point(bestIndex));
       numAssignedTwo++;
     }
 
-    oldTree->Points()[bestIndex] = oldTree->Points()[--end]; // Decrement end.
+    oldTree->Point(bestIndex) = oldTree->Point(--end); // Decrement end.
   }
 
   // See if we need to satisfy the minimum fill.
@@ -344,12 +344,12 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
     if (numAssignedOne < numAssignedTwo)
     {
       for (size_t i = 0; i < end; i++)
-        treeOne->InsertPoint(oldTree->Points()[i]);
+        treeOne->InsertPoint(oldTree->Point(i));
     }
     else
     {
       for (size_t i = 0; i < end; i++)
-        treeTwo->InsertPoint(oldTree->Points()[i]);
+        treeTwo->InsertPoint(oldTree->Point(i));
     }
   }
 }
@@ -434,7 +434,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
         // For each of the new rectangles, find the width in this dimension if
         // we add the rectangle at index to the new rectangle.
         const math::RangeType<ElemType>& range =
-            oldTree->Children()[index]->Bound()[i];
+            oldTree->Child(index).Bound()[i];
         newVolOne *= treeOne->Bound()[i].Contains(range) ?
             treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
             range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ?

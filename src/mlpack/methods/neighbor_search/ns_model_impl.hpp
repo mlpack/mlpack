@@ -382,6 +382,10 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case X_TREE:
       nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode, epsilon);
       break;
+    case HILBERT_R_TREE:
+      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(naive, singleMode,
+          epsilon);
+      break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
@@ -460,6 +464,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "ball tree";
     case X_TREE:
       return "X tree";
+    case HILBERT_R_TREE:
+      return "Hilbert R tree";
     default:
       return "unknown tree";
   }

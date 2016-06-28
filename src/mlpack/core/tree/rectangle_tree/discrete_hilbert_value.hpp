@@ -155,15 +155,6 @@ class DiscreteHilbertValue
   void RemoveNode(TreeType* node, const size_t nodeIndex);
 
   /**
-   * Copy the largest Hilbert value and the local dataset.
-   *
-   * @param dst The node to which the information is being copied.
-   * @param src The node from which the information is being copied.
-   */
-  template<typename TreeType>
-  void Copy(TreeType* dst, TreeType* src);
-
-  /**
    * Copy the local Hilbert value's pointer.
    *
    * @param val The DiscreteHilbertValue object from which the dataset

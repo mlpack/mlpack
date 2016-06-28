@@ -81,9 +81,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < p; i++)
     {
       // We start from the end of sorted.
-      pointIndices[i] = tree->Points()[sorted[sorted.size() - 1 - i].n];
+      pointIndices[i] = tree->Point(sorted[sorted.size() - 1 - i].n);
 
-      root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
+      root->DeletePoint(tree->Point(sorted[sorted.size() - 1 - i].n),
           relevels);
     }
 
@@ -227,9 +227,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].n));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].n));
     }
   }
   else
@@ -237,9 +237,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].n));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].n));
     }
   }
 
