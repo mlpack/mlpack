@@ -2,8 +2,8 @@
  * @file imputer.hpp
  * @author Keon Kim
  *
- * Defines Imputer(), a utility function to replace missing variables
- * in a dataset.
+ * Defines Imputer class a utility function to replace missing variables in a
+ * dataset.
  */
 #ifndef MLPACK_CORE_DATA_IMPUTER_HPP
 #define MLPACK_CORE_DATA_IMPUTER_HPP
@@ -14,12 +14,12 @@ namespace mlpack {
 namespace data {
 
 /**
- * This class implements a way to replace target values. It is dependent on the
- * user defined StrategyType and MapperType used to hold dataset's information.
+ * Given a dataset of a particular datatype, replace user-specified missing
+ * value with a variable dependent on the StrategyType and MapperType.
  *
- * @tparam Option of imputation strategy.
- * @tparam MapperType that is used to hold dataset information.
- * @tparam primitive type of input and output's armadillo matrix.
+ * @tparam T Type of armadillo matrix used for imputation strategy.
+ * @tparam MapperType DatasetMapper that is used to hold dataset information.
+ * @tparam StrategyType Imputation strategy used.
  */
 template<typename T, typename MapperType, typename StrategyType>
 class Imputer
@@ -29,7 +29,9 @@ class Imputer
     mapper(std::move(mapper)),
     transpose(transpose)
   {
-  // nothing to initialize here
+    //static_assert(std::is_same<typename std::decay<MapperType>::type,
+        //data::IncrementPolicy>::value, "The type of MapperType must be "
+        //"IncrementPolicy");
   }
 
   Imputer(MapperType mapper, StrategyType strategy, bool transpose = true):
@@ -37,7 +39,9 @@ class Imputer
     mapper(std::move(mapper)),
     transpose(transpose)
   {
-  // nothing to initialize here
+    //static_assert(std::is_same<typename std::decay<MapperType>::type,
+        //data::IncrementPolicy>::value, "The type of MapperType must be "
+        //"IncrementPolicy");
   }
 
   /**
@@ -45,11 +49,9 @@ class Imputer
   * strategy.
   *
   * @param input Input dataset to apply imputation.
-  * @param output
-  * @oaran targetValue
-  * @param mapper DatasetInfo object that holds informations about the dataset.
-  * @param dimension.
-  * @param transpose.
+  * @param output Armadillo matrix to save the results
+  * @oaran missingValue User defined missing value; it can be anything.
+  * @param dimension Dimension to apply the imputation.
   */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
@@ -61,8 +63,8 @@ class Imputer
   }
 
   /**
-  * This overload of Impute() lets users to define custom value that
-  * can be replaced with the target value.
+  * This overload of Impute() lets users to define custom value that can be
+  * replaced with the target value.
   */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
@@ -71,7 +73,12 @@ class Imputer
               const size_t dimension)
   {
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Apply(input, output, mappedValue, customValue, dimension, transpose);
+    strategy.Apply(input,
+                   output,
+                   mappedValue,
+                   customValue,
+                   dimension,
+                   transpose);
   }
 
   //! Get the strategy

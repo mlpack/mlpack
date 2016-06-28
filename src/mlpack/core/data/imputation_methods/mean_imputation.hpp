@@ -42,7 +42,6 @@ class MeanImputation
     // nan. while doing that, remember where mappedValue or NaN exists.
     if (transpose)
     {
-      Log::Debug << "transpose mean imputation" << std::endl;
       for (size_t i = 0; i < input.n_cols; ++i)
       {
         if (input(dimension, i) == mappedValue)
@@ -58,7 +57,6 @@ class MeanImputation
     }
     else
     {
-      Log::Debug << "un-transpose mean imputation" << std::endl;
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         if (input(i, dimension) == mappedValue)
@@ -72,8 +70,11 @@ class MeanImputation
         }
       }
     }
-    Log::Debug << "sum: " << sum << std::endl;
-    Log::Debug << "elems: " << elems << std::endl;
+
+    if (elems == 0)
+      Log::Fatal << "it is impossible to calculate mean; no valid elements in "
+          << "the dimension" << std::endl;
+
     // calculate mean;
     const double mean = sum / elems;
 
