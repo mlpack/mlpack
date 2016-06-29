@@ -553,14 +553,12 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
  */
 BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 {
-  math::RandomSeed(std::time(NULL));
-
   // Generate known deterministic clusters of points.
   const size_t N = 40;
   arma::mat rdata;
   GetPointset(N, rdata);
 
-  const int k = N/4;
+  const int k = N / 4;
   const double hashWidth = 1;
   const int secondHashSize = 99901;
   const int bucketSize = 500;
@@ -581,12 +579,12 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   // Construct q1 so it is hashed directly under C2.
   arma::mat q1;
   q1 << 3.9 << arma::endr << 2.99;
-  q1-= offsets;
+  q1 -= offsets;
 
   // Construct q2 so it is hashed near the center of C2.
   arma::mat q2;
   q2 << 3.6 << arma::endr << 3.6;
-  q2-= offsets;
+  q2 -= offsets;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -599,18 +597,18 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
   BOOST_REQUIRE(arma::all(
         neighbors.col(0) == N ||
-        (neighbors.col(0) >= 10 && neighbors.col(0) < 20)));
+        (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
       neighbors.col(0) == N || 
-      (neighbors.col(0) >= 10 && neighbors.col(0) < 20)));
+      (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
 
   // Test that q2 with 3 additional probes returns all C2 points.
   lshTest.Search(q2, k, neighbors, distances, 0, 3);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) >= 10 && neighbors.col(0) < 20));
+      neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2));
 }
 
 
@@ -730,7 +728,6 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
 
   BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
       std::invalid_argument);
-
 }
 
 BOOST_AUTO_TEST_CASE(EmptyConstructorTest)

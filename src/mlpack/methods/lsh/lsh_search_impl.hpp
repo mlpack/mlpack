@@ -582,8 +582,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
         perturbationSets.push_back(As); // add shifted set to sets
         minHeap.push(
             std::make_pair(PerturbationScore(As, scores), 
-            perturbationSets.size() - 1)
-            );
+            perturbationSets.size() - 1));
       }
 
       // Expand operation on Ai (add max+1 to set).
@@ -594,8 +593,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
         perturbationSets.push_back(Ae); // add expanded set to sets
         minHeap.push(
             std::make_pair(PerturbationScore(Ae, scores),
-            perturbationSets.size() - 1)
-            );
+            perturbationSets.size() - 1));
       }
 
     } while (!PerturbationValid(Ai));//Discard invalid perturbations
