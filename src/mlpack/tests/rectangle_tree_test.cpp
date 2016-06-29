@@ -69,7 +69,7 @@ std::vector<arma::vec*> GetAllPointsInTree(const TreeType& tree)
   {
     for (size_t i = 0; i < tree.NumChildren(); i++)
     {
-      std::vector<arma::vec*> tmp = GetAllPointsInTree(*(tree.Children()[i]));
+      std::vector<arma::vec*> tmp = GetAllPointsInTree(tree.Child(i));
       vec.insert(vec.begin(), tmp.begin(), tmp.end());
     }
   }
@@ -137,9 +137,9 @@ void CheckContainment(const TreeType& tree)
     for (size_t i = 0; i < tree.NumChildren(); i++)
     {
       for (size_t j = 0; j < tree.Bound().Dim(); j++)
-        BOOST_REQUIRE(tree.Bound()[j].Contains(tree.Children()[i]->Bound()[j]));
+        BOOST_REQUIRE(tree.Bound()[j].Contains(tree.Child(i).Bound()[j]));
 
-      CheckContainment(*(tree.Children()[i]));
+      CheckContainment(tree.Child(i));
     }
   }
 }
@@ -244,7 +244,7 @@ void CheckFills(const TreeType& tree)
       BOOST_REQUIRE(tree.NumChildren() >= tree.MinNumChildren() ||
                     tree.Parent() == NULL);
       BOOST_REQUIRE(tree.NumChildren() <= tree.MaxNumChildren());
-      CheckFills(*tree.Children()[i]);
+      CheckFills(tree.Child(i));
     }
   }
 }
@@ -279,7 +279,7 @@ int GetMaxLevel(const TreeType& tree)
     int m = 0;
     for (size_t i = 0; i < tree.NumChildren(); i++)
     {
-      int n = GetMaxLevel(*tree.Children()[i]);
+      int n = GetMaxLevel(tree.Child(i));
       if (n > m)
         m = n;
     }
@@ -306,7 +306,7 @@ int GetMinLevel(const TreeType& tree)
     int m = INT_MAX;
     for (size_t i = 0; i < tree.NumChildren(); i++)
     {
-      int n = GetMinLevel(*tree.Children()[i]);
+      int n = GetMinLevel(tree.Child(i));
       if (n < m)
         m = n;
     }
@@ -314,6 +314,28 @@ int GetMinLevel(const TreeType& tree)
   }
 
   return min;
+}
+
+/**
+ * A function to check that numDescendants values are set correctly.
+ */
+template<typename TreeType>
+size_t CheckNumDescendants(const TreeType& tree)
+{
+  if (tree.IsLeaf())
+  {
+    BOOST_REQUIRE_EQUAL(tree.NumDescendants(), tree.Count());
+    return tree.Count();
+  }
+
+  size_t numDescendants = 0;
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+    numDescendants += CheckNumDescendants(tree.Child(i));
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), numDescendants);
+
+  return numDescendants;
 }
 
 // A test to ensure that all leaf nodes are stored on the same level of the
@@ -378,6 +400,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   CheckContainment(tree);
   CheckExactContainment(tree);
+  CheckNumDescendants(tree);
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
@@ -460,6 +483,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
   CheckContainment(tree);
   CheckExactContainment(tree);
+  CheckNumDescendants(tree);
 
   // Now we will compare the output of the R Tree vs the output of a naive
   // search.
@@ -510,6 +534,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   CheckContainment(rTree);
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
+  CheckNumDescendants(rTree);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -552,6 +577,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
+  CheckNumDescendants(xTree);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -592,6 +618,7 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
   CheckContainment(hilbertRTree);
   CheckExactContainment(hilbertRTree);
   CheckHierarchy(hilbertRTree);
+  CheckNumDescendants(hilbertRTree);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -853,77 +880,77 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest)
   BOOST_REQUIRE_EQUAL(rTree.TreeDepth(), 3);
 
   int firstChild = 0, secondChild = 1;
-  if (rTree.Children()[firstChild]->NumChildren() == 2)
+  if (rTree.Child(firstChild).NumChildren() == 2)
   {
     firstChild = 1;
     secondChild = 0;
   }
 
-  BOOST_REQUIRE_SMALL(rTree.Children()[firstChild]->Bound()[0].Lo(), 1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[firstChild]->Bound()[0].Hi(), 0.1,
+  BOOST_REQUIRE_SMALL(rTree.Child(firstChild).Bound()[0].Lo(), 1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(firstChild).Bound()[0].Hi(), 0.1,
       1e-15);
-  BOOST_REQUIRE_SMALL(rTree.Children()[firstChild]->Bound()[1].Lo(), 1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[firstChild]->Bound()[1].Hi(), 1.0,
-      1e-15);
-
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[0].Lo(), 0.3,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[0].Hi(), 1.0,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[1].Lo(), 0.1,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[1].Hi(), 0.9,
+  BOOST_REQUIRE_SMALL(rTree.Child(firstChild).Bound()[1].Lo(), 1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(firstChild).Bound()[1].Hi(), 1.0,
       1e-15);
 
-  BOOST_REQUIRE_EQUAL(rTree.Children()[firstChild]->NumChildren(), 1);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[0].Lo(), 0.3,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[0].Hi(), 1.0,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[1].Lo(), 0.1,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[1].Hi(), 0.9,
+      1e-15);
+
+  BOOST_REQUIRE_EQUAL(rTree.Child(firstChild).NumChildren(), 1);
   BOOST_REQUIRE_SMALL(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[0].Lo(), 1e-15);
+      rTree.Child(firstChild).Child(0).Bound()[0].Lo(), 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[0].Hi(), 0.1,
+      rTree.Child(firstChild).Child(0).Bound()[0].Hi(), 0.1,
       1e-15);
   BOOST_REQUIRE_SMALL(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[1].Lo(), 1e-15);
+      rTree.Child(firstChild).Child(0).Bound()[1].Lo(), 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[1].Hi(), 1.0,
+      rTree.Child(firstChild).Child(0).Bound()[1].Hi(), 1.0,
       1e-15);
-  BOOST_REQUIRE_EQUAL(rTree.Children()[firstChild]->Children()[0]->Count(), 3);
+  BOOST_REQUIRE_EQUAL(rTree.Child(firstChild).Child(0).Count(), 3);
 
   int firstPrime = 0, secondPrime = 1;
-  if (rTree.Children()[secondChild]->Children()[firstPrime]->Count() == 3)
+  if (rTree.Child(secondChild).Child(firstPrime).Count() == 3)
   {
     firstPrime = 1;
     secondPrime = 0;
   }
 
-  BOOST_REQUIRE_EQUAL(rTree.Children()[secondChild]->NumChildren(), 2);
+  BOOST_REQUIRE_EQUAL(rTree.Child(secondChild).NumChildren(), 2);
   BOOST_REQUIRE_EQUAL(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Count(), 4);
+      rTree.Child(secondChild).Child(firstPrime).Count(), 4);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[0].Lo(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[0].Lo(),
       0.3, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[0].Hi(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[0].Hi(),
       0.7, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[1].Lo(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[1].Lo(),
       0.3, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[1].Hi(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[1].Hi(),
       0.7, 1e-15);
 
   BOOST_REQUIRE_EQUAL(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Count(), 3);
+      rTree.Child(secondChild).Child(secondPrime).Count(), 3);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[0].Lo(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[0].Lo(),
       0.9, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[0].Hi(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[0].Hi(),
       1.0, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[1].Lo(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[1].Lo(),
       0.1, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[1].Hi(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[1].Hi(),
       0.9, 1e-15);
 }
 
@@ -955,75 +982,75 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest)
   BOOST_REQUIRE_EQUAL(rTree.TreeDepth(), 3);
 
   int firstChild = 0, secondChild = 1;
-  if (rTree.Children()[firstChild]->NumChildren() == 2)
+  if (rTree.Child(firstChild).NumChildren() == 2)
   {
     firstChild = 1;
     secondChild = 0;
   }
 
-  BOOST_REQUIRE_SMALL(rTree.Children()[firstChild]->Bound()[0].Lo(), 1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[firstChild]->Bound()[0].Hi(), 0.1,
+  BOOST_REQUIRE_SMALL(rTree.Child(firstChild).Bound()[0].Lo(), 1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(firstChild).Bound()[0].Hi(), 0.1,
       1e-15);
-  BOOST_REQUIRE_SMALL(rTree.Children()[firstChild]->Bound()[1].Lo(), 1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[firstChild]->Bound()[1].Hi(), 1.0,
-      1e-15);
-
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[0].Lo(), 0.3,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[0].Hi(), 1.0,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[1].Lo(), 0.1,
-      1e-15);
-  BOOST_REQUIRE_CLOSE(rTree.Children()[secondChild]->Bound()[1].Hi(), 0.9,
+  BOOST_REQUIRE_SMALL(rTree.Child(firstChild).Bound()[1].Lo(), 1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(firstChild).Bound()[1].Hi(), 1.0,
       1e-15);
 
-  BOOST_REQUIRE_EQUAL(rTree.Children()[firstChild]->NumChildren(), 1);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[0].Lo(), 0.3,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[0].Hi(), 1.0,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[1].Lo(), 0.1,
+      1e-15);
+  BOOST_REQUIRE_CLOSE(rTree.Child(secondChild).Bound()[1].Hi(), 0.9,
+      1e-15);
+
+  BOOST_REQUIRE_EQUAL(rTree.Child(firstChild).NumChildren(), 1);
   BOOST_REQUIRE_SMALL(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[0].Lo(), 1e-15);
+      rTree.Child(firstChild).Child(0).Bound()[0].Lo(), 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[0].Hi(), 0.1, 1e-15);
+      rTree.Child(firstChild).Child(0).Bound()[0].Hi(), 0.1, 1e-15);
   BOOST_REQUIRE_SMALL(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[1].Lo(), 1e-15);
+      rTree.Child(firstChild).Child(0).Bound()[1].Lo(), 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[firstChild]->Children()[0]->Bound()[1].Hi(), 1.0, 1e-15);
-  BOOST_REQUIRE_EQUAL(rTree.Children()[firstChild]->Children()[0]->Count(), 3);
+      rTree.Child(firstChild).Child(0).Bound()[1].Hi(), 1.0, 1e-15);
+  BOOST_REQUIRE_EQUAL(rTree.Child(firstChild).Child(0).Count(), 3);
 
   int firstPrime = 0, secondPrime = 1;
-  if (rTree.Children()[secondChild]->Children()[firstPrime]->Count() == 3)
+  if (rTree.Child(secondChild).Child(firstPrime).Count() == 3)
   {
     firstPrime = 1;
     secondPrime = 0;
   }
 
-  BOOST_REQUIRE_EQUAL(rTree.Children()[secondChild]->NumChildren(), 2);
+  BOOST_REQUIRE_EQUAL(rTree.Child(secondChild).NumChildren(), 2);
   BOOST_REQUIRE_EQUAL(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Count(), 4);
+      rTree.Child(secondChild).Child(firstPrime).Count(), 4);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[0].Lo(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[0].Lo(),
       0.3, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[0].Hi(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[0].Hi(),
       0.7, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[1].Lo(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[1].Lo(),
       0.3, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[firstPrime]->Bound()[1].Hi(),
+      rTree.Child(secondChild).Child(firstPrime).Bound()[1].Hi(),
       0.7, 1e-15);
 
   BOOST_REQUIRE_EQUAL(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Count(), 3);
+      rTree.Child(secondChild).Child(secondPrime).Count(), 3);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[0].Lo(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[0].Lo(),
       0.9, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[0].Hi(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[0].Hi(),
       1.0, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[1].Lo(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[1].Lo(),
       0.1, 1e-15);
   BOOST_REQUIRE_CLOSE(
-      rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[1].Hi(),
+      rTree.Child(secondChild).Child(secondPrime).Bound()[1].Hi(),
       0.9, 1e-15);
 }
 

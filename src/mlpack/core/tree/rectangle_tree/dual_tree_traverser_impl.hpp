@@ -103,7 +103,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     for (size_t i = 0; i < referenceNode.NumChildren(); i++)
     {
       rule.TraversalInfo() = traversalInfo;
-      nodesAndScores[i].node = referenceNode.Children()[i];
+      nodesAndScores[i].node = &(referenceNode.Child(i));
       nodesAndScores[i].score = rule.Score(queryNode,
           *(nodesAndScores[i].node));
       nodesAndScores[i].travInfo = rule.TraversalInfo();
@@ -138,7 +138,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       for (size_t i = 0; i < referenceNode.NumChildren(); i++)
       {
         rule.TraversalInfo() = traversalInfo;
-        nodesAndScores[i].node = referenceNode.Children()[i];
+        nodesAndScores[i].node = &(referenceNode.Child(i));
         nodesAndScores[i].score = rule.Score(queryNode.Child(j),
             *nodesAndScores[i].node);
         nodesAndScores[i].travInfo = rule.TraversalInfo();

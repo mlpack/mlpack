@@ -194,14 +194,19 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     // Now we hash every key, point ID to its corresponding bucket.  We must
     // also normalize the hashes to the range [0, secondHashSize).
     arma::rowvec unmodVector = secondHashWeights.t() * arma::floor(hashMat);
-    for (size_t j = 0; j < secondHashVectors.n_cols; ++j)
+    for (size_t j = 0; j < unmodVector.n_elem; ++j)
     {
       double shs = (double) secondHashSize; // Convenience cast.
       if (unmodVector[j] >= 0.0)
-        secondHashVectors[j] = size_t(fmod(unmodVector[j], shs));
+      {
+        secondHashVectors(i, j) = size_t(fmod(unmodVector[j], shs));
+      }
       else
-        secondHashVectors[j] = secondHashSize -
-            size_t(fmod(-unmodVector[j], shs));
+      {
+        const double mod = fmod(-unmodVector[j], shs);
+        secondHashVectors(i, j) = (mod < 1.0) ? 0 : secondHashSize -
+            size_t(mod);
+      }
     }
   }
 

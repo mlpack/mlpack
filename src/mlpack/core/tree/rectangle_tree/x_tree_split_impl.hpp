@@ -37,7 +37,7 @@ void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
     XTreeSplit::SplitLeafNode(copy,relevels);
     return;
@@ -254,15 +254,15 @@ void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
   size_t index = par->NumChildren();
   for (size_t i = 0; i < par->NumChildren(); i++)
   {
-    if (par->Children()[i] == tree)
+    if (par->children[i] == tree)
     {
       index = i;
       break;
     }
   }
   assert(index != par->NumChildren());
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   // We now update the split history of each new node.
   treeOne->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
@@ -312,7 +312,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     XTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
@@ -388,7 +388,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     std::vector<sortStruct<ElemType>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[j].Lo();
+      sorted[i].d = tree->Child(i).Bound()[j].Lo();
       sorted[i].n = i;
     }
 
@@ -422,27 +422,27 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        minG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Lo();
-        maxG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Hi();
+        minG1[k] = tree->Child(sorted[0].n).Bound()[k].Lo();
+        maxG1[k] = tree->Child(sorted[0].n).Bound()[k].Hi();
         minG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Lo();
+            tree->Child(sorted[sorted.size() - 1].n).Bound()[k].Lo();
         maxG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Hi();
+            tree->Child(sorted[sorted.size() - 1].n).Bound()[k].Hi();
         for (size_t l = 1; l < tree->NumChildren() - 1; l++)
         {
           if (l < cutOff)
           {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG1[k])
-              minG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG1[k])
-              maxG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
+            if (tree->Child(sorted[l].n).Bound()[k].Lo() < minG1[k])
+              minG1[k] = tree->Child(sorted[l].n).Bound()[k].Lo();
+            else if (tree->Child(sorted[l].n).Bound()[k].Hi() > maxG1[k])
+              maxG1[k] = tree->Child(sorted[l].n).Bound()[k].Hi();
           }
           else
           {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG2[k])
-              minG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG2[k])
-              maxG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
+            if (tree->Child(sorted[l].n).Bound()[k].Lo() < minG2[k])
+              minG2[k] = tree->Child(sorted[l].n).Bound()[k].Lo();
+            else if (tree->Child(sorted[l].n).Bound()[k].Hi() > maxG2[k])
+              maxG2[k] = tree->Child(sorted[l].n).Bound()[k].Hi();
           }
         }
       }
@@ -519,7 +519,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     std::vector<sortStruct<ElemType>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[j].Hi();
+      sorted[i].d = tree->Child(i).Bound()[j].Hi();
       sorted[i].n = i;
     }
 
@@ -553,27 +553,25 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        minG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Lo();
-        maxG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Hi();
-        minG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Lo();
-        maxG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Hi();
+        minG1[k] = tree->Child(sorted[0].n).Bound()[k].Lo();
+        maxG1[k] = tree->Child(sorted[0].n).Bound()[k].Hi();
+        minG2[k] = tree->Child(sorted[sorted.size() - 1].n).Bound()[k].Lo();
+        maxG2[k] = tree->Child(sorted[sorted.size() - 1].n).Bound()[k].Hi();
         for (size_t l = 1; l < tree->NumChildren() - 1; l++)
         {
           if (l < cutOff)
           {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG1[k])
-              minG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG1[k])
-              maxG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
+            if (tree->Child(sorted[l].n).Bound()[k].Lo() < minG1[k])
+              minG1[k] = tree->Child(sorted[l].n).Bound()[k].Lo();
+            else if (tree->Child(sorted[l].n).Bound()[k].Hi() > maxG1[k])
+              maxG1[k] = tree->Child(sorted[l].n).Bound()[k].Hi();
           }
           else
           {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG2[k])
-              minG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG2[k])
-              maxG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
+            if (tree->Child(sorted[l].n).Bound()[k].Lo() < minG2[k])
+              minG2[k] = tree->Child(sorted[l].n).Bound()[k].Lo();
+            else if (tree->Child(sorted[l].n).Bound()[k].Hi() > maxG2[k])
+              maxG2[k] = tree->Child(sorted[l].n).Bound()[k].Hi();
           }
         }
       }
@@ -649,7 +647,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   {
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[bestAxis].Lo();
+      sorted[i].d = tree->Child(i).Bound()[bestAxis].Lo();
       sorted[i].n = i;
     }
   }
@@ -657,7 +655,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   {
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[bestAxis].Hi();
+      sorted[i].d = tree->Child(i).Bound()[bestAxis].Hi();
       sorted[i].n = i;
     }
   }
@@ -676,9 +674,9 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted[i].n]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted[i].n]);
       }
     }
     else
@@ -691,9 +689,9 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestOverlapIndexOnBestAxis + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted[i].n]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted[i].n]);
       }
     }
     else
@@ -714,7 +712,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       {
         for (size_t i = 0; i < sorted2.size(); i++)
         {
-          sorted2[i].d = tree->Children()[i]->Bound()[bestAxis].Hi();
+          sorted2[i].d = tree->Child(i).Bound()[bestAxis].Hi();
           sorted2[i].n = i;
         }
       }
@@ -722,7 +720,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       {
         for (size_t i = 0; i < sorted2.size(); i++)
         {
-          sorted2[i].d = tree->Children()[i]->Bound()[bestAxis].Lo();
+          sorted2[i].d = tree->Child(i).Bound()[bestAxis].Lo();
           sorted2[i].n = i;
         }
       }
@@ -730,9 +728,9 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestIndexMinOverlapSplit + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted[i].n]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted[i].n]);
       }
     }
     else
@@ -752,11 +750,11 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
         // We make the root a supernode instead.
         tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + 
                               tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
-        tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
+        tree->Parent()->children.resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
         {
-          tree->Parent()->Children()[i] = tree->Children()[i];
+          tree->Parent()->children[i] = tree->children[i];
           tree->Child(i).Parent() = tree->Parent();
         }
 
@@ -770,7 +768,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       // If we don't have to worry about the root, we just enlarge this node.
       tree->MaxNumChildren() += 
                               tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
-      tree->Children().resize(tree->MaxNumChildren() + 1);
+      tree->children.resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)
         tree->Child(i).Parent() = tree;
 
@@ -792,15 +790,15 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   size_t index = 0;
   for (size_t i = 0; i < par->NumChildren(); i++)
   {
-    if (par->Children()[i] == tree)
+    if (par->children[i] == tree)
     {
       index = i;
       break;
     }
   }
 
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
@@ -816,9 +814,9 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
   for (size_t i = 0; i < treeOne->NumChildren(); i++)
-    treeOne->Children()[i]->Parent() = treeOne;
+    treeOne->Child(i).Parent() = treeOne;
   for (size_t i = 0; i < treeTwo->NumChildren(); i++)
-    treeTwo->Children()[i]->Parent() = treeTwo;
+    treeTwo->Child(i).Parent() = treeTwo;
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -842,7 +840,8 @@ template<typename TreeType>
 void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()] = srcNode;
+  destTree->numDescendants += srcNode->numDescendants;
+  destTree->children[destTree->NumChildren()] = srcNode;
   destTree->NumChildren()++;
 }
 
