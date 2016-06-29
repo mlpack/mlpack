@@ -27,15 +27,11 @@ class Population {
   // Species contained by this population.
   std::vector<Species> aSpecies;
 
-  // Genomes contained by this population.
-  std::vector<Genome> aGenomes;
-
   // Default constructor.
   Population() {
     aNumSpecies = 0;
     aPopulationSize = 0;
     aBestFitness = DBL_MAX;
-    aBestGenome = Genome();
     aNextSpeciesId = 0;
     aNextGenomeId = 0;
   }
@@ -44,11 +40,10 @@ class Population {
   Population(Genome& seedGenome, ssize_t populationSize) {
     aPopulationSize = populationSize;
     aNumSpecies = 0;
-    aBestGenome = seedGenome;
     aBestFitness = DBL_MAX;
     Species species(seedGenome, populationSize);
-    aGenomes = species.aGenomes;
-    aNextSpeciesId = 0;
+    aSpecies.push_back(species);  // NOTICE: we don't speciate.
+    aNextSpeciesId = 1;
     aNextGenomeId = populationSize;
   }
 
@@ -65,7 +60,6 @@ class Population {
       aNextSpeciesId = population.aNextSpeciesId;
       aNextGenomeId = population.aNextGenomeId;
       aSpecies = population.aSpecies;
-      aGenomes = population.aGenomes;
     }
 
     return *this;
@@ -107,6 +101,18 @@ class Population {
   // Get next genome id.
   ssize_t NextGenomeId() const { return aNextGenomeId; }
 
+  // Set best fitness to be the minimum of all genomes' fitness.
+  void SetBestFitness() {
+    aBestFitness = DBL_MAX;
+    for (ssize_t i=0; i<NumSpecies(); ++i) {
+      for (ssize_t j=0; j<aSpecies[i].SpeciesSize(); ++j) {
+        if (aSpecies[i].aGenomes[j].Fitness() < aBestFitness) {
+          aBestFitness = aSpecies[i].aGenomes[j].Fitness();
+        }
+      }
+    }
+  }
+
   // Add species.
   void AddSpecies(Species& species) {
     aSpecies.push_back(species);
@@ -124,36 +130,15 @@ class Population {
 
   // ReassignGenomesId
   void ReassignGenomeId() {
-    for (ssize_t i=0; i<aGenomes.size(); ++i) {
-      aGenomes[i].Id(i);
-    }
-    aNextGenomeId = aGenomes.size();
-  }
-
-  // Aggregate genomes to aGenomes vector using species vector.
-  void AggregateGenomes() {
-    aGenomes.clear();
-    for (ssize_t i=0; i<NumSpecies(); ++i) {
-      for (ssize_t j=0; j<aSpecies[i].SpeciesSize(); ++j) {
-        aGenomes.push_back(aSpecies[i].aGenomes[j]);
+    ssize_t id = -1;
+    for (ssize_t i=0; i<aSpecies.size(); ++i) {
+      for (ssize_t j=0; j<aSpecies[i].aGenomes.size(); ++j) {
+        ++id;
+        aSpecies[i].aGenomes[j].Id(id);
       }
     }
+    aNextGenomeId = id + 1;
   }
-
-  // Sort genomes by fitness. Smaller fitness is better and put first.
-  void SortGenomes() {
-    std::sort(aGenomes.begin(), aGenomes.end(), Species::CompareGenome);
-  }
-
-  // Get genome index in aGenomes.
-  ssize_t GetGenomeIndex(ssize_t id) {
-    for (ssize_t i=0; i<aPopulationSize; ++i) {
-      if (aGenomes[i].Id() == id)
-        return i;
-    }
-    return -1;
-  }
-
 
  private:
   // Number of species.

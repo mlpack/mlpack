@@ -112,19 +112,7 @@ class Species {
 
   // Sort genomes by fitness. First is best.
   static bool CompareGenome(Genome lg, Genome rg) {
-    if (lg.Fitness() < rg.Fitness()) {  // NOTICE: we assume smaller is better.
-      return true;
-    } else if (rg.Fitness() < lg.Fitness()) {
-      return false;
-    } else if (lg.NumLink() < rg.NumLink()) {
-      return true;
-    } else if (rg.NumLink() < lg.NumLink()) {
-      return false;
-    } else if (mlpack::math::Random() < 0.5) {
-      return true;
-    } else {
-      return false;
-    }
+    return (lg.Fitness() < rg.Fitness());
   }
   void SortGenomes() {
     std::sort(aGenomes.begin(), aGenomes.end(), CompareGenome);

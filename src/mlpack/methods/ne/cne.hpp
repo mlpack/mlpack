@@ -43,6 +43,53 @@ class CNE {
   // Destructor.
   ~CNE() {}
 
+  // Soft mutation: add a random value chosen from
+  // initialization prob distribution with probability p.
+  // TODO: here we use uniform distribution. Can we use exponential distribution?
+  static void MutateWeightsBiased(Genome& genome, double mutateProb, double mutateSize) {
+    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {
+      double p = mlpack::math::Random();  // rand 0~1
+      if (p < mutateProb) {
+        double deltaW = mlpack::math::RandNormal(0, mutateSize);
+        double oldW = genome.aLinkGenes[i].Weight();
+        genome.aLinkGenes[i].Weight(oldW + deltaW);
+      }
+    }
+  }
+
+  // Hard mutation: replace with a random value chosen from
+  // initialization prob distribution with probability p.
+  // TODO: here we use uniform distribution. Can we use exponential distribution?
+  static void MutateWeightsUnbiased(Genome& genome, double mutateProb, double mutateSize) {
+    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {
+      double p = mlpack::math::Random();
+      if (p < mutateProb) {
+        double weight = mlpack::math::RandNormal(0, mutateSize);
+        genome.aLinkGenes[i].Weight(weight);
+      }
+    }
+  }
+
+  // Randomly select weights from one parent genome.
+  // NOTICE: child genomes need to set genome id based on its population's max id.
+  static void CrossoverWeights(Genome& momGenome, 
+                               Genome& dadGenome, 
+                               Genome& child1Genome, 
+                               Genome& child2Genome) {
+    child1Genome = momGenome;
+    child2Genome = dadGenome;
+    for (ssize_t i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
+      double t = mlpack::math::RandNormal();
+      if (t>0) {  // prob = 0.5
+        child1Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
+        child2Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
+      } else {
+        child1Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
+        child2Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
+      }
+    }
+  }
+
   // Initializing the species of genomes.
   // It can use species's parametric constructor.
   // Besides, adapt its own style of initialization.
@@ -56,26 +103,25 @@ class CNE {
   // form G(i + 1).
   void Reproduce() {
     // Sort species by fitness
-    aSpecies.SortSpecies();
+    aSpecies.SortGenomes();
 
     // Select parents from elite genomes and crossover.
     ssize_t numElite = floor(aElitePercentage * aSpeciesSize);
     ssize_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
     numElite = aSpeciesSize - numDrop;
-
     for (ssize_t i=numElite; i<aSpeciesSize-1; ++i) {
       // Randomly select two parents from elite genomes.
       ssize_t idx1 = RandInt(0, numElite);
       ssize_t idx2 = RandInt(0, numElite);
 
       // Crossover to get two children genomes.
-      Genome::CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
+      CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
                                aSpecies.aGenomes[i], aSpecies.aGenomes[i+1]);
     }
 
     // Keep the best genome and mutate the rests.
     for (ssize_t i=1; i<aSpeciesSize; ++i) {
-      aSpecies.aGenomes[i].MutateWeightsBiased(aMutateRate, aMutateSize);
+      MutateWeightsBiased(aSpecies.aGenomes[i], aMutateRate, aMutateSize);
     }
   }
 

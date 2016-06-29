@@ -173,4 +173,87 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
                  // the best fitness during each generation.
 }
 
+/**
+ * Test CNE by XOR task.
+ */
+BOOST_AUTO_TEST_CASE(NENeatXorTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set CNE algorithm parameters.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 1000;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
+  params.aCompatThreshold = 1.0;
+  params.aStaleAgeThreshold = 15;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.5;
+  params.aMutateWeightProb = 0.2;
+  params.aPerturbWeightProb = 0.9;
+  params.aMutateWeightSize = 0.1;
+  params.aMutateAddLinkProb = 0.5;
+  params.aMutateAddNeuronProb = 0.5;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
+
+  // Construct seed genome for xor task.
+  ssize_t id = 0;
+  ssize_t numInput = 3;
+  ssize_t numOutput = 1;
+  ssize_t depth = 2;
+  double fitness = -1;
+  double adjustedFitness = -1;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0);
+  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 3, 0, 0, true);
+  LinkGene link2(1, 3, 0, 0, true);
+  LinkGene link3(2, 3, 0, 0, true);
+  LinkGene link4(0, 4, 0, 0, true);
+  LinkGene link5(1, 4, 0, 0, true);
+  LinkGene link6(2, 4, 0, 0, true);
+  LinkGene link7(4, 3, 0, 0, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+  linkGenes.push_back(link7);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             depth,
+                             fitness,
+                             adjustedFitness);
+
+  // Specify task type.
+  TaskXor<ann::MeanSquaredErrorFunction> task;
+
+  // Construct CNE instance.
+  NEAT<TaskXor<ann::MeanSquaredErrorFunction>> neat(task, seedGenome, params);
+
+  // Evolve.
+  neat.Evolve();  // Judge whether XOR test passed or not by printing 
+                 // the best fitness during each generation.
+}
+
 BOOST_AUTO_TEST_SUITE_END();

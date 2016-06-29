@@ -43,11 +43,29 @@ struct NeuronInnovation {
 template<typename TaskType>
 class NEAT {
  public:
-  // Default constructor.
-
   // Parametric constructor.
+  NEAT(TaskType task, Genome& seedGenome, Parameters& params) {
+    aTask = task;
+    aSeedGenome = seedGenome;
+    aPopulationSize = params.aPopulationSize;
+    aMaxGeneration = params.aMaxGeneration;
+    aCoeffDisjoint = params.aCoeffDisjoint;
+    aCoeffWeightDiff = params.aCoeffWeightDiff;
+    aCompatThreshold = params.aCompatThreshold;
+    aStaleAgeThreshold = params.aStaleAgeThreshold;
+    aCrossoverRate = params.aCrossoverRate;
+    aCullSpeciesPercentage = params.aCullSpeciesPercentage;
+    aMutateWeightProb = params.aMutateWeightProb;
+    aPerturbWeightProb = params.aPerturbWeightProb;
+    aMutateWeightSize = params.aMutateWeightSize;
+    aMutateAddLinkProb = params.aMutateAddLinkProb;
+    aMutateAddNeuronProb = params.aMutateAddNeuronProb;
+    aMutateEnabledProb = params.aMutateEnabledProb;
+    aMutateDisabledProb = params.aMutateDisabledProb;
+  }
 
   // Destructor.
+  ~NEAT() {}
 
   // Check whether a link innovation already exist.
   ssize_t CheckLinkInnovation(ssize_t fromNeuronId, ssize_t toNeuronId) {
@@ -109,6 +127,7 @@ class NEAT {
 
   // Mutate: add new link to genome.
   // TODO: what if created looped link? It will influence the depth calculation in genome class!!
+  // TODO: make innovation a class and pass as parameter? Also for other similar functions.
   void MutateAddLink(Genome& genome, double mutateAddLinkProb) {
     // Whether mutate or not.
     double p = mlpack::math::Random();
@@ -216,6 +235,56 @@ class NEAT {
     genome.AddLink(outputLink);
   }
 
+  // Mutate: enable disabled, or disable enabled link.
+  void MutateEnableDisable(Genome& genome, bool enabled, double mutateProb) {
+    std::vector<ssize_t> linkIndexs;
+    for (ssize_t i=0; i<genome.NumLink(); ++i) {
+      if (genome.aLinkGenes[i].Enabled() == enabled) {
+        linkIndexs.push_back(i);
+      }
+    }
+
+    double p = mlpack::math::Random();
+    if (p<mutateProb && linkIndexs.size()>0) {
+      ssize_t idx = linkIndexs[mlpack::math::RandInt(0, linkIndexs.size())];
+      genome.aLinkGenes[idx].Enabled(!enabled);  // Reverse enabled status to opposite.
+    }
+  }
+
+  // Mutate: change single weight. Combine both biased and unbiased mutation.
+  void MutateWeight(Genome& genome, double mutateProb, double perturbProb, double mutateSize) {
+    double p = mlpack::math::Random();  // rand 0~1
+    if (p > mutateProb) return;
+    
+    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {  
+      double p2 = mlpack::math::Random();
+      if (p2 < perturbProb) {  // Biased weight mutation.
+        double deltaW = mlpack::math::RandNormal(0, mutateSize);
+        double oldW = genome.aLinkGenes[i].Weight();
+        genome.aLinkGenes[i].Weight(oldW + deltaW);
+      } else {  // Unbiased weight mutation.
+        double weight = mlpack::math::RandNormal(0, mutateSize);
+        genome.aLinkGenes[i].Weight(weight);
+      }
+    }
+  }
+
+  static bool CompareGenome(Genome lg, Genome rg) {
+    if (lg.Fitness() < rg.Fitness()) {  // NOTICE: we assume smaller is better.
+      return true;
+    } else if (rg.Fitness() < lg.Fitness()) {
+      return false;
+    } else if (lg.NumLink() < rg.NumLink()) {
+      return true;
+    } else if (rg.NumLink() < lg.NumLink()) {
+      return false;
+    } else if (mlpack::math::Random() < 0.5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // Crossover link weights.
   // NOTICE: assume momGenome is the better genome.
   // NOTICE: assume childGenome is empty.
@@ -293,12 +362,13 @@ class NEAT {
         }
 
         continue;
-      }
+      }  
     }
   }
 
+  // Crossover two genome to get one genome.
   void Crossover(Genome& genome1, Genome& genome2, Genome& childGenome) {
-    if (Species::CompareGenome(genome1, genome2)) {  // genome1 is better
+    if (CompareGenome(genome1, genome2)) {  // genome1 is better
       CrossoverLinkAndNeuron(genome1, genome2, childGenome);
     } else {
       CrossoverLinkAndNeuron(genome2, genome1, childGenome);
@@ -306,8 +376,7 @@ class NEAT {
   }
 
   // Measure two genomes' disjoint (including exceed).
-  // TODO: we can seperate into disjoint and exceed.
-  // But currently maybe it is enough.
+  // NOTICE: we can separate into disjoint and exceed. But currently maybe it is enough.
   double Disjoint(Genome& genome1, Genome& genome2) {
     double numDisjoint = 0;
 
@@ -408,39 +477,54 @@ class NEAT {
     }
   }
 
-  // Distribute genomes into species.
-  void Speciate(Population& population) {
-    population.aSpecies.clear();
-
-    for (ssize_t i=0; i<population.aGenomes.size(); ++i) {
-      AddGenomeToSpecies(population, population.aGenomes[i]);
+  // Aggregate population's genomes.
+  void AggregateGenomes(Population& population, std::vector<Genome>& genomes) {
+    genomes.clear();
+    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+      for (ssize_t j=0; j<population.aSpecies[i].SpeciesSize(); ++j) {
+        genomes.push_back(population.aSpecies[i].aGenomes[j]);
+      }
     }
   }
 
+  // Sort genomes by fitness. Smaller fitness is better and put first.
+  void SortGenomes(std::vector<Genome>& genomes) {
+    std::sort(genomes.begin(), genomes.end(), Species::CompareGenome);
+  }
+
+  // Get genome index in a genomes vector.
+  ssize_t GetGenomeIndex(std::vector<Genome>& genomes, ssize_t id) {
+    for (ssize_t i=0; i<genomes.size(); ++i) {
+      if (genomes[i].Id() == id)
+        return i;
+    }
+    return -1;
+  }
+
   // Calculate species' average rank in population.
-  std::vector<double> CalcSpeciesAverageRank(Population& population) {
-    population.AggregateGenomes();
-    population.SortGenomes();
-    std::vector<double> speciesAverageRank;
+  void CalcSpeciesAverageRank(Population& population, std::vector<double>& speciesAverageRank) {
+    std::vector<Genome> genomes;
+    AggregateGenomes(population, genomes);
+    SortGenomes(genomes);
+    speciesAverageRank.clear();
 
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
       double averageRank = 0;
       ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
 
       for (ssize_t j=0; j<speciesSize; ++j) {
-        averageRank += population.GetGenomeIndex(population.aSpecies[i].aGenomes[j].Id());
+        averageRank += GetGenomeIndex(genomes, population.aSpecies[i].aGenomes[j].Id());
       }
 
       averageRank = averageRank / speciesSize;  // smaller is better.
       speciesAverageRank.push_back(averageRank);
     }
-
-    return speciesAverageRank;
   }
 
   // Remove weak species.
   void RemoveWeakSpecies(Population& population) {
-    std::vector<double> speciesAverageRank = CalcSpeciesAverageRank(population);
+    std::vector<double> speciesAverageRank;
+    CalcSpeciesAverageRank(population, speciesAverageRank);
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
 
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
@@ -453,19 +537,19 @@ class NEAT {
   }
 
   // Remove a portion weak genomes in each species
-  void cullSpecies(Population& population, double percentageToRemove) {
+  void CullSpecies(Population& population, double percentageToRemove) {
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
       population.aSpecies[i].SortGenomes();
       ssize_t numRemove = std::floor(population.aSpecies[i].SpeciesSize() * percentageToRemove);
       while (numRemove > 0) {
-        population.aSpecies[i].pop_back();
+        population.aSpecies[i].aGenomes.pop_back();
         --numRemove;
       }
     }
   }
 
   // Only keep the best genome in each species.
-  void cullSpeciesToOne(Population& population) {
+  void CullSpeciesToOne(Population& population) {
     for (ssize_t i=0; i<population.NumSpecies(); ++i) {
       population.aSpecies[i].SortGenomes();
       ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
@@ -477,12 +561,57 @@ class NEAT {
     }
   }
 
+  // Mutate child by different mutations.
+  // NOTICE: how we organize different mutations is kind of flexible.
+  void Mutate(Genome& genome) {
+    // NOTICE: we can change mutate rates here. Randomly let mutate rates be bigger or smaller.
+
+    // Mutate weights.
+    MutateWeight(genome, aMutateWeightProb, aPerturbWeightProb, aMutateWeightSize);
+
+    // Mutate link. TODO: check link mutate implementation is correct or not.
+    double p = aMutateAddLinkProb;
+    while (p > 0) {  // so p can be bigger than 1 and mutate can happen multiple times.
+      if (mlpack::math::Random() < p) {
+        MutateAddLink(genome, aMutateAddLinkProb);
+      }
+      --p;
+    }
+
+    // Mutate neuron
+    p = aMutateAddNeuronProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateAddNeuron(genome, aMutateAddNeuronProb);
+      }
+      --p;
+    }
+
+    // Mutate enabled node to disabled.
+    p = aMutateEnabledProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateEnableDisable(genome, true, aMutateEnabledProb);
+      }
+      --p;
+    }
+
+    // Mutate disabled node to enabled.
+    p = aMutateDisabledProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateEnableDisable(genome, false, aMutateDisabledProb);
+      }
+      --p;
+    }
+  }
+
   // Breed child for a species.
   // NOTICE: can have different ways to breed a child.
   void BreedChild(Species& species, Genome& childGenome, double crossoverProb) {
     double p = mlpack::math::Random();
+    ssize_t speciesSize = species.aGenomes.size();
     if (p < crossoverProb) {
-      ssize_t speciesSize = species.aGenomes.size();
       ssize_t idx1 = mlpack::math::RandInt(0, speciesSize);
       ssize_t idx2 = mlpack::math::RandInt(0, speciesSize);
       Crossover(species.aGenomes[idx1], species.aGenomes[idx2], childGenome);
@@ -490,7 +619,10 @@ class NEAT {
       ssize_t idx = mlpack::math::RandInt(0, speciesSize);
       childGenome = species.aGenomes[idx];
     }
+
+    Mutate(childGenome);
   }
+
 
   // Initialize population.
   void InitPopulation() {
@@ -499,12 +631,90 @@ class NEAT {
 
   // Reproduce next generation of population.
   void Reproduce() {
+    // Remove stale species.
+    RemoveStaleSpecies(aPopulation);
 
+    // Remove weak genomes in each species.
+    CullSpecies(aPopulation, aCullSpeciesPercentage);
+
+    // Remove weak species.
+    RemoveWeakSpecies(aPopulation);
+
+    // Breed children in each species. 
+    std::vector<double> speciesAverageRank;
+    CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
+    double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
+    std::vector<Genome> childGenomes;
+    for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
+      // number of child genomes by this species.
+      ssize_t numBreed = std::floor(speciesAverageRank[i] * aPopulationSize / totalAverageRank) - 1;
+
+      for (ssize_t j=0; j<numBreed; ++j) {
+        Genome genome; //!!!!!!!!!!!!!
+        BreedChild(aPopulation.aSpecies[i], genome, aCrossoverRate);
+        childGenomes.push_back(genome);
+      }
+    }
+
+    // Keep the best in each species.
+    CullSpeciesToOne(aPopulation);
+
+    // Random choose species and breed child until reach population size.
+    while (childGenomes.size() + aPopulation.aSpecies.size() < aPopulationSize) {
+      ssize_t speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
+      Genome genome;  //!!!!!!!!!!!!!
+      BreedChild(aPopulation.aSpecies[speciesIndex], genome, aCrossoverRate);
+      childGenomes.push_back(genome);
+    }
+
+    // Speciate genomes into new species.
+    for (ssize_t i=0; i<childGenomes.size(); ++i) {
+      AddGenomeToSpecies(aPopulation, childGenomes[i]);
+    }
+
+    // Reassign genome IDs.
+    aPopulation.ReassignGenomeId();
+  }
+
+  // Evaluate genomes in population, set genomes' fitness.
+  void Evaluate() {
+    for (ssize_t i=0; i<aPopulation.NumSpecies(); ++i) {
+      for (ssize_t j=0; j<aPopulation.aSpecies[i].SpeciesSize(); ++j) {
+        double fitness = aTask.EvalFitness(aPopulation.aSpecies[i].aGenomes[j]);
+        aPopulation.aSpecies[i].aGenomes[j].Fitness(fitness);
+      }
+
+      double oldSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
+      aPopulation.aSpecies[i].SetBestFitness();
+      double newSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
+      if (newSpeciesBestFitness < oldSpeciesBestFitness) {
+        aPopulation.aSpecies[i].StaleAge(0);
+      } else {
+        ssize_t staleAge = aPopulation.aSpecies[i].StaleAge();
+        aPopulation.aSpecies[i].StaleAge(staleAge + 1);
+      }
+    }
+    aPopulation.SetBestFitness();
   }
 
   // Evolve.
   void Evolve() {
+    // Generate initial species at random.
+    ssize_t generation = 0;
+    InitPopulation();
+    
+    // Repeat
+    while (generation < aMaxGeneration) {
+      // Evaluate all genomes in population.
+      Evaluate();
 
+      // Output some information.
+      printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
+
+      // Reproduce next generation.
+      Reproduce();
+      ++generation;
+    }
   }
  
  private:
@@ -549,6 +759,30 @@ class NEAT {
 
   // Crossover rate.
   double aCrossoverRate;
+
+  // Percentage to remove in each species.
+  double aCullSpeciesPercentage;
+
+  // Probability to mutate a genome's weight
+  double aMutateWeightProb;
+
+  // Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
+  double aPerturbWeightProb;
+
+  // The Gaussian noise variance when mutating genome weights.
+  double aMutateWeightSize;
+
+  // Probability to add link to genome.
+  double aMutateAddLinkProb;
+
+  // Probability to add neuron to genome.
+  double aMutateAddNeuronProb;
+
+  // Probability to turn enabled link to disabled.
+  double aMutateEnabledProb;
+
+  // Probability to turn disabled link to enabled.
+  double aMutateDisabledProb;
 
 };
 
