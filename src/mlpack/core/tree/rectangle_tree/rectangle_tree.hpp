@@ -56,7 +56,8 @@ class RectangleTree
   typedef MatType Mat;
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
-
+  //! The auxiliary information type held by the tree.
+  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -76,6 +77,8 @@ class RectangleTree
   //! The number of points in the dataset contained in this node (and its
   //! children).
   size_t count;
+  //! The number of descendants of this node.
+  size_t numDescendants;
   //! The max leaf size.
   size_t maxLeafSize;
   //! The minimum leaf size.
@@ -339,11 +342,6 @@ class RectangleTree
   //! Modify the number of child nodes.  Be careful.
   size_t& NumChildren() { return numChildren; }
 
-  //! Get the children of this node.
-  const std::vector<RectangleTree*>& Children() const { return children; }
-  //! Modify the children of this node.
-  std::vector<RectangleTree*>& Children() { return children; }
-
   /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
@@ -513,6 +511,15 @@ class RectangleTree
 
   //! Friend access is given for the default constructor.
   friend class boost::serialization::access;
+
+  //! Give friend access for DescentType.
+  friend DescentType;
+
+  //! Give friend access for SplitType.
+  friend SplitType;
+
+  //! Give friend access for AuxiliaryInformationType.
+  friend AuxiliaryInformation;
 
  public:
   /**

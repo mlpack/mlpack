@@ -21,7 +21,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
   size_t bestIndex = 0;
 
   for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
-    if (node->Children()[bestIndex]->AuxiliaryInfo().HilbertValue().
+    if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().
         CompareWithCachedPoint(node->Dataset().col(point)) > 0)
       break;
 
@@ -36,7 +36,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
   size_t bestIndex = 0;
 
   for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
-    if (node->Children()[bestIndex]->AuxiliaryInfo().HilbertValue().
+    if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().
         CompareWith(node, node->AuxiliaryInfo().HilbertValue()) > 0)
       break;
 

@@ -54,7 +54,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
     RPlusTreeSplit::SplitLeafNode(copy,relevels);
@@ -82,17 +82,14 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   TreeType* parent = tree->Parent();
   size_t i = 0;
-  while (parent->Children()[i] != tree)
+  while (parent->children[i] != tree)
     i++;
 
   assert(i < parent->NumChildren());
 
-  // Remove the node from the tree.
-  parent->Children()[i] = parent->Children()[--parent->NumChildren()];
-
   // Insert two new nodes to the tree.
-  InsertNodeIntoTree(parent, treeOne);
-  InsertNodeIntoTree(parent, treeTwo);
+  parent->children[i] = treeOne;
+  parent->children[parent->NumChildren()++] = treeTwo;
 
   assert(parent->NumChildren() <= parent->MaxNumChildren() + 1);
 
@@ -120,7 +117,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
 
     RPlusTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
@@ -146,17 +143,14 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   TreeType* parent = tree->Parent();
   size_t i = 0;
-  while (parent->Children()[i] != tree)
+  while (parent->children[i] != tree)
     i++;
 
   assert(i < parent->NumChildren());
 
-  // Remove the node from the tree.
-  parent->Children()[i] = parent->Children()[--parent->NumChildren()];
-
   // Insert two new nodes to the tree.
-  InsertNodeIntoTree(parent, treeOne);
-  InsertNodeIntoTree(parent, treeTwo);
+  parent->children[i] = treeOne;
+  parent->children[parent->NumChildren()++] = treeTwo;
 
   tree->SoftDelete();
 
@@ -196,6 +190,10 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
       treeTwo->Bound() |= tree->Dataset().col(tree->Point(i));
     }
   }
+  // Update the number of descandants.
+  treeOne->numDescendants = treeOne->Count();
+  treeTwo->numDescendants = treeTwo->Count();
+
   assert(treeOne->Count() <= treeOne->MaxLeafSize());
   assert(treeTwo->Count() <= treeTwo->MaxLeafSize());
   
@@ -219,8 +217,8 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
   // Insert children into the corresponding subtree.
   for (size_t i = 0; i < tree->NumChildren(); i++)
   {
-    TreeType* child = tree->Children()[i];
-    int policy = SplitPolicyType::GetSplitPolicy(child, cutAxis, cut);
+    TreeType* child = tree->children[i];
+    int policy = SplitPolicyType::GetSplitPolicy(*child, cutAxis, cut);
 
     if (policy == SplitPolicyType::AssignToFirstTree)
     {
@@ -279,7 +277,7 @@ AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
   for (size_t i = 0; i < numDescendantNodes; i++)
   {
     TreeType* child = new TreeType(node);
-    node->Children()[node->NumChildren()++] = child;
+    node->children[node->NumChildren()++] = child;
 
     node = child;
   }
@@ -333,7 +331,8 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::
 InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()++] = srcNode;
+  destTree->numDescendants += srcNode->numDescendants;
+  destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
 

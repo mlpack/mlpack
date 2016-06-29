@@ -26,7 +26,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    sorted[i].d = SplitPolicy::Bound(node->Children()[i])[axis].Hi();
+    sorted[i].d = SplitPolicy::Bound(node->Child(i))[axis].Hi();
     sorted[i].n = i;
   }
 
@@ -45,7 +45,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     // Calculate the number of splits.
     for (size_t j = 0; j < node->NumChildren(); j++)
     {
-      TreeType* child = node->Children()[j];
+      const TreeType& child = node->Child(j);
       int policy = SplitPolicy::GetSplitPolicy(child, axis, sorted[i].d);
       if (policy == SplitPolicy::AssignToFirstTree)
         numTreeOneChildren++;

@@ -21,7 +21,7 @@ size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
   // Find the node whose maximum bounding rectangle contains the point.
   for (size_t bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    if (node->Children()[bestIndex]->AuxiliaryInfo().OuterBound().Contains(
+    if (node->Child(bestIndex).AuxiliaryInfo().OuterBound().Contains(
         node->Dataset().col(point)))
       return bestIndex;
   }

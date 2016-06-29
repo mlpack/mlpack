@@ -26,7 +26,7 @@ SweepNonLeafNode(const size_t axis,
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    sorted[i].d = SplitPolicy::Bound(node->Children()[i])[axis].Hi();
+    sorted[i].d = SplitPolicy::Bound(node->Child(i))[axis].Hi();
     sorted[i].n = i;
   }
   // Sort high bounds of children.
@@ -58,26 +58,26 @@ SweepNonLeafNode(const size_t axis,
   // Find lower and high bounds of two resulting nodes.
   for (size_t k = 0; k < node->Bound().Dim(); k++)
   {
-    lowerBound1[k] = node->Children()[sorted[0].n]->Bound()[k].Lo();
-    highBound1[k] = node->Children()[sorted[0].n]->Bound()[k].Hi();
+    lowerBound1[k] = node->Child(sorted[0].n).Bound()[k].Lo();
+    highBound1[k] = node->Child(sorted[0].n).Bound()[k].Hi();
 
     for (size_t i = 1; i < splitPointer; i++)
     {
-      if (node->Children()[sorted[i].n]->Bound()[k].Lo() < lowerBound1[k])
-        lowerBound1[k] = node->Children()[sorted[i].n]->Bound()[k].Lo();
-      if (node->Children()[sorted[i].n]->Bound()[k].Hi() > highBound1[k])
-        highBound1[k] = node->Children()[sorted[i].n]->Bound()[k].Hi();
+      if (node->Child(sorted[i].n).Bound()[k].Lo() < lowerBound1[k])
+        lowerBound1[k] = node->Child(sorted[i].n).Bound()[k].Lo();
+      if (node->Child(sorted[i].n).Bound()[k].Hi() > highBound1[k])
+        highBound1[k] = node->Child(sorted[i].n).Bound()[k].Hi();
     }
 
-    lowerBound2[k] = node->Children()[sorted[splitPointer].n]->Bound()[k].Lo();
-    highBound2[k] = node->Children()[sorted[splitPointer].n]->Bound()[k].Hi();
+    lowerBound2[k] = node->Child(sorted[splitPointer].n).Bound()[k].Lo();
+    highBound2[k] = node->Child(sorted[splitPointer].n).Bound()[k].Hi();
 
     for (size_t i = splitPointer + 1; i < node->NumChildren(); i++)
     {
-      if (node->Children()[sorted[i].n]->Bound()[k].Lo() < lowerBound2[k])
-        lowerBound2[k] = node->Children()[sorted[i].n]->Bound()[k].Lo();
-      if (node->Children()[sorted[i].n]->Bound()[k].Hi() > highBound2[k])
-        highBound2[k] = node->Children()[sorted[i].n]->Bound()[k].Hi();
+      if (node->Child(sorted[i].n).Bound()[k].Lo() < lowerBound2[k])
+        lowerBound2[k] = node->Child(sorted[i].n).Bound()[k].Lo();
+      if (node->Child(sorted[i].n).Bound()[k].Hi() > highBound2[k])
+        highBound2[k] = node->Child(sorted[i].n).Bound()[k].Hi();
     }
   }
 
@@ -208,7 +208,7 @@ CheckNonLeafSweep(const TreeType* node,
   // Calculate the number of children in the resulting nodes.
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    TreeType* child = node->Children()[i];
+    const TreeType& child = node->Child(i);
     int policy = SplitPolicy::GetSplitPolicy(child, cutAxis, cut);
     if (policy == SplitPolicy::AssignToFirstTree)
       numTreeOneChildren++;

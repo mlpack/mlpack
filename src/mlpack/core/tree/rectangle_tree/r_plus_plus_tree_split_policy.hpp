@@ -40,13 +40,13 @@ class RPlusPlusTreeSplitPolicy
    * @param cut The coordinate at which the node is being split.
    */
   template<typename TreeType>
-  static int GetSplitPolicy(const TreeType* child,
+  static int GetSplitPolicy(const TreeType& child,
                             const size_t axis,
                             const typename TreeType::ElemType cut)
   {
-    if (child->AuxiliaryInfo().OuterBound()[axis].Hi() <= cut)
+    if (child.AuxiliaryInfo().OuterBound()[axis].Hi() <= cut)
       return AssignToFirstTree;
-    else if (child->AuxiliaryInfo().OuterBound()[axis].Lo() >= cut)
+    else if (child.AuxiliaryInfo().OuterBound()[axis].Lo() >= cut)
       return AssignToSecondTree;
 
     return SplitRequired;
@@ -62,9 +62,9 @@ class RPlusPlusTreeSplitPolicy
   template<typename TreeType>
   static const
       bound::HRectBound<metric::EuclideanDistance, typename TreeType::ElemType>&
-          Bound(const TreeType* node)
+          Bound(const TreeType& node)
   {
-    return node->AuxiliaryInfo().OuterBound();
+    return node.AuxiliaryInfo().OuterBound();
   }
 };
 

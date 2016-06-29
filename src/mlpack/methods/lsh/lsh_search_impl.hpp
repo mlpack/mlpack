@@ -166,7 +166,8 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
   }
 
   // We will store the second hash vectors in this matrix; the second hash
-  // vector for table i will be held in row i.
+  // vector for table i will be held in row i.  We have to use int and not
+  // size_t, otherwise negative numbers are cast to 0.
   arma::Mat<size_t> secondHashVectors(numTables, referenceSet.n_cols);
 
   for (size_t i = 0; i < numTables; i++)
@@ -189,14 +190,24 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     hashMat /= hashWidth;
 
     // Step V: Putting the points in the 'secondHashTable' by hashing the key.
-    // Now we hash every key, point ID to its corresponding bucket.
-    secondHashVectors.row(i) = arma::conv_to<arma::Row<size_t>>::from(
-        secondHashWeights.t() * arma::floor(hashMat));
+    // Now we hash every key, point ID to its corresponding bucket.  We must
+    // also normalize the hashes to the range [0, secondHashSize).
+    arma::rowvec unmodVector = secondHashWeights.t() * arma::floor(hashMat);
+    for (size_t j = 0; j < unmodVector.n_elem; ++j)
+    {
+      double shs = (double) secondHashSize; // Convenience cast.
+      if (unmodVector[j] >= 0.0)
+      {
+        secondHashVectors(i, j) = size_t(fmod(unmodVector[j], shs));
+      }
+      else
+      {
+        const double mod = fmod(-unmodVector[j], shs);
+        secondHashVectors(i, j) = (mod < 1.0) ? 0 : secondHashSize -
+            size_t(mod);
+      }
+    }
   }
-
-  // Normalize hashes (take modulus with secondHashSize).
-  secondHashVectors.transform([secondHashSize](size_t val)
-      { return val % secondHashSize; });
 
   // Now, using the hash vectors for each table, count the number of rows we
   // have in the second hash table.

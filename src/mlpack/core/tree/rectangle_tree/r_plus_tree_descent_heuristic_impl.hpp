@@ -25,7 +25,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
   // Try to find a node that contains the point.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    if (node->Children()[bestIndex]->Bound().Contains(
+    if (node->Child(bestIndex).Bound().Contains(
         node->Dataset().col(point)))
       return bestIndex;
   }
@@ -35,7 +35,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
     bound::HRectBound<metric::EuclideanDistance, ElemType> bound =
-        node->Children()[bestIndex]->Bound();
+        node->Child(bestIndex).Bound();
     bound |=  node->Dataset().col(point);
 
     success = true;
@@ -49,8 +49,8 @@ ChooseDescentNode(TreeType* node, const size_t point)
       // they do not overlap each other.
       for (size_t k = 0; k < node->Bound().Dim(); k++)
       {
-        if (bound[k].Lo() >= node->Children()[j]->Bound()[k].Hi() ||
-            node->Children()[j]->Bound()[k].Lo() >= bound[k].Hi())
+        if (bound[k].Lo() >= node->Child(j).Bound()[k].Hi() ||
+            node->Child(j).Bound()[k].Lo() >= bound[k].Hi())
         {
           // We found the dimension in which these nodes do not overlap
           // each other.
@@ -75,7 +75,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
     {
       TreeType* child = new TreeType(tree);
 
-      tree->Children()[tree->NumChildren()++] = child;
+      tree->children[tree->NumChildren()++] = child;
       tree = child;
       depth--;
     }
