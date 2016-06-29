@@ -231,10 +231,12 @@ RedistributeNodesEvenly(const TreeType *parent,
     // Since we redistribute children of a sibling we should recalculate the
     // bound.
     parent->Child(i).Bound().Clear();
+    parent->Child(i).numDescendants = 0;
 
     for (size_t j = 0; j < numChildrenPerNode; j++)
     {
       parent->Child(i).Bound() |= children[iChild]->Bound();
+      parent->Child(i).numDescendants += children[iChild]->numDescendants;
       parent->Child(i).children[j] = children[iChild];
       children[iChild]->Parent() = parent->children[i];
       iChild++;
@@ -242,6 +244,7 @@ RedistributeNodesEvenly(const TreeType *parent,
     if (numRestChildren > 0)
     {
       parent->Child(i).Bound() |= children[iChild]->Bound();
+      parent->Child(i).numDescendants += children[iChild]->numDescendants;
       parent->Child(i).children[numChildrenPerNode] = children[iChild];
       children[iChild]->Parent() = parent->children[i];
       parent->Child(i).NumChildren() = numChildrenPerNode + 1;
@@ -313,6 +316,8 @@ RedistributePointsEvenly(TreeType* parent,
     {
       parent->Child(i).Count() = numPointsPerNode;
     }
+    parent->Child(i).numDescendants = parent->Child(i).Count();
+
     assert(parent->Child(i).NumPoints() <=
            parent->Child(i).MaxLeafSize());
   }

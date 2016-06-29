@@ -840,6 +840,7 @@ template<typename TreeType>
 void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
+  destTree->numDescendants += srcNode->numDescendants;
   destTree->children[destTree->NumChildren()] = srcNode;
   destTree->NumChildren()++;
 }

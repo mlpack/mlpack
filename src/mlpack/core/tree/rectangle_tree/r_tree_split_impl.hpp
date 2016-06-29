@@ -521,6 +521,7 @@ template<typename TreeType>
 void RTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
+  destTree->numDescendants += srcNode->numDescendants;
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 

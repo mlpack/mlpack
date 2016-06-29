@@ -37,6 +37,7 @@ RectangleTree(const MatType& data,
     parent(NULL),
     begin(0),
     count(0),
+    numDescendants(0),
     maxLeafSize(maxLeafSize),
     minLeafSize(minLeafSize),
     bound(data.n_rows),
@@ -76,6 +77,7 @@ RectangleTree(MatType&& data,
     parent(NULL),
     begin(0),
     count(0),
+    numDescendants(0),
     maxLeafSize(maxLeafSize),
     minLeafSize(minLeafSize),
     bound(data.n_rows),
@@ -114,6 +116,7 @@ RectangleTree(
     parent(parentNode),
     begin(0),
     count(0),
+    numDescendants(0),
     maxLeafSize(parentNode->MaxLeafSize()),
     minLeafSize(parentNode->MinLeafSize()),
     bound(parentNode->Bound().Dim()),
@@ -148,6 +151,7 @@ RectangleTree(
     parent(other.Parent()),
     begin(other.Begin()),
     count(other.Count()),
+    numDescendants(other.numDescendants),
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
@@ -269,6 +273,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // Expand the bound regardless of whether it is a leaf node.
   bound |= dataset->col(point);
 
+  numDescendants++;
+
   std::vector<bool> lvls(TreeDepth());
   for (size_t i = 0; i < lvls.size(); i++)
     lvls[i] = true;
@@ -305,6 +311,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 {
   // Expand the bound regardless of whether it is a leaf node.
   bound |= dataset->col(point);
+
+  numDescendants++;
 
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
@@ -345,6 +353,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 {
   // Expand the bound regardless of the level.
   bound |= node->Bound();
+  numDescendants += node->numDescendants;
   if (level == TreeDepth())
   {
     if (!auxiliaryInfo.HandleNodeInsertion(this, node, true))
@@ -395,6 +404,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (!auxiliaryInfo.HandlePointDeletion(this, i))
           points[i] = points[--count];
 
+        RectangleTree* tree = this;
+        while (tree != NULL)
+        {
+          tree->numDescendants--;
+          tree = tree->Parent();
+        }
         // This function wil ensure that minFill is satisfied.
         CondenseTree(dataset->col(point), lvls, true);
         return true;
@@ -433,6 +448,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (!auxiliaryInfo.HandlePointDeletion(this, i))
           points[i] = points[--count];
 
+        RectangleTree* tree = this;
+        while (tree != NULL)
+        {
+          tree->numDescendants--;
+          tree = tree->Parent();
+        }
         // This function will ensure that minFill is satisfied.
         CondenseTree(dataset->col(point), relevels, true);
         return true;
@@ -470,6 +491,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (!auxiliaryInfo.HandleNodeRemoval(this, i))
       {
         children[i] = children[--numChildren]; // Decrement numChildren.
+      }
+      RectangleTree* tree = this;
+      while (tree != NULL)
+      {
+        tree->numDescendants -= node->numDescendants;
+        tree = tree->Parent();
       }
       CondenseTree(arma::vec(), relevels, false);
       return true;
@@ -613,17 +640,7 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                   DescentType, AuxiliaryInformationType>::NumDescendants() const
 {
-  if (numChildren == 0)
-  {
-    return count;
-  }
-  else
-  {
-    size_t n = 0;
-    for (size_t i = 0; i < numChildren; i++)
-      n += children[i]->NumDescendants();
-    return n;
-  }
+  return numDescendants;
 }
 
 /**
@@ -763,6 +780,13 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (stillShrinking)
           stillShrinking = root->ShrinkBoundForBound(bound);
 
+        root = parent;
+        while (root != NULL)
+        {
+          root->numDescendants -= numDescendants;
+          root = root->Parent();
+        }
+
         stillShrinking = true;
         root = parent;
         while (root->Parent() != NULL)
@@ -816,6 +840,13 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           }
           if (stillShrinking)
             stillShrinking = root->ShrinkBoundForBound(bound);
+
+          root = parent;
+          while (root != NULL)
+          {
+            root->numDescendants -= numDescendants;
+            root = root->Parent();
+          }
 
           stillShrinking = true;
           root = parent;
@@ -1068,6 +1099,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   ar & CreateNVP(begin, "begin");
   ar & CreateNVP(count, "count");
+  ar & CreateNVP(numDescendants, "numDescendants");
   ar & CreateNVP(maxLeafSize, "maxLeafSize");
   ar & CreateNVP(minLeafSize, "minLeafSize");
   ar & CreateNVP(bound, "bound");

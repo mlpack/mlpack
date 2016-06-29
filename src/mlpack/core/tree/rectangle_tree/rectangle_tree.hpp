@@ -76,6 +76,8 @@ class RectangleTree
   //! The number of points in the dataset contained in this node (and its
   //! children).
   size_t count;
+  //! The number of descendants of this node.
+  size_t numDescendants;
   //! The max leaf size.
   size_t maxLeafSize;
   //! The minimum leaf size.

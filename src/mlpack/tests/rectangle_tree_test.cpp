@@ -316,6 +316,28 @@ int GetMinLevel(const TreeType& tree)
   return min;
 }
 
+/**
+ * A function to check that numDescendants values are set correctly.
+ */
+template<typename TreeType>
+size_t CheckNumDescendants(const TreeType& tree)
+{
+  if (tree.IsLeaf())
+  {
+    BOOST_REQUIRE_EQUAL(tree.NumDescendants(), tree.Count());
+    return tree.Count();
+  }
+
+  size_t numDescendants = 0;
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+    numDescendants += CheckNumDescendants(tree.Child(i));
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), numDescendants);
+
+  return numDescendants;
+}
+
 // A test to ensure that all leaf nodes are stored on the same level of the
 // tree.
 BOOST_AUTO_TEST_CASE(TreeBalance)
@@ -378,6 +400,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   CheckContainment(tree);
   CheckExactContainment(tree);
+  CheckNumDescendants(tree);
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
@@ -460,6 +483,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
   CheckContainment(tree);
   CheckExactContainment(tree);
+  CheckNumDescendants(tree);
 
   // Now we will compare the output of the R Tree vs the output of a naive
   // search.
@@ -510,6 +534,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   CheckContainment(rTree);
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
+  CheckNumDescendants(rTree);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -552,6 +577,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
+  CheckNumDescendants(xTree);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -592,6 +618,7 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
   CheckContainment(hilbertRTree);
   CheckExactContainment(hilbertRTree);
   CheckHierarchy(hilbertRTree);
+  CheckNumDescendants(hilbertRTree);
 
   knn1.Search(5, neighbors1, distances1);
 
