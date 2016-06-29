@@ -38,7 +38,8 @@ using RTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             RTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            NoAuxiliaryInformation>;
 
 /**
  * The R*-tree, a more recent variant of the R tree.  This template typedef
@@ -65,7 +66,8 @@ using RStarTree = RectangleTree<MetricType,
                                 StatisticType,
                                 MatType,
                                 RStarTreeSplit,
-                                RStarTreeDescentHeuristic>;
+                                RStarTreeDescentHeuristic,
+                                NoAuxiliaryInformation>;
 
 /**
  * The X-tree, a variant of the R tree with supernodes.  This template typedef
@@ -90,7 +92,44 @@ using XTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             XTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            XTreeAuxiliaryInformation>;
+
+/**
+ * The Hilbert R-tree, a variant of the R tree with an ordering along
+ * the Hilbert curve. This template typedef satisfies the TreeType policy API.
+ *
+ * @code
+ * @inproceedings{kamel1994r,
+ *   author = {Kamel, Ibrahim and Faloutsos, Christos},
+ *   title = {Hilbert R-tree: An Improved R-tree Using Fractals},
+ *   booktitle = {Proceedings of the 20th International Conference on Very Large Data Bases},
+ *   series = {VLDB '94},
+ *   year = {1994},
+ *   isbn = {1-55860-153-8},
+ *   pages = {500--509},
+ *   numpages = {10},
+ *   url = {http://dl.acm.org/citation.cfm?id=645920.673001},
+ *   acmid = {673001},
+ *   publisher = {Morgan Kaufmann Publishers Inc.},
+ *   address = {San Francisco, CA, USA}
+ * }
+ * @endcode
+ *
+ * @see @ref trees, RTree, DiscreteHilbertRTree
+ */
+template<typename TreeType>
+using DiscreteHilbertRTreeAuxiliaryInformation =
+      HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using HilbertRTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            HilbertRTreeSplit<2>,
+                            HilbertRTreeDescentHeuristic,
+                            DiscreteHilbertRTreeAuxiliaryInformation>;
+
 
 } // namespace tree
 } // namespace mlpack

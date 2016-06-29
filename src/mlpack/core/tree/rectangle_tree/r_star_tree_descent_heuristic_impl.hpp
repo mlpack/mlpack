@@ -16,7 +16,7 @@ namespace tree {
 template<typename TreeType>
 inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
-    const arma::vec& point)
+    const size_t point)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -41,9 +41,9 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
           ElemType newOverlap = 1.0;
           for (size_t k = 0; k < node->Bound().Dim(); k++)
           {
-            ElemType newHigh = std::max(point[k],
+            ElemType newHigh = std::max(node->Dataset().col(point)[k],
                 node->Children()[i]->Bound()[k].Hi());
-            ElemType newLow = std::min(point[k],
+            ElemType newLow = std::min(node->Dataset().col(point)[k],
                 node->Children()[i]->Bound()[k].Lo());
             overlap *= node->Children()[i]->Bound()[k].Hi() < node->Children()[j]->Bound()[k].Lo() || node->Children()[i]->Bound()[k].Lo() > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(node->Children()[i]->Bound()[k].Hi(), node->Children()[j]->Bound()[k].Hi()) - std::max(node->Children()[i]->Bound()[k].Lo(), node->Children()[j]->Bound()[k].Lo());
             newOverlap *= newHigh < node->Children()[j]->Bound()[k].Lo() || newLow > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(newHigh, node->Children()[j]->Bound()[k].Hi()) - std::max(newLow, node->Children()[j]->Bound()[k].Lo());
@@ -91,8 +91,8 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
       for (size_t j = 0; j < node->Bound().Dim(); j++)
       {
         v1 *= node->Children()[i]->Bound()[j].Width();
-        v2 *= node->Children()[i]->Bound()[j].Contains(point[j]) ? node->Children()[i]->Bound()[j].Width() : (node->Children()[i]->Bound()[j].Hi() < point[j] ? (point[j] - node->Children()[i]->Bound()[j].Lo()) :
-            (node->Children()[i]->Bound()[j].Hi() - point[j]));
+        v2 *= node->Children()[i]->Bound()[j].Contains(node->Dataset().col(point)[j]) ? node->Children()[i]->Bound()[j].Width() : (node->Children()[i]->Bound()[j].Hi() < node->Dataset().col(point)[j] ? (node->Dataset().col(point)[j] - node->Children()[i]->Bound()[j].Lo()) :
+            (node->Children()[i]->Bound()[j].Hi() - node->Dataset().col(point)[j]));
       }
 
       assert(v2 - v1 >= 0);

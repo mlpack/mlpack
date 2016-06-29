@@ -62,7 +62,7 @@ PARAM_INT("k", "Number of furthest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few pararmeters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
+    "'x', 'ball', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
@@ -72,6 +72,12 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "s");
+PARAM_DOUBLE("epsilon", "If specified, will do approximate furthest neighbor "
+    "search with given relative error. Must be in the range [0,1).", "e", 0);
+PARAM_DOUBLE("percentage", "If specified, will do approximate furthest neighbor"
+    " search. Must be in the range (0,1] (decimal form). Resultant neighbors "
+    "will be at least (p*100) % of the distance as the true furthest neighbor.",
+    "p", 1);
 
 // Convenience typedef.
 typedef NSModel<FurthestNeighborSort> KFNModel;
@@ -138,6 +144,24 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater than 0."
         << endl;
 
+  // Sanity check on epsilon.
+  double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0 || epsilon >= 1)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be in the range "
+        << "[0,1)." << endl;
+
+  // Sanity check on percentage.
+  const double percentage = CLI::GetParam<double>("percentage");
+  if (percentage <= 0 || percentage > 1)
+    Log::Fatal << "Invalid percentage: " << percentage << ".  Must be in the "
+        << "range (0,1] (decimal form)." << endl;
+
+  if (CLI::HasParam("percentage") && CLI::HasParam("epsilon"))
+    Log::Fatal << "Cannot provide both epsilon and percentage." << endl;
+
+  if (CLI::HasParam("percentage"))
+    epsilon = 1 - percentage;
+
   // We either have to load the reference data, or we have to load the model.
   NSModel<FurthestNeighborSort> kfn;
   const bool naive = CLI::HasParam("naive");
@@ -162,9 +186,11 @@ int main(int argc, char *argv[])
       tree = KFNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KFNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KFNModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball' and 'hilbert-r'." << endl;
 
     kfn.TreeType() = tree;
     kfn.RandomBasis() = randomBasis;
@@ -175,7 +201,8 @@ int main(int argc, char *argv[])
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
+        epsilon);
   }
   else
   {
@@ -191,6 +218,7 @@ int main(int argc, char *argv[])
     kfn.SingleMode() = CLI::HasParam("single_mode");
     kfn.Naive() = CLI::HasParam("naive");
     kfn.LeafSize() = size_t(lsInt);
+    kfn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.

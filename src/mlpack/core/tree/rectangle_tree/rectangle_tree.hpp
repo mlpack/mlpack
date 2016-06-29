@@ -14,6 +14,7 @@
 #include "../statistic.hpp"
 #include "r_tree_split.hpp"
 #include "r_tree_descent_heuristic.hpp"
+#include "no_auxiliary_information.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -34,13 +35,16 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam SplitType The type of split to use when inserting points.
  * @tparam DescentType The heuristic to use when descending the tree to insert
  *    points.
+ * @tparam AuxiliaryInformationType An auxiliary information contained
+ *    in the node. This information depends on the type of the RectangleTree.
  */
 
 template<typename MetricType = metric::EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename> class SplitType = RTreeSplit,
-         typename DescentType = RTreeDescentHeuristic>
+         typename SplitType = RTreeSplit,
+         typename DescentType = RTreeDescentHeuristic,
+         template<typename> class AuxiliaryInformationType = NoAuxiliaryInformation>
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
@@ -89,10 +93,8 @@ class RectangleTree
   bool ownsDataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
-  //! The local dataset
-  MatType* localDataset;
-  //! The class that performs the split of the node.
-  SplitType<RectangleTree> split;
+  //! A tree-specific information
+  AuxiliaryInformationType<RectangleTree> auxiliaryInfo;
 
  public:
   //! A single traverser for rectangle type trees.  See
@@ -188,26 +190,23 @@ class RectangleTree
   void SoftDelete();
 
   /**
-   * Set dataset to null. Used for memory management.  Be careful.
+   * Nullify the auxiliary information. Used for memory management.
+   * Be cafeful.
    */
   void NullifyData();
 
   /**
-   * Inserts a point into the tree. The point will be copied to the data matrix
-   * of the leaf node where it is finally inserted, but we pass by reference
-   * since it may be passed many times before it actually reaches a leaf.
+   * Inserts a point into the tree.
    *
-   * @param point The point (arma::vec&) to be inserted.
+   * @param point The index of a point in the dataset.
    */
   void InsertPoint(const size_t point);
 
   /**
    * Inserts a point into the tree, tracking which levels have been inserted
-   * into.  The point will be copied to the data matrix of the leaf node where
-   * it is finally inserted, but we pass by reference since it may be passed
-   * many times before it actually reaches a leaf.
+   * into.
    *
-   * @param point The point (arma::vec&) to be inserted.
+   * @param point The index of a point in the dataset.
    * @param relevels The levels that have been reinserted to on this top level
    *      insertion.
    */
@@ -229,9 +228,8 @@ class RectangleTree
                   std::vector<bool>& relevels);
 
   /**
-   * Deletes a point in the tree.  The point will be removed from the data
-   * matrix of the leaf node where it is store and the bounding rectangles will
-   * be updated.  However, the point will be kept in the centeral dataset. (The
+   * Deletes a point from the treeand, updates the bounding rectangle.
+   * However, the point will be kept in the centeral dataset. (The
    * user may remove it from there if he wants, but he must not change the
    * indices of the other points.) Returns true if the point is successfully
    * removed and false if it is not.  (ie. the point is not in the tree)
@@ -239,10 +237,9 @@ class RectangleTree
   bool DeletePoint(const size_t point);
 
   /**
-   * Deletes a point in the tree, tracking levels.  The point will be removed
-   * from the data matrix of the leaf node where it is store and the bounding
-   * rectangles will be updated.  However, the point will be kept in the
-   * centeral dataset. (The user may remove it from there if he wants, but he
+   * Deletes a point from the tree, updates the bounding rectangle,
+   * tracking levels. However, the point will be kept in the centeral dataset.
+   * (The user may remove it from there if he wants, but he
    * must not change the indices of the other points.) Returns true if the point
    * is successfully removed and false if it is not.  (ie. the point is not in
    * the tree)
@@ -291,10 +288,12 @@ class RectangleTree
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
 
-  //! Return the split object of this node.
-  const SplitType<RectangleTree>& Split() const { return split; }
+  //! Return the auxiliary information object of this node.
+  const AuxiliaryInformationType<RectangleTree> &AuxiliaryInfo() const
+  { return auxiliaryInfo; }
   //! Modify the split object of this node.
-  SplitType<RectangleTree>& Split() { return split; }
+  AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo()
+  { return auxiliaryInfo; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
@@ -328,16 +327,6 @@ class RectangleTree
   const MatType& Dataset() const { return *dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
-
-  //! Get the points vector for this node.
-  const std::vector<size_t>& Points() const { return points; }
-  //! Modify the points vector for this node.  Be careful!
-  std::vector<size_t>& Points() { return points; }
-
-  //! Get the local dataset of this node.
-  const MatType& LocalDataset() const { return *localDataset; }
-  //! Modify the local dataset of this node.
-  MatType& LocalDataset() { return *localDataset; }
 
   //! Get the metric which the tree uses.
   MetricType Metric() const { return MetricType(); }
@@ -430,7 +419,11 @@ class RectangleTree
    *
    * @param index Index of point for which a dataset index is wanted.
    */
-  size_t Point(const size_t index) const;
+  size_t Point(const size_t index) const { return points[index]; }
+
+  //! Modify the index of a particular point in this node.  Be very careful when
+  //! you do this!  You may make the tree invalid.
+  size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const RectangleTree* other) const
@@ -502,26 +495,6 @@ class RectangleTree
   static bool HasSelfChildren() { return false; }
 
  private:
-  /**
-   * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.  TO BE REMOVED
-   */
-  RectangleTree(const size_t begin,
-                const size_t count,
-                bound::HRectBound<MetricType> bound,
-                StatisticType stat,
-                const int maxLeafSize = 20) :
-      begin(begin),
-      count(count),
-      bound(bound),
-      stat(stat),
-      maxLeafSize(maxLeafSize) { }
-
-  RectangleTree* CopyMe()
-  {
-    return new RectangleTree(begin, count, bound, stat, maxLeafSize);
-  }
-
   /**
    * Splits the current node, recursing up the tree.
    *

@@ -22,7 +22,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -41,7 +41,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     tree->Children()[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    copy->Split().SplitLeafNode(copy, relevels);
+    RStarTreeSplit::SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -53,12 +53,12 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     // We sort the points by decreasing distance to the centroid of the bound.
     // We then remove the first p entries and reinsert them at the root.
     TreeType* root = tree;
-    while(root->Parent() != NULL)
+    while (root->Parent() != NULL)
       root = root->Parent();
     size_t p = tree->MaxLeafSize() * 0.3; // The paper says this works the best.
     if (p == 0)
     {
-      tree->Split().SplitLeafNode(tree, relevels);
+      RStarTreeSplit::SplitLeafNode(tree,relevels);
       return;
     }
 
@@ -68,17 +68,19 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].d = tree->Metric().Evaluate(center,
-          tree->LocalDataset().col(i));
+          tree->Dataset().col(tree->Point(i)));
       sorted[i].n = i;
     }
 
     std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
-    std::vector<int> pointIndices(p);
+    std::vector<size_t> pointIndices(p);
+
     for (size_t i = 0; i < p; i++)
     {
       // We start from the end of sorted.
-      pointIndices[i] = tree->Points()[sorted[sorted.size() - 1 - i].n];
-      root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
+      pointIndices[i] = tree->Point(sorted[sorted.size() - 1 - i].n);
+
+      root->DeletePoint(tree->Point(sorted[sorted.size() - 1 - i].n),
           relevels);
     }
 
@@ -104,7 +106,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     std::vector<SortStruct<ElemType>> sorted(tree->Count());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->LocalDataset().col(i)[j];
+      sorted[i].d = tree->Dataset().col(tree->Point(i))[j];
       sorted[i].n = i;
     }
 
@@ -140,25 +142,25 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
       std::vector<ElemType> minG2(maxG1.size());
       for (size_t k = 0; k < tree->Bound().Dim(); k++)
       {
-        minG1[k] = maxG1[k] = tree->LocalDataset().col(sorted[0].n)[k];
+        minG1[k] = maxG1[k] = tree->Dataset().col(tree->Point(sorted[0].n))[k];
         minG2[k] = maxG2[k] =
-            tree->LocalDataset().col(sorted[sorted.size() - 1].n)[k];
+            tree->Dataset().col(tree->Point(sorted[sorted.size() - 1].n))[k];
 
         for (size_t l = 1; l < tree->Count() - 1; l++)
         {
           if (l < cutOff)
           {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG1[k])
-              minG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG1[k])
-              maxG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
+            if (tree->Dataset().col(tree->Point(sorted[l].n))[k] < minG1[k])
+              minG1[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
+            else if (tree->Dataset().col(tree->Point(sorted[l].n))[k] > maxG1[k])
+              maxG1[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
           }
           else
           {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG2[k])
-              minG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG2[k])
-              maxG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
+            if (tree->Dataset().col(tree->Point(sorted[l].n))[k] < minG2[k])
+              minG2[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
+            else if (tree->Dataset().col(tree->Point(sorted[l].n))[k] > maxG2[k])
+              maxG2[k] = tree->Dataset().col(tree->Point(sorted[l].n))[k];
           }
         }
       }
@@ -208,7 +210,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
   std::vector<SortStruct<ElemType>> sorted(tree->Count());
   for (size_t i = 0; i < sorted.size(); i++)
   {
-    sorted[i].d = tree->LocalDataset().col(i)[bestAxis];
+    sorted[i].d = tree->Dataset().col(tree->Point(i))[bestAxis];
     sorted[i].n = i;
   }
 
@@ -222,9 +224,9 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].n));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].n));
     }
   }
   else
@@ -232,9 +234,9 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].n));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].n));
     }
   }
 
@@ -251,7 +253,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par, relevels);
+    RStarTreeSplit::SplitNonLeafNode(par,relevels);
 
   assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
@@ -269,8 +271,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
-                                                std::vector<bool>& relevels)
+bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -288,7 +289,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
 
-    copy->Split().SplitNonLeafNode(copy, relevels);
+    RStarTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
 
@@ -643,9 +644,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-  {
-    par->Split().SplitNonLeafNode(par, relevels);
-  }
+    RStarTreeSplit::SplitNonLeafNode(par,relevels);
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
@@ -673,8 +672,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
  * numberOfChildren.
  */
 template<typename TreeType>
-void RStarTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree,
-                                                  TreeType* srcNode)
+void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;
