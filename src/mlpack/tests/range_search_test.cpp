@@ -1244,8 +1244,6 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
 
 BOOST_AUTO_TEST_CASE(RSModelTest)
 {
-  math::RandomSeed(std::time(NULL));
-
   // Ensure that we can build an RSModel and get correct results.
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);

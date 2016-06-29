@@ -390,7 +390,6 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
-  math::RandomSeed(std::time(NULL));
   arma::mat data(3, 3000);
   data.randn();
 
