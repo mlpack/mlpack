@@ -64,7 +64,14 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
         numTreeTwoChildren <= node->MaxNumChildren() && numTreeTwoChildren > 0)
     {
       // Evaluate the cost using the number of splits and balancing.
-      size_t cost = numSplits * (std::abs(sorted.size() / 2 - i));
+      size_t balance;
+
+      if (sorted.size() / 2 > i )
+        balance = sorted.size() / 2 - i;
+      else
+        balance = i - sorted.size() / 2;
+
+      size_t cost = numSplits * balance;
       if (cost < minCost)
       {
         minCost = cost;
