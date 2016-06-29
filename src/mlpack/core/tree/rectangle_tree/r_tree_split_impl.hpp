@@ -34,7 +34,7 @@ void RTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     RTreeSplit::SplitLeafNode(copy,relevels);
     return;
   }
@@ -57,10 +57,10 @@ void RTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
   size_t index = 0;
-  while (par->Children()[index] != tree) { ++index; }
+  while (par->children[index] != tree) { ++index; }
 
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   // We only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
@@ -97,7 +97,7 @@ bool RTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     RTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
@@ -117,14 +117,14 @@ bool RTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
   size_t index = 0;
-  while (par->Children()[index] != tree) { ++index; }
+  while (par->children[index] != tree) { ++index; }
 
   assert(index != par->NumChildren());
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   for (size_t i = 0; i < par->NumChildren(); i++)
-    assert(par->Children()[i] != tree);
+    assert(par->children[i] != tree);
 
   // We only add one at a time, so should only need to test for equality just in
   // case, we use an assert.
@@ -136,10 +136,10 @@ bool RTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
   for (size_t i = 0; i < treeOne->NumChildren(); i++)
-    treeOne->Children()[i]->Parent() = treeOne;
+    treeOne->children[i]->Parent() = treeOne;
 
   for (size_t i = 0; i < treeTwo->NumChildren(); i++)
-    treeTwo->Children()[i]->Parent() = treeTwo;
+    treeTwo->children[i]->Parent() = treeTwo;
 
   assert(treeOne->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeTwo->NumChildren() <= treeTwo->MaxNumChildren());
@@ -369,22 +369,22 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
 
   for (size_t i = 0; i < oldTree->NumChildren(); i++)
     for (size_t j = i + 1; j < oldTree->NumChildren(); j++)
-      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+      assert(oldTree->children[i] != oldTree->children[j]);
 
-  InsertNodeIntoTree(treeOne, oldTree->Children()[intI]);
-  InsertNodeIntoTree(treeTwo, oldTree->Children()[intJ]);
+  InsertNodeIntoTree(treeOne, oldTree->children[intI]);
+  InsertNodeIntoTree(treeTwo, oldTree->children[intJ]);
 
   // If intJ is the last node in the tree, we need to switch the order so that
   // we remove the correct nodes.
   if (intI > intJ)
   {
-    oldTree->Children()[intI] = oldTree->Children()[--end];
-    oldTree->Children()[intJ] = oldTree->Children()[--end];
+    oldTree->children[intI] = oldTree->children[--end];
+    oldTree->children[intJ] = oldTree->children[--end];
   }
   else
   {
-    oldTree->Children()[intJ] = oldTree->Children()[--end];
-    oldTree->Children()[intI] = oldTree->Children()[--end];
+    oldTree->children[intJ] = oldTree->children[--end];
+    oldTree->children[intI] = oldTree->children[--end];
   }
 
   assert(treeOne->NumChildren() == 1);
@@ -392,13 +392,13 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
 
   for (size_t i = 0; i < end; i++)
     for (size_t j = i + 1; j < end; j++)
-      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+      assert(oldTree->children[i] != oldTree->children[j]);
 
   for (size_t i = 0; i < end; i++)
-    assert(oldTree->Children()[i] != treeOne->Children()[0]);
+    assert(oldTree->children[i] != treeOne->children[0]);
 
   for (size_t i = 0; i < end; i++)
-    assert(oldTree->Children()[i] != treeTwo->Children()[0]);
+    assert(oldTree->children[i] != treeTwo->children[0]);
 
   size_t numAssignTreeOne = 1;
   size_t numAssignTreeTwo = 1;
@@ -471,16 +471,16 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
     // to the appropriate rectangle.
     if (bestRect == 1)
     {
-      InsertNodeIntoTree(treeOne, oldTree->Children()[bestIndex]);
+      InsertNodeIntoTree(treeOne, oldTree->children[bestIndex]);
       numAssignTreeOne++;
     }
     else
     {
-      InsertNodeIntoTree(treeTwo, oldTree->Children()[bestIndex]);
+      InsertNodeIntoTree(treeTwo, oldTree->children[bestIndex]);
       numAssignTreeTwo++;
     }
 
-    oldTree->Children()[bestIndex] = oldTree->Children()[--end];
+    oldTree->children[bestIndex] = oldTree->children[--end];
   }
 
   // See if we need to satisfy the minimum fill.
@@ -490,7 +490,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
     {
       for (size_t i = 0; i < end; i++)
       {
-        InsertNodeIntoTree(treeOne, oldTree->Children()[i]);
+        InsertNodeIntoTree(treeOne, oldTree->children[i]);
         numAssignTreeOne++;
       }
     }
@@ -498,7 +498,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
     {
       for (size_t i = 0; i < end; i++)
       {
-        InsertNodeIntoTree(treeTwo, oldTree->Children()[i]);
+        InsertNodeIntoTree(treeTwo, oldTree->children[i]);
         numAssignTreeTwo++;
       }
     }
@@ -506,11 +506,11 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
 
   for (size_t i = 0; i < treeOne->NumChildren(); i++)
     for (size_t j = i + 1; j < treeOne->NumChildren(); j++)
-      assert(treeOne->Children()[i] != treeOne->Children()[j]);
+      assert(treeOne->children[i] != treeOne->children[j]);
 
   for (size_t i = 0; i < treeTwo->NumChildren(); i++)
     for (size_t j = i + 1; j < treeTwo->NumChildren(); j++)
-      assert(treeTwo->Children()[i] != treeTwo->Children()[j]);
+      assert(treeTwo->children[i] != treeTwo->children[j]);
 }
 
 /**
@@ -521,7 +521,7 @@ template<typename TreeType>
 void RTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()++] = srcNode;
+  destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
 } // namespace tree

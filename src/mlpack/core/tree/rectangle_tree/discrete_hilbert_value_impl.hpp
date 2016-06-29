@@ -45,7 +45,7 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
   // Calculate the Hilbert value for all points.
   if (!tree->Parent()) // This is the root node.
     ownsLocalHilbertValues = true;
-  else if (tree->Parent()->Children()[0]->IsLeaf())
+  else if (tree->Parent()->Child(0).IsLeaf())
   {
     // This is a leaf node.
     assert(tree->Parent()->NumChildren() > 0);
@@ -342,12 +342,12 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
   if (nodeIndex + 1 == node->NumChildren())
   {
     // Update the largest Hilbert value if the value exists
-    TreeType* child = node->Children()[nodeIndex - 1];
-    if (child->AuxiliaryInfo.HilbertValue().NumValues() != 0)
+    TreeType& child = node->Child(nodeIndex - 1);
+    if (child.AuxiliaryInfo.HilbertValue().NumValues() != 0)
     {
-      numValues = child->AuxiliaryInfo.HilbertValue().NumValues();
+      numValues = child.AuxiliaryInfo.HilbertValue().NumValues();
       localHilbertValues =
-          child->AuxiliaryInfo.HilbertValue().LocalHilbertValues();
+          child.AuxiliaryInfo.HilbertValue().LocalHilbertValues();
     }
     else
     {
@@ -382,10 +382,10 @@ void DiscreteHilbertValue<TreeElemType>::UpdateLargestValue(TreeType* node)
   if (!node->IsLeaf())
   {
     // Update the largest Hilbert value
-    localHilbertValues = node->Children()[node->NumChildren() -
-        1]->AuxiliaryInfo().HilbertValue().LocalHilbertValues();
-    numValues = node->Children()[node->NumChildren() -
-        1]->AuxiliaryInfo().HilbertValue().NumValues();
+    localHilbertValues = node->Child(node->NumChildren() -
+        1).AuxiliaryInfo().HilbertValue().LocalHilbertValues();
+    numValues = node->Child(node->NumChildren() -
+        1).AuxiliaryInfo().HilbertValue().NumValues();
   }
 }
 
@@ -399,7 +399,7 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
   // We need to update the local dataset if points were redistributed.
   size_t numPoints = 0;
   for (size_t i = firstSibling; i <= lastSibling; i++)
-    numPoints += parent->Children()[i]->NumPoints();
+    numPoints += parent->Child(i).NumPoints();
 
   // Copy the local Hilbert values.
   arma::Mat<HilbertElemType> tmp(localHilbertValues->n_rows, numPoints);
@@ -408,7 +408,7 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
   for (size_t i = firstSibling; i<= lastSibling; i++)
   {
     DiscreteHilbertValue<TreeElemType> &value =
-        parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+        parent->Child(i).AuxiliaryInfo().HilbertValue();
 
     for (size_t j = 0; j < value.NumValues(); j++)
     {
@@ -424,14 +424,14 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
   for (size_t i = firstSibling; i <= lastSibling; i++)
   {
     DiscreteHilbertValue<TreeElemType> &value =
-        parent->Children()[i]->AuxiliaryInfo().HilbertValue();
+        parent->Child(i).AuxiliaryInfo().HilbertValue();
 
-    for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
     {
       value.LocalHilbertValues()->col(j) = tmp.col(iPoint);
       iPoint++;
     }
-    value.NumValues() = parent->Children()[i]->NumPoints();
+    value.NumValues() = parent->Child(i).NumPoints();
   }
 
   assert(iPoint == numPoints);

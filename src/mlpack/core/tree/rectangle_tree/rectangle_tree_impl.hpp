@@ -162,11 +162,11 @@ RectangleTree(
     if (numChildren > 0)
     {
       for (size_t i = 0; i < numChildren; i++)
-        children[i] = new RectangleTree(*(other.Children()[i]));
+        children[i] = new RectangleTree(other.Child(i));
     }
   }
   else
-    children = other.Children();
+    children = other.children;
 }
 
 /**
@@ -477,7 +477,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
     bool contains = true;
     for (size_t j = 0; j < node->Bound().Dim(); j++)
-      contains &= Children()[i]->Bound()[j].Contains(node->Bound()[j]);
+      contains &= Child(i).Bound()[j].Contains(node->Bound()[j]);
 
     if (contains)
       if (children[i]->RemoveNode(node, relevels))
@@ -517,7 +517,7 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
 
   while (!currentNode->IsLeaf())
   {
-    currentNode = currentNode->Children()[0];
+    currentNode = currentNode->children[0];
     n++;
   }
 
@@ -743,12 +743,12 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     // We can't delete the root node.
     for (size_t i = 0; i < parent->NumChildren(); i++)
     {
-      if (parent->Children()[i] == this)
+      if (parent->children[i] == this)
       {
         // Decrement numChildren.
         if (!auxiliaryInfo.HandleNodeRemoval(parent, i))
         {
-          parent->Children()[i] = parent->Children()[--parent->NumChildren()];
+          parent->children[i] = parent->children[--parent->NumChildren()];
         }
 
         // We find the root and shrink bounds at the same time.
@@ -796,12 +796,12 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       // The normal case.  We need to be careful with the root.
       for (size_t j = 0; j < parent->NumChildren(); j++)
       {
-        if (parent->Children()[j] == this)
+        if (parent->children[j] == this)
         {
           // Decrement numChildren.
           if (!auxiliaryInfo.HandleNodeRemoval(parent,j))
           {
-            parent->Children()[j] = parent->Children()[--parent->NumChildren()];
+            parent->children[j] = parent->children[--parent->NumChildren()];
           }
           size_t level = TreeDepth();
 
@@ -854,7 +854,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       }
 
       for (size_t i = 0; i < child->NumChildren(); i++) {
-        children[i] = child->Children()[i];
+        children[i] = child->children[i];
         children[i]->Parent() = this;
       }
 

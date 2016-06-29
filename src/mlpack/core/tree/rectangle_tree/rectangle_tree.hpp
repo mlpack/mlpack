@@ -339,11 +339,6 @@ class RectangleTree
   //! Modify the number of child nodes.  Be careful.
   size_t& NumChildren() { return numChildren; }
 
-  //! Get the children of this node.
-  const std::vector<RectangleTree*>& Children() const { return children; }
-  //! Modify the children of this node.
-  std::vector<RectangleTree*>& Children() { return children; }
-
   /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
@@ -513,6 +508,12 @@ class RectangleTree
 
   //! Friend access is given for the default constructor.
   friend class boost::serialization::access;
+
+  //! Give friend access for SplitType.
+  friend SplitType;
+
+  //! Give friend access for AuxiliaryInformationType.
+  friend class AuxiliaryInformationType<RectangleTree>;
 
  public:
   /**
