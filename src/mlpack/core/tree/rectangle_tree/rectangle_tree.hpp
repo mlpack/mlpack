@@ -56,7 +56,8 @@ class RectangleTree
   typedef MatType Mat;
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
-
+  //! The auxiliary information type held by the tree.
+  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -515,7 +516,7 @@ class RectangleTree
   friend SplitType;
 
   //! Give friend access for AuxiliaryInformationType.
-  friend class AuxiliaryInformationType<RectangleTree>;
+  friend AuxiliaryInformation;
 
  public:
   /**
