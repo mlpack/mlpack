@@ -423,11 +423,15 @@ class NEAT {
     ssize_t coincident = 0;
 
     for (ssize_t i=0; i<genome1.NumLink(); ++i) {
+      int linkEnabledInGenome1 = (int) genome1.aLinkGenes[i].Enabled();
       ssize_t innovId = genome1.aLinkGenes[i].InnovationId();
       ssize_t idx = genome2.GetLinkIndex(innovId);
       bool linkContainedInGenome2 = (idx != -1);
+
       if (linkContainedInGenome2) {
-        deltaW += std::abs(genome1.aLinkGenes[i].Weight() - genome2.aLinkGenes[idx].Weight());
+        int linkEnabledInGenome2 = (int) genome2.aLinkGenes[idx].Enabled();
+        deltaW += std::abs(genome1.aLinkGenes[i].Weight() * linkEnabledInGenome1 - 
+                           genome2.aLinkGenes[idx].Weight() * linkEnabledInGenome2);
         ++coincident;
       }
     }
@@ -479,15 +483,13 @@ class NEAT {
   // Set adjusted fitness.
   // NOTICE: we assume fitness have already evaluated before adjust it.
   // Maybe we can add some flag or other way to judge whether is evaluated or not.
-  void AdjustFitness(Population& population) {
+  void SetAdjustedFitness(Population& population) {
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
-      if (population.aSpecies[i].aGenomes.size() > 0) {
-        for (ssize_t j=0; j<population.aSpecies[i].aGenomes.size(); ++j) {
-          double fitness = population.aSpecies[i].aGenomes[j].Fitness();
-          ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
-          double adjustedFitness = fitness / speciesSize;
-          population.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
-        }
+      ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
+      for (ssize_t j=0; j<speciesSize; ++j) {
+        double fitness = population.aSpecies[i].aGenomes[j].Fitness();
+        double adjustedFitness = fitness / speciesSize;
+        population.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
       }
     }
   }
@@ -507,6 +509,14 @@ class NEAT {
     std::sort(genomes.begin(), genomes.end(), Species::CompareGenome);
   }
 
+  // SortGenomes by adjusted fitness. Smaller is better.
+  static bool CompareGenomeByAdjustedFitness(Genome lg, Genome rg) {
+    return (lg.AdjustedFitness() < rg.AdjustedFitness());
+  }
+  void SortGenomesByAdjustedFitness(std::vector<Genome>& genomes) {
+    std::sort(genomes.begin(), genomes.end(), CompareGenomeByAdjustedFitness);
+  }
+
   // Get genome index in a genomes vector.
   ssize_t GetGenomeIndex(std::vector<Genome>& genomes, ssize_t id) {
     for (ssize_t i=0; i<genomes.size(); ++i) {
@@ -521,9 +531,10 @@ class NEAT {
     //printf("average rank 0\n");
     std::vector<Genome> genomes;
     //printf("average rank 0.5\n");
+    SetAdjustedFitness(population);
     AggregateGenomes(population, genomes);
     //printf("average rank 1\n");
-    SortGenomes(genomes);
+    SortGenomesByAdjustedFitness(genomes);  //!! we use adjusted fitness here for rank.
     speciesAverageRank.clear();
     //printf("average rank 2\n");
 
@@ -717,6 +728,13 @@ class NEAT {
     // Breed children in each species. 
     std::vector<double> speciesAverageRank;
     CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
+    //DEBUGGING!!!!!!!!!
+    printf("Species average rank are: ");
+    for (ssize_t s=0; s<speciesAverageRank.size(); ++s) {
+      std::cout<< speciesAverageRank[s] << "  ";
+    }
+    printf("\n");
+    //DEBUGGING!!!!!!!!!
     //printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
     //printf("hehe 3\n"); // DEBUG
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
@@ -780,6 +798,12 @@ class NEAT {
     //printf("hehe 6\n"); // DEBUG
 
     // Speciate genomes into new species.
+    std::vector<Genome> populationGenomes;
+    AggregateGenomes(aPopulation, populationGenomes);
+    aPopulation.aSpecies.clear();
+    for (ssize_t i=0; i<populationGenomes.size(); ++i) {
+      AddGenomeToSpecies(aPopulation, populationGenomes[i]);
+    }
     for (ssize_t i=0; i<childGenomes.size(); ++i) {
       AddGenomeToSpecies(aPopulation, childGenomes[i]);
     }
@@ -841,8 +865,8 @@ class NEAT {
       ++generation;
     }
   }
- 
- private:
+  
+  private:
   // Task.
   TaskType aTask;
 
