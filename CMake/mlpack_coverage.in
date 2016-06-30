@@ -1,15 +1,20 @@
 #!/bin/bash
 
 test_case=""
+gcov_loc=""
 
-while getopts ":t:" opt; do
+while getopts ":t:g:" opt; do
   case $opt in
     t)
       test_case=$OPTARG
       echo "Finding coverage with $OPTARG tests."
       ;;
+    g)
+      gcov_loc=$OPTARG
+      echo "Using gcov: $OPTARG"
+      ;;
     \?)
-      echo "Invalid option: -$OPTARG" >&2
+      echo "Invalid option: -$OPTARG"
       exit 1
       ;;
     :)
@@ -23,14 +28,18 @@ done
 lcov -b . -c -i -d ./ -o .coverage.wtest.base
 
 # Run the tests
-if [$test_case -eq ""]
+if [ "$test_case" = "" ];
 then ${CMAKE_BINARY_DIR}/bin/mlpack_test
 else
   ${CMAKE_BINARY_DIR}/bin/mlpack_test --run_test=$test_case
 fi
 
 # Generate coverage based on executed tests
-lcov -b . -c -d ./ -o .coverage.wtest.run
+if [ "$gcov_loc" = "" ];
+then lcov -b . -c -d ./ -o .coverage.wtest.run
+else 
+  lcov -b . -c -d ./ -o .coverage.wtest.run --gcov-tool=$gcov_loc
+fi
 
 # Merge coverage tracefiles
 lcov -a .coverage.wtest.base -a .coverage.wtest.run  -o .coverage.total
@@ -58,7 +67,4 @@ genhtml -o ./coverage/ .coverage.total
 # Extra: Preserve coverage file in coveragehistory folder
 [[ -d ./coveragehistory/ ]] || mkdir coveragehistory
 cp .coverage.total ./coveragehistory/`date +'%Y.%m.%d-coverage'`
-
-# Cleanup
-rm .coverage.*
 
