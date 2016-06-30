@@ -29,6 +29,7 @@ class TaskXor {
   double EvalFitness(Genome& genome) {
   	// Check input size
   	if (genome.NumInput() != 3 || genome.NumOutput() != 1) {
+      printf("number of input is %d, output is %d \n", genome.NumInput(), genome.NumOutput()); //!!! DEBUG
   	  return -1;  // -1 means network structure input/output dimension not correct.
   	}
 

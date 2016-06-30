@@ -95,13 +95,27 @@ class Genome {
   void Id(ssize_t id) { aId = id; }
 
   // Get input length.
-  ssize_t NumInput() const { return aNumInput; }
+  ssize_t NumInput() {
+    ssize_t numInput = 0;
+    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
+      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS) //!!!
+        ++numInput;
+    }
+    return numInput;
+  }
 
   // Set input length.
   void NumInput(ssize_t numInput) { aNumInput = numInput; }
 
   // Get output length.
-  ssize_t NumOutput() const { return aNumOutput; }
+  ssize_t NumOutput() {
+    ssize_t numOutput = 0;
+    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {  
+      if (aNeuronGenes[i].Type() == OUTPUT)  //!!!
+        ++numOutput;
+    }
+    return numOutput;
+  }
 
   // Set output length.
   void NumOutput(ssize_t numOutput) { aNumOutput = numOutput; }
