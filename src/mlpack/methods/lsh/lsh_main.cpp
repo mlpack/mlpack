@@ -5,14 +5,8 @@
  * This file computes the approximate nearest-neighbors using 2-stable
  * Locality-sensitive Hashing.
  */
-#include <time.h>
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
 
 #include "lsh_search.hpp"
 
