@@ -39,7 +39,7 @@ class Population {
   // Parametric constructor.
   Population(Genome& seedGenome, ssize_t populationSize) {
     aPopulationSize = populationSize;
-    aNumSpecies = 0;
+    aNumSpecies = 1;
     aBestFitness = DBL_MAX;
     Species species(seedGenome, populationSize);
     aSpecies.push_back(species);  // NOTICE: we don't speciate.

@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   params.aMutateRate = 0.1;
   params.aMutateSize = 0.02;
   params.aElitePercentage = 0.2;
-  params.aMaxGeneration = 1000;
+  params.aMaxGeneration = 500;
 
   // Construct seed genome for xor task.
   ssize_t id = 0;

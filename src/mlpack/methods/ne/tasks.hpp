@@ -51,7 +51,9 @@ class TaskXor {
 
   	double fitness = 0;
   	for (int i=0; i<4; ++i) {
+      printf("start activate\n");
   		genome.Activate(inputs[i]);
+      printf("end activate\n");
   		double output = genome.Output()[0];
   	    //fitness += FitnissFunction::Error(output, outputs[i]); incorrect
   	    fitness += pow((output - outputs[i]), 2);  // TODO: revise.
