@@ -305,7 +305,7 @@ printf("addlink 5\n");
     childGenome.NumInput(momGenome.NumInput());
     childGenome.NumOutput(momGenome.NumOutput());
     childGenome.GenomeDepth();
-    
+
     printf("crossover 1\n");
     // Iterate to add link genes and neuron genes to child genome.
     for (ssize_t i=0; i<momGenome.NumLink(); ++i) {
@@ -446,8 +446,8 @@ printf("crossover 12\n");
 
   // Add genome to existing species or create new species.
   void AddGenomeToSpecies(Population& population, Genome& genome) {
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
-      if (population.aSpecies[i].SpeciesSize() > 0) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
+      if (population.aSpecies[i].aGenomes.size() > 0) {
         if (IsSameSpecies(population.aSpecies[i].aGenomes[0], genome)) {  // each first genome in species is the representative genome.
           population.aSpecies[i].AddGenome(genome);
           return;
@@ -464,7 +464,7 @@ printf("crossover 12\n");
 
   // Remove stale species.
   void RemoveStaleSpecies(Population& population) {
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       if (population.aSpecies[i].StaleAge() > aStaleAgeThreshold) {
         population.RemoveSpecies(i);
       }
@@ -475,11 +475,11 @@ printf("crossover 12\n");
   // NOTICE: we assume fitness have already evaluated before adjust it.
   // Maybe we can add some flag or other way to judge whether is evaluated or not.
   void AdjustFitness(Population& population) {
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
-      if (population.aSpecies[i].SpeciesSize() > 0) {
-        for (ssize_t j=0; j<population.aSpecies[i].SpeciesSize(); ++j) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
+      if (population.aSpecies[i].aGenomes.size() > 0) {
+        for (ssize_t j=0; j<population.aSpecies[i].aGenomes.size(); ++j) {
           double fitness = population.aSpecies[i].aGenomes[j].Fitness();
-          ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
+          ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
           double adjustedFitness = fitness / speciesSize;
           population.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
         }
@@ -490,8 +490,8 @@ printf("crossover 12\n");
   // Aggregate population's genomes.
   void AggregateGenomes(Population& population, std::vector<Genome>& genomes) {
     genomes.clear();
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
-      for (ssize_t j=0; j<population.aSpecies[i].SpeciesSize(); ++j) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {  //!!! is num species updated?
+      for (ssize_t j=0; j<population.aSpecies[i].aGenomes.size(); ++j) {
         genomes.push_back(population.aSpecies[i].aGenomes[j]);
       }
     }
@@ -513,14 +513,18 @@ printf("crossover 12\n");
 
   // Calculate species' average rank in population.
   void CalcSpeciesAverageRank(Population& population, std::vector<double>& speciesAverageRank) {
+    printf("average rank 0\n");
     std::vector<Genome> genomes;
+    printf("average rank 0.5\n");
     AggregateGenomes(population, genomes);
+    printf("average rank 1\n");
     SortGenomes(genomes);
     speciesAverageRank.clear();
+    printf("average rank 2\n");
 
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       double averageRank = 0;
-      ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
+      ssize_t speciesSize = population.aSpecies[i].aGenomes.size(); //!! NOTICE: species size updated???
 
       for (ssize_t j=0; j<speciesSize; ++j) {
         averageRank += GetGenomeIndex(genomes, population.aSpecies[i].aGenomes[j].Id());
@@ -539,7 +543,7 @@ printf("crossover 12\n");
     CalcSpeciesAverageRank(population, speciesAverageRank);
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
 
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       double weak = (std::floor(speciesAverageRank[i] * population.PopulationSize() / totalAverageRank)
                     > 1);
       if (weak) {
@@ -550,21 +554,28 @@ printf("crossover 12\n");
 
   // Remove a portion weak genomes in each species
   void CullSpecies(Population& population, double percentageToRemove) {
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+    printf("cull species 0\n");
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
+      printf("cull species 0.5\n");
       population.aSpecies[i].SortGenomes();
-      ssize_t numRemove = std::floor(population.aSpecies[i].SpeciesSize() * percentageToRemove);
+      printf("cull species 0.6\n");
+      ssize_t numRemove = std::floor(population.aSpecies[i].aGenomes.size() * percentageToRemove); // NOTICE:!! debuggin shows aGenomes.size() not updated
+      printf("numRemove is %d\n", numRemove);
+      printf("number of genome is %d\n", population.aSpecies[i].aGenomes.size());
+      printf("cull species 1\n");
       while (numRemove > 0) {
         population.aSpecies[i].aGenomes.pop_back();
         --numRemove;
       }
+      printf("cull species 4\n");
     }
   }
 
   // Only keep the best genome in each species.
   void CullSpeciesToOne(Population& population) {
-    for (ssize_t i=0; i<population.NumSpecies(); ++i) {
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       population.aSpecies[i].SortGenomes();
-      ssize_t speciesSize = population.aSpecies[i].SpeciesSize();
+      ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
       if (speciesSize > 0) {
         Genome bestGenome = population.aSpecies[i].aGenomes[0];
         population.aSpecies[i].aGenomes.clear();
@@ -674,7 +685,7 @@ printf("crossover 12\n");
     printf("hehe 1\n"); // DEBUG
 
     // Remove weak species.
-    if (aPopulation.NumSpecies() > 10) {
+    if (aPopulation.aSpecies.size() > 10) {
       RemoveWeakSpecies(aPopulation);
     }
     printf("hehe 2\n"); // DEBUG
@@ -730,8 +741,8 @@ printf("crossover 12\n");
 
   // Evaluate genomes in population, set genomes' fitness.
   void Evaluate() {
-    for (ssize_t i=0; i<aPopulation.NumSpecies(); ++i) {
-      for (ssize_t j=0; j<aPopulation.aSpecies[i].SpeciesSize(); ++j) {
+    for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
+      for (ssize_t j=0; j<aPopulation.aSpecies[i].aGenomes.size(); ++j) {
         printf("start eval fitness\n");
         double fitness = aTask.EvalFitness(aPopulation.aSpecies[i].aGenomes[j]);
         printf("end eval fitness\n");
