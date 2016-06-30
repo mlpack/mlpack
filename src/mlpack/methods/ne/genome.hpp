@@ -291,7 +291,7 @@ class Genome {
       neuronIdToIndex.insert(std::pair<ssize_t, ssize_t>(aNeuronGenes[i].Id(), i));
     }
 
-    printf("aDepth is %d \n", aDepth);
+    //printf("aDepth is %d \n", aDepth);
     // Activate layer by layer.
     for (ssize_t i=0; i<aDepth; ++i) {
       // Loop links to calculate neurons' input sum.

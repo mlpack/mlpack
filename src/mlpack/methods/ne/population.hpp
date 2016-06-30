@@ -104,8 +104,8 @@ class Population {
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitness() {
     aBestFitness = DBL_MAX;
-    for (ssize_t i=0; i<NumSpecies(); ++i) {
-      for (ssize_t j=0; j<aSpecies[i].SpeciesSize(); ++j) {
+    for (ssize_t i=0; i<aSpecies.size(); ++i) {
+      for (ssize_t j=0; j<aSpecies[i].aGenomes.size(); ++j) {
         if (aSpecies[i].aGenomes[j].Fitness() < aBestFitness) {
           aBestFitness = aSpecies[i].aGenomes[j].Fitness();
         }
@@ -116,7 +116,7 @@ class Population {
   // Add species.
   void AddSpecies(Species& species) {
     aSpecies.push_back(species);
-    aPopulationSize += species.SpeciesSize();
+    aPopulationSize += species.aGenomes.size();
     ++aNumSpecies;  // TODO: do we really need numSpecies? Maybe NumSpecies() is enough.
     ++aNextSpeciesId;
   }
