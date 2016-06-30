@@ -677,6 +677,9 @@ class NEAT {
 
   // Reproduce next generation of population.
   void Reproduce() {
+    // keep best genome.
+    Genome lastBestGenome = aPopulation.BestGenome();
+
     // Remove stale species.
     RemoveStaleSpecies(aPopulation);
     //printf("hehe 0\n"); // DEBUG
@@ -698,6 +701,7 @@ class NEAT {
     //printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
     //printf("hehe 3-0\n");
     std::vector<Genome> childGenomes;
+    childGenomes.push_back(lastBestGenome);
     //printf("hehe 3-01\n");
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       // number of child genomes by this species.
@@ -750,7 +754,7 @@ class NEAT {
       }
 
       double oldSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
-      aPopulation.aSpecies[i].SetBestFitness();
+      aPopulation.aSpecies[i].SetBestFitnessAndGenome();
       double newSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
       if (newSpeciesBestFitness < oldSpeciesBestFitness) {
         aPopulation.aSpecies[i].StaleAge(0);
@@ -759,7 +763,7 @@ class NEAT {
         aPopulation.aSpecies[i].StaleAge(staleAge + 1);
       }
     }
-    aPopulation.SetBestFitness();
+    aPopulation.SetBestFitnessAndGenome();
   }
 
   // Evolve.

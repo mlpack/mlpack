@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   // Set CNE algorithm parameters.
   Parameters params;
   params.aPopulationSize = 100;
-  params.aMaxGeneration = 100;
+  params.aMaxGeneration = 500;
   params.aCoeffDisjoint = 2.0;
   params.aCoeffWeightDiff = 0.4;
   params.aCompatThreshold = 1.0;

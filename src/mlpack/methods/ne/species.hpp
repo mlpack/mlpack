@@ -98,7 +98,7 @@ class Species {
   double BestFitness() const { return aBestFitness; }
 
   // Set best fitness to be the minimum of all genomes' fitness.
-  void SetBestFitness() {
+  void SetBestFitnessAndGenome() {
     if (aGenomes.size() == 0) 
       return;
 
@@ -106,6 +106,7 @@ class Species {
     for (ssize_t i=0; i<aGenomes.size(); ++i) {
       if (aGenomes[i].Fitness() < aBestFitness) {
         aBestFitness = aGenomes[i].Fitness();
+        aBestGenome = aGenomes[i];
       }
     }
   }

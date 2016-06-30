@@ -102,12 +102,13 @@ class Population {
   ssize_t NextGenomeId() const { return aNextGenomeId; }
 
   // Set best fitness to be the minimum of all genomes' fitness.
-  void SetBestFitness() {
+  void SetBestFitnessAndGenome() {
     aBestFitness = DBL_MAX;
     for (ssize_t i=0; i<aSpecies.size(); ++i) {
       for (ssize_t j=0; j<aSpecies[i].aGenomes.size(); ++j) {
         if (aSpecies[i].aGenomes[j].Fitness() < aBestFitness) {
           aBestFitness = aSpecies[i].aGenomes[j].Fitness();
+          aBestGenome = aSpecies[i].aGenomes[j];
         }
       }
     }

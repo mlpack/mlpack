@@ -138,7 +138,7 @@ class CNE {
         double fitness = aTask.EvalFitness(aSpecies.aGenomes[i]);
         aSpecies.aGenomes[i].Fitness(fitness);
       }
-      aSpecies.SetBestFitness();
+      aSpecies.SetBestFitnessAndGenome();
 
     	// Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aSpecies.BestFitness());
