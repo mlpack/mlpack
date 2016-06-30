@@ -64,6 +64,8 @@ PARAM_INT("tables", "The number of hash tables to be used.", "L", 30);
 PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing in the "
     "LSH preprocessing. By default, the LSH class automatically estimates a "
     "hash width for its use.", "H", 0.0);
+PARAM_INT("num_probes", "Number of additional probes for Multiprobe LSH;"
+    " if 0, traditional LSH is used.", "T", 0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
 PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
@@ -137,6 +139,7 @@ int main(int argc, char *argv[])
   const size_t numProj = CLI::GetParam<int>("projections");
   const size_t numTables = CLI::GetParam<int>("tables");
   const double hashWidth = CLI::GetParam<double>("hash_width");
+  const size_t numProbes = (size_t) CLI::GetParam<int>("num_probes");
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -180,11 +183,11 @@ int main(int argc, char *argv[])
         Log::Info << "Loaded query data from '" << queryFile << "' ("
             << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
       }
-      allkann.Search(queryData, k, neighbors, distances);
+      allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
     {
-      allkann.Search(k, neighbors, distances);
+      allkann.Search(k, neighbors, distances, 0, numProbes);
     }
   }
 

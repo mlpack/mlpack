@@ -16,8 +16,13 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 /**
- * Generates a point set of four clusters around (0.5, 0.5),
- * (3.5, 0.5), (0.5, 3.5), (3.5, 3.5).
+ * Generates a point set of four clusters:
+ * -C1 around (0.5, 3.5),
+ * -C2 around (3.5, 3.5),
+ * -C3 around (0.5, 0.5),
+ * -C4 around (3.5, 3.5).
+ *
+ * It then merges these clusters into one set, rdata.
  */
 void GetPointset(const size_t N, arma::mat& rdata)
 {
@@ -332,7 +337,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
 
   // Cheap LSH run.
   const int hChp = 1; // Small first-level hash width.
-  const int kChp = 1000; // Large number of projections per table.
+  const int kChp = 100; // Large number of projections per table.
   const int tChp = 1; // Only one table.
   const double recallThreshChp = 0.25; // Recall threshold.
 
@@ -466,6 +471,147 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
   }
 }
 
+/**
+ * Test: Create an LSHSearch object and use an increasing number of probes to
+ * search for points. Require that recall for the same object doesn't decrease
+ * with increasing number of probes. Also require that at least a few times
+ * there's some increase in recall.
+ */
+BOOST_AUTO_TEST_CASE(MultiprobeTest)
+{
+  const double epsilonIncrease = 0.05;
+  const size_t repetitions = 5; // train five objects
+
+  const size_t probeTrials = 5;
+  const size_t numProbes[probeTrials] = {0, 1, 2, 3, 4};
+
+
+  /// algorithm parameters
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+  const double hashWidth = 0;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Run classic knn on reference set
+  KNN knn(rdata);
+  arma::Mat<size_t> groundTruth;
+  arma::mat groundDistances;
+  knn.Search(qdata, k, groundTruth, groundDistances);
+  
+  bool foundIncrease = 0;
+
+  for (size_t rep = 0; rep < repetitions; ++rep)
+  {
+    // Train a model.
+    LSHSearch<> multiprobeTest(rdata, numProj, numTables, hashWidth, 
+        secondHashSize, bucketSize);
+
+    double prevRecall = 0;
+    // Search with varying number of probes.
+    for (size_t p = 0; p < probeTrials; ++p)
+    {
+      arma::Mat<size_t> lshNeighbors;
+      arma::mat lshDistances;
+      
+      multiprobeTest.Search(qdata, k, lshNeighbors, lshDistances, 0, 
+          numProbes[p]);
+
+      // Compute recall of this run.
+      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth); 
+      if (p > 0)
+      {
+        // More probes should at the very least not lower recall...
+        BOOST_REQUIRE_GE(recall, prevRecall);
+
+        // ... and should ideally increase it a bit.
+        if (recall > prevRecall + epsilonIncrease)
+          foundIncrease = true;
+        prevRecall = recall;
+      }
+    }
+  }
+  BOOST_REQUIRE(foundIncrease);
+}
+
+/**
+ * Test: This is a deterministic test that verifies multiprobe LSH works
+ * correctly. To do this, we generate two queries, q1 and q2. q1 is hashed 
+ * directly under cluster C2, q2 is hashed in C2's center. 
+ * We verify that:
+ * 1) q1 should have no neighbors without multiprobe.
+ * 2) q1 should have neighbors only from C2 with 1 additional probe.
+ * 3) q2 should have all neighbors found with 3 additional probes.
+ */
+BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
+{
+  // Generate known deterministic clusters of points.
+  const size_t N = 40;
+  arma::mat rdata;
+  GetPointset(N, rdata);
+
+  const int k = N / 4;
+  const double hashWidth = 1;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+
+  // 1 table, projections on orthonormal plane.
+  arma::cube projections(2, 2, 1);
+  projections(0, 0, 0) = 1;
+  projections(1, 0, 0) = 0;
+  projections(0, 1, 0) = 0;
+  projections(1, 1, 0) = 1;
+
+  // Construct LSH object with given tables.
+  LSHSearch<> lshTest(rdata, projections,
+                      hashWidth, secondHashSize, bucketSize);
+
+  const arma::mat offsets = lshTest.Offsets();
+  
+  // Construct q1 so it is hashed directly under C2.
+  arma::mat q1;
+  q1 << 3.9 << arma::endr << 2.99;
+  q1 -= offsets;
+
+  // Construct q2 so it is hashed near the center of C2.
+  arma::mat q2;
+  q2 << 3.6 << arma::endr << 3.6;
+  q2 -= offsets;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Test that q1 simple search comes up empty.
+  lshTest.Search(q1, k, neighbors, distances);
+  BOOST_REQUIRE(arma::all(neighbors.col(0) == N));
+
+  // Test that q1 search with 1 additional probe returns some C2 points.
+  lshTest.Search(q1, k, neighbors, distances, 0, 1);
+  BOOST_REQUIRE(arma::all(
+        neighbors.col(0) == N ||
+        (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+
+  // Test that q2 simple search returns some C2 points.
+  lshTest.Search(q2, k, neighbors, distances);
+  BOOST_REQUIRE(arma::all(
+      neighbors.col(0) == N || 
+      (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+
+  // Test that q2 with 3 additional probes returns all C2 points.
+  lshTest.Search(q2, k, neighbors, distances, 0, 3);
+  BOOST_REQUIRE(arma::all(
+      neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2));
+}
+
+
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
   // This is a not very good test that simply checks that the re-trained LSH
@@ -582,7 +728,6 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
 
   BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
       std::invalid_argument);
-
 }
 
 BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
