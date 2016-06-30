@@ -12,14 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <time.h>
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
 
 #include "lsh_search.hpp"
 
