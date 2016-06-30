@@ -506,13 +506,13 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
-  
+
   bool foundIncrease = 0;
 
   for (size_t rep = 0; rep < repetitions; ++rep)
   {
     // Train a model.
-    LSHSearch<> multiprobeTest(rdata, numProj, numTables, hashWidth, 
+    LSHSearch<> multiprobeTest(rdata, numProj, numTables, hashWidth,
         secondHashSize, bucketSize);
 
     double prevRecall = 0;
@@ -521,12 +521,12 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
     {
       arma::Mat<size_t> lshNeighbors;
       arma::mat lshDistances;
-      
-      multiprobeTest.Search(qdata, k, lshNeighbors, lshDistances, 0, 
+
+      multiprobeTest.Search(qdata, k, lshNeighbors, lshDistances, 0,
           numProbes[p]);
 
       // Compute recall of this run.
-      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth); 
+      double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
       if (p > 0)
       {
         // More probes should at the very least not lower recall...
@@ -544,8 +544,8 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
 
 /**
  * Test: This is a deterministic test that verifies multiprobe LSH works
- * correctly. To do this, we generate two queries, q1 and q2. q1 is hashed 
- * directly under cluster C2, q2 is hashed in C2's center. 
+ * correctly. To do this, we generate two queries, q1 and q2. q1 is hashed
+ * directly under cluster C2, q2 is hashed in C2's center.
  * We verify that:
  * 1) q1 should have no neighbors without multiprobe.
  * 2) q1 should have neighbors only from C2 with 1 additional probe.
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
                       hashWidth, secondHashSize, bucketSize);
 
   const arma::mat offsets = lshTest.Offsets();
-  
+
   // Construct q1 so it is hashed directly under C2.
   arma::mat q1;
   q1 << 3.9 << arma::endr << 2.99;
@@ -602,7 +602,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) == N || 
+      neighbors.col(0) == N ||
       (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
 
   // Test that q2 with 3 additional probes returns all C2 points.
@@ -610,7 +610,6 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   BOOST_REQUIRE(arma::all(
       neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2));
 }
-
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
 {
@@ -654,7 +653,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIdentical)
   arma::Mat<size_t> q1;
   q1.set_size(k, numQueries);
   q1.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
-  
+
   BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q1), 1);
 }
 
@@ -679,11 +678,11 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
   // be 0 but recall should not be.
   arma::Mat<size_t> q2;
   q2.set_size(k, numQueries);
-  q2 << 
-    2 << arma::endr << 
-    3 << arma::endr << 
-    4 << arma::endr << 
-    6 << arma::endr << 
+  q2 <<
+    2 << arma::endr <<
+    3 << arma::endr <<
+    4 << arma::endr <<
+    6 << arma::endr <<
     7 << arma::endr;
 
   BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
@@ -711,7 +710,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
 
 /**
  * Test: If given a vector of wrong shape, ComputeRecall should throw an
- * exception
+ * exception.
  */
 BOOST_AUTO_TEST_CASE(RecallTestException)
 {
