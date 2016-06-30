@@ -132,29 +132,29 @@ class NEAT {
     // Whether mutate or not.
     double p = mlpack::math::Random();
     if (p > mutateAddLinkProb) return;
-  printf("addlink 1\n");
-  printf("genome size is %d \n", genome.aNeuronGenes.size());
+  //printf("addlink 1\n");
+  //printf("genome size is %d \n", genome.aNeuronGenes.size());
     if (genome.aNeuronGenes.size() == 0) return;   // NOTICE: this happened. Why???
     // Select from neuron
     ssize_t fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
-  printf("fromNeuronIdx is %d \n", fromNeuronIdx);
+  //printf("fromNeuronIdx is %d \n", fromNeuronIdx);
     ssize_t fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
-printf("addlink 2\n");
+//printf("addlink 2\n");
     // Select to neuron which cannot be input.
-printf("genome num input is: %d\n", genome.NumInput());
+//printf("genome num input is: %d\n", genome.NumInput());
     ssize_t toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size());
-  printf("toNeuronIdx is: %d\n", toNeuronIdx);
-  printf("num of neuron is : %d\n", genome.aNeuronGenes.size());  
+  //printf("toNeuronIdx is: %d\n", toNeuronIdx);
+  //printf("num of neuron is : %d\n", genome.aNeuronGenes.size());  
     ssize_t toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
     if (fromNeuronId == toNeuronId) return;
-printf("addlink 3\n");
+//printf("addlink 3\n");
     // Check link already exist or not.
     ssize_t linkIdx = IsLinkExist(genome, fromNeuronId, toNeuronId);
     if (linkIdx != -1) {
       genome.aLinkGenes[linkIdx].Enabled(true);
       return;
     }
-printf("addlink 4\n");
+//printf("addlink 4\n");
     // Check innovation already exist or not.
     ssize_t innovIdx = CheckLinkInnovation(fromNeuronId, toNeuronId);
     if (innovIdx != -1) {
@@ -166,7 +166,7 @@ printf("addlink 4\n");
       genome.AddLink(linkGene);
       return;
     }
-printf("addlink 5\n");
+//printf("addlink 5\n");
     // If new link and new innovation, create it, push new innovation.
     LinkInnovation linkInnov = AddLinkInnovation(fromNeuronId, toNeuronId);
     LinkGene linkGene(fromNeuronId,
@@ -300,82 +300,82 @@ printf("addlink 5\n");
   // If not, we will need to change CrossoverLinkAndNeuron, and Disjoint, and WeightDiff.
   void CrossoverLinkAndNeuron(Genome& momGenome, Genome& dadGenome, Genome& childGenome) {
     // Add input and output neuron genes to child genome.
-    printf("crossover 0\n");
+    //printf("crossover 0\n");
     for (ssize_t i=0; i<(momGenome.NumInput() + momGenome.NumOutput()); ++i) {
-      printf("mom num input is %d\n", momGenome.NumInput());
-      printf("mom num output is %d\n", momGenome.NumOutput());
+      //printf("mom num input is %d\n", momGenome.NumInput());
+      //printf("mom num output is %d\n", momGenome.NumOutput());
       childGenome.aNeuronGenes.push_back(momGenome.aNeuronGenes[i]);
-      printf("crossover 0.5\n");
+      //printf("crossover 0.5\n");
     }
     childGenome.NumInput(momGenome.NumInput());
     childGenome.NumOutput(momGenome.NumOutput());
     childGenome.GenomeDepth();
 
-    printf("crossover 1\n");
+    //printf("crossover 1\n");
     // Iterate to add link genes and neuron genes to child genome.
     for (ssize_t i=0; i<momGenome.NumLink(); ++i) {
       ssize_t innovId = momGenome.aLinkGenes[i].InnovationId();      
       ssize_t idx = dadGenome.GetLinkIndex(innovId);
       bool linkContainedInDad = (idx != -1);
       double randNum = mlpack::math::Random();
-   printf("crossover 2\n");
+   //printf("crossover 2\n");
       if (!linkContainedInDad) {  // exceed or disjoint
         childGenome.AddLink(momGenome.aLinkGenes[i]);
-       printf("crossover 3\n"); 
+       //printf("crossover 3\n"); 
         // Add from neuron
         ssize_t idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
         ssize_t idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 4\n");
+//printf("crossover 4\n");
         // Add to neuron
         idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
         idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 5\n");
+//printf("crossover 5\n");
         continue;
       }
 
       if (linkContainedInDad && randNum < 0.5) {
         childGenome.AddLink(momGenome.aLinkGenes[i]);
-printf("crossover 6\n");
+//printf("crossover 6\n");
         // Add from neuron
         ssize_t idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
         ssize_t idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 7\n");
+//printf("crossover 7\n");
         // Add to neuron
         idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
         idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 8\n");
+//printf("crossover 8\n");
         continue;
       }
-printf("crossover 9\n");
+//printf("crossover 9\n");
       if (linkContainedInDad && randNum >= 0.5) {
         childGenome.AddLink(dadGenome.aLinkGenes[idx]);
-printf("crossover 10\n");
+//printf("crossover 10\n");
         // Add from neuron   TODO: make it a function?? check whether crossover is correct.
         ssize_t idxInChild = childGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].FromNeuronId());
         ssize_t idxInParent = dadGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].FromNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(dadGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 11\n");
+//printf("crossover 11\n");
         // Add to neuron
         idxInChild = childGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].ToNeuronId());
         idxInParent = dadGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].ToNeuronId());
         if (idxInChild == -1) {
           childGenome.AddHiddenNeuron(dadGenome.aNeuronGenes[idxInParent]);
         }
-printf("crossover 12\n");
+//printf("crossover 12\n");
         continue;
       }  
     }
@@ -518,14 +518,14 @@ printf("crossover 12\n");
 
   // Calculate species' average rank in population.
   void CalcSpeciesAverageRank(Population& population, std::vector<double>& speciesAverageRank) {
-    printf("average rank 0\n");
+    //printf("average rank 0\n");
     std::vector<Genome> genomes;
-    printf("average rank 0.5\n");
+    //printf("average rank 0.5\n");
     AggregateGenomes(population, genomes);
-    printf("average rank 1\n");
+    //printf("average rank 1\n");
     SortGenomes(genomes);
     speciesAverageRank.clear();
-    printf("average rank 2\n");
+    //printf("average rank 2\n");
 
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       double averageRank = 0;
@@ -537,9 +537,9 @@ printf("crossover 12\n");
 
       averageRank = averageRank / speciesSize;  // smaller is worse.
       speciesAverageRank.push_back(averageRank);
-      printf("size speciesAverage is %d \n", speciesAverageRank.size());
+      //printf("size speciesAverage is %d \n", speciesAverageRank.size());
     }
-    printf("size speciesAverage is %d \n", speciesAverageRank.size());
+    //printf("size speciesAverage is %d \n", speciesAverageRank.size());
   }
 
   // Remove weak species.
@@ -568,20 +568,20 @@ printf("crossover 12\n");
 
   // Remove a portion weak genomes in each species
   void CullSpecies(Population& population, double percentageToRemove) {
-    printf("cull species 0\n");
+    //printf("cull species 0\n");
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
-      printf("cull species 0.5\n");
+      //printf("cull species 0.5\n");
       population.aSpecies[i].SortGenomes();
-      printf("cull species 0.6\n");
+      //printf("cull species 0.6\n");
       ssize_t numRemove = std::floor(population.aSpecies[i].aGenomes.size() * percentageToRemove); // NOTICE:!! debuggin shows aGenomes.size() not updated
-      printf("numRemove is %d\n", numRemove);
-      printf("number of genome is %d\n", population.aSpecies[i].aGenomes.size());
-      printf("cull species 1\n");
+      //printf("numRemove is %d\n", numRemove);
+      //printf("number of genome is %d\n", population.aSpecies[i].aGenomes.size());
+      //printf("cull species 1\n");
       while (numRemove > 0) {
         population.aSpecies[i].aGenomes.pop_back();
         --numRemove;
       }
-      printf("cull species 4\n");
+      //printf("cull species 4\n");
     }
 
     RemoveEmptySpecies(population);
@@ -600,37 +600,37 @@ printf("crossover 12\n");
       }
     }
     RemoveEmptySpecies(population);
-    printf("after cull species to one, there are %d species.\n", population.aSpecies.size());
+    //printf("after cull species to one, there are %d species.\n", population.aSpecies.size());
   }
 
   // Mutate child by different mutations.
   // NOTICE: how we organize different mutations is kind of flexible.
   void Mutate(Genome& genome) {
     // NOTICE: we can change mutate rates here. Randomly let mutate rates be bigger or smaller.
-    printf("mutate 1\n");
+    //printf("mutate 1\n");
     // Mutate weights.
     MutateWeight(genome, aMutateWeightProb, aPerturbWeightProb, aMutateWeightSize);
-    printf("mutate 2\n");
+    //printf("mutate 2\n");
     // Mutate link. TODO: check link mutate implementation is correct or not.
     double p = aMutateAddLinkProb;
     while (p > 0) {  // so p can be bigger than 1 and mutate can happen multiple times.
       if (mlpack::math::Random() < p) {
-        printf("mutate 3\n");
+        //printf("mutate 3\n");
         MutateAddLink(genome, aMutateAddLinkProb);
-        printf("mutate 4\n");
+        //printf("mutate 4\n");
       }
       --p;
     }
 
     // Mutate neuron
-    printf("mutate 5\n");
+    //printf("mutate 5\n");
     p = aMutateAddNeuronProb;
-    printf("mutate 6\n");
+    //printf("mutate 6\n");
     while (p > 0) {
       if (mlpack::math::Random() < p) {
-        printf("mutate 7\n");
+        //printf("mutate 7\n");
         MutateAddNeuron(genome, aMutateAddNeuronProb);
-        printf("mutate 8\n");
+        //printf("mutate 8\n");
       }
       --p;
     }
@@ -639,9 +639,9 @@ printf("crossover 12\n");
     p = aMutateEnabledProb;
     while (p > 0) {
       if (mlpack::math::Random() < p) {
-       printf("mutate 9\n");
+       //printf("mutate 9\n");
         MutateEnableDisable(genome, true, aMutateEnabledProb);
-        printf("mutate 10\n");
+        //printf("mutate 10\n");
       }
       --p;
     }
@@ -650,9 +650,9 @@ printf("crossover 12\n");
     p = aMutateDisabledProb;
     while (p > 0) {
       if (mlpack::math::Random() < p) {
-        printf("mutate 11\n");
+        //printf("mutate 11\n");
         MutateEnableDisable(genome, false, aMutateDisabledProb);
-        printf("mutate 12\n");
+        //printf("mutate 12\n");
       }
       --p;
     }
@@ -661,31 +661,31 @@ printf("crossover 12\n");
   // Breed child for a species.
   // NOTICE: can have different ways to breed a child.
   bool BreedChild(Species& species, Genome& childGenome, double crossoverProb) {
-    printf("breed 1\n");
+    //printf("breed 1\n");
     double p = mlpack::math::Random();
     ssize_t speciesSize = species.aGenomes.size();
-    printf("species size is %d \n", speciesSize);
-    printf("breed 2\n");
+    //printf("species size is %d \n", speciesSize);
+    //printf("breed 2\n");
     if (speciesSize == 0)
       return false;
 
     if (p < crossoverProb) {
       ssize_t idx1 = mlpack::math::RandInt(0, speciesSize);
       ssize_t idx2 = mlpack::math::RandInt(0, speciesSize);
-      printf("idx1 is %d\n", idx1);
-      printf("idx2 is %d\n", idx2);
-      printf("breed 3\n");
+      //printf("idx1 is %d\n", idx1);
+      //printf("idx2 is %d\n", idx2);
+      //printf("breed 3\n");
       Crossover(species.aGenomes[idx1], species.aGenomes[idx2], childGenome);
-      printf("breed 4\n");
+      //printf("breed 4\n");
     } else {
       ssize_t idx = mlpack::math::RandInt(0, speciesSize);
-      printf("breed 5\n");
+      //printf("breed 5\n");
       childGenome = species.aGenomes[idx];
-      printf("breed 6\n");
+      //printf("breed 6\n");
     }
-    printf("breed 7\n");
+    //printf("breed 7\n");
     Mutate(childGenome);
-    printf("breed 8\n");
+    //printf("breed 8\n");
     return true;
   }
 
@@ -701,49 +701,71 @@ printf("crossover 12\n");
     Genome lastBestGenome = aPopulation.BestGenome();
 
     // Remove stale species.
-    RemoveStaleSpecies(aPopulation);
-    printf("hehe 0\n"); // DEBUG
+    if (aPopulation.aSpecies.size() > 10) {
+      RemoveStaleSpecies(aPopulation);
+    }
+    //printf("hehe 0\n"); // DEBUG
     // Remove weak genomes in each species.
     CullSpecies(aPopulation, aCullSpeciesPercentage);
-    printf("hehe 1\n"); // DEBUG
+    //printf("hehe 1\n"); // DEBUG
 
     // Remove weak species.
     if (aPopulation.aSpecies.size() > 10) {
       RemoveWeakSpecies(aPopulation);
     }
-    printf("hehe 2\n"); // DEBUG
+    //printf("hehe 2\n"); // DEBUG
     // Breed children in each species. 
     std::vector<double> speciesAverageRank;
     CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
-    printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
-    printf("hehe 3\n"); // DEBUG
+    //printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
+    //printf("hehe 3\n"); // DEBUG
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
-    printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
-    printf("hehe 3-0\n");
+    //printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
+    //printf("hehe 3-0\n");
     std::vector<Genome> childGenomes;
     childGenomes.push_back(lastBestGenome);
-    printf("hehe 3-01\n");
+    //printf("hehe 3-01\n");
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       // number of child genomes by this species.
-      printf("hehe 3-02\n");
-      printf("size species is %d \n", aPopulation.aSpecies.size());
-      printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
+      //printf("hehe 3-02\n");
+      //printf("size species is %d \n", aPopulation.aSpecies.size());
+      //printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
       ssize_t numBreed = std::floor(speciesAverageRank[i] * aPopulationSize / totalAverageRank) - 1;
       printf("numBreed is %d \n", numBreed);
-      printf("hehe 3-1\n"); // DEBUG
-      for (ssize_t j=0; j<numBreed; ++j) {
+      //printf("hehe 3-1\n"); // DEBUG
+      ssize_t numBreedSuccess = 0;
+      while (numBreedSuccess < numBreed) {
         Genome genome; //!!!!!!!!!!!!!
-        printf("num of species is %d \n", aPopulation.aSpecies.size());
+        //printf("num of species is %d \n", aPopulation.aSpecies.size());
         bool hasBaby = BreedChild(aPopulation.aSpecies[i], genome, aCrossoverRate);
-        if (hasBaby) childGenomes.push_back(genome);
+        if (hasBaby) {
+          childGenomes.push_back(genome);
+          ++numBreedSuccess;
+        }
       }
-      printf("hehe 3-2\n"); // DEBUG
+      //printf("hehe 3-2\n"); // DEBUG
     }
-    printf("hehe 4\n"); // DEBUG
+    //printf("hehe 4\n"); // DEBUG
 
     // Keep the best in each species.
+    //DEBUGGING!!!!!!!!!
+    printf("before cull to one, species size is: %d \n", aPopulation.aSpecies.size());
+    printf("before, species sizes are: ");
+    for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
+      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
+    }
+    printf("\n");
+    //DEBUGGING!!!!!!!!!
     CullSpeciesToOne(aPopulation);
-    printf("hehe 5\n"); // DEBUG
+    //printf("hehe 5\n"); // DEBUG
+    //DEBUGGING!!!!!!!!!
+    printf("after cull to one, species size is: %d \n", aPopulation.aSpecies.size());
+    printf("after, species sizes are: ");
+    for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
+      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
+    }
+    printf("\n");
+    //DEBUGGING!!!!!!!!!
 
     // Random choose species and breed child until reach population size.
     while (childGenomes.size() + aPopulation.aSpecies.size() < aPopulationSize) {
@@ -751,17 +773,17 @@ printf("crossover 12\n");
       Genome genome;  //!!!!!!!!!!!!!
       bool hasBaby = BreedChild(aPopulation.aSpecies[speciesIndex], genome, aCrossoverRate);
       if (hasBaby) childGenomes.push_back(genome);
-      printf("childGenomes size is %d \n", childGenomes.size());
-      printf("aSpecies size is %d \n", aPopulation.aSpecies.size());
-      printf("aPopulationSize is %d \n", aPopulationSize);
+      //printf("childGenomes size is %d \n", childGenomes.size());
+      //printf("aSpecies size is %d \n", aPopulation.aSpecies.size());
+      //printf("aPopulationSize is %d \n", aPopulationSize);
     }
-    printf("hehe 6\n"); // DEBUG
+    //printf("hehe 6\n"); // DEBUG
 
     // Speciate genomes into new species.
     for (ssize_t i=0; i<childGenomes.size(); ++i) {
       AddGenomeToSpecies(aPopulation, childGenomes[i]);
     }
-    printf("hehe 7\n"); // DEBUG
+    //printf("hehe 7\n"); // DEBUG
 
     // Reassign genome IDs.
     aPopulation.ReassignGenomeId();
@@ -771,9 +793,9 @@ printf("crossover 12\n");
   void Evaluate() {
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       for (ssize_t j=0; j<aPopulation.aSpecies[i].aGenomes.size(); ++j) {
-        printf("start eval fitness\n");
+        //printf("start eval fitness\n");
         double fitness = aTask.EvalFitness(aPopulation.aSpecies[i].aGenomes[j]);
-       printf("end eval fitness\n");
+       //printf("end eval fitness\n");
         aPopulation.aSpecies[i].aGenomes[j].Fitness(fitness);
       }
 
@@ -807,9 +829,9 @@ printf("crossover 12\n");
     // Repeat
     while (generation < aMaxGeneration) {
       // Evaluate all genomes in population.
-      printf("start evaluate\n");
+      //printf("start evaluate\n");
       Evaluate();
-      printf("end evaluate\n");
+      //printf("end evaluate\n");
 
       // Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
