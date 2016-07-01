@@ -29,8 +29,6 @@ class Population {
 
   // Default constructor.
   Population() {
-    aNumSpecies = 0;
-    aPopulationSize = 0;
     aBestFitness = DBL_MAX;
     aNextSpeciesId = 0;
     aNextGenomeId = 0;
@@ -38,8 +36,6 @@ class Population {
 
   // Parametric constructor.
   Population(Genome& seedGenome, ssize_t populationSize) {
-    aPopulationSize = populationSize;
-    aNumSpecies = 1;
     aBestFitness = DBL_MAX;
     Species species(seedGenome, populationSize);
     aSpecies.push_back(species);  // NOTICE: we don't speciate.
@@ -53,8 +49,6 @@ class Population {
   // Operator =.
   Population& operator =(const Population& population) {
     if (this != &population) {
-      aNumSpecies = population.aNumSpecies;
-      aPopulationSize = population.aPopulationSize;
       aBestFitness = population.aBestFitness;
       aBestGenome = population.aBestGenome;
       aNextSpeciesId = population.aNextSpeciesId;
@@ -65,17 +59,16 @@ class Population {
     return *this;
   }
 
-  // Set species number.
-  void NumSpecies(ssize_t numSpecies) { aNumSpecies = numSpecies; }
-
   // Get species number.
-  ssize_t NumSpecies() const { return aNumSpecies; }
-
-  // Set population size.
-  void PopulationSize(ssize_t populationSize) { aPopulationSize = populationSize; }
+  ssize_t NumSpecies() const { return aSpecies.size(); }
 
   // Get population size.
-  ssize_t PopulationSize() const { return aPopulationSize; }
+  ssize_t PopulationSize() const {
+    ssize_t populationSize = 0;
+    for (ssize_t i=0; i<aSpecies.size(); ++i) {
+      populationSize += aSpecies[i].aGenomes.size();
+    }
+  }
 
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
@@ -117,15 +110,11 @@ class Population {
   // Add species.
   void AddSpecies(Species& species) {
     aSpecies.push_back(species);
-    aPopulationSize += species.aGenomes.size();
-    ++aNumSpecies;  // TODO: do we really need numSpecies? Maybe NumSpecies() is enough.
     ++aNextSpeciesId;
   }
 
   // Remove species.
   void RemoveSpecies(ssize_t idx) {
-    --aNumSpecies;
-    aPopulationSize -= aSpecies[idx].aGenomes.size();
     aSpecies.erase(aSpecies.begin() + idx);
   }
 
@@ -142,12 +131,6 @@ class Population {
   }
 
  private:
-  // Number of species.
-  ssize_t aNumSpecies;
-
-  // Number of genomes including all species.
-  ssize_t aPopulationSize;
-
   // Best fitness.
   double aBestFitness;
 

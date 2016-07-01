@@ -30,7 +30,6 @@ class Species {
   Species() {
     aId = -1;
     aStaleAge = -1;
-    aSpeciesSize = 0;
     aBestFitness = DBL_MAX;
     aBestGenome = Genome();
     aNextGenomeId = 0;
@@ -41,7 +40,6 @@ class Species {
   Species(Genome& seedGenome, ssize_t speciesSize) {
     aId = 0;
     aStaleAge = 0;
-    aSpeciesSize = speciesSize;
     aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
 
     // Create genomes from seed Genome and randomize weight.
@@ -63,7 +61,6 @@ class Species {
     if (this != &species) {
       aId = species.aId;
       aStaleAge = species.aStaleAge;
-      aSpeciesSize = species.aSpeciesSize;
       aBestFitness = species.aBestFitness;
       aBestGenome = species.aBestGenome;
       aNextGenomeId = species.aNextGenomeId;
@@ -85,17 +82,14 @@ class Species {
   // Get age.
   ssize_t StaleAge() const { return aStaleAge; }
 
-  // Set species size.
-  void SpeciesSize(ssize_t speciesSize) { aSpeciesSize = speciesSize; }
-
-  // Get species size.
-  ssize_t SpeciesSize() const { return aSpeciesSize; }
-
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
 
   // Get best fitness.
   double BestFitness() const { return aBestFitness; }
+
+  // Get species size.
+  ssize_t SpeciesSize() const { return aGenomes.size(); }
 
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitnessAndGenome() {
@@ -123,7 +117,6 @@ class Species {
   void AddGenome(Genome& genome) {
     genome.Id(aNextGenomeId);  // NOTICE: thus we changed genome id when add to species.
     aGenomes.push_back(genome);
-    ++aSpeciesSize;
     ++aNextGenomeId;
   }
 
@@ -133,9 +126,6 @@ class Species {
 
   // Stale age (how many generations that its best fitness doesn't improve) of species.
   ssize_t aStaleAge;
-
-  // Number of Genomes.
-  ssize_t aSpeciesSize;
 
   // Best fitness.
   double aBestFitness;

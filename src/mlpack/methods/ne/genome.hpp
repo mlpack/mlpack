@@ -217,11 +217,21 @@ class Genome {
   }
 
   // Calculate Neuron depth.
-  ssize_t NeuronDepth(ssize_t id) {
+  ssize_t NeuronDepth(ssize_t id, ssize_t depth) {
     // TODO: if contains loop in network.
+    
+    ssize_t currentDepth;
+    ssize_t maxDepth = depth;
+
+    // Network contains loop.
+    ssize_t loopDepth = NumNeuron() - NumInput();
+    if (depth > loopDepth) {
+      return loopDepth;
+    }
+    
     // Find all links that output to this neuron id.
     std::vector<int> inputLinksIndex;
-    for (ssize_t i=0; i<NumLink(); ++i) {
+    for (ssize_t i=0; i<NumLink(); ++i) {   
       if (aLinkGenes[i].ToNeuronId() == id) {
         inputLinksIndex.push_back(i);
       }
@@ -233,14 +243,14 @@ class Genome {
     }
 
     // Recursively get neuron depth.
-    std::vector<ssize_t> depths(inputLinksIndex.size());
     for (ssize_t i=0; i<inputLinksIndex.size(); ++i) {
-      depths[i] = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId());
+      currentDepth = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId(), depth + 1);
+      if (currentDepth > maxDepth) {
+        maxDepth = currentDepth;
+      } 
     }
 
-    ssize_t maxInputDepth = *(std::max_element(std::begin(depths),
-                                 std::end(depths)));
-    return (maxInputDepth + 1);
+    return maxDepth;
   }
 
   // Calculate Genome depth.
@@ -271,7 +281,7 @@ class Genome {
     // Get max depth of all output neurons.
     ssize_t genomeDepth = 0;
     for (ssize_t i=0; i<outputNeuronsId.size(); ++i) {
-      ssize_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i]);
+      ssize_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i], 0);
       if (outputNeuronDepth > genomeDepth) {
         genomeDepth = outputNeuronDepth;
       }
