@@ -98,7 +98,7 @@ class Genome {
   ssize_t NumInput() {
     ssize_t numInput = 0;
     for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
-      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS) //!!!
+      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS)
         ++numInput;
     }
     return numInput;
@@ -111,7 +111,7 @@ class Genome {
   ssize_t NumOutput() {
     ssize_t numOutput = 0;
     for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {  
-      if (aNeuronGenes[i].Type() == OUTPUT)  //!!!
+      if (aNeuronGenes[i].Type() == OUTPUT)
         ++numOutput;
     }
     return numOutput;
@@ -302,7 +302,7 @@ class Genome {
   void Activate(std::vector<double>& input) {
     assert(input.size() == aNumInput);
     //Flush();
-
+    
     // Set inputs.
     for (ssize_t i=0; i<aNumInput; ++i) {
       aNeuronGenes[i].aActivation = input[i];  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
@@ -354,7 +354,7 @@ class Genome {
   // Get output vector.
   std::vector<double> Output() {
     std::vector<double> output;
-    for (ssize_t i=0; i<aNumOutput; ++i) {  // TODO: it relies on the sequence. Good?
+    for (ssize_t i=0; i<aNumOutput; ++i) {
       output.push_back(aNeuronGenes[aNumInput + i].aActivation);
     }
     return output;

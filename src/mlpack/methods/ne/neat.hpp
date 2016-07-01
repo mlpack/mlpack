@@ -307,9 +307,6 @@ class NEAT {
       childGenome.aNeuronGenes.push_back(momGenome.aNeuronGenes[i]);
       ////printf("crossover 0.5\n");
     }
-    childGenome.NumInput(momGenome.NumInput());
-    childGenome.NumOutput(momGenome.NumOutput());
-    childGenome.GenomeDepth();
 
     ////printf("crossover 1\n");
     // Iterate to add link genes and neuron genes to child genome.
@@ -697,6 +694,9 @@ class NEAT {
     ////printf("breed 7\n");
     Mutate(childGenome);
     ////printf("breed 8\n");
+    childGenome.NumInput(childGenome.NumInput());
+    childGenome.NumOutput(childGenome.NumOutput());
+    childGenome.GenomeDepth();
     return true;
   }
 
@@ -866,7 +866,7 @@ class NEAT {
     }
   }
   
-  private:
+ private:
   // Task.
   TaskType aTask;
 
