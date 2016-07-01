@@ -272,6 +272,40 @@ class LSHSearch
                               arma::uvec& referenceIndices,
                               size_t numTablesToSearch);
 
+//  /**
+//   * This is a helper function that computes the distance of the query to the
+//   * neighbor candidates and appropriately stores the best 'k' candidates.  This
+//   * is specific to the monochromatic search case, where the query set is the
+//   * reference set.
+//   *
+//   * @param queryIndex The index of the query in question
+//   * @param referenceIndex The index of the neighbor candidate in question
+//   * @param neighbors Matrix holding output neighbors.
+//   * @param distances Matrix holding output distances.
+//   */
+//  void BaseCase(const size_t queryIndex,
+//                const size_t referenceIndex,
+//                arma::Mat<size_t>& neighbors,
+//                arma::mat& distances) const;
+//
+//  /**
+//   * This is a helper function that computes the distance of the query to the
+//   * neighbor candidates and appropriately stores the best 'k' candidates.  This
+//   * is specific to bichromatic search, where the query set is not the same as
+//   * the reference set.
+//   *
+//   * @param queryIndex The index of the query in question
+//   * @param referenceIndex The index of the neighbor candidate in question
+//   * @param querySet Set of query points.
+//   * @param neighbors Matrix holding output neighbors.
+//   * @param distances Matrix holding output distances.
+//   */
+//  void BaseCase(const size_t queryIndex,
+//                const size_t referenceIndex,
+//                const arma::mat& querySet,
+//                arma::Mat<size_t>& neighbors,
+//                arma::mat& distances) const;
+
   /**
    * This is a helper function that computes the distance of the query to the
    * neighbor candidates and appropriately stores the best 'k' candidates.  This
@@ -283,8 +317,9 @@ class LSHSearch
    * @param neighbors Matrix holding output neighbors.
    * @param distances Matrix holding output distances.
    */
+  // TODO: change documentation above
   void BaseCase(const size_t queryIndex,
-                const size_t referenceIndex,
+                const arma::uvec& referenceIndices,
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances) const;
 
@@ -300,8 +335,9 @@ class LSHSearch
    * @param neighbors Matrix holding output neighbors.
    * @param distances Matrix holding output distances.
    */
+  //TODO: change documentation above.
   void BaseCase(const size_t queryIndex,
-                const size_t referenceIndex,
+                const arma::uvec& referenceIndices,
                 const arma::mat& querySet,
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances) const;

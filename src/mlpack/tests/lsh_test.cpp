@@ -509,7 +509,7 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
  */
 BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
 {
-  // kNN and LSH parameters (use LSH default parameters).
+  // kNN and LSH parameters.
   const int k = 4;
   const int numTables = 16;
   const int numProj = 3;
@@ -524,15 +524,56 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   arma::Mat<size_t> parallelNeighbors;
   arma::mat distances;
 
-  // Construct an LSH object. By default, it uses the maximum number of threads
-  LSHSearch<> lshTest(rdata, numProj, numTables); //default parameters
+  // Construct an LSH object, using maximum number of available threads.
+  LSHSearch<> lshTest(rdata, numProj, numTables);
   lshTest.Search(k, parallelNeighbors, distances);
 
-  // Now perform same search but with 1 thread
+  // Now perform same search but with 1 thread.
   lshTest.MaxThreads(1);
   lshTest.Search(k, sequentialNeighbors, distances);
 
-  // Require both have same results
+  // Require both have same results.
+  double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  BOOST_REQUIRE_EQUAL(recall, 1);
+}
+
+/**
+ * Test: This test verifies that processing a query in parallel returns the same
+ * results with processing it sequentially. 
+ * Requires OMP_NESTED environment variable to be set to TRUE. To set it,
+ * execute:
+ * ```
+ * export OMP_NESTED=TRUE
+ * ```
+ */
+BOOST_AUTO_TEST_CASE(ParallelSingleQuery)
+{
+  // kNN and LSH parameters.
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+
+  // Read iris training data as reference and query set.
+  const string trainSet = "iris_train.csv";
+  arma::mat rdata;
+  data::Load(trainSet, rdata, true);
+
+  arma::mat qdata = rdata.col(0); // Only 1 query.
+
+  // Where to store neighbors and distances.
+  arma::Mat<size_t> sequentialNeighbors;
+  arma::Mat<size_t> parallelNeighbors;
+  arma::mat distances;
+
+  // Construct an LSH object. By default, maximum number of threads are used.
+  LSHSearch<> lshTest(rdata, numProj, numTables);
+  lshTest.Search(qdata, k, parallelNeighbors, distances);
+
+  // Now perform same search but with 1 thread.
+  lshTest.MaxThreads(1);
+  lshTest.Search(qdata, k, sequentialNeighbors, distances);
+
+  // Require both have same results.
   double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
   BOOST_REQUIRE_EQUAL(recall, 1);
 }

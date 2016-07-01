@@ -293,6 +293,7 @@ void LSHSearch<SortPolicy>::InsertNeighbor(arma::mat& distances,
   neighbors(pos, queryIndex) = neighbor;
 }
 
+/*
 // Base case where the query set is the reference set.  (So, we can't return
 // ourselves as the nearest neighbor.)
 template<typename SortPolicy>
@@ -319,8 +320,13 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
   // SortDistance() returns (size_t() - 1) if we shouldn't add it.
   if (insertPosition != (size_t() - 1))
-    InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-        referenceIndex, distance);
+  {
+    #pragma omp critical
+    {
+      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
+          referenceIndex, distance);
+    }
+  }
 }
 
 // Base case for bichromatic search.
@@ -345,10 +351,79 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
   // SortDistance() returns (size_t() - 1) if we shouldn't add it.
   if (insertPosition != (size_t() - 1))
-    InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-        referenceIndex, distance);
+  {  
+    #pragma omp critical
+    {
+      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
+          referenceIndex, distance);
+    }
+  }
+}
+*/
+
+// Base case where the query set is the reference set.  (So, we can't return
+// ourselves as the nearest neighbor.)
+template<typename SortPolicy>
+inline force_inline
+void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
+                                     const arma::uvec& referenceIndices,
+                                     arma::Mat<size_t>& neighbors,
+                                     arma::mat& distances) const
+{
+  for (size_t j = 0; j < referenceIndices.n_elem; ++j)
+  {
+    const size_t referenceIndex = referenceIndices[j];
+    // If the points are the same, skip this point.
+    if (queryIndex == referenceIndex)
+      continue;
+
+    const double distance = metric::EuclideanDistance::Evaluate(
+        referenceSet->unsafe_col(queryIndex),
+        referenceSet->unsafe_col(referenceIndex));
+
+    // If this distance is better than any of the current candidates, the
+    // SortDistance() function will give us the position to insert it into.
+    arma::vec queryDist = distances.unsafe_col(queryIndex);
+    arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
+    size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
+        distance);
+
+    // SortDistance() returns (size_t() - 1) if we shouldn't add it.
+    if (insertPosition != (size_t() - 1))
+      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
+          referenceIndex, distance);
+  }
 }
 
+// Base case for bichromatic search.
+template<typename SortPolicy>
+inline force_inline
+void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
+                                     const arma::uvec& referenceIndices,
+                                     const arma::mat& querySet,
+                                     arma::Mat<size_t>& neighbors,
+                                     arma::mat& distances) const
+{
+  for (size_t j = 0; j < referenceIndices.n_elem; ++j)
+  {
+    const size_t referenceIndex = referenceIndices[j];
+    const double distance = metric::EuclideanDistance::Evaluate(
+        querySet.unsafe_col(queryIndex),
+        referenceSet->unsafe_col(referenceIndex));
+
+    // If this distance is better than any of the current candidates, the
+    // SortDistance() function will give us the position to insert it into.
+    arma::vec queryDist = distances.unsafe_col(queryIndex);
+    arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
+    size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
+        distance);
+
+    // SortDistance() returns (size_t() - 1) if we shouldn't add it.
+    if (insertPosition != (size_t() - 1))
+      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
+          referenceIndex, distance);
+  }
+}
 template<typename SortPolicy>
 template<typename VecType>
 void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
@@ -416,19 +491,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     arma::Col<size_t> refPointsConsidered;
     refPointsConsidered.zeros(referenceSet->n_cols);
 
-    // Define the number of threads used to process this.
-    size_t numThreadsUsed = std::min(maxThreads, numTablesToSearch);
-
-    // Parallelization: By default nested parallelism is off, so this won't be
-    // parallel. The user might turn nested parallelism on if (for example) they
-    // have a query-by-query processing scheme and so processing more than one
-    // query at the same time doesn't make sense for them.
-
-    #pragma omp parallel for \
-    num_threads (numThreadsUsed) \
-    shared (hashVec, refPointsConsidered) \
-    schedule(dynamic)
-    for (size_t i = 0; i < numTablesToSearch; ++i)
+    for (long long int i = 0; i < numTablesToSearch; ++i)
     {
 
       const size_t hashInd = (size_t) hashVec[i];
@@ -436,25 +499,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
 
       // Pick the indices in the bucket corresponding to 'hashInd'.
       if (tableRow != secondHashSize)
-      {
         for (size_t j = 0; j < bucketContentSize[tableRow]; j++)
-        {
-          #pragma omp atomic
           refPointsConsidered[secondHashTable[tableRow](j)]++;
-        }
-      }
     }
 
-    // Only keep reference points found in at least one bucket. If OpenMP is
-    // found, do it in parallel
-    #ifdef OPENMP_FOUND
-      // TODO: change this to our own function?
-      referenceIndices = arma::find(refPointsConsidered > 0);
-      return;
-    #else
-      referenceIndices = arma::find(refPointsConsidered > 0);
-      return;
-    #endif
+    // Only keep reference points found in at least one bucket.
+    referenceIndices = arma::find(refPointsConsidered > 0);
+    return;
   }
   else
   {
@@ -467,45 +518,20 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // Retrieve candidates.
     size_t start = 0;
 
-    // Define the number of threads used to process this.
-    size_t numThreadsUsed = std::min(maxThreads, numTablesToSearch);
-
-    // Parallelization: By default nested parallelism is off, so this won't be
-    // parallel. The user might turn nested parallelism on if (for example) they
-    // have a query-by-query processing scheme and so processing more than one
-    // query at the same time doesn't make sense for them.
-
-    #pragma omp parallel for \
-    num_threads (numThreadsUsed) \
-    shared (hashVec, refPointsConsideredSmall, start) \
-    schedule(dynamic)
-    for (size_t i = 0; i < numTablesToSearch; ++i) // For all tables
+    for (long long int i = 0; i < numTablesToSearch; ++i) // For all tables
     {
       const size_t hashInd = (size_t) hashVec[i]; // Find the query's bucket.
       const size_t tableRow = bucketRowInHashTable[hashInd];
 
       // Store all secondHashTable points in the candidates set.
       if (tableRow != secondHashSize)
-      { 
         for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-        {
-          #pragma omp critical
-          {
-            refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
-          }
-        }
-      }
+          refPointsConsideredSmall(start++) = secondHashTable[tableRow][j];
     }
 
-    // Only keep unique candidates. If OpenMP is found, do it in parallel.
-    #ifdef OPENMP_FOUND
-      // TODO: change this to our own function?
-      referenceIndices = arma::unique(refPointsConsideredSmall);
-      return;
-    #else
-      referenceIndices = arma::unique(refPointsConsideredSmall);
-      return;
-    #endif
+    // Keep only one copy of each candidate.
+    referenceIndices = arma::unique(refPointsConsideredSmall);
+    return;
   }
 }
 
@@ -557,8 +583,9 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
     num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
-  // Go through every query point.
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  // Go through every query point. Use long int because some compilers complain
+  // for openMP unsigned index variables.
+  for (long long int i = 0; i < querySet.n_cols; i++)
   {
 
     // Hash every query into every hash table and eventually into the
@@ -574,9 +601,17 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
+    /*
+    numTheadsUsed = std::min( (arma::uword) maxThreads, refIndices.n_elem);
+    #pragma omp parallel for\
+    num_threads( numThreadsUsed )\
+    shared(refIndices, resultingNeighbors, distances, querySet)\
+    schedule(dynamic)
     for (size_t j = 0; j < refIndices.n_elem; j++)
       BaseCase(i, (size_t) refIndices[j], querySet, resultingNeighbors,
           distances);
+    */
+    BaseCase(i, refIndices, querySet, resultingNeighbors, distances);
   }
 
   Timer::Stop("computing_neighbors");
@@ -613,8 +648,9 @@ Search(const size_t k,
     num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
-  // Go through every query point.
-  for (size_t i = 0; i < referenceSet->n_cols; i++)
+  // Go through every query point. Use long int because some compilers complain
+  // for openMP unsigned index variables.
+  for (long long int i = 0; i < referenceSet->n_cols; i++)
   {
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
@@ -629,8 +665,17 @@ Search(const size_t k,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
+
+    /*
+    numTheadsUsed = std::min( (arma::uword) maxThreads, refIndices.n_elem);
+    #pragma omp parallel for\
+    num_threads( numThreadsUsed )\
+    shared(refIndices, resultingNeighbors, distances)\
+    schedule(dynamic)
     for (size_t j = 0; j < refIndices.n_elem; j++)
       BaseCase(i, (size_t) refIndices[j], resultingNeighbors, distances);
+    */
+    BaseCase(i, refIndices, resultingNeighbors, distances);
 
   }
 
