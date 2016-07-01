@@ -1,5 +1,5 @@
 /***
- * @file nearest_neighbor_sort.cpp
+ * @file furthest_neighbor_sort.cpp
  * @author Ryan Curtin
  *
  * Implementation of the simple FurthestNeighborSort policy class.
@@ -12,7 +12,7 @@ size_t FurthestNeighborSort::SortDistance(const arma::vec& list,
                                           const arma::Col<size_t>& indices,
                                           double newDistance)
 {
-  // The first element in the list is the nearest neighbor.  We only want to
+  // The first element in the list is the furthest neighbor.  We only want to
   // insert if the new distance is greater than the last element in the list.
   if (newDistance < list[list.n_elem - 1])
     return (size_t() - 1); // Do not insert.

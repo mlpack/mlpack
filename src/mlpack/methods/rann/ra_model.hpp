@@ -40,7 +40,8 @@ class RAModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
-    X_TREE
+    X_TREE,
+    HILBERT_R_TREE
   };
 
  private:
@@ -73,6 +74,8 @@ class RAModel
   RAType<tree::RStarTree>* rStarTreeRA;
   //! Non-NULL if the X tree is used.
   RAType<tree::XTree>* xTreeRA;
+  //! Non-NULL if the Hilbert R tree is used.
+  RAType<tree::HilbertRTree>* hilbertRTreeRA;
 
  public:
   /**

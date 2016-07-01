@@ -59,17 +59,26 @@ struct NSModelName<FurthestNeighborSort>
 class MonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
+  //! Number of neighbors to search for.
   const size_t k;
+  //! Result matrix for neighbors.
   arma::Mat<size_t>& neighbors;
+  //! Result matrix for distances.
   arma::mat& distances;
 
  public:
+  //! Perform monochromatic nearest neighbor search.
   template<typename NSType>
   void operator()(NSType* ns) const;
 
+  //! Construct the MonoSearchVisitor object with the given parameters.
   MonoSearchVisitor(const size_t k,
                     arma::Mat<size_t>& neighbors,
-                    arma::mat& distances);
+                    arma::mat& distances) :
+      k(k),
+      neighbors(neighbors),
+      distances(distances)
+  {};
 };
 
 /**
@@ -82,10 +91,15 @@ template<typename SortPolicy>
 class BiSearchVisitor : public boost::static_visitor<void>
 {
  private:
+  //! The query set for the bichromatic search.
   const arma::mat& querySet;
+  //! The number of neighbors to search for.
   const size_t k;
+  //! The result matrix for neighbors.
   arma::Mat<size_t>& neighbors;
+  //! The result matrix for distances.
   arma::mat& distances;
+  //! The number of points in a leaf (for BinarySpaceTrees).
   const size_t leafSize;
 
   //! Bichromatic neighbor search on the given NSType considering the leafSize.
@@ -111,6 +125,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic neighbor search on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
+  //! Construct the BiSearchVisitor.
   BiSearchVisitor(const arma::mat& querySet,
                   const size_t k,
                   arma::Mat<size_t>& neighbors,
@@ -128,7 +143,9 @@ template<typename SortPolicy>
 class TrainVisitor : public boost::static_visitor<void>
 {
  private:
+  //! The reference set to use for training.
   arma::mat&& referenceSet;
+  //! The leaf size, used only by BinarySpaceTree.
   size_t leafSize;
 
   //! Train on the given NSType considering the leafSize.
@@ -154,6 +171,8 @@ class TrainVisitor : public boost::static_visitor<void>
   //! Train on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
+  //! Construct the TrainVisitor object with the given reference set and leaf
+  //! size for BinarySpaceTrees.
   TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
 };
 
@@ -163,6 +182,7 @@ class TrainVisitor : public boost::static_visitor<void>
 class SingleModeVisitor : public boost::static_visitor<bool&>
 {
  public:
+  //! Return whether or not single-tree search is enabled.
   template<typename NSType>
   bool& operator()(NSType* ns) const;
 };
@@ -173,8 +193,20 @@ class SingleModeVisitor : public boost::static_visitor<bool&>
 class NaiveVisitor : public boost::static_visitor<bool&>
 {
  public:
+  //! Return whether or not naive search is enabled.
   template<typename NSType>
   bool& operator()(NSType *ns) const;
+};
+
+/**
+ * EpsilonVisitor exposes the Epsilon method of the given NSType.
+ */
+class EpsilonVisitor : public boost::static_visitor<double&>
+{
+ public:
+  //! Return epsilon, the approximation parameter.
+  template<typename NSType>
+  double& operator()(NSType *ns) const;
 };
 
 /**
@@ -183,6 +215,7 @@ class NaiveVisitor : public boost::static_visitor<bool&>
 class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 {
  public:
+  //! Return the reference set.
   template<typename NSType>
   const arma::mat& operator()(NSType *ns) const;
 };
@@ -193,13 +226,18 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
+  //! Delete the NSType object.
   template<typename NSType>
   void operator()(NSType *ns) const;
 };
 
 /**
  * The NSModel class provides an easy way to serialize a model, abstracts away
- * the different types of trees, and also reflects the NeighborSearch API.
+ * the different types of trees, and also reflects the NeighborSearch API.  This
+ * class is meant to be used by the command-line mlpack_knn and mlpack_kfn
+ * programs, and thus does not have the same complete functionality and
+ * flexibility as the NeighborSearch class.  So if you are using it outside of
+ * mlpack_knn and mlpack_kfn, be aware that it is limited!
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  */
@@ -215,7 +253,8 @@ class NSModel
     R_TREE,
     R_STAR_TREE,
     BALL_TREE,
-    X_TREE
+    X_TREE,
+    HILBERT_R_TREE
   };
 
  private:
@@ -225,8 +264,9 @@ class NSModel
   //! For tree types that accept the maxLeafSize parameter.
   size_t leafSize;
 
-  //! For random projections.
+  //! If true, random projections are used.
   bool randomBasis;
+  //! This is the random projection matrix; only used if randomBasis is true.
   arma::mat q;
 
   /**
@@ -239,7 +279,8 @@ class NSModel
                  NSType<SortPolicy, tree::RTree>*,
                  NSType<SortPolicy, tree::RStarTree>*,
                  NSType<SortPolicy, tree::BallTree>*,
-                 NSType<SortPolicy, tree::XTree>*> nSearch;
+                 NSType<SortPolicy, tree::XTree>*,
+                 NSType<SortPolicy, tree::HilbertRTree>*> nSearch;
 
  public:
   /**
@@ -266,6 +307,10 @@ class NSModel
   bool Naive() const;
   bool& Naive();
 
+  //! Expose Epsilon.
+  double Epsilon() const;
+  double& Epsilon();
+
   //! Expose leafSize.
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
@@ -282,7 +327,8 @@ class NSModel
   void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,
                   const bool naive,
-                  const bool singleMode);
+                  const bool singleMode,
+                  const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
   void Search(arma::mat&& querySet,

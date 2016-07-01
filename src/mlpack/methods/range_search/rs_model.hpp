@@ -29,7 +29,8 @@ class RSModel
     R_TREE,
     R_STAR_TREE,
     BALL_TREE,
-    X_TREE
+    X_TREE,
+    HILBERT_R_TREE
   };
 
  private:
@@ -60,6 +61,8 @@ class RSModel
   RSType<tree::BallTree>* ballTreeRS;
   //! X tree based range search object (NULL if not in use).
   RSType<tree::XTree>* xTreeRS;
+  //! Hilbert R tree based range search object (NULL if not in use).
+  RSType<tree::HilbertRTree>* hilbertRTreeRS;
 
  public:
   /**
