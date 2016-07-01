@@ -218,13 +218,8 @@ class Genome {
 
   // Calculate Neuron depth.
   ssize_t NeuronDepth(ssize_t id, ssize_t depth) {
-    // TODO: if contains loop in network.
-    
-    ssize_t currentDepth;
-    ssize_t maxDepth = depth;
-
     // Network contains loop.
-    ssize_t loopDepth = NumNeuron() - NumInput();
+    ssize_t loopDepth = NumNeuron() - NumInput() - NumOutput() + 1;  // If contains loop in network.
     if (depth > loopDepth) {
       return loopDepth;
     }
@@ -243,6 +238,9 @@ class Genome {
     }
 
     // Recursively get neuron depth.
+    ssize_t currentDepth;
+    ssize_t maxDepth = depth;
+
     for (ssize_t i=0; i<inputLinksIndex.size(); ++i) {
       currentDepth = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId(), depth + 1);
       if (currentDepth > maxDepth) {
@@ -300,6 +298,7 @@ class Genome {
   }
 
   // Activate genome. The last dimension of input is always 1 for bias. 0 means no bias.
+  // NOTICE: make sure depth is set before activate.
   void Activate(std::vector<double>& input) {
     assert(input.size() == aNumInput);
     //Flush();
@@ -315,7 +314,6 @@ class Genome {
       neuronIdToIndex.insert(std::pair<ssize_t, ssize_t>(aNeuronGenes[i].Id(), i));
     }
 
-    //printf("aDepth is %d \n", aDepth);
     // Activate layer by layer.
     for (ssize_t i=0; i<aDepth; ++i) {
       // Loop links to calculate neurons' input sum.
@@ -381,9 +379,6 @@ class Genome {
       aNeuronGenes.push_back(neuronGene);
     }
   }
-
-  // TODO: More potential operators to search genome.
-
 
  private:
   // Genome id.

@@ -59,17 +59,6 @@ class Population {
     return *this;
   }
 
-  // Get species number.
-  ssize_t NumSpecies() const { return aSpecies.size(); }
-
-  // Get population size.
-  ssize_t PopulationSize() const {
-    ssize_t populationSize = 0;
-    for (ssize_t i=0; i<aSpecies.size(); ++i) {
-      populationSize += aSpecies[i].aGenomes.size();
-    }
-  }
-
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
 
@@ -94,6 +83,17 @@ class Population {
   // Get next genome id.
   ssize_t NextGenomeId() const { return aNextGenomeId; }
 
+  // Get species number.
+  ssize_t NumSpecies() const { return aSpecies.size(); }
+
+  // Get population size.
+  ssize_t PopulationSize() const {
+    ssize_t populationSize = 0;
+    for (ssize_t i=0; i<aSpecies.size(); ++i) {
+      populationSize += aSpecies[i].aGenomes.size();
+    }
+  }
+
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitnessAndGenome() {
     aBestFitness = DBL_MAX;
@@ -109,6 +109,7 @@ class Population {
 
   // Add species.
   void AddSpecies(Species& species) {
+    species.Id(aNextSpeciesId);  // NOTICE: thus we changed species id when add to population.
     aSpecies.push_back(species);
     ++aNextSpeciesId;
   }

@@ -30,17 +30,16 @@ class Species {
   Species() {
     aId = -1;
     aStaleAge = -1;
-    aBestFitness = DBL_MAX;
-    aBestGenome = Genome();
+    aBestFitness = DBL_MAX;  // DBL_MAX denotes haven't evaluate yet.
     aNextGenomeId = 0;
   }
 
   // Parametric constructor.
-  // TODO: whether randomize, random range, as parameter or not??
   Species(Genome& seedGenome, ssize_t speciesSize) {
     aId = 0;
     aStaleAge = 0;
-    aBestFitness = DBL_MAX; // DBL_MAX denotes haven't evaluate yet.
+    aBestFitness = DBL_MAX; 
+    aNextGenomeId = speciesSize;
 
     // Create genomes from seed Genome and randomize weight.
     for (ssize_t i=0; i<speciesSize; ++i) {
@@ -49,8 +48,6 @@ class Species {
       aGenomes.push_back(genome);
       aGenomes[i].RandomizeWeights(-1, 1);
     }
-
-    aNextGenomeId = speciesSize;
   }
 
   // Destructor.
