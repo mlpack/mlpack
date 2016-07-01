@@ -29,7 +29,6 @@ class MissingPolicy
   MissingPolicy()
   {
     Log::Debug << "MissingPolicy()" << std::endl;
-    missingSet.insert("a");
   }
 
   explicit MissingPolicy(std::set<std::string> missingSet) :

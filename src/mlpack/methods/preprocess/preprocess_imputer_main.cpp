@@ -15,14 +15,23 @@
 #include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
-PROGRAM_INFO("Imputer", "This "
-    "utility takes an any type of data and provides "
-    "imputation strategies for missing data.");
+PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
+    "defined missing variable to another to provide more meaningful analysis "
+    "\n\n"
+    "The program does not modify the original file, but instead makes a "
+    "separate file to save the output data; The program requires you to "
+    "specify the file name with --output_file (-o)."
+    "\n\n"
+    "For example, if we consider 'NULL' in dimension 0 to be a missing "
+    "variable and want to delete whole row containing the NULL in the "
+    "column-wise dataset, and save the result to result.csv, we could run"
+    "\n\n"
+    "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
+    "> -s listwise_deletion")
 
 PARAM_STRING_REQ("input_file", "File containing data,", "i");
 PARAM_STRING("output_file", "File to save output", "o", "");
 PARAM_STRING("missing_value", "User defined missing value", "m", "")
-PARAM_STRING("map_policy", "mapping policy to be used while loading", "p", "")
 PARAM_STRING("strategy", "imputation strategy to be applied", "s", "")
 PARAM_DOUBLE("custom_value", "user_defined custom value", "c", 0.0)
 PARAM_INT("dimension", "the dimension to apply imputation", "d", 0);
@@ -40,7 +49,6 @@ int main(int argc, char** argv)
   const string inputFile = CLI::GetParam<string>("input_file");
   const string outputFile = CLI::GetParam<string>("output_file");
   const string missingValue = CLI::GetParam<string>("missing_value");
-  const string mapPolicy = CLI::GetParam<string>("map_policy");
   const double customValue = CLI::GetParam<double>("custom_value");
   const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   string strategy = CLI::GetParam<string>("strategy");
@@ -81,12 +89,13 @@ int main(int argc, char** argv)
         << "'custom' strategy" << endl;
 
   arma::mat input;
-  // DatasetInfo holds how the DatasetMapper should map the values.
+  // Policy tells how the DatasetMapper should map the values.
   // can be specified by passing map_policy classes as template parameters
   // ex) DatasetMapper<IncrementPolicy> info;
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
   MissingPolicy policy(missingSet);
+  using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
 
   Load<double, MissingPolicy>(inputFile, input, info, policy, true, true);
@@ -104,14 +113,14 @@ int main(int argc, char** argv)
   arma::Mat<double> output(input);
 
   Log::Info << "Performing '" << strategy << "' imputation strategy "
-      << "on dimension '" << dimension << endl;
+      << "on dimension '" << dimension << "'." << endl;
 
   // custom strategy only
   if (strategy == "custom")
   {
     Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
         << "'." << endl;
-    Imputer<double, MissingPolicy, CustomImputation<double>> impu(info);
+    Imputer<double, MapperType, CustomImputation<double>> impu(info);
     impu.Impute(input, output, missingValue, customValue, dimension);
   }
   else
@@ -121,17 +130,17 @@ int main(int argc, char** argv)
 
     if (strategy == "mean")
     {
-      Imputer<double, MissingPolicy, MeanImputation<double>> impu(info);
+      Imputer<double, MapperType, MeanImputation<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
     else if (strategy == "median")
     {
-      Imputer<double, MissingPolicy, MedianImputation<double>> impu(info);
+      Imputer<double, MapperType, MedianImputation<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
-    else if (strategy == "listwise")
+    else if (strategy == "listwise_deletion")
     {
-      Imputer<double, MissingPolicy, ListwiseDeletion<double>> impu(info);
+      Imputer<double, MapperType, ListwiseDeletion<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
     else

@@ -369,7 +369,7 @@ bool Load(const std::string& filename,
   return success;
 }
 
-// Load with mappings.  Unfortunately we have to implement this ourselves.
+// Load with mappings and policy.
 template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
