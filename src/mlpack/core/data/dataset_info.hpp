@@ -37,6 +37,7 @@ class DatasetMapper
    */
   DatasetMapper(const size_t dimensionality = 0);
 
+  DatasetMapper(MapPolicy policy, const size_t dimensionality = 0);
   /**
    * Given the string and the dimension to which it belongs, return its numeric
    * mapping.  If no mapping yet exists, the string is added to the list of

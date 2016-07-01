@@ -9,6 +9,7 @@
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_info.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>
+#include <mlpack/core/data/map_policies/missing_policy.hpp>
 #include <mlpack/core/data/imputation_methods/mean_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/median_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
@@ -83,10 +84,10 @@ int main(int argc, char** argv)
   // DatasetInfo holds how the DatasetMapper should map the values.
   // can be specified by passing map_policy classes as template parameters
   // ex) DatasetMapper<IncrementPolicy> info;
-  using MapperType = DatasetMapper<IncrementPolicy>;
+  using MapperType = DatasetMapper<MissingPolicy>;
   MapperType info;
 
-  Load(inputFile, input, info,  true, true);
+  Load<double, MapperType>(inputFile, input, info,  true, true);
 
   // for testing purpose
   Log::Info << input << endl;
@@ -99,7 +100,6 @@ int main(int argc, char** argv)
   }
 
   arma::Mat<double> output(input);
-
 
   Log::Info << "Performing '" << strategy << "' imputation strategy "
       << "on dimension '" << dimension << endl;

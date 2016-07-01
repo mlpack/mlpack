@@ -18,9 +18,17 @@ template<typename MapPolicy>
 inline DatasetMapper<MapPolicy>::DatasetMapper(const size_t dimensionality) :
     types(dimensionality, Datatype::numeric)
 {
-  // Nothing to initialize.
+  // Nothing to initialize here.
 }
 
+template<typename MapPolicy>
+inline DatasetMapper<MapPolicy>::DatasetMapper(MapPolicy policy,
+                                               const size_t dimensionality) :
+    types(dimensionality, Datatype::numeric),
+    policy(std::move(policy))
+{
+  // Nothing to initialize here.
+}
 
 // When we want to insert value into the map,
 // we could use the policy to map the string
