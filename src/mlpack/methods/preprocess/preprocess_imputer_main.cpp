@@ -84,10 +84,12 @@ int main(int argc, char** argv)
   // DatasetInfo holds how the DatasetMapper should map the values.
   // can be specified by passing map_policy classes as template parameters
   // ex) DatasetMapper<IncrementPolicy> info;
-  using MapperType = DatasetMapper<MissingPolicy>;
-  MapperType info;
+  std::set<std::string> missingSet;
+  missingSet.insert(missingValue);
+  MissingPolicy policy(missingSet);
+  DatasetMapper<MissingPolicy> info(policy);
 
-  Load<double, MapperType>(inputFile, input, info,  true, true);
+  Load<double, MissingPolicy>(inputFile, input, info, policy, true, true);
 
   // for testing purpose
   Log::Info << input << endl;
@@ -109,7 +111,7 @@ int main(int argc, char** argv)
   {
     Log::Info << "Replacing all '" << missingValue << "' with '" << customValue
         << "'." << endl;
-    Imputer<double, MapperType, CustomImputation<double>> impu(info);
+    Imputer<double, MissingPolicy, CustomImputation<double>> impu(info);
     impu.Impute(input, output, missingValue, customValue, dimension);
   }
   else
@@ -119,17 +121,17 @@ int main(int argc, char** argv)
 
     if (strategy == "mean")
     {
-      Imputer<double, MapperType, MeanImputation<double>> impu(info);
+      Imputer<double, MissingPolicy, MeanImputation<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
     else if (strategy == "median")
     {
-      Imputer<double, MapperType, MedianImputation<double>> impu(info);
+      Imputer<double, MissingPolicy, MedianImputation<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
     else if (strategy == "listwise")
     {
-      Imputer<double, MapperType, ListwiseDeletion<double>> impu(info);
+      Imputer<double, MissingPolicy, ListwiseDeletion<double>> impu(info);
       impu.Impute(input, output, missingValue, dimension);
     }
     else
@@ -139,8 +141,6 @@ int main(int argc, char** argv)
   }
 
   // for testing purpose
-  Log::Info << "input::" << endl;
-  Log::Info << input << endl;
   Log::Info << "output::" << endl;
   Log::Info << output << endl;
 

@@ -24,9 +24,9 @@ namespace data {
  * (Datatype::numeric or Datatype::categorical) as well as mappings from strings
  * to unsigned integers and vice versa.
  *
- * @tparam MapPolicy Mapping policy used to specify MapString();
+ * @tparam PolicyType Mapping policy used to specify MapString();
  */
-template <typename MapPolicy>
+template <typename PolicyType>
 class DatasetMapper
 {
  public:
@@ -37,7 +37,7 @@ class DatasetMapper
    */
   DatasetMapper(const size_t dimensionality = 0);
 
-  DatasetMapper(MapPolicy policy, const size_t dimensionality = 0);
+  DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
   /**
    * Given the string and the dimension to which it belongs, return its numeric
    * mapping.  If no mapping yet exists, the string is added to the list of
@@ -47,7 +47,7 @@ class DatasetMapper
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
-  typename MapPolicy::mapped_type MapString(const std::string& string,
+  typename PolicyType::mapped_type MapString(const std::string& string,
                                             const size_t dimension);
 
   /**
@@ -69,7 +69,7 @@ class DatasetMapper
    * @param string Mapped string for value.
    * @param dimension Dimension to unmap string from.
    */
-  typename MapPolicy::mapped_type UnmapValue(const std::string& string,
+  typename PolicyType::mapped_type UnmapValue(const std::string& string,
                                             const size_t dimension);
 
   //! Return the type of a given dimension (numeric or categorical).
@@ -106,7 +106,7 @@ class DatasetMapper
   std::vector<Datatype> types;
 
   // BiMapType definition
-  using BiMapType = boost::bimap<std::string, typename MapPolicy::mapped_type>;
+  using BiMapType = boost::bimap<std::string, typename PolicyType::mapped_type>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
@@ -114,7 +114,7 @@ class DatasetMapper
 
   MapType maps;
 
-  MapPolicy policy;
+  PolicyType policy;
 };
 
 // Use typedef to provide backward compatibility

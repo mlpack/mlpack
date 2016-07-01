@@ -9,6 +9,7 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/core.hpp>
+#include "dataset_info.hpp"
 
 namespace mlpack {
 namespace data {

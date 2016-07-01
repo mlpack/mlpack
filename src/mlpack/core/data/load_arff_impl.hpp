@@ -15,10 +15,10 @@
 namespace mlpack {
 namespace data {
 
-template<typename eT, typename MapperType>
+template<typename eT, typename PolicyType>
 void LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              MapperType& info)
+              DatasetMapper<PolicyType>& info)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -98,7 +98,7 @@ void LoadARFF(const std::string& filename,
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
   {
-    info = MapperType(dimensionality);
+    info = DatasetMapper<PolicyType>(dimensionality);
   }
   else if (info.Dimensionality() != dimensionality)
   {

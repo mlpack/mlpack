@@ -91,10 +91,18 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT, typename MapperType>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          MapperType& info,
+          DatasetMapper<PolicyType>& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+template<typename eT, typename PolicyType>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          DatasetMapper<PolicyType>& info,
+          PolicyType& policy,
           const bool fatal = false,
           const bool transpose = true);
 

@@ -51,10 +51,10 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   /* TODO: Connect Load with the new DatasetMapper instead of DatasetInfo*/
 
-  Imputer<double,
-          DatasetInfo,
-          CustomImputation<double>> impu(info);
-  impu.Impute(input, output, missingValue, customValue, feature);
+  //Imputer<double,
+          //DatasetInfo,
+          //CustomImputation<double>> impu(info);
+  //impu.Impute(input, output, missingValue, customValue, feature);
   // Remove the file.
   remove("test_file.csv");
 }

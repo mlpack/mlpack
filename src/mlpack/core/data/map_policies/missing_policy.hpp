@@ -26,11 +26,18 @@ class MissingPolicy
  public:
   typedef size_t mapped_type;
 
-  //explicit MissingPolicy(std::set<std::string> specificString) :
-    //specificString(std::move(specificString))
-  //{
-    //// Nothing to initialize here.
-  //}
+  MissingPolicy()
+  {
+    Log::Debug << "MissingPolicy()" << std::endl;
+    missingSet.insert("a");
+  }
+
+  explicit MissingPolicy(std::set<std::string> missingSet) :
+    missingSet(std::move(missingSet))
+  {
+    Log::Debug << "MissingPolicy()" << std::endl;
+    // Nothing to initialize here.
+  }
 
 
   template <typename MapType>
@@ -42,11 +49,11 @@ class MissingPolicy
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
-    if (//specificString.count(string) != 0 &&
+    if (missingSet.count(string) != 0 &&
         maps.count(dimension) == 0 ||
         maps[dimension].first.left.count(string) == 0)
     {
-       // This string does not exist yet.
+      // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
 
       typedef boost::bimap<std::string, size_t>::value_type PairType;
@@ -60,7 +67,7 @@ class MissingPolicy
     }
   }
  private:
-  //std::set<std::string> specificString;
+  std::set<std::string> missingSet;
 }; // class MissingPolicy
 
 } // namespace data
