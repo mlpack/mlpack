@@ -38,7 +38,7 @@ class MedianImputation
       {
         if (input(dimension, i) == mappedValue)
         {
-          output(dimension, i) = medianMat(0, i);
+          output(dimension, i) = medianMat(dimension, 0);
         }
       }
     }
@@ -49,7 +49,7 @@ class MedianImputation
       {
         if (input(i, dimension) == mappedValue)
         {
-          output(i, dimension) = medianMat(i, 0);
+          output(i, dimension) = medianMat(0, dimension);
         }
       }
     }

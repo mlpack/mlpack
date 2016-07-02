@@ -90,12 +90,12 @@ int main(int argc, char** argv)
 
   arma::mat input;
   // Policy tells how the DatasetMapper should map the values.
-  // can be specified by passing map_policy classes as template parameters
-  // ex) DatasetMapper<IncrementPolicy> info;
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
+  Log::Debug << "initalize MissingPolicy(missingSet)" << endl;
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
+  Log::Debug << "initalize info(policy)" << endl;
   DatasetMapper<MissingPolicy> info(policy);
 
   Load<double, MissingPolicy>(inputFile, input, info, policy, true, true);

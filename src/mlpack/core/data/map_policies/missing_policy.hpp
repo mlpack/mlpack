@@ -34,7 +34,7 @@ class MissingPolicy
   explicit MissingPolicy(std::set<std::string> missingSet) :
     missingSet(std::move(missingSet))
   {
-    Log::Debug << "MissingPolicy()" << std::endl;
+    Log::Debug << "MissingPolicy(missingSet)" << std::endl;
     // Nothing to initialize here.
   }
 
