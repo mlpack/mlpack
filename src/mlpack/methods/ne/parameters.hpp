@@ -67,6 +67,12 @@ class Parameters {
   // Probability to add link to genome.
   double aMutateAddLinkProb;
 
+  // Probability to add a recurrent link.
+  double aMutateAddRecurrentLinkProb;
+
+  // Probability to add a loop link.
+  double aMutateAddLoopLinkProb;
+
   // Probability to add neuron to genome.
   double aMutateAddNeuronProb;
 

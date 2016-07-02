@@ -208,14 +208,6 @@ class Genome {
     }
   }
 
-  // Sort neuron genes by depth.
-  static bool CompareNeuronGene(NeuronGene ln, NeuronGene rn) {
-    return (ln.Depth() < rn.Depth());
-  }
-  void SortHiddenNeuronGenes() {
-    std::sort(aNeuronGenes.begin() + NumInput() + NumOutput(), aNeuronGenes.end(), CompareNeuronGene);
-  }
-
   // Sort link genes by toNeuron's depth.
   void SortLinkGenes() {
     struct DepthAndLink

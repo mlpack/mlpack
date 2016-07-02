@@ -192,6 +192,8 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   params.aPerturbWeightProb = 0.9;
   params.aMutateWeightSize = 0.1;
   params.aMutateAddLinkProb = 0.5;
+  params.aMutateAddRecurrentLinkProb = 0;
+  params.aMutateAddLoopLinkProb = 0;
   params.aMutateAddNeuronProb = 0.5;
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;

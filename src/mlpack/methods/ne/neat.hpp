@@ -59,6 +59,8 @@ class NEAT {
     aPerturbWeightProb = params.aPerturbWeightProb;
     aMutateWeightSize = params.aMutateWeightSize;
     aMutateAddLinkProb = params.aMutateAddLinkProb;
+    aMutateAddRecurrentLinkProb = params.aMutateAddRecurrentLinkProb;
+    aMutateAddLoopLinkProb = params.aMutateAddLoopLinkProb;
     aMutateAddNeuronProb = params.aMutateAddNeuronProb;
     aMutateEnabledProb = params.aMutateEnabledProb;
     aMutateDisabledProb = params.aMutateDisabledProb;
@@ -109,7 +111,6 @@ class NEAT {
     neuronInnov.newInputLinkInnovId = aNextLinkInnovId++;
     neuronInnov.newOutputLinkInnovId = aNextLinkInnovId++;
     aNeuronInnovations.push_back(neuronInnov);
-    // TODO: do we need to add two link innovations ???
 
     return neuronInnov;
   }
@@ -126,53 +127,61 @@ class NEAT {
   } 
 
   // Mutate: add new link to genome.
-  // TODO: what if created looped link? It will influence the depth calculation in genome class!!
   // TODO: make innovation a class and pass as parameter? Also for other similar functions.
-  void MutateAddLink(Genome& genome, double mutateAddLinkProb) {
+  void MutateAddLink(Genome& genome,
+                     double mutateAddLinkProb,
+                     double mutateAddRecurrentLinkProb,
+                     double mutateAddLoopLinkProb) {
     // Whether mutate or not.
     double p = mlpack::math::Random();
     if (p > mutateAddLinkProb) return;
-  ////printf("addlink 1\n");
-  ////printf("genome size is %d \n", genome.aNeuronGenes.size());
-    if (genome.aNeuronGenes.size() == 0) return;   // NOTICE: this happened. Why???
+
+    if (genome.aNeuronGenes.size() == 0) return;
+
     // Select from neuron
     ssize_t fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
-  ////printf("fromNeuronIdx is %d \n", fromNeuronIdx);
     ssize_t fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
-////printf("addlink 2\n");
+
     // Select to neuron which cannot be input.
-////printf("genome num input is: %d\n", genome.NumInput());
-    ssize_t toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size());
-  ////printf("toNeuronIdx is: %d\n", toNeuronIdx);
-  ////printf("num of neuron is : %d\n", genome.aNeuronGenes.size());  
+    ssize_t toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
     ssize_t toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
-    if (fromNeuronId == toNeuronId) return;
-////printf("addlink 3\n");
+
+    // Handle same depth connection, recurrent connection and loop connection.
+    if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth()) {
+      return;
+    } else if (fromNeuronId == toNeuronId) {
+      p = mlpack::math::Random();
+      if (p >= mutateAddRecurrentLinkProb) return;
+    } else if (genome.aNeuronGenes[fromNeuronIdx].Depth() > genome.aNeuronGenes[toNeuronIdx].Depth()) {
+      p = mlpack::math::Random();
+      if (p >= mutateAddLoopLinkProb) return;
+    }
+
     // Check link already exist or not.
     ssize_t linkIdx = IsLinkExist(genome, fromNeuronId, toNeuronId);
     if (linkIdx != -1) {
       genome.aLinkGenes[linkIdx].Enabled(true);
       return;
     }
-////printf("addlink 4\n");
+
     // Check innovation already exist or not.
     ssize_t innovIdx = CheckLinkInnovation(fromNeuronId, toNeuronId);
     if (innovIdx != -1) {
       LinkGene linkGene(fromNeuronId,
                         toNeuronId,
                         aLinkInnovations[innovIdx].newLinkInnovId,
-                        mlpack::math::RandNormal(0, 1), // TODO: make the distribution an argument for control?
+                        mlpack::math::RandNormal(0, 1),
                         true);
       genome.AddLink(linkGene);
       return;
     }
-////printf("addlink 5\n");
+
     // If new link and new innovation, create it, push new innovation.
     LinkInnovation linkInnov = AddLinkInnovation(fromNeuronId, toNeuronId);
     LinkGene linkGene(fromNeuronId,
                       toNeuronId,
                       linkInnov.newLinkInnovId,
-                      mlpack::math::RandNormal(0, 1), // TODO: make the distribution an argument for control?
+                      mlpack::math::RandNormal(0, 1),
                       true);
     genome.AddLink(linkGene);
   }
@@ -223,6 +232,18 @@ class NEAT {
 
     // If new innovation, create.
     NeuronInnovation neuronInnov = AddNeuronInnovation(splitLinkInnovId);
+
+    LinkInnovation inputLinkInnov;
+    inputLinkInnov.fromNeuronId = genome.aLinkGenes[linkIdx].FromNeuronId();
+    inputLinkInnov.toNeuronId = neuronInnov.newNeuronId;
+    inputLinkInnov.newLinkInnovId = neuronInnov.newInputLinkInnovId;
+    aLinkInnovations.push_back(inputLinkInnov);
+
+    LinkInnovation outputLinkInnov;
+    outputLinkInnov.fromNeuronId = neuronInnov.newNeuronId;
+    outputLinkInnov.toNeuronId = genome.aLinkGenes[linkIdx].ToNeuronId();
+    outputLinkInnov.newLinkInnovId = neuronInnov.newOutputLinkInnovId;
+    aLinkInnovations.push_back(outputLinkInnov);
 
     NeuronGene neuronGene(neuronInnov.newNeuronId,
                           HIDDEN,
@@ -303,6 +324,9 @@ class NEAT {
   // Is it really a good idea???
   // If not, we will need to change CrossoverLinkAndNeuron, and Disjoint, and WeightDiff.
   void CrossoverLinkAndNeuron(Genome& momGenome, Genome& dadGenome, Genome& childGenome) {
+    childGenome.NumInput(momGenome.NumInput());
+    childGenome.NumOutput(momGenome.NumOutput());
+
     // Add input and output neuron genes to child genome.
     ////printf("crossover 0\n");
     for (ssize_t i=0; i<(momGenome.NumInput() + momGenome.NumOutput()); ++i) {
@@ -628,7 +652,7 @@ class NEAT {
     while (p > 0) {  // so p can be bigger than 1 and mutate can happen multiple times.
       if (mlpack::math::Random() < p) {
         ////printf("mutate 3\n");
-        MutateAddLink(genome, aMutateAddLinkProb);
+        MutateAddLink(genome, aMutateAddLinkProb, aMutateAddRecurrentLinkProb, aMutateAddLoopLinkProb);
         ////printf("mutate 4\n");
       }
       --p;
@@ -698,8 +722,6 @@ class NEAT {
     ////printf("breed 7\n");
     Mutate(childGenome);
     ////printf("breed 8\n");
-    childGenome.NumInput(childGenome.NumInput());
-    childGenome.NumOutput(childGenome.NumOutput());
     return true;
   }
 
@@ -926,6 +948,12 @@ class NEAT {
 
   // Probability to add link to genome.
   double aMutateAddLinkProb;
+
+  // Probability to add a recurrent link.
+  double aMutateAddRecurrentLinkProb;
+
+  // Probability to add a loop link.
+  double aMutateAddLoopLinkProb;
 
   // Probability to add neuron to genome.
   double aMutateAddNeuronProb;
