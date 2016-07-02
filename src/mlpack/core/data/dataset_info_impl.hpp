@@ -115,6 +115,12 @@ inline size_t DatasetMapper<PolicyType>::Dimensionality() const
   return types.size();
 }
 
+template<typename PolicyType>
+inline PolicyType& DatasetMapper<PolicyType>::Policy() const
+{
+  return this->policy;
+}
+
 } // namespace data
 } // namespace mlpack
 

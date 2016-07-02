@@ -35,9 +35,9 @@ class DatasetMapper
    * the dimensionality cannot be changed later; you will have to create a new
    * DatasetMapper object.
    */
-  DatasetMapper(const size_t dimensionality = 0);
+  explicit DatasetMapper(const size_t dimensionality = 0);
 
-  DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
+  explicit DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
   /**
    * Given the string and the dimension to which it belongs, return its numeric
    * mapping.  If no mapping yet exists, the string is added to the list of
@@ -100,6 +100,8 @@ class DatasetMapper
     ar & data::CreateNVP(types, "types");
     ar & data::CreateNVP(maps, "maps");
   }
+
+  PolicyType& Policy() const;
 
  private:
   //! Types of each dimension.

@@ -96,7 +96,11 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
-          const bool transpose = true);
+          const bool transpose = true)
+{
+  PolicyType policy;
+  return Load(filename, matrix, info, policy, fatal, transpose);
+}
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and
