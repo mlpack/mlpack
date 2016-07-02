@@ -12,9 +12,6 @@
 #include <map>
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 #include "link_gene.hpp"
 #include "neuron_gene.hpp"
@@ -44,7 +41,6 @@ class Genome {
          const std::vector<LinkGene>& linkGenes,
          ssize_t numInput,
          ssize_t numOutput,
-         ssize_t depth,
          double fitness,
          double adjustedFitness):
     aId(id),
@@ -52,7 +48,6 @@ class Genome {
     aLinkGenes(linkGenes),
     aNumInput(numInput),
     aNumOutput(numOutput),
-    aDepth(depth),
     aFitness(fitness),
     aAdjustedFitness(adjustedFitness)
   {}
@@ -64,7 +59,6 @@ class Genome {
     aLinkGenes = genome.aLinkGenes;
     aNumInput = genome.aNumInput;
     aNumOutput = genome.aNumOutput;
-    aDepth = genome.aDepth;
     aFitness = genome.aFitness;
     aAdjustedFitness = genome.aAdjustedFitness;
   }
@@ -80,7 +74,6 @@ class Genome {
       aLinkGenes = genome.aLinkGenes;
       aNumInput = genome.aNumInput;
       aNumOutput = genome.aNumOutput;
-      aDepth = genome.aDepth;
       aFitness = genome.aFitness;
       aAdjustedFitness = genome.aAdjustedFitness;
     }
@@ -120,12 +113,6 @@ class Genome {
   // Set output length.
   void NumOutput(ssize_t numOutput) { aNumOutput = numOutput; }
 
-  // Get depth.
-  ssize_t Depth() const { return aDepth; }
-
-  // Set depth.
-  void Depth(ssize_t depth) { aDepth = depth; }
-
   // Set fitness.
   void Fitness(double fitness) { aFitness = fitness; }
 
@@ -150,9 +137,6 @@ class Genome {
 
   // Whether specified neuron id exist in this genome.
   bool HasNeuronId(ssize_t id) const {
-    assert(id > 0);
-    assert(NumNeuron() > 0);
-
     for (ssize_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Id() == id) {
         return true;
@@ -216,137 +200,86 @@ class Genome {
     return false;
   }
 
-  // Calculate Neuron depth.
-  ssize_t NeuronDepth(ssize_t id, ssize_t depth) {
-    // Network contains loop.
-    ssize_t loopDepth = NumNeuron() - NumInput() - NumOutput() + 1;  // If contains loop in network.
-    if (depth > loopDepth) {
-      return loopDepth;
-    }
-    
-    // Find all links that output to this neuron id.
-    std::vector<int> inputLinksIndex;
-    for (ssize_t i=0; i<NumLink(); ++i) {   
-      if (aLinkGenes[i].ToNeuronId() == id) {
-        inputLinksIndex.push_back(i);
-      }
-    }
-
-    // INPUT or BIAS or isolated neurons.
-    if (inputLinksIndex.size() == 0) {
-      return 0;
-    }
-
-    // Recursively get neuron depth.
-    ssize_t currentDepth;
-    ssize_t maxDepth = depth;
-
-    for (ssize_t i=0; i<inputLinksIndex.size(); ++i) {
-      currentDepth = NeuronDepth(aLinkGenes[inputLinksIndex[i]].FromNeuronId(), depth + 1);
-      if (currentDepth > maxDepth) {
-        maxDepth = currentDepth;
-      } 
-    }
-
-    return maxDepth;
-  }
-
-  // Calculate Genome depth.
-  // It is the max depth of all output neuron genes.
-  ssize_t GenomeDepth() {
-    ssize_t numNeuron = NumNeuron();
-
-    // If empty genome.
-    if (numNeuron == 0) {
-      aDepth = 0;
-      return aDepth;
-    }
-
-    // If no hidden neuron, depth is 1.
-    if (aNumInput + aNumOutput == numNeuron) {
-      aDepth = 1;
-      return aDepth;
-    }
-    
-    // Find all OUTPUT neuron id.
-    std::vector<ssize_t> outputNeuronsId;
-    for (ssize_t i=0; i<NumNeuron(); ++i) {
-      if (aNeuronGenes[i].Type() == OUTPUT) {
-        outputNeuronsId.push_back(aNeuronGenes[i].Id());
-      }
-    }
-
-    // Get max depth of all output neurons.
-    ssize_t genomeDepth = 0;
-    for (ssize_t i=0; i<outputNeuronsId.size(); ++i) {
-      ssize_t outputNeuronDepth = NeuronDepth(outputNeuronsId[i], 0);
-      if (outputNeuronDepth > genomeDepth) {
-        genomeDepth = outputNeuronDepth;
-      }
-    }
-    aDepth = genomeDepth;
-
-    return aDepth;
-  }
-
   // Set neurons' input and output to zero.
   void Flush() {
     for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
-      aNeuronGenes[i].aActivation = 0;
-      aNeuronGenes[i].aInput = 0;
+      aNeuronGenes[i].Activation(0);
+      aNeuronGenes[i].Input(0);
+    }
+  }
+
+  // Sort neuron genes by depth.
+  static bool CompareNeuronGene(NeuronGene ln, NeuronGene rn) {
+    return (ln.Depth() < rn.Depth());
+  }
+  void SortHiddenNeuronGenes() {
+    std::sort(aNeuronGenes.begin() + NumInput() + NumOutput(), aNeuronGenes.end(), CompareNeuronGene);
+  }
+
+  // Sort link genes by toNeuron's depth.
+  void SortLinkGenes() {
+    struct DepthAndLink
+    {
+      double depth;
+      LinkGene link;
+ 
+      DepthAndLink(double d, LinkGene& l) : depth(d), link(l) {}
+
+      bool operator < (const DepthAndLink& dL) const
+      {
+        return (depth < dL.depth);
+      }
+    };
+
+    std::vector<double> toNeuronDepths;
+    for (ssize_t i=0; i<aLinkGenes.size(); ++i) {
+      NeuronGene toNeuron = GetNeuronById(aLinkGenes[i].ToNeuronId());
+      toNeuronDepths.push_back(toNeuron.Depth());
+    }
+
+    std::vector<DepthAndLink> depthAndLinks;
+    ssize_t linkGenesSize = aLinkGenes.size();
+    for (ssize_t i=0; i<linkGenesSize; ++i) {
+      depthAndLinks.push_back(DepthAndLink(toNeuronDepths[i], aLinkGenes[i]));
+    }
+
+    std::sort(depthAndLinks.begin(), depthAndLinks.end());
+
+    for (ssize_t i=0; i<linkGenesSize; ++i) {
+      aLinkGenes[i] = depthAndLinks[i].link;
     }
   }
 
   // Activate genome. The last dimension of input is always 1 for bias. 0 means no bias.
-  // NOTICE: make sure depth is set before activate.
   void Activate(std::vector<double>& input) {
     assert(input.size() == aNumInput);
-    //Flush();
-    
-    // Set inputs.
-    for (ssize_t i=0; i<aNumInput; ++i) {
-      aNeuronGenes[i].aActivation = input[i];  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
-    }
 
-    // Construct neuron id: index dictionary.
-    std::map<ssize_t, ssize_t> neuronIdToIndex;
+    SortLinkGenes();
+
+    // Set all neurons' input to be 0.
     for (ssize_t i=0; i<NumNeuron(); ++i) {
-      neuronIdToIndex.insert(std::pair<ssize_t, ssize_t>(aNeuronGenes[i].Id(), i));
+      aNeuronGenes[i].Input(0);
     }
 
-    // Activate layer by layer.
-    for (ssize_t i=0; i<aDepth; ++i) {
-      // Loop links to calculate neurons' input sum.
-      for (ssize_t j=0; j<aLinkGenes.size(); ++j) {
-        aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].ToNeuronId())].aInput +=
-          aLinkGenes[j].Weight() *
-          aNeuronGenes[neuronIdToIndex.at(aLinkGenes[j].FromNeuronId())].aActivation *
-          ((int) aLinkGenes[j].Enabled());
-      }
+    // Set input neurons.
+    for (ssize_t i=0; i<aNumInput; ++i) {
+      aNeuronGenes[i].Activation(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+    }
 
-      // Loop neurons to calculate neurons' activation.
-      for (ssize_t j=aNumInput; j<aNeuronGenes.size(); ++j) {
-        double x = aNeuronGenes[j].aInput;  // TODO: consider bias. Difference?
-        aNeuronGenes[j].aInput = 0;
-
-        double y = 0;
-        switch (aNeuronGenes[j].Type()) { // TODO: more cases.
-          case SIGMOID:                   
-            y = ann::LogisticFunction::fn(x);
-            break;
-          case TANH:
-            y = ann::TanhFunction::fn(x);
-            break;
-          case RELU:
-            y = ann::RectifierFunction::fn(x);
-            break;
-          case LINEAR:
-            y = x;
-          default:
-            y = ann::LogisticFunction::fn(x);
-            break;
+    // Activate hidden and output neurons.
+    for (ssize_t i = 0; i < NumLink(); ++i) {
+      if (aLinkGenes[i].Enabled()) {
+        ssize_t toNeuronIdx = GetNeuronIndex(aLinkGenes[i].ToNeuronId());
+        ssize_t fromNeuronIdx = GetNeuronIndex(aLinkGenes[i].FromNeuronId());
+        double input = aNeuronGenes[toNeuronIdx].Input() + 
+                       aNeuronGenes[fromNeuronIdx].Activation() * aLinkGenes[i].Weight();
+        aNeuronGenes[toNeuronIdx].Input(input);
+        
+        if (i == NumLink() - 1) {
+          aNeuronGenes[toNeuronIdx].CalcActivation();
+        } else if (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx) {
+          aNeuronGenes[toNeuronIdx].CalcActivation();
         }
-        aNeuronGenes[j].aActivation = y;
       }
     }
   }
@@ -355,7 +288,7 @@ class Genome {
   std::vector<double> Output() {
     std::vector<double> output;
     for (ssize_t i=0; i<aNumOutput; ++i) {
-      output.push_back(aNeuronGenes[aNumInput + i].aActivation);
+      output.push_back(aNeuronGenes[aNumInput + i].Activation());
     }
     return output;
   }
@@ -389,9 +322,6 @@ class Genome {
 
   // Output length.
   ssize_t aNumOutput;
-
-  // Network maximum depth.
-  ssize_t aDepth;
 
   // Genome fitness.
   double aFitness;

@@ -60,14 +60,14 @@ BOOST_AUTO_TEST_CASE(NELinkGeneTest)
 BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
 {
   // Create a neuron gene.
-  NeuronGene neuronGene(1, INPUT, SIGMOID, 0, 0);
+  NeuronGene neuronGene(1, INPUT, SIGMOID, 0, 0, 0);
 
   // Test parametric constructor and access functions.
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 1);
   BOOST_REQUIRE_EQUAL(neuronGene.Type(), INPUT);
   BOOST_REQUIRE_EQUAL(neuronGene.ActFuncType(), SIGMOID);
-  BOOST_REQUIRE_EQUAL(neuronGene.aInput, 0);
-  BOOST_REQUIRE_EQUAL(neuronGene.aActivation, 0);
+  BOOST_REQUIRE_EQUAL(neuronGene.Input(), 0);
+  BOOST_REQUIRE_EQUAL(neuronGene.Activation(), 0);
 
   // Test set function
   neuronGene.ActFuncType(RELU);
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   BOOST_REQUIRE_EQUAL(neuronGene2.Id(), 1);
 
   // Test operator =.
-  NeuronGene neuronGene3(11, INPUT, SIGMOID, 0, 0);
+  NeuronGene neuronGene3(11, INPUT, SIGMOID, 0, 0, 0);
   neuronGene = neuronGene3;
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 11);
 
@@ -119,17 +119,16 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   ssize_t id = 0;
   ssize_t numInput = 3;
   ssize_t numOutput = 1;
-  ssize_t depth = 2;
   double fitness = -1;
   double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0);
-  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0);
-  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0);
-  NeuronGene outputGene(3, OUTPUT, SIGMOID, 0, 0);
-  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0, 0);
+  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
 
   neuronGenes.push_back(inputGene1);
   neuronGenes.push_back(inputGene2);
@@ -158,7 +157,6 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             depth,
                              fitness,
                              adjustedFitness);
 
@@ -202,17 +200,16 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   ssize_t id = 0;
   ssize_t numInput = 3;
   ssize_t numOutput = 1;
-  ssize_t depth = 2;
   double fitness = -1;
   double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0);
-  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0);
-  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0);
-  NeuronGene outputGene(3, OUTPUT, SIGMOID, 0, 0);
-  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0, 0);
+  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
 
   neuronGenes.push_back(inputGene1);
   neuronGenes.push_back(inputGene2);
@@ -241,7 +238,6 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             depth,
                              fitness,
                              adjustedFitness);
 

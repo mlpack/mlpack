@@ -10,6 +10,9 @@
 #include <cstddef>
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 namespace mlpack {
 namespace ne {
@@ -40,12 +43,6 @@ enum ActivationFuncType {
  */
 class NeuronGene {
  public:
-  // Input sum.
-  double aInput;
-
-  // Activation.
-  double aActivation;
-
   // Default constructor.
   NeuronGene() {}
 
@@ -53,11 +50,13 @@ class NeuronGene {
   NeuronGene(ssize_t id,
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
+             double depth,
   	         double input,
              double activation):
     aId(id),
     aType(type),
     aActFuncType(actFuncType),
+    aDepth(depth),
     aInput(input),
     aActivation(activation)
   {}
@@ -67,6 +66,7 @@ class NeuronGene {
   	aId = neuronGene.aId;
   	aType = neuronGene.aType;
   	aActFuncType = neuronGene.aActFuncType;
+    aDepth = neuronGene.aDepth;
   	aInput = neuronGene.aInput;
     aActivation = neuronGene.aActivation;
   }
@@ -74,11 +74,31 @@ class NeuronGene {
   // Destructor.
   ~NeuronGene() {}
 
+  // Operator =.
+  NeuronGene& operator =(const NeuronGene& neuronGene) {
+    if (this != &neuronGene) {
+      aId = neuronGene.aId;
+      aType = neuronGene.aType;
+      aActFuncType = neuronGene.aActFuncType;
+      aDepth = neuronGene.aDepth;
+      aInput = neuronGene.aInput;
+      aActivation = neuronGene.aActivation;
+    }
+    
+    return *this;
+  }  
+
   // Get neuron id.
   ssize_t Id() const { return aId; }
 
+  // Set neuron id.
+  void Id(ssize_t id) { aId = id; }
+
   // Get neuron type.
   NeuronType Type() const { return aType; }
+
+  // Set neuron type.
+  void Type(NeuronType type) { aType = type; }
 
   // Get activation function type.
   ActivationFuncType ActFuncType() const { return aActFuncType; }
@@ -88,18 +108,44 @@ class NeuronGene {
     aActFuncType = actFuncType;
   }
 
-  // Operator =.
-  NeuronGene& operator =(const NeuronGene& neuronGene) {
-    if (this != &neuronGene) {
-  	  aId = neuronGene.aId;
-  	  aType = neuronGene.aType;
-  	  aActFuncType = neuronGene.aActFuncType;
-  	  aInput = neuronGene.aInput;
-      aActivation = neuronGene.aActivation;
+  // Get input.
+  double Input() const { return aInput; }
+
+  // Set input.
+  void Input(double input) { aInput = input; }
+
+  // Get activation.
+  double Activation() const { return aActivation; }
+
+  // Set activation.
+  void Activation(double activation) { aActivation = activation; }
+
+  // Get neuron depth.
+  double Depth() const { return aDepth; }
+
+  // Set neuron depth.
+  void Depth(double depth) { aDepth = depth; }
+
+  // Calculate activation based on current input.
+  void CalcActivation() {
+    switch (aType) { // TODO: more cases.
+      case SIGMOID:                   
+        aActivation = ann::LogisticFunction::fn(aInput);
+        break;
+      case TANH:
+        aActivation = ann::TanhFunction::fn(aInput);
+        break;
+      case RELU:
+        aActivation = ann::RectifierFunction::fn(aInput);
+        break;
+      case LINEAR:
+        aActivation = aInput;
+        break;
+      default:
+        aActivation = ann::LogisticFunction::fn(aInput);
+        break;
     }
-    
-    return *this;
-  }  
+  }
 
  private:
   // Neuron id.
@@ -110,6 +156,15 @@ class NeuronGene {
 
   // Activation function type.
   ActivationFuncType aActFuncType;
+
+  // Input sum.
+  double aInput;
+
+  // Activation.
+  double aActivation;
+
+  // Depth. INPUT and BIAS is 0, OUTPUT is 1. HIDDEN is between 0 and 1. Calculate activate by sequence.
+  double aDepth;
 
 };
 

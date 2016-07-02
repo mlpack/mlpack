@@ -191,6 +191,8 @@ class NEAT {
     if (!genome.aLinkGenes[linkIdx].Enabled()) return;
 
     genome.aLinkGenes[linkIdx].Enabled(false);
+    NeuronGene fromNeuron = genome.GetNeuronById(genome.aLinkGenes[linkIdx].FromNeuronId());
+    NeuronGene toNeuron = genome.GetNeuronById(genome.aLinkGenes[linkIdx].ToNeuronId());
 
     // Check innovation already exist or not.
     ssize_t splitLinkInnovId = genome.aLinkGenes[linkIdx].InnovationId();
@@ -199,6 +201,7 @@ class NEAT {
       NeuronGene neuronGene(aNeuronInnovations[innovIdx].newNeuronId,
                             HIDDEN,
                             SIGMOID,  // TODO: make it random??
+                            (fromNeuron.Depth() + toNeuron.Depth()) / 2,
                             0,
                             0);
       genome.AddHiddenNeuron(neuronGene);
@@ -224,6 +227,7 @@ class NEAT {
     NeuronGene neuronGene(neuronInnov.newNeuronId,
                           HIDDEN,
                           SIGMOID,  // TODO: make it random??
+                          (fromNeuron.Depth() + toNeuron.Depth()) / 2,
                           0,
                           0);
     genome.AddHiddenNeuron(neuronGene);
@@ -696,7 +700,6 @@ class NEAT {
     ////printf("breed 8\n");
     childGenome.NumInput(childGenome.NumInput());
     childGenome.NumOutput(childGenome.NumOutput());
-    childGenome.GenomeDepth();
     return true;
   }
 
