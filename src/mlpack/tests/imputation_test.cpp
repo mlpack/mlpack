@@ -39,11 +39,12 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   arma::mat input;
   arma::mat output;
-  string missingValue = "a";
-  double customValue = 99;
-  size_t feature = 0;
+  size_t dimension = 0;
 
-  DatasetInfo info;
+  std::set<string> mset;
+  mset.insert("a");
+  MissingPolicy miss(mset);
+  DatasetMapper<MissingPolicy> info(miss);
   BOOST_REQUIRE(data::Load("test_file.csv", input, info) == true);
 
   BOOST_REQUIRE_EQUAL(input.n_rows, 3);
@@ -51,10 +52,21 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   /* TODO: Connect Load with the new DatasetMapper instead of DatasetInfo*/
 
-  //Imputer<double,
-          //DatasetInfo,
-          //CustomImputation<double>> impu(info);
-  //impu.Impute(input, output, missingValue, customValue, feature);
+  Imputer<double,
+          DatasetMapper<MissingPolicy>,
+          CustomImputation<double>> imputer(info);
+  imputer.Impute(input, output, "a", 99, dimension); // convert a -> 99
+
+  BOOST_REQUIRE_CLOSE(output(0, 0), 99.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 1), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 2), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 2), 7.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 0), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 1), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
+
   // Remove the file.
   remove("test_file.csv");
 }

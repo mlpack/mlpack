@@ -369,18 +369,17 @@ bool Load(const std::string& filename,
   return success;
 }
 
-// Load with mappings and policy.
+// Load with mappings.  Unfortunately we have to implement this ourselves.
 template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
-          PolicyType& policy,
           const bool fatal,
           const bool transpose)
 {
   // Get the extension and load as necessary.
   Timer::Start("loading_data");
-  Log::Debug << "Load with Policy" << std::endl;
+
   // Get the extension.
   std::string extension = Extension(filename);
 
@@ -412,7 +411,7 @@ bool Load(const std::string& filename,
       type = "raw ASCII-formatted data";
 
     Log::Info << "Loading '" << filename << "' as " << type << ".  "
-        << std::flush;
+        << std::endl;
     std::string separators;
     if (commas)
       separators = ",";
@@ -447,14 +446,12 @@ bool Load(const std::string& filename,
     if (transpose)
     {
       matrix.set_size(cols, rows);
-      Log::Debug << "initialize datasetmapper with policy" << std::endl;
-      info = DatasetMapper<PolicyType>(policy, cols);
+      info = DatasetMapper<PolicyType>(info.Policy(), cols);
     }
     else
     {
       matrix.set_size(rows, cols);
-      Log::Debug << "initialize datasetmapper with policy" << std::endl;
-      info = DatasetMapper<PolicyType>(policy, rows);
+      info = DatasetMapper<PolicyType>(info.Policy(), rows);
     }
 
     stream.close();
@@ -499,7 +496,7 @@ bool Load(const std::string& filename,
   else if (extension == "arff")
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
+        << std::endl;
     try
     {
       LoadARFF(filename, matrix, info);

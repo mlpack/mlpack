@@ -96,52 +96,6 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
-          const bool transpose = true)
-{
-  PolicyType policy;
-  return Load(filename, matrix, info, policy, fatal, transpose);
-}
-
-/**
- * Loads a matrix from a file, guessing the filetype from the extension and
- * mapping categorical features with a DatasetMapper object.  This will
- * transpose the matrix (unless the transpose parameter is set to false).
- * This particular overload of Load() can only load text-based formats, such as
- * those given below:
- *
- * - CSV (csv_ascii), denoted by .csv, or optionally .txt
- * - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
- * - ASCII (raw_ascii), denoted by .txt
- *
- * If the file extension is not one of those types, an error will be given.
- * This is preferable to Armadillo's default behavior of loading an unknown
- * filetype as raw_binary, which can have very confusing effects.
- *
- * If the parameter 'fatal' is set to true, a std::runtime_error exception will
- * be thrown if the matrix does not load successfully.  The parameter
- * 'transpose' controls whether or not the matrix is transposed after loading.
- * In most cases, because data is generally stored in a row-major format and
- * mlpack requires column-major matrices, this should be left at its default
- * value of 'true'.
- *
- * The DatasetMapper object passed to this function will be re-created, so any
- * mappings from previous loads will be lost. policy is passed to the
- * constructor of DatasetMapper to create a new instance.
- *
- * @param filename Name of file to load.
- * @param matrix Matrix to load contents of file into.
- * @param info DatasetMapper object to populate with mappings and data types.
- * @param policy Policy class that decides how the DatasetMapper should map.
- * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
-          PolicyType& policy,
-          const bool fatal = false,
           const bool transpose = true);
 
 /**

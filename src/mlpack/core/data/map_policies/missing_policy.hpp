@@ -24,7 +24,8 @@ namespace data {
 class MissingPolicy
 {
  public:
-  typedef size_t mapped_type;
+  // typedef of mapped_type
+  using mapped_type = size_t;
 
   MissingPolicy()
   {
@@ -48,9 +49,10 @@ class MissingPolicy
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
+    Log::Debug << "missingSet has: " << missingSet.count(string) << std::endl;
     if (missingSet.count(string) != 0 &&
-        maps.count(dimension) == 0 ||
-        maps[dimension].first.left.count(string) == 0)
+        (maps.count(dimension) == 0 ||
+         maps[dimension].first.left.count(string) == 0))
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
@@ -62,6 +64,7 @@ class MissingPolicy
     else
     {
       // This string already exists in the mapping.
+      Log::Debug << "string already exists in the mapping" << std::endl;
       return maps[dimension].first.left.at(string);
     }
   }

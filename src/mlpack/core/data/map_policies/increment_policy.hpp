@@ -24,7 +24,8 @@ namespace data {
 class IncrementPolicy
 {
  public:
-  typedef size_t mapped_type;
+  // typedef of mapped_type
+  using mapped_type = size_t;
 
   template <typename MapType>
   mapped_type MapString(MapType& maps,

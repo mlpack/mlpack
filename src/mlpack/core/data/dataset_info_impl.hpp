@@ -121,6 +121,13 @@ inline PolicyType& DatasetMapper<PolicyType>::Policy() const
   return this->policy;
 }
 
+template<typename PolicyType>
+inline PolicyType& DatasetMapper<PolicyType>::Policy()
+{
+  return this->policy;
+}
+
+
 } // namespace data
 } // namespace mlpack
 

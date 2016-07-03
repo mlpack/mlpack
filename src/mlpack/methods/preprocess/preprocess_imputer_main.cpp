@@ -98,7 +98,7 @@ int main(int argc, char** argv)
   Log::Debug << "initalize info(policy)" << endl;
   DatasetMapper<MissingPolicy> info(policy);
 
-  Load<double, MissingPolicy>(inputFile, input, info, policy, true, true);
+  Load(inputFile, input, info, true, true);
 
   // for testing purpose
   Log::Info << input << endl;
