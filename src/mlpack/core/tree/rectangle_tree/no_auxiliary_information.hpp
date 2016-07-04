@@ -100,7 +100,9 @@ class NoAuxiliaryInformation
 
   /**
    * The R++ tree requires to split the maximum bounding rectangle of a node
-   * that is being split. This method is intended for that.
+   * that is being split. This method is intended for that. This method is only
+   * necessary for an AuxiliaryInformationType that is being used in conjunction
+   * with RPlusTreeSplit.
    *
    * @param treeOne The first subtree.
    * @param treeTwo The second subtree.

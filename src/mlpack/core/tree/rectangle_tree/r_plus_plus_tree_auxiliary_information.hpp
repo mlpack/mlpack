@@ -21,6 +21,8 @@ class RPlusPlusTreeAuxiliaryInformation
  public:
   //! The element type held by the tree.
   typedef typename TreeType::ElemType ElemType;
+  //! The bound type held by the auxiliary information.
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
 
   //! Construct the auxiliary information object.
   RPlusPlusTreeAuxiliaryInformation();
@@ -124,16 +126,13 @@ class RPlusPlusTreeAuxiliaryInformation
   void NullifyData();
 
   //! Return the maximum bounding rectangle.
-  bound::HRectBound<metric::EuclideanDistance, ElemType>& OuterBound()
-  { return outerBound; }
+  BoundType& OuterBound() { return outerBound; }
 
   //! Modify the maximum bounding rectangle.
-  const bound::HRectBound<metric::EuclideanDistance, ElemType>&
-      OuterBound() const
-  { return outerBound; }
+  const BoundType& OuterBound() const { return outerBound; }
  private:
   //! The maximum bounding rectangle.
-  bound::HRectBound<metric::EuclideanDistance, ElemType> outerBound;
+  BoundType outerBound;
  public:
   /**
    * Serialize the information.

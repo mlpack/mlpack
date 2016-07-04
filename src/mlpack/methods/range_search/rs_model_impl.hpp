@@ -57,6 +57,14 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
     case HILBERT_R_TREE:
       ar & CreateNVP(hilbertRTreeRS, "range_search_model");
       break;
+
+    case R_PLUS_TREE:
+      ar & CreateNVP(rPlusTreeRS, "range_search_model");
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      ar & CreateNVP(rPlusPlusTreeRS, "range_search_model");
+      break;
   }
 }
 
@@ -76,6 +84,10 @@ inline const arma::mat& RSModel::Dataset() const
     return xTreeRS->ReferenceSet();
   else if (hilbertRTreeRS)
     return hilbertRTreeRS->ReferenceSet();
+  else if (rPlusTreeRS)
+    return rPlusTreeRS->ReferenceSet();
+  else if (rPlusPlusTreeRS)
+    return rPlusPlusTreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -96,6 +108,10 @@ inline bool RSModel::SingleMode() const
     return xTreeRS->SingleMode();
   else if (hilbertRTreeRS)
     return hilbertRTreeRS->SingleMode();
+  else if (rPlusTreeRS)
+    return rPlusTreeRS->SingleMode();
+  else if (rPlusPlusTreeRS)
+    return rPlusPlusTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -116,6 +132,10 @@ inline bool& RSModel::SingleMode()
     return xTreeRS->SingleMode();
   else if (hilbertRTreeRS)
     return hilbertRTreeRS->SingleMode();
+  else if (rPlusTreeRS)
+    return rPlusTreeRS->SingleMode();
+  else if (rPlusPlusTreeRS)
+    return rPlusPlusTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -136,6 +156,10 @@ inline bool RSModel::Naive() const
     return xTreeRS->Naive();
   else if (hilbertRTreeRS)
     return hilbertRTreeRS->Naive();
+  else if (rPlusTreeRS)
+    return rPlusTreeRS->Naive();
+  else if (rPlusPlusTreeRS)
+    return rPlusPlusTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -156,6 +180,10 @@ inline bool& RSModel::Naive()
     return xTreeRS->Naive();
   else if (hilbertRTreeRS)
     return hilbertRTreeRS->Naive();
+  else if (rPlusTreeRS)
+    return rPlusTreeRS->Naive();
+  else if (rPlusPlusTreeRS)
+    return rPlusPlusTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }

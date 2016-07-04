@@ -878,20 +878,9 @@ void CheckOverlap(const TreeType& tree)
     {
       if (j == i)
         continue;
-      success = false;
-      // Two nodes overlap each other if and only if there are no dimension
-      // in which they do not overlap each other.
-      for (size_t k = 0; k < tree.Bound().Dim(); k++)
-      {
-        if ((tree.Child(i).Bound()[k].Lo() >=
-            tree.Child(j).Bound()[k].Hi()) ||
-            (tree.Child(j).Bound()[k].Lo() >=
-            tree.Child(i).Bound()[k].Hi()))
-        {
-          success = true;
-          break;
-        }
-      }
+
+      success = !tree.Child(i).Bound().Contains(tree.Child(j).Bound());
+
       if (!success)
         break;
     }
@@ -934,10 +923,10 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
   arma::mat distances2;
 
   typedef RPlusTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+      arma::mat > TreeType;
   TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the X tree.
+  // Nearest neighbor search with the R+ tree.
 
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
       RPlusTree > knn1(&rPlusTree, true);
@@ -1004,18 +993,8 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
         continue;
       const Bound& bound2 = tree.Child(j).AuxiliaryInfo().OuterBound();
 
-      // Two bounds overlap each other if and only if there are no dimension
-      // in which they do not overlap each other.
-      success = false;
-      for (size_t k = 0; k < tree.Bound().Dim(); k++)
-      {
-        if (bound1[k].Lo() >= bound2[k].Hi() ||
-            bound2[k].Lo() >= bound1[k].Hi())
-        {
-          success = true;
-          break;
-        }
-      }
+      success = !bound1.Contains(bound2);
+
       if (!success)
         break;
     }
@@ -1046,7 +1025,7 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeBoundTest)
   // Check the MinimalSplitsNumberSweep.
   typedef RectangleTree<EuclideanDistance,
       NeighborSearchStat<NearestNeighborSort>, arma::mat,
-      RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalSplitsNumberSweep>,
+      RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalCoverageSweep>,
       RPlusPlusTreeDescentHeuristic, RPlusPlusTreeAuxiliaryInformation>
           RPlusPlusTreeMinimalSplits;
 
@@ -1071,10 +1050,10 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
   arma::mat distances2;
 
   typedef RPlusPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+      NeighborSearchStat<NearestNeighborSort>, arma::mat > TreeType;
   TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the X tree.
+  // Nearest neighbor search with the R++ tree.
 
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
       arma::mat, RPlusPlusTree > knn1(&rPlusPlusTree, true);

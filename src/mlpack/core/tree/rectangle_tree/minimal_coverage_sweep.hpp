@@ -11,12 +11,12 @@
 namespace mlpack {
 namespace tree {
 
-constexpr double fillFactor = 0.5;
-
 /**
  * The MinimalCoverageSweep class finds a partition along which we
- * can split a node according to the coverage of two resulting nodes.
- * Moreover, the class evaluates the cost of each split.
+ * can split a node according to the coverage of two resulting nodes. The class
+ * finds a partition along a given axis. Moreover, the class evaluates the cost
+ * of each split. The cost is proportional to the total coverage of resulting
+ * nodes. If the resulting nodes are overflowed the maximum cost is returned.
  *
  * @tparam SplitPolicy The class that provides rules for inserting children of
  *    a node that is being split into two new subtrees.
@@ -24,27 +24,6 @@ constexpr double fillFactor = 0.5;
 template<typename SplitPolicy>
 class MinimalCoverageSweep
 {
- private:
-  /**
-   * Class to allow for faster sorting.
-   */
-  template<typename ElemType>
-  struct SortStruct
-  {
-    ElemType d;
-    int n;
-  };
-
-  /**
-   * Comparator for sorting with SortStruct.
-   */
-  template<typename ElemType>
-  static bool StructComp(const SortStruct<ElemType>& s1,
-                         const SortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
-
  public:
   //! A struct that provides the type of the sweep cost.
   template<typename TreeType>

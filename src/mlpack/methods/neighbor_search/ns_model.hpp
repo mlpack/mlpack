@@ -230,7 +230,9 @@ class NSModel
     R_STAR_TREE,
     BALL_TREE,
     X_TREE,
-    HILBERT_R_TREE
+    HILBERT_R_TREE,
+    R_PLUS_TREE,
+    R_PLUS_PLUS_TREE
   };
 
  private:
@@ -255,7 +257,9 @@ class NSModel
                  NSType<SortPolicy, tree::RStarTree>*,
                  NSType<SortPolicy, tree::BallTree>*,
                  NSType<SortPolicy, tree::XTree>*,
-                 NSType<SortPolicy, tree::HilbertRTree>*> nSearch;
+                 NSType<SortPolicy, tree::HilbertRTree>*,
+                 NSType<SortPolicy, tree::RPlusTree>*,
+                 NSType<SortPolicy, tree::RPlusPlusTree>*> nSearch;
 
  public:
   /**

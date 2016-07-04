@@ -68,7 +68,15 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   if ( !PartitionNode(tree, cutAxis, cut))
     return;
 
-  assert(cutAxis < tree->Bound().Dim());
+  // If we could not find a suitable partition.
+  if (cutAxis == tree->Bound().Dim())
+  {
+    tree->MaxLeafSize()++;
+    tree->points.resize(tree->MaxLeafSize() + 1);
+    Log::Warn << "Could not find an acceptable partition."
+        "The size of the node will be increased.";
+    return;
+  }
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -129,7 +137,15 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   if ( !PartitionNode(tree, cutAxis, cut))
     return false;
 
-  assert(cutAxis < tree->Bound().Dim());
+  // If we could not find a suitable partition.
+  if (cutAxis == tree->Bound().Dim())
+  {
+    tree->MaxNumChildren()++;
+    tree->children.resize(tree->MaxNumChildren() + 1);
+    Log::Warn << "Could not find an acceptable partition."
+        "The size of the node will be increased.";
+    return false;
+  }
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -290,8 +306,8 @@ bool RPlusTreeSplit<SplitPolicyType, SweepType>::
 PartitionNode(const TreeType* node, size_t& minCutAxis,
     typename TreeType::ElemType& minCut)
 {
-  if ((node->NumChildren() <= fillFactor && !node->IsLeaf()) ||
-      (node->Count() <= fillFactor && node->IsLeaf()))
+  if ((node->NumChildren() <= node->MaxNumChildren() && !node->IsLeaf()) ||
+      (node->Count() <= node->MaxLeafSize() && node->IsLeaf()))
     return false; // No partition required.
 
   // Define the type of the sweep cost.

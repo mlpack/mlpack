@@ -143,7 +143,12 @@ inline ElemType HRectBound<MetricType, ElemType>::Volume() const
 {
   ElemType volume = 1.0;
   for (size_t i = 0; i < dim; ++i)
+  {
+    if (bounds[i].Lo() >= bounds[i].Hi())
+      return 0;
+
     volume *= (bounds[i].Hi() - bounds[i].Lo());
+  }
 
   return volume;
 }
@@ -428,6 +433,55 @@ inline bool HRectBound<MetricType, ElemType>::Contains(const VecType& point) con
   }
 
   return true;
+}
+
+template<typename MetricType, typename ElemType>
+inline bool HRectBound<MetricType, ElemType>::Contains(
+    const HRectBound& bound) const
+{
+  for (size_t i = 0; i < dim; i++)
+  {
+    const math::RangeType<ElemType>& r_a = bounds[i];
+    const math::RangeType<ElemType>& r_b = bound.bounds[i];
+
+    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi()) // If a does not overlap b at all.
+      return false;
+  }
+
+  return true;
+}
+
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
+Intersect(const HRectBound& bound) const
+{
+  HRectBound<MetricType, ElemType> result(dim);
+
+  for (size_t k = 0; k < dim; k++)
+  {
+    result[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    result[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+  }
+  return result;
+}
+
+template<typename MetricType, typename ElemType>
+inline ElemType HRectBound<MetricType, ElemType>::Overlap(
+    const HRectBound& bound) const
+{
+  ElemType volume = 1.0;
+
+  for (size_t k = 0; k < dim; k++)
+  {
+    ElemType lo = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    ElemType hi = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+
+    if ( hi <= lo)
+      return 0;
+
+    volume *= hi - lo;
+  }
+  return volume;
 }
 
 /**

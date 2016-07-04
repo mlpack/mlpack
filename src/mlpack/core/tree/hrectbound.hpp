@@ -183,6 +183,21 @@ class HRectBound
   bool Contains(const VecType& point) const;
 
   /**
+   * Determines if this bound partially contains a bound.
+   */
+  bool Contains(const HRectBound& bound) const;
+
+  /**
+   * Returns the intersection of this bound and another.
+   */
+  HRectBound Intersect(const HRectBound& bound) const;
+
+  /**
+   * Returns the volume of overlap of this bound and another.
+   */
+  ElemType Overlap(const HRectBound& bound) const;
+
+  /**
    * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
    */
   ElemType Diameter() const;

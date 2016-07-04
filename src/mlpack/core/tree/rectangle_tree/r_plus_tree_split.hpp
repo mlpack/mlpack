@@ -18,7 +18,9 @@ namespace tree /** Trees and tree-building procedures. */ {
  *
  * @tparam SplitPolicyType The class that helps to determine the subtree into
  *    which we should insert a child node.
- * @tparam SweepType The class that sweeps a node along an axis.
+ * @tparam SweepType The class that finds the partition of a node along a
+ * given axis. The partition algorithm tries to find a partition along each
+ * axis, evaluates each partition and chooses the best one.
  */
 template<typename SplitPolicyType,
          template<typename> class SweepType>
@@ -81,8 +83,9 @@ class RPlusTreeSplit
       const typename TreeType::ElemType cut);
 
   /**
-   * This method should be invoked in order to make the tree balanced if
-   * one of two resulting subtrees is empty after the split process
+   * This method is used to make sure that the tree has equivalent maximum depth
+   * in every branch. The method should be invoked if one of two resulting
+   * subtrees is empty after the split process
    * (i.e. the subtree contains no children).
    * The method convert the empty node into an empty subtree (increase the node
    * in depth).

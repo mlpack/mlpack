@@ -22,16 +22,21 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
 {
   typedef typename TreeType::ElemType ElemType;
 
-  std::vector<SortStruct<ElemType>> sorted(node->NumChildren());
+  std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    sorted[i].d = SplitPolicy::Bound(node->Child(i))[axis].Hi();
-    sorted[i].n = i;
+    sorted[i].first = SplitPolicy::Bound(node->Child(i))[axis].Hi();
+    sorted[i].second = i;
   }
 
   // Sort candidates in order to check balancing.
-  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(),
+      [] (std::pair<ElemType, size_t>& s1,
+          std::pair<ElemType, size_t>& s2)
+      {
+        return s1.first < s2.first;
+      });
 
   size_t minCost = SIZE_MAX;
 
@@ -46,7 +51,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     for (size_t j = 0; j < node->NumChildren(); j++)
     {
       const TreeType& child = node->Child(j);
-      int policy = SplitPolicy::GetSplitPolicy(child, axis, sorted[i].d);
+      int policy = SplitPolicy::GetSplitPolicy(child, axis, sorted[i].first);
       if (policy == SplitPolicy::AssignToFirstTree)
         numTreeOneChildren++;
       else if (policy == SplitPolicy::AssignToSecondTree)
@@ -75,7 +80,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
       if (cost < minCost)
       {
         minCost = cost;
-        axisCut = sorted[i].d;
+        axisCut = sorted[i].first;
       }
     }
   }

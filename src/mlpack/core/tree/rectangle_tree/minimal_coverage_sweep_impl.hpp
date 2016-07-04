@@ -21,27 +21,34 @@ SweepNonLeafNode(const size_t axis,
                  typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
 
-  std::vector<SortStruct<ElemType>> sorted(node->NumChildren());
+  std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
-    sorted[i].d = SplitPolicy::Bound(node->Child(i))[axis].Hi();
-    sorted[i].n = i;
+    sorted[i].first = SplitPolicy::Bound(node->Child(i))[axis].Hi();
+    sorted[i].second = i;
   }
   // Sort high bounds of children.
-  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(),
+      [] (std::pair<ElemType, size_t>& s1,
+          std::pair<ElemType, size_t>& s2)
+      {
+        return s1.first < s2.first;
+      });
 
-  size_t splitPointer = fillFactor * node->NumChildren();
+  size_t splitPointer = node->NumChildren() / 2;
 
-  axisCut = sorted[splitPointer - 1].d;
+  axisCut = sorted[splitPointer - 1].first;
 
-  // Check if the partition is suitable.
+  // Check if the midpoint split is suitable.
   if (!CheckNonLeafSweep(node, axis, axisCut))
   {
+    // Find any suitable partition if the default partition is not acceptable.
     for (splitPointer = 1; splitPointer < sorted.size(); splitPointer++)
     {
-      axisCut = sorted[splitPointer - 1].d;
+      axisCut = sorted[splitPointer - 1].first;
       if (CheckNonLeafSweep(node, axis, axisCut))
         break;
     }
@@ -50,72 +57,24 @@ SweepNonLeafNode(const size_t axis,
       return std::numeric_limits<ElemType>::max();
   }
 
-  std::vector<ElemType> lowerBound1(node->Bound().Dim());
-  std::vector<ElemType> highBound1(node->Bound().Dim());
-  std::vector<ElemType> lowerBound2(node->Bound().Dim());
-  std::vector<ElemType> highBound2(node->Bound().Dim());
+  BoundType bound1(node->Bound().Dim());
+  BoundType bound2(node->Bound().Dim());
 
-  // Find lower and high bounds of two resulting nodes.
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
-  {
-    lowerBound1[k] = node->Child(sorted[0].n).Bound()[k].Lo();
-    highBound1[k] = node->Child(sorted[0].n).Bound()[k].Hi();
+  // Find bounds of two resulting nodes.
+  for (size_t i = 0; i < splitPointer; i++)
+    bound1 |= node->Child(sorted[i].second).Bound();
 
-    for (size_t i = 1; i < splitPointer; i++)
-    {
-      if (node->Child(sorted[i].n).Bound()[k].Lo() < lowerBound1[k])
-        lowerBound1[k] = node->Child(sorted[i].n).Bound()[k].Lo();
-      if (node->Child(sorted[i].n).Bound()[k].Hi() > highBound1[k])
-        highBound1[k] = node->Child(sorted[i].n).Bound()[k].Hi();
-    }
+  for (size_t i = splitPointer; i < node->NumChildren(); i++)
+    bound2 |= node->Child(sorted[i].second).Bound();
 
-    lowerBound2[k] = node->Child(sorted[splitPointer].n).Bound()[k].Lo();
-    highBound2[k] = node->Child(sorted[splitPointer].n).Bound()[k].Hi();
-
-    for (size_t i = splitPointer + 1; i < node->NumChildren(); i++)
-    {
-      if (node->Child(sorted[i].n).Bound()[k].Lo() < lowerBound2[k])
-        lowerBound2[k] = node->Child(sorted[i].n).Bound()[k].Lo();
-      if (node->Child(sorted[i].n).Bound()[k].Hi() > highBound2[k])
-        highBound2[k] = node->Child(sorted[i].n).Bound()[k].Hi();
-    }
-  }
 
   // Evaluate the cost of the split i.e. calculate the total coverage
   // of two resulting nodes.
 
-  ElemType area1 = 1.0, area2 = 1.0;
-  ElemType overlappedArea = 1.0;
+  ElemType area1 = bound1.Volume();
+  ElemType area2 = bound2.Volume();
 
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
-  {
-    if (lowerBound1[k] >= highBound1[k])
-    {
-      overlappedArea *= 0;
-      area1 *= 0;
-    }
-    else
-      area1 *= highBound1[k] - lowerBound1[k];
-
-    if (lowerBound2[k] >= highBound2[k])
-    {
-      overlappedArea *= 0;
-      area1 *= 0;
-    }
-    else
-      area2 *= highBound2[k] - lowerBound2[k];
-
-    if (lowerBound1[k] < highBound1[k] && lowerBound2[k] < highBound2[k])
-    {
-      if (lowerBound1[k] > highBound2[k] || lowerBound2[k] > highBound2[k])
-        overlappedArea *= 0;
-      else
-        overlappedArea *= std::min(highBound1[k], highBound2[k]) -
-            std::max(lowerBound1[k], lowerBound2[k]);
-    }
-  }
-
-  return area1 + area2 - overlappedArea;
+  return area1 + area2;
 }
 
 template<typename SplitPolicy>
@@ -126,73 +85,48 @@ SweepLeafNode(const size_t axis,
               typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
 
-  std::vector<SortStruct<ElemType>> sorted(node->Count());
+  std::vector<std::pair<ElemType, size_t>> sorted(node->Count());
 
   sorted.resize(node->Count());
 
   for (size_t i = 0; i < node->NumPoints(); i++)
   {
-    sorted[i].d = node->Dataset().col(node->Point(i))[axis];
-    sorted[i].n = i;
+    sorted[i].first = node->Dataset().col(node->Point(i))[axis];
+    sorted[i].second = i;
   }
 
   // Sort high bounds of children.
-  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(),
+      [] (std::pair<ElemType, size_t>& s1,
+          std::pair<ElemType, size_t>& s2)
+      {
+        return s1.first < s2.first;
+      });
 
-  size_t splitPointer = fillFactor * node->Count();
+  size_t splitPointer = node->Count() / 2;
 
-  axisCut = sorted[splitPointer - 1].d;
+  axisCut = sorted[splitPointer - 1].first;
 
   // Check if the partition is suitable.
   if (!CheckLeafSweep(node, axis, axisCut))
     return std::numeric_limits<ElemType>::max();
 
-  std::vector<ElemType> lowerBound1(node->Bound().Dim());
-  std::vector<ElemType> highBound1(node->Bound().Dim());
-  std::vector<ElemType> lowerBound2(node->Bound().Dim());
-  std::vector<ElemType> highBound2(node->Bound().Dim());
+  BoundType bound1(node->Bound().Dim());
+  BoundType bound2(node->Bound().Dim());
 
-  // Find lower and high bounds of two resulting nodes.
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
-  {
-    lowerBound1[k] = node->Dataset().col(node->Point(sorted[0].n))[k];
-    highBound1[k] = node->Dataset().col(node->Point(sorted[0].n))[k];
+  // Find bounds of two resulting nodes.
+  for (size_t i = 0; i < splitPointer; i++)
+    bound1 |= node->Dataset().col(node->Point(sorted[i].second));
 
-    for (size_t i = 1; i < splitPointer; i++)
-    {
-      if (node->Dataset().col(node->Point(sorted[i].n))[k] < lowerBound1[k])
-        lowerBound1[k] = node->Dataset().col(node->Point(sorted[i].n))[k];
-      if (node->Dataset().col(node->Point(sorted[i].n))[k] > highBound1[k])
-        highBound1[k] = node->Dataset().col(node->Point(sorted[i].n))[k];
-    }
-
-    lowerBound2[k] = node->Dataset().col(
-        node->Point(sorted[splitPointer].n))[k];
-    highBound2[k] = node->Dataset().col(node->Point(sorted[splitPointer].n))[k];
-
-    for (size_t i = splitPointer + 1; i < node->NumChildren(); i++)
-    {
-      if (node->Dataset().col(node->Point(sorted[i].n))[k] < lowerBound2[k])
-        lowerBound2[k] = node->Dataset().col(node->Point(sorted[i].n))[k];
-      if (node->Dataset().col(node->Point(sorted[i].n))[k] > highBound2[k])
-        highBound2[k] = node->Dataset().col(node->Point(sorted[i].n))[k];
-    }
-  }
+  for (size_t i = splitPointer; i < node->NumChildren(); i++)
+    bound2 |= node->Dataset().col(node->Point(sorted[i].second));
 
   // Evaluate the cost of the split i.e. calculate the total coverage
   // of two resulting nodes.
 
-  ElemType area1 = 1.0, area2 = 1.0;
-  ElemType overlappedArea = 1.0;
-
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
-  {
-    area1 *= highBound1[k] - lowerBound1[k];
-    area2 *= highBound2[k] - lowerBound2[k];
-  }
-
-  return area1 + area2 - overlappedArea;
+  return bound1.Volume() + bound2.Volume();
 }
 
 template<typename SplitPolicy>
