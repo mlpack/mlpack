@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>
+#include <limits>
 
 
 using namespace std;
@@ -25,7 +26,7 @@ class MissingPolicy
 {
  public:
   // typedef of mapped_type
-  using mapped_type = size_t;
+  using mapped_type = double;
 
   MissingPolicy()
   {
@@ -48,21 +49,24 @@ class MissingPolicy
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
+    const double NaN = std::numeric_limits<double>::quiet_NaN();
     if (missingSet.count(string) != 0 &&
         (maps.count(dimension) == 0 ||
          maps[dimension].first.left.count(string) == 0))
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
+      numMappings++;
 
-      typedef boost::bimap<std::string, size_t>::value_type PairType;
-      maps[dimension].first.insert(PairType(string, numMappings));
-      return numMappings++;
+      typedef boost::bimap<std::string, mapped_type>::value_type PairType;
+      maps[dimension].first.insert(PairType(string, NaN));
+      return NaN;
     }
     else
     {
       // This string already exists in the mapping.
-      return maps[dimension].first.left.at(string);
+      //return maps[dimension].first.left.at(string);
+      return NaN;
     }
   }
  private:

@@ -8,6 +8,7 @@
 #define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_CUSTOM_IMPUTATION_HPP
 
 #include <mlpack/core.hpp>
+#include <cmath>
 
 using namespace std;
 
@@ -33,7 +34,8 @@ class CustomImputation
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-        if (input(dimension, i) == mappedValue)
+        if (input(dimension, i) == mappedValue ||
+            std::isnan(input(dimension, i)))
         {
           output(dimension, i) = customValue;
         }
@@ -43,7 +45,8 @@ class CustomImputation
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(i, dimension) == mappedValue)
+        if (input(i, dimension) == mappedValue ||
+            std::isnan(input(i, dimension)))
         {
           output(i, dimension) = customValue;
         }

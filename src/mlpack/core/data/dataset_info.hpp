@@ -108,7 +108,7 @@ class DatasetMapper
   }
 
   //! Return the policy of the mapper.
-  PolicyType& Policy() const;
+  const PolicyType& Policy() const;
 
   //! Modify the policy of the mapper (be careful!).
   PolicyType& Policy();

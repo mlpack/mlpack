@@ -114,7 +114,7 @@ inline size_t DatasetMapper<PolicyType>::Dimensionality() const
 }
 
 template<typename PolicyType>
-inline PolicyType& DatasetMapper<PolicyType>::Policy() const
+inline const PolicyType& DatasetMapper<PolicyType>::Policy() const
 {
   return this->policy;
 }

@@ -8,6 +8,7 @@
 #define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_LISTWISE_DELETION_HPP
 
 #include <mlpack/core.hpp>
+#include <cmath>
 
 using namespace std;
 
@@ -36,7 +37,8 @@ class ListwiseDeletion
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-         if (input(dimension, i) == mappedValue)
+         if (input(dimension, i) == mappedValue ||
+             std::isnan(input(dimension, i)))
          {
            output.shed_col(i - count);
            count++;
@@ -47,7 +49,8 @@ class ListwiseDeletion
     {
       for (size_t i = 0; i < input.n_rows; ++i)\
       {
-        if (input(i, dimension) == mappedValue)
+        if (input(i, dimension) == mappedValue ||
+             std::isnan(input(i, dimension)))
         {
            output.shed_row(i - count);
            count++;

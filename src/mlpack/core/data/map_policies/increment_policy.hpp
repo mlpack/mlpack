@@ -46,7 +46,7 @@ class IncrementPolicy
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
-      typedef boost::bimap<std::string, size_t>::value_type PairType;
+      typedef boost::bimap<std::string, mapped_type>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
       return numMappings++;
     }

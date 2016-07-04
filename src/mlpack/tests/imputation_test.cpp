@@ -33,13 +33,12 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   fstream f;
   f.open("test_file.csv", fstream::out);
   f << "a, 2, 3"  << endl;
-  f << "5, 6, b"  << endl;
+  f << "5, 6, a"  << endl;
   f << "8, 9, 10" << endl;
   f.close();
 
   arma::mat input;
   arma::mat output;
-  size_t dimension = 0;
 
   std::set<string> mset;
   mset.insert("a");
@@ -48,17 +47,28 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   DatasetMapper<MissingPolicy> info(miss);
   BOOST_REQUIRE(data::Load("test_file.csv", input, info) == true);
 
+  // row and column test
   BOOST_REQUIRE_EQUAL(input.n_rows, 3);
   BOOST_REQUIRE_EQUAL(input.n_cols, 3);
 
-  /* TODO: Connect Load with the new DatasetMapper instead of DatasetInfo*/
+  // Load check
+  // MissingPolicy should convert strings to nans
+  BOOST_REQUIRE(std::isnan(output(0, 0)));
+  BOOST_REQUIRE_CLOSE(output(0, 1), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 2), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 0), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 0), 3.0, 1e-5);
+  BOOST_REQUIRE(std::isnan(output(2, 1)));
+  BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
 
   Imputer<double,
           DatasetMapper<MissingPolicy>,
           CustomImputation<double>> imputer(info);
-  imputer.Impute(input, output, "a", 99, dimension); // convert a -> 99
-  imputer.Impute(input, output, "b", 99, dimension); // convert b -> 99
+  imputer.Impute(input, output, "a", 99, 0); // convert a -> 99 for dimension 0
 
+  // Custom imputation result check
   BOOST_REQUIRE_CLOSE(output(0, 0), 99.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 2), 8.0, 1e-5);
@@ -66,7 +76,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 2), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(2, 1), 99.0, 1e-5);
+  BOOST_REQUIRE(std::isnan(output(2, 1))); // remains as NaN
   BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
 
   // Remove the file.
