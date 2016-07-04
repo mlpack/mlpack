@@ -4,8 +4,8 @@
  *
  * An implementation of QUIC-SVD.
  */
-#ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
-#define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
+// #ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
+// #define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "quic_svd.hpp"
@@ -33,6 +33,9 @@ QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
 
   // Get subspace basis by creating the cosine tree.
   ctree->GetFinalBasis(basis);
+
+  // Delete cosine tree.
+  delete ctree;
 
   // Use the ExtractSVD algorithm mentioned in the paper to extract the SVD of
   // the original dataset in the obtained subspace.
@@ -77,4 +80,4 @@ void QUIC_SVD::ExtractSVD(arma::mat& u,
 } // namespace svd
 } // namespace mlpack
 
-#endif
+// #endif
