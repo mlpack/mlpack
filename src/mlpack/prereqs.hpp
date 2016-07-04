@@ -24,6 +24,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <tuple>
+#include <queue>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES

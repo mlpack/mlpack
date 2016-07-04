@@ -365,7 +365,7 @@ if (UNIX)
           mlpack_adaboost
           mlpack_kfn
           mlpack_knn
-          mlpack_allkrann
+          mlpack_krann
           mlpack_cf
           mlpack_decision_stump
           mlpack_det

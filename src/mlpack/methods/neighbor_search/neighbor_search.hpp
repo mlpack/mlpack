@@ -28,7 +28,7 @@ namespace neighbor /** Neighbor-search routines.  These include
 
 // Forward declaration.
 template<typename SortPolicy>
-class NSModel;
+class TrainVisitor;
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
@@ -84,11 +84,13 @@ class NeighborSearch
    *      dual-tree search).  This overrides singleMode (if it is set to true).
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
+   * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(const MatType& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
+                 const double epsilon = 0,
                  const MetricType metric = MetricType());
 
   /**
@@ -108,11 +110,13 @@ class NeighborSearch
    *      dual-tree search).  This overrides singleMode (if it is set to true).
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
+   * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(MatType&& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
+                 const double epsilon = 0,
                  const MetricType metric = MetricType());
 
   /**
@@ -138,10 +142,12 @@ class NeighborSearch
    * @param referenceSet Set of reference points corresponding to referenceTree.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
+   * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
   NeighborSearch(Tree* referenceTree,
                  const bool singleMode = false,
+                 const double epsilon = 0,
                  const MetricType metric = MetricType());
 
   /**
@@ -152,10 +158,12 @@ class NeighborSearch
    * @param naive Whether to use naive search.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
+   * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
   NeighborSearch(const bool naive = false,
                  const bool singleMode = false,
+                 const double epsilon = 0,
                  const MetricType metric = MetricType());
 
 
@@ -270,6 +278,11 @@ class NeighborSearch
   //! Modify whether or not search is done in single-tree mode.
   bool& SingleMode() { return singleMode; }
 
+  //! Access the relative error to be considered in approximate search.
+  double Epsilon() const { return epsilon; }
+  //! Modify the relative error to be considered in approximate search.
+  double& Epsilon() { return epsilon; }
+
   //! Access the reference dataset.
   const MatType& ReferenceSet() const { return *referenceSet; }
 
@@ -294,6 +307,8 @@ class NeighborSearch
   bool naive;
   //! Indicates if single-tree search is being used (as opposed to dual-tree).
   bool singleMode;
+  //! Indicates the relative error to be considered in approximate search.
+  double epsilon;
 
   //! Instantiation of metric.
   MetricType metric;
@@ -308,7 +323,7 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  friend class NSModel<SortPolicy>;
+  friend class TrainVisitor<SortPolicy>;
 }; // class NeighborSearch
 
 } // namespace neighbor

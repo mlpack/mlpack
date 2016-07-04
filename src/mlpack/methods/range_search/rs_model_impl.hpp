@@ -53,6 +53,10 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
     case X_TREE:
       ar & CreateNVP(xTreeRS, "range_search_model");
       break;
+
+    case HILBERT_R_TREE:
+      ar & CreateNVP(hilbertRTreeRS, "range_search_model");
+      break;
   }
 }
 
@@ -70,6 +74,8 @@ inline const arma::mat& RSModel::Dataset() const
     return ballTreeRS->ReferenceSet();
   else if (xTreeRS)
     return xTreeRS->ReferenceSet();
+  else if (hilbertRTreeRS)
+    return hilbertRTreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -88,6 +94,8 @@ inline bool RSModel::SingleMode() const
     return ballTreeRS->SingleMode();
   else if (xTreeRS)
     return xTreeRS->SingleMode();
+  else if (hilbertRTreeRS)
+    return hilbertRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -106,6 +114,8 @@ inline bool& RSModel::SingleMode()
     return ballTreeRS->SingleMode();
   else if (xTreeRS)
     return xTreeRS->SingleMode();
+  else if (hilbertRTreeRS)
+    return hilbertRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -124,6 +134,8 @@ inline bool RSModel::Naive() const
     return ballTreeRS->Naive();
   else if (xTreeRS)
     return xTreeRS->Naive();
+  else if (hilbertRTreeRS)
+    return hilbertRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -142,6 +154,8 @@ inline bool& RSModel::Naive()
     return ballTreeRS->Naive();
   else if (xTreeRS)
     return xTreeRS->Naive();
+  else if (hilbertRTreeRS)
+    return hilbertRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }

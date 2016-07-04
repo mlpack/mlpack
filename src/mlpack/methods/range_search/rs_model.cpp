@@ -22,7 +22,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rTreeRS(NULL),
     rStarTreeRS(NULL),
     ballTreeRS(NULL),
-    xTreeRS(NULL)
+    xTreeRS(NULL),
+    hilbertRTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -120,6 +121,11 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
 
     case X_TREE:
       xTreeRS = new RSType<tree::XTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS = new RSType<tree::HilbertRTree>(move(referenceSet), naive,
           singleMode);
       break;
   }
@@ -231,6 +237,10 @@ void RSModel::Search(arma::mat&& querySet,
     case X_TREE:
       xTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -273,6 +283,10 @@ void RSModel::Search(const math::Range& range,
     case X_TREE:
       xTreeRS->Search(range, neighbors, distances);
       break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -293,6 +307,8 @@ std::string RSModel::TreeName() const
       return "ball tree";
     case X_TREE:
       return "X tree";
+    case HILBERT_R_TREE:
+      return "Hilbert R tree";
     default:
       return "unknown tree";
   }
@@ -313,6 +329,8 @@ void RSModel::CleanMemory()
     delete ballTreeRS;
   if (xTreeRS)
     delete xTreeRS;
+  if (hilbertRTreeRS)
+    delete hilbertRTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -320,4 +338,5 @@ void RSModel::CleanMemory()
   rStarTreeRS = NULL;
   ballTreeRS = NULL;
   xTreeRS = NULL;
+  hilbertRTreeRS = NULL;
 }
