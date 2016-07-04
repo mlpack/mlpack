@@ -4,8 +4,6 @@
  *
  * An implementation of QUIC-SVD.
  */
-// #ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
-// #define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "quic_svd.hpp"
@@ -79,5 +77,3 @@ void QUIC_SVD::ExtractSVD(arma::mat& u,
 
 } // namespace svd
 } // namespace mlpack
-
-// #endif
