@@ -114,7 +114,7 @@ class DatasetMapper
   PolicyType& Policy();
 
   //! Modify (Replace) the policy of the mapper with a new policy
-  void Policy(PolicyType& policy);
+  void Policy(PolicyType&& policy);
 
  private:
   //! Types of each dimension.

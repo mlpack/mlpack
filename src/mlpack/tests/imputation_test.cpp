@@ -53,15 +53,15 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   // Load check
   // MissingPolicy should convert strings to nans
-  BOOST_REQUIRE(std::isnan(output(0, 0)));
-  BOOST_REQUIRE_CLOSE(output(0, 1), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(0, 2), 8.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(1, 0), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(1, 2), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(2, 0), 3.0, 1e-5);
-  BOOST_REQUIRE(std::isnan(output(2, 1)));
-  BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
+  BOOST_REQUIRE(std::isnan(input(0, 0)) == true);
+  BOOST_REQUIRE_CLOSE(input(0, 1), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 2), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 0), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 0), 3.0, 1e-5);
+  BOOST_REQUIRE(std::isnan(input(2, 1)) == true);
+  BOOST_REQUIRE_CLOSE(input(2, 2), 10.0, 1e-5);
 
   Imputer<double,
           DatasetMapper<MissingPolicy>,
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 2), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 0), 3.0, 1e-5);
-  BOOST_REQUIRE(std::isnan(output(2, 1))); // remains as NaN
+  BOOST_REQUIRE(std::isnan(output(2, 1)) == true); // remains as NaN
   BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
 
   // Remove the file.

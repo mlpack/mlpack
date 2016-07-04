@@ -126,9 +126,9 @@ inline PolicyType& DatasetMapper<PolicyType>::Policy()
 }
 
 template<typename PolicyType>
-inline void DatasetMapper<PolicyType>::Policy(PolicyType& policy)
+inline void DatasetMapper<PolicyType>::Policy(PolicyType&& policy)
 {
-  this->policy = std::move(policy);
+  this->policy = std::forward<PolicyType>(policy);
 }
 
 

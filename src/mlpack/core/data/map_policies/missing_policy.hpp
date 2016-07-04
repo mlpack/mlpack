@@ -56,16 +56,16 @@ class MissingPolicy
     {
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
-      numMappings++;
 
       typedef boost::bimap<std::string, mapped_type>::value_type PairType;
       maps[dimension].first.insert(PairType(string, NaN));
+
+      ++numMappings;
       return NaN;
     }
     else
     {
-      // This string already exists in the mapping.
-      //return maps[dimension].first.left.at(string);
+      // This string already exists in the mapping or .
       return NaN;
     }
   }
