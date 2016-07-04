@@ -102,15 +102,7 @@ int main(int argc, char** argv)
   // Perform PCA.
   if (decompositionMethod == "exact")
   {
-<<<<<<< HEAD
     RunPCA<ExactSVDPolicy>(dataset, newDimension, scale, varToRetain);
-=======
-    if (CLI::GetParam<int>("new_dimensionality") != 0)
-      Log::Warn << "New dimensionality (-d) ignored because --var_to_retain was"
-          << " specified." << endl;
-
-    varRetained = p.Apply(dataset, CLI::GetParam<double>("var_to_retain"));
->>>>>>> origin/master
   }
   else if(decompositionMethod == "randomized")
   {
