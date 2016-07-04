@@ -171,6 +171,77 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
 }
 
 template<typename BoundType, typename MatType>
+bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
+                                              const MatType& data,
+                                              const std::vector<size_t>& points,
+                                              size_t& splitDimension,
+                                              double& splitVal)
+{
+  splitDimension = data.n_rows; // Indicate invalid.
+  double maxWidth = -1;
+
+  // Find the split dimension.  If the bound is tight, we only need to consult
+  // the bound's width.
+  if (bound::BoundTraits<BoundType>::HasTightBounds)
+  {
+    for (size_t d = 0; d < data.n_rows; d++)
+    {
+      const double width = bound[d].Width();
+
+      if (width > maxWidth)
+      {
+        maxWidth = width;
+        splitDimension = d;
+      }
+    }
+  }
+  else
+  {
+    // We must individually calculate bounding boxes.
+    math::Range* ranges = new math::Range[data.n_rows];
+    for (size_t i = 0; i < points.size(); ++i)
+    {
+      // Expand each dimension as necessary.
+      for (size_t d = 0; d < data.n_rows; ++d)
+      {
+        const double val = data(d, points[i]);
+        if (val < ranges[d].Lo())
+          ranges[d].Lo() = val;
+        if (val > ranges[d].Hi())
+          ranges[d].Hi() = val;
+      }
+    }
+
+    // Now, which is the widest?
+    for (size_t d = 0; d < data.n_rows; d++)
+    {
+      const double width = ranges[d].Width();
+      if (width > maxWidth)
+      {
+        maxWidth = width;
+        splitDimension = d;
+      }
+    }
+
+    delete[] ranges;
+  }
+
+  if (maxWidth == 0) // All these points are the same.  We can't split.
+    return false;
+
+  // Split in the mean of that dimension.
+  splitVal = 0.0;
+  for (size_t i = 0; i < points.size(); ++i)
+    splitVal += data(splitDimension, points[i]);
+  splitVal /= points.size();
+
+  Log::Assert(splitVal >= bound[splitDimension].Lo());
+  Log::Assert(splitVal <= bound[splitDimension].Hi());
+
+  return true;
+}
+
+template<typename BoundType, typename MatType>
 size_t MeanSplit<BoundType, MatType>::
     PerformSplit(MatType& data,
                  const size_t begin,

@@ -75,6 +75,11 @@ set(SOURCES
   rectangle_tree/r_plus_plus_tree_split_policy.hpp
   rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
   rectangle_tree/r_plus_plus_tree_auxiliary_information_impl.hpp
+  spill_tree.hpp
+  spill_tree/spill_tree.hpp
+  spill_tree/spill_tree_impl.hpp
+  spill_tree/traits.hpp
+  spill_tree/typedef.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
