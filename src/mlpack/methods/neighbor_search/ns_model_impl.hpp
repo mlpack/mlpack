@@ -13,8 +13,194 @@
 // In case it hasn't been included yet.
 #include "ns_model.hpp"
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace neighbor {
+
+//! Monochromatic neighbor search on the given NSType instance.
+template<typename NSType>
+void MonoSearchVisitor::operator()(NSType *ns) const
+{
+  if (ns)
+    return ns->Search(k, neighbors, distances);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Save parameters for bichromatic neighbor search.
+template<typename SortPolicy>
+BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
+                                             const size_t k,
+                                             arma::Mat<size_t>& neighbors,
+                                             arma::mat& distances,
+                                             const size_t leafSize) :
+    querySet(querySet),
+    k(k),
+    neighbors(neighbors),
+    distances(distances),
+    leafSize(leafSize)
+{}
+
+//! Default Bichromatic neighbor search on the given NSType instance.
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
+{
+  if (ns)
+    return ns->Search(querySet, k, neighbors, distances);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Bichromatic neighbor search on the given NSType specialized for KDTrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
+{
+  if (ns)
+    return SearchLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Bichromatic neighbor search on the given NSType specialized for BallTrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
+{
+  if (ns)
+    return SearchLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Bichromatic neighbor search on the given NSType considering the leafSize.
+template<typename SortPolicy>
+template<typename NSType>
+void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
+{
+  if (!ns->Naive() && !ns->SingleMode())
+  {
+    std::vector<size_t> oldFromNewQueries;
+    typename NSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
+        leafSize);
+
+    arma::Mat<size_t> neighborsOut;
+    arma::mat distancesOut;
+    ns->Search(&queryTree, k, neighborsOut, distancesOut);
+
+    // Unmap the query points.
+    distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
+    neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
+    for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+    {
+      neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
+      distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
+    }
+  }
+  else
+    ns->Search(querySet, k, neighbors, distances);
+}
+
+//! Save parameters for Train.
+template<typename SortPolicy>
+TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
+                                       const size_t leafSize) :
+    referenceSet(std::move(referenceSet)),
+    leafSize(leafSize)
+{}
+
+//! Default Train on the given NSType instance.
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
+{
+  if (ns)
+    return ns->Train(std::move(referenceSet));
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Train on the given NSType specialized for KDTrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
+{
+  if (ns)
+    return TrainLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Train on the given NSType specialized for BallTrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
+{
+  if (ns)
+    return TrainLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Train on the given NSType considering the leafSize.
+template<typename SortPolicy>
+template<typename NSType>
+void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
+{
+  if (ns->Naive())
+    ns->Train(std::move(referenceSet));
+  else
+  {
+    std::vector<size_t> oldFromNewReferences;
+    typename NSType::Tree* tree =
+        new typename NSType::Tree(std::move(referenceSet),
+        oldFromNewReferences, leafSize);
+    ns->Train(tree);
+
+    // Give the model ownership of the tree and the mappings.
+    ns->treeOwner = true;
+    ns->oldFromNewReferences = std::move(oldFromNewReferences);
+  }
+}
+
+//! Expose the SingleMode method of the given NSType.
+template<typename NSType>
+bool& SingleModeVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    return ns->SingleMode();
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Expose the Naive method of the given NSType.
+template<typename NSType>
+bool& NaiveVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    return ns->Naive();
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Expose the Epsilon method of the given NSType.
+template<typename NSType>
+double& EpsilonVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    return ns->Epsilon();
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Expose the referenceSet of the given NSType.
+template<typename NSType>
+const arma::mat& ReferenceSetVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    return ns->ReferenceSet();
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Clean memory, if necessary.
+template<typename NSType>
+void DeleteVisitor::operator()(NSType* ns) const
+{
+  if (ns)
+    delete ns;
+}
 
 /**
  * Initialize the NSModel with the given type and whether or not a random
@@ -23,13 +209,7 @@ namespace neighbor {
 template<typename SortPolicy>
 NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
-    randomBasis(randomBasis),
-    kdTreeNS(NULL),
-    coverTreeNS(NULL),
-    rTreeNS(NULL),
-    rStarTreeNS(NULL),
-    ballTreeNS(NULL),
-    xTreeNS(NULL)
+    randomBasis(randomBasis)
 {
   // Nothing to do.
 }
@@ -38,18 +218,28 @@ NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
 template<typename SortPolicy>
 NSModel<SortPolicy>::~NSModel()
 {
-  if (kdTreeNS)
-    delete kdTreeNS;
-  if (coverTreeNS)
-    delete coverTreeNS;
-  if (rTreeNS)
-    delete rTreeNS;
-  if (rStarTreeNS)
-    delete rStarTreeNS;
-  if (ballTreeNS)
-    delete ballTreeNS;
-  if (xTreeNS)
-    delete xTreeNS;
+  boost::apply_visitor(DeleteVisitor(), nSearch);
+}
+
+/**
+ * Non-intrusive serialization for Neighbor Search class. We need this
+ * definition because we are going to use the serialize function for boost
+ * variant, which will look for a serialize function for its member types.
+ */
+template<typename Archive,
+         typename SortPolicy,
+         typename MetrType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class TraversalType>
+void serialize(
+    Archive& ar,
+    NeighborSearch<SortPolicy, MetrType, MatType, TreeType, TraversalType>& ns,
+    const unsigned int version)
+{
+  ns.Serialize(ar, version);
 }
 
 //! Serialize the kNN model.
@@ -64,148 +254,55 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
-  {
-    if (kdTreeNS)
-      delete kdTreeNS;
-    if (coverTreeNS)
-      delete coverTreeNS;
-    if (rTreeNS)
-      delete rTreeNS;
-    if (rStarTreeNS)
-      delete rStarTreeNS;
-    if (ballTreeNS)
-      delete ballTreeNS;
-    if (xTreeNS)
-      delete xTreeNS;
+    boost::apply_visitor(DeleteVisitor(), nSearch);
 
-    // Set all the pointers to NULL.
-    kdTreeNS = NULL;
-    coverTreeNS = NULL;
-    rTreeNS = NULL;
-    rStarTreeNS = NULL;
-    ballTreeNS = NULL;
-    xTreeNS = NULL;
-  }
-
-  // We'll only need to serialize one of the kNN objects, based on the type.
   const std::string& name = NSModelName<SortPolicy>::Name();
-  switch (treeType)
-  {
-    case KD_TREE:
-      ar & data::CreateNVP(kdTreeNS, name);
-      break;
-    case COVER_TREE:
-      ar & data::CreateNVP(coverTreeNS, name);
-      break;
-    case R_TREE:
-      ar & data::CreateNVP(rTreeNS, name);
-      break;
-    case R_STAR_TREE:
-      ar & data::CreateNVP(rStarTreeNS, name);
-      break;
-    case BALL_TREE:
-      ar & data::CreateNVP(ballTreeNS, name);
-      break;
-    case X_TREE:
-      ar & data::CreateNVP(xTreeNS, name);
-      break;
-  }
+  ar & data::CreateNVP(nSearch, name);
 }
 
+//! Expose the dataset.
 template<typename SortPolicy>
 const arma::mat& NSModel<SortPolicy>::Dataset() const
 {
-  if (kdTreeNS)
-    return kdTreeNS->ReferenceSet();
-  else if (coverTreeNS)
-    return coverTreeNS->ReferenceSet();
-  else if (rTreeNS)
-    return rTreeNS->ReferenceSet();
-  else if (rStarTreeNS)
-    return rStarTreeNS->ReferenceSet();
-  else if (ballTreeNS)
-    return ballTreeNS->ReferenceSet();
-  else if (xTreeNS)
-    return xTreeNS->ReferenceSet();
-
-  throw std::runtime_error("no neighbor search model initialized");
+  return boost::apply_visitor(ReferenceSetVisitor(), nSearch);
 }
 
 //! Expose singleMode.
 template<typename SortPolicy>
 bool NSModel<SortPolicy>::SingleMode() const
 {
-  if (kdTreeNS)
-    return kdTreeNS->SingleMode();
-  else if (coverTreeNS)
-    return coverTreeNS->SingleMode();
-  else if (rTreeNS)
-    return rTreeNS->SingleMode();
-  else if (rStarTreeNS)
-    return rStarTreeNS->SingleMode();
-  else if (ballTreeNS)
-    return ballTreeNS->SingleMode();
-  else if (xTreeNS)
-    return xTreeNS->SingleMode();
-
-  throw std::runtime_error("no neighbor search model initialized");
+  return boost::apply_visitor(SingleModeVisitor(), nSearch);
 }
 
 template<typename SortPolicy>
 bool& NSModel<SortPolicy>::SingleMode()
 {
-  if (kdTreeNS)
-    return kdTreeNS->SingleMode();
-  else if (coverTreeNS)
-    return coverTreeNS->SingleMode();
-  else if (rTreeNS)
-    return rTreeNS->SingleMode();
-  else if (rStarTreeNS)
-    return rStarTreeNS->SingleMode();
-  else if (ballTreeNS)
-    return ballTreeNS->SingleMode();
-  else if (xTreeNS)
-    return xTreeNS->SingleMode();
-
-  throw std::runtime_error("no neighbor search model initialized");
+  return boost::apply_visitor(SingleModeVisitor(), nSearch);
 }
 
+//! Expose Naive.
 template<typename SortPolicy>
 bool NSModel<SortPolicy>::Naive() const
 {
-  if (kdTreeNS)
-    return kdTreeNS->Naive();
-  else if (coverTreeNS)
-    return coverTreeNS->Naive();
-  else if (rTreeNS)
-    return rTreeNS->Naive();
-  else if (rStarTreeNS)
-    return rStarTreeNS->Naive();
-  else if (ballTreeNS)
-    return ballTreeNS->Naive();
-  else if (xTreeNS)
-    return xTreeNS->Naive();
-
-  throw std::runtime_error("no neighbor search model initialized");
+  return boost::apply_visitor(NaiveVisitor(), nSearch);
 }
 
 template<typename SortPolicy>
 bool& NSModel<SortPolicy>::Naive()
 {
-  if (kdTreeNS)
-    return kdTreeNS->Naive();
-  else if (coverTreeNS)
-    return coverTreeNS->Naive();
-  else if (rTreeNS)
-    return rTreeNS->Naive();
-  else if (rStarTreeNS)
-    return rStarTreeNS->Naive();
-  else if (ballTreeNS)
-    return ballTreeNS->Naive();
-  else if (xTreeNS)
-    return xTreeNS->Naive();
+  return boost::apply_visitor(NaiveVisitor(), nSearch);
+}
 
-  throw std::runtime_error("no neighbor search model initialized");
+template<typename SortPolicy>
+double NSModel<SortPolicy>::Epsilon() const
+{
+  return boost::apply_visitor(EpsilonVisitor(), nSearch);
+}
+
+template<typename SortPolicy>
+double& NSModel<SortPolicy>::Epsilon()
+{
+  return boost::apply_visitor(EpsilonVisitor(), nSearch);
 }
 
 //! Build the reference tree.
@@ -213,7 +310,8 @@ template<typename SortPolicy>
 void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
                                      const size_t leafSize,
                                      const bool naive,
-                                     const bool singleMode)
+                                     const bool singleMode,
+                                     const double epsilon)
 {
   // Initialize random basis if necessary.
   if (randomBasis)
@@ -248,18 +346,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   }
 
   // Clean memory, if necessary.
-  if (kdTreeNS)
-    delete kdTreeNS;
-  if (coverTreeNS)
-    delete coverTreeNS;
-  if (rTreeNS)
-    delete rTreeNS;
-  if (rStarTreeNS)
-    delete rStarTreeNS;
-  if (ballTreeNS)
-    delete ballTreeNS;
-  if (xTreeNS)
-    delete xTreeNS;
+  boost::apply_visitor(DeleteVisitor(), nSearch);
 
   // Do we need to modify the reference set?
   if (randomBasis)
@@ -274,68 +361,35 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      // If necessary, build the kd-tree.
-      if (naive)
-      {
-        kdTreeNS = new NSType<tree::KDTree>(std::move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        std::vector<size_t> oldFromNewReferences;
-        typename NSType<tree::KDTree>::Tree* kdTree =
-            new typename NSType<tree::KDTree>::Tree(std::move(referenceSet),
-            oldFromNewReferences, leafSize);
-        kdTreeNS = new NSType<tree::KDTree>(kdTree, singleMode);
-
-        // Give the model ownership of the tree and the mappings.
-        kdTreeNS->treeOwner = true;
-        kdTreeNS->oldFromNewReferences = std::move(oldFromNewReferences);
-      }
-
+      nSearch = new NSType<SortPolicy, tree::KDTree>(naive, singleMode,
+          epsilon);
       break;
     case COVER_TREE:
-      // If necessary, build the cover tree.
-      coverTreeNS = new NSType<tree::StandardCoverTree>(std::move(referenceSet),
-          naive, singleMode);
+      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(naive,
+          singleMode, epsilon);
       break;
     case R_TREE:
-      // If necessary, build the R tree.
-      rTreeNS = new NSType<tree::RTree>(std::move(referenceSet), naive,
-          singleMode);
+      nSearch = new NSType<SortPolicy, tree::RTree>(naive, singleMode, epsilon);
       break;
     case R_STAR_TREE:
-      // If necessary, build the R* tree.
-      rStarTreeNS = new NSType<tree::RStarTree>(std::move(referenceSet), naive,
-          singleMode);
+      nSearch = new NSType<SortPolicy, tree::RStarTree>(naive, singleMode,
+          epsilon);
       break;
     case BALL_TREE:
-      // If necessary, build the ball tree.
-      if (naive)
-      {
-        ballTreeNS = new NSType<tree::BallTree>(std::move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        std::vector<size_t> oldFromNewReferences;
-        typename NSType<tree::BallTree>::Tree* ballTree =
-            new typename NSType<tree::BallTree>::Tree(std::move(referenceSet),
-            oldFromNewReferences, leafSize);
-        ballTreeNS = new NSType<tree::BallTree>(ballTree, singleMode);
-
-        // Give the model ownership of the tree and the mappings.
-        ballTreeNS->treeOwner = true;
-        ballTreeNS->oldFromNewReferences = std::move(oldFromNewReferences);
-      }
-
+      nSearch = new NSType<SortPolicy, tree::BallTree>(naive, singleMode,
+          epsilon);
       break;
     case X_TREE:
-      // If necessary, build the X tree.
-      xTreeNS = new NSType<tree::XTree>(std::move(referenceSet), naive,
-          singleMode);
+      nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode, epsilon);
+      break;
+    case HILBERT_R_TREE:
+      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(naive, singleMode,
+          epsilon);
       break;
   }
+
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
+  boost::apply_visitor(tn, nSearch);
 
   if (!naive)
   {
@@ -355,96 +409,20 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
   if (randomBasis)
     querySet = q * querySet;
 
-  Log::Info << "Searching for " << k << " nearest neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      if (!kdTreeNS->Naive() && !kdTreeNS->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << std::endl;
-        std::vector<size_t> oldFromNewQueries;
-        typename NSType<tree::KDTree>::Tree queryTree(std::move(querySet),
-            oldFromNewQueries, leafSize);
-        Log::Info << "Tree built." << std::endl;
-        Timer::Stop("tree_building");
-
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        kdTreeNS->Search(&queryTree, k, neighborsOut, distancesOut);
-
-        // Unmap the query points.
-        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
-        {
-          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
-          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        kdTreeNS->Search(querySet, k, neighbors, distances);
-      }
-      break;
-    case COVER_TREE:
-      // No mapping necessary.
-      coverTreeNS->Search(querySet, k, neighbors, distances);
-      break;
-    case R_TREE:
-      // No mapping necessary.
-      rTreeNS->Search(querySet, k, neighbors, distances);
-      break;
-    case R_STAR_TREE:
-      // No mapping necessary.
-      rStarTreeNS->Search(querySet, k, neighbors, distances);
-      break;
-    case BALL_TREE:
-      if (!ballTreeNS->Naive() && !ballTreeNS->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << std::endl;
-        std::vector<size_t> oldFromNewQueries;
-        typename NSType<tree::BallTree>::Tree queryTree(std::move(querySet),
-            oldFromNewQueries, leafSize);
-        Log::Info << "Tree built." << std::endl;
-        Timer::Stop("tree_building");
-
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        ballTreeNS->Search(&queryTree, k, neighborsOut, distancesOut);
-
-        // Unmap the query points.
-        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
-        {
-          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
-          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        ballTreeNS->Search(querySet, k, neighbors, distances);
-      }
-
-      break;
-    case X_TREE:
-      // No mapping necessary.
-      xTreeNS->Search(querySet, k, neighbors, distances);
-      break;
-  }
+  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
+      leafSize);
+  boost::apply_visitor(search, nSearch);
 }
 
 //! Perform neighbor search.
@@ -453,35 +431,19 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
-  Log::Info << "Searching for " << k << " nearest neighbors with ";
+  Log::Info << "Searching for " << k << " neighbors with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
+  if (Epsilon() != 0 && !Naive())
+    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
+        << std::endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      kdTreeNS->Search(k, neighbors, distances);
-      break;
-    case COVER_TREE:
-      coverTreeNS->Search(k, neighbors, distances);
-      break;
-    case R_TREE:
-      rTreeNS->Search(k, neighbors, distances);
-      break;
-    case R_STAR_TREE:
-      rStarTreeNS->Search(k, neighbors, distances);
-      break;
-    case BALL_TREE:
-      ballTreeNS->Search(k, neighbors, distances);
-      break;
-    case X_TREE:
-      xTreeNS->Search(k, neighbors, distances);
-      break;
-  }
+  MonoSearchVisitor search(k, neighbors, distances);
+  boost::apply_visitor(search, nSearch);
 }
 
 //! Get the name of the tree type.
@@ -502,6 +464,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "ball tree";
     case X_TREE:
       return "X tree";
+    case HILBERT_R_TREE:
+      return "Hilbert R tree";
     default:
       return "unknown tree";
   }

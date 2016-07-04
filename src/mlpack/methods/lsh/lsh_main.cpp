@@ -5,14 +5,8 @@
  * This file computes the approximate nearest-neighbors using 2-stable
  * Locality-sensitive Hashing.
  */
-#include <time.h>
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
 
 #include "lsh_search.hpp"
 
@@ -48,6 +42,7 @@ PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING("true_neighbors_file", "File of real neighbors to compute recall (printed with -v).", "t", "");
 
 // We can load or save models.
 PARAM_STRING("input_model_file", "File to load LSH model from.  (Cannot be "
@@ -63,9 +58,12 @@ PARAM_INT("tables", "The number of hash tables to be used.", "L", 30);
 PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing in the "
     "LSH preprocessing. By default, the LSH class automatically estimates a "
     "hash width for its use.", "H", 0.0);
+PARAM_INT("num_probes", "Number of additional probes for Multiprobe LSH;"
+    " if 0, traditional LSH is used.", "T", 0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", "S",
     99901);
-PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", "B",
+PARAM_INT("bucket_size", "The maximum size of a bucket in the second level "
+    "hash; 0 indicates no limit (so the table can be arbitrarily large!).", "B",
     500);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
@@ -135,6 +133,7 @@ int main(int argc, char *argv[])
   const size_t numProj = CLI::GetParam<int>("projections");
   const size_t numTables = CLI::GetParam<int>("tables");
   const double hashWidth = CLI::GetParam<double>("hash_width");
+  const size_t numProbes = (size_t) CLI::GetParam<int>("num_probes");
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -178,15 +177,34 @@ int main(int argc, char *argv[])
         Log::Info << "Loaded query data from '" << queryFile << "' ("
             << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
       }
-      allkann.Search(queryData, k, neighbors, distances);
+      allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
     {
-      allkann.Search(k, neighbors, distances);
+      allkann.Search(k, neighbors, distances, 0, numProbes);
     }
   }
 
   Log::Info << "Neighbors computed." << endl;
+
+  // Compute recall, if desired.
+  if (CLI::HasParam("true_neighbors_file"))
+  {
+    const string trueNeighborsFile = 
+        CLI::GetParam<string>("true_neighbors_file");
+
+    // Load the true neighbors.
+    arma::Mat<size_t> trueNeighbors;
+    data::Load(trueNeighborsFile, trueNeighbors, true);
+    Log::Info << "Loaded true neighbor indices from '" 
+        << trueNeighborsFile << "'." << endl;
+
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
+
+    Log::Info << "Recall: " << recallPercentage << endl;
+  }
 
   // Save output, if desired.
   if (CLI::HasParam("distances_file"))

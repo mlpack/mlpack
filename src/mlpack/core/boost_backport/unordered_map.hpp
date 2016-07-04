@@ -1,4 +1,7 @@
-#ifndef  BOOST_SERIALIZATION_UNORDERED_MAP_HPP
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+#ifndef BOOST_SERIALIZATION_UNORDERED_MAP_HPP
 #define BOOST_SERIALIZATION_UNORDERED_MAP_HPP
 
 // MS compatible compilers support #pragma once

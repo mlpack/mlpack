@@ -2,7 +2,7 @@
  * @file allkrann_main.cpp
  * @author Parikshit Ram
  *
- * Implementation of the AllkRANN executable.  Allows some number of standard
+ * Implementation of the kRANN executable.  Allows some number of standard
  * options.
  */
 #include <mlpack/core.hpp>
@@ -18,7 +18,7 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Rank-Approximate-Nearest-Neighbors",
+PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
@@ -64,7 +64,7 @@ PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', or "
-    "'x', 'r-star'.", "t", "kd");
+    "'x', 'r-star', 'hilbert-r'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
@@ -73,7 +73,7 @@ PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search options.
 PARAM_DOUBLE("tau", "The allowed rank-error in terms of the percentile of "
-             "the data.", "t", 5);
+             "the data.", "T", 5);
 PARAM_DOUBLE("alpha", "The desired success probability.", "a", 0.95);
 PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
            "N");
@@ -172,9 +172,11 @@ int main(int argc, char *argv[])
       tree = RANNModel::R_STAR_TREE;
     else if (treeType == "x")
       tree = RANNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = RANNModel::HILBERT_R_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star' and 'x'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x' and 'hilbert-r'." << endl;
 
     rann.TreeType() = tree;
     rann.RandomBasis() = randomBasis;
