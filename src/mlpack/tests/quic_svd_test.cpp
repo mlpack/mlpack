@@ -14,7 +14,6 @@
 BOOST_AUTO_TEST_SUITE(QUICSVDTest);
 
 using namespace mlpack;
-using namespace mlpack::svd;
 
 /**
  * The reconstruction error of the obtained SVD should be small.
@@ -27,7 +26,7 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
 
   // Obtain the SVD using default parameters.
   arma::mat u, v, sigma;
-  QUIC_SVD quicsvd(dataset, u, v, sigma);
+  svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
 
   // Reconstruct the matrix using the SVD.
   arma::mat reconstruct;
@@ -37,6 +36,37 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
   double relativeError = arma::norm(dataset - reconstruct, "frob") /
                          arma::norm(dataset, "frob");
   BOOST_REQUIRE_SMALL(relativeError, 1e-5);
+}
+
+/**
+ * The singular value error of the obtained SVD should be small.
+ */
+BOOST_AUTO_TEST_CASE(QUICSVDSigularValueError)
+{
+  arma::mat U = arma::randn<arma::mat>(3, 20);
+  arma::mat V = arma::randn<arma::mat>(10, 3);
+
+  arma::mat R;
+  arma::qr_econ(U, R, U);
+  arma::qr_econ(V, R, V);
+
+  arma::mat s = arma::diagmat(arma::vec("1 0.1 0.01"));
+
+  arma::mat data = arma::trans(U * arma::diagmat(s) * V.t());
+
+  arma::vec s1, s3;
+  arma::mat U1, U2, V1, V2, s2;
+
+  // Obtain the SVD using default parameters.
+  arma::svd_econ(U1, s1, V1, data);
+  svd::QUIC_SVD quicsvd(data, U1, V1, s2);
+
+  s3 = arma::diagvec(s2);
+  s1 = s1.subvec(0, s3.n_elem - 1);
+
+  // The sigular value error should be small.
+  double error = arma::norm(s1 - s3);
+  BOOST_REQUIRE_SMALL(error, 0.01);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

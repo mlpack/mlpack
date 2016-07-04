@@ -277,8 +277,8 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
 void CosineTree::CosineNodeSplit()
 {
-  //! If less than two nodes, splitting does not make sense.
-  if (numColumns < 3) return;
+  // //! If less than two nodes, splitting does not make sense.
+  // if (numColumns < 3) return;
 
   //! Calculate cosines with respect to the splitting point.
   arma::vec cosines;
