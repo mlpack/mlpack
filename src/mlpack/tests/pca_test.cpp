@@ -1,37 +1,41 @@
 /**
  * @file pca_test.cpp
  * @author Ajinkya Kale
+ * @author Marcus Edel
  *
  * Test file for PCA class.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/pca/pca.hpp>
+#include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 BOOST_AUTO_TEST_SUITE(PCATest);
 
-using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::pca;
 using namespace mlpack::distribution;
 
-/**
- * Compare the output of our PCA implementation with Armadillo's.
+/*
+ * Compare the output of the our PCA implementation with Armadillo's using the
+ * specified decomposition policy.
  */
-BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
+template<typename DecompositionPolicy>
+void ArmaComparisonPCA()
 {
-  mat coeff, coeff1;
-  vec eigVal, eigVal1;
-  mat score, score1;
+  arma::mat coeff, coeff1, score, score1;
+  arma::vec eigVal, eigVal1;
 
-  mat data = randu<mat>(100, 100);
+  arma::mat data = arma::randu<arma::mat>(3, 1000);
 
-  PCA p;
+  PCA<DecompositionPolicy> exactPCA;
+  exactPCA.Apply(data, score1, eigVal1, coeff1);
 
-  p.Apply(data, score1, eigVal1, coeff1);
   princomp(coeff, score, eigVal, trans(data));
 
   // Verify the PCA results based on the eigenvalues.
@@ -44,11 +48,12 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
   }
 }
 
-/**
+/*
  * Test that dimensionality reduction with PCA works the same way MATLAB does
- * (which should be correct!).
+ * (which should be correct!) using the specified decomposition policy.
  */
-BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
+template<typename DecompositionPolicy>
+void PCADimensionalityReduction()
 {
   // Fake, simple dataset.  The results we will compare against are from MATLAB.
   mat data("1 0 2 3 9;"
@@ -56,7 +61,7 @@ BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
            "6 7 3 1 8");
 
   // Now run PCA to reduce the dimensionality.
-  PCA p;
+  PCA<DecompositionPolicy> p;
   const double varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
 
   // Compare with correct results.
@@ -87,11 +92,12 @@ BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
 
 /**
  * Test that setting the variance retained parameter to perform dimensionality
- * reduction works.
+ * reduction works using the specified decomposition policy.
  */
-BOOST_AUTO_TEST_CASE(PCAVarianceRetainedTest)
+template<typename DecompositionPolicy>
+void PCAVarianceRetained()
 {
-  // Fake, simple dataset.
+    // Fake, simple dataset.
   mat data("1 0 2 3 9;"
            "5 2 8 4 8;"
            "6 7 3 1 8");
@@ -105,7 +111,7 @@ BOOST_AUTO_TEST_CASE(PCAVarianceRetainedTest)
   // and if we keep two, the actual variance retained is
   //   0.904876047045906
   // and if we keep three, the actual variance retained is 1.
-  PCA p;
+  PCA<DecompositionPolicy> p;
   arma::mat origData = data;
   double varRetained = p.Apply(data, 0.1);
 
@@ -150,6 +156,80 @@ BOOST_AUTO_TEST_CASE(PCAVarianceRetainedTest)
 }
 
 /**
+ * Compare the output of our exact PCA implementation with Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonExactPCATest)
+{
+  ArmaComparisonPCA<ExactSVDPolicy>();
+}
+
+/**
+ * Compare the output of our randomized-SVD PCA implementation with Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
+{
+  ArmaComparisonPCA<RandomizedSVDPolicy>();
+}
+
+/**
+ * Test that dimensionality reduction with exact-svd PCA works the same way
+ * MATLAB does (which should be correct!).
+ */
+BOOST_AUTO_TEST_CASE(ExactPCADimensionalityReductionTest)
+{
+  PCADimensionalityReduction<ExactSVDPolicy>();
+}
+
+/**
+ * Test that dimensionality reduction with randomized-svd PCA works the same way
+ * MATLAB does (which should be correct!).
+ */
+BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
+{
+  PCADimensionalityReduction<RandomizedSVDPolicy>();
+}
+
+/**
+ * Test that dimensionality reduction with QUIC-SVD PCA works the same way
+ * as the Exact-SVD PCA method.
+ */
+BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
+{
+  arma::mat data, data1;
+  data::Load("test_data_3_1000.csv", data);
+  data1 = data;
+
+  PCA<ExactSVDPolicy> exactPCA;
+  const double varRetainedExact = exactPCA.Apply(data, 1);
+
+  PCA<QUICSVDPolicy> quicPCA;
+  const double varRetainedQUIC = quicPCA.Apply(data1, 1);
+
+  BOOST_REQUIRE_CLOSE(varRetainedExact, varRetainedQUIC, 4.0);
+
+  BOOST_REQUIRE_EQUAL(data.n_rows, data1.n_rows);
+  BOOST_REQUIRE_EQUAL(data.n_cols, data1.n_cols);
+}
+
+/**
+ * Test that setting the variance retained parameter to perform dimensionality
+ * reduction works using the exact svd PCA method.
+ */
+BOOST_AUTO_TEST_CASE(ExactPCAVarianceRetainedTest)
+{
+  PCAVarianceRetained<ExactSVDPolicy>();
+}
+
+/**
+ * Test that setting the variance retained parameter to perform dimensionality
+ * reduction works using the randomized svd PCA method.
+ */
+BOOST_AUTO_TEST_CASE(RandomizedPCAVarianceRetainedTest)
+{
+  PCAVarianceRetained<RandomizedSVDPolicy>();
+}
+
+/**
  * Test that scaling PCA works.
  */
 BOOST_AUTO_TEST_CASE(PCAScalingTest)
@@ -167,7 +247,7 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
     data.col(i) = g.Random();
 
   // Now get the principal components when we are scaling.
-  PCA p(true);
+  PCA<> p(true);
   arma::mat transData;
   arma::vec eigval;
   arma::mat eigvec;

@@ -3,12 +3,14 @@
  * @author Ajinkya Kale
  *
  * Defines the PCA class to perform Principal Components Analysis on the
- * specified data set.
+ * specified data set. There are many variations on how to do this, so template
+ * parameters allow the selection of different techniques.
  */
 #ifndef MLPACK_METHODS_PCA_PCA_HPP
 #define MLPACK_METHODS_PCA_PCA_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 
 namespace mlpack {
 namespace pca {
@@ -20,6 +22,7 @@ namespace pca {
  * found in almost any statistics or machine learning textbook, and all over the
  * internet.
  */
+template<typename DecompositionPolicy = ExactSVDPolicy>
 class PCA
 {
  public:
@@ -29,7 +32,8 @@ class PCA
    *
    * @param scaleData Whether or not to scale the data.
    */
-  PCA(const bool scaleData = false);
+  PCA(const bool scaleData = false,
+      const DecompositionPolicy& decomposition = DecompositionPolicy());
 
   /**
    * Apply Principal Component Analysis to the provided data set.  It is safe to
@@ -43,7 +47,7 @@ class PCA
   void Apply(const arma::mat& data,
              arma::mat& transformedData,
              arma::vec& eigval,
-             arma::mat& eigvec) const;
+             arma::mat& eigvec);
 
   /**
    * Apply Principal Component Analysis to the provided data set.  It is safe to
@@ -55,7 +59,7 @@ class PCA
    */
   void Apply(const arma::mat& data,
              arma::mat& transformedData,
-             arma::vec& eigVal) const;
+             arma::vec& eigVal);
 
   /**
    * Use PCA for dimensionality reduction on the given dataset.  This will save
@@ -68,10 +72,10 @@ class PCA
    * @param newDimension New dimension of the data.
    * @return Amount of the variance of the data retained (between 0 and 1).
    */
-  double Apply(arma::mat& data, const size_t newDimension) const;
+  double Apply(arma::mat& data, const size_t newDimension);
 
   //! This overload is here to make sure int gets casted right to size_t.
-  inline double Apply(arma::mat& data, const int newDimension) const
+  inline double Apply(arma::mat& data, const int newDimension)
   {
     return Apply(data, size_t(newDimension));
   }
@@ -91,7 +95,7 @@ class PCA
    *     between 0 and 1.
    * @return Actual amount of variance retained (between 0 and 1).
    */
-  double Apply(arma::mat& data, const double varRetained) const;
+  double Apply(arma::mat& data, const double varRetained);
 
   //! Get whether or not this PCA object will scale (by standard deviation) the
   //! data when PCA is performed.
@@ -101,13 +105,37 @@ class PCA
   bool& ScaleData() { return scaleData; }
 
  private:
+  //! Scaling the data is when we reduce the variance of each dimension to 1.
+  void ScaleData(arma::mat& centeredData)
+  {
+    if (scaleData)
+    {
+      // Scaling the data is when we reduce the variance of each dimension to 1.
+      // We do this by dividing each dimension by its standard deviation.
+      arma::vec stdDev = arma::stddev(centeredData, 0, 1 /* for each dimension */);
+
+      // If there are any zeroes, make them very small.
+      for (size_t i = 0; i < stdDev.n_elem; ++i)
+        if (stdDev[i] == 0)
+          stdDev[i] = 1e-50;
+
+      centeredData /= arma::repmat(stdDev, 1, centeredData.n_cols);
+    }
+  }
+
   //! Whether or not the data will be scaled by standard deviation when PCA is
   //! performed.
   bool scaleData;
 
+  //! Decomposition method used to perform principal components analysis.
+  DecompositionPolicy decomposition;
 }; // class PCA
+
 
 } // namespace pca
 } // namespace mlpack
+
+// Include implementation.
+#include "pca_impl.hpp"
 
 #endif
