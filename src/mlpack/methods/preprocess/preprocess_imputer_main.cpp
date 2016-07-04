@@ -92,10 +92,8 @@ int main(int argc, char** argv)
   // Policy tells how the DatasetMapper should map the values.
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
-  Log::Debug << "initalize MissingPolicy(missingSet)" << endl;
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
-  Log::Debug << "initalize info(policy)" << endl;
   DatasetMapper<MissingPolicy> info(policy);
 
   Load(inputFile, input, info, true, true);
@@ -149,9 +147,6 @@ int main(int argc, char** argv)
     }
   }
 
-  // for testing purpose
-  Log::Info << "output::" << endl;
-  Log::Info << output << endl;
 
   if (!outputFile.empty())
   {

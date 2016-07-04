@@ -29,13 +29,12 @@ class MissingPolicy
 
   MissingPolicy()
   {
-    Log::Debug << "MissingPolicy()" << std::endl;
+    // Nothing to initialize here.
   }
 
   explicit MissingPolicy(std::set<std::string> missingSet) :
     missingSet(std::move(missingSet))
   {
-    Log::Debug << "MissingPolicy(missingSet)" << std::endl;
     // Nothing to initialize here.
   }
 
@@ -49,7 +48,6 @@ class MissingPolicy
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
-    Log::Debug << "missingSet has: " << missingSet.count(string) << std::endl;
     if (missingSet.count(string) != 0 &&
         (maps.count(dimension) == 0 ||
          maps[dimension].first.left.count(string) == 0))
@@ -64,7 +62,6 @@ class MissingPolicy
     else
     {
       // This string already exists in the mapping.
-      Log::Debug << "string already exists in the mapping" << std::endl;
       return maps[dimension].first.left.at(string);
     }
   }

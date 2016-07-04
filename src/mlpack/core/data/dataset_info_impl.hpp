@@ -18,7 +18,6 @@ template<typename PolicyType>
 inline DatasetMapper<PolicyType>::DatasetMapper(const size_t dimensionality) :
     types(dimensionality, Datatype::numeric)
 {
-    Log::Debug << "DatasetMapper(dimensionality)" << std::endl;
   // Nothing to initialize here.
 }
 
@@ -28,7 +27,6 @@ inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
     types(dimensionality, Datatype::numeric),
     policy(std::move(policy))
 {
-    Log::Debug << "DatasetMapper(policy, dimensionality)" << std::endl;
   // Nothing to initialize here.
 }
 
@@ -126,6 +124,13 @@ inline PolicyType& DatasetMapper<PolicyType>::Policy()
 {
   return this->policy;
 }
+
+template<typename PolicyType>
+inline void DatasetMapper<PolicyType>::Policy(PolicyType& policy)
+{
+  this->policy = std::move(policy);
+}
+
 
 
 } // namespace data

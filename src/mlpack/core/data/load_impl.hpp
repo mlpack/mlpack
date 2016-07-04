@@ -65,34 +65,17 @@ void MapToNumerical(const std::vector<std::string>& tokens,
                     DatasetMapper<PolicyType>& info,
                     arma::Mat<eT>& matrix)
 {
-  auto notNumber = [](const std::string& str)
+  std::stringstream token;
+  for (size_t i = 0; i != tokens.size(); ++i)
   {
-    eT val(0);
-    std::stringstream token;
-    token.str(str);
-    token>>val;
-    return token.fail();
-  };
-
-  const bool notNumeric = std::any_of(std::begin(tokens),
-                                      std::end(tokens), notNumber);
-  if(notNumeric)
-  {
-    for(size_t i = 0; i != tokens.size(); ++i)
+    token.str(tokens[i]);
+    token>>matrix.at(row, i);
+    if (token.fail()) // if not number, map it to datasetmapper
     {
       const eT val = static_cast<eT>(info.MapString(tokens[i], row));
       matrix.at(row, i) = val;
     }
-  }
-  else
-  {
-    std::stringstream token;
-    for(size_t i = 0; i != tokens.size(); ++i)
-    {
-      token.str(tokens[i]);
-      token>>matrix.at(row, i);
-      token.clear();
-    }
+    token.clear();
   }
 }
 
@@ -411,7 +394,7 @@ bool Load(const std::string& filename,
       type = "raw ASCII-formatted data";
 
     Log::Info << "Loading '" << filename << "' as " << type << ".  "
-        << std::endl;
+        << std::flush;
     std::string separators;
     if (commas)
       separators = ",";
@@ -496,7 +479,7 @@ bool Load(const std::string& filename,
   else if (extension == "arff")
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::endl;
+        << std::flush;
     try
     {
       LoadARFF(filename, matrix, info);

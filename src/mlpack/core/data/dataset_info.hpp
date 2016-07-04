@@ -113,6 +113,9 @@ class DatasetMapper
   //! Modify the policy of the mapper (be careful!).
   PolicyType& Policy();
 
+  //! Modify (Replace) the policy of the mapper with a new policy
+  void Policy(PolicyType& policy);
+
  private:
   //! Types of each dimension.
   std::vector<Datatype> types;

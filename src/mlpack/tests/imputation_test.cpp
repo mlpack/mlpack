@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   fstream f;
   f.open("test_file.csv", fstream::out);
   f << "a, 2, 3"  << endl;
-  f << "5, 6, 7"  << endl;
+  f << "5, 6, b"  << endl;
   f << "8, 9, 10" << endl;
   f.close();
 
@@ -43,6 +43,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   std::set<string> mset;
   mset.insert("a");
+  mset.insert("b");
   MissingPolicy miss(mset);
   DatasetMapper<MissingPolicy> info(miss);
   BOOST_REQUIRE(data::Load("test_file.csv", input, info) == true);
@@ -56,15 +57,16 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
           DatasetMapper<MissingPolicy>,
           CustomImputation<double>> imputer(info);
   imputer.Impute(input, output, "a", 99, dimension); // convert a -> 99
+  imputer.Impute(input, output, "b", 99, dimension); // convert b -> 99
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 99.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(0, 1), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(0, 2), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 1), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 2), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 0), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(1, 2), 7.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(2, 0), 8.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(2, 1), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 1), 99.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 2), 10.0, 1e-5);
 
   // Remove the file.
