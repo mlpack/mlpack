@@ -37,7 +37,7 @@ class ExactSVDPolicy
              const arma::mat& centeredData,
              arma::mat& transformedData,
              arma::vec& eigVal,
-             arma::mat& coeff,
+             arma::mat& eigvec,
              const size_t /* rank */)
   {
     // This matrix will store the right singular values; we do not need them.
@@ -49,11 +49,11 @@ class ExactSVDPolicy
     {
       // Do economical singular value decomposition and compute only the left
       // singular vectors.
-      arma::svd_econ(coeff, eigVal, v, centeredData, 'l');
+      arma::svd_econ(eigvec, eigVal, v, centeredData, 'l');
     }
     else
     {
-      arma::svd(coeff, eigVal, v, centeredData);
+      arma::svd(eigvec, eigVal, v, centeredData);
     }
 
     // Now we must square the singular values to get the eigenvalues.
@@ -62,7 +62,7 @@ class ExactSVDPolicy
     eigVal %= eigVal / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(coeff) * centeredData;
+    transformedData = arma::trans(eigvec) * centeredData;
   }
 };
 

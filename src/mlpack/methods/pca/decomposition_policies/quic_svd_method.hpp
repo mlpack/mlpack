@@ -50,14 +50,14 @@ class QUICSVDPolicy
              const arma::mat& centeredData,
              arma::mat& transformedData,
              arma::vec& eigVal,
-             arma::mat& coeff,
+             arma::mat& eigvec,
              const size_t /* rank */)
   {
     // This matrix will store the right singular values; we do not need them.
     arma::mat v, sigma;
 
     // Do singular value decomposition using the QUIC-SVD algorithm.
-    svd::QUIC_SVD quicsvd(centeredData, coeff, v, sigma, epsilon, delta);
+    svd::QUIC_SVD quicsvd(centeredData, eigvec, v, sigma, epsilon, delta);
 
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
@@ -65,7 +65,7 @@ class QUICSVDPolicy
     eigVal = arma::pow(arma::diagvec(sigma), 2) / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(coeff) * centeredData;
+    transformedData = arma::trans(eigvec) * centeredData;
   }
 
   //! Get the error tolerance fraction for calculated subspace.

@@ -54,7 +54,7 @@ class RandomizedSVDPolicy
              const arma::mat& centeredData,
              arma::mat& transformedData,
              arma::vec& eigVal,
-             arma::mat& coeff,
+             arma::mat& eigvec,
              const size_t rank)
   {
     // This matrix will store the right singular values; we do not need them.
@@ -62,7 +62,7 @@ class RandomizedSVDPolicy
 
     // Do singular value decomposition using the randomized SVD algorithm.
     svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
-    rsvd.Apply(data, coeff, eigVal, v, rank);
+    rsvd.Apply(data, eigvec, eigVal, v, rank);
 
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
@@ -70,7 +70,7 @@ class RandomizedSVDPolicy
     eigVal %= eigVal / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(coeff) * centeredData;
+    transformedData = arma::trans(eigvec) * centeredData;
   }
 
   //! Get the size of the normalized power iterations.
