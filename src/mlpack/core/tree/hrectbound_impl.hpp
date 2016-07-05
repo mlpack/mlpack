@@ -435,6 +435,9 @@ inline bool HRectBound<MetricType, ElemType>::Contains(const VecType& point) con
   return true;
 }
 
+/**
+ * Determines if this bound partially contains a bound.
+ */
 template<typename MetricType, typename ElemType>
 inline bool HRectBound<MetricType, ElemType>::Contains(
     const HRectBound& bound) const
@@ -451,9 +454,12 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
   return true;
 }
 
+/**
+ * Returns the intersection of this bound and another.
+ */
 template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
-Intersect(const HRectBound& bound) const
+operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
@@ -465,6 +471,24 @@ Intersect(const HRectBound& bound) const
   return result;
 }
 
+/**
+ * Intersects this bound with another.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::
+operator&=(const HRectBound& bound)
+{
+  for (size_t k = 0; k < dim; k++)
+  {
+    bounds[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    bounds[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+  }
+  return *this;
+}
+
+/**
+ * Returns the volume of overlap of this bound and another.
+ */
 template<typename MetricType, typename ElemType>
 inline ElemType HRectBound<MetricType, ElemType>::Overlap(
     const HRectBound& bound) const

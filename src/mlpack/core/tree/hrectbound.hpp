@@ -190,7 +190,12 @@ class HRectBound
   /**
    * Returns the intersection of this bound and another.
    */
-  HRectBound Intersect(const HRectBound& bound) const;
+  HRectBound operator&(const HRectBound& bound) const;
+
+  /**
+   * Intersects this bound with another.
+   */
+  HRectBound& operator&=(const HRectBound& bound);
 
   /**
    * Returns the volume of overlap of this bound and another.
