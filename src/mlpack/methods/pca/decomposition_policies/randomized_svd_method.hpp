@@ -44,7 +44,7 @@ class RandomizedSVDPolicy
    * randomized SVD.
    *
    * @param data Data matrix.
-   * @param data Centered data matrix.
+   * @param centeredData Centered data matrix.
    * @param transformedData Matrix to put results of PCA into.
    * @param eigVal Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
