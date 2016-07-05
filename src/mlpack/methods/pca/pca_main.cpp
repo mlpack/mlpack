@@ -46,7 +46,7 @@ void RunPCA(arma::mat& dataset,
             const size_t scale,
             const double varToRetain)
 {
-  PCA<DecompositionPolicy> p(scale);
+  PCAType<DecompositionPolicy> p(scale);
 
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
@@ -111,6 +111,12 @@ int main(int argc, char** argv)
   else if(decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
+  }
+  else
+  {
+    // Invalid decomposition method.
+    Log::Fatal << "Invalid decomposition method ('" << decompositionMethod
+        << "'); valid choices are 'exact', 'randomized', 'quic'." << endl;
   }
 
   // Now save the results.

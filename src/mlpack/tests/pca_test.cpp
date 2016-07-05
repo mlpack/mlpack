@@ -33,7 +33,7 @@ void ArmaComparisonPCA()
 
   arma::mat data = arma::randu<arma::mat>(3, 1000);
 
-  PCA<DecompositionPolicy> exactPCA;
+  PCAType<DecompositionPolicy> exactPCA;
   exactPCA.Apply(data, score1, eigVal1, coeff1);
 
   princomp(coeff, score, eigVal, trans(data));
@@ -61,7 +61,7 @@ void PCADimensionalityReduction()
            "6 7 3 1 8");
 
   // Now run PCA to reduce the dimensionality.
-  PCA<DecompositionPolicy> p;
+  PCAType<DecompositionPolicy> p;
   const double varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
 
   // Compare with correct results.
@@ -111,7 +111,7 @@ void PCAVarianceRetained()
   // and if we keep two, the actual variance retained is
   //   0.904876047045906
   // and if we keep three, the actual variance retained is 1.
-  PCA<DecompositionPolicy> p;
+  PCAType<DecompositionPolicy> p;
   arma::mat origData = data;
   double varRetained = p.Apply(data, 0.1);
 
@@ -199,10 +199,10 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
   data::Load("test_data_3_1000.csv", data);
   data1 = data;
 
-  PCA<ExactSVDPolicy> exactPCA;
+  PCAType<ExactSVDPolicy> exactPCA;
   const double varRetainedExact = exactPCA.Apply(data, 1);
 
-  PCA<QUICSVDPolicy> quicPCA;
+  PCAType<QUICSVDPolicy> quicPCA;
   const double varRetainedQUIC = quicPCA.Apply(data1, 1);
 
   BOOST_REQUIRE_CLOSE(varRetainedExact, varRetainedQUIC, 4.0);
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
     data.col(i) = g.Random();
 
   // Now get the principal components when we are scaling.
-  PCA<> p(true);
+  PCA p(true);
   arma::mat transData;
   arma::vec eigval;
   arma::mat eigvec;

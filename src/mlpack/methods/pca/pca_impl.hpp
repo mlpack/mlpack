@@ -1,6 +1,8 @@
 /**
  * @file pca.cpp
  * @author Ajinkya Kale
+ * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Implementation of PCA class to perform Principal Components Analysis on the
  * specified data set.
@@ -18,8 +20,8 @@ namespace mlpack {
 namespace pca {
 
 template<typename DecompositionPolicy>
-PCA<DecompositionPolicy>::PCA(const bool scaleData,
-                              const DecompositionPolicy& decomposition) :
+PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
+                                      const DecompositionPolicy& decomposition) :
     scaleData(scaleData),
     decomposition(decomposition)
 { }
@@ -33,10 +35,10 @@ PCA<DecompositionPolicy>::PCA(const bool scaleData,
  * @param coeff - PCA Loadings/Coeffs/EigenVectors
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
-                arma::mat& transformedData,
-                arma::vec& eigVal,
-                arma::mat& coeff)
+void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
+                                         arma::mat& transformedData,
+                                         arma::vec& eigVal,
+                                         arma::mat& coeff)
 {
   Timer::Start("pca");
 
@@ -61,9 +63,9 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
  * @param eigVal - contains eigen values in a column vector
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
-                arma::mat& transformedData,
-                arma::vec& eigVal)
+void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
+                                         arma::mat& transformedData,
+                                         arma::vec& eigVal)
 {
   arma::mat coeffs;
   Apply(data, transformedData, eigVal, coeffs);
@@ -81,7 +83,8 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
  * @return Amount of the variance of the data retained (between 0 and 1).
  */
 template<typename DecompositionPolicy>
-double PCA<DecompositionPolicy>::Apply(arma::mat& data, const size_t newDimension)
+double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
+                                           const size_t newDimension)
 {
   // Parameter validation.
   if (newDimension == 0)
@@ -94,6 +97,8 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data, const size_t newDimensio
 
   arma::mat coeffs;
   arma::vec eigVal;
+
+  Timer::Start("pca");
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
@@ -112,6 +117,8 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data, const size_t newDimensio
   // the right dimension before calculating the amount of variance retained.
   double eigDim = std::min(newDimension - 1, (size_t) eigVal.n_elem - 1);
 
+  Timer::Stop("pca");
+
   // Calculate the total amount of variance retained.
   return (sum(eigVal.subvec(0, eigDim)) / sum(eigVal));
 }
@@ -127,7 +134,8 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data, const size_t newDimensio
  * always be greater than or equal to the varRetained parameter.
  */
 template<typename DecompositionPolicy>
-double PCA<DecompositionPolicy>::Apply(arma::mat& data, const double varRetained)
+double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
+                                           const double varRetained)
 {
   // Parameter validation.
   if (varRetained < 0)
@@ -158,7 +166,6 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data, const double varRetained
 
   return varSum;
 }
-
 
 } // namespace pca
 } // namespace mlpack

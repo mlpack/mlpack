@@ -1,10 +1,12 @@
 /**
  * @file pca.hpp
  * @author Ajinkya Kale
+ * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Defines the PCA class to perform Principal Components Analysis on the
- * specified data set. There are many variations on how to do this, so template
- * parameters allow the selection of different techniques.
+ * specified data set. There are many variations on how to do this, so
+ * template parameters allow the selection of different techniques.
  */
 #ifndef MLPACK_METHODS_PCA_PCA_HPP
 #define MLPACK_METHODS_PCA_PCA_HPP
@@ -16,14 +18,14 @@ namespace mlpack {
 namespace pca {
 
 /**
- * This class implements principal components analysis (PCA).  This is a common,
- * widely-used technique that is often used for either dimensionality reduction
- * or transforming data into a better basis.  Further information on PCA can be
- * found in almost any statistics or machine learning textbook, and all over the
- * internet.
+ * This class implements principal components analysis (PCA). This is a
+ * common, widely-used technique that is often used for either dimensionality
+ * reduction or transforming data into a better basis.  Further information on
+ * PCA can be found in almost any statistics or machine learning textbook, and
+ * all over the internet.
  */
 template<typename DecompositionPolicy = ExactSVDPolicy>
-class PCA
+class PCAType
 {
  public:
   /**
@@ -32,12 +34,12 @@ class PCA
    *
    * @param scaleData Whether or not to scale the data.
    */
-  PCA(const bool scaleData = false,
-      const DecompositionPolicy& decomposition = DecompositionPolicy());
+  PCAType(const bool scaleData = false,
+          const DecompositionPolicy& decomposition = DecompositionPolicy());
 
   /**
-   * Apply Principal Component Analysis to the provided data set.  It is safe to
-   * pass the same matrix reference for both data and transformedData.
+   * Apply Principal Component Analysis to the provided data set. It is safe
+   * to pass the same matrix reference for both data and transformedData.
    *
    * @param data Data matrix.
    * @param transformedData Matrix to put results of PCA into.
@@ -50,8 +52,8 @@ class PCA
              arma::mat& eigvec);
 
   /**
-   * Apply Principal Component Analysis to the provided data set.  It is safe to
-   * pass the same matrix reference for both data and transformedData.
+   * Apply Principal Component Analysis to the provided data set. It is safe
+   * to pass the same matrix reference for both data and transformedData.
    *
    * @param data Data matrix.
    * @param transformedData Matrix to store results of PCA in.
@@ -62,11 +64,11 @@ class PCA
              arma::vec& eigVal);
 
   /**
-   * Use PCA for dimensionality reduction on the given dataset.  This will save
+   * Use PCA for dimensionality reduction on the given dataset. This will save
    * the newDimension largest principal components of the data and remove the
-   * rest.  The parameter returned is the amount of variance of the data that is
-   * retained; this is a value between 0 and 1.  For instance, a value of 0.9
-   * indicates that 90% of the variance present in the data was retained.
+   * rest. The parameter returned is the amount of variance of the data that
+   * is retained; this is a value between 0 and 1.  For instance, a value of
+   * 0.9 indicates that 90% of the variance present in the data was retained.
    *
    * @param data Data matrix.
    * @param newDimension New dimension of the data.
@@ -81,7 +83,7 @@ class PCA
   }
 
   /**
-   * Use PCA for dimensionality reduction on the given dataset.  This will save
+   * Use PCA for dimensionality reduction on the given dataset. This will save
    * as many dimensions as necessary to retain at least the given amount of
    * variance (specified by parameter varRetained).  The amount should be
    * between 0 and 1; if the amount is 0, then only 1 dimension will be
@@ -97,8 +99,8 @@ class PCA
    */
   double Apply(arma::mat& data, const double varRetained);
 
-  //! Get whether or not this PCA object will scale (by standard deviation) the
-  //! data when PCA is performed.
+  //! Get whether or not this PCA object will scale (by standard deviation)
+  //! the data when PCA is performed.
   bool ScaleData() const { return scaleData; }
   //! Modify whether or not this PCA object will scale (by standard deviation)
   //! the data when PCA is performed.
@@ -110,9 +112,11 @@ class PCA
   {
     if (scaleData)
     {
-      // Scaling the data is when we reduce the variance of each dimension to 1.
-      // We do this by dividing each dimension by its standard deviation.
-      arma::vec stdDev = arma::stddev(centeredData, 0, 1 /* for each dimension */);
+      // Scaling the data is when we reduce the variance of each dimension
+      // to 1. We do this by dividing each dimension by its standard
+      // deviation.
+      arma::vec stdDev = arma::stddev(
+          centeredData, 0, 1 /* for each dimension */);
 
       // If there are any zeroes, make them very small.
       for (size_t i = 0; i < stdDev.n_elem; ++i)
@@ -131,6 +135,8 @@ class PCA
   DecompositionPolicy decomposition;
 }; // class PCA
 
+//! 3.0.0 TODO: break reverse-compatibility by changing PCAType to PCA.
+typedef PCAType<ExactSVDPolicy> PCA;
 
 } // namespace pca
 } // namespace mlpack
