@@ -59,26 +59,6 @@ void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
   }
 }
 
-template<typename eT, typename PolicyType>
-void MapToNumerical(const std::vector<std::string>& tokens,
-                    size_t& row,
-                    DatasetMapper<PolicyType>& info,
-                    arma::Mat<eT>& matrix)
-{
-  std::stringstream token;
-  for (size_t i = 0; i != tokens.size(); ++i)
-  {
-    token.str(tokens[i]);
-    token>>matrix.at(row, i);
-    if (token.fail()) // if not number, map it to datasetmapper
-    {
-      const eT val = static_cast<eT>(info.MapString(tokens[i], row));
-      matrix.at(row, i) = val;
-    }
-    token.clear();
-  }
-}
-
 }
 
 template<typename eT>
@@ -458,8 +438,7 @@ bool Load(const std::string& filename,
       for(size_t i = 0; i != cols; ++i)
       {
         details::TransPoseTokens(tokensArray, tokens, i);
-        details::MapToNumerical(tokens, i,
-                                info, matrix);
+        info.MapTokens(tokens, i, matrix);
       }
     }
     else
@@ -470,8 +449,7 @@ bool Load(const std::string& filename,
         // Extract line by line.
         std::getline(stream, buffer, '\n');
         Tokenizer lineTok(buffer, sep);
-        details::MapToNumerical(details::ToTokens(lineTok), row,
-                                info, matrix);
+        info.MapTokens(details::ToTokens(lineTok), row, matrix);
         ++row;
       }
     }

@@ -56,6 +56,46 @@ class IncrementPolicy
       return maps[dimension].first.left.at(string);
     }
   }
+
+  template <typename eT, typename MapType>
+  void MapTokens(const std::vector<std::string>& tokens,
+                 size_t& row,
+                 arma::Mat<eT>& matrix,
+                 MapType& maps,
+                 std::vector<Datatype>& types)
+  {
+    auto notNumber = [](const std::string& str)
+    {
+      eT val(0);
+      std::stringstream token;
+      token.str(str);
+      token >> val;
+      return token.fail();
+    };
+
+    const bool notNumeric = std::any_of(std::begin(tokens),
+                                        std::end(tokens), notNumber);
+    if (notNumeric)
+    {
+       for (size_t i = 0; i != tokens.size(); ++i)
+       {
+         const eT val = static_cast<eT>(this->MapString(maps, types, tokens[i],
+                                                        row));
+         double temp = (double) val;
+         matrix.at(row, i) = val;
+       }
+    }
+    else
+    {
+      std::stringstream token;
+      for (size_t i = 0; i != tokens.size(); ++i)
+      {
+         token.str(tokens[i]);
+         token >> matrix.at(row, i);
+         token.clear();
+      }
+    }
+  }
 }; // class IncrementPolicy
 
 } // namespace data

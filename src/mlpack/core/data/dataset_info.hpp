@@ -78,6 +78,11 @@ class DatasetMapper
   typename PolicyType::mapped_type UnmapValue(const std::string& string,
                                             const size_t dimension);
 
+  template <typename eT>
+  void MapTokens(const std::vector<std::string>& tokens,
+                 size_t& row,
+                 arma::Mat<eT>& matrix);
+
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
   //! Modify the type of a given dimension (be careful!).

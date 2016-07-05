@@ -69,6 +69,29 @@ class MissingPolicy
       return NaN;
     }
   }
+
+  template <typename eT, typename MapType>
+  void MapTokens(const std::vector<std::string>& tokens,
+                 size_t& row,
+                 arma::Mat<eT>& matrix,
+                 MapType& maps,
+                 std::vector<Datatype>& types)
+  {
+    std::stringstream token;
+    for (size_t i = 0; i != tokens.size(); ++i)
+    {
+      token.str(tokens[i]);
+      token>>matrix.at(row, i);
+      if (token.fail()) // if not number, map it to datasetmapper
+      {
+        const eT val = static_cast<eT>(this->MapString(maps, types, tokens[i],
+                                                       row));
+        matrix.at(row, i) = val;
+      }
+      token.clear();
+    }
+  }
+
  private:
   std::set<std::string> missingSet;
 }; // class MissingPolicy

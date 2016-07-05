@@ -76,6 +76,17 @@ inline typename PolicyType::mapped_type DatasetMapper<PolicyType>::UnmapValue(
   return maps[dimension].first.left.at(string);
 }
 
+template<typename PolicyType>
+template<typename eT>
+inline void DatasetMapper<PolicyType>::MapTokens(
+                                        const std::vector<std::string>& tokens,
+                                        size_t& row,
+                                        arma::Mat<eT>& matrix)
+{
+  return policy.template MapTokens<eT, MapType>(tokens, row, matrix, maps,
+                                                types);
+}
+
 // Get the type of a particular dimension.
 template<typename PolicyType>
 inline Datatype DatasetMapper<PolicyType>::Type(const size_t dimension) const
