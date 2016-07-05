@@ -22,7 +22,7 @@ template <typename T>
 class MedianImputation
 {
  public:
-  void Apply (const arma::Mat<T>& input,
+  void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
               const T& mappedValue,
               const size_t dimension,

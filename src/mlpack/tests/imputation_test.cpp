@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   CustomImputation<double> imputer;
 
   // transposed
-  imputer.Apply(input, outputT, mappedValue, customValue, 0/*dimension*/, true);
+  imputer.Impute(input, outputT, mappedValue, customValue, 0/*dimension*/, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 99.0, 1e-5);
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
   // not transposed
-  imputer.Apply(input, output, mappedValue, customValue, 1, false);
+  imputer.Impute(input, output, mappedValue, customValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 99.0, 1e-5);
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
   MeanImputation<double> imputer;
 
   // transposed
-  imputer.Apply(input, outputT, mappedValue, 0, true);
+  imputer.Impute(input, outputT, mappedValue, 0, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 2.5, 1e-5);
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
   // not transposed
-  imputer.Apply(input, output, mappedValue, 1, false);
+  imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 7.0, 1e-5);
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   MedianImputation<double> imputer;
 
   // transposed
-  imputer.Apply(input, outputT, mappedValue, 1, true);
+  imputer.Impute(input, outputT, mappedValue, 1, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 0.0, 1e-5);
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
   // not transposed
-  imputer.Apply(input, output, mappedValue, 1, false);
+  imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 6.0, 1e-5);
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   ListwiseDeletion<double> imputer;
 
   // transposed
-  imputer.Apply(input, outputT, mappedValue, 0, true); // transposed
+  imputer.Impute(input, outputT, mappedValue, 0, true); // transposed
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 2.0, 1e-5);
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 1), 4.0, 1e-5);
 
   // not transposed
-  imputer.Apply(input, output, mappedValue, 1, false); // not transposed
+  imputer.Impute(input, output, mappedValue, 1, false); // not transposed
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 6.0, 1e-5);

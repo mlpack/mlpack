@@ -41,10 +41,10 @@ class MissingPolicy
 
 
   template <typename MapType>
-  mapped_type MapString(MapType& maps,
-                        std::vector<Datatype>& types,
-                        const std::string& string,
-                        const size_t dimension)
+  mapped_type MapString(const std::string& string,
+                        const size_t dimension,
+                        MapType maps,
+                        std::vector<Datatype>& types)
   {
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
@@ -84,8 +84,8 @@ class MissingPolicy
       token>>matrix.at(row, i);
       if (token.fail()) // if not number, map it to datasetmapper
       {
-        const eT val = static_cast<eT>(this->MapString(maps, types, tokens[i],
-                                                       row));
+        const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
+                                                       types));
         matrix.at(row, i) = val;
       }
       token.clear();

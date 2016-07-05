@@ -60,7 +60,7 @@ class Imputer
               const size_t dimension)
   {
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Apply(input, output, mappedValue, dimension, transpose);
+    strategy.Impute(input, output, mappedValue, dimension, transpose);
   }
 
   /**
@@ -74,12 +74,8 @@ class Imputer
               const size_t dimension)
   {
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Apply(input,
-                   output,
-                   mappedValue,
-                   customValue,
-                   dimension,
-                   transpose);
+    strategy.Impute(input, output, mappedValue, customValue, dimension,
+                    transpose);
   }
 
   //! Get the strategy
