@@ -451,8 +451,8 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
               const double rho)
 {
   // We need to expand the bounds of this node properly.
-  for(size_t i = 0; i < pointsIndex->size(); i++)
-    bound |= dataset->cols(pointsIndex[i], pointsIndex[i]);
+  for(size_t i = 0; i < points->size(); i++)
+    bound |= dataset->cols(points[i], points[i]);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -462,7 +462,7 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   {
     pointsIndex = new std::vector<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex().size();
+    count = pointsIndex->size();
     return; // We can't split this.
   }
 
@@ -476,7 +476,7 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   {
     pointsIndex = new std::vector<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex().size();
+    count = pointsIndex->size();
     return; // We can't split this.
   }
 
