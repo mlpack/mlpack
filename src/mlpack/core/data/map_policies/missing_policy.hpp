@@ -80,6 +80,12 @@ class MissingPolicy
     std::stringstream token;
     for (size_t i = 0; i != tokens.size(); ++i)
     {
+      if (missingSet.find(tokens[i]) != std::end(missingSet))
+      {
+         const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
+                                                        types));
+         matrix.at(row, i) = val;
+      }
       token.str(tokens[i]);
       token>>matrix.at(row, i);
       if (token.fail()) // if not number, map it to datasetmapper
