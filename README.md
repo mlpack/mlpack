@@ -6,7 +6,7 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
-**Download [current stable version (2.0.1)](http://www.mlpack.org/files/mlpack-2.0.1.tar.gz).**
+**Download [current stable version (2.0.2)](http://www.mlpack.org/files/mlpack-2.0.2.tar.gz).**
 
 [![Build Status](http://big.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://big.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a>
 
