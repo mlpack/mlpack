@@ -1,5 +1,5 @@
 /**
- * @file pca.cpp
+ * @file pca_impl.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -32,13 +32,13 @@ PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
  * @param data - Data matrix
  * @param transformedData - Data with PCA applied
  * @param eigVal - contains eigen values in a column vector
- * @param coeff - PCA Loadings/Coeffs/EigenVectors
+ * @param eigvec - PCA Loadings/Coeffs/EigenVectors
  */
 template<typename DecompositionPolicy>
 void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
                                          arma::mat& transformedData,
                                          arma::vec& eigVal,
-                                         arma::mat& coeff)
+                                         arma::mat& eigvec)
 {
   Timer::Start("pca");
 
@@ -49,7 +49,7 @@ void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
   // Scale the data if the user ask for.
   ScaleData(centeredData);
 
-  decomposition.Apply(data, centeredData, transformedData, eigVal, coeff,
+  decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
       data.n_rows);
 
   Timer::Stop("pca");
@@ -67,8 +67,8 @@ void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
                                          arma::mat& transformedData,
                                          arma::vec& eigVal)
 {
-  arma::mat coeffs;
-  Apply(data, transformedData, eigVal, coeffs);
+  arma::mat eigvec;
+  Apply(data, transformedData, eigVal, eigvec);
 }
 
 /**
@@ -95,7 +95,7 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
         << "be greater than the existing dimensionality of the data ("
         << data.n_rows << ")!" << endl;
 
-  arma::mat coeffs;
+  arma::mat eigvec;
   arma::vec eigVal;
 
   Timer::Start("pca");
@@ -107,9 +107,9 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
   // Scale the data if the user ask for.
   ScaleData(centeredData);
 
-  decomposition.Apply(data, centeredData, data, eigVal, coeffs, newDimension);
+  decomposition.Apply(data, centeredData, data, eigVal, eigvec, newDimension);
 
-  if (newDimension < coeffs.n_rows)
+  if (newDimension < eigvec.n_rows)
     // Drop unnecessary rows.
     data.shed_rows(newDimension, data.n_rows - 1);
 
@@ -145,10 +145,10 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
         << "less than or equal to 1." << endl;
 
-  arma::mat coeffs;
+  arma::mat eigvec;
   arma::vec eigVal;
 
-  Apply(data, data, eigVal, coeffs);
+  Apply(data, data, eigVal, eigvec);
 
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
