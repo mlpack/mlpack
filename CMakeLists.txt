@@ -24,10 +24,10 @@ option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
-option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
+option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-option(HAS_OPENMP "Use OpenMP for parallel execution, if available" ON)
+option(HAS_OPENMP "Use OpenMP for parallel execution, if available." ON)
 
 enable_testing()
 

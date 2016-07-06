@@ -217,13 +217,14 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
       double shs = (double) secondHashSize; // Convenience cast.
       if (unmodVector[j] >= 0.0)
       {
-        secondHashVectors(i, j) = size_t(fmod(unmodVector[j], shs));
+        const size_t key = size_t(fmod(unmodVector[j], shs));
+        secondHashVectors(i, j) = key;
       }
       else
       {
         const double mod = fmod(-unmodVector[j], shs);
-        secondHashVectors(i, j) = (mod < 1.0) ? 0 : secondHashSize -
-            size_t(mod);
+        const size_t key = (mod < 1.0) ? 0 : secondHashSize - size_t(mod);
+        secondHashVectors(i, j) = key;
       }
     }
   }
@@ -305,74 +306,6 @@ void LSHSearch<SortPolicy>::InsertNeighbor(arma::mat& distances,
   neighbors(pos, queryIndex) = neighbor;
 }
 
-/*
-// Base case where the query set is the reference set.  (So, we can't return
-// ourselves as the nearest neighbor.)
-template<typename SortPolicy>
-inline force_inline
-void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
-                                     const size_t referenceIndex,
-                                     arma::Mat<size_t>& neighbors,
-                                     arma::mat& distances) const
-{
-  // If the points are the same, we can't continue.
-  if (queryIndex == referenceIndex)
-    return;
-
-  const double distance = metric::EuclideanDistance::Evaluate(
-      referenceSet->unsafe_col(queryIndex),
-      referenceSet->unsafe_col(referenceIndex));
-
-  // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the position to insert it into.
-  arma::vec queryDist = distances.unsafe_col(queryIndex);
-  arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-  size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
-      distance);
-
-  // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-  if (insertPosition != (size_t() - 1))
-  {
-    #pragma omp critical
-    {
-      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-          referenceIndex, distance);
-    }
-  }
-}
-
-// Base case for bichromatic search.
-template<typename SortPolicy>
-inline force_inline
-void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
-                                     const size_t referenceIndex,
-                                     const arma::mat& querySet,
-                                     arma::Mat<size_t>& neighbors,
-                                     arma::mat& distances) const
-{
-  const double distance = metric::EuclideanDistance::Evaluate(
-      querySet.unsafe_col(queryIndex),
-      referenceSet->unsafe_col(referenceIndex));
-
-  // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the position to insert it into.
-  arma::vec queryDist = distances.unsafe_col(queryIndex);
-  arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-  size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
-      distance);
-
-  // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-  if (insertPosition != (size_t() - 1))
-  {  
-    #pragma omp critical
-    {
-      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-          referenceIndex, distance);
-    }
-  }
-}
-*/
-
 // Base case where the query set is the reference set.  (So, we can't return
 // ourselves as the nearest neighbor.)
 template<typename SortPolicy>
@@ -382,6 +315,7 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
                                      arma::Mat<size_t>& neighbors,
                                      arma::mat& distances) const
 {
+
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
     const size_t referenceIndex = referenceIndices[j];
@@ -432,8 +366,11 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
     // SortDistance() returns (size_t() - 1) if we shouldn't add it.
     if (insertPosition != (size_t() - 1))
+      #pragma omp critical
       InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
           referenceIndex, distance);
+
+      #pragma omp flush(distances, neighbors)
   }
 }
 template<typename SortPolicy>
@@ -907,7 +844,7 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
   // Parallelization to process more than one query at a time.
   // use as many threads possible but not more than allowed number
-  size_t numThreadsUsed = std::min( (arma::uword) maxThreads, querySet.n_cols );
+  size_t numThreadsUsed = maxThreads;
   #pragma omp parallel for \
     num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
@@ -931,16 +868,6 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
-    /*
-    numTheadsUsed = std::min( (arma::uword) maxThreads, refIndices.n_elem);
-    #pragma omp parallel for\
-    num_threads( numThreadsUsed )\
-    shared(refIndices, resultingNeighbors, distances, querySet)\
-    schedule(dynamic)
-    for (size_t j = 0; j < refIndices.n_elem; j++)
-      BaseCase(i, (size_t) refIndices[j], querySet, resultingNeighbors,
-          distances);
-    */
     BaseCase(i, refIndices, querySet, resultingNeighbors, distances);
   }
 
@@ -989,7 +916,7 @@ Search(const size_t k,
 
   // Parallelization to process more than one query at a time.
   // use as many threads possible but not more than allowed number
-  size_t numThreadsUsed = std::min( (arma::uword) maxThreads, referenceSet->n_cols );
+  size_t numThreadsUsed = maxThreads;
   #pragma omp parallel for \
     num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
@@ -1012,18 +939,7 @@ Search(const size_t k,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
-
-    /*
-    numTheadsUsed = std::min( (arma::uword) maxThreads, refIndices.n_elem);
-    #pragma omp parallel for\
-    num_threads( numThreadsUsed )\
-    shared(refIndices, resultingNeighbors, distances)\
-    schedule(dynamic)
-    for (size_t j = 0; j < refIndices.n_elem; j++)
-      BaseCase(i, (size_t) refIndices[j], resultingNeighbors, distances);
-    */
     BaseCase(i, refIndices, resultingNeighbors, distances);
-
   }
 
   Timer::Stop("computing_neighbors");
