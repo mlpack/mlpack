@@ -37,6 +37,6 @@
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
 #define REQUIRE_RELATIVE_ERR( L, R, E ) \
-    BOOST_REQUIRE_LE( abs((R) - (L)), (E) * abs(R))
+    BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
 
 #endif
