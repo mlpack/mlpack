@@ -10,10 +10,14 @@ before_install:
   - export CXX=g++-4.8
   - printenv
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
+  - sudo apt-get install ruby lcov
+  - sudo gem install coveralls-lcov
 install:
-  - mkdir build && cd build && cmake -DDEBUG=OFF -DPROFILE=OFF .. && make -j4
+  - mkdir build && cd build && cmake -DBUILD_WITH_COVERAGE=ON .. && make -j4
 script:
-  - travis_wait 30 ./bin/mlpack_test -p
+  - travis_wait 30 ./mlpack_coverage -g gcov-4.8
+after_success:
+  - coveralls-lcov .coverage.total
 notifications:
   email:
     - mlpack-git@cc.gatech.edu

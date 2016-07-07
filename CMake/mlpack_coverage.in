@@ -1,0 +1,70 @@
+#!/bin/bash
+
+test_case=""
+gcov_loc=""
+
+while getopts ":t:g:" opt; do
+  case $opt in
+    t)
+      test_case=$OPTARG
+      echo "Finding coverage with $OPTARG tests."
+      ;;
+    g)
+      gcov_loc=$OPTARG
+      echo "Using gcov: $OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG"
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument."
+      exit 1
+      ;;
+  esac
+done
+
+# Generate initial coverage information
+lcov -b . -c -i -d ./ -o .coverage.wtest.base
+
+# Run the tests
+if [ "$test_case" = "" ];
+then ${CMAKE_BINARY_DIR}/bin/mlpack_test
+else
+  ${CMAKE_BINARY_DIR}/bin/mlpack_test --run_test=$test_case
+fi
+
+# Generate coverage based on executed tests
+if [ "$gcov_loc" = "" ];
+then lcov -b . -c -d ./ -o .coverage.wtest.run
+else 
+  lcov -b . -c -d ./ -o .coverage.wtest.run --gcov-tool=$gcov_loc
+fi
+
+# Merge coverage tracefiles
+lcov -a .coverage.wtest.base -a .coverage.wtest.run  -o .coverage.total
+
+# Filtering, extracting project files
+lcov -e .coverage.total "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/*" -o .coverage.total.filtered
+
+# Filtering, removing test-files and main.cpp
+lcov -r .coverage.total.filtered "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/*/*_main.cpp" -o .coverage.total.filtered
+lcov -r .coverage.total.filtered "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/tests/*" -o .coverage.total.filtered
+
+# Extra:  Replace /build/ with /src/ to unify directories
+cat .coverage.total.filtered > .coverage.total
+
+# Extra: Clear up previous data, create html folder
+if [[ -d ./coverage/ ]] ; then
+    rm -rf ./coverage/*
+else
+    mkdir coverage
+fi
+
+# Step 9: Generate webpage
+genhtml -o ./coverage/ .coverage.total
+
+# Extra: Preserve coverage file in coveragehistory folder
+[[ -d ./coveragehistory/ ]] || mkdir coveragehistory
+cp .coverage.total ./coveragehistory/`date +'%Y.%m.%d-coverage'`
+
