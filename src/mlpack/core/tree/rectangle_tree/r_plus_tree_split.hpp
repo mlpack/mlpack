@@ -2,8 +2,8 @@
  * @file r_plus_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the RPlusTreeSplit class, a class that splits the nodes of an R
- * tree, starting at a leaf node and moving upwards if necessary.
+ * Definition of the RPlusTreeSplit class, a class that splits the nodes of an
+ * R+ (or R++) tree, starting at a leaf node and moving upwards if necessary.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP
@@ -17,10 +17,10 @@ namespace tree /** Trees and tree-building procedures. */ {
  * The RPlusTreeSplit class performs the split process of a node on overflow.
  *
  * @tparam SplitPolicyType The class that helps to determine the subtree into
- *    which we should insert a child node.
- * @tparam SweepType The class that finds the partition of a node along a
- * given axis. The partition algorithm tries to find a partition along each
- * axis, evaluates each partition and chooses the best one.
+ *     which we should insert a child node.
+ * @tparam SweepType The class that finds the partition of a node along a given
+ *     axis. The partition algorithm tries to find a partition along each axis,
+ *     evaluates each partition and chooses the best one.
  */
 template<typename SplitPolicyType,
          template<typename> class SweepType>
@@ -35,7 +35,7 @@ class RPlusTreeSplit
    * @param relevels Not used.
    */
   template<typename TreeType>
-  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
@@ -44,7 +44,7 @@ class RPlusTreeSplit
    * @param relevels Not used.
    */
   template<typename TreeType>
-  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
  private:
   /**
@@ -118,7 +118,6 @@ class RPlusTreeSplit
    */
   template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
-
 };
 
 } // namespace tree
@@ -127,5 +126,4 @@ class RPlusTreeSplit
 // Include implementation
 #include "r_plus_tree_split_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP
-
+#endif  // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP

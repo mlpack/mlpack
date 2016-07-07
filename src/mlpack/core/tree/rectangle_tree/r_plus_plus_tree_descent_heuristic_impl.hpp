@@ -42,8 +42,7 @@ size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
   return 0;
 }
 
+} // namespace tree
+} // namespace mlpack
 
-} //  namespace tree
-} //  namespace mlpack
-
-#endif  //MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP

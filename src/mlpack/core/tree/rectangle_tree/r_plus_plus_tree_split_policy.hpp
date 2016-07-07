@@ -55,7 +55,7 @@ class RPlusPlusTreeSplitPolicy
   /**
    * Return the maximum bounding rectangle of the node.
    * This method should always return the bound that is used for the
-   * desicion-making in GetSplitPolicy().
+   * decision-making in GetSplitPolicy().
    *
    * @param node The node whose bound is requested.
    */
@@ -70,6 +70,5 @@ class RPlusPlusTreeSplitPolicy
 
 } //  namespace tree
 } //  namespace mlpack
+
 #endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_SPLIT_POLICY_HPP
-
-

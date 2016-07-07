@@ -14,7 +14,7 @@
 namespace mlpack {
 namespace tree {
 
-template<typename  TreeType>
+template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation() :
     outerBound(0)
@@ -22,7 +22,7 @@ RPlusPlusTreeAuxiliaryInformation() :
 
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
     outerBound(tree->Parent() ?
@@ -38,7 +38,7 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
     }
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(
     const RPlusPlusTreeAuxiliaryInformation& other) :
@@ -47,14 +47,14 @@ RPlusPlusTreeAuxiliaryInformation(
 
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointInsertion(
     TreeType* /* node */, const size_t /* point */)
 {
   return false;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandleNodeInsertion(
     TreeType* /* node */,
     TreeType* /* nodeToInsert */,
@@ -64,28 +64,28 @@ bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandleNodeInsertion(
   return false;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointDeletion(
     TreeType* /* node */, const size_t /* localIndex */)
 {
   return false;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandleNodeRemoval(
     TreeType* /* node */, const size_t /* nodeIndex */)
 {
   return false;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::UpdateAuxiliaryInfo(
     TreeType* /* node */)
 {
   return false;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
     TreeType* treeOne,
     TreeType* treeTwo,
@@ -96,16 +96,16 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
   Bound& treeOneBound = treeOne->AuxiliaryInfo().OuterBound();
   Bound& treeTwoBound = treeTwo->AuxiliaryInfo().OuterBound();
 
-  // Copy the maximum bounding rectangle
+  // Copy the maximum bounding rectangle.
   treeOneBound = outerBound;
   treeTwoBound = outerBound;
 
-  // Set proper limits
+  // Set proper limits.
   treeOneBound[axis].Hi() = cut;
   treeTwoBound[axis].Lo() = cut;
 }
 
-template<typename  TreeType>
+template<typename TreeType>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
 {
 
@@ -114,7 +114,7 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
 /**
  * Serialize the information.
  */
-template<typename  TreeType>
+template<typename TreeType>
 template<typename Archive>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::
 Serialize(Archive& ar, const unsigned int /* version */)
@@ -127,4 +127,4 @@ Serialize(Archive& ar, const unsigned int /* version */)
 } // namespace tree
 } // namespace mlpack
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_IMPL_HPP

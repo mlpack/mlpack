@@ -34,7 +34,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       if (node->NumChildren() == node->MaxNumChildren() + 1)
       {
         // Split the overflowed node.
-        RPlusTreeSplit::SplitNonLeafNode(node,relevels);
+        RPlusTreeSplit::SplitNonLeafNode(node, relevels);
         return;
       }
       node = node->Parent();
@@ -42,7 +42,10 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     return;
   }
   else if (tree->Count() <= tree->MaxLeafSize())
+  {
     return;
+  }
+
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -57,7 +60,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    RPlusTreeSplit::SplitLeafNode(copy,relevels);
+    RPlusTreeSplit::SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -65,7 +68,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   typename TreeType::ElemType cut;
 
   // Try to find a partiotion of the node.
-  if ( !PartitionNode(tree, cutAxis, cut))
+  if (!PartitionNode(tree, cutAxis, cut))
     return;
 
   // If we could not find a suitable partition.
@@ -171,7 +174,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   tree->SoftDelete();
 
   assert(parent->NumChildren() <= parent->MaxNumChildren() + 1);
-  
+
   // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
     RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
@@ -212,7 +215,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
 
   assert(treeOne->Count() <= treeOne->MaxLeafSize());
   assert(treeTwo->Count() <= treeTwo->MaxLeafSize());
-  
+
   assert(tree->Count() == treeOne->Count() + treeTwo->Count());
   assert(treeOne->Bound()[cutAxis].Hi() < treeTwo->Bound()[cutAxis].Lo());
 }
@@ -328,15 +331,15 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
       cost = SweepType<SplitPolicyType>::SweepLeafNode(k, node, cut);
     else
       cost = SweepType<SplitPolicyType>::SweepNonLeafNode(k, node, cut);
-    
 
     if (cost < minCost)
     {
       minCost = cost;
       minCutAxis = k;
-      minCut = cut;      
+      minCut = cut;
     }
   }
+
   return true;
 }
 
@@ -351,8 +354,7 @@ InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_SPLIT_IMPL_HPP
+#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_IMPL_HPP

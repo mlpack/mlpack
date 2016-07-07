@@ -38,12 +38,11 @@ class RPlusTreeDescentHeuristic
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* /* node */,
                                   const TreeType* /*insertedNode */);
-
 };
 
-} //  namespace tree
-} //  namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #include "r_plus_tree_descent_heuristic_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP

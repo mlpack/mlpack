@@ -119,7 +119,6 @@ class RPlusPlusTreeAuxiliaryInformation
                           const size_t axis,
                           const ElemType cut);
 
-
   /**
    * Nullify the auxiliary information in order to prevent an invalid free.
    */

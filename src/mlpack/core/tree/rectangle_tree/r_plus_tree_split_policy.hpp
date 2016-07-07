@@ -55,7 +55,7 @@ class RPlusTreeSplitPolicy
   /**
    * Return the minimum bounding rectangle of the node.
    * This method should always return the bound that is used for the
-   * desicion-making in GetSplitPolicy().
+   * decision-making in GetSplitPolicy().
    * 
    * @param node The node whose bound is requested.
     */
@@ -68,8 +68,7 @@ class RPlusTreeSplitPolicy
   }
 };
 
-} //  namespace tree
-} //  namespace mlpack
-#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_POLICY_HPP
+} // namespace tree
+} // namespace mlpack
 
-
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_POLICY_HPP

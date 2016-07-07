@@ -15,8 +15,8 @@ namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-size_t RPlusTreeDescentHeuristic::
-ChooseDescentNode(TreeType* node, const size_t point)
+size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
+                                                    const size_t point)
 {
   typedef typename TreeType::ElemType ElemType;
   size_t bestIndex = 0;
@@ -36,7 +36,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
   {
     bound::HRectBound<metric::EuclideanDistance, ElemType> bound =
         node->Child(bestIndex).Bound();
-    bound |=  node->Dataset().col(point);
+    bound |= node->Dataset().col(point);
 
     success = true;
 
@@ -79,7 +79,7 @@ ChooseDescentNode(TreeType* node, const size_t point)
       tree = child;
       depth--;
     }
-    return node->NumChildren()-1;
+    return node->NumChildren() - 1;
   }
 
   assert(bestIndex < node->NumChildren());
@@ -97,8 +97,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(
   return 0;
 }
 
+} // namespace tree
+} // namespace mlpack
 
-} //  namespace tree
-} //  namespace mlpack
-
-#endif  //MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
