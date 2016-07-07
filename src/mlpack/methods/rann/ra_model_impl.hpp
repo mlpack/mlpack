@@ -23,7 +23,9 @@ RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
     rTreeRA(NULL),
     rStarTreeRA(NULL),
     xTreeRA(NULL),
-    hilbertRTreeRA(NULL)
+    hilbertRTreeRA(NULL),
+    rPlusTreeRA(NULL),
+    rPlusPlusTreeRA(NULL)
 {
   // Nothing to do.
 }
@@ -43,6 +45,10 @@ RAModel<SortPolicy>::~RAModel()
     delete xTreeRA;
   if (hilbertRTreeRA)
     delete hilbertRTreeRA;
+  if (rPlusTreeRA)
+    delete rPlusTreeRA;
+  if (rPlusPlusTreeRA)
+    delete rPlusPlusTreeRA;
 }
 
 template<typename SortPolicy>
@@ -69,6 +75,10 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
       delete xTreeRA;
     if (hilbertRTreeRA)
       delete hilbertRTreeRA;
+    if (rPlusTreeRA)
+      delete rPlusTreeRA;
+    if (rPlusPlusTreeRA)
+      delete rPlusPlusTreeRA;
 
     // Set all the pointers to NULL.
     kdTreeRA = NULL;
@@ -77,6 +87,8 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
     rStarTreeRA = NULL;
     xTreeRA = NULL;
     hilbertRTreeRA = NULL;
+    rPlusPlusTreeRA = NULL;
+    rPlusTreeRA = NULL;
   }
 
   // We only need to serialize one of the kRANN objects.
@@ -100,6 +112,12 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
     case HILBERT_R_TREE:
       ar & data::CreateNVP(hilbertRTreeRA, "ra_model");
       break;
+    case R_PLUS_TREE:
+      ar & data::CreateNVP(rPlusTreeRA, "ra_model");
+      break;
+    case R_PLUS_PLUS_TREE:
+      ar & data::CreateNVP(rPlusPlusTreeRA, "ra_model");
+      break;
   }
 }
 
@@ -118,6 +136,10 @@ const arma::mat& RAModel<SortPolicy>::Dataset() const
     return xTreeRA->ReferenceSet();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->ReferenceSet();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->ReferenceSet();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->ReferenceSet();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -138,6 +160,10 @@ bool RAModel<SortPolicy>::Naive() const
     return xTreeRA->Naive();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Naive();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Naive();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Naive();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -158,6 +184,10 @@ bool& RAModel<SortPolicy>::Naive()
     return xTreeRA->Naive();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Naive();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Naive();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Naive();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -178,6 +208,10 @@ bool RAModel<SortPolicy>::SingleMode() const
     return xTreeRA->SingleMode();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SingleMode();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SingleMode();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SingleMode();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -198,6 +232,10 @@ bool& RAModel<SortPolicy>::SingleMode()
     return xTreeRA->SingleMode();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SingleMode();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SingleMode();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SingleMode();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -218,6 +256,10 @@ double RAModel<SortPolicy>::Tau() const
     return xTreeRA->Tau();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Tau();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Tau();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Tau();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -238,6 +280,10 @@ double& RAModel<SortPolicy>::Tau()
     return xTreeRA->Tau();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Tau();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Tau();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Tau();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -258,6 +304,10 @@ double RAModel<SortPolicy>::Alpha() const
     return xTreeRA->Alpha();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Alpha();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Alpha();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Alpha();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -278,6 +328,10 @@ double& RAModel<SortPolicy>::Alpha()
     return xTreeRA->Alpha();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->Alpha();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->Alpha();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->Alpha();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -298,6 +352,10 @@ bool RAModel<SortPolicy>::SampleAtLeaves() const
     return xTreeRA->SampleAtLeaves();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SampleAtLeaves();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SampleAtLeaves();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SampleAtLeaves();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -318,6 +376,10 @@ bool& RAModel<SortPolicy>::SampleAtLeaves()
     return xTreeRA->SampleAtLeaves();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SampleAtLeaves();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SampleAtLeaves();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SampleAtLeaves();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -338,6 +400,10 @@ bool RAModel<SortPolicy>::FirstLeafExact() const
     return xTreeRA->FirstLeafExact();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->FirstLeafExact();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->FirstLeafExact();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->FirstLeafExact();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -358,6 +424,10 @@ bool& RAModel<SortPolicy>::FirstLeafExact()
     return xTreeRA->FirstLeafExact();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->FirstLeafExact();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->FirstLeafExact();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->FirstLeafExact();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -378,6 +448,10 @@ size_t RAModel<SortPolicy>::SingleSampleLimit() const
     return xTreeRA->SingleSampleLimit();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SingleSampleLimit();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SingleSampleLimit();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SingleSampleLimit();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -398,6 +472,10 @@ size_t& RAModel<SortPolicy>::SingleSampleLimit()
     return xTreeRA->SingleSampleLimit();
   else if (hilbertRTreeRA)
     return hilbertRTreeRA->SingleSampleLimit();
+  else if (rPlusTreeRA)
+    return rPlusTreeRA->SingleSampleLimit();
+  else if (rPlusPlusTreeRA)
+    return rPlusPlusTreeRA->SingleSampleLimit();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -465,6 +543,10 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     delete xTreeRA;
   if (hilbertRTreeRA)
     delete hilbertRTreeRA;
+  if (rPlusTreeRA)
+    delete rPlusTreeRA;
+  if (rPlusPlusTreeRA)
+    delete rPlusPlusTreeRA;
 
   if (randomBasis)
     referenceSet = q * referenceSet;
@@ -515,6 +597,14 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
     case HILBERT_R_TREE:
       hilbertRTreeRA = new RAType<tree::HilbertRTree>(std::move(referenceSet),
+          naive, singleMode);
+      break;
+    case R_PLUS_TREE:
+      rPlusTreeRA = new RAType<tree::RPlusTree>(std::move(referenceSet),
+          naive, singleMode);
+      break;
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(std::move(referenceSet),
           naive, singleMode);
       break;
   }
@@ -598,6 +688,14 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
       // No mapping necessary.
       hilbertRTreeRA->Search(querySet, k, neighbors, distances);
       break;
+    case R_PLUS_TREE:
+      // No mapping necessary.
+      rPlusTreeRA->Search(querySet, k, neighbors, distances);
+      break;
+    case R_PLUS_PLUS_TREE:
+      // No mapping necessary.
+      rPlusPlusTreeRA->Search(querySet, k, neighbors, distances);
+      break;
   }
 }
 
@@ -635,6 +733,12 @@ void RAModel<SortPolicy>::Search(const size_t k,
     case HILBERT_R_TREE:
       hilbertRTreeRA->Search(k, neighbors, distances);
       break;
+    case R_PLUS_TREE:
+      rPlusTreeRA->Search(k, neighbors, distances);
+      break;
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRA->Search(k, neighbors, distances);
+      break;
   }
 }
 
@@ -655,6 +759,10 @@ std::string RAModel<SortPolicy>::TreeName() const
       return "X tree";
     case HILBERT_R_TREE:
       return "Hilbert R tree";
+    case R_PLUS_TREE:
+      return "R+ tree";
+    case R_PLUS_PLUS_TREE:
+      return "R++ tree";
     default:
       return "unknown tree";
   }

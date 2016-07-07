@@ -1,26 +1,47 @@
 /**
- * @file no_auxiliary_information.hpp
+ * @file r_plus_plus_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
- * Definition of the NoAuxiliaryInformation class, a class that provides
- * no additional information about the nodes.
+ * Definition of the RPlusPlusTreeAuxiliaryInformation class,
+ * a class that provides some r++-tree specific information
+ * about the nodes.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
+
+#include <mlpack/core.hpp>
+#include "../hrectbound.hpp"
 
 namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-class NoAuxiliaryInformation
+class RPlusPlusTreeAuxiliaryInformation
 {
  public:
+  //! The element type held by the tree.
+  typedef typename TreeType::ElemType ElemType;
+  //! The bound type held by the auxiliary information.
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation() { };
-  //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(const TreeType* /* node */) { };
-  //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(const TreeType& /* node */) { };
+  RPlusPlusTreeAuxiliaryInformation();
+
+  /**
+   * Construct this as an auxiliary information for the given node.
+   *
+   * @param node The node that stores this auxiliary information.
+   */
+  RPlusPlusTreeAuxiliaryInformation(const TreeType* /* node */);
+
+  /**
+   * Create an auxiliary information object by copying from another node.
+   *
+   * @param other The auxiliary information object from which the information
+   * will be copied.
+   */
+  RPlusPlusTreeAuxiliaryInformation(
+      const RPlusPlusTreeAuxiliaryInformation& other);
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -32,10 +53,7 @@ class NoAuxiliaryInformation
    * @param node The node in which the point is being inserted.
    * @param point The global number of the point being inserted.
    */
-  bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
-  {
-    return false;
-  }
+  bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */);
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -51,10 +69,7 @@ class NoAuxiliaryInformation
    */
   bool HandleNodeInsertion(TreeType* /* node */,
                            TreeType* /* nodeToInsert */,
-                           bool /* insertionLevel */)
-  {
-    return false;
-  }
+                           bool /* insertionLevel */);
 
   /**
    * Some tree types require to save some properties at the deletion process.
@@ -66,10 +81,7 @@ class NoAuxiliaryInformation
    * @param node The node from which the point is being deleted.
    * @param localIndex The local index of the point being deleted.
    */
-  bool HandlePointDeletion(TreeType* /* node */, const size_t /* localIndex */)
-  {
-    return false;
-  }
+  bool HandlePointDeletion(TreeType* /* node */, const size_t /* localIndex */);
 
   /**
    * Some tree types require to save some properties at the deletion process.
@@ -81,10 +93,8 @@ class NoAuxiliaryInformation
    * @param node The node from which the node is being deleted.
    * @param nodeIndex The local index of the node being deleted.
    */
-  bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */)
-  {
-    return false;
-  }
+  bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */);
+
 
   /**
    * Some tree types require to propagate the information upward.
@@ -93,43 +103,47 @@ class NoAuxiliaryInformation
    *
    * @param node The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType* /* node */)
-  {
-    return false;
-  }
+  bool UpdateAuxiliaryInfo(TreeType* /* node */);
 
   /**
    * The R++ tree requires to split the maximum bounding rectangle of a node
-   * that is being split. This method is intended for that. This method is only
-   * necessary for an AuxiliaryInformationType that is being used in conjunction
-   * with RPlusTreeSplit.
+   * that is being split. This method is intended for that.
    *
    * @param treeOne The first subtree.
    * @param treeTwo The second subtree.
    * @param axis The axis along which the split is performed.
    * @param cut The coordinate at which the node is split.
    */
-  void SplitAuxiliaryInfo(TreeType* /* treeOne */,
-                          TreeType* /* treeTwo */,
-                          size_t /* axis */,
-                          typename TreeType::ElemType /* cut */)
-  { }
+  void SplitAuxiliaryInfo(TreeType* treeOne,
+                          TreeType* treeTwo,
+                          const size_t axis,
+                          const ElemType cut);
 
 
   /**
    * Nullify the auxiliary information in order to prevent an invalid free.
    */
-  void NullifyData()
-  { }
+  void NullifyData();
 
+  //! Return the maximum bounding rectangle.
+  BoundType& OuterBound() { return outerBound; }
+
+  //! Modify the maximum bounding rectangle.
+  const BoundType& OuterBound() const { return outerBound; }
+ private:
+  //! The maximum bounding rectangle.
+  BoundType outerBound;
+ public:
   /**
    * Serialize the information.
    */
   template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */) { };
+  void Serialize(Archive &, const unsigned int /* version */);
 };
 
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
+#include "r_plus_plus_tree_auxiliary_information_impl.hpp"
+
+#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP

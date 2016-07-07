@@ -23,7 +23,9 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rStarTreeRS(NULL),
     ballTreeRS(NULL),
     xTreeRS(NULL),
-    hilbertRTreeRS(NULL)
+    hilbertRTreeRS(NULL),
+    rPlusTreeRS(NULL),
+    rPlusPlusTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -126,6 +128,16 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
 
     case HILBERT_R_TREE:
       hilbertRTreeRS = new RSType<tree::HilbertRTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS = new RSType<tree::RPlusTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
           singleMode);
       break;
   }
@@ -241,6 +253,14 @@ void RSModel::Search(arma::mat&& querySet,
     case HILBERT_R_TREE:
       hilbertRTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -287,6 +307,14 @@ void RSModel::Search(const math::Range& range,
     case HILBERT_R_TREE:
       hilbertRTreeRS->Search(range, neighbors, distances);
       break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -309,6 +337,10 @@ std::string RSModel::TreeName() const
       return "X tree";
     case HILBERT_R_TREE:
       return "Hilbert R tree";
+    case R_PLUS_TREE:
+      return "R+ tree";
+    case R_PLUS_PLUS_TREE:
+      return "R++ tree";
     default:
       return "unknown tree";
   }
@@ -331,6 +363,10 @@ void RSModel::CleanMemory()
     delete xTreeRS;
   if (hilbertRTreeRS)
     delete hilbertRTreeRS;
+  if (rPlusTreeRS)
+    delete rPlusTreeRS;
+  if (rPlusPlusTreeRS)
+    delete rPlusPlusTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -339,4 +375,6 @@ void RSModel::CleanMemory()
   ballTreeRS = NULL;
   xTreeRS = NULL;
   hilbertRTreeRS = NULL;
+  rPlusTreeRS = NULL;
+  rPlusPlusTreeRS = NULL;
 }
