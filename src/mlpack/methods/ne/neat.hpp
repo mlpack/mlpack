@@ -47,6 +47,8 @@ class NEAT {
   NEAT(TaskType task, Genome& seedGenome, Parameters& params) {
     aTask = task;
     aSeedGenome = seedGenome;
+    aNextNeuronId = seedGenome.NumNeuron();
+    aNextLinkInnovId = seedGenome.NumLink();
     aPopulationSize = params.aPopulationSize;
     aMaxGeneration = params.aMaxGeneration;
     aCoeffDisjoint = params.aCoeffDisjoint;
@@ -200,8 +202,10 @@ class NEAT {
     if (!genome.aLinkGenes[linkIdx].Enabled()) return;
 
     genome.aLinkGenes[linkIdx].Enabled(false);
-    NeuronGene fromNeuron = genome.GetNeuronById(genome.aLinkGenes[linkIdx].FromNeuronId());
-    NeuronGene toNeuron = genome.GetNeuronById(genome.aLinkGenes[linkIdx].ToNeuronId());
+    NeuronGene fromNeuron;
+    genome.GetNeuronById(genome.aLinkGenes[linkIdx].FromNeuronId(), fromNeuron);
+    NeuronGene toNeuron;
+    genome.GetNeuronById(genome.aLinkGenes[linkIdx].ToNeuronId(), toNeuron);
 
     // Check innovation already exist or not.
     ssize_t splitLinkInnovId = genome.aLinkGenes[linkIdx].InnovationId();
@@ -442,7 +446,6 @@ class NEAT {
   }
 
   // Measure two genomes' weight difference.
-  // TODO: what if one or two weights are disabled? 0 or still the weight?
   double WeightDiff(Genome& genome1, Genome& genome2) {
     double deltaW = 0;
     ssize_t coincident = 0;
@@ -507,7 +510,6 @@ class NEAT {
 
   // Set adjusted fitness.
   // NOTICE: we assume fitness have already evaluated before adjust it.
-  // Maybe we can add some flag or other way to judge whether is evaluated or not.
   void SetAdjustedFitness(Population& population) {
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
@@ -522,7 +524,7 @@ class NEAT {
   // Aggregate population's genomes.
   void AggregateGenomes(Population& population, std::vector<Genome>& genomes) {
     genomes.clear();
-    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {  //!!! is num species updated?
+    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       for (ssize_t j=0; j<population.aSpecies[i].aGenomes.size(); ++j) {
         genomes.push_back(population.aSpecies[i].aGenomes[j]);
       }

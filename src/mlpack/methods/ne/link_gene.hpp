@@ -47,6 +47,19 @@ class LinkGene {
   // Destructor.
   ~LinkGene() {}
 
+  // Operator =.
+  LinkGene& operator =(const LinkGene& linkGene) {
+    if (this != &linkGene) {
+      aFromNeuronId = linkGene.aFromNeuronId;
+      aToNeuronId = linkGene.aToNeuronId;
+      aInnovationId = linkGene.aInnovationId;
+      aWeight = linkGene.aWeight;
+      aEnabled = linkGene.aEnabled;
+    }
+    
+    return *this;
+  }
+
   // Set aFromNeuronId.
   void FromNeuronId(ssize_t fromNeuronId) { aFromNeuronId = fromNeuronId; } 
 
@@ -59,36 +72,23 @@ class LinkGene {
   // Get aToNeuronId.
   ssize_t ToNeuronId() const { return aToNeuronId; }
 
-  // Set aWeight.
-  void Weight(double weight) { aWeight = weight; }
-
-  // Get aWeight.
-  double Weight() const { return aWeight; }
-
   // Set aInnovationId.
   void InnovationId(ssize_t innovationId) { aInnovationId = innovationId; }
 
   // Get aInnovationId.
   ssize_t InnovationId() const { return aInnovationId; }
 
+  // Set aWeight.
+  void Weight(double weight) { aWeight = weight; }
+
+  // Get aWeight.
+  double Weight() const { return aWeight; }
+
   // Set aEnabled.
   void Enabled(bool enabled) { aEnabled = enabled; }
 
   // Get aEnabled.
   bool Enabled() const { return aEnabled; }
-
-  // Operator =.
-  LinkGene& operator =(const LinkGene& linkGene) {
-    if (this != &linkGene) {
-  	  aFromNeuronId = linkGene.aFromNeuronId;
-  	  aToNeuronId = linkGene.aToNeuronId;
-  	  aInnovationId = linkGene.aInnovationId;
-  	  aWeight = linkGene.aWeight;
-      aEnabled = linkGene.aEnabled;
-    }
-    
-    return *this;
-  }
 
  private:
   // The IDs of neurons connected by this link.

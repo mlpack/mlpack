@@ -18,7 +18,7 @@
 #include <mlpack/methods/ne/neat.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ne;
@@ -89,6 +89,81 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
  */
 BOOST_AUTO_TEST_CASE(NEGenomeTest)
 {
+  mlpack::math::RandomSeed(1);
+
+  // Construct seed genome for xor task.
+  ssize_t id = 0;
+  ssize_t numInput = 3;
+  ssize_t numOutput = 1;
+  double fitness = -1;
+  double adjustedFitness = -1;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 3, 0, 1, true);
+  LinkGene link2(1, 3, 0, 1, true);
+  LinkGene link3(2, 3, 0, 0.5, true);
+  LinkGene link4(0, 4, 0, -0.5, true);
+  LinkGene link5(1, 4, 0, 2, true);
+  LinkGene link6(2, 4, 0, 1, true);
+  LinkGene link7(4, 3, 0, 0.1, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+  linkGenes.push_back(link7);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             fitness,
+                             adjustedFitness);
+
+  // Test seed genome.
+  seedGenome.printGenes(seedGenome.aNeuronGenes);
+  seedGenome.printLinks(seedGenome.aLinkGenes);
+
+  std::vector<std::vector<double>> inputs;  // TODO: use arma::mat for input.
+  std::vector<double> input1 = {0, 0, 1};
+  std::vector<double> input2 = {0, 1, 1};
+  std::vector<double> input3 = {1, 0, 1};
+  std::vector<double> input4 = {1, 1, 1};
+  inputs.push_back(input1);
+  inputs.push_back(input2);
+  inputs.push_back(input3);
+  inputs.push_back(input4);
+
+  std::vector<double> outputs;
+  outputs.push_back(1);
+  outputs.push_back(0);
+  outputs.push_back(1);
+  outputs.push_back(0);
+
+  for (int i=0; i<4; ++i) {
+    seedGenome.Activate(inputs[i]);
+    std::vector<double> output;
+    seedGenome.Output(output);
+    std::cout << "Output is: " << output[0] << std::endl;
+  }
+
+
 
 }
 
@@ -109,7 +184,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
 
   // Set CNE algorithm parameters.
   Parameters params;
-  params.aSpeciesSize = 500;
+  params.aSpeciesSize = 1000;
   params.aMutateRate = 0.1;
   params.aMutateSize = 0.02;
   params.aElitePercentage = 0.2;
@@ -124,8 +199,8 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0, 0);
-  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
   NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
   NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
   NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
@@ -207,8 +282,8 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, SIGMOID, 0, 0, 0);
-  NeuronGene inputGene2(1, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
   NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
   NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
   NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
@@ -251,7 +326,7 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
 
   // Evolve.
   neat.Evolve();  // Judge whether XOR test passed or not by printing 
-                 // the best fitness during each generation.
+                  // the best fitness during each generation.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

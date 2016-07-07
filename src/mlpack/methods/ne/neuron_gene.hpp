@@ -128,7 +128,7 @@ class NeuronGene {
 
   // Calculate activation based on current input.
   void CalcActivation() {
-    switch (aType) { // TODO: more cases.
+    switch (aActFuncType) { // TODO: more cases.
       case SIGMOID:                   
         aActivation = ann::LogisticFunction::fn(aInput);
         break;

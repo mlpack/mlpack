@@ -27,11 +27,8 @@ class TaskXor {
  public:
   // Evaluate genome's fitness for this task.
   double EvalFitness(Genome& genome) {
-  	// Check input size
-  	if (genome.NumInput() != 3 || genome.NumOutput() != 1) {
-      printf("Genome number of input is %d, output is %d \n", genome.NumInput(), genome.NumOutput()); //!!! DEBUG
-  	  return -1;  // -1 means network structure input/output dimension not correct.
-  	}
+  	assert(genome.NumInput() == 3); 
+    assert(genome.NumOutput() == 1);
 
     // Input, output pairs for evaluate fitness.
   	std::vector<std::vector<double>> inputs;  // TODO: use arma::mat for input.
@@ -52,12 +49,10 @@ class TaskXor {
 
   	double fitness = 0;
   	for (int i=0; i<4; ++i) {
-      //printf("start activate\n");
   		genome.Activate(inputs[i]);
-      //printf("end activate\n");
-  		double output = genome.Output()[0];
-  	    //fitness += FitnissFunction::Error(output, outputs[i]); incorrect
-  	    fitness += pow((output - outputs[i]), 2);  // TODO: revise.
+  		std::vector<double> output;
+      genome.Output(output);
+  	  fitness += pow((output[0] - outputs[i]), 2);
   	}
 
     return fitness;  // fitness smaller is better. 0 is best.

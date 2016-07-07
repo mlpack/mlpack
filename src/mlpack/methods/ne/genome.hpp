@@ -88,27 +88,13 @@ class Genome {
   void Id(ssize_t id) { aId = id; }
 
   // Get input length.
-  ssize_t NumInput() {
-    ssize_t numInput = 0;
-    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
-      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS)
-        ++numInput;
-    }
-    return numInput;
-  }
+  ssize_t NumInput() { return aNumInput; }
 
   // Set input length.
   void NumInput(ssize_t numInput) { aNumInput = numInput; }
 
   // Get output length.
-  ssize_t NumOutput() {
-    ssize_t numOutput = 0;
-    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {  
-      if (aNeuronGenes[i].Type() == OUTPUT)
-        ++numOutput;
-    }
-    return numOutput;
-  }
+  ssize_t NumOutput() { return aNumOutput; }
 
   // Set output length.
   void NumOutput(ssize_t numOutput) { aNumOutput = numOutput; }
@@ -135,6 +121,26 @@ class Genome {
     return aLinkGenes.size();
   }
 
+  // Get input length.
+  ssize_t GetNumInput() {
+    ssize_t numInput = 0;
+    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {
+      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS)
+        ++numInput;
+    }
+    return numInput;
+  }
+
+  // Get output length.
+  ssize_t GetNumOutput() {
+    ssize_t numOutput = 0;
+    for (ssize_t i=0; i<aNeuronGenes.size(); ++i) {  
+      if (aNeuronGenes[i].Type() == OUTPUT)
+        ++numOutput;
+    }
+    return numOutput;
+  }
+
   // Whether specified neuron id exist in this genome.
   bool HasNeuronId(ssize_t id) const {
     for (ssize_t i=0; i<NumNeuron(); ++i) {
@@ -147,12 +153,13 @@ class Genome {
   }
 
   // Get neuron by id.
-  NeuronGene GetNeuronById(ssize_t id) {
+  void GetNeuronById(ssize_t id, NeuronGene& neuronGene) {
     assert(HasNeuronId(id));
 
     for (ssize_t i=0; i<NumNeuron(); ++i) {
       if (aNeuronGenes[i].Id() == id) {
-        return aNeuronGenes[i];
+        neuronGene = aNeuronGenes[i];
+        return;
       }
     }
   }
@@ -225,7 +232,8 @@ class Genome {
 
     std::vector<double> toNeuronDepths;
     for (ssize_t i=0; i<aLinkGenes.size(); ++i) {
-      NeuronGene toNeuron = GetNeuronById(aLinkGenes[i].ToNeuronId());
+      NeuronGene toNeuron;
+      GetNeuronById(aLinkGenes[i].ToNeuronId(), toNeuron);
       toNeuronDepths.push_back(toNeuron.Depth());
     }
 
@@ -239,6 +247,35 @@ class Genome {
 
     for (ssize_t i=0; i<linkGenesSize; ++i) {
       aLinkGenes[i] = depthAndLinks[i].link;
+    }
+  }
+  
+  void printGenes(std::vector<NeuronGene>& genes)
+  {
+    for (size_t i = 0; i < genes.size(); ++i)
+    {
+      std::cout << "Id: " << genes[i].Id() << std::endl;
+      std::cout << "Type: " << genes[i].Type() << std::endl;
+      
+
+      std::cout << "Input: " << genes[i].Input() << std::endl;
+      std::cout << "Activation: " << genes[i].Activation() << std::endl;
+      std::cout << "Depth: " << genes[i].Depth() << std::endl;
+      std::cout << "..................................\n";
+    }
+  }
+
+  void printLinks(std::vector<LinkGene>& links)
+  {
+    for (size_t i = 0; i < links.size(); ++i)
+    {
+      std::cout << "Id: " << links[i].FromNeuronId() << std::endl;
+      std::cout << "FromNeuronId: " << links[i].FromNeuronId() << std::endl;
+      std::cout << "ToNeuronId: " << links[i].ToNeuronId() << std::endl;
+      std::cout << "InnovationId: " << links[i].InnovationId() << std::endl;
+      std::cout << "Weight: " << links[i].Weight() << std::endl;
+      std::cout << "Enabled: " << links[i].Enabled() << std::endl;
+      std::cout << "..................................\n";
     }
   }
 
@@ -274,15 +311,20 @@ class Genome {
         }
       }
     }
+
+    //std::cout << "===============================================\n";
+    //printGenes(aNeuronGenes);
+    //std::cout << "-----------------------------------------------\n";
+    //printLinks(aLinkGenes);
+    //std::cout << "===============================================\n";
   }
 
   // Get output vector.
-  std::vector<double> Output() {
-    std::vector<double> output;
+  void Output(std::vector<double>& output) {
+    output.clear();
     for (ssize_t i=0; i<aNumOutput; ++i) {
       output.push_back(aNeuronGenes[aNumInput + i].Activation());
     }
-    return output;
   }
 
   // Set random link weights between [lo, hi].

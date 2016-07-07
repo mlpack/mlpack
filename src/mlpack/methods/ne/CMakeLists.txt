@@ -6,11 +6,11 @@ set(SOURCES
   genome.hpp
   species.hpp
   population.hpp
-  cne.hpp
-  neat.hpp
   tasks.hpp
   parameters.hpp
   utils.hpp
+  cne.hpp
+  neat.hpp
 )
 
 # Add directory name to sources.
