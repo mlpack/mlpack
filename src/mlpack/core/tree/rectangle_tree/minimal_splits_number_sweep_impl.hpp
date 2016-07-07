@@ -32,8 +32,8 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
 
   // Sort candidates in order to check balancing.
   std::sort(sorted.begin(), sorted.end(),
-      [] (std::pair<ElemType, size_t>& s1,
-          std::pair<ElemType, size_t>& s2)
+      [] (const std::pair<ElemType, size_t>& s1,
+          const std::pair<ElemType, size_t>& s2)
       {
         return s1.first < s2.first;
       });

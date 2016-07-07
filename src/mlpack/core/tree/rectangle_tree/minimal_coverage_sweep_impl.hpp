@@ -32,8 +32,8 @@ SweepNonLeafNode(const size_t axis,
   }
   // Sort high bounds of children.
   std::sort(sorted.begin(), sorted.end(),
-      [] (std::pair<ElemType, size_t>& s1,
-          std::pair<ElemType, size_t>& s2)
+      [] (const std::pair<ElemType, size_t>& s1,
+          const std::pair<ElemType, size_t>& s2)
       {
         return s1.first < s2.first;
       });
@@ -99,8 +99,8 @@ SweepLeafNode(const size_t axis,
 
   // Sort high bounds of children.
   std::sort(sorted.begin(), sorted.end(),
-      [] (std::pair<ElemType, size_t>& s1,
-          std::pair<ElemType, size_t>& s2)
+      [] (const std::pair<ElemType, size_t>& s1,
+          const std::pair<ElemType, size_t>& s2)
       {
         return s1.first < s2.first;
       });
