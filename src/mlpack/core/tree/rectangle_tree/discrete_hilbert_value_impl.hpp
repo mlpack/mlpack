@@ -318,7 +318,7 @@ void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 template<typename TreeElemType>
 template<typename TreeType>
 void DiscreteHilbertValue<TreeElemType>::
-DeletePoint(TreeType* node, const size_t localIndex)
+DeletePoint(TreeType* /* node */, const size_t localIndex)
 {
 
   // Delete the Hilbert value from the local dataset

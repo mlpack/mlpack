@@ -31,7 +31,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
 template<typename TreeType>
 size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
-    const TreeType* insertedNode)
+    const TreeType* /* insertedNode */)
 {
   size_t bestIndex = 0;
 
