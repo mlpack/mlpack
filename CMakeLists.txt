@@ -232,29 +232,11 @@ endif ()
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
-# TODO: Remove these lines.
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, and the
-# user has not specified that OpenMP should not be used, flags to compile with 
-# OpenMP are returned and added and the HAS_OPENMP is set to 1. If OpenMP is 
-# found but the user asked for it not to be used, HAS_OPENMP will be set to 0. 
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags 
+# to compile with OpenMP are returned and added and the HAS_OPENMP is set to 1. 
 # This way we can skip calls to functions defined in omp.h with code like:
-# if(HAS_OPENMP) {omp related stuff}
-#if (HAS_OPENMP)
-#  add_definitions(-DHAS_OPENMP)
-#  find_package(OpenMP)
-#  if (OPENMP_FOUND)
-#    set(HAS_OPENMP "1")
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-#  else ()
-#    set(HAS_OPENMP "0")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-#  endif ()
-#else ()
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-#endif()
-# Simpler OpenMP activation: If OpenMP is found, define HAS_OPENMP to be 1.
-# Otherwise define it to be 0.
+# if (HAS_OPENMP == 1) { openMP code here }
+# If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
 find_package(OpenMP)
 if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
