@@ -9,7 +9,9 @@
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
 #include <mlpack/core.hpp>
-#include "dataset_info.hpp"
+#include "dataset_mapper.hpp"
+#include "map_policies/missing_policy.hpp"
+#include "map_policies/increment_policy.hpp"
 
 namespace mlpack {
 namespace data {
@@ -27,22 +29,18 @@ class Imputer
 {
  public:
   Imputer(MapperType mapper, bool transpose = true):
-    mapper(std::move(mapper)),
-    transpose(transpose)
+      mapper(std::move(mapper)),
+      transpose(transpose)
   {
-    //static_assert(std::is_same<typename std::decay<MapperType>::type,
-        //data::IncrementPolicy>::value, "The type of MapperType must be "
-        //"IncrementPolicy");
+    // Nothing to initialize here.
   }
 
   Imputer(MapperType mapper, StrategyType strategy, bool transpose = true):
-    strategy(std::move(strategy)),
-    mapper(std::move(mapper)),
-    transpose(transpose)
+      strategy(std::move(strategy)),
+      mapper(std::move(mapper)),
+      transpose(transpose)
   {
-    //static_assert(std::is_same<typename std::decay<MapperType>::type,
-        //data::IncrementPolicy>::value, "The type of MapperType must be "
-        //"IncrementPolicy");
+    // Nothing to initialize here.
   }
 
   /**
@@ -66,6 +64,13 @@ class Imputer
   /**
   * This overload of Impute() lets users to define custom value that can be
   * replaced with the target value.
+  *
+  * @param input Input dataset to apply imputation.
+  * @param output Armadillo matrix to save the results
+  * @oaran missingValue User defined missing value; it can be anything.
+  * @param customValue The numeric value that a user wants to replace
+  *        missingValue with.
+  * @param dimension Dimension to apply the imputation.
   */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,

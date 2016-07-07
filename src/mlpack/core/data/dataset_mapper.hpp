@@ -1,6 +1,7 @@
 /**
- * @file dataset_info.hpp
+ * @file dataset_mapper.hpp
  * @author Ryan Curtin
+ * @author Keon Kim
  *
  * Defines the DatasetMapper class, which holds information about a dataset.
  * This is useful when the dataset contains categorical non-numeric features
@@ -53,7 +54,7 @@ class DatasetMapper
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
-  typename PolicyType::mapped_type MapString(const std::string& string,
+  typename PolicyType::MappedType MapString(const std::string& string,
                                             const size_t dimension);
 
   /**
@@ -75,13 +76,13 @@ class DatasetMapper
    * @param string Mapped string for value.
    * @param dimension Dimension to unmap string from.
    */
-  typename PolicyType::mapped_type UnmapValue(const std::string& string,
+  typename PolicyType::MappedType UnmapValue(const std::string& string,
                                             const size_t dimension);
 
   template <typename eT>
   void MapTokens(const std::vector<std::string>& tokens,
-                 size_t& row,
-                 arma::Mat<eT>& matrix);
+      size_t& row,
+      arma::Mat<eT>& matrix);
 
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
@@ -126,7 +127,7 @@ class DatasetMapper
   std::vector<Datatype> types;
 
   // BiMapType definition
-  using BiMapType = boost::bimap<std::string, typename PolicyType::mapped_type>;
+  using BiMapType = boost::bimap<std::string, typename PolicyType::MappedType>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
@@ -143,6 +144,6 @@ using DatasetInfo = DatasetMapper<data::IncrementPolicy>;
 } // namespace data
 } // namespace mlpack
 
-#include "dataset_info_impl.hpp"
+#include "dataset_mapper_impl.hpp"
 
 #endif

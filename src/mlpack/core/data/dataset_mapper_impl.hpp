@@ -1,6 +1,7 @@
 /**
- * @file dataset_info_impl.hpp
+ * @file dataset_mapper_impl.hpp
  * @author Ryan Curtin
+ * @author Keon Kim
  *
  * An implementation of the DatasetMapper<PolicyType> class.
  */
@@ -8,7 +9,7 @@
 #define MLPACK_CORE_DATA_DATASET_INFO_IMPL_HPP
 
 // In case it hasn't already been included.
-#include "dataset_info.hpp"
+#include "dataset_mapper.hpp"
 
 namespace mlpack {
 namespace data {
@@ -23,7 +24,7 @@ inline DatasetMapper<PolicyType>::DatasetMapper(const size_t dimensionality) :
 
 template<typename PolicyType>
 inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
-                                               const size_t dimensionality) :
+    const size_t dimensionality) :
     types(dimensionality, Datatype::numeric),
     policy(std::move(policy))
 {
@@ -33,9 +34,9 @@ inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
 // When we want to insert value into the map,
 // we could use the policy to map the string
 template<typename PolicyType>
-inline typename PolicyType::mapped_type DatasetMapper<PolicyType>::MapString(
-                                                    const std::string& string,
-                                                    const size_t dimension)
+inline typename PolicyType::MappedType DatasetMapper<PolicyType>::MapString(
+    const std::string& string,
+    const size_t dimension)
 {
   return policy.template MapString<MapType>(string, dimension, maps, types);
 }
@@ -43,8 +44,8 @@ inline typename PolicyType::mapped_type DatasetMapper<PolicyType>::MapString(
 // Return the string corresponding to a value in a given dimension.
 template<typename PolicyType>
 inline const std::string& DatasetMapper<PolicyType>::UnmapString(
-                                                    const size_t value,
-                                                    const size_t dimension)
+    const size_t value,
+    const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.right.count(value) == 0)
@@ -60,9 +61,9 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
 
 // Return the value corresponding to a string in a given dimension.
 template<typename PolicyType>
-inline typename PolicyType::mapped_type DatasetMapper<PolicyType>::UnmapValue(
-                                                    const std::string& string,
-                                                    const size_t dimension)
+inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
+    const std::string& string,
+    const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.left.count(string) == 0)
@@ -79,9 +80,9 @@ inline typename PolicyType::mapped_type DatasetMapper<PolicyType>::UnmapValue(
 template<typename PolicyType>
 template<typename eT>
 inline void DatasetMapper<PolicyType>::MapTokens(
-                                        const std::vector<std::string>& tokens,
-                                        size_t& row,
-                                        arma::Mat<eT>& matrix)
+    const std::vector<std::string>& tokens,
+    size_t& row,
+    arma::Mat<eT>& matrix)
 {
   return policy.template MapTokens<eT, MapType>(tokens, row, matrix, maps,
                                                 types);

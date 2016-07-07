@@ -8,17 +8,29 @@
 #define MLPACK_CORE_DATA_IMPUTE_STRATEGIES_CUSTOM_IMPUTATION_HPP
 
 #include <mlpack/core.hpp>
-#include <cmath>
-
-using namespace std;
 
 namespace mlpack {
 namespace data {
-
+/**
+ * A simple custom imputation class
+ * @tparam T Type of armadillo matrix
+ */
 template <typename T>
 class CustomImputation
 {
  public:
+  /**
+   * Impute function searches through the input looking for mappedValue and
+   * replaces it with the user-defined custom value of the given dimension.
+   * The result is saved to the output.
+   *
+   * @param input Matrix that contains mappedValue.
+   * @param output Matrix that the result will be saved into.
+   * @param mappedValue Value that the user wants to get rid of.
+   * @param customValue Value that the user wants to replace mappedValue with.
+   * @param dimension Index of the dimension of the mappedValue.
+   * @param transpose State of whether the input matrix is transposed or not.
+   */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
               const T& mappedValue,

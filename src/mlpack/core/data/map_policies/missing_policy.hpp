@@ -13,38 +13,58 @@
 #include <mlpack/core/data/map_policies/datatype.hpp>
 #include <limits>
 
-
-using namespace std;
-
 namespace mlpack {
 namespace data {
-
 /**
- * Same as increment map policy, but does not change type of features.
+ * MissingPolicy is used as a helper class for DatasetMapper. It tells how the
+ * strings should be mapped. Purpose of this policy is to map all user-defined
+ * missing variables into maps so that users can decide what to do with the
+ * corrupted data. User-defined missing variables are given by the missingSet.
+ * Note that MissingPolicy does not change type of features.
  */
 class MissingPolicy
 {
  public:
-  // typedef of mapped_type
-  using mapped_type = double;
+  // typedef of MappedType
+  using MappedType = double;
 
   MissingPolicy()
   {
     // Nothing to initialize here.
   }
 
+  /**
+   * Create the MissingPolicy object with the given missingSet. Note that the
+   * missingSet cannot be changed later; you will have to create a new
+   * MissingPolicy object.
+   *
+   * @param missingSet Set of strings that should be mapped.
+   */
   explicit MissingPolicy(std::set<std::string> missingSet) :
-    missingSet(std::move(missingSet))
+      missingSet(std::move(missingSet))
   {
     // Nothing to initialize here.
   }
 
-
+  /**
+   * Given the string and the dimension to which it belongs by the user, and
+   * the maps and types given by the DatasetMapper class, returns its numeric
+   * mapping. If no mapping yet exists and the string is included in the
+   * missingSet, the string is added to the list of mappings for the given
+   * dimension. This function is used as a helper function for DatasetMapper
+   * class.
+   *
+   * @tparam MapType Type of unordered_map that contains mapped value pairs
+   * @param string String to find/create mapping for.
+   * @param dimension Index of the dimension of the string.
+   * @param maps Unordered map given by the DatasetMapper.
+   * @param types Vector containing the type information about each dimensions.
+   */
   template <typename MapType>
-  mapped_type MapString(const std::string& string,
-                        const size_t dimension,
-                        MapType maps,
-                        std::vector<Datatype>& types)
+  MappedType MapString(const std::string& string,
+                       const size_t dimension,
+                       MapType maps,
+                       std::vector<Datatype>& types)
   {
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
@@ -57,7 +77,7 @@ class MissingPolicy
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
 
-      typedef boost::bimap<std::string, mapped_type>::value_type PairType;
+      typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, NaN));
 
       ++numMappings;
@@ -65,11 +85,28 @@ class MissingPolicy
     }
     else
     {
-      // This string already exists in the mapping or .
+      // This string already exists in the mapping
+      // or not included in missingSet.
       return NaN;
     }
   }
 
+  /**
+   * MapTokens turns vector of strings into numeric variables and puts them
+   * into a given matrix. It is used as a helper function when trying to load
+   * files. Each dimension's tokens are given in to this function. If one of the
+   * tokens turns out to be a string or one of the missingSet's variables, only
+   * the token responsible for it should be mapped using the MapString()
+   * funciton.
+   *
+   * @tparam eT Type of armadillo matrix.
+   * @tparam MapType Type of unordered_map that contains mapped value pairs.
+   * @param tokens Vector of variables inside a dimension.
+   * @param row Position of the given tokens.
+   * @param matrix Matrix to save the data into.
+   * @param maps Maps given by the DatasetMapper class.
+   * @param types Types of each dimensions given by the DatasetMapper class.
+   */
   template <typename eT, typename MapType>
   void MapTokens(const std::vector<std::string>& tokens,
                  size_t& row,
@@ -77,9 +114,14 @@ class MissingPolicy
                  MapType& maps,
                  std::vector<Datatype>& types)
   {
+    // MissingPolicy allows double type matrix only, because it uses NaN.
+    static_assert(std::is_same<eT, double>::value, "You must use double type "
+        " matrix in order to apply MissingPolicy");
+
     std::stringstream token;
     for (size_t i = 0; i != tokens.size(); ++i)
     {
+      // if token is a number, but is included in the missingSet, map it.
       if (missingSet.find(tokens[i]) != std::end(missingSet))
       {
          const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
@@ -88,7 +130,8 @@ class MissingPolicy
       }
       token.str(tokens[i]);
       token>>matrix.at(row, i);
-      if (token.fail()) // if not number, map it to datasetmapper
+      // if the token is not number, map it.
+      if (token.fail())
       {
         const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
                                                        types));
@@ -99,6 +142,8 @@ class MissingPolicy
   }
 
  private:
+  // Note that missingSet and maps are different.
+  // missingSet specifies which value/string should be mapped.
   std::set<std::string> missingSet;
 }; // class MissingPolicy
 

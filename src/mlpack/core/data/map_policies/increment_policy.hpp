@@ -12,26 +12,39 @@
 #include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>
 
-using namespace std;
-
 namespace mlpack {
 namespace data {
-
 /**
- * This class is used to map strings to incrementing unsigned integers (size_t).
- * First string to be mapped will be mapped to 0, next to 1 and so on.
+ * IncrementPolicy is used as a helper class for DatasetMapper. It tells how the
+ * strings should be mapped. Purpose of this policy is to map all dimension if
+ * one if the variables in a dimension turns out to be a categorical variable.
+ * IncrementPolicy maps strings to incrementing unsigned integers (size_t).
+ * The first string to be mapped will be mapped to 0, the next to 1 and so on.
  */
 class IncrementPolicy
 {
  public:
-  // typedef of mapped_type
-  using mapped_type = size_t;
+  // typedef of MappedType
+  using MappedType = size_t;
 
+  /**
+   * Given the string and the dimension to which the it belongs, and the maps
+   * and types given by the DatasetMapper class, returns its numeric mapping.
+   * If no mapping yet exists, the string is added to the list of mappings for
+   * the given dimension. This function is used as a helper function for
+   * DatasetMapper class.
+   *
+   * @tparam MapType Type of unordered_map that contains mapped value pairs
+   * @param string String to find/create mapping for.
+   * @param dimension Index of the dimension of the string.
+   * @param maps Unordered map given by the DatasetMapper.
+   * @param types Vector containing the type information about each dimensions.
+   */
   template <typename MapType>
-  mapped_type MapString(const std::string& string,
-                        const size_t dimension,
-                        MapType& maps,
-                        std::vector<Datatype>& types)
+  MappedType MapString(const std::string& string,
+                       const size_t dimension,
+                       MapType& maps,
+                       std::vector<Datatype>& types)
   {
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
@@ -46,7 +59,7 @@ class IncrementPolicy
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
-      typedef boost::bimap<std::string, mapped_type>::value_type PairType;
+      typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
       return numMappings++;
     }
@@ -57,6 +70,21 @@ class IncrementPolicy
     }
   }
 
+  /**
+   * MapTokens turns vector of strings into numeric variables and puts them
+   * into a given matrix. It is used as a helper function when trying to load
+   * files. Each dimension's tokens are given in to this function. If one of the
+   * tokens turns out to be a string, all the tokens should be mapped using the
+   * MapString() funciton.
+   *
+   * @tparam eT Type of armadillo matrix.
+   * @tparam MapType Type of unordered_map that contains mapped value pairs.
+   * @param tokens Vector of variables inside a dimension.
+   * @param row Position of the given tokens.
+   * @param matrix Matrix to save the data into.
+   * @param maps Maps given by the DatasetMapper class.
+   * @param types Types of each dimensions given by the DatasetMapper class.
+   */
   template <typename eT, typename MapType>
   void MapTokens(const std::vector<std::string>& tokens,
                  size_t& row,
@@ -81,7 +109,6 @@ class IncrementPolicy
        {
          const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
                                                         types));
-         double temp = (double) val;
          matrix.at(row, i) = val;
        }
     }
