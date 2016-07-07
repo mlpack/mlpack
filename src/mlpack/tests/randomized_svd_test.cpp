@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(RandomizedSVDReconstructionError)
 
   arma::svd_econ(U1, s1, V1, centeredData);
 
-  svd::RandomizedSVD rSVD(0, 6);
+  svd::RandomizedSVD rSVD(0, 10);
   rSVD.Apply(data, U2, s2, V2, 3);
 
   // Use the same amount of data for the compariosn (matrix rank).
