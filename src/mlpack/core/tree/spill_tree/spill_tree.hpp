@@ -158,12 +158,14 @@ class SpillTree
    *
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param points Vector of indexes of points to be included in this node.
+   * @param overlapIndex Index where the list of overlapping points starts.
    * @param tau Overlapping size.
    * @param maxLeafSize Size of each leaf in the tree.
    * @param rho Balance threshold.
    */
   SpillTree(SpillTree* parent,
             std::vector<size_t>& points,
+            const size_t overlapIndex,
             const double tau,
             const size_t maxLeafSize = 20,
             const double rho = 0.7);
@@ -361,11 +363,13 @@ class SpillTree
    * Splits the current node, assigning its left and right children recursively.
    *
    * @param points Vector of indexes of points to be included in this node.
+   * @param overlapIndex Index where the list of overlapping points starts.
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param tau Overlapping size.
    * @param rho Balance threshold.
    */
   void SplitNode(std::vector<size_t>& points,
+                 const size_t overlapIndex,
                  const size_t maxLeafSize,
                  const double tau,
                  const double rho);
@@ -380,6 +384,14 @@ class SpillTree
    * @param points Vector of indexes of points to be included.
    * @param leftPoints Indexes of points to be included in left child.
    * @param rightPoints Indexes of points to be included in right child.
+   * @param overlapIndexLeft Index in leftPoints where the list of overlapping
+         points starts ( [overlapIndexLeft, leftPoints.size()) represents the
+         indexes of the points from the right node that are included in the left
+         node).
+   * @param overlapIndexRight Index in rightPoints where the list of overlapping
+         points starts ( [overlapIndexRight, rightPoints.size()) represents the
+         indexes of the points from the left node that are included in the right
+         node).
    * @return Flag to know if the overlapping buffer was included.
    */
   bool SplitPoints(const size_t splitDimension,
@@ -388,7 +400,9 @@ class SpillTree
                    const double rho,
                    const std::vector<size_t>& points,
                    std::vector<size_t>& leftPoints,
-                   std::vector<size_t>& rightPoints);
+                   std::vector<size_t>& rightPoints,
+                   size_t& overlapIndexLeft,
+                   size_t& overlapIndexRight);
  protected:
   /**
    * A default constructor.  This is meant to only be used with

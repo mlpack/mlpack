@@ -43,7 +43,7 @@ SpillTree(
     points.push_back(i);
 
   // Do the actual splitting of this node.
-  SplitNode(points, maxLeafSize, tau, rho);
+  SplitNode(points, points.size(), maxLeafSize, tau, rho);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -77,7 +77,7 @@ SpillTree(
     points.push_back(i);
 
   // Do the actual splitting of this node.
-  SplitNode(points, maxLeafSize, tau, rho);
+  SplitNode(points, points.size(), maxLeafSize, tau, rho);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -93,6 +93,7 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 SpillTree(
     SpillTree* parent,
     std::vector<size_t>& points,
+    const size_t overlapIndex,
     const double tau,
     const size_t maxLeafSize,
     const double rho) :
@@ -106,7 +107,7 @@ SpillTree(
     dataset(&parent->Dataset()) // Point to the parent's dataset.
 {
   // Perform the actual splitting.
-  SplitNode(points, maxLeafSize, tau, rho);
+  SplitNode(points, overlapIndex, maxLeafSize, tau, rho);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -446,12 +447,14 @@ template<typename MetricType,
              class SplitType>
 void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     SplitNode(std::vector<size_t>& points,
+              const size_t overlapIndex,
               const size_t maxLeafSize,
               const double tau,
               const double rho)
 {
-  // We need to expand the bounds of this node properly.
-  for(size_t i = 0; i < points->size(); i++)
+  // We need to expand the bounds of this node properly, ignoring overlapping
+  // points (they will be included in the bound of the other node).
+  for(size_t i = 0; i < overlapIndex; i++)
     bound |= dataset->cols(points[i], points[i]);
 
   // Calculate the furthest descendant distance.
@@ -481,17 +484,20 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   }
 
   std::vector<size_t> leftPoints, rightPoints;
+  size_t overlapIndexLeft, overlapIndexRight;
   // Split the node.
   overlappingNode = SplitPoints(splitDimension, splitVal, tau, rho, points,
-      leftPoints, rightPoints);
+      leftPoints, rightPoints, overlapIndexLeft, overlapIndexRight);
 
   // We don't need the information in points, so lets clean it.
   std::vector<size_t>().swap(points);
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
-  left = new SpillTree(this, leftPoints, maxLeafSize, tau, rho);
-  right = new SpillTree(this, rightPoints, maxLeafSize, tau, rho);
+  left = new SpillTree(this, leftPoints, overlapIndexLeft, maxLeafSize, tau,
+      rho);
+  right = new SpillTree(this, rightPoints, overlapIndexRight, maxLeafSize, tau,
+      rho);
 
   // Update count number, to represent the number of descendant points.
   count = left->NumDescendants() + right->NumDescendants();
@@ -523,7 +529,9 @@ bool SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
                 const double rho,
                 const std::vector<size_t>& points,
                 std::vector<size_t>& leftPoints,
-                std::vector<size_t>& rightPoints)
+                std::vector<size_t>& rightPoints,
+                size_t& overlapIndexLeft,
+                size_t& overlapIndexRight)
 {
   std::vector<size_t> leftFrontier, rightFrontier;
 
@@ -549,6 +557,9 @@ bool SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
       points.size();
   const double p2 = double (rightPoints.size() + leftFrontier.size()) /
       points.size();
+
+  overlapIndexLeft = leftPoints.size();
+  overlapIndexRight = rightPoints.size();
 
   if (p1 <= rho && p2 <= rho)
   {
