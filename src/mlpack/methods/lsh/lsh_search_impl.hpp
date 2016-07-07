@@ -12,18 +12,19 @@
 namespace mlpack {
 namespace neighbor {
 
-// If OpenMP was not found by the compiler and it was used in compiling mlpack,
+// If OpenMP was found by the compiler and was used in compiling mlpack,
 // then we can get more than one thread.
 inline size_t CalculateMaxThreads()
 {
-  // User asked for OpenMP to be used, check if we could find it.
+  // HAS_OPENMP should be defined by CMakeLists after the check for OpenMP has
+  // been performed.
   #ifdef HAS_OPENMP
-    if (HAS_OPENMP) // We found it. Use all cores.
+    if (HAS_OPENMP) // If compiler has OpenMP support, use all available threads.
       return omp_get_max_threads();
-    return 1; // We didn't find it. Use 1 core.
+    return 1; // Compiler doesn't support OpenMP. Hard-wire maxThreads to 1.
   #endif
   
-  // User asked for OpenMP to not be used. Use 1 core.
+  // In case HAS_OPENMP wasn't properly defined by CMakeLists, use 1 thread.
   return 1;
 }
 
@@ -366,11 +367,9 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
     // SortDistance() returns (size_t() - 1) if we shouldn't add it.
     if (insertPosition != (size_t() - 1))
-      #pragma omp critical
       InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
           referenceIndex, distance);
 
-      #pragma omp flush(distances, neighbors)
   }
 }
 template<typename SortPolicy>
