@@ -238,10 +238,13 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 # If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
 find_package(OpenMP)
 if (OPENMP_FOUND)
+  add_definitions(-DHAS_OPENMP)
+  set(HAS_OPENMP 1)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 else ()
   add_definitions(-DHAS_OPENMP)
+  set(HAS_OPENMP 0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif ()
 

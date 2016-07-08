@@ -373,8 +373,8 @@ bool LSHSearch<SortPolicy>::PerturbationShift(std::vector<bool>& A) const
   for (size_t i = 0; i < A.size(); ++i)
     if (A[i] == 1) // marked true
       maxPos=i;
-  
-  if ( maxPos + 1 < A.size()) // otherwise, this is an invalid vector 
+
+  if ( maxPos + 1 < A.size()) // otherwise, this is an invalid vector
   {
     A[maxPos] = 0;
     A[maxPos + 1] = 1;
@@ -445,8 +445,8 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
   // Each column of additionalProbingBins is the code of a bin.
   additionalProbingBins.set_size(numProj, T);
-  
-  // Copy the query's code, then in the end we will  add/subtract according 
+
+  // Copy the query's code, then in the end we will  add/subtract according
   // to perturbations we calculated.
   for (size_t c = 0; c < T; ++c)
     additionalProbingBins.col(c) = queryCode;
@@ -497,7 +497,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
         minloc = s;
       }
     }
-    
+
     // Add or subtract 1 to dimension corresponding to minimum score.
     additionalProbingBins(positions[minloc], 0) += actions[minloc];
     if (T == 1)
@@ -512,7 +512,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     // smallest and the second smallest, it's obvious that score(Ae) >
     // score(As). Therefore the second perturbation vector is ALWAYS the vector
     // containing only the second-lowest scoring perturbation.
-    
+
     double minscore2 = scores[0];
     size_t minloc2 = 0;
     for (size_t s = 0; s < (2 * numProj); ++s) // here we can't start from 1
@@ -590,13 +590,13 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
       {
         perturbationSets.push_back(As); // add shifted set to sets
         minHeap.push(
-            std::make_pair(PerturbationScore(As, scores), 
+            std::make_pair(PerturbationScore(As, scores),
             perturbationSets.size() - 1));
       }
 
       // Expand operation on Ai (add max+1 to set).
       std::vector<bool> Ae = Ai;
-      if (PerturbationExpand(Ae) && PerturbationValid(Ae)) 
+      if (PerturbationExpand(Ae) && PerturbationValid(Ae))
         // Don't add invalid sets.
       {
         perturbationSets.push_back(Ae); // add expanded set to sets
@@ -610,7 +610,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     // Found valid perturbation set Ai. Construct perturbation vector from set.
     for (size_t pos = 0; pos < Ai.size(); ++pos)
       // If Ai[pos] is marked, add action to probing vector.
-      additionalProbingBins(positions(pos), pvec) 
+      additionalProbingBins(positions(pos), pvec)
           += Ai[pos] ? actions(pos) : 0;
   }
 }
@@ -808,13 +808,13 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   {
     Teffective = (1 << numProj) - 1;
     Log::Warn << "Requested " << T << " additional bins are more than "
-        << "theoretical maximum. Using " << Teffective << " instead." 
+        << "theoretical maximum. Using " << Teffective << " instead."
         << std::endl;
   }
 
   // If the user set multiprobe, log it
   if (Teffective > 0)
-    Log::Info << "Running multiprobe LSH with " << Teffective 
+    Log::Info << "Running multiprobe LSH with " << Teffective
         <<" additional probing bins per table per query." << std::endl;
 
   size_t avgIndicesReturned = 0;
@@ -822,16 +822,20 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-  #pragma omp parallel for \
-    shared(avgIndicesReturned, resultingNeighbors, distances) \
-    schedule(dynamic)
 #ifdef _WIN32
   // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
   // support unsigned loop variables. If we're building for Visual Studio, use
   // the intmax_t type instead.
-  intmax_t querySetSize = (intmax_t) querySet.n_cols;
-  for (intmax_t i = 0; i < querySetSize; ++i)
+  #pragma omp parallel for \
+    shared(resultingNeighbors, distances) \
+    schedule(dynamic)\
+    reduction(+:avgIndicesReturned)
+  for (intmax_t i = 0; i < (intmax_t) querySet.n_cols; ++i)
 #else
+  #pragma omp parallel for \
+    shared(resultingNeighbors, distances) \
+    schedule(dynamic)\
+    reduction(+:avgIndicesReturned)
   for (size_t i = 0; i < querySet.n_cols; ++i)
 #endif
   {
@@ -839,14 +843,14 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
-    ReturnIndicesFromTable(querySet.col(i), refIndices, numTablesToSearch, 
+    ReturnIndicesFromTable(querySet.col(i), refIndices, numTablesToSearch,
         Teffective);
 
     // An informative book-keeping for the number of neighbor candidates
     // returned on average.
     // Make atomic to avoid race conditions when multiple threads are running
-    #pragma omp atomic
-    avgIndicesReturned += refIndices.n_elem;
+    // #pragma omp atomic
+    avgIndicesReturned = avgIndicesReturned + refIndices.n_elem;
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
@@ -883,7 +887,7 @@ Search(const size_t k,
   {
     Teffective = (1 << numProj) - 1;
     Log::Warn << "Requested " << T << " additional bins are more than "
-        << "theoretical maximum. Using " << Teffective << " instead." 
+        << "theoretical maximum. Using " << Teffective << " instead."
         << std::endl;
   }
 
@@ -891,28 +895,30 @@ Search(const size_t k,
   if (T > 0)
     Log::Info << "Running multiprobe LSH with " << Teffective <<
       " additional probing bins per table per query."<< std::endl;
-  
+
   size_t avgIndicesReturned = 0;
 
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-  #pragma omp parallel for \
-    shared(avgIndicesReturned, resultingNeighbors, distances) \
-    schedule(dynamic)
 #ifdef _WIN32
   // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
   // support unsigned loop variables. If we're building for Visual Studio, use
   // the intmax_t type instead.
-  intmax_t referenceSetSize = (intmax_t) referenceSet->n_cols;
-  for (intmax_t i = 0; i < referenceSetSize; ++i)
+  #pragma omp parallel for \
+    shared(resultingNeighbors, distances) \
+    schedule(dynamic)\
+    reduction(+:avgIndicesReturned)
+  for (intmax_t i = 0; i < (intmax_t) referenceSet->n_cols; ++i)
 #else
+  #pragma omp parallel for \
+    shared(resultingNeighbors, distances) \
+    schedule(dynamic)\
+    reduction(+:avgIndicesReturned)
   for (size_t i = 0; i < referenceSet->n_cols; ++i)
 #endif
-  // Go through every query point. Use long int because some compilers complain
-  // for openMP unsigned index variables.
-  for (size_t i = 0; i < referenceSet->n_cols; i++)
   {
+    // Go through every query point.
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
@@ -920,10 +926,10 @@ Search(const size_t k,
         Teffective);
 
     // An informative book-keeping for the number of neighbor candidates
-    // returned on average. Make atomic to avoid race conditions when multiple
-    // threads are running.
-    #pragma omp atomic
-    avgIndicesReturned += refIndices.n_elem;
+    // returned on average.
+    // Make atomic to avoid race conditions when multiple threads are running.
+    // #pragma omp atomic
+    avgIndicesReturned = avgIndicesReturned + refIndices.n_elem;
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
