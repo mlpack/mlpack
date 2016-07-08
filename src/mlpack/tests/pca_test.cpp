@@ -221,15 +221,6 @@ BOOST_AUTO_TEST_CASE(ExactPCAVarianceRetainedTest)
 }
 
 /**
- * Test that setting the variance retained parameter to perform dimensionality
- * reduction works using the randomized svd PCA method.
- */
-BOOST_AUTO_TEST_CASE(RandomizedPCAVarianceRetainedTest)
-{
-  PCAVarianceRetained<RandomizedSVDPolicy>();
-}
-
-/**
  * Test that scaling PCA works.
  */
 BOOST_AUTO_TEST_CASE(PCAScalingTest)

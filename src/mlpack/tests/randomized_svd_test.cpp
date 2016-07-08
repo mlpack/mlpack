@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(RandomizedSVDReconstructionError)
   s3 = s1.subvec(0, s2.n_elem - 1);
 
   // The sigular value error should be small.
-  double error = arma::norm(s2 - s3, "frob");
+  double error = arma::norm(s2 - s3, "frob") / arma::norm(s2, "frob");
   BOOST_REQUIRE_SMALL(error, 1e-5);
 
   arma::mat reconstruct = U2 * arma::diagmat(s2) * V2.t();
