@@ -371,10 +371,10 @@ bool LSHSearch<SortPolicy>::PerturbationShift(std::vector<bool>& A) const
 {
   size_t maxPos = 0;
   for (size_t i = 0; i < A.size(); ++i)
-    if (A[i] == 1) // marked true
-      maxPos=i;
+    if (A[i] == 1) // Marked true.
+      maxPos = i;
 
-  if ( maxPos + 1 < A.size()) // otherwise, this is an invalid vector
+  if (maxPos + 1 < A.size()) // Otherwise, this is an invalid vector.
   {
     A[maxPos] = 0;
     A[maxPos + 1] = 1;
@@ -387,13 +387,13 @@ template<typename SortPolicy>
 inline force_inline
 bool LSHSearch<SortPolicy>::PerturbationExpand(std::vector<bool>& A) const
 {
-  // Find the last '1' in A
+  // Find the last '1' in A.
   size_t maxPos = 0;
   for (size_t i = 0; i < A.size(); ++i)
-    if (A[i]) // marked true
+    if (A[i]) // Marked true.
       maxPos = i;
 
-  if (maxPos + 1 < A.size()) // otherwise, this is an invalid vector
+  if (maxPos + 1 < A.size()) // Otherwise, this is an invalid vector.
   {
     A[maxPos + 1] = 1;
     return true;
@@ -827,15 +827,15 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   // support unsigned loop variables. If we're building for Visual Studio, use
   // the intmax_t type instead.
   #pragma omp parallel for \
-    shared(resultingNeighbors, distances) \
-    schedule(dynamic)\
-    reduction(+:avgIndicesReturned)
+      shared(resultingNeighbors, distances) \
+      schedule(dynamic)\
+      reduction(+:avgIndicesReturned)
   for (intmax_t i = 0; i < (intmax_t) querySet.n_cols; ++i)
 #else
   #pragma omp parallel for \
-    shared(resultingNeighbors, distances) \
-    schedule(dynamic)\
-    reduction(+:avgIndicesReturned)
+      shared(resultingNeighbors, distances) \
+      schedule(dynamic)\
+      reduction(+:avgIndicesReturned)
   for (size_t i = 0; i < querySet.n_cols; ++i)
 #endif
   {
@@ -906,15 +906,15 @@ Search(const size_t k,
   // support unsigned loop variables. If we're building for Visual Studio, use
   // the intmax_t type instead.
   #pragma omp parallel for \
-    shared(resultingNeighbors, distances) \
-    schedule(dynamic)\
-    reduction(+:avgIndicesReturned)
+      shared(resultingNeighbors, distances) \
+      schedule(dynamic)\
+      reduction(+:avgIndicesReturned)
   for (intmax_t i = 0; i < (intmax_t) referenceSet->n_cols; ++i)
 #else
   #pragma omp parallel for \
-    shared(resultingNeighbors, distances) \
-    schedule(dynamic)\
-    reduction(+:avgIndicesReturned)
+      shared(resultingNeighbors, distances) \
+      schedule(dynamic)\
+      reduction(+:avgIndicesReturned)
   for (size_t i = 0; i < referenceSet->n_cols; ++i)
 #endif
   {

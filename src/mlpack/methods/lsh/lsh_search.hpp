@@ -19,7 +19,7 @@
  *  organization={ACM}
  * }
  *
- * Additionally, the class implements Multiprobe LSH, which improves 
+ * Additionally, the class implements Multiprobe LSH, which improves
  * approximation results during the search for approximate nearest neighbors.
  * The Multiprobe LSH algorithm was presented in the paper:
  *
@@ -208,7 +208,6 @@ class LSHSearch
               const size_t numTablesToSearch = 0,
               size_t T = 0);
 
-
   /**
    * Compute the recall (% of neighbors found) given the neighbors returned by
    * LSHSearch::Search and a "ground truth" set of neighbors.  The recall
@@ -297,7 +296,7 @@ class LSHSearch
    * reference set.
    *
    * @param queryIndex The index of the query in question
-   * @param referenceIndices The vector of indices of candidate neighbors for 
+   * @param referenceIndices The vector of indices of candidate neighbors for
    *    the query.
    * @param neighbors Matrix holding output neighbors.
    * @param distances Matrix holding output distances.
@@ -391,7 +390,7 @@ class LSHSearch
    * @param A perturbation set to expand.
   */
   bool PerturbationExpand(std::vector<bool>& A) const;
-  
+
   /**
    * Return true if perturbation set A is valid. A perturbation set is invalid if
    * it contains two (or more) actions for the same dimension or dimensions that
