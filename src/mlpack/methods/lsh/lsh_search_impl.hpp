@@ -850,7 +850,7 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
     schedule(dynamic)
   // Go through every query point. Use long int because some compilers complain
   // for openMP unsigned index variables.
-  for (long long int i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; i++)
   {
 
     // Hash every query into every hash table and eventually into the
@@ -922,7 +922,7 @@ Search(const size_t k,
     schedule(dynamic)
   // Go through every query point. Use long int because some compilers complain
   // for openMP unsigned index variables.
-  for (long long int i = 0; i < referenceSet->n_cols; i++)
+  for (size_t i = 0; i < referenceSet->n_cols; i++)
   {
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.

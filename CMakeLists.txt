@@ -18,8 +18,8 @@ endif()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information." ON)
-option(PROFILE "Compile with profiling information." ON)
+option(DEBUG "Compile with debugging information." OFF)
+option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
@@ -232,12 +232,12 @@ endif ()
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags 
-# to compile with OpenMP are returned and added and the HAS_OPENMP is set to 1. 
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
+# to compile with OpenMP are returned and added and the HAS_OPENMP is set to 1.
 # This way we can skip calls to functions defined in omp.h with code like:
 # if (HAS_OPENMP == 1) { openMP code here }
 # If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
-find_package(OpenMP)
+find_package(OpenMP 3)
 if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(HAS_OPENMP "1")
