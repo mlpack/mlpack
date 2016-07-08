@@ -18,15 +18,15 @@ endif()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" OFF)
-option(PROFILE "Compile with profiling information" OFF)
+option(DEBUG "Compile with debugging information." OFF)
+option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
-option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
+option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 
 enable_testing()
 
@@ -231,12 +231,21 @@ endif ()
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, the
-# flags to compile with OpenMP are returned and added.
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
+# to compile with OpenMP are returned and added and the HAS_OPENMP is set to 1.
+# This way we can skip calls to functions defined in omp.h with code like:
+# if (HAS_OPENMP == 1) { openMP code here }
+# If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
 find_package(OpenMP)
 if (OPENMP_FOUND)
+  add_definitions(-DHAS_OPENMP)
+  set(HAS_OPENMP 1)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+else ()
+  add_definitions(-DHAS_OPENMP)
+  set(HAS_OPENMP 0)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for

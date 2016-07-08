@@ -233,6 +233,11 @@
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 
+// Use OpenMP if compiled with -DHAS_OPENMP.
+#ifdef HAS_OPENMP
+  #include <omp.h>
+#endif
+
 // Use Armadillo's C++ version detection.
 #ifdef ARMA_USE_CXX11
   #define MLPACK_USE_CX11
