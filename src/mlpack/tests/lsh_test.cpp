@@ -784,8 +784,10 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
   lshTest.Search(qdata, k, parallelNeighbors, distances);
 
   // Now perform same search but with 1 thread
-  lshTest.MaxThreads(1);
+  size_t prevNumThreads = omp_get_max_threads(); // Store number of threads used.
+  omp_set_num_threads(1);
   lshTest.Search(qdata, k, sequentialNeighbors, distances);
+  omp_set_num_threads(prevNumThreads);
 
   // Require both have same results
   double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
@@ -818,8 +820,10 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   lshTest.Search(k, parallelNeighbors, distances);
 
   // Now perform same search but with 1 thread.
-  lshTest.MaxThreads(1);
+  size_t prevNumThreads = omp_get_max_threads(); // Store number of threads used.
+  omp_set_num_threads(1);
   lshTest.Search(k, sequentialNeighbors, distances);
+  omp_set_num_threads(prevNumThreads);
 
   // Require both have same results.
   double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);

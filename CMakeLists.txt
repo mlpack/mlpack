@@ -27,7 +27,6 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-#option(HAS_OPENMP "Use OpenMP for parallel execution, if available." ON)
 
 enable_testing()
 
@@ -237,7 +236,7 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 # This way we can skip calls to functions defined in omp.h with code like:
 # if (HAS_OPENMP == 1) { openMP code here }
 # If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
-find_package(OpenMP 3)
+find_package(OpenMP 3.0.0 )
 if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(HAS_OPENMP "1")

@@ -268,12 +268,6 @@ class LSHSearch
   //! removed in mlpack 2.1.0!
   const arma::mat& Projection(size_t i) { return projections.slice(i); }
 
-  //! Set the maximum number of threads the object is allowed to use
-  void MaxThreads(size_t numThreads) { maxThreads = numThreads;}
-
-  //! Return the current maxumum threads the object is allowed to use
-  size_t MaxThreads(void) const { return maxThreads; }
-
  private:
   /**
    * This function takes a query and hashes it into each of the hash tables to
@@ -450,9 +444,6 @@ class LSHSearch
 
   //! The number of distance evaluations.
   size_t distanceEvaluations;
-
-  //! The maximum number of threads allowed.
-  size_t maxThreads;
 
 }; // class LSHSearch
 

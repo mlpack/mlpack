@@ -12,22 +12,6 @@
 namespace mlpack {
 namespace neighbor {
 
-// If OpenMP was found by the compiler and was used in compiling mlpack,
-// then we can get more than one thread.
-inline size_t CalculateMaxThreads()
-{
-  // HAS_OPENMP should be defined by CMakeLists after the check for OpenMP has
-  // been performed.
-  #ifdef HAS_OPENMP
-    if (HAS_OPENMP) // If compiler has OpenMP support, use all available threads.
-      return omp_get_max_threads();
-    return 1; // Compiler doesn't support OpenMP. Hard-wire maxThreads to 1.
-  #endif
-  
-  // In case HAS_OPENMP wasn't properly defined by CMakeLists, use 1 thread.
-  return 1;
-}
-
 // Construct the object with random tables
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::
@@ -46,7 +30,6 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-  maxThreads = CalculateMaxThreads();
   // Pass work to training function.
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize);
@@ -69,7 +52,6 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-  maxThreads = CalculateMaxThreads();
   // Pass work to training function
   Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
       bucketSize, projections);
@@ -87,8 +69,6 @@ LSHSearch<SortPolicy>::LSHSearch() :
     bucketSize(500),
     distanceEvaluations(0)
 {
-  // Only define maxThreads. Nothing else to do.
-  maxThreads = CalculateMaxThreads();
 }
 
 // Destructor.
@@ -763,7 +743,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // Retrieve candidates.
     size_t start = 0;
 
-    for (long long int i = 0; i < numTablesToSearch; ++i) // For all tables
+    for (size_t i = 0; i < numTablesToSearch; ++i) // For all tables
     {
       for (size_t p = 0; p < T + 1; ++p)
       {
@@ -842,14 +822,10 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-  // use as many threads possible but not more than allowed number
-  size_t numThreadsUsed = maxThreads;
   #pragma omp parallel for \
-    num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
-  // Go through every query point. Use long int because some compilers complain
-  // for openMP unsigned index variables.
+  // Go through every query point.
   for (size_t i = 0; i < querySet.n_cols; i++)
   {
 
@@ -914,10 +890,7 @@ Search(const size_t k,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-  // use as many threads possible but not more than allowed number
-  size_t numThreadsUsed = maxThreads;
   #pragma omp parallel for \
-    num_threads ( numThreadsUsed )\
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
   // Go through every query point. Use long int because some compilers complain
