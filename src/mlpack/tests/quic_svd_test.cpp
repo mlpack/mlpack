@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(QUICSVDSigularValueError)
 
   // The sigular value error should be small.
   double error = arma::norm(s1 - s3);
-  BOOST_REQUIRE_SMALL(error, 0.02);
+  BOOST_REQUIRE_SMALL(error, 0.05);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
