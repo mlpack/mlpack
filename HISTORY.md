@@ -12,6 +12,8 @@
   * Added the mlpack_preprocess_split and mlpack_preprocess_binarize programs,
     which can be used for preprocessing code (#650, #666).
 
+  * Added OpenMP support to LSHSearch and mlpack_lsh (#700).
+
 ### mlpack 2.0.2
 ###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube
