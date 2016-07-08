@@ -38,8 +38,8 @@ SpillTree(
     dataset(new MatType(data)) // Copies the dataset.
 {
   std::vector<size_t> points;
-  points.reserve(data.n_cols);
-  for(size_t i=0; i < data.n_cols; i++)
+  points.reserve(dataset->n_cols);
+  for(size_t i=0; i < dataset->n_cols; i++)
     points.push_back(i);
 
   // Do the actual splitting of this node.
@@ -72,8 +72,8 @@ SpillTree(
     dataset(new MatType(std::move(data)))
 {
   std::vector<size_t> points;
-  points.reserve(data.n_cols);
-  for(size_t i=0; i < data.n_cols; i++)
+  points.reserve(dataset->n_cols);
+  for(size_t i=0; i < dataset->n_cols; i++)
     points.push_back(i);
 
   // Do the actual splitting of this node.
@@ -411,7 +411,7 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
     SplitType>::Descendant(const size_t index) const
 {
   if (IsLeaf())
-    return pointsIndex[index];
+    return (*pointsIndex)[index];
   size_t num = left->NumDescendants();
   if (index < num)
     return left->Descendant(index);
@@ -434,7 +434,7 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
     SplitType>::Point(const size_t index) const
 {
   if (IsLeaf())
-    return pointsIndex[index];
+    return (*pointsIndex)[index];
   // This should never happen.
   return (size_t() - 1);
 }
@@ -472,7 +472,7 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   size_t splitDimension;
   double splitVal;
   const bool split = SplitType<BoundType<MetricType>, MatType>::SplitNode(
-      bound, *dataset, splitDimension, splitVal);
+      bound, *dataset, points, splitDimension, splitVal);
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
