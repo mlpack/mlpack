@@ -825,10 +825,17 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   #pragma omp parallel for \
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
-  // Go through every query point.
-  for (size_t i = 0; i < querySet.n_cols; i++)
+#ifdef _WIN32
+  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
+  // support unsigned loop variables. If we're building for Visual Studio, use
+  // the intmax_t type instead.
+  intmax_t querySetSize = (intmax_t) querySet.n_cols;
+  for (intmax_t i = 0; i < querySetSize; ++i)
+#else
+  for (size_t i = 0; i < querySet.n_cols; ++i)
+#endif
   {
-
+    // Go through every query point.
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
@@ -893,6 +900,15 @@ Search(const size_t k,
   #pragma omp parallel for \
     shared(avgIndicesReturned, resultingNeighbors, distances) \
     schedule(dynamic)
+#ifdef _WIN32
+  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
+  // support unsigned loop variables. If we're building for Visual Studio, use
+  // the intmax_t type instead.
+  intmax_t referenceSetSize = (intmax_t) referenceSet->n_cols;
+  for (intmax_t i = 0; i < referenceSetSize; ++i)
+#else
+  for (size_t i = 0; i < referenceSet->n_cols; ++i)
+#endif
   // Go through every query point. Use long int because some compilers complain
   // for openMP unsigned index variables.
   for (size_t i = 0; i < referenceSet->n_cols; i++)

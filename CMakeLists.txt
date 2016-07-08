@@ -236,7 +236,7 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 # This way we can skip calls to functions defined in omp.h with code like:
 # if (HAS_OPENMP == 1) { openMP code here }
 # If OpenMP is found, define HAS_OPENMP to be 1. Otherwise define it to be 0.
-find_package(OpenMP 3.0.0)
+find_package(OpenMP)
 if (OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
