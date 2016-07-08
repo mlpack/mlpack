@@ -929,7 +929,7 @@ Search(const size_t k,
     // returned on average.
     // Make atomic to avoid race conditions when multiple threads are running.
     // #pragma omp atomic
-    avgIndicesReturned = avgIndicesReturned + refIndices.n_elem;
+    avgIndicesReturned += refIndices.n_elem;
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
