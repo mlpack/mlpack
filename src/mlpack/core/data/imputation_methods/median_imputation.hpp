@@ -65,6 +65,47 @@ class MedianImputation
       }
     }
   }
+
+  /**
+   * Impute function searches through the input looking for mappedValue and
+   * replaces it with the median of the given dimension. The result is
+   * overwritten to the input matrix.
+   *
+   * @param input Matrix that contains mappedValue.
+   * @param mappedValue Value that the user wants to get rid of.
+   * @param dimension Index of the dimension of the mappedValue.
+   * @param columnMajor State of whether the input matrix is columnMajor or not.
+   */
+  void Impute(arma::Mat<T>& input,
+              const T& mappedValue,
+              const size_t dimension,
+              const bool columnMajor = true)
+  {
+    if (columnMajor)
+    {
+      arma::Mat<T> medianMat = arma::median(input, 1);
+      for (size_t i = 0; i < input.n_cols; ++i)
+      {
+        if (input(dimension, i) == mappedValue ||
+            std::isnan(input(dimension, i)))
+        {
+          input(dimension, i) = medianMat(dimension, 0);
+        }
+      }
+    }
+    else
+    {
+      arma::Mat<T> medianMat = arma::median(input, 0);
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (input(i, dimension) == mappedValue ||
+            std::isnan(input(i, dimension)))
+        {
+          input(i, dimension) = medianMat(0, dimension);
+        }
+      }
+    }
+  }
 }; // class MedianImputation
 
 } // namespace data

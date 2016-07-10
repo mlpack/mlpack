@@ -35,7 +35,7 @@ class CustomImputation
    * @param output Matrix that the result will be saved into.
    * @param mappedValue Value that the user wants to get rid of.
    * @param dimension Index of the dimension of the mappedValue.
-   * @param columnMajor State of whether the input matrix is columnMajord or not.
+   * @param columnMajor State of whether the input matrix is columnMajor or not.
    */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
@@ -66,6 +66,47 @@ class CustomImputation
             std::isnan(input(i, dimension)))
         {
           output(i, dimension) = customValue;
+        }
+      }
+    }
+  }
+
+  /**
+   * Impute function searches through the input looking for mappedValue and
+   * replaces it with the user-defined custom value of the given dimension.
+   * The result is overwritten to the input, not creating any copy. Custom value
+   * must be set when initializing the CustomImputation object.
+   *
+   * @param input Matrix that contains mappedValue.
+   * @param mappedValue Value that the user wants to get rid of.
+   * @param dimension Index of the dimension of the mappedValue.
+   * @param columnMajor State of whether the input matrix is columnMajor or not.
+   */
+  void Impute(arma::Mat<T>& input,
+              const T& mappedValue,
+              const size_t dimension,
+              const bool columnMajor = true)
+  {
+    // replace the target value to custom value
+    if (columnMajor)
+    {
+      for (size_t i = 0; i < input.n_cols; ++i)
+      {
+        if (input(dimension, i) == mappedValue ||
+            std::isnan(input(dimension, i)))
+        {
+          input(dimension, i) = customValue;
+        }
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (input(i, dimension) == mappedValue ||
+            std::isnan(input(i, dimension)))
+        {
+          input(i, dimension) = customValue;
         }
       }
     }

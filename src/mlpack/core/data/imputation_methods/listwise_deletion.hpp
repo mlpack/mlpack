@@ -36,33 +36,73 @@ class ListwiseDeletion
               const size_t dimension,
               const bool columnMajor = true)
   {
-    // initiate output
-    output = input;
-    size_t count = 0;
+    std::vector<arma::uword> colsToKeep;
 
     if (columnMajor)
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-         if (input(dimension, i) == mappedValue ||
-             std::isnan(input(dimension, i)))
+         if (!(input(dimension, i) == mappedValue ||
+             std::isnan(input(dimension, i))))
          {
-           output.shed_col(i - count);
-           count++;
+           colsToKeep.push_back(i);
          }
       }
+      output = input.cols(arma::uvec(colsToKeep));
     }
     else
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(i, dimension) == mappedValue ||
-             std::isnan(input(i, dimension)))
+        if (!(input(i, dimension) == mappedValue ||
+             std::isnan(input(i, dimension))))
         {
-           output.shed_row(i - count);
-           count++;
+           colsToKeep.push_back(i);
         }
       }
+      output = input.rows(arma::uvec(colsToKeep));
+    }
+  }
+
+  /**
+   * Impute function searches through the input looking for mappedValue and
+   * remove the whole row or column. The result is overwritten to the input.
+   *
+   * @param input Matrix that contains mappedValue.
+   * @param mappedValue Value that the user wants to get rid of.
+   * @param dimension Index of the dimension of the mappedValue.
+   * @param columnMajor State of whether the input matrix is columnMajor or not.
+   */
+  void Impute(arma::Mat<T>& input,
+              const T& mappedValue,
+              const size_t dimension,
+              const bool columnMajor = true)
+  {
+    std::vector<arma::uword> colsToKeep;
+
+    if (columnMajor)
+    {
+      for (size_t i = 0; i < input.n_cols; ++i)
+      {
+         if (!(input(dimension, i) == mappedValue ||
+             std::isnan(input(dimension, i))))
+         {
+           colsToKeep.push_back(i);
+         }
+      }
+      input = input.cols(arma::uvec(colsToKeep));
+    }
+    else
+    {
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (!(input(i, dimension) == mappedValue ||
+             std::isnan(input(i, dimension))))
+        {
+           colsToKeep.push_back(i);
+        }
+      }
+      input = input.rows(arma::uvec(colsToKeep));
     }
   }
 }; // class ListwiseDeletion

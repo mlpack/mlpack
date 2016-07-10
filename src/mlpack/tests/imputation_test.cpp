@@ -129,6 +129,22 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   BOOST_REQUIRE_CLOSE(output(2, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 3), 8.0, 1e-5);
+
+  // overwrite to the input
+  imputer.Impute(input, mappedValue, 0/*dimension*/, true);
+
+  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 1), 99.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 3), 99.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 2), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
 }
 
 /**
@@ -176,6 +192,22 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
   BOOST_REQUIRE_CLOSE(output(2, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 3), 8.0, 1e-5);
+
+  // overwrite to the input
+  imputer.Impute(input, mappedValue, 0/*dimension*/, true);
+
+  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 1), 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 3), 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 2), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
 }
 
 /**
@@ -222,7 +254,22 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(output(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(2, 2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(2, 3), 8.0, 1e-5);
+
+  // overwrite to the input
+  imputer.Impute(input, mappedValue, 1/*dimension*/, true);
+
+  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 1), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 3), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 2), 5.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
 }
 
 /**
@@ -260,6 +307,16 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(output(1, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 3), 8.0, 1e-5);
+
+  // overwrite to the input
+  imputer.Impute(input, mappedValue, 0, true); // transposed
+
+  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(0, 1), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 1), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(2, 1), 4.0, 1e-5);
 }
 
 
