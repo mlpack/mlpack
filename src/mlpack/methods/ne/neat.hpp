@@ -768,7 +768,6 @@ class NEAT {
     ////printf("size speciesAverageRank is %d \n", speciesAverageRank.size());
     ////printf("hehe 3-0\n");
     std::vector<Genome> childGenomes;
-    childGenomes.push_back(lastBestGenome);
     ////printf("hehe 3-01\n");
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       // number of child genomes by this species.
@@ -813,6 +812,7 @@ class NEAT {
     //DEBUGGING!!!!!!!!!
 
     // Random choose species and breed child until reach population size.
+    childGenomes.push_back(lastBestGenome);
     while (childGenomes.size() + aPopulation.aSpecies.size() < aPopulationSize) {
       ssize_t speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
       Genome genome;  //!!!!!!!!!!!!!

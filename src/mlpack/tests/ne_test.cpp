@@ -5,6 +5,7 @@
  * Test file for NE (Neural Evolution).
  */
 #include <cstddef>
+#include <cmath>
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ne/utils.hpp>
@@ -18,7 +19,7 @@
 #include <mlpack/methods/ne/neat.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ne;
@@ -137,9 +138,6 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
                              adjustedFitness);
 
   // Test seed genome.
-  seedGenome.printGenes(seedGenome.aNeuronGenes);
-  seedGenome.printLinks(seedGenome.aLinkGenes);
-
   std::vector<std::vector<double>> inputs;  // TODO: use arma::mat for input.
   std::vector<double> input1 = {0, 0, 1};
   std::vector<double> input2 = {0, 1, 1};
@@ -162,9 +160,6 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
     seedGenome.Output(output);
     std::cout << "Output is: " << output[0] << std::endl;
   }
-
-
-
 }
 
 /**
@@ -253,7 +248,7 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
 {
   mlpack::math::RandomSeed(1);
 
-  // Set CNE algorithm parameters.
+  // Set NEAT algorithm parameters.
   Parameters params;
   params.aPopulationSize = 500;
   params.aMaxGeneration = 500;
@@ -321,12 +316,118 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   // Specify task type.
   TaskXor<ann::MeanSquaredErrorFunction> task;
 
-  // Construct CNE instance.
+  // Construct NEAT instance.
   NEAT<TaskXor<ann::MeanSquaredErrorFunction>> neat(task, seedGenome, params);
 
   // Evolve.
   neat.Evolve();  // Judge whether XOR test passed or not by printing 
                   // the best fitness during each generation.
+}
+
+/**
+ * Test NEAT by Cart Pole task.
+ */
+BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set parameters of cart pole task.
+  double track_limit = 2.4;
+  double theta_limit = 12 * M_PI / 180.0;
+  double g = 9.81;
+  double mp = 0.1;
+  double mc = 1.0;
+  double l = 0.5;
+  double F = 10.0;
+  double tau = 0.02;
+  ssize_t num_trial = 20;
+  ssize_t num_step = 200;
+
+  // Construct task instance.
+  TaskCartPole task(mc, mp, g, l, F, tau, track_limit, theta_limit, num_trial, num_step);
+
+  // Set parameters of NEAT algorithm.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 500;
+  params.aCoeffDisjoint = 1.0;
+  params.aCoeffWeightDiff = 1.0;
+  params.aCompatThreshold = 1.0;
+  params.aStaleAgeThreshold = 15;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.5;
+  params.aMutateWeightProb = 0.5;
+  params.aPerturbWeightProb = 0.5;
+  params.aMutateWeightSize = 0.9;
+  params.aMutateAddLinkProb = 0.3;
+  params.aMutateAddRecurrentLinkProb = 0;
+  params.aMutateAddLoopLinkProb = 0;
+  params.aMutateAddNeuronProb = 0.01;
+  params.aMutateEnabledProb = 0.1;
+  params.aMutateDisabledProb = 0.1;
+
+  // Set seed genome for cart pole task.
+  ssize_t id = 0;
+  ssize_t numInput = 5;
+  ssize_t numOutput = 1;
+  double fitness = -1;
+  double adjustedFitness = -1;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene3(2, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene4(3, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene biasGene(4, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(5, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(6, HIDDEN, SIGMOID, 0.5, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(inputGene3);
+  neuronGenes.push_back(inputGene4);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 5, 0, 0, true);
+  LinkGene link2(1, 5, 0, 0, true);
+  LinkGene link3(2, 5, 0, 0, true);
+  LinkGene link4(3, 5, 0, 0, true);
+  LinkGene link5(4, 5, 0, 0, true);
+  LinkGene link6(0, 6, 0, 0, true);
+  LinkGene link7(1, 6, 0, 0, true);
+  LinkGene link8(2, 6, 0, 0, true);
+  LinkGene link9(3, 6, 0, 0, true);
+  LinkGene link10(4, 6, 0, 0, true);
+  LinkGene link11(6, 5, 0, 0, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+  linkGenes.push_back(link7);
+  linkGenes.push_back(link8);
+  linkGenes.push_back(link9);
+  linkGenes.push_back(link10);
+  linkGenes.push_back(link11);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             fitness,
+                             adjustedFitness);
+
+  // Construct NEAT instance.
+  NEAT<TaskCartPole> neat(task, seedGenome, params);
+
+  // Evolve. 
+  neat.Evolve();  // Fitness 4000 (num_trial * num_step) means passed test.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

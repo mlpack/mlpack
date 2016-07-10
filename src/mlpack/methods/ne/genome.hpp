@@ -249,35 +249,6 @@ class Genome {
       aLinkGenes[i] = depthAndLinks[i].link;
     }
   }
-  
-  void printGenes(std::vector<NeuronGene>& genes)
-  {
-    for (size_t i = 0; i < genes.size(); ++i)
-    {
-      std::cout << "Id: " << genes[i].Id() << std::endl;
-      std::cout << "Type: " << genes[i].Type() << std::endl;
-      
-
-      std::cout << "Input: " << genes[i].Input() << std::endl;
-      std::cout << "Activation: " << genes[i].Activation() << std::endl;
-      std::cout << "Depth: " << genes[i].Depth() << std::endl;
-      std::cout << "..................................\n";
-    }
-  }
-
-  void printLinks(std::vector<LinkGene>& links)
-  {
-    for (size_t i = 0; i < links.size(); ++i)
-    {
-      std::cout << "Id: " << links[i].FromNeuronId() << std::endl;
-      std::cout << "FromNeuronId: " << links[i].FromNeuronId() << std::endl;
-      std::cout << "ToNeuronId: " << links[i].ToNeuronId() << std::endl;
-      std::cout << "InnovationId: " << links[i].InnovationId() << std::endl;
-      std::cout << "Weight: " << links[i].Weight() << std::endl;
-      std::cout << "Enabled: " << links[i].Enabled() << std::endl;
-      std::cout << "..................................\n";
-    }
-  }
 
   // Activate genome. The last dimension of input is always 1 for bias. 0 means no bias.
   void Activate(std::vector<double>& input) {
@@ -311,12 +282,6 @@ class Genome {
         }
       }
     }
-
-    //std::cout << "===============================================\n";
-    //printGenes(aNeuronGenes);
-    //std::cout << "-----------------------------------------------\n";
-    //printLinks(aLinkGenes);
-    //std::cout << "===============================================\n";
   }
 
   // Get output vector.
