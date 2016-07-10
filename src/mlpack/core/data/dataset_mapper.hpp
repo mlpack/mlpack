@@ -131,6 +131,7 @@ class DatasetMapper
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
+  // MapType = map<dimension, pair<bimap<string, MappedType>, numMappings>>
   using MapType = std::unordered_map<size_t, std::pair<BiMapType, size_t>>;
 
   MapType maps;

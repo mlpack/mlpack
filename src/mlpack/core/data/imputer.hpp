@@ -28,17 +28,17 @@ template<typename T, typename MapperType, typename StrategyType>
 class Imputer
 {
  public:
-  Imputer(MapperType mapper, bool transpose = true):
+  Imputer(MapperType mapper, bool columnMajor = true):
       mapper(std::move(mapper)),
-      transpose(transpose)
+      columnMajor(columnMajor)
   {
     // Nothing to initialize here.
   }
 
-  Imputer(MapperType mapper, StrategyType strategy, bool transpose = true):
+  Imputer(MapperType mapper, StrategyType strategy, bool columnMajor = true):
       strategy(std::move(strategy)),
       mapper(std::move(mapper)),
-      transpose(transpose)
+      columnMajor(columnMajor)
   {
     // Nothing to initialize here.
   }
@@ -58,29 +58,7 @@ class Imputer
               const size_t dimension)
   {
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Impute(input, output, mappedValue, dimension, transpose);
-  }
-
-  /**
-  * This overload of Impute() lets users to define custom value that can be
-  * replaced with the target value.
-  *
-  * @param input Input dataset to apply imputation.
-  * @param output Armadillo matrix to save the results
-  * @oaran missingValue User defined missing value; it can be anything.
-  * @param customValue The numeric value that a user wants to replace
-  *        missingValue with.
-  * @param dimension Dimension to apply the imputation.
-  */
-  void Impute(const arma::Mat<T>& input,
-              arma::Mat<T>& output,
-              const std::string& missingValue,
-              const T& customValue,
-              const size_t dimension)
-  {
-    T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Impute(input, output, mappedValue, customValue, dimension,
-                    transpose);
+    strategy.Impute(input, output, mappedValue, dimension, columnMajor);
   }
 
   //! Get the strategy
@@ -102,8 +80,8 @@ class Imputer
   // DatasetMapperType<MapPolicy>
   MapperType mapper;
 
-  // save transpose as a member variable since it is rarely changed.
-  bool transpose;
+  // save columnMajor as a member variable since it is rarely changed.
+  bool columnMajor;
 
 }; // class Imputer
 

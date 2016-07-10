@@ -72,16 +72,16 @@ int main(int argc, char** argv)
 
   // If custom value is specified, and imputation strategy is not,
   // set imputation strategy to "custom"
-  if (CLI::HasParam("custom_value") && !CLI::HasParam("impute_strategy"))
+  if (CLI::HasParam("custom_value") && !CLI::HasParam("strategy"))
   {
     strategy = "custom";
-    Log::Warn << "--custom_value is specified without --impute_strategy, "
-        << "--impute_strategy is automatically set to 'custom'." << endl;
+    Log::Warn << "--custom_value is specified without --strategy, "
+        << "--strategy is automatically set to 'custom'." << endl;
   }
 
   // Custom value and any other impute strategies cannot be specified at
   // the same time.
-  if (CLI::HasParam("custom_value") && CLI::HasParam("impute_strategy") &&
+  if (CLI::HasParam("custom_value") && CLI::HasParam("strategy") &&
       strategy != "custom")
     Log::Fatal << "--custom_value cannot be specified with "
         << "impute strategies excluding 'custom' strategy" << endl;
@@ -109,15 +109,26 @@ int main(int argc, char** argv)
         << endl;
   }
 
-  // default imputer is mean imputation (to provide scope)
-  Imputer<double, MapperType, MeanImputation<double>> impu(info);
-  if (strategy == "median")
+  Log::Info << input << endl;
+
+  // Initialize imputer class
+  Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+  if (strategy == "mean")
   {
-    Imputer<double, MapperType, MedianImputation<double>> impu(info);
+    Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+  }
+  else if (strategy == "median")
+  {
+    Imputer<double, MapperType, MedianImputation<double>> imputer(info);
   }
   else if (strategy == "listwise_deletion")
   {
-    Imputer<double, MapperType, ListwiseDeletion<double>> impu(info);
+    Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+  }
+  else if (strategy == "custom")
+  {
+    CustomImputation<double> strat(customValue);
+    Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
   }
   else
   {
@@ -125,24 +136,15 @@ int main(int argc, char** argv)
         << endl;
   }
 
-  // Initialize imputer class
-
   if (CLI::HasParam("dimension"))
   {
     // when --dimension is specified,
     // the program will apply the changes to only the given dimension.
     Log::Info << "Performing '" << strategy << "' imputation strategy "
-        << "to replace '" << missingValue << "' on all dimensions." << endl;
+        << "to replace '" << missingValue << "' on dimension " << dimension
+        << "." << endl;
 
-    if (strategy == "custom")
-    {
-      Imputer<double, MapperType, CustomImputation<double>> impu(info);
-      impu.Impute(input, output, missingValue, customValue, dimension);
-    }
-    else
-    {
-      impu.Impute(input, output, missingValue, dimension);
-    }
+    imputer.Impute(input, output, missingValue, dimension);
   }
   else
   {
@@ -151,20 +153,9 @@ int main(int argc, char** argv)
     Log::Info << "Performing '" << strategy << "' imputation strategy "
         << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-    if (strategy == "custom")
+    for (size_t i = 0; i < input.n_rows; ++i)
     {
-      Imputer<double, MapperType, CustomImputation<double>> impu(info);
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        impu.Impute(input, output, missingValue, customValue, i);
-      }
-    }
-    else
-    {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        impu.Impute(input, output, missingValue, i);
-      }
+      imputer.Impute(input, output, missingValue, i);
     }
   }
 

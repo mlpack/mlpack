@@ -63,9 +63,11 @@ class MissingPolicy
   template <typename MapType>
   MappedType MapString(const std::string& string,
                        const size_t dimension,
-                       MapType maps,
+                       MapType& maps,
                        std::vector<Datatype>& types)
   {
+    // mute the unused parameter warning (does nothing here.)
+    (void)types;
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
@@ -75,11 +77,10 @@ class MissingPolicy
          maps[dimension].first.left.count(string) == 0))
     {
       // This string does not exist yet.
-      size_t& numMappings = maps[dimension].second;
-
       typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, NaN));
 
+      size_t& numMappings = maps[dimension].second;
       ++numMappings;
       return NaN;
     }
@@ -87,6 +88,9 @@ class MissingPolicy
     {
       // This string already exists in the mapping
       // or not included in missingSet.
+      // Unlike IncrementPolicy, MissingPolicy counts all mapped values.
+      size_t& numMappings = maps[dimension].second;
+      ++numMappings;
       return NaN;
     }
   }
@@ -121,17 +125,11 @@ class MissingPolicy
     std::stringstream token;
     for (size_t i = 0; i != tokens.size(); ++i)
     {
-      // if token is a number, but is included in the missingSet, map it.
-      if (missingSet.find(tokens[i]) != std::end(missingSet))
-      {
-         const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
-                                                        types));
-         matrix.at(row, i) = val;
-      }
       token.str(tokens[i]);
       token>>matrix.at(row, i);
       // if the token is not number, map it.
-      if (token.fail())
+      // or if token is a number, but is included in the missingSet, map it.
+      if (token.fail() || missingSet.find(tokens[i]) != std::end(missingSet))
       {
         const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
                                                        types));

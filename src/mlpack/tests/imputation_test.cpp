@@ -42,9 +42,8 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   std::set<string> mset;
   mset.insert("a");
-  mset.insert("b");
-  MissingPolicy miss(mset);
-  DatasetMapper<MissingPolicy> info(miss);
+  MissingPolicy policy(mset);
+  DatasetMapper<MissingPolicy> info(policy);
   BOOST_REQUIRE(data::Load("test_file.csv", input, info) == true);
 
   // row and column test
@@ -63,10 +62,11 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   BOOST_REQUIRE(std::isnan(input(2, 1)) == true);
   BOOST_REQUIRE_CLOSE(input(2, 2), 10.0, 1e-5);
 
+  CustomImputation<double> customStrategy(99); // convert missing vals to 99.
   Imputer<double,
           DatasetMapper<MissingPolicy>,
-          CustomImputation<double>> imputer(info);
-  imputer.Impute(input, output, "a", 99, 0); // convert a -> 99 for dimension 0
+          CustomImputation<double>> imputer(info, customStrategy);
+  imputer.Impute(input, output, "a", 0); // convert a -> 99 for dimension 0
 
   // Custom imputation result check
   BOOST_REQUIRE_CLOSE(output(0, 0), 99.0, 1e-5);
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   double customValue = 99;
   double mappedValue = 0.0;
 
-  CustomImputation<double> imputer;
+  CustomImputation<double> imputer(customValue);
 
   // transposed
-  imputer.Impute(input, outputT, mappedValue, customValue, 0/*dimension*/, true);
+  imputer.Impute(input, outputT, mappedValue, 0/*dimension*/, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 99.0, 1e-5);
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
   // not transposed
-  imputer.Impute(input, output, mappedValue, customValue, 1, false);
+  imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 99.0, 1e-5);

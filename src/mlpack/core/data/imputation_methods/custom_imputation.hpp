@@ -19,30 +19,35 @@ template <typename T>
 class CustomImputation
 {
  public:
+  CustomImputation(T customValue):
+      customValue(std::move(customValue))
+  {
+    // nothing to initialize here
+  }
+
   /**
    * Impute function searches through the input looking for mappedValue and
    * replaces it with the user-defined custom value of the given dimension.
-   * The result is saved to the output.
+   * The result is saved to the output. Custom value must be set when
+   * initializing the CustomImputation object.
    *
    * @param input Matrix that contains mappedValue.
    * @param output Matrix that the result will be saved into.
    * @param mappedValue Value that the user wants to get rid of.
-   * @param customValue Value that the user wants to replace mappedValue with.
    * @param dimension Index of the dimension of the mappedValue.
-   * @param transpose State of whether the input matrix is transposed or not.
+   * @param columnMajor State of whether the input matrix is columnMajord or not.
    */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
               const T& mappedValue,
-              const T& customValue,
               const size_t dimension,
-              const bool transpose = true)
+              const bool columnMajor = true)
   {
     // initiate output
     output = input;
 
     // replace the target value to custom value
-    if (transpose)
+    if (columnMajor)
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
@@ -65,6 +70,9 @@ class CustomImputation
       }
     }
   }
+
+ private:
+  T customValue;
 }; // class CustomImputation
 
 } // namespace data

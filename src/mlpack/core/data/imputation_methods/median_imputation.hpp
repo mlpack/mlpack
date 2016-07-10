@@ -29,18 +29,18 @@ class MedianImputation
    * @param output Matrix that the result will be saved into.
    * @param mappedValue Value that the user wants to get rid of.
    * @param dimension Index of the dimension of the mappedValue.
-   * @param transpose State of whether the input matrix is transposed or not.
+   * @param columnMajor State of whether the input matrix is columnMajor or not.
    */
   void Impute(const arma::Mat<T>& input,
               arma::Mat<T>& output,
               const T& mappedValue,
               const size_t dimension,
-              const bool transpose = true)
+              const bool columnMajor = true)
   {
     //initiate output
     output = input;
 
-    if (transpose)
+    if (columnMajor)
     {
       arma::Mat<T> medianMat = arma::median(input, 1);
       for (size_t i = 0; i < input.n_cols; ++i)
