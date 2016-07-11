@@ -15,18 +15,12 @@ using namespace mlpack::ann;
 namespace mlpack {
 namespace structured_tree {
 
-/**
- * Constructor: stores all the parameters in an object
- * of feature_parameters class.
- */
+
 template<typename MatType, typename CubeType>
 StructuredForests<MatType, CubeType>::
 StructuredForests(FeatureParameters F) : params(F) {}
 
-/**
- * Get Dimensions of Features
- * @param FtrDim Output vector that contains the result 
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 GetFeatureDimension(arma::vec& FtrDim)
@@ -43,13 +37,7 @@ GetFeatureDimension(arma::vec& FtrDim)
   FtrDim[1] = std::pow(numCell , 2) * (std::pow (numCell, 2) - 1) / 2 * nCh;
 }
 
-/**
- * Computes distance transform of 1D vector f.
- * @param f input vector whose distance transform is to be found.
- * @param n size of the Output vector to be made.
- * @param inf a large double value.
- * @param d Output vector which stores distance transform of f.
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 DistanceTransform1D(const arma::vec& f, const size_t n, const double inf,
@@ -85,11 +73,6 @@ DistanceTransform1D(const arma::vec& f, const size_t n, const double inf,
   }
 }
 
-/**
- * Computes distance transform of a 2D array
- * @param Im input array whose distance transform is to be found.
- * @param inf a large double value.
- */
 
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
@@ -115,16 +98,7 @@ DistanceTransform2D(MatType &Im, const double inf)
   }
 }
 
-/**
- * euclidean distance transform of binary Image using squared distance
- * @param Im Input binary Image whose distance transform is to be found.
- * @param on if on == 1, 1 is taken as boundaries and vice versa.
- * @param Out Output Image.
- * This is the discription of the paper which discribes the approach 
- * for this algorithm : Distance Transforms of Sampled Functions,
- * P. Felzenszwalb, D. Huttenlocher
- * Theory of Computing, Vol. 8, No. 19, September 2012
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 DistanceTransformImage(const MatType& Im, double on, MatType& Out)
@@ -136,15 +110,7 @@ DistanceTransformImage(const MatType& Im, double on, MatType& Out)
   this->DistanceTransform2D(Out, inf);
 }
 
-/**
- * Makes a reflective border around an Image.
- * @param InImage, Image which we have to make border around.
- * @param top, border length (to be incremented) at top.
- * @param left, border length at left.
- * @param bottom, border length at bottom.
- * @param right, border length at right.
- * @param OutImage, Output Image. 
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 CopyMakeBorder(const CubeType& InImage, size_t top, 
@@ -158,6 +124,7 @@ CopyMakeBorder(const CubeType& InImage, size_t top,
     OutImage.slice(i).submat(top, left, InImage.n_rows + top - 1, InImage.n_cols + left - 1)
      = InImage.slice(i);
     
+    // first copy borders from left and right 
     for(size_t j = 0; j < right; ++j)
     {
       OutImage.slice(i).col(InImage.n_cols + left + j).subvec(top, InImage.n_rows + top - 1)
@@ -170,6 +137,7 @@ CopyMakeBorder(const CubeType& InImage, size_t top,
       = InImage.slice(i).col(left - 1 - j);
     }
 
+    // copy borders from top and bottom
     for(size_t j = 0; j < top; j++)
     {
 
@@ -186,41 +154,19 @@ CopyMakeBorder(const CubeType& InImage, size_t top,
   }
 }
 
-/**
- * Converts an Image in RGB color space to LUV color space.
- * RGB must range in (0.0, 1.0).
- * @param InImage Input Image in RGB color space.
- * @param OutImage Ouptut Image in LUV color space.
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
         const arma::vec& table)
 {
-  //assert type is double or float.
-
-
   MatType rgb2xyz;
   rgb2xyz << 0.430574 << 0.222015 << 0.020183 << arma::endr
           << 0.341550 << 0.706655 << 0.129553 << arma::endr
           << 0.178325 << 0.071330 << 0.939180;
 
-  //see how to calculate this efficiently. numpy.dot does this.
   CubeType xyz(InImage.n_rows, InImage.n_cols, rgb2xyz.n_cols);
-  /*
-  for (size_t i = 0; i < InImage.slice(0).n_elem; ++i)
-  {
-    double r = InImage.slice(0)(i);
-    double g = InImage.slice(1)(i);
-    double b = InImage.slice(2)(i);
-    
-    xyz.slice(0)(i) = 0.430574 * r + 0.341550 * g + 0.178325 * b;
-    xyz.slice(1)(i) = 0.222015 * r + 0.706655 * g + 0.071330 * b;
-    xyz.slice(2)(i) = 0.020183 * r + 0.129553 * g + 0.939180 * b;
-  }
-  */
-
-
+  
   xyz.slice(0) = 0.430574 * InImage.slice(0) + 0.341550 * InImage.slice(1)\
                  + 0.178325 * InImage.slice(2);
   xyz.slice(1) = 0.222015 * InImage.slice(0) + 0.706655 * InImage.slice(1)\
@@ -246,13 +192,7 @@ RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
               - 13 * 0.468331) + 134 * maxi;
 }
 
-/**
- * Resizes the Image to the given size using Bilinear Interpolation
- * @param src Input Image
- * @param height Height of Output Image.
- * @param width Width Out Output Image.
- * @param dst Output Image resized to (height, width)
- */
+
 /*Implement this function in a column major order.*/
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
@@ -286,13 +226,7 @@ BilinearInterpolation(const MatType& src,
   }
 }
 
-/**
- * Applies a separable linear filter to an Image
- * @param InOutImage Input/Output Contains the input Image, The final filtered Image is
- *          stored in this param.
- * @param kernel Input Kernel vector to be applied on Image.
- * @param radius amount, the Image should be padded before applying filter.
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 Convolution(CubeType &InOutImage, const MatType& Filter, const size_t radius)
@@ -319,18 +253,14 @@ Convolution(CubeType &InOutImage, const MatType& Filter, const size_t radius)
 
 }
 
-/**
- * Applies a triangle filter on an Image.
- * @param InImage Input/Output Image on which filter is applied.
- * @param radius Decides the size of kernel to be applied on Image.
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 ConvTriangle(CubeType &InImage, const size_t radius)
 {
   if (radius == 0)
   {
-    //nothing to do
+    // nothing to do
   }
   else if (radius <= 1)
   {
@@ -359,9 +289,7 @@ ConvTriangle(CubeType &InImage, const size_t radius)
   }
 }
 
-//just a helper function, can't use it for anything else
-//finds max numbers on cube axis and returns max values,
-// also stores the locations of max values in Location
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 MaxAndLoc(CubeType& mag, arma::umat& Location, MatType& MaxVal) const
@@ -387,9 +315,7 @@ MaxAndLoc(CubeType& mag, arma::umat& Location, MatType& MaxVal) const
   }
 }
 
-/**
- * Computes Gradient, Magnitude & Orientation of the Edges.
- */
+
 template<typename MatType, typename CubeType>
 void StructuredForests<MatType, CubeType>::
 Gradient(const CubeType& InImage, 
@@ -403,6 +329,8 @@ Gradient(const CubeType& InImage,
   CubeType dy = InImage;
 
   MatType gx, gy;
+
+  // values for sobel filter.
   gx << -1 << 0 << 1 << arma::endr
      << -2 << 0 << 2 << arma::endr
      << -1 << 0 << 1;
@@ -414,6 +342,7 @@ Gradient(const CubeType& InImage,
   Convolution(dx, gx, 2);
   Convolution(dy, gy, 2);
 
+  // calculate the magnitudes of edges.
   CubeType mag(InImage.n_rows, InImage.n_cols, InImage.n_slices);
   for (size_t i = 0; i < InImage.n_slices; ++i)
   {
@@ -431,6 +360,7 @@ Gradient(const CubeType& InImage,
     this->ConvTriangle(mag2, grdNormRad);
     Magnitude = Magnitude / (mag2.slice(0) + 0.01);
   }
+
   MatType dx_mat(dx.n_rows, dx.n_cols),\
             dy_mat(dy.n_rows, dy.n_cols);
 
@@ -442,6 +372,8 @@ Gradient(const CubeType& InImage,
       dy_mat(i, j) = dy(i, j, Location(i, j));
     }
   }
+  
+  // calculate Orientation of edges.
   Orientation = arma::atan(dy_mat / dx_mat);
 
   Orientation.transform( [](double val)\
