@@ -59,6 +59,7 @@ Copyright:
   Copyright 2016, Marcos Pividori <marcos.pividori@gmail.com>
   Copyright 2016, Keon Kim <kwk236@gmail.com>
   Copyright 2016, Nilay Jain <nilayjain13@gmail.com>
+  Copyright 2016, Peter Lehner <peter.lehner@dlr.de>
 License: BSD-3-clause
   All rights reserved.
   .

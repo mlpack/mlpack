@@ -38,7 +38,8 @@ using RTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             RTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            NoAuxiliaryInformation>;
 
 /**
  * The R*-tree, a more recent variant of the R tree.  This template typedef
@@ -65,7 +66,8 @@ using RStarTree = RectangleTree<MetricType,
                                 StatisticType,
                                 MatType,
                                 RStarTreeSplit,
-                                RStarTreeDescentHeuristic>;
+                                RStarTreeDescentHeuristic,
+                                NoAuxiliaryInformation>;
 
 /**
  * The X-tree, a variant of the R tree with supernodes.  This template typedef
@@ -90,8 +92,103 @@ using XTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,
                             XTreeSplit,
-                            RTreeDescentHeuristic>;
+                            RTreeDescentHeuristic,
+                            XTreeAuxiliaryInformation>;
 
+/**
+ * The Hilbert R-tree, a variant of the R tree with an ordering along
+ * the Hilbert curve. This template typedef satisfies the TreeType policy API.
+ *
+ * @code
+ * @inproceedings{kamel1994r,
+ *   author = {Kamel, Ibrahim and Faloutsos, Christos},
+ *   title = {Hilbert R-tree: An Improved R-tree Using Fractals},
+ *   booktitle = {Proceedings of the 20th International Conference on Very Large Data Bases},
+ *   series = {VLDB '94},
+ *   year = {1994},
+ *   isbn = {1-55860-153-8},
+ *   pages = {500--509},
+ *   numpages = {10},
+ *   url = {http://dl.acm.org/citation.cfm?id=645920.673001},
+ *   acmid = {673001},
+ *   publisher = {Morgan Kaufmann Publishers Inc.},
+ *   address = {San Francisco, CA, USA}
+ * }
+ * @endcode
+ *
+ * @see @ref trees, RTree, DiscreteHilbertRTree
+ */
+template<typename TreeType>
+using DiscreteHilbertRTreeAuxiliaryInformation =
+      HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using HilbertRTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            HilbertRTreeSplit<2>,
+                            HilbertRTreeDescentHeuristic,
+                            DiscreteHilbertRTreeAuxiliaryInformation>;
+
+/**
+ * The R+ tree, a variant of the R tree that avoids overlapping rectangles.
+ * The implementation is modified from the original paper implementation.
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @code
+ * @inproceedings{sellis1987r,
+ *   author = {Sellis, Timos K. and Roussopoulos, Nick and Faloutsos, Christos},
+ *   title = {The R+-Tree: A Dynamic Index for Multi-Dimensional Objects},
+ *   booktitle = {Proceedings of the 13th International Conference on Very
+ *      Large Data Bases},
+ *   series = {VLDB '87},
+ *   year = {1987},
+ *   isbn = {0-934613-46-X},
+ *   pages = {507--518},
+ *   numpages = {12},
+ *   publisher = {Morgan Kaufmann Publishers Inc.},
+ *   address = {San Francisco, CA, USA},
+ * }
+ * @endcode
+ *
+ * @see @ref trees, RTree, RTree, RPlusTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPlusTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            RPlusTreeSplit<RPlusTreeSplitPolicy,
+                                           MinimalCoverageSweep>,
+                            RPlusTreeDescentHeuristic,
+                            NoAuxiliaryInformation>;
+
+/**
+ * The R++ tree, a variant of the R+ tree with maximum buonding rectangles.
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @code
+ * @inproceedings{sumak2014r,
+ *   author = {{\v{S}}um{\'a}k, Martin and Gursk{\'y}, Peter},
+ *   title = {R++-Tree: An Efficient Spatial Access Method for Highly Redundant
+ *      Point Data},
+ *   booktitle = {New Trends in Databases and Information Systems: 17th East
+ *      European Conference on Advances in Databases and Information Systems},
+ *   year = {2014},
+ *   isbn = {978-3-319-01863-8},
+ *   pages = {37--44},
+ *   publisher = {Springer International Publishing},
+ * }
+ * @endcode
+ *
+ * @see @ref trees, RTree, RTree, RPlusTree, RPlusPlusTree
+ */template<typename MetricType, typename StatisticType, typename MatType>
+using RPlusPlusTree = RectangleTree<MetricType,
+                            StatisticType,
+                            MatType,
+                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
+                                           MinimalSplitsNumberSweep>,
+                            RPlusPlusTreeDescentHeuristic,
+                            RPlusPlusTreeAuxiliaryInformation>;
 } // namespace tree
 } // namespace mlpack
 

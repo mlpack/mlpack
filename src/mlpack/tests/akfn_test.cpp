@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_SUITE(AKFNTest);
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(AproxVsExact1)
+BOOST_AUTO_TEST_CASE(ApproxVsExact1)
 {
   arma::mat dataset;
 
@@ -58,12 +58,12 @@ BOOST_AUTO_TEST_CASE(AproxVsExact1)
 
     // Now perform the actual calculation.
     akfn = new KFN(dataset, false, false, epsilon);
-    arma::Mat<size_t> neighborsAprox;
-    arma::mat distancesAprox;
-    akfn->Search(dataset, 15, neighborsAprox, distancesAprox);
+    arma::Mat<size_t> neighborsApprox;
+    arma::mat distancesApprox;
+    akfn->Search(dataset, 15, neighborsApprox, distancesApprox);
 
-    for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-      REQUIRE_RELATIVE_ERR(distancesAprox(i), distancesExact(i), epsilon);
+    for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+      REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), epsilon);
 
     // Clean the memory.
     delete akfn;
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(AproxVsExact1)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(AproxVsExact2)
+BOOST_AUTO_TEST_CASE(ApproxVsExact2)
 {
   arma::mat dataset;
 
@@ -89,12 +89,12 @@ BOOST_AUTO_TEST_CASE(AproxVsExact2)
   exact.Search(15, neighborsExact, distancesExact);
 
   KFN akfn(dataset, false, false, 0.05);
-  arma::Mat<size_t> neighborsAprox;
-  arma::mat distancesAprox;
-  akfn.Search(15, neighborsAprox, distancesAprox);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  akfn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesAprox[i], distancesExact[i], 0.05);
+  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesApprox[i], distancesExact[i], 0.05);
 }
 
 /**
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsExact)
   exact.Search(15, neighborsExact, distancesExact);
 
   KFN akfn(dataset, false, true, 0.05);
-  arma::Mat<size_t> neighborsAprox;
-  arma::mat distancesAprox;
-  akfn.Search(15, neighborsAprox, distancesAprox);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  akfn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesAprox[i], distancesExact[i], 0.05);
+  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesApprox[i], distancesExact[i], 0.05);
 }
 
 /**

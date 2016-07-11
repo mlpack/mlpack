@@ -193,6 +193,7 @@
  *   - Marcos Pividori <marcos.pividori@gmail.com>
  *   - Keon Kim <kwk236@gmail.com>
  *   - Nilay Jain <nilayjain13@gmail.com>
+ *   - Peter Lehner <peter.lehner@dlr.de>
  */
 
 // First, include all of the prerequisites.
@@ -231,6 +232,11 @@
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
+
+// Use OpenMP if compiled with -DHAS_OPENMP.
+#ifdef HAS_OPENMP
+  #include <omp.h>
+#endif
 
 // Use Armadillo's C++ version detection.
 #ifdef ARMA_USE_CXX11

@@ -68,7 +68,7 @@ int main(int argc, char** argv)
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
   // Check on label parameters.
-  if (CLI::HasParam("input_labels"))
+  if (CLI::HasParam("input_labels_file"))
   {
     if (!CLI::HasParam("training_labels_file"))
     {

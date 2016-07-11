@@ -90,7 +90,6 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
 // recovers those four centers.
 BOOST_AUTO_TEST_CASE(GaussianClustering)
 {
-  math::RandomSeed(std::time(NULL));
   GaussianDistribution g1("0.0 0.0 0.0", arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2("5.0 5.0 5.0", 2 * arma::eye<arma::mat>(3, 3));
   GaussianDistribution g3("-3.0 3.0 -1.0", arma::eye<arma::mat>(3, 3));

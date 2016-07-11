@@ -555,7 +555,6 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");

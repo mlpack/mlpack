@@ -21,10 +21,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                               DescentType>>
+                               DescentType, AuxiliaryInformationType>>
 {
  public:
   /**

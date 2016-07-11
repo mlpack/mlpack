@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (CLI::HasParam("training_responses"))
+    if (!CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
       responses = trans(regressors.row(regressors.n_rows - 1));

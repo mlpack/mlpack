@@ -1,19 +1,29 @@
 /**
- * @file pca.cpp
+ * @file pca_impl.hpp
  * @author Ajinkya Kale
+ * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Implementation of PCA class to perform Principal Components Analysis on the
  * specified data set.
  */
-#include "pca.hpp"
+
+#ifndef MLPACK_METHODS_PCA_PCA_IMPL_HPP
+#define MLPACK_METHODS_PCA_PCA_IMPL_HPP
+
 #include <mlpack/core.hpp>
+#include "pca.hpp"
 
 using namespace std;
-using namespace mlpack;
-using namespace mlpack::pca;
 
-PCA::PCA(const bool scaleData) :
-    scaleData(scaleData)
+namespace mlpack {
+namespace pca {
+
+template<typename DecompositionPolicy>
+PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
+                                      const DecompositionPolicy& decomposition) :
+    scaleData(scaleData),
+    decomposition(decomposition)
 { }
 
 /**
@@ -22,56 +32,25 @@ PCA::PCA(const bool scaleData) :
  * @param data - Data matrix
  * @param transformedData - Data with PCA applied
  * @param eigVal - contains eigen values in a column vector
- * @param coeff - PCA Loadings/Coeffs/EigenVectors
+ * @param eigvec - PCA Loadings/Coeffs/EigenVectors
  */
-void PCA::Apply(const arma::mat& data,
-                arma::mat& transformedData,
-                arma::vec& eigVal,
-                arma::mat& coeff) const
+template<typename DecompositionPolicy>
+void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
+                                         arma::mat& transformedData,
+                                         arma::vec& eigVal,
+                                         arma::mat& eigvec)
 {
   Timer::Start("pca");
-
-  // This matrix will store the right singular values; we do not need them.
-  arma::mat v;
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
   math::Center(data, centeredData);
 
-  if (scaleData)
-  {
-    // Scaling the data is when we reduce the variance of each dimension to 1.
-    // We do this by dividing each dimension by its standard deviation.
-    arma::vec stdDev = arma::stddev(centeredData, 0, 1 /* for each dimension */);
+  // Scale the data if the user ask for.
+  ScaleData(centeredData);
 
-    // If there are any zeroes, make them very small.
-    for (size_t i = 0; i < stdDev.n_elem; ++i)
-      if (stdDev[i] == 0)
-        stdDev[i] = 1e-50;
-
-    centeredData /= arma::repmat(stdDev, 1, centeredData.n_cols);
-  }
-
-  // Do singular value decomposition.  Use the economical singular value
-  // decomposition if the columns are much larger than the rows.
-  if (data.n_rows < data.n_cols)
-  {
-    // Do economical singular value decomposition and compute only the left
-    // singular vectors.
-    arma::svd_econ(coeff, eigVal, v, centeredData, 'l');
-  }
-  else
-  {
-    arma::svd(coeff, eigVal, v, centeredData);
-  }
-
-  // Now we must square the singular values to get the eigenvalues.
-  // In addition we must divide by the number of points, because the covariance
-  // matrix is X * X' / (N - 1).
-  eigVal %= eigVal / (data.n_cols - 1);
-
-  // Project the samples to the principals.
-  transformedData = arma::trans(coeff) * centeredData;
+  decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
+      data.n_rows);
 
   Timer::Stop("pca");
 }
@@ -83,12 +62,13 @@ void PCA::Apply(const arma::mat& data,
  * @param transformedData - Data with PCA applied
  * @param eigVal - contains eigen values in a column vector
  */
-void PCA::Apply(const arma::mat& data,
-                arma::mat& transformedData,
-                arma::vec& eigVal) const
+template<typename DecompositionPolicy>
+void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
+                                         arma::mat& transformedData,
+                                         arma::vec& eigVal)
 {
-  arma::mat coeffs;
-  Apply(data, transformedData, eigVal, coeffs);
+  arma::mat eigvec;
+  Apply(data, transformedData, eigVal, eigvec);
 }
 
 /**
@@ -102,7 +82,9 @@ void PCA::Apply(const arma::mat& data,
  * @param newDimension New dimension of the data.
  * @return Amount of the variance of the data retained (between 0 and 1).
  */
-double PCA::Apply(arma::mat& data, const size_t newDimension) const
+template<typename DecompositionPolicy>
+double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
+                                           const size_t newDimension)
 {
   // Parameter validation.
   if (newDimension == 0)
@@ -113,18 +95,29 @@ double PCA::Apply(arma::mat& data, const size_t newDimension) const
         << "be greater than the existing dimensionality of the data ("
         << data.n_rows << ")!" << endl;
 
-  arma::mat coeffs;
+  arma::mat eigvec;
   arma::vec eigVal;
 
-  Apply(data, data, eigVal, coeffs);
+  Timer::Start("pca");
 
-  if (newDimension < coeffs.n_rows)
+  // Center the data into a temporary matrix.
+  arma::mat centeredData;
+  math::Center(data, centeredData);
+
+  // Scale the data if the user ask for.
+  ScaleData(centeredData);
+
+  decomposition.Apply(data, centeredData, data, eigVal, eigvec, newDimension);
+
+  if (newDimension < eigvec.n_rows)
     // Drop unnecessary rows.
     data.shed_rows(newDimension, data.n_rows - 1);
 
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
   double eigDim = std::min(newDimension - 1, (size_t) eigVal.n_elem - 1);
+
+  Timer::Stop("pca");
 
   // Calculate the total amount of variance retained.
   return (sum(eigVal.subvec(0, eigDim)) / sum(eigVal));
@@ -140,7 +133,9 @@ double PCA::Apply(arma::mat& data, const size_t newDimension) const
  * The method returns the actual amount of variance retained, which will
  * always be greater than or equal to the varRetained parameter.
  */
-double PCA::Apply(arma::mat& data, const double varRetained) const
+template<typename DecompositionPolicy>
+double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
+                                           const double varRetained)
 {
   // Parameter validation.
   if (varRetained < 0)
@@ -150,10 +145,10 @@ double PCA::Apply(arma::mat& data, const double varRetained) const
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
         << "less than or equal to 1." << endl;
 
-  arma::mat coeffs;
+  arma::mat eigvec;
   arma::vec eigVal;
 
-  Apply(data, data, eigVal, coeffs);
+  Apply(data, data, eigVal, eigvec);
 
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
@@ -171,3 +166,8 @@ double PCA::Apply(arma::mat& data, const double varRetained) const
 
   return varSum;
 }
+
+} // namespace pca
+} // namespace mlpack
+
+#endif
