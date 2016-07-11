@@ -29,7 +29,9 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   if (mu == 0)
     return false;
 
-  arma::Col<ElemType> vantagePoint = data.col(vantagePointIndex);
+  data.swap_cols(begin, vantagePointIndex);
+
+  arma::Col<ElemType> vantagePoint = data.col(begin);
   splitCol = PerformSplit(bound, data, begin, count, vantagePoint, mu);
 
   assert(splitCol > begin);
@@ -52,7 +54,12 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   if (mu == 0)
     return false;
 
-  arma::Col<ElemType> vantagePoint = data.col(vantagePointIndex);
+  data.swap_cols(begin, vantagePointIndex);
+  size_t t = oldFromNew[begin];
+  oldFromNew[begin] = oldFromNew[vantagePointIndex];
+  oldFromNew[vantagePointIndex] = t;
+
+  arma::Col<ElemType> vantagePoint = data.col(begin);
 
   splitCol = PerformSplit(bound, data, begin, count, vantagePoint, mu, oldFromNew);
 
