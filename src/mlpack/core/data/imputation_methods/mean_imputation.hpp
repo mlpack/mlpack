@@ -46,7 +46,6 @@ class MeanImputation
     // dimensions and indexes are saved as pairs inside this vector.
     std::vector<PairType> targets;
 
-
     // calculate number of elements and sum of them excluding mapped value or
     // nan. while doing that, remember where mappedValue or NaN exists.
     if (columnMajor)

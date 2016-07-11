@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(0, 3), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(1, 0), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(outputT(1, 2), 5.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(outputT(1, 2), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(1, 3), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 1), 8.0, 1e-5);
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(output(0, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 1), 7.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 2), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 3), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 0), 5.0, 1e-5);
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(input(0, 3), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 2), 5.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(input(1, 2), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);

@@ -40,29 +40,49 @@ class MedianImputation
     //initiate output
     output = input;
 
+    using PairType = std::pair<size_t, size_t>;
+    // dimensions and indexes are saved as pairs inside this vector.
+    std::vector<PairType> targets;
+    // good elements are kept inside this vector.
+    std::vector<double> elemsToKeep;
+
     if (columnMajor)
     {
-      arma::Mat<T> medianMat = arma::median(input, 1);
       for (size_t i = 0; i < input.n_cols; ++i)
       {
         if (input(dimension, i) == mappedValue ||
             std::isnan(input(dimension, i)))
         {
-          output(dimension, i) = medianMat(dimension, 0);
+          targets.emplace_back(dimension, i);
+        }
+        else
+        {
+          elemsToKeep.push_back(input(dimension, i));
         }
       }
     }
     else
     {
-      arma::Mat<T> medianMat = arma::median(input, 0);
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         if (input(i, dimension) == mappedValue ||
             std::isnan(input(i, dimension)))
         {
-          output(i, dimension) = medianMat(0, dimension);
+          targets.emplace_back(i, dimension);
+        }
+        else
+        {
+           elemsToKeep.push_back(input(i, dimension));
         }
       }
+    }
+
+    // calculate median
+    const double median = arma::median(arma::vec(elemsToKeep));
+
+    for (const PairType& target : targets)
+    {
+       output(target.first, target.second) = median;
     }
   }
 
@@ -81,29 +101,49 @@ class MedianImputation
               const size_t dimension,
               const bool columnMajor = true)
   {
+    using PairType = std::pair<size_t, size_t>;
+    // dimensions and indexes are saved as pairs inside this vector.
+    std::vector<PairType> targets;
+    // good elements are kept inside this vector.
+    std::vector<double> elemsToKeep;
+
     if (columnMajor)
     {
-      arma::Mat<T> medianMat = arma::median(input, 1);
       for (size_t i = 0; i < input.n_cols; ++i)
       {
         if (input(dimension, i) == mappedValue ||
             std::isnan(input(dimension, i)))
         {
-          input(dimension, i) = medianMat(dimension, 0);
+          targets.emplace_back(dimension, i);
+        }
+        else
+        {
+          elemsToKeep.push_back(input(dimension, i));
         }
       }
     }
     else
     {
-      arma::Mat<T> medianMat = arma::median(input, 0);
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         if (input(i, dimension) == mappedValue ||
             std::isnan(input(i, dimension)))
         {
-          input(i, dimension) = medianMat(0, dimension);
+          targets.emplace_back(i, dimension);
+        }
+        else
+        {
+           elemsToKeep.push_back(input(i, dimension));
         }
       }
+    }
+
+    // calculate median
+    const double median = arma::median(arma::vec(elemsToKeep));
+
+    for (const PairType& target : targets)
+    {
+       input(target.first, target.second) = median;
     }
   }
 }; // class MedianImputation

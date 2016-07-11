@@ -109,8 +109,6 @@ int main(int argc, char** argv)
         << endl;
   }
 
-  Log::Info << input << endl;
-
   // Initialize imputer class
   Imputer<double, MapperType, MeanImputation<double>> imputer(info);
   if (strategy == "mean")
