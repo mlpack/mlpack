@@ -26,8 +26,8 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-
+    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+option(BUILD_WITH_COVERAGE "Build with COVTOOL" OFF)
 enable_testing()
 
 # Include modules in the CMake directory.
@@ -72,6 +72,34 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
+endif()
+
+# Setup build for test coverage
+if(BUILD_WITH_COVERAGE)
+  # Currently coverage only works with GNU g++
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Find gcov and lcov
+    find_program(GCOV gcov)
+    find_program(LCOV lcov)
+
+    if(NOT GCOV)
+      message(FATAL_ERROR "gcov not found! Aborting...")
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
+    message(WARNING "Adding debug options for coverage")
+    # Remove optimizations for better line coverage
+    set(DEBUG ON)
+
+    if(LCOV)
+      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
+      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
+    else()
+      message(WARNING "'lcov' not found, local coverage report is disabled. Install 'lcov' and rerun cmake to generate local coverage report.")
+    endif()
+  else()
+    message(FATAL_ERROR "Coverage will only work with GNU environment.")
+  endif()
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
