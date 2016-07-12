@@ -127,7 +127,7 @@ class SpillTree
    * @param rho Balance threshold.
    */
   SpillTree(const MatType& data,
-            const double tau,
+            const double tau = 0,
             const size_t maxLeafSize = 20,
             const double rho = 0.7);
 
@@ -143,7 +143,7 @@ class SpillTree
    * @param rho Balance threshold.
    */
   SpillTree(MatType&& data,
-            const double tau,
+            const double tau = 0,
             const size_t maxLeafSize = 20,
             const double rho = 0.7);
 
@@ -163,7 +163,7 @@ class SpillTree
   SpillTree(SpillTree* parent,
             std::vector<size_t>& points,
             const size_t overlapIndex,
-            const double tau,
+            const double tau = 0,
             const size_t maxLeafSize = 20,
             const double rho = 0.7);
 

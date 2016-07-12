@@ -64,10 +64,13 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
-    "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus'.", "t", "kd");
+    "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill'.",
+    "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, R* trees, X trees, Hilbert R trees, R+ trees and R++ trees).", "l",
-    20);
+    "trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and Spill "
+    "trees).", "l", 20);
+PARAM_DOUBLE_IN("tau", "Overlapping size (for spill trees).", "u", 0);
+
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -111,6 +114,9 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("leaf_size"))
       Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
           << " is specified." << endl;
+    if (CLI::HasParam("tau"))
+      Log::Warn << "--tau (-u) will be ignored because --input_model_file"
+          << " is specified." << endl;
     if (CLI::HasParam("random_basis"))
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
@@ -143,6 +149,13 @@ int main(int argc, char *argv[])
   if (lsInt < 1)
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than 0." << endl;
+
+  // Sanity check on tau.
+  const double tau = CLI::GetParam<double>("tau");
+  if (tau < 0)
+    Log::Fatal << "Invalid tau: " << tau << ".  Must be non-negative. " << endl;
+  if (CLI::HasParam("tau") && "spill" != CLI::GetParam<string>("tree_type"))
+    Log::Fatal << "Tau parameter is only valid for spill trees." << endl;
 
   // Sanity check on epsilon.
   const double epsilon = CLI::GetParam<double>("epsilon");
@@ -180,13 +193,17 @@ int main(int argc, char *argv[])
       tree = KNNModel::R_PLUS_TREE;
     else if (treeType == "r-plus-plus")
       tree = KNNModel::R_PLUS_PLUS_TREE;
+    else if (treeType == "spill")
+      tree = KNNModel::SPILL_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
-          << "'r-plus' and 'r-plus-plus'." << endl;
+          << "'r-plus', 'r-plus-plus' and 'spill'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
+    knn.LeafSize() = size_t(lsInt);
+    knn.Tau() = tau;
 
     arma::mat referenceSet;
     data::Load(referenceFile, referenceSet, true);
@@ -213,6 +230,7 @@ int main(int argc, char *argv[])
     knn.Naive() = CLI::HasParam("naive");
     knn.LeafSize() = size_t(lsInt);
     knn.Epsilon() = epsilon;
+    knn.Tau() = tau;
   }
 
   // Perform search, if desired.
