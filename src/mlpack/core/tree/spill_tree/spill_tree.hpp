@@ -116,9 +116,6 @@ class SpillTree
   template<typename RuleType>
   class DualTreeTraverser;
 
-  template<typename RuleType>
-  class BreadthFirstDualTreeTraverser;
-
   /**
    * Construct this as the root node of a hybrid spill tree using the given
    * dataset.  This will copy the input matrix; if you don't want this, consider
@@ -235,6 +232,9 @@ class SpillTree
   const MatType& Dataset() const { return *dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return *dataset; }
+
+  //! Distinguish overlapping nodes from non-overlapping nodes.
+  bool Overlap() const { return overlappingNode; }
 
   //! Get the metric that the tree uses.
   MetricType Metric() const { return MetricType(); }
