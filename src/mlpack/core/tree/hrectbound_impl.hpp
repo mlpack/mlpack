@@ -5,13 +5,6 @@
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
  *
  * @experimental
- *
- * This file is part of mlpack 2.0.2.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
@@ -150,7 +143,12 @@ inline ElemType HRectBound<MetricType, ElemType>::Volume() const
 {
   ElemType volume = 1.0;
   for (size_t i = 0; i < dim; ++i)
+  {
+    if (bounds[i].Lo() >= bounds[i].Hi())
+      return 0;
+
     volume *= (bounds[i].Hi() - bounds[i].Lo());
+  }
 
   return volume;
 }
@@ -435,6 +433,79 @@ inline bool HRectBound<MetricType, ElemType>::Contains(const VecType& point) con
   }
 
   return true;
+}
+
+/**
+ * Determines if this bound partially contains a bound.
+ */
+template<typename MetricType, typename ElemType>
+inline bool HRectBound<MetricType, ElemType>::Contains(
+    const HRectBound& bound) const
+{
+  for (size_t i = 0; i < dim; i++)
+  {
+    const math::RangeType<ElemType>& r_a = bounds[i];
+    const math::RangeType<ElemType>& r_b = bound.bounds[i];
+
+    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi()) // If a does not overlap b at all.
+      return false;
+  }
+
+  return true;
+}
+
+/**
+ * Returns the intersection of this bound and another.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
+operator&(const HRectBound& bound) const
+{
+  HRectBound<MetricType, ElemType> result(dim);
+
+  for (size_t k = 0; k < dim; k++)
+  {
+    result[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    result[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+  }
+  return result;
+}
+
+/**
+ * Intersects this bound with another.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::
+operator&=(const HRectBound& bound)
+{
+  for (size_t k = 0; k < dim; k++)
+  {
+    bounds[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    bounds[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+  }
+  return *this;
+}
+
+/**
+ * Returns the volume of overlap of this bound and another.
+ */
+template<typename MetricType, typename ElemType>
+inline ElemType HRectBound<MetricType, ElemType>::Overlap(
+    const HRectBound& bound) const
+{
+  ElemType volume = 1.0;
+
+  for (size_t k = 0; k < dim; k++)
+  {
+    ElemType lo = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
+    ElemType hi = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
+
+    if ( hi <= lo)
+      return 0;
+
+    volume *= hi - lo;
+  }
+  return volume;
 }
 
 /**

@@ -91,27 +91,6 @@ class XTreeSplit
   SplitHistoryStruct splitHistory;
 
   /**
-   * Class to allow for faster sorting.
-   */
-  template<typename ElemType>
-  class sortStruct
-  {
-   public:
-    ElemType d;
-    int n;
-  };
-
-  /**
-   * Comparator for sorting with sortStruct.
-   */
-  template<typename ElemType>
-  static bool structComp(const sortStruct<ElemType>& s1,
-                         const sortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
-
-  /**
    * Insert a node into another node.
    */
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);

@@ -53,26 +53,6 @@ class RStarTreeSplit
 
  private:
   /**
-   * Class to allow for faster sorting.
-   */
-  template<typename ElemType>
-  struct SortStruct
-  {
-    ElemType d;
-    int n;
-  };
-
-  /**
-   * Comparator for sorting with SortStruct.
-   */
-  template<typename ElemType>
-  static bool StructComp(const SortStruct<ElemType>& s1,
-                         const SortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
-
-  /**
    * Insert a node into another node.
    */
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
