@@ -54,16 +54,24 @@ class StructuredForests
 
   /**
    * euclidean distance transform of binary Image using squared distance
-   * @param Im Input binary Image whose distance transform is to be found.
-   * @param on if on == 1, 1 is taken as boundaries and vice versa.
-   * @param Out Output Image.
    * This is the discription of the paper which discribes the approach 
    * for this algorithm : Distance Transforms of Sampled Functions,
    * P. Felzenszwalb, D. Huttenlocher
    * Theory of Computing, Vol. 8, No. 19, September 2012
+   * @param Im Input binary Image whose distance transform is to be found.
+   * @param on if on == 1, 1 is taken as boundaries and vice versa.
+   * @param Out Output Image.
    */  
   void DistanceTransformImage(const MatType& Im, double on, MatType& Out);
 
+  /**
+   * Compute the Regular and Self Similarity Features of the given image.
+   * @param Image Given Input Image
+   * @param loc Locations at which features need to be extracted
+   * @param RegFtr Output the Regular Features
+   * @param SSFtr Output the Self Similarity Features
+   * @param table a helper vector required to convert image to LAB space.
+   */
   void GetFeatures(const MatType &Image, arma::umat &loc,\
                    CubeType& RegFtr, CubeType& SSFtr,\
                    const arma::vec& table);
@@ -81,12 +89,25 @@ class StructuredForests
                  size_t left, size_t bottom, size_t right,
                  CubeType& OutImage);
   
+  /**
+   * Augment image patch with multiple channels of information 
+   * resulting in a feature vector. Shrink these channels by shrink
+   * size to reduce dimensions of the extracted candidate features.
+   * Refer to the following paper for details:
+   * Fast edge detection using structured forests
+   * Authors: Piotr Dollar, Larry Zitnick
+   * Published In: ICCV
+   * @param InImage Input Image.
+   * @param regCh Channels used in calculating Regular Features.
+   * @param ssCh Channels used in calculating Self Similarity Features.
+   * @param table a vector which helps in converting image from RGB to LUV.
+   */
   void GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch,\
                   CubeType &ss_ch, const arma::vec& table);
   
   /**
    * Converts an Image in RGB color space to LUV color space.
-   * RGB must range in (0.0, 1.0).
+   * RGB values must be normalized i.e., range in [0.0, 1.0].
    * @param InImage Input Image in RGB color space.
    * @param OutImage Ouptut Image in LUV color space.
    */
@@ -145,27 +166,85 @@ class StructuredForests
          MatType& Magnitude,
          MatType& Orientation);
 
-  
+  /**
+   * Compute Histogram of Oriented Gradients ( count occurrences of gradient
+   * orientation in localized portions of an image. )
+   * @param Magnitude gradient magnitude
+   * @param Orientation gradient orientation
+   * @param downscale spatially downscaling factor
+   * @param interp: 1 (true) for interpolation over orientations
+   */
   void Histogram(const MatType& Magnitude,
                  const MatType& Orientation, 
                  const size_t downscale,
                  const size_t interp,
                  CubeType& HistArr);
  
+  /**
+   * store the features as a window view for a 16 x 16 patch, 
+   * centered at each location in loc.
+   * @param channels Input candidate features
+   * @param loc Input locations
+   * @param features Output features at each 16 x 16 window centered at loc
+   */
   void ViewAsWindows(const CubeType& channels, const arma::umat& loc,
                      CubeType& features);
 
+  /**
+   * Regular Features are features directly indexing to the image locations.
+   * Each channel is of same size as that of image and captures a different
+   * faucet of information, like color, gradient and oriented gradient
+   * information at a patch x. Refer to the below paper for details:
+   * Sketch Tokens: A Learned Mid-level Representation for Contour 
+   * and Object Detection.
+   * Published in: Computer Vision and Pattern Recognition (CVPR),
+   * 2013 IEEE Conference 
+   * Author(s) : Joseph J. Lim ; C. Lawrence Zitnick ; Piotr Dollár
+   * @param channels input candidate regular features
+   * @param loc input locations
+   * @param RegFtr output Regular Features at that location.
+   */
   void GetRegFtr(const CubeType& channels, const arma::umat& loc,
                  CubeType& RegFtr);
 
+  /**
+   * The self-similarity features capture the portions
+   * of an image patch that contain similar textures based
+   * on color or gradient information.
+   * Refer the sketch tokens paper for details.
+   * @param channels input candidate self similarity features
+   * @param loc input locations
+   * @param RegFtr output Self Similarity Features at that location.
+   */
   void GetSSFtr(const CubeType& channels, const arma::umat& loc,
-                 CubeType SSFtr);
+                 CubeType& SSFtr);
 
+  /**
+   * Rearranges the features so that we can use them 
+   * in a fast and efficient way.
+   * convert (16, 16, 13 * 1000) features to (256, 1000, 13).
+   * @param channels input features
+   * @param ch output features just rearranged 
+   */
   void Rearrange(const CubeType& channels, CubeType& ch);
 
+  /**
+   * Compute the pairwise differences between n-dimensional points in a way
+   * specified in the paper "Structured Forests for Fast Edge Detection".
+   * Note: Indeed this is not a valid distance measurement (asymmetry).
+   * find nC2 differences, for locations in the grid_pos.
+   * @param features n-dimensional points
+   * @param grid_pos locations
+   * @param Output stores differences between features at grid_pos locations
+   */
   void PDist(const CubeType& features, const arma::uvec& grid_pos,
              CubeType& Output);
 
+  /**
+   * Find the index of minimum element in a vector
+   * @param k Vector in which we want to find element
+   * return value index of minimum element
+   */
   size_t IndexMin(arma::vec& k);
 
   size_t Discretize(const MatType& labels, const size_t nClass,\
