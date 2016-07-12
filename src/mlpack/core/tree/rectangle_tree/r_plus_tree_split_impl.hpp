@@ -22,6 +22,8 @@ template<typename TreeType>
 void RPlusTreeSplit<SplitPolicyType, SweepType>::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
+  typedef typename TreeType::ElemType ElemType;
+
   if (tree->Count() == 1)
   {
     // Check if an intermediate node was added during the insertion process.
@@ -64,8 +66,8 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     return;
   }
 
-  size_t cutAxis;
-  typename TreeType::ElemType cut;
+  size_t cutAxis = tree->Bound().Dim();
+  ElemType cut = std::numeric_limits<ElemType>::lowest();
 
   // Try to find a partiotion of the node.
   if (!PartitionNode(tree, cutAxis, cut))
@@ -117,6 +119,7 @@ template<typename TreeType>
 bool RPlusTreeSplit<SplitPolicyType, SweepType>::
 SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
+  typedef typename TreeType::ElemType ElemType;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -133,8 +136,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     RPlusTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
-  size_t cutAxis;
-  typename TreeType::ElemType cut;
+  size_t cutAxis = tree->Bound().Dim();
+  ElemType cut = std::numeric_limits<ElemType>::lowest();
 
   // Try to find a partiotion of the node.
   if ( !PartitionNode(tree, cutAxis, cut))
