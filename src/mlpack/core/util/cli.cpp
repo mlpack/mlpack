@@ -99,11 +99,14 @@ CLI::~CLI()
  * @param description Short string description of the parameter.
  * @param alias An alias for the parameter.
  * @param required Indicates if parameter must be set on command line.
+ * @param input If true, the parameter is an input parameter (not an output
+ *      parameter).
  */
 void CLI::Add(const std::string& path,
-             const std::string& description,
-             const std::string& alias,
-             bool required)
+              const std::string& description,
+              const std::string& alias,
+              const bool required,
+              const bool input)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
@@ -131,6 +134,13 @@ void CLI::Add(const std::string& path,
   // If the option is required, add it to the required options list.
   if (required)
     GetSingleton().requiredOptions.push_front(path);
+
+  // Depending on whether the option is input or output, add it to the list of
+  // input or output options.
+  if (input)
+    GetSingleton().inputOptions.push_front(path);
+  else
+    GetSingleton().outputOptions.push_front(path);
 
   return;
 }
@@ -600,7 +610,7 @@ void CLI::PrintHelp(const std::string& param)
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
 
-  for (size_t pass = 0; pass < 2; ++pass)
+  for (size_t pass = 0; pass < 4; ++pass)
   {
     bool printedHeader = false;
 
@@ -613,29 +623,40 @@ void CLI::PrintHelp(const std::string& param)
       std::string alias = AliasReverseLookup(key);
       alias = alias.length() ? " (-" + alias + ")" : alias;
 
-      // Is the option required or not?
-      bool required = false;
-      std::list<std::string>::iterator iter;
-      std::list<std::string>& rOpt = GetSingleton().requiredOptions;
-      for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
-        if ((*iter) == key)
-          required = true;
+      // Is the option required or not?  And is it an input option or not?
+      const std::list<std::string>& requiredOptions =
+          GetSingleton().requiredOptions;
+      const std::list<std::string>& inputOptions = GetSingleton().inputOptions;
 
-      if ((pass == 0) && !required)
-        continue; // Don't print this one.
-      if ((pass == 1) && required)
-        continue; // Don't print this one.
+      const bool required = (std::find(std::begin(requiredOptions),
+          std::end(requiredOptions), key) != std::end(requiredOptions));
+      const bool input = (std::find(std::begin(inputOptions),
+          std::end(inputOptions), key) != std::end(inputOptions));
+
+      // Filter un-printed options.
+      if ((pass == 0) && !(required && input)) // Required input options only.
+        continue;
+      if ((pass == 1) && !(required && !input)) // Required output options only.
+        continue;
+      if ((pass == 2) && !(!required && input)) // Optional input options only.
+        continue;
+      if ((pass == 3) && (required || input)) // Optional output options only.
+        continue;
 
       if (!printedHeader)
       {
         printedHeader = true;
         if (pass == 0)
-          std::cout << "Required options:" << std::endl << std::endl;
-        else
-          std::cout << "Options: " << std::endl << std::endl;
+          std::cout << "Required input options:" << std::endl << std::endl;
+        else if (pass == 1)
+          std::cout << "Required output options:" << std::endl << std::endl;
+        else if (pass == 2)
+          std::cout << "Optional input options: " << std::endl << std::endl;
+        else if (pass == 3)
+          std::cout << "Optional output options: " << std::endl << std::endl;
       }
 
-      if (pass == 1) // Append default value to description.
+      if (pass >= 2) // Append default value to description.
       {
         desc += "  Default value ";
         std::stringstream tmp;
@@ -679,7 +700,6 @@ void CLI::PrintHelp(const std::string& param)
     }
 
     std::cout << std::endl;
-
   }
 
   // Helpful information at the bottom of the help output, to point the user to
@@ -751,7 +771,7 @@ void CLI::UpdateGmap()
 
 // Add help parameter.
 PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING("info", "Get help on a specific module or option.", "", "");
+PARAM_STRING_IN("info", "Get help on a specific module or option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 PARAM_FLAG("version", "Display the version of mlpack.", "V");

@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(TestOption)
 {
   // This test will involve creating an option, and making sure CLI reflects
   // this.
-  PARAM(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
+  PARAM_IN(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
 
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), DEFAULT_INT);
