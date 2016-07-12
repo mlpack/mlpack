@@ -215,7 +215,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   }
 
   arma::colvec cMRow;
-  arma::uword maxIndex;
+  arma::uword maxIndex = 0;
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {

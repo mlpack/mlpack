@@ -92,7 +92,7 @@ double Radical::DoRadical2D(const mat& matX)
     values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
   }
 
-  uword indOpt;
+  uword indOpt = 0;
   values.min(indOpt); // we ignore the return value; we don't care about it
   return (indOpt / (double) angles) * M_PI / 2.0;
 }
