@@ -21,24 +21,25 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     "in a separate file.");
 
 // Required options.
-PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
+PARAM_STRING_IN_REQ("inputFile", "Input dataset to perform clustering on.",
+    "i");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
-           "assignments will be added to the input dataset file.  In this case,"
-           " --outputFile is overridden.", "P");
-PARAM_STRING("output_file", "File to write output labels or labeled data to.",
-             "o", "");
-PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
-             " be written to the given file.", "C", "");
+    "assignments will be added to the input dataset file.  In this case, "
+    "--output_file is overridden.", "P");
+PARAM_STRING_OUT("output_file", "File to write output labels or labeled data "
+    "to.", "o");
+PARAM_STRING_OUT("centroid_file", "If specified, the centroids of each cluster "
+    "will be written to the given file.", "C");
 
 // Mean shift configuration options.
-PARAM_INT("max_iterations", "Maximum number of iterations before mean shift "
-          "terminates.", "m", 1000);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations before mean shift "
+    "terminates.", "m", 1000);
 
-PARAM_DOUBLE("radius", "If distance of two centroids is less than the given "
-    "radius, one will be removed.  A radius of 0 or less means an estimate will"
-    " be calculated and used.", "r", 0);
+PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
+    "the given radius, one will be removed.  A radius of 0 or less means an "
+    "estimate will be calculated and used for the radius.", "r", 0);
 
 int main(int argc, char** argv)
 {

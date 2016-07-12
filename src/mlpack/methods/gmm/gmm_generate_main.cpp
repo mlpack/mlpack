@@ -19,13 +19,13 @@ PROGRAM_INFO("GMM Sample Generator",
     "The output samples are saved in the file specified by --output_file "
     "(-o).");
 
-PARAM_STRING_REQ("input_model_file", "File containing input GMM model.", "m");
-PARAM_INT_REQ("samples", "Number of samples to generate.", "n");
+PARAM_STRING_IN_REQ("input_model_file", "File containing input GMM model.",
+    "m");
+PARAM_INT_IN_REQ("samples", "Number of samples to generate.", "n");
 
-PARAM_STRING("output_file", "File to save output samples in.", "o",
-    "output.csv");
+PARAM_STRING_OUT("output_file", "File to save output samples in.", "o");
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 int main(int argc, char** argv)
 {
@@ -48,5 +48,9 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm.Random();
 
-  data::Save(CLI::GetParam<string>("output_file"), samples);
+  if (CLI::HasParam("output_file"))
+    data::Save(CLI::GetParam<string>("output_file"), samples);
+  else
+    Log::Warn << "--output_file is not specified, so no output will be saved!"
+        << endl;
 }

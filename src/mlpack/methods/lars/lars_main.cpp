@@ -42,21 +42,21 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "predictions from a test file can be saved into the file specified by the "
     "--output_predictions option.");
 
-PARAM_STRING("input_file", "File containing covariates (X).", "i", "");
-PARAM_STRING("responses_file", "File containing y (responses/observations).",
+PARAM_STRING_IN("input_file", "File containing covariates (X).", "i", "");
+PARAM_STRING_IN("responses_file", "File containing y (responses/observations).",
     "r", "");
 
-PARAM_STRING("input_model_file", "File to load model from.", "m", "");
-PARAM_STRING("output_model_file", "File to save model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File to load model from.", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save model to.", "M");
 
-PARAM_STRING("test_file", "File containing points to regress on (test points).",
-    "t", "");
-PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "predictions.csv");
+PARAM_STRING_IN("test_file", "File containing points to regress on (test "
+    "points).", "t", "");
+PARAM_STRING_OUT("output_predictions", "If --test_file is specified, this file "
+    "is where the predicted responses will be saved.", "o");
 
-PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty.", "l",
+PARAM_DOUBLE_IN("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
-PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty.", "L",
+PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
     0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
@@ -161,7 +161,8 @@ int main(int argc, char* argv[])
     lars.Predict(testPoints.t(), predictions, false);
 
     // Save test predictions.  One per line, so, don't transpose on save.
-    data::Save(outputPredictionsFile, predictions, true, false);
+    if (outputPredictionsFile != "")
+      data::Save(outputPredictionsFile, predictions, true, false);
   }
 
   if (CLI::HasParam("output_model_file"))

@@ -15,12 +15,11 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
     "such that the distances to the nearest neighbors of each point are held "
     "constant.");
 
-PARAM_STRING_REQ("input_file", "Filename of input dataset.", "i");
-PARAM_INT_REQ("new_dim", "New dimensionality of dataset.", "d");
+PARAM_STRING_IN_REQ("input_file", "Filename of input dataset.", "i");
+PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
 
-PARAM_STRING("output_file", "Filename to save unfolded dataset to.", "o",
-    "output.csv");
-PARAM_INT("num_neighbors", "Number of nearest neighbors to consider while "
+PARAM_STRING_OUT("output_file", "Filename to save unfolded dataset to.", "o");
+PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
     "unfolding.", "k", 5);
 
 using namespace mlpack;
@@ -67,5 +66,6 @@ int main(int argc, char **argv)
 
   // Save results to file.
   const string outputFile = CLI::GetParam<string>("output_file");
-  data::Save(outputFile, output, true);
+  if (outputFile != "")
+    data::Save(outputFile, output, true);
 }

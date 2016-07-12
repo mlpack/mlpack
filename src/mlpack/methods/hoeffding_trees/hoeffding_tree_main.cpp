@@ -41,39 +41,39 @@ PROGRAM_INFO("Hoeffding trees",
     "probabilities for each predictions will be stored in the file specified by"
     " the --probabilities_file (-P) option.");
 
-PARAM_STRING("training_file", "Training dataset file.", "t", "");
-PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
+PARAM_STRING_IN("training_file", "Training dataset file.", "t", "");
+PARAM_STRING_IN("labels_file", "Labels for training dataset.", "l", "");
 
-PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
+PARAM_DOUBLE_IN("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
-PARAM_INT("max_samples", "Maximum number of samples before splitting.", "n",
+PARAM_INT_IN("max_samples", "Maximum number of samples before splitting.", "n",
     5000);
-PARAM_INT("min_samples", "Minimum number of samples before splitting.", "I",
+PARAM_INT_IN("min_samples", "Minimum number of samples before splitting.", "I",
     100);
 
-PARAM_STRING("input_model_file", "File to load trained tree from.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained tree to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File to load trained tree from.", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained tree to.", "M");
 
-PARAM_STRING("test_file", "File of testing data.", "T", "");
-PARAM_STRING("test_labels_file", "Labels of test data.", "L", "");
-PARAM_STRING("predictions_file", "File to output label predictions for test "
-    "data into.", "p", "");
-PARAM_STRING("probabilities_file", "In addition to predicting labels, provide "
-    "prediction probabilities in this file.", "P", "");
+PARAM_STRING_IN("test_file", "File of testing data.", "T", "");
+PARAM_STRING_IN("test_labels_file", "Labels of test data.", "L", "");
+PARAM_STRING_OUT("predictions_file", "File to output label predictions for "
+    "test data into.", "p");
+PARAM_STRING_OUT("probabilities_file", "In addition to predicting labels, "
+    "provide prediction probabilities in this file.", "P");
 
-PARAM_STRING("numeric_split_strategy", "The splitting strategy to use for "
+PARAM_STRING_IN("numeric_split_strategy", "The splitting strategy to use for "
     "numeric features: 'domingos' or 'binary'.", "N", "binary");
 PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
     "of as a stream.  This generally results in better trees but at the cost of"
     " memory usage and runtime.", "b");
 PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
     "impurity for calculating Hoeffding bounds.", "i");
-PARAM_INT("passes", "Number of passes to take over the dataset.", "s", 1);
+PARAM_INT_IN("passes", "Number of passes to take over the dataset.", "s", 1);
 
-PARAM_INT("bins", "If the 'domingos' split strategy is used, this specifies "
+PARAM_INT_IN("bins", "If the 'domingos' split strategy is used, this specifies "
     "the number of bins for each numeric split.", "B", 10);
-PARAM_INT("observations_before_binning", "If the 'domingos' split strategy is "
-    "used, this specifies the number of samples observed before binning is "
+PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
+    "is used, this specifies the number of samples observed before binning is "
     "performed.", "o", 100);
 
 // Helper function for once we have chosen a tree type.

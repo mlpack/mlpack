@@ -44,31 +44,32 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
+PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
-PARAM_STRING("distances_file", "File to output distances into.", "d", "");
-PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
+PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained kNN model.", "m",
-    "");
-PARAM_STRING("output_model_file", "If specified, the kNN model will be saved "
-    "to the given file.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
+    "m", "");
+PARAM_STRING_OUT("output_model_file", "If specified, the kNN model will be "
+    "saved to the given file.", "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
+PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
+    "");
+PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
+    "'r-star', 'x', 'ball'.", "t", "kd");
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
-PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
+PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");

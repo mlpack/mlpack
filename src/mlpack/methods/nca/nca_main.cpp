@@ -70,38 +70,40 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "\n\n"
     "By default, the SGD optimizer is used.");
 
-PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
-PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
+PARAM_STRING_IN_REQ("input_file", "Input dataset to run NCA on.", "i");
+PARAM_STRING_IN_REQ("output_file", "Output file for learned distance matrix.",
     "o");
-PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
-PARAM_STRING("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
+PARAM_STRING_IN("labels_file", "File of labels for input dataset.", "l", "");
+PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
     "'lbfgs'.", "O", "sgd");
 
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
     " is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
 
-PARAM_INT("max_iterations", "Maximum number of iterations for SGD or L-BFGS (0 "
-    "indicates no limit).", "n", 500000);
-PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of SGD or L-BFGS.",
-    "t", 1e-7);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for SGD or L-BFGS "
+    "(0 indicates no limit).", "n", 500000);
+PARAM_DOUBLE_IN("tolerance", "Maximum tolerance for termination of SGD or "
+    "L-BFGS.", "t", 1e-7);
 
-PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
-    "a", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for stochastic gradient descent "
+    "(alpha).", "a", 0.01);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
-PARAM_INT("batch_size", "Batch size for mini-batch SGD.", "b", 50);
+PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
 
-PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "B",
-    5);
-PARAM_DOUBLE("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
-PARAM_DOUBLE("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
-PARAM_INT("max_line_search_trials", "Maximum number of line search trials for "
-    "L-BFGS.", "T", 50);
-PARAM_DOUBLE("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-20);
-PARAM_DOUBLE("max_step", "Maximum step of line search for L-BFGS.", "M", 1e20);
+PARAM_INT_IN("num_basis", "Number of memory points to be stored for L-BFGS.",
+    "B", 5);
+PARAM_DOUBLE_IN("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
+PARAM_DOUBLE_IN("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
+PARAM_INT_IN("max_line_search_trials", "Maximum number of line search trials "
+    "for L-BFGS.", "T", 50);
+PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m",
+    1e-20);
+PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
+    1e20);
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::nca;

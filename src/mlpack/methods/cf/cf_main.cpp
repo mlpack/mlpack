@@ -56,38 +56,38 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "parameter.");
 
 // Parameters for training a model.
-PARAM_STRING("training_file", "Input dataset to perform CF on.", "t", "");
-PARAM_STRING("algorithm", "Algorithm used for matrix factorization.", "a",
+PARAM_STRING_IN("training_file", "Input dataset to perform CF on.", "t", "");
+PARAM_STRING_IN("algorithm", "Algorithm used for matrix factorization.", "a",
     "NMF");
-PARAM_INT("neighborhood", "Size of the neighborhood of similar users to "
+PARAM_INT_IN("neighborhood", "Size of the neighborhood of similar users to "
     "consider for each query user.", "n", 5);
-PARAM_INT("rank", "Rank of decomposed matrices (if 0, a heuristic is used to "
-    "estimate the rank).", "R", 0);
-PARAM_STRING("test_file", "Test set to calculate RMSE on.", "T", "");
+PARAM_INT_IN("rank", "Rank of decomposed matrices (if 0, a heuristic is used to"
+    " estimate the rank).", "R", 0);
+PARAM_STRING_IN("test_file", "Test set to calculate RMSE on.", "T", "");
 
 // Offer the user the option to set the maximum number of iterations, and
 // terminate only based on the number of iterations.
-PARAM_INT("max_iterations", "Maximum number of iterations.", "N", 1000);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "N", 1000);
 PARAM_FLAG("iteration_only_termination", "Terminate only when the maximum "
     "number of iterations is reached.", "I");
-PARAM_DOUBLE("min_residue", "Residue required to terminate the factorization "
-    "(lower values generally mean better fits).", "r", 1e-5);
+PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
+    " (lower values generally mean better fits).", "r", 1e-5);
 
 // Load/save a model.
-PARAM_STRING("input_model_file", "File to load trained CF model from.", "m",
+PARAM_STRING_IN("input_model_file", "File to load trained CF model from.", "m",
     "");
-PARAM_STRING("output_model_file", "File to save trained CF model to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained CF model to.", "M");
 
 // Query settings.
-PARAM_STRING("query_file", "List of users for which recommendations are to "
+PARAM_STRING_IN("query_file", "List of users for which recommendations are to "
     "be generated.", "q", "");
 PARAM_FLAG("all_user_recommendations", "Generate recommendations for all "
     "users.", "A");
-PARAM_STRING("output_file","File to save output recommendations to.", "o", "");
-PARAM_INT("recommendations", "Number of recommendations to generate for each "
-    "query user.", "n", 5);
+PARAM_STRING_OUT("output_file","File to save output recommendations to.", "o");
+PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
+    " query user.", "c", 5);
 
-PARAM_INT("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
+PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
 void ComputeRecommendations(CF& cf,
                             const size_t numRecs,

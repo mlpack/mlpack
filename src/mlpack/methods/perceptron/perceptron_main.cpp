@@ -61,22 +61,23 @@ PROGRAM_INFO("Perceptron",
     );
 
 // Training parameters.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set.",
-  "l", "");
-PARAM_INT("max_iterations","The maximum number of iterations the perceptron is "
-  "to be run", "n", 1000);
+PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
+    "");
+PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
+    "l", "");
+PARAM_INT_IN("max_iterations","The maximum number of iterations the perceptron "
+    "is to be run", "n", 1000);
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing input perceptron model.", "m",
-    "");
-PARAM_STRING("output_model_file", "File to save trained perceptron model to.",
-    "M", "");
+PARAM_STRING_IN("input_model_file", "File containing input perceptron model.",
+    "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained perceptron model "
+    "to.", "M");
 
 // Testing/classification parameters.
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING("output_file", "The file in which the predicted labels for the "
-    "test set will be written.", "o", "output.csv");
+PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
+PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+    " test set will be written.", "o");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll
@@ -122,6 +123,10 @@ int main(int argc, char** argv)
   if (outputModelFile == "" && testDataFile == "")
     Log::Warn << "Output will not be saved!  (Neither --test_file nor "
         << "--output_model_file are specified.)" << endl;
+
+  if (testDataFile == "" && outputFile != "")
+    Log::Warn << "--output_file will be ignored because --test_file is not "
+        << "specified." << endl;
 
   // Now, load our model, if there is one.
   Perceptron<>* p = NULL;
@@ -241,7 +246,8 @@ int main(int argc, char** argv)
     data::RevertLabels(predictedLabels, mappings, results);
 
     // Save the predicted labels.
-    data::Save(outputFile, results, false /* non-fatal */);
+    if (outputFile != "")
+      data::Save(outputFile, results, false /* non-fatal */);
   }
 
   // Lastly, do we need to save the output model?

@@ -42,41 +42,42 @@ PROGRAM_INFO("Recurrent Model for Visual Attention",
     "should be given.");
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing the Recurrent Model for "
+PARAM_STRING_IN("input_model_file", "File containing the Recurrent Model for "
     "Visual Attention.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained Recurrent Model for "
-    "Visual Attention to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained Recurrent Model for"
+    " Visual Attention to.", "M");
 
 // Training parameters.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set.",
+PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
+    "");
+PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
     "l", "");
 
-PARAM_STRING("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
+PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
     "'lbfgs'.", "O", "minibatch-sgd");
 
-PARAM_INT("max_iterations", "Maximum number of iterations for SGD or RMSProp "
-    "(0 indicates no limit).", "n", 500000);
-PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of SGD or "
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for SGD or RMSProp"
+    " (0 indicates no limit).", "n", 500000);
+PARAM_DOUBLE_IN("tolerance", "Maximum tolerance for termination of SGD or "
     "RMSProp.", "e", 1e-7);
 
-PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
-    "a", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for stochastic gradient descent "
+    "(alpha),", "a", 0.01);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
-PARAM_INT("batch_size", "Batch size for mini-batch SGD.", "b", 20);
+PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 20);
 
-PARAM_INT("rho", "Number of steps for the back-propagate through time.", "r",
+PARAM_INT_IN("rho", "Number of steps for the back-propagate through time.", "r",
     7);
 
-PARAM_INT("classes", "The number of classes.", "c", 10);
+PARAM_INT_IN("classes", "The number of classes.", "c", 10);
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 // Test parameters.
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING("output_file", "The file in which the predicted labels for the "
-    "test set will be written.", "o", "");
+PARAM_STRING_OUT("test_file", "A file containing the test set.", "T");
+PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+    " test set will be written.", "o");
 
 int main(int argc, char** argv)
 {

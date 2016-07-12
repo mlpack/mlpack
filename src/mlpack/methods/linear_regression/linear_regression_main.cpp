@@ -25,22 +25,22 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     "(--output_predictions).  This type of regression is related to least-angle"
     " regression, which mlpack implements with the 'lars' executable.");
 
-PARAM_STRING("training_file", "File containing training set X (regressors).",
+PARAM_STRING_IN("training_file", "File containing training set X (regressors).",
     "t", "");
-PARAM_STRING("training_responses", "Optional file containing y (responses). If "
-    "not given, the responses are assumed to be the last row of the input "
+PARAM_STRING_IN("training_responses", "Optional file containing y (responses). "
+    "If not given, the responses are assumed to be the last row of the input "
     "file.", "r", "");
 
-PARAM_STRING("input_model_file", "File containing existing model (parameters).",
-    "m", "");
-PARAM_STRING("output_model_file", "File to save trained model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing existing model "
+    "(parameters).", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained model to.", "M");
 
-PARAM_STRING("test_file", "File containing X' (test regressors).", "T", "");
-PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "p", "predictions.csv");
+PARAM_STRING_IN("test_file", "File containing X' (test regressors).", "T", "");
+PARAM_STRING_OUT("output_predictions", "If --test_file is specified, this file "
+    "is where the predicted responses will be saved.", "p");
 
-PARAM_DOUBLE("lambda", "Tikhonov regularization for ridge regression.  If 0, "
-    "the method reduces to linear regression.", "l", 0.0);
+PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
+    " the method reduces to linear regression.", "l", 0.0);
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -100,6 +100,12 @@ int main(int argc, char* argv[])
   if (!computeModel && CLI::HasParam("lambda"))
   {
     Log::Warn << "--lambda ignored because no model is being trained." << endl;
+  }
+
+  if (outputModelFile == "" && outputPredictions == "")
+  {
+    Log::Warn << "Neither --output_model_file nor --output_predictions are "
+        << "specified; no output will be saved!" << endl;
   }
 
   // An input file was given and we need to generate the model.
@@ -175,6 +181,7 @@ int main(int argc, char* argv[])
     Timer::Stop("prediction");
 
     // Save predictions.
-    data::Save(outputPredictions, predictions, true, false);
+    if (outputPredictions != "")
+      data::Save(outputPredictions, predictions, true, false);
   }
 }

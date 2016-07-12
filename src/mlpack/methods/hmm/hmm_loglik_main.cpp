@@ -16,8 +16,10 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
     "log-likelihood of a given sequence of observations (--input_file).  The "
     "computed log-likelihood is given directly to stdout.");
 
-PARAM_STRING_REQ("input_file", "File containing observations,", "i");
-PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
+PARAM_STRING_IN_REQ("input_file", "File containing observations,", "i");
+PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
+
+PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -55,7 +57,7 @@ struct Loglik
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
-    cout << loglik << endl;
+    CLI::GetParam<double>("log_likelihood") = loglik;
   }
 };
 

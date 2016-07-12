@@ -45,16 +45,19 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "> -L test_labels.csv");
 
 // Define parameters for data.
-PARAM_STRING_REQ("input_file", "File containing data,", "i");
-// Define optional parameters.
-PARAM_STRING("input_labels_file", "File containing labels", "I", "");
-PARAM_STRING("training_file", "File name to save train data", "t", "");
-PARAM_STRING("test_file", "File name to save test data", "T", "");
-PARAM_STRING("training_labels_file", "File name to save train label", "l", "");
-PARAM_STRING("test_labels_file", "File name to save test label", "L", "");
+PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
 
-// Define optional test ratio, default is 0.2 (Test 20% Train 80%)
-PARAM_DOUBLE("test_ratio", "Ratio of test set, if not set,"
+// Define optional parameters.
+PARAM_STRING_IN("input_labels_file", "File containing labels", "I", "");
+PARAM_STRING_OUT("training_file", "File name to save train data", "t");
+PARAM_STRING_OUT("test_file", "File name to save test data", "T");
+PARAM_STRING_OUT("training_labels_file", "File name to save training labels "
+    "to.", "l");
+PARAM_STRING_OUT("test_labels_file", "File name to save test labels to.",
+    "L");
+
+// Define optional test ratio, default is 0.2 (Test 20% Train 80%).
+PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 using namespace mlpack;
