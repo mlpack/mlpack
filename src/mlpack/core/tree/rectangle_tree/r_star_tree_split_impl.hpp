@@ -80,12 +80,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(),
-        [] (const std::pair<ElemType, size_t>& p1,
-            const std::pair<ElemType, size_t>& p2)
-        {
-          return p1.first < p2.first;
-        });
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
     std::vector<size_t> pointIndices(p);
 
     for (size_t i = 0; i < p; i++)
@@ -122,12 +117,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(),
-        [] (const std::pair<ElemType, size_t>& p1,
-            const std::pair<ElemType, size_t>& p2)
-        {
-          return p1.first < p2.first;
-        });
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
@@ -206,12 +196,7 @@ void RStarTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& r
     sorted[i].second = i;
   }
 
-  std::sort(sorted.begin(), sorted.end(),
-      [] (const std::pair<ElemType, size_t>& p1,
-          const std::pair<ElemType, size_t>& p2)
-      {
-        return p1.first < p2.first;
-      });
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -372,12 +357,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(),
-        [] (const std::pair<ElemType, size_t>& p1,
-            const std::pair<ElemType, size_t>& p2)
-        {
-          return p1.first < p2.first;
-        });
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -460,12 +440,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(),
-        [] (const std::pair<ElemType, size_t>& p1,
-            const std::pair<ElemType, size_t>& p2)
-        {
-          return p1.first < p2.first;
-        });
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -556,12 +531,7 @@ bool RStarTreeSplit<TreeType>::SplitNonLeafNode(TreeType* tree,
     }
   }
 
-  std::sort(sorted.begin(), sorted.end(),
-      [] (const std::pair<ElemType, size_t>& p1,
-          const std::pair<ElemType, size_t>& p2)
-      {
-        return p1.first < p2.first;
-      });
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());

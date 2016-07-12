@@ -110,6 +110,17 @@ class XTreeSplit
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
+
+  /**
+   * Comparator for sorting with std::pair. This comparator works a little bit
+   * faster then the default comparator.
+   */
+  template<typename ElemType>
+  static bool PairComp(const std::pair<ElemType, size_t>& p1,
+                       const std::pair<ElemType, size_t>& p2)
+  {
+    return p1.first < p2.first;
+  }
 };
 
 } // namespace tree
