@@ -666,7 +666,8 @@ void CLI::PrintHelp(const std::string& param)
       std::cout << HyphenateString(desc, 32) << std::endl;
     }
 
-    std::cout << std::endl;
+    if (printedHeader)
+      std::cout << std::endl;
   }
 
   // Helpful information at the bottom of the help output, to point the user to
