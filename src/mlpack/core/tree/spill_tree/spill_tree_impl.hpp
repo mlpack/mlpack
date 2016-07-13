@@ -9,9 +9,6 @@
 // In case it wasn't included already for some reason.
 #include "spill_tree.hpp"
 
-#include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/util/log.hpp>
-
 namespace mlpack {
 namespace tree {
 
@@ -39,7 +36,7 @@ SpillTree(
 {
   std::vector<size_t> points;
   points.reserve(dataset->n_cols);
-  for(size_t i=0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; i++)
     points.push_back(i);
 
   // Do the actual splitting of this node.
@@ -73,7 +70,7 @@ SpillTree(
 {
   std::vector<size_t> points;
   points.reserve(dataset->n_cols);
-  for(size_t i=0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; i++)
     points.push_back(i);
 
   // Do the actual splitting of this node.
@@ -454,7 +451,7 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 {
   // We need to expand the bounds of this node properly, ignoring overlapping
   // points (they will be included in the bound of the other node).
-  for(size_t i = 0; i < overlapIndex; i++)
+  for (size_t i = 0; i < overlapIndex; i++)
     bound |= dataset->cols(points[i], points[i]);
 
   // Calculate the furthest descendant distance.

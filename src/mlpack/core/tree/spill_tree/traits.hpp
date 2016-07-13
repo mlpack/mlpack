@@ -26,7 +26,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 class TreeTraits<SpillTree<MetricType, StatisticType, MatType, BoundType,
-                                 SplitType>>
+    SplitType>>
 {
  public:
   /**
