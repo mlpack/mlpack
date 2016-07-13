@@ -491,9 +491,9 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
-  left = new SpillTree(this, leftPoints, overlapIndexLeft, maxLeafSize, tau,
+  left = new SpillTree(this, leftPoints, overlapIndexLeft, tau, maxLeafSize,
       rho);
-  right = new SpillTree(this, rightPoints, overlapIndexRight, maxLeafSize, tau,
+  right = new SpillTree(this, rightPoints, overlapIndexRight, tau, maxLeafSize,
       rho);
 
   // Update count number, to represent the number of descendant points.
