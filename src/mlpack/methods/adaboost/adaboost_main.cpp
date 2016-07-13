@@ -281,6 +281,12 @@ int main(int argc, char *argv[])
         << "no results will be saved." << endl;
   }
 
+  if (CLI::HasParam("output_file") && !CLI::HasParam("test_file"))
+  {
+    Log::Warn << "--output_file ignored because --test_file is not specified."
+        << endl;
+  }
+
   AdaBoostModel m;
   if (CLI::HasParam("training_file"))
   {
