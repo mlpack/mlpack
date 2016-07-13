@@ -163,7 +163,8 @@ void PerformAction(CF& c)
 
     // Save the output.
     const string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, recommendations);
+    if (outputFile != "")
+      data::Save(outputFile, recommendations);
   }
 
   if (CLI::HasParam("test_file"))
@@ -268,6 +269,15 @@ int main(int argc, char** argv)
   if (CLI::HasParam("query_file") && CLI::HasParam("all_user_recommendations"))
     Log::Fatal << "Both --query_file and --all_user_recommendations are given, "
         << "but only one is allowed!" << endl;
+
+  if (!CLI::HasParam("output_file") && !CLI::HasParam("output_model_file"))
+    Log::Warn << "Neither --output_file nor --output_model_file are specified; "
+        << "no output will be saved." << endl;
+
+  if (CLI::HasParam("output_file") && (!CLI::HasParam("query_file") ||
+      CLI::HasParam("all_user_recommendations")))
+    Log::Warn << "--output_file is ignored because neither --query_file nor "
+        << "--all_user_recommendations are specified." << endl;
 
   // Either load from a model, or train a model.
   if (CLI::HasParam("training_file"))
