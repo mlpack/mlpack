@@ -608,6 +608,11 @@ void CLI::PrintHelp(const std::string& param)
       if ((pass == 2) && input) // Output options only (always optional).
         continue;
 
+      // Only print string output options that end in "_file".
+      if ((pass == 2) && ((data.tname != TYPENAME(std::string)) ||
+          (data.name.substr(data.name.size() - 5, 5) != "_file")))
+        continue;
+
       if (!printedHeader)
       {
         printedHeader = true;
