@@ -153,6 +153,10 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
+  if (!CLI::HasParam("output_file"))
+    Log::Warn << "--output_file is not specified; no output will be saved!"
+        << endl;
+
   // Load input dataset.
   mat dataset;
   const string inputFile = CLI::GetParam<string>("input_file");
@@ -243,5 +247,6 @@ int main(int argc, char** argv)
 
   // Save the output dataset.
   const string outputFile = CLI::GetParam<string>("output_file");
-  data::Save(outputFile, dataset, true); // Fatal on failure.
+  if (outputFile != "")
+    data::Save(outputFile, dataset, true); // Fatal on failure.
 }
