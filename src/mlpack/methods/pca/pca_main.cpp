@@ -29,7 +29,7 @@ PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
 PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
     "If 0, no dimensionality reduction is performed.", "d", 0);
 PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
-    "between 0 and 1.  If 1, all variance is retained.  Overrides -d.", "V", 0);
+    "between 0 and 1.  If 1, all variance is retained.  Overrides -d.", "r", 0);
 
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
@@ -53,8 +53,8 @@ void RunPCA(arma::mat& dataset,
   if (varToRetain != 0)
   {
     if (newDimension != 0)
-      Log::Warn << "New dimensionality (-d) ignored because -V was specified."
-          << endl;
+      Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
+          << "(-r) was specified." << endl;
 
     varRetained = p.Apply(dataset, varToRetain);
   }
