@@ -50,6 +50,9 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI()
 {
+  // We need to print any output options.
+  PrintOutput();
+
   // Terminate the program timers.
   std::map<std::string, std::chrono::microseconds>::iterator it;
   for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
@@ -456,6 +459,53 @@ void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
               << " is defined multiple times." << std::endl;
         }
       }
+    }
+  }
+}
+
+// Prints any output options.
+void CLI::PrintOutput()
+{
+  gmap_t& gmap = GetSingleton().globalValues;
+  gmap_t::iterator iter;
+
+  for (iter = gmap.begin(); iter != gmap.end(); ++iter)
+  {
+    std::string key = iter->first;
+    ParamData data = iter->second;
+
+    const std::list<std::string>& inputOptions = GetSingleton().inputOptions;
+    const bool input = (std::find(std::begin(inputOptions),
+        std::end(inputOptions), key) != std::end(inputOptions));
+
+    // Ignore input options.
+    if (input)
+      continue;
+
+    // Ignore string output options that end in _file.
+    if ((data.tname == TYPENAME(std::string)) &&
+        (data.name.substr(data.name.size() - 5, 5) == "_file"))
+      continue;
+
+    // Now, we must print it, so figure out what the type is.
+    if (data.tname == TYPENAME(std::string))
+    {
+      std::string value = GetParam<std::string>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else if (data.tname == TYPENAME(int))
+    {
+      int value = GetParam<int>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else if (data.tname == TYPENAME(double))
+    {
+      double value = GetParam<double>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else
+    {
+      std::cout << key << ": unknown data type" << std::endl;
     }
   }
 }

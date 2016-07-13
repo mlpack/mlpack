@@ -311,6 +311,11 @@ class CLI
   static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
 
   /**
+   * Print the value of any output options on stdout.
+   */
+  static void PrintOutput();
+
+  /**
    * Print out the current hierarchy.
    */
   static void Print();
