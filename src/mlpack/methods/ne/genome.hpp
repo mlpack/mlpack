@@ -255,12 +255,12 @@ class Genome {
     assert(input.size() == aNumInput);
 
     SortLinkGenes();
-
+    
     // Set all neurons' input to be 0.
     for (ssize_t i=0; i<NumNeuron(); ++i) {
       aNeuronGenes[i].Input(0);
     }
-
+    
     // Set input neurons.
     for (ssize_t i=0; i<aNumInput; ++i) {
       aNeuronGenes[i].Activation(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
@@ -310,6 +310,11 @@ class Genome {
     if (neuronGene.Type() == HIDDEN) {
       aNeuronGenes.push_back(neuronGene);
     }
+  }
+
+  // Show genome structure.
+  void Show() {
+    
   }
 
  private:

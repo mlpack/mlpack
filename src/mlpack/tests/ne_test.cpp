@@ -350,21 +350,21 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   Parameters params;
   params.aPopulationSize = 500;
   params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 1.0;
-  params.aCoeffWeightDiff = 1.0;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
   params.aCompatThreshold = 1.0;
   params.aStaleAgeThreshold = 15;
   params.aCrossoverRate = 0.75;
   params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.5;
-  params.aPerturbWeightProb = 0.5;
-  params.aMutateWeightSize = 0.9;
-  params.aMutateAddLinkProb = 0.3;
+  params.aMutateWeightProb = 0.2;
+  params.aPerturbWeightProb = 0.9;
+  params.aMutateWeightSize = 0.1;
+  params.aMutateAddLinkProb = 0.5;
   params.aMutateAddRecurrentLinkProb = 0;
   params.aMutateAddLoopLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.01;
-  params.aMutateEnabledProb = 0.1;
-  params.aMutateDisabledProb = 0.1;
+  params.aMutateAddNeuronProb = 0.5;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
 
   // Set seed genome for cart pole task.
   ssize_t id = 0;

@@ -172,7 +172,7 @@ class TaskCartPole {
       }
     }
 
-    return fitness;
+    return 1/fitness;
   }
 
 };
