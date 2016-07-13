@@ -46,6 +46,7 @@ set(DIRS
   perceptron
   quic_svd
   radical
+  randomized_svd
   range_search
   rann
   rmva

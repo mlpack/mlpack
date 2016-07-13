@@ -49,6 +49,8 @@ struct Generate
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
     const size_t length = (size_t) CLI::GetParam<int>("length");
+    const string outputFile = CLI::GetParam<string>("output_file");
+    const string sequenceFile = CLI::GetParam<string>("state_file");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
@@ -59,13 +61,11 @@ struct Generate
     hmm.Generate(length, observations, sequence, startState);
 
     // Now save the output.
-    const string outputFile = CLI::GetParam<string>("output_file");
-    if (outputFile != "")
+    if (CLI::HasParam("output_file"))
       data::Save(outputFile, observations, true);
 
     // Do we want to save the hidden sequence?
-    const string sequenceFile = CLI::GetParam<string>("state_file");
-    if (sequenceFile != "")
+    if (CLI::HasParam("state_file"))
       data::Save(sequenceFile, sequence, true);
 
     if (outputFile == "" && sequenceFile == "")
@@ -78,6 +78,10 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

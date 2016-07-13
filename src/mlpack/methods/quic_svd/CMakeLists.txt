@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   quic_svd.hpp
-  quic_svd_impl.hpp
+  quic_svd.cpp
 )
 
 # Add directory name to sources.

@@ -22,7 +22,7 @@
 #define DEFAULT_INT 42
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"

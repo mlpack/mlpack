@@ -90,25 +90,28 @@ int main(int argc, char** argv)
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile = CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
+  const string predictionsFile =
+      CLI::GetParam<string>("predictions_file");
+  const string probabilitiesFile =
+      CLI::GetParam<string>("probabilities_file");
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((!predictionsFile.empty() || !probabilitiesFile.empty()) &&
-      testFile.empty())
+  if ((CLI::HasParam("predictions_file") ||
+       CLI::HasParam("probabilities_file")) &&
+       !CLI::HasParam("test_file"))
     Log::Fatal << "--test_file must be specified if --predictions_file or "
         << "--probabilities_file is specified." << endl;
 
-  if (trainingFile.empty() && inputModelFile.empty())
+  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "One of --training_file or --input_model_file must be "
         << "specified!" << endl;
 
-  if (!trainingFile.empty() && labelsFile.empty())
+  if (CLI::HasParam("training_file") && !CLI::HasParam("labels_file"))
     Log::Fatal << "If --training_file is specified, --labels_file must be "
         << "specified too!" << endl;
 
-  if (trainingFile.empty() && CLI::HasParam("batch_mode"))
+  if (!CLI::HasParam("training_file") && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
 
   if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
@@ -177,8 +180,10 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile = CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
+  const string predictionsFile =
+      CLI::GetParam<string>("predictions_file");
+  const string probabilitiesFile =
+      CLI::GetParam<string>("probabilities_file");
   bool batchTraining = CLI::HasParam("batch_mode");
   const size_t passes = (size_t) CLI::GetParam<int>("passes");
   if (passes > 1)
@@ -186,7 +191,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
 
   TreeType* tree = NULL;
   DatasetInfo datasetInfo;
-  if (inputModelFile.empty())
+  if (!CLI::HasParam("input_model_file"))
   {
     arma::mat trainingSet;
     data::Load(trainingFile, trainingSet, datasetInfo, true);
@@ -216,7 +221,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     tree = new TreeType(datasetInfo, 1, 1);
     data::Load(inputModelFile, "streamingDecisionTree", *tree, true);
 
-    if (!trainingFile.empty())
+    if (CLI::HasParam("training_file"))
     {
       arma::mat trainingSet;
       data::Load(trainingFile, trainingSet, datasetInfo, true);
@@ -244,7 +249,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     }
   }
 
-  if (!trainingFile.empty())
+  if (CLI::HasParam("training_file"))
   {
     // Get training error.
     arma::mat trainingSet;
@@ -282,7 +287,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   Log::Info << nodes << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
-  if (!testFile.empty())
+  if (CLI::HasParam("test_file"))
   {
     arma::mat testSet;
     data::Load(testFile, testSet, datasetInfo, true);
@@ -312,15 +317,15 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
           100.0 << ")." << endl;
     }
 
-    if (!predictionsFile.empty())
+    if (CLI::HasParam("predictions_file"))
       data::Save(predictionsFile, predictions);
 
-    if (!probabilitiesFile.empty())
+    if (CLI::HasParam("probabilities_file"))
       data::Save(probabilitiesFile, probabilities);
   }
 
   // Check the accuracy on the training set.
-  if (!outputModelFile.empty())
+  if (CLI::HasParam("output_model_file"))
     data::Save(outputModelFile, "streamingDecisionTree", *tree, true);
 
   // Clean up memory.

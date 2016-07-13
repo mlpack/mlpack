@@ -18,7 +18,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
@@ -390,7 +390,6 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
-  math::RandomSeed(std::time(NULL));
   arma::mat data(3, 3000);
   data.randn();
 

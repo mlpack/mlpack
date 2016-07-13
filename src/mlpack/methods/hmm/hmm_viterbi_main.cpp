@@ -40,6 +40,7 @@ struct Viterbi
   {
     // Load observations.
     const string inputFile = CLI::GetParam<string>("input_file");
+    const string outputFile = CLI::GetParam<string>("output_file");
 
     mat dataSeq;
     data::Load(inputFile, dataSeq, true);
@@ -62,12 +63,8 @@ struct Viterbi
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
-    const string outputFile = CLI::GetParam<string>("output_file");
-    if (outputFile != "")
+    if (CLI::HasParam("output_file"))
       data::Save(outputFile, sequence, true);
-    else
-      Log::Warn << "--output_file not specified; no output will be saved."
-          << endl;
   }
 };
 
@@ -75,6 +72,10 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   const string modelFile = CLI::GetParam<string>("model_file");
   LoadHMMAndPerformAction<Viterbi>(modelFile);

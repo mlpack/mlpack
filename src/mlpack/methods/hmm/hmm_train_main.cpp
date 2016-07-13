@@ -88,7 +88,7 @@ struct Train
             << endl;
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
-    if (labelsFile != "")
+    if (CLI::HasParam("labels_file"))
     {
       // Do we have multiple label files to load?
       char lineBuf[1024];
@@ -271,7 +271,7 @@ int main(int argc, char** argv)
   }
 
   // If we have a model file, we can autodetect the type.
-  if (modelFile != "")
+  if (CLI::HasParam("model_file"))
   {
     LoadHMMAndPerformAction<Train>(modelFile, &trainSeq);
   }

@@ -32,16 +32,22 @@ int main(int argc, char **argv)
 {
   // Read from command line.
   CLI::ParseCommandLine(argc, argv);
+  const string inputFile = CLI::GetParam<string>("input_file");
+  const string outputFile = CLI::GetParam<string>("output_file");
+  const int newDim = CLI::GetParam<int>("new_dim");
+  const int numNeighbors = CLI::GetParam<int>("num_neighbors");
+
+  if (CLI::HasParam("output_file"))
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  const string inputFile = CLI::GetParam<string>("input_file");
   mat data;
   data::Load(inputFile, data, true);
 
   // Verify that the requested dimensionality is valid.
-  const int newDim = CLI::GetParam<int>("new_dim");
   if (newDim <= 0 || newDim > (int) data.n_rows)
   {
     Log::Fatal << "Invalid new dimensionality (" << newDim << ").  Must be "
@@ -50,7 +56,6 @@ int main(int argc, char **argv)
   }
 
   // Verify that the number of neighbors is valid.
-  const int numNeighbors = CLI::GetParam<int>("num_neighbors");
   if (numNeighbors <= 0 || numNeighbors > (int) data.n_cols)
   {
     Log::Fatal << "Invalid number of neighbors (" << numNeighbors << ").  Must "
@@ -65,7 +70,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  const string outputFile = CLI::GetParam<string>("output_file");
-  if (outputFile != "")
+  if (CLI::HasParam("output_file"))
     data::Save(outputFile, output, true);
 }

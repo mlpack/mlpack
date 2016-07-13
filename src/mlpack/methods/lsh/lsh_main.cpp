@@ -5,14 +5,8 @@
  * This file computes the approximate nearest-neighbors using 2-stable
  * Locality-sensitive Hashing.
  */
-#include <time.h>
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
 
 #include "lsh_search.hpp"
 
@@ -136,6 +130,7 @@ int main(int argc, char *argv[])
   const size_t numProj = CLI::GetParam<int>("projections");
   const size_t numTables = CLI::GetParam<int>("tables");
   const double hashWidth = CLI::GetParam<double>("hash_width");
+  const size_t numProbes = (size_t) CLI::GetParam<int>("num_probes");
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -179,15 +174,34 @@ int main(int argc, char *argv[])
         Log::Info << "Loaded query data from '" << queryFile << "' ("
             << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
       }
-      allkann.Search(queryData, k, neighbors, distances);
+      allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
     {
-      allkann.Search(k, neighbors, distances);
+      allkann.Search(k, neighbors, distances, 0, numProbes);
     }
   }
 
   Log::Info << "Neighbors computed." << endl;
+
+  // Compute recall, if desired.
+  if (CLI::HasParam("true_neighbors_file"))
+  {
+    const string trueNeighborsFile = 
+        CLI::GetParam<string>("true_neighbors_file");
+
+    // Load the true neighbors.
+    arma::Mat<size_t> trueNeighbors;
+    data::Load(trueNeighborsFile, trueNeighbors, true);
+    Log::Info << "Loaded true neighbor indices from '" 
+        << trueNeighborsFile << "'." << endl;
+
+    // Compute recall and print it.
+    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+        trueNeighbors);
+
+    Log::Info << "Recall: " << recallPercentage << endl;
+  }
 
   // Save output, if desired.
   if (CLI::HasParam("distances_file"))

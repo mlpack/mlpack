@@ -22,6 +22,7 @@ class NeighborSearchRules
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
                       MetricType& metric,
+                      const double epsilon = 0,
                       const bool sameSet = false);
   /**
    * Get the distance from the query point to the reference point.
@@ -119,6 +120,9 @@ class NeighborSearchRules
 
   //! Denotes whether or not the reference and query sets are the same.
   bool sameSet;
+
+  //! Relative error to be considered in approximate search.
+  const double epsilon;
 
   //! The last query point BaseCase() was called with.
   size_t lastQueryIndex;

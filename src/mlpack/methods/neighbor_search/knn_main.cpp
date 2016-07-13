@@ -64,9 +64,10 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
-    "'r-star', 'x', 'ball'.", "t", "kd");
+    "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, and R* trees).", "l", 20);
+    "trees, R* trees, X trees, Hilbert R trees, R+ trees and R++ trees).", "l",
+    20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -75,6 +76,8 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
+PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
+    "search with given relative error.", "e", 0);
 
 // Convenience typedef.
 typedef NSModel<NearestNeighborSort> KNNModel;
@@ -138,10 +141,14 @@ int main(int argc, char *argv[])
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
   if (lsInt < 1)
-  {
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than 0." << endl;
-  }
+
+  // Sanity check on epsilon.
+  const double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be non-negative. "
+        << endl;
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<NearestNeighborSort> knn;
@@ -167,9 +174,16 @@ int main(int argc, char *argv[])
       tree = KNNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KNNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KNNModel::HILBERT_R_TREE;
+    else if (treeType == "r-plus")
+      tree = KNNModel::R_PLUS_TREE;
+    else if (treeType == "r-plus-plus")
+      tree = KNNModel::R_PLUS_PLUS_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
+          << "'r-plus' and 'r-plus-plus'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -181,7 +195,8 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
+        epsilon);
   }
   else
   {
@@ -197,6 +212,7 @@ int main(int argc, char *argv[])
     knn.SingleMode() = CLI::HasParam("single_mode");
     knn.Naive() = CLI::HasParam("naive");
     knn.LeafSize() = size_t(lsInt);
+    knn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.

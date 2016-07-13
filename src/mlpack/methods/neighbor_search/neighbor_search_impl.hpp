@@ -75,6 +75,7 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 NeighborSearch(const MatType& referenceSetIn,
                const bool naive,
                const bool singleMode,
+               const double epsilon,
                const MetricType metric) :
     referenceTree(naive ? NULL :
         BuildTree<MatType, Tree>(referenceSetIn, oldFromNewReferences)),
@@ -83,12 +84,14 @@ NeighborSearch(const MatType& referenceSetIn,
     setOwner(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
+    epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Nothing to do.
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
 }
 
 // Construct the object.
@@ -103,6 +106,7 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 NeighborSearch(MatType&& referenceSetIn,
                const bool naive,
                const bool singleMode,
+               const double epsilon,
                const MetricType metric) :
     referenceTree(naive ? NULL :
         BuildTree<MatType, Tree>(std::move(referenceSetIn),
@@ -113,12 +117,14 @@ NeighborSearch(MatType&& referenceSetIn,
     setOwner(naive),
     naive(naive),
     singleMode(!naive && singleMode),
+    epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Nothing to do.
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
 }
 
 // Construct the object.
@@ -132,6 +138,7 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 NeighborSearch(Tree* referenceTree,
                const bool singleMode,
+               const double epsilon,
                const MetricType metric) :
     referenceTree(referenceTree),
     referenceSet(&referenceTree->Dataset()),
@@ -139,12 +146,14 @@ NeighborSearch(Tree* referenceTree,
     setOwner(false),
     naive(false),
     singleMode(singleMode),
+    epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Nothing else to initialize.
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
 }
 
 // Construct the object without a reference dataset.
@@ -158,6 +167,7 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     NeighborSearch(const bool naive,
                    const bool singleMode,
+                   const double epsilon,
                    const MetricType metric) :
     referenceTree(NULL),
     referenceSet(new MatType()), // Empty matrix.
@@ -165,11 +175,14 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     setOwner(true),
     naive(naive),
     singleMode(singleMode),
+    epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
@@ -364,7 +377,8 @@ Search(const MatType& querySet,
   if (naive)
   {
     // Create the helper object for the tree traversal.
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
+        epsilon);
 
     // The naive brute-force traversal.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -376,7 +390,8 @@ Search(const MatType& querySet,
   else if (singleMode)
   {
     // Create the helper object for the tree traversal.
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
+        epsilon);
 
     // Create the traverser.
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -402,7 +417,7 @@ Search(const MatType& querySet,
 
     // Create the helper object for the tree traversal.
     RuleType rules(*referenceSet, queryTree->Dataset(), *neighborPtr,
-        *distancePtr, metric);
+        *distancePtr, metric, epsilon);
 
     // Create the traverser.
     TraversalType<RuleType> traverser(rules);
@@ -527,7 +542,8 @@ Search(Tree* queryTree,
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, querySet, *neighborPtr, distances, metric);
+  RuleType rules(*referenceSet, querySet, *neighborPtr, distances, metric,
+      epsilon);
 
   // Create the traverser.
   TraversalType<RuleType> traverser(rules);
@@ -598,7 +614,7 @@ Search(const size_t k,
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
   RuleType rules(*referenceSet, *referenceSet, *neighborPtr, *distancePtr,
-      metric, true /* don't return the same point as nearest neighbor */);
+      metric, epsilon, true /* don't return the same point as nearest neighbor */);
 
   if (naive)
   {
@@ -638,9 +654,7 @@ Search(const size_t k,
         nodes.pop();
 
         // Reset bounds of this node.
-        node->Stat().FirstBound() = SortPolicy::WorstDistance();
-        node->Stat().SecondBound() = SortPolicy::WorstDistance();
-        node->Stat().LastDistance() = 0.0;
+        node->Stat().Reset();
 
         // Then add the children.
         for (size_t i = 0; i < node->NumChildren(); ++i)

@@ -6,15 +6,11 @@
  */
 #include <list>
 #include <boost/program_options.hpp>
-#include <boost/any.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <iostream>
-#include <string>
 
 #include "cli.hpp"
 #include "log.hpp"
-
-#include "option.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -102,7 +98,7 @@ CLI::~CLI()
  * @param input If true, the parameter is an input parameter (not an output
  *      parameter).
  */
-void CLI::Add(const std::string& path,
+void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
               const bool required,
@@ -111,10 +107,11 @@ void CLI::Add(const std::string& path,
   po::options_description& desc = CLI::GetSingleton().desc;
 
   // Must make use of boost option name syntax.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId =
+      alias.length() ? identifier + "," + alias : identifier;
 
   // Deal with a required alias.
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost::program_options.
   desc.add_options()(progOptId.c_str(), description.c_str());
@@ -125,22 +122,22 @@ void CLI::Add(const std::string& path,
   ParamData data;
   data.desc = description;
   data.tname = "";
-  data.name = path;
+  data.name = identifier;
   data.isFlag = false;
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
 
   // Depending on whether the option is input or output, add it to the list of
   // input or output options.
   if (input)
-    GetSingleton().inputOptions.push_front(path);
+    GetSingleton().inputOptions.push_front(identifier);
   else
-    GetSingleton().outputOptions.push_front(path);
+    GetSingleton().outputOptions.push_front(identifier);
 
   return;
 }
@@ -165,8 +162,8 @@ void CLI::AddAlias(const std::string& alias, const std::string& original)
  * @brief Adds a flag parameter to CLI.
  */
 void CLI::AddFlag(const std::string& identifier,
-                 const std::string& description,
-                 const std::string& alias)
+                  const std::string& description,
+                  const std::string& alias)
 {
   // Reuse functionality from Add().
   Add(identifier, description, alias, false);
@@ -461,36 +458,6 @@ void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
       }
     }
   }
-}
-
-/**
- * Parses a stream for arguments
- *
- * @param stream The stream to be parsed.
- */
-void CLI::ParseStream(std::istream& stream)
-{
-  po::variables_map& vmap = GetSingleton().vmap;
-  po::options_description& desc = GetSingleton().desc;
-
-  // Parse the stream; place options & values into vmap.
-  try
-  {
-    po::store(po::parse_config_file(stream, desc), vmap);
-  }
-  catch (std::exception& ex)
-  {
-    Log::Fatal << ex.what() << std::endl;
-  }
-
-  // Flush the buffer; make sure changes are propagated to vmap.
-  po::notify(vmap);
-
-  UpdateGmap();
-  DefaultMessages();
-  RequiredOptions();
-
-  Timer::Start("total_time");
 }
 
 /* Prints out the current hierarchy. */

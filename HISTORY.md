@@ -1,5 +1,21 @@
-### mlpack 2.0.2
+### mlpack 2.0.3
 ###### 2016-??-??
+  * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
+    now be used to control the number of extra bins that are probed, as can the
+    -T (--num_probes) option to mlpack_lsh.
+
+  * Added the Hilbert R tree to src/mlpack/core/tree/rectangle_tree/ (#664).  It
+    can be used as the typedef HilbertRTree, and it is now an option in the
+    mlpack_knn, mlpack_kfn, mlpack_range_search, and mlpack_krann command-line
+    programs.
+
+  * Added the mlpack_preprocess_split and mlpack_preprocess_binarize programs,
+    which can be used for preprocessing code (#650, #666).
+
+  * Added OpenMP support to LSHSearch and mlpack_lsh (#700).
+
+### mlpack 2.0.2
+###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).
@@ -25,12 +41,15 @@
     and MLPACK_VERSION_PATCH.  The old names will remain in place until
     mlpack 3.0.0.
 
-  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
-    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
-    3.0.0.
+  * Renamed mlpack_allknn, mlpack_allkfn, and mlpack_allkrann to mlpack_knn,
+    mlpack_kfn, and mlpack_krann.  The mlpack_allknn, mlpack_allkfn, and
+    mlpack_allkrann programs will remain as copies until mlpack 3.0.0.
 
   * Add --random_initialization option to mlpack_hmm_train, for use when no
     labels are provided.
+
+  * Add --kill_empty_clusters option to mlpack_kmeans and KillEmptyClusters
+    policy for the KMeans class (#595, #596).
 
 ### mlpack 2.0.1
 ###### 2016-02-04
