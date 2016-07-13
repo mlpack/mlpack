@@ -577,7 +577,7 @@ void CLI::PrintHelp(const std::string& param)
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
 
-  for (size_t pass = 0; pass < 4; ++pass)
+  for (size_t pass = 0; pass < 3; ++pass)
   {
     bool printedHeader = false;
 
@@ -603,11 +603,9 @@ void CLI::PrintHelp(const std::string& param)
       // Filter un-printed options.
       if ((pass == 0) && !(required && input)) // Required input options only.
         continue;
-      if ((pass == 1) && !(required && !input)) // Required output options only.
+      if ((pass == 1) && !(!required && input)) // Optional input options only.
         continue;
-      if ((pass == 2) && !(!required && input)) // Optional input options only.
-        continue;
-      if ((pass == 3) && (required || input)) // Optional output options only.
+      if ((pass == 2) && input) // Output options only (always optional).
         continue;
 
       if (!printedHeader)
@@ -616,14 +614,12 @@ void CLI::PrintHelp(const std::string& param)
         if (pass == 0)
           std::cout << "Required input options:" << std::endl << std::endl;
         else if (pass == 1)
-          std::cout << "Required output options:" << std::endl << std::endl;
-        else if (pass == 2)
           std::cout << "Optional input options: " << std::endl << std::endl;
-        else if (pass == 3)
+        else if (pass == 2)
           std::cout << "Optional output options: " << std::endl << std::endl;
       }
 
-      if (pass >= 2) // Append default value to description.
+      if (pass >= 1) // Append default value to description.
       {
         desc += "  Default value ";
         std::stringstream tmp;
