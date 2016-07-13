@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model_file"))
   {
-    const string outputModelFile = CLI::GetParam<string>("output_model_File");
+    const string outputModelFile = CLI::GetParam<string>("output_model_file");
     data::Save(outputModelFile, "kfn_model", kfn);
   }
 }
