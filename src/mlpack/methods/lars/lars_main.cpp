@@ -51,8 +51,13 @@ PARAM_STRING_OUT("output_model_file", "File to save model to.", "M");
 
 PARAM_STRING_IN("test_file", "File containing points to regress on (test "
     "points).", "t", "");
+
+// Kept for reverse compatibility until mlpack 3.0.0.
 PARAM_STRING_OUT("output_predictions", "If --test_file is specified, this file "
-    "is where the predicted responses will be saved.", "o");
+    "is where the predicted responses will be saved.", "");
+// This is the future name of the parameter.
+PARAM_STRING_OUT("output_predictions_file", "If --test_file is specified, this "
+    "file is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
@@ -74,6 +79,20 @@ int main(int argc, char* argv[])
   double lambda1 = CLI::GetParam<double>("lambda1");
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::HasParam("use_cholesky");
+
+  // Reverse compatibility.  We can remove these for mlpack 3.0.0.
+  if (CLI::HasParam("output_predictions") &&
+      CLI::HasParam("output_predictions_file"))
+    Log::Fatal << "Cannot specify both --output_predictions and "
+        << "--output_predictions_file!" << endl;
+
+  if (CLI::HasParam("output_predictions"))
+  {
+    Log::Warn << "--output_predictions is deprecated and will be removed in "
+        << "mlpack 3.0.0; use --output_predictions_file instead." << endl;
+    CLI::GetParam<string>("output_predictions_file") =
+        CLI::GetParam<string>("output_predictions");
+  }
 
   // Check parameters -- make sure everything given makes sense.
   if (CLI::HasParam("input_file") && !CLI::HasParam("responses_file"))
