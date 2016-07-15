@@ -38,7 +38,7 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
 PARAM_STRING_IN("training_file", "A file containing the training set (the "
     "matrix of predictors, X).", "t", "");
 PARAM_STRING_IN("labels_file", "A file containing labels (0 or 1) for the "
-    "points in the training set (y). The labels must order as a row", "l", "");
+    "points in the training set (y). The labels must order as a row.", "l", "");
 
 // Model loading/saving.
 PARAM_STRING_IN("input_model_file", "File containing existing model "
@@ -104,7 +104,8 @@ int main(int argc, char** argv)
     Log::Fatal << "One of --input_model_file or --training_file must be specified."
         << endl;
 
-  if (CLI::HasParam("training_file") && CLI::HasParam("labels_file"))
+  if ((CLI::HasParam("training_file") || CLI::HasParam("labels_file")) &&
+      !(CLI::HasParam("training_file") && CLI::HasParam("labels_file")))
     Log::Fatal << "--labels_file must be specified with --training_file!"
         << endl;
 

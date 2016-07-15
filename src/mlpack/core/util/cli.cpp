@@ -487,6 +487,13 @@ void CLI::PrintOutput()
         (data.name.substr(data.name.size() - 5, 5) == "_file"))
       continue;
 
+    // Reverse compatibility; should be removed for mlpack 3.0.0.  Don't print
+    // some options that have only been kept for reverse compatibility.
+    if (data.name == "output_predictions" ||
+        data.name == "output_ic" ||
+        data.name == "output_unmixing")
+      continue;
+
     // Now, we must print it, so figure out what the type is.
     if (data.tname == TYPENAME(std::string))
     {
@@ -661,6 +668,11 @@ void CLI::PrintHelp(const std::string& param)
       // Only print string output options that end in "_file".
       if ((pass == 2) && ((data.tname != TYPENAME(std::string)) ||
           (data.name.substr(data.name.size() - 5, 5) != "_file")))
+        continue;
+
+      // For reverse compatibility: this can be removed when these options are
+      // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
+      if (data.name == "inputFile")
         continue;
 
       if (!printedHeader)

@@ -48,6 +48,10 @@ PARAM_STRING_IN("input_model_file", "File to load LSH model from.  (Cannot be "
     "specified with --reference_file.)", "m", "");
 PARAM_STRING_OUT("output_model_file", "File to save LSH model to.", "M");
 
+// For testing recall.
+PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute "
+    "recall with (the recall is printed when -v is specified).", "t", "");
+
 PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
     "");
@@ -58,6 +62,8 @@ PARAM_INT_IN("tables", "The number of hash tables to be used.", "L", 30);
 PARAM_DOUBLE_IN("hash_width", "The hash width for the first-level hashing in "
     "the LSH preprocessing. By default, the LSH class automatically estimates "
     "a hash width for its use.", "H", 0.0);
+PARAM_INT_IN("num_probes", "Number of additional probes for multiprobe LSH; if "
+    "0, traditional LSH is used.", "T", 0);
 PARAM_INT_IN("second_hash_size", "The size of the second level hash table.",
     "S", 99901);
 PARAM_INT_IN("bucket_size", "The size of a bucket in the second level hash.",
@@ -187,13 +193,13 @@ int main(int argc, char *argv[])
   // Compute recall, if desired.
   if (CLI::HasParam("true_neighbors_file"))
   {
-    const string trueNeighborsFile = 
+    const string trueNeighborsFile =
         CLI::GetParam<string>("true_neighbors_file");
 
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors;
     data::Load(trueNeighborsFile, trueNeighbors, true);
-    Log::Info << "Loaded true neighbor indices from '" 
+    Log::Info << "Loaded true neighbor indices from '"
         << trueNeighborsFile << "'." << endl;
 
     // Compute recall and print it.

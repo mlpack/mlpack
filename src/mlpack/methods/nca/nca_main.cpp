@@ -71,7 +71,7 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "By default, the SGD optimizer is used.");
 
 PARAM_STRING_IN_REQ("input_file", "Input dataset to run NCA on.", "i");
-PARAM_STRING_IN_REQ("output_file", "Output file for learned distance matrix.",
+PARAM_STRING_OUT("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING_IN("labels_file", "File of labels for input dataset.", "l", "");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
@@ -124,6 +124,10 @@ int main(int argc, char* argv[])
   const string inputFile = CLI::GetParam<string>("input_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string outputFile = CLI::GetParam<string>("output_file");
+
+  if (outputFile == "")
+    Log::Warn << "--output_file (-o) not specified; no output will be saved!"
+        << endl;
 
   const string optimizerType = CLI::GetParam<string>("optimizer");
 
@@ -280,5 +284,6 @@ int main(int argc, char* argv[])
   }
 
   // Save the output.
-  data::Save(CLI::GetParam<string>("output_file"), distance, true);
+  if (outputFile != "")
+    data::Save(outputFile, distance, true);
 }

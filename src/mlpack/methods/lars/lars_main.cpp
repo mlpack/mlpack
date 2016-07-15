@@ -94,7 +94,9 @@ int main(int argc, char* argv[])
         CLI::GetParam<string>("output_predictions");
   }
 
-  // Check parameters -- make sure everything given makes sense.
+  // Check parameters -- make sure everything given makes sense.  These checks
+  // can be simplified to HasParam() after the reverse compatibility options are
+  // removed.
   if (CLI::HasParam("input_file") && !CLI::HasParam("responses_file"))
     Log::Fatal << "--input_file (-i) is specified, but --responses_file (-r) is"
         << " not!" << endl;
@@ -112,17 +114,19 @@ int main(int argc, char* argv[])
     Log::Fatal << "Both --input_file (-i) and --input_model_file (-m) are "
         << "specified, but only one may be specified!" << endl;
 
-  if (!CLI::HasParam("output_predictions") &&
+  if ((CLI::GetParam<string>("output_predictions_file") == "") &&
       !CLI::HasParam("output_model_file"))
-    Log::Warn << "--output_predictions (-o) and --output_model_file (-M) "
+    Log::Warn << "--output_predictions_file (-o) and --output_model_file (-M) "
         << "are not specified; no results will be saved!" << endl;
 
-  if (CLI::HasParam("output_predictions") && !CLI::HasParam("test_file"))
-    Log::Warn << "--output_predictions (-o) specified, but --test_file "
+  if ((CLI::GetParam<string>("output_predictions_file") == "") &&
+      !CLI::HasParam("test_file"))
+    Log::Warn << "--output_predictions_file (-o) specified, but --test_file "
         << "(-t) is not; no results will be saved." << endl;
 
-  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions "
+  if (CLI::HasParam("test_file") &&
+      (CLI::GetParam<string>("output_predictions_file") == ""))
+    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
         << "(-o) is not; no results will be saved." << endl;
 
   // Initialize the object.
@@ -182,10 +186,10 @@ int main(int argc, char* argv[])
     lars.Predict(testPoints.t(), predictions, false);
 
     // Save test predictions.  One per line, so, don't transpose on save.
-    if (CLI::HasParam("output_predictions"))
+    if (CLI::GetParam<string>("output_predictions_file") != "")
     {
       const string outputPredictionsFile =
-        CLI::GetParam<string>("output_predictions");
+        CLI::GetParam<string>("output_predictions_file");
       data::Save(outputPredictionsFile, predictions, true, false);
     }
   }
