@@ -117,7 +117,8 @@ int main(int argc, char** argv)
     Log::Fatal << "One of --input_model_file or --training_file must be specified."
         << endl;
 
-  if (CLI::HasParam("training_file") && CLI::HasParam("labels_file"))
+  if ((CLI::HasParam("training_file") || CLI::HasParam("labels_file")) &&
+      !(CLI::HasParam("training_file") && CLI::HasParam("labels_file")))
     Log::Fatal << "--labels_file must be specified with --training_file!"
         << endl;
 

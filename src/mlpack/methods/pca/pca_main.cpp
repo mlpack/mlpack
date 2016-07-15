@@ -38,9 +38,6 @@ PARAM_DOUBLE("var_to_retain", "Amount of variance to retain; should be between "
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
 
-PARAM_STRING_IN("decomposition_method", "Method used for the principal"
-    "components analysis: 'exact', 'randomized', 'quic'.", "c", "exact");
-
 int main(int argc, char** argv)
 {
   // Parse commandline.

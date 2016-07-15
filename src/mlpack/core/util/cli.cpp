@@ -600,6 +600,11 @@ void CLI::PrintHelp(const std::string& param)
       if ((pass == 1) && required)
         continue; // Don't print this one.
 
+      // For reverse compatibility: this can be removed when these options are
+      // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
+      if (data.name == "inputFile")
+        continue;
+
       if (!printedHeader)
       {
         printedHeader = true;

@@ -74,29 +74,36 @@ int main(int argc, char** argv)
   const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
+  // Make sure the user specified output filenames.
+  if (trainingFile == "")
+    Log::Warn << "--training_file (-t) is not specified; no training set will "
+        << "be saved!" << endl;
+  if (testFile == "")
+    Log::Warn << "--test_file (-T) is not specified; no test set will be saved!"
+        << endl;
+
   // Check on label parameters.
   if (CLI::HasParam("input_labels"))
   {
     if (!CLI::HasParam("training_labels_file"))
     {
-      Log::Fatal << "--training_labels_file (-l) must be specified if "
-          << "--input_labels (-l) is specified!" << endl;
+      Log::Warn << "--training_labels_file (-l) is not specified; no training "
+          << "set labels will be saved!" << endl;
     }
     if (!CLI::HasParam("test_labels_file"))
     {
-      Log::Fatal << "--test_labels_file (-L) must be specified if "
-          << "--input_labels (-I) is specified!" << endl;
+      Log::Warn << "--test_labels_file (-L) is not specified; no test set "
+          << "labels will be saved!" << endl;
     }
   }
   else
   {
-    if (CLI::HasParam("training_labels_file") ||
-        CLI::HasParam("test_labels_file"))
-    {
-      Log::Fatal << "When specifying --training_labels_file or "
-          << "--test_labels_file, you must also specify --input_labels."
-          << endl;
-    }
+    if (CLI::HasParam("training_labels_file"))
+      Log::Warn << "--training_labels_file ignored because --input_labels is "
+          << "not specified." << endl;
+    if (CLI::HasParam("test_labels_file"))
+      Log::Warn << "--test_labels_file ignored because --input_labels is not "
+          << "specified." << endl;
   }
 
   // Check test_ratio.
@@ -131,10 +138,14 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    data::Save(trainingFile, get<0>(value), false);
-    data::Save(testFile, get<1>(value), false);
-    data::Save(trainingLabelsFile, get<2>(value), false);
-    data::Save(testLabelsFile, get<3>(value), false);
+    if (trainingFile != "")
+      data::Save(trainingFile, get<0>(value), false);
+    if (testFile != "")
+      data::Save(testFile, get<1>(value), false);
+    if (trainingLabelsFile != "")
+      data::Save(trainingLabelsFile, get<2>(value), false);
+    if (testLabelsFile != "")
+      data::Save(testLabelsFile, get<3>(value), false);
   }
   else // We have no labels, so just split the dataset.
   {
@@ -144,7 +155,9 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    data::Save(trainingFile, get<0>(value), false);
-    data::Save(testFile, get<1>(value), false);
+    if (trainingFile != "")
+      data::Save(trainingFile, get<0>(value), false);
+    if (testFile != "")
+      data::Save(testFile, get<1>(value), false);
   }
 }

@@ -23,8 +23,17 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
 
 PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
-PARAM_STRING_REQ("output_ic", "File to save independent components to.", "o");
-PARAM_STRING_REQ("output_unmixing", "File to save unmixing matrix to.", "u");
+// Kept for reverse compatibility until mlpack 3.0.0.
+PARAM_STRING("output_ic", "File to save independent components to "
+    "(deprecated: use --output_ic_file).", "", "");
+PARAM_STRING("output_unmixing", "File to save unmixing matrix to "
+    "(deprecated: use --output_unmixing_file).", "", "");
+
+// These are the new parameter names.
+PARAM_STRING("output_ic_file", "File to save independent components to.",
+    "o", "");
+PARAM_STRING("output_unmixing_file", "File to save unmixing matrix to.",
+    "u", "");
 
 PARAM_DOUBLE("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);
@@ -49,11 +58,41 @@ int main(int argc, char* argv[])
   // Handle parameters.
   CLI::ParseCommandLine(argc, argv);
 
+  // Reverse compatibility.  We can remove these for mlpack 3.0.0.
+  if (CLI::HasParam("output_ic") && CLI::HasParam("output_ic_file"))
+    Log::Fatal << "Cannot specify both --output_ic and --output_ic_file!"
+        << endl;
+
+  if (CLI::HasParam("output_unmixing") && CLI::HasParam("output_unmixing_file"))
+    Log::Fatal << "Cannot specify both --output_unmixing and "
+        << "--output_unmixing_file!" << endl;
+
+  if (CLI::HasParam("output_ic"))
+  {
+    Log::Warn << "--output_ic is deprecated and will be removed in mlpack "
+        << "3.0.0; use --output_ic_file instead." << endl;
+    CLI::GetParam<string>("output_ic_file") =
+        CLI::GetParam<string>("output_ic");
+  }
+
+  if (CLI::HasParam("output_unmixing"))
+  {
+    Log::Warn << "--output_unmixing is deprecated and will be removed in mlpack"
+        << " 3.0.0; use --output_unmixing_file instead." << endl;
+    CLI::GetParam<string>("output_unmixing_file") =
+        CLI::GetParam<string>("output_unmixing");
+  }
+
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
+
+  if ((CLI::GetParam<string>("output_ic_file") == "") &&
+      (CLI::GetParam<string>("output_unmixing_file") == ""))
+    Log::Warn << "Neither --output_ic_file nor --output_unmixing_file were "
+        << "specified; no output will be saved!" << endl;
 
   // Load the data.
   const string matXFilename = CLI::GetParam<string>("input_file");
@@ -78,11 +117,13 @@ int main(int argc, char* argv[])
   rad.DoRadical(matX, matY, matW);
 
   // Save results.
-  const string matYFilename = CLI::GetParam<string>("output_ic");
-  data::Save(matYFilename, matY);
+  const string matYFilename = CLI::GetParam<string>("output_ic_file");
+  if (matYFilename != "")
+    data::Save(matYFilename, matY);
 
-  const string matWFilename = CLI::GetParam<string>("output_unmixing");
-  data::Save(matWFilename, matW);
+  const string matWFilename = CLI::GetParam<string>("output_unmixing_file");
+  if (matWFilename != "")
+    data::Save(matWFilename, matW);
 
   if (CLI::HasParam("objective"))
   {

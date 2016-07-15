@@ -28,16 +28,22 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     "in a separate file.");
 
 // Required options.
-PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
+PARAM_STRING("input_file", "Input dataset to perform clustering on.",
+    "i", "");
+// This is kept for reverse compatibility and may be removed in mlpack 3.0.0.
+// At that time, --input_file should be made a required parameter.
+PARAM_STRING("inputFile", "Input dataset to perform clustering on.", "", "");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
-           "assignments will be added to the input dataset file.  In this case,"
-           " --outputFile is overridden.", "P");
-PARAM_STRING("output_file", "File to write output labels or labeled data to.",
-             "o", "");
-PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
-             " be written to the given file.", "C", "");
+    "assignments will be added to the input dataset file.  In this case, "
+    "--output_file is overridden.", "P");
+PARAM_FLAG("labels_only", "If specified, only the output labels will be "
+    "written to the file specified by --output_file.", "l");
+PARAM_STRING("output_file", "File to write output labels or labeled data "
+    "to.", "o", "");
+PARAM_STRING("centroid_file", "If specified, the centroids of each cluster "
+    "will be written to the given file.", "C", "");
 
 // Mean shift configuration options.
 PARAM_INT("max_iterations", "Maximum number of iterations before mean shift "
@@ -51,7 +57,21 @@ int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  const string inputFile = CLI::GetParam<string>("inputFile");
+  // This is for reverse compatibility and may be removed in mlpack 3.0.0.
+  if (CLI::HasParam("inputFile") && CLI::HasParam("input_file"))
+    Log::Fatal << "Cannot specify both --input_file and --inputFile!" << endl;
+
+  if (CLI::HasParam("inputFile"))
+  {
+    Log::Warn << "--inputFile is deprecated and will be removed in mlpack "
+        << "3.0.0; use --input_file instead." << endl;
+    CLI::GetParam<string>("input_file") = CLI::GetParam<string>("inputFile");
+  }
+
+  if (CLI::GetParam<string>("input_file") == "")
+    Log::Fatal << "--input_file must be specified!" << endl;
+
+  const string inputFile = CLI::GetParam<string>("input_file");
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
@@ -68,6 +88,10 @@ int main(int argc, char** argv)
     Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
         << "no results will be saved." << endl;
   }
+
+  if (CLI::HasParam("labels_only") && !CLI::HasParam("output_file"))
+    Log::Warn << "--labels_only ignored because --output_file is not specified."
+        << endl;
 
   arma::mat dataset;
   data::Load(inputFile, dataset, true); // Fatal upon failure.
@@ -100,16 +124,26 @@ int main(int argc, char** argv)
   }
   else
   {
-    // Convert the assignments to doubles.
-    arma::vec converted(assignments.n_elem);
-    for (size_t i = 0; i < assignments.n_elem; i++)
-      converted(i) = (double) assignments(i);
+    if (!CLI::HasParam("labels_only"))
+    {
+      // Convert the assignments to doubles.
+      arma::vec converted(assignments.n_elem);
+      for (size_t i = 0; i < assignments.n_elem; i++)
+        converted(i) = (double) assignments(i);
 
-    dataset.insert_rows(dataset.n_rows, trans(converted));
+      dataset.insert_rows(dataset.n_rows, trans(converted));
 
-    // Now save, in the different file.
-    string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, dataset);
+      // Now save, in the different file.
+      string outputFile = CLI::GetParam<string>("output_file");
+      if (outputFile != "")
+        data::Save(outputFile, dataset);
+    }
+    else
+    {
+      string outputFile = CLI::GetParam<string>("output_file");
+      if (outputFile != "")
+        data::Save(outputFile, assignments, false, false); // No transpose.
+    }
   }
 
   // Should we write the centroids to a file?

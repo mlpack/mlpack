@@ -130,6 +130,10 @@ int main(int argc, char* argv[])
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string outputFile = CLI::GetParam<string>("output_file");
 
+  if (outputFile == "")
+    Log::Warn << "--output_file (-o) not specified; no output will be saved!"
+        << endl;
+
   const string optimizerType = CLI::GetParam<string>("optimizer");
 
   if ((optimizerType != "sgd") && (optimizerType != "lbfgs") &&
@@ -285,5 +289,6 @@ int main(int argc, char* argv[])
   }
 
   // Save the output.
-  data::Save(CLI::GetParam<string>("output_file"), distance, true);
+  if (outputFile != "")
+    data::Save(outputFile, distance, true);
 }
