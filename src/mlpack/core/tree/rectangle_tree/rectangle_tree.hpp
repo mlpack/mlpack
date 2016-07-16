@@ -492,6 +492,10 @@ class RectangleTree
   //! Returns false: this tree type does not have self children.
   static bool HasSelfChildren() { return false; }
 
+  //! Returns false: The first point of this node is not the centroid
+  //! of its bound.
+  static constexpr bool IsFirstPointCentroid() { return false; }
+
  private:
   /**
    * Splits the current node, recursing up the tree.

@@ -30,7 +30,8 @@ VantagePointTree(
     count(data.n_cols), /* and spans all of the dataset. */
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(data)) // Copies the dataset.
+    dataset(new MatType(data)), // Copies the dataset.
+    firstPointIsCentroid(false)
 {
   // Do the actual splitting of this node.
   SplitType<BoundType<MetricType>, MatType> splitter;
@@ -58,7 +59,8 @@ VantagePointTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(data)) // Copies the dataset.
+    dataset(new MatType(data)), // Copies the dataset.
+    firstPointIsCentroid(false)
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
@@ -92,7 +94,8 @@ VantagePointTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(data)) // Copies the dataset.
+    dataset(new MatType(data)), // Copies the dataset.
+    firstPointIsCentroid(false)
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
@@ -127,7 +130,8 @@ VantagePointTree(MatType&& data, const size_t maxLeafSize) :
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(std::move(data)))
+    dataset(new MatType(std::move(data))),
+    firstPointIsCentroid(false)
 {
   // Do the actual splitting of this node.
   SplitType<BoundType<MetricType>, MatType> splitter;
@@ -155,7 +159,8 @@ VantagePointTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(std::move(data)))
+    dataset(new MatType(std::move(data))),
+    firstPointIsCentroid(false)
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(dataset->n_cols);
@@ -189,7 +194,8 @@ VantagePointTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(std::move(data)))
+    dataset(new MatType(std::move(data))),
+    firstPointIsCentroid(false)
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(dataset->n_cols);
@@ -221,14 +227,16 @@ VantagePointTree(
     const size_t begin,
     const size_t count,
     SplitType<BoundType<MetricType>, MatType>& splitter,
-    const size_t maxLeafSize) :
+    const size_t maxLeafSize,
+    bool firstPointIsCentroid) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
     bound(parent->Dataset().n_rows),
-    dataset(&parent->Dataset()) // Point to the parent's dataset.
+    dataset(&parent->Dataset()), // Point to the parent's dataset.
+    firstPointIsCentroid(firstPointIsCentroid)
 {
   // Perform the actual splitting.
   SplitNode(maxLeafSize, splitter);
@@ -250,14 +258,16 @@ VantagePointTree(
     const size_t count,
     std::vector<size_t>& oldFromNew,
     SplitType<BoundType<MetricType>, MatType>& splitter,
-    const size_t maxLeafSize) :
+    const size_t maxLeafSize,
+    bool firstPointIsCentroid) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
     bound(parent->Dataset().n_rows),
-    dataset(&parent->Dataset())
+    dataset(&parent->Dataset()),
+    firstPointIsCentroid(firstPointIsCentroid)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -284,14 +294,16 @@ VantagePointTree(
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
     SplitType<BoundType<MetricType>, MatType>& splitter,
-    const size_t maxLeafSize) :
+    const size_t maxLeafSize,
+    bool firstPointIsCentroid) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
     bound(parent->Dataset()->n_rows),
-    dataset(&parent->Dataset())
+    dataset(&parent->Dataset()),
+    firstPointIsCentroid(firstPointIsCentroid)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -332,7 +344,8 @@ VantagePointTree(
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     // Copy matrix, but only if we are the root.
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL)
+    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+    firstPointIsCentroid(other.firstPointIsCentroid)
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -390,7 +403,8 @@ VantagePointTree(VantagePointTree&& other) :
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     minimumBoundDistance(other.minimumBoundDistance),
-    dataset(other.dataset)
+    dataset(other.dataset),
+    firstPointIsCentroid(other.firstPointIsCentroid)
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
@@ -573,8 +587,10 @@ inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::NumPoints() const
 {
   // Each intermediate node contains exactly one point.
-  if (left)
+  if (left && parent)
     return 1;
+  else if(!parent)
+	return 0;
 
   return count;
 }
@@ -637,7 +653,8 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   // We need to expand the bounds of this node properly.
   if (parent)
   {
-    bound.Center() = dataset->col(parent->begin);
+    bound.Center() = parent->firstPointIsCentroid ?
+			dataset->col(parent->begin + 1) : dataset->col(parent->begin);
     bound.OuterRadius() = 0;
     bound.InnerRadius() = std::numeric_limits<ElemType>::max();
   }
@@ -650,6 +667,8 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   while (tree->Parent() != NULL)
   {
     tree->Parent()->Bound() |= tree->Bound();
+	tree->Parent()->furthestDescendantDistance = 0.5 *
+			tree->Parent()->Bound().Diameter();
     tree = tree->Parent();
   }
   // Calculate the furthest descendant distance.
@@ -666,7 +685,17 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
 
   // Split the node. The elements of 'data' are reordered by the splitting
   // algorithm. This function call updates splitCol.
-  const bool split = splitter.SplitNode(bound, *dataset, begin, count,
+
+  size_t splitBegin = begin;
+  size_t splitCount = count;
+
+  if (IsFirstPointCentroid())
+  {
+    splitBegin = begin + 1;
+    splitCount = count - 1;
+  }
+
+  const bool split = splitter.SplitNode(bound, *dataset, splitBegin, splitCount,
       splitCol);
 
   // The node may not be always split. For instance, if all the points are the
@@ -676,10 +705,10 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new VantagePointTree(this, begin + 1, splitCol - begin - 1, splitter,
-      maxLeafSize);
-  right = new VantagePointTree(this, splitCol, begin + count - splitCol,
-      splitter, maxLeafSize);
+  left = new VantagePointTree(this, splitBegin, splitCol - splitBegin, splitter,
+      maxLeafSize, true);
+  right = new VantagePointTree(this, splitCol, splitBegin + splitCount - splitCol,
+      splitter, maxLeafSize, false);
 
   // Calculate parent distances for those two nodes.
   arma::vec center, leftCenter, rightCenter;
@@ -706,12 +735,12 @@ SplitNode(std::vector<size_t>& oldFromNew,
           const size_t maxLeafSize,
           SplitType<BoundType<MetricType>, MatType>& splitter)
 {
-  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
 
   if (parent)
   {
-    bound.Center() = dataset->col(parent->begin);
+    bound.Center() = parent->firstPointIsCentroid ?
+			dataset->col(parent->begin + 1) : dataset->col(parent->begin);
     bound.OuterRadius() = 0;
     bound.InnerRadius() = std::numeric_limits<ElemType>::max();
   }
@@ -724,6 +753,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
   while (tree->Parent() != NULL)
   {
     tree->Parent()->Bound() |= tree->Bound();
+	tree->Parent()->furthestDescendantDistance = 0.5 *
+			tree->Parent()->Bound().Diameter();
     tree = tree->Parent();
   }
 
@@ -741,7 +772,17 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   // Split the node. The elements of 'data' are reordered by the splitting
   // algorithm. This function call updates splitCol and oldFromNew.
-  const bool split = splitter.SplitNode(bound, *dataset, begin, count, splitCol,
+
+  size_t splitBegin = begin;
+  size_t splitCount = count;
+
+  if (IsFirstPointCentroid())
+  {
+    splitBegin = begin + 1;
+    splitCount = count - 1;
+  }
+
+  const bool split = splitter.SplitNode(bound, *dataset, splitBegin, splitCount, splitCol,
       oldFromNew);
 
   // The node may not be always split. For instance, if all the points are the
@@ -751,10 +792,10 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new VantagePointTree(this, begin + 1, splitCol - begin - 1, oldFromNew,
-      splitter, maxLeafSize);
-  right = new VantagePointTree(this, splitCol, begin + count - splitCol,
-      oldFromNew, splitter, maxLeafSize);
+  left = new VantagePointTree(this, splitBegin, splitCol - splitBegin, oldFromNew,
+      splitter, maxLeafSize, true);
+  right = new VantagePointTree(this, splitCol, splitBegin + splitCount - splitCol,
+      oldFromNew, splitter, maxLeafSize, false);
 
   
   // Calculate parent distances for those two nodes.
@@ -831,6 +872,7 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   // Save children last; otherwise boost::serialization gets confused.
   ar & CreateNVP(left, "left");
   ar & CreateNVP(right, "right");
+  ar & CreateNVP(firstPointIsCentroid, "firstPointIsCentroid");
 
   // Due to quirks of boost::serialization, if a tree is saved as an object and
   // not a pointer, the first level of the tree will be duplicated on load.

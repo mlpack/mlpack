@@ -51,7 +51,9 @@ SingleTreeTraverser<RuleType>::Traverse(
     return;
   }
 
-  rule.BaseCase(queryIndex, referenceNode.Point(0));
+  // If the reference node contains a point we should calculate the base case.
+  if (referenceNode.IsFirstPointCentroid())
+    rule.BaseCase(queryIndex, referenceNode.Point(0));
 
   // If either score is DBL_MAX, we do not recurse into that node.
   double leftScore = rule.Score(queryIndex, *referenceNode.Left());

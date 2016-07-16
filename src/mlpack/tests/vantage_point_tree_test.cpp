@@ -125,9 +125,14 @@ void CheckBound(TreeType& tree)
   }
   else
   {
-    BOOST_REQUIRE_EQUAL(tree.NumPoints(), 1);
-    BOOST_REQUIRE_EQUAL(true,
-          tree.Bound().Contains(tree.Dataset().col(tree.Point(0))));
+    if (!tree.Parent())
+      BOOST_REQUIRE_EQUAL(tree.NumPoints(), 0);
+    else if (tree.IsFirstPointCentroid())
+    {
+      BOOST_REQUIRE_EQUAL(tree.NumPoints(), 1);
+      BOOST_REQUIRE_EQUAL(true,
+            tree.Bound().Contains(tree.Dataset().col(tree.Point(0))));
+    }
 
     BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Left()->Bound()), true);
     BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Right()->Bound()), true);
@@ -160,7 +165,7 @@ void CheckSplit(TreeType& tree)
   for (size_t i = tree.Left()->Begin(); i < pointsEnd; i++)
   {
     typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Begin()),
+        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Left()->Begin()),
                                        tree.Dataset().col(i));
 
     if (dist > maxDist)
@@ -171,9 +176,16 @@ void CheckSplit(TreeType& tree)
   for (size_t i = tree.Right()->Begin(); i < pointsEnd; i++)
   {
     typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Begin()),
+        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Left()->Begin()),
                                        tree.Dataset().col(i));
     BOOST_REQUIRE_LE(maxDist, dist);
+  }
+
+  if (tree.IsFirstPointCentroid())
+  {
+    for (size_t k = 0; k < tree.Bound().Dim(); k++)
+      BOOST_REQUIRE_EQUAL(tree.Bound().Center()[k],
+          tree.Dataset().col(tree.Point(0))[k]);
   }
 
   CheckSplit(*tree.Left());

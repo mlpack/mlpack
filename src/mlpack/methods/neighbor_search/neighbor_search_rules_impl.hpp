@@ -85,7 +85,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
 {
   ++scores; // Count number of Score() calls.
   double distance;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (referenceNode.IsFirstPointCentroid())
   {
     // The first point in the tree is the centroid.  So we can then calculate
     // the base case between that and the query point.
@@ -160,7 +160,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   // We want to set adjustedScore to be the distance between the centroid of the
   // last query node and last reference node.  We will do this by adjusting the
   // last score.  In some cases, we can just use the last base case.
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (queryNode.IsFirstPointCentroid() && referenceNode.IsFirstPointCentroid())
   {
     adjustedScore = traversalInfo.LastBaseCase();
   }
@@ -237,7 +237,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   // Can we prune?
   if (!SortPolicy::IsBetter(adjustedScore, bestDistance))
   {
-    if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
+    if (!(queryNode.IsFirstPointCentroid() &&
+        referenceNode.IsFirstPointCentroid() && score == 0.0))
     {
       // There isn't any need to set the traversal information because no
       // descendant combinations will be visited, and those are the only
@@ -247,7 +248,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   double distance;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (queryNode.IsFirstPointCentroid() && referenceNode.IsFirstPointCentroid())
   {
     // The first point in the node is the centroid, so we can calculate the
     // distance between the two points using BaseCase() and then find the
