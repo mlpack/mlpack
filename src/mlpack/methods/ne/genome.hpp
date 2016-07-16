@@ -33,7 +33,12 @@ class Genome {
   std::vector<LinkGene> aLinkGenes;
 
   // Default constructor.
-  Genome() {}
+  Genome() {
+    aId = -1;
+    aNumInput = 0;
+    aNumOutput = 0;
+    aFitness = DBL_MAX;
+  }
   
   // Parametric constructor.
   Genome(ssize_t id,
@@ -41,15 +46,13 @@ class Genome {
          const std::vector<LinkGene>& linkGenes,
          ssize_t numInput,
          ssize_t numOutput,
-         double fitness,
-         double adjustedFitness):
+         double fitness):
     aId(id),
     aNeuronGenes(neuronGenes),
     aLinkGenes(linkGenes),
     aNumInput(numInput),
     aNumOutput(numOutput),
-    aFitness(fitness),
-    aAdjustedFitness(adjustedFitness)
+    aFitness(fitness)
   {}
 
   // Copy constructor.
@@ -60,7 +63,6 @@ class Genome {
     aNumInput = genome.aNumInput;
     aNumOutput = genome.aNumOutput;
     aFitness = genome.aFitness;
-    aAdjustedFitness = genome.aAdjustedFitness;
   }
 
   // Destructor.
@@ -75,7 +77,6 @@ class Genome {
       aNumInput = genome.aNumInput;
       aNumOutput = genome.aNumOutput;
       aFitness = genome.aFitness;
-      aAdjustedFitness = genome.aAdjustedFitness;
     }
 
     return *this;
@@ -104,12 +105,6 @@ class Genome {
 
   // Get fitness.
   double Fitness() const { return aFitness; }
-
-  // Set adjusted fitness.
-  void AdjustedFitness(double adjustedFitness) { aAdjustedFitness = adjustedFitness; }
-
-  // Get adjusted fitness.
-  double AdjustedFitness() const { return aAdjustedFitness; }
 
   // Get neuron number.
   ssize_t NumNeuron() const {
@@ -329,9 +324,6 @@ class Genome {
 
   // Genome fitness.
   double aFitness;
-
-  // Genome adjusted fitness.
-  double aAdjustedFitness;
 
 };
 

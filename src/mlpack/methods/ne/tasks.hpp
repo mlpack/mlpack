@@ -121,8 +121,8 @@ class TaskCartPole {
   // Update status.
   void Action(double action, double& x, double& x_dot, double& theta, double& theta_dot) {
     double force = action * F;  // action is -1 or 1. TODO: or continuous???
-    double cos_theta = cos(theta * M_PI / 180.0);
-    double sin_theta = sin(theta * M_PI / 180.0);
+    double cos_theta = cos(theta);
+    double sin_theta = sin(theta);
     double total_mass = mp + mc;
     double temp = (force + mp * l * theta_dot * theta_dot * sin_theta) / total_mass;   
     double theta_acc = (g * sin_theta - cos_theta * temp) / (l * (4.0 / 3.0 - mp * cos_theta * cos_theta / total_mass));    
@@ -140,7 +140,8 @@ class TaskCartPole {
     assert(genome.NumInput() == 5); 
     assert(genome.NumOutput() == 1);
 
-    double fitness = 0;  // For this task, bigger is better.
+    mlpack::math::RandomSeed(1);  // If no seed set, each time the fitness will change.
+    double fitness = 0;
     for (ssize_t trial=0; trial<num_trial; ++trial) {
       // Initialize inputs: x, x_dot, theta, theta_dot. As used by Stanley
       double x = mlpack::math::Random(-2.4, 2.4);
@@ -168,11 +169,11 @@ class TaskCartPole {
         
         Action(action, x, x_dot, theta, theta_dot);
         fitness += 1;
-        if(abs(x)>=track_limit || abs(theta)>=theta_limit) break;
+        if (abs(x)>=track_limit || abs(theta)>=theta_limit) break;
       }
     }
 
-    return 1/fitness;
+    return (1.0 / fitness);
   }
 
 };

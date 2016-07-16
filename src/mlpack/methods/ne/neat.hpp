@@ -487,7 +487,6 @@ class NEAT {
 
     Species newSpecies = Species();
     newSpecies.AddGenome(genome);
-    newSpecies.Id(population.NextSpeciesId());  // NOTICE: changed species id.
     newSpecies.StaleAge(0);
     population.AddSpecies(newSpecies);
   }
@@ -497,19 +496,6 @@ class NEAT {
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       if (population.aSpecies[i].StaleAge() > aStaleAgeThreshold) {
         population.RemoveSpecies(i);
-      }
-    }
-  }
-
-  // Set adjusted fitness.
-  // NOTICE: we assume fitness have already evaluated before adjust it.
-  void SetAdjustedFitness(Population& population) {
-    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
-      ssize_t speciesSize = population.aSpecies[i].aGenomes.size();
-      for (ssize_t j=0; j<speciesSize; ++j) {
-        double fitness = population.aSpecies[i].aGenomes[j].Fitness();
-        double adjustedFitness = fitness / speciesSize;
-        population.aSpecies[i].aGenomes[j].AdjustedFitness(adjustedFitness);
       }
     }
   }
@@ -529,14 +515,6 @@ class NEAT {
     std::sort(genomes.begin(), genomes.end(), Species::CompareGenome);
   }
 
-  // SortGenomes by adjusted fitness. Smaller is better.
-  static bool CompareGenomeByAdjustedFitness(Genome lg, Genome rg) {
-    return (lg.AdjustedFitness() < rg.AdjustedFitness());
-  }
-  void SortGenomesByAdjustedFitness(std::vector<Genome>& genomes) {
-    std::sort(genomes.begin(), genomes.end(), CompareGenomeByAdjustedFitness);
-  }
-
   // Get genome index in a genomes vector.
   ssize_t GetGenomeIndex(std::vector<Genome>& genomes, ssize_t id) {
     for (ssize_t i=0; i<genomes.size(); ++i) {
@@ -546,12 +524,11 @@ class NEAT {
     return -1;
   }
 
-  // Calculate species' average rank in population by adjusted fitness. Bigger is better.
+  // Calculate species' average rank in population by fitness. Bigger is better.
   void CalcSpeciesAverageRank(Population& population, std::vector<double>& speciesAverageRank) {
     std::vector<Genome> genomes;
-    SetAdjustedFitness(population);
     AggregateGenomes(population, genomes);
-    SortGenomesByAdjustedFitness(genomes);  //!! we use adjusted fitness here for rank.
+    SortGenomes(genomes);
     speciesAverageRank.clear();
 
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
@@ -698,22 +675,19 @@ class NEAT {
     // keep best genome.
     Genome lastBestGenome = aPopulation.BestGenome();
 
-    // Remove stale species.
-    if (aPopulation.aSpecies.size() > 10) {
-      RemoveStaleSpecies(aPopulation);
-    }
-
     // Remove weak genomes in each species.
     CullSpecies(aPopulation, aCullSpeciesPercentage);
 
-    // Remove weak species.
+    // Remove stale species, weak species.
     if (aPopulation.aSpecies.size() > 10) {
+      RemoveStaleSpecies(aPopulation);
       RemoveWeakSpecies(aPopulation);
     }
 
     // Breed children in each species. 
     std::vector<double> speciesAverageRank;
     CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
+
     //DEBUGGING!!!!!!!!!
     printf("Species average rank are: ");
     for (ssize_t s=0; s<speciesAverageRank.size(); ++s) {
@@ -729,7 +703,7 @@ class NEAT {
       ssize_t numBreed = std::floor(speciesAverageRank[i] * aPopulationSize / totalAverageRank) - 1;
       ssize_t numBreedSuccess = 0;
       while (numBreedSuccess < numBreed) {
-        Genome genome; //!!!!!!!!!!!!!
+        Genome genome;
         bool hasBaby = BreedChild(aPopulation.aSpecies[i], genome, aCrossoverRate);
         if (hasBaby) {
           childGenomes.push_back(genome);
@@ -739,6 +713,7 @@ class NEAT {
     }
 
     // Keep the best in each species.
+
     //DEBUGGING!!!!!!!!!
     printf("before, species sizes are: ");
     for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
@@ -746,7 +721,9 @@ class NEAT {
     }
     printf("\n");
     //DEBUGGING!!!!!!!!!
-    CullSpeciesToOne(aPopulation);
+
+    CullSpeciesToOne(aPopulation);  // NOTICE: I found that this makes XOR test converges fast.
+
     //DEBUGGING!!!!!!!!!
     printf("after, species sizes are: ");
     for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
@@ -759,7 +736,7 @@ class NEAT {
     childGenomes.push_back(lastBestGenome);
     while (childGenomes.size() + aPopulation.aSpecies.size() < aPopulationSize) {
       ssize_t speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
-      Genome genome;  //!!!!!!!!!!!!!
+      Genome genome;
       bool hasBaby = BreedChild(aPopulation.aSpecies[speciesIndex], genome, aCrossoverRate);
       if (hasBaby) childGenomes.push_back(genome);
     }
@@ -779,7 +756,8 @@ class NEAT {
     aPopulation.ReassignGenomeId();
   }
 
-  // Evaluate genomes in population, set genomes' fitness.
+  // Evaluate genomes in population.
+  // Set genomes' fitness, species' and population's best fitness and genome.
   void Evaluate() {
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       for (ssize_t j=0; j<aPopulation.aSpecies[i].aGenomes.size(); ++j) {

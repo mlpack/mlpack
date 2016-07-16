@@ -97,7 +97,6 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
   ssize_t numInput = 3;
   ssize_t numOutput = 1;
   double fitness = -1;
-  double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
@@ -134,8 +133,7 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             fitness,
-                             adjustedFitness);
+                             fitness);
 
   // Test seed genome.
   std::vector<std::vector<double>> inputs;  // TODO: use arma::mat for input.
@@ -190,7 +188,6 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   ssize_t numInput = 3;
   ssize_t numOutput = 1;
   double fitness = -1;
-  double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
@@ -227,8 +224,7 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             fitness,
-                             adjustedFitness);
+                             fitness);
 
   // Specify task type.
   TaskXor<ann::MeanSquaredErrorFunction> task;
@@ -273,7 +269,6 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   ssize_t numInput = 3;
   ssize_t numOutput = 1;
   double fitness = -1;
-  double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
@@ -310,8 +305,7 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             fitness,
-                             adjustedFitness);
+                             fitness);
 
   // Specify task type.
   TaskXor<ann::MeanSquaredErrorFunction> task;
@@ -350,28 +344,27 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   Parameters params;
   params.aPopulationSize = 500;
   params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
+  params.aCoeffDisjoint = 1.0;
+  params.aCoeffWeightDiff = 0.5;
   params.aCompatThreshold = 1.0;
   params.aStaleAgeThreshold = 15;
   params.aCrossoverRate = 0.75;
   params.aCullSpeciesPercentage = 0.5;
   params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
+  params.aPerturbWeightProb = 0.5;
   params.aMutateWeightSize = 0.1;
-  params.aMutateAddLinkProb = 0.5;
+  params.aMutateAddLinkProb = 0.3;
   params.aMutateAddRecurrentLinkProb = 0;
   params.aMutateAddLoopLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.5;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
+  params.aMutateAddNeuronProb = 0.1;
+  params.aMutateEnabledProb = 0.1;
+  params.aMutateDisabledProb = 0.1;
 
   // Set seed genome for cart pole task.
   ssize_t id = 0;
   ssize_t numInput = 5;
   ssize_t numOutput = 1;
   double fitness = -1;
-  double adjustedFitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
@@ -420,8 +413,7 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
                              linkGenes,
                              numInput,
                              numOutput,
-                             fitness,
-                             adjustedFitness);
+                             fitness);
 
   // Construct NEAT instance.
   NEAT<TaskCartPole> neat(task, seedGenome, params);
