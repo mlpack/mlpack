@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  if (CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified;"
         << "no results will be saved!" << endl;
 

@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   const int newDim = CLI::GetParam<int>("new_dim");
   const int numNeighbors = CLI::GetParam<int>("num_neighbors");
 
-  if (CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 
