@@ -889,6 +889,49 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
 }
 
 /**
+ * Test the spill tree hybrid sp-tree search (defeatist search on overlapping
+ * nodes, and backtracking in non-overlapping nodes) against the naive method.
+ * This uses only a random reference dataset.
+ */
+BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
+{
+  arma::mat dataset;
+  dataset.randu(50, 300); // 50 dimensional, 300 points.
+
+  const size_t k = 3;
+
+  KNN naive(dataset);
+  arma::Mat<size_t> neighborsNaive;
+  arma::mat distancesNaive;
+  naive.Search(dataset, k, neighborsNaive, distancesNaive);
+
+  double max_dist = 0;
+  for (size_t i = 0; i < neighborsNaive.n_cols; ++i)
+    if (distancesNaive(k - 1, i) > max_dist)
+      max_dist = distancesNaive(k - 1, i);
+
+  // If we are sure that tau is a valid upper bound of the kth nearest neighbor
+  // of the query points, then we can be sure that we will get an exact
+  // solution.
+  SPTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>, arma::mat>
+      referenceTree(dataset, max_dist * 1.01 /* tau parameter */);
+
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
+      spTreeSearch(&referenceTree, true);
+
+  arma::Mat<size_t> neighborsSPTree;
+  arma::mat distancesSPTree;
+  spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
+
+  for (size_t i = 0; i < neighborsSPTree.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighborsSPTree(i), neighborsNaive(i));
+    BOOST_REQUIRE_CLOSE(distancesSPTree(i), distancesNaive(i), 1e-5);
+  }
+}
+
+
+/**
  * Make sure sparse nearest neighbors works with kd trees.
  */
 BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
