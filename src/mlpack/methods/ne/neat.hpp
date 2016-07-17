@@ -493,9 +493,13 @@ class NEAT {
 
   // Remove stale species.
   void RemoveStaleSpecies(Population& population) {
-    for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
-      if (population.aSpecies[i].StaleAge() > aStaleAgeThreshold) {
-        population.RemoveSpecies(i);
+    for (std::vector<Species>::iterator it = population.aSpecies.begin();
+         it != population.aSpecies.end();  /*it++*/) {
+      if(it->StaleAge() > aStaleAgeThreshold) {
+        it = population.aSpecies.erase(it);
+      }
+      else {
+        ++it;
       }
     }
   }
@@ -681,7 +685,7 @@ class NEAT {
     // Remove stale species, weak species.
     if (aPopulation.aSpecies.size() > 10) {
       RemoveStaleSpecies(aPopulation);
-      RemoveWeakSpecies(aPopulation);
+      //RemoveWeakSpecies(aPopulation);
     }
 
     // Breed children in each species. 
@@ -713,32 +717,19 @@ class NEAT {
     }
 
     // Keep the best in each species.
-
-    //DEBUGGING!!!!!!!!!
-    printf("before, species sizes are: ");
-    for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
-      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
-    }
-    printf("\n");
-    //DEBUGGING!!!!!!!!!
-
     CullSpeciesToOne(aPopulation);  // NOTICE: I found that this makes XOR test converges fast.
-
-    //DEBUGGING!!!!!!!!!
-    printf("after, species sizes are: ");
-    for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
-      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
-    }
-    printf("\n");
-    //DEBUGGING!!!!!!!!!
 
     // Random choose species and breed child until reach population size.
     childGenomes.push_back(lastBestGenome);
-    while (childGenomes.size() + aPopulation.aSpecies.size() < aPopulationSize) {
+    ssize_t currentNumGenome = childGenomes.size() + aPopulation.PopulationSize();
+    while (currentNumGenome < aPopulationSize) {
       ssize_t speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
       Genome genome;
       bool hasBaby = BreedChild(aPopulation.aSpecies[speciesIndex], genome, aCrossoverRate);
-      if (hasBaby) childGenomes.push_back(genome);
+      if (hasBaby) {
+        childGenomes.push_back(genome);
+        ++currentNumGenome;
+      }
     }
 
     // Speciate genomes into new species.
@@ -751,6 +742,14 @@ class NEAT {
     for (ssize_t i=0; i<childGenomes.size(); ++i) {
       AddGenomeToSpecies(aPopulation, childGenomes[i]);
     }
+
+    //DEBUGGING!!!!!!!!!
+    printf("Species sizes are: ");
+    for (ssize_t s=0; s<aPopulation.aSpecies.size(); ++s) {
+      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
+    }
+    printf("\n");
+    //DEBUGGING!!!!!!!!!
 
     // Reassign genome IDs.
     aPopulation.ReassignGenomeId();

@@ -285,12 +285,12 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   neuronGenes.push_back(hiddenGene);
 
   LinkGene link1(0, 3, 0, 0, true);
-  LinkGene link2(1, 3, 0, 0, true);
-  LinkGene link3(2, 3, 0, 0, true);
-  LinkGene link4(0, 4, 0, 0, true);
-  LinkGene link5(1, 4, 0, 0, true);
-  LinkGene link6(2, 4, 0, 0, true);
-  LinkGene link7(4, 3, 0, 0, true);
+  LinkGene link2(1, 3, 1, 0, true);
+  LinkGene link3(2, 3, 2, 0, true);
+  LinkGene link4(0, 4, 3, 0, true);
+  LinkGene link5(1, 4, 4, 0, true);
+  LinkGene link6(2, 4, 5, 0, true);
+  LinkGene link7(4, 3, 6, 0, true);
 
   linkGenes.push_back(link1);
   linkGenes.push_back(link2);
@@ -344,21 +344,21 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   Parameters params;
   params.aPopulationSize = 500;
   params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 1.0;
-  params.aCoeffWeightDiff = 0.5;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
   params.aCompatThreshold = 1.0;
   params.aStaleAgeThreshold = 15;
   params.aCrossoverRate = 0.75;
   params.aCullSpeciesPercentage = 0.5;
   params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.5;
+  params.aPerturbWeightProb = 0.9;
   params.aMutateWeightSize = 0.1;
-  params.aMutateAddLinkProb = 0.3;
+  params.aMutateAddLinkProb = 0.5;
   params.aMutateAddRecurrentLinkProb = 0;
   params.aMutateAddLoopLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.1;
-  params.aMutateEnabledProb = 0.1;
-  params.aMutateDisabledProb = 0.1;
+  params.aMutateAddNeuronProb = 0.5;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
 
   // Set seed genome for cart pole task.
   ssize_t id = 0;
@@ -385,16 +385,16 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   neuronGenes.push_back(hiddenGene);
 
   LinkGene link1(0, 5, 0, 0, true);
-  LinkGene link2(1, 5, 0, 0, true);
-  LinkGene link3(2, 5, 0, 0, true);
-  LinkGene link4(3, 5, 0, 0, true);
-  LinkGene link5(4, 5, 0, 0, true);
-  LinkGene link6(0, 6, 0, 0, true);
-  LinkGene link7(1, 6, 0, 0, true);
-  LinkGene link8(2, 6, 0, 0, true);
-  LinkGene link9(3, 6, 0, 0, true);
-  LinkGene link10(4, 6, 0, 0, true);
-  LinkGene link11(6, 5, 0, 0, true);
+  LinkGene link2(1, 5, 1, 0, true);
+  LinkGene link3(2, 5, 2, 0, true);
+  LinkGene link4(3, 5, 3, 0, true);
+  LinkGene link5(4, 5, 4, 0, true);
+  LinkGene link6(0, 6, 5, 0, true);
+  LinkGene link7(1, 6, 6, 0, true);
+  LinkGene link8(2, 6, 7, 0, true);
+  LinkGene link9(3, 6, 8, 0, true);
+  LinkGene link10(4, 6, 9, 0, true);
+  LinkGene link11(6, 5, 10, 0, true);
 
   linkGenes.push_back(link1);
   linkGenes.push_back(link2);
