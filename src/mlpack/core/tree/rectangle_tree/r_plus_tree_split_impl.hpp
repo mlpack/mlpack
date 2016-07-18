@@ -83,8 +83,8 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     return;
   }
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent(), tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), tree->MaxNumChildren());
   treeOne->MinLeafSize() = 0;
   treeOne->MinNumChildren() = 0;
   treeTwo->MinLeafSize() = 0;
@@ -153,8 +153,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     return false;
   }
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent(), tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), tree->MaxNumChildren());
   treeOne->MinLeafSize() = 0;
   treeOne->MinNumChildren() = 0;
   treeTwo->MinLeafSize() = 0;
@@ -197,6 +197,19 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
 {
   // Split the auxiliary information.
   tree->AuxiliaryInfo().SplitAuxiliaryInfo(treeOne, treeTwo, cutAxis, cut);
+
+  // Ensure that the capacity of the nodes is sufficient.
+  if (treeOne->MaxLeafSize() < tree->NumPoints())
+  {
+    treeOne->MaxLeafSize() = tree->NumPoints();
+    treeOne->points.resize(treeOne->MaxLeafSize() + 1);
+  }
+
+  if (treeTwo->MaxLeafSize() < tree->NumPoints())
+  {
+    treeTwo->MaxLeafSize() = tree->NumPoints();
+    treeTwo->points.resize(treeTwo->MaxLeafSize() + 1);
+  }
 
   // Insert points into the corresponding subtree.
   for (size_t i = 0; i < tree->NumPoints(); i++)
