@@ -24,9 +24,11 @@ using namespace mlpack::data;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(ImputationTest);
-
 /**
- * Make sure a CSV is loaded correctly.
+ * 1. Make sure a CSV is loaded correctly with mappings using MissingPolicy.
+ * 2. Try Imputer object with CustomImputation method to impute data "a".
+ * (It is ok to test on one method since the other ones will be covered in the
+ * next cases).
  */
 BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 {
@@ -62,11 +64,13 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   BOOST_REQUIRE(std::isnan(input(2, 1)) == true);
   BOOST_REQUIRE_CLOSE(input(2, 2), 10.0, 1e-5);
 
-  CustomImputation<double> customStrategy(99); // convert missing vals to 99.
+  // convert missing vals to 99.
+  CustomImputation<double> customStrategy(99);
   Imputer<double,
           DatasetMapper<MissingPolicy>,
           CustomImputation<double>> imputer(info, customStrategy);
-  imputer.Impute(input, output, "a", 0); // convert a -> 99 for dimension 0
+  // convert a or nan to 99 for dimension 0
+  imputer.Impute(input, output, "a", 0);
 
   // Custom imputation result check
   BOOST_REQUIRE_CLOSE(output(0, 0), 99.0, 1e-5);
@@ -84,21 +88,21 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 }
 
 /**
- * Make sure a CSV is loaded correctly.
+ * Make sure CustomImputation method replaces data 0 to 99.
  */
 BOOST_AUTO_TEST_CASE(CustomImputationTest)
 {
   arma::mat input("3.0 0.0 2.0 0.0;"
                   "5.0 6.0 0.0 6.0;"
                   "9.0 8.0 4.0 8.0;");
-  arma::mat outputT; // assume input is transposed
-  arma::mat output;  // assume input is not transposed
+  arma::mat outputT; // assume input is column wise
+  arma::mat output;  // assume input is row wise
   double customValue = 99;
   double mappedValue = 0.0;
 
   CustomImputation<double> imputer(customValue);
 
-  // transposed
+  // column wise
   imputer.Impute(input, outputT, mappedValue, 0/*dimension*/, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
@@ -114,7 +118,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
-  // not transposed
+  // row wise
   imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
@@ -148,20 +152,21 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
 }
 
 /**
- * Make sure a CSV is loaded correctly.
+ * Make sure MeanImputation method replaces data 0 to mean value of each
+ * dimensions.
  */
 BOOST_AUTO_TEST_CASE(MeanImputationTest)
 {
   arma::mat input("3.0 0.0 2.0 0.0;"
                   "5.0 6.0 0.0 6.0;"
                   "9.0 8.0 4.0 8.0;");
-  arma::mat outputT; // assume input is transposed
-  arma::mat output;  // assume input is not transposed
+  arma::mat outputT; // assume input is column wise
+  arma::mat output;  // assume input is row wise
   double mappedValue = 0.0;
 
   MeanImputation<double> imputer;
 
-  // transposed
+  // column wise
   imputer.Impute(input, outputT, mappedValue, 0, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
@@ -177,7 +182,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
-  // not transposed
+  // row wise
   imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
@@ -211,20 +216,21 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 }
 
 /**
- * Make sure a CSV is loaded correctly.
+ * Make sure MeanImputation method replaces data 0 to median value of each
+ * dimensions.
  */
 BOOST_AUTO_TEST_CASE(MedianImputationTest)
 {
   arma::mat input("3.0 0.0 2.0 0.0;"
                   "5.0 6.0 0.0 6.0;"
                   "9.0 8.0 4.0 8.0;");
-  arma::mat outputT; // assume input is transposed
-  arma::mat output;  // assume input is not transposed
+  arma::mat outputT; // assume input is column wise
+  arma::mat output;  // assume input is row wise
   double mappedValue = 0.0;
 
   MedianImputation<double> imputer;
 
-  // transposed
+  // column wise
   imputer.Impute(input, outputT, mappedValue, 1, true);
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
@@ -240,7 +246,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 3), 8.0, 1e-5);
 
-  // not transposed
+  // row wise
   imputer.Impute(input, output, mappedValue, 1, false);
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 3.0, 1e-5);
@@ -273,21 +279,22 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
 }
 
 /**
- * Make sure a CSV is loaded correctly.
+ * Make sure ListwiseDeletion method deletes the whole column (if column wise)
+ * or the row (if row wise) containing value of 0.
  */
 BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
 {
   arma::mat input("3.0 0.0 2.0 0.0;"
                   "5.0 6.0 0.0 6.0;"
                   "9.0 8.0 4.0 8.0;");
-  arma::mat outputT; // assume input is transposed
-  arma::mat output;  // assume input is not transposed
+  arma::mat outputT; // assume input is column wise
+  arma::mat output;  // assume input is row wise
   double mappedValue = 0.0;
 
   ListwiseDeletion<double> imputer;
 
-  // transposed
-  imputer.Impute(input, outputT, mappedValue, 0, true); // transposed
+  // column wise
+  imputer.Impute(input, outputT, mappedValue, 0, true); // column wise
 
   BOOST_REQUIRE_CLOSE(outputT(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(0, 1), 2.0, 1e-5);
@@ -296,8 +303,8 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(outputT(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(outputT(2, 1), 4.0, 1e-5);
 
-  // not transposed
-  imputer.Impute(input, output, mappedValue, 1, false); // not transposed
+  // row wise
+  imputer.Impute(input, output, mappedValue, 1, false); // row wise
 
   BOOST_REQUIRE_CLOSE(output(0, 0), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 1), 6.0, 1e-5);
@@ -309,7 +316,7 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(output(1, 3), 8.0, 1e-5);
 
   // overwrite to the input
-  imputer.Impute(input, mappedValue, 0, true); // transposed
+  imputer.Impute(input, mappedValue, 0, true); // column wise
 
   BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(0, 1), 2.0, 1e-5);
@@ -318,6 +325,5 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(2, 1), 4.0, 1e-5);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
