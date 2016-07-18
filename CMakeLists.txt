@@ -76,9 +76,12 @@ endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
-  add_definitions(-DDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  if (NOT MSVC)
+    add_definitions(-DDEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  endif ()
+
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
