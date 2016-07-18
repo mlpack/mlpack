@@ -5,9 +5,7 @@
  *
  * A nested class of SpillTree which traverses the entire tree with a
  * given set of rules which indicate the branches which can be pruned and the
- * order in which to recurse.  This traverser implements a Hybrid sp-tree
- * depth-first search.  Does defeatist search on overlapping nodes,
- * and backtracking on non-overlapping nodes.
+ * order in which to recurse.  This traverser is a depth-first traverser.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
@@ -61,13 +59,6 @@ SingleTreeTraverser<RuleType>::Traverse(
       // Recurse to the left.
       Traverse(queryIndex, *referenceNode.Left());
 
-      // If overlapping node, let's do defeatist search and ignore backtracking.
-      if (referenceNode.Overlap())
-      {
-        ++numPrunes;
-        return;
-      }
-
       // Is it still valid to recurse to the right?
       rightScore = rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
 
@@ -80,13 +71,6 @@ SingleTreeTraverser<RuleType>::Traverse(
     {
       // Recurse to the right.
       Traverse(queryIndex, *referenceNode.Right());
-
-      // If overlapping node, let's do defeatist search and ignore backtracking.
-      if (referenceNode.Overlap())
-      {
-        ++numPrunes;
-        return;
-      }
 
       // Is it still valid to recurse to the left?
       leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
@@ -106,14 +90,6 @@ SingleTreeTraverser<RuleType>::Traverse(
       {
         // Choose the left first.
         Traverse(queryIndex, *referenceNode.Left());
-
-        // If overlapping node, let's do defeatist search and ignore
-        // backtracking.
-        if (referenceNode.Overlap())
-        {
-          ++numPrunes;
-          return;
-        }
 
         // Is it still valid to recurse to the right?
         rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),

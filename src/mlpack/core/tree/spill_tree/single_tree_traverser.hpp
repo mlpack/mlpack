@@ -5,9 +5,7 @@
  *
  * A nested class of SpillTree which traverses the entire tree with a
  * given set of rules which indicate the branches which can be pruned and the
- * order in which to recurse.  This traverser implements a Hybrid sp-tree
- * depth-first search.  Does defeatist search on overlapping nodes,
- * and backtracking on non-overlapping nodes.
+ * order in which to recurse.  This traverser is a depth-first traverser.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_HPP
