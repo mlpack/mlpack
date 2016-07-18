@@ -144,9 +144,10 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename Tree>
 inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     const size_t queryIndex,
-    TreeType& /* referenceNode */,
+    Tree& /* referenceNode */,
     const double oldScore) const
 {
   // If we are already pruning, still prune.
@@ -155,6 +156,34 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
 
   // Just check the score again against the distances.
   double bestDistance = candidates[queryIndex].top().first;
+  bestDistance = SortPolicy::Relax(bestDistance, epsilon);
+
+  return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+    const size_t queryIndex,
+    tree::SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+        referenceNode,
+    double oldScore) const
+{
+  // If we are already pruning, still prune.
+  if (oldScore == DBL_MAX)
+    return oldScore;
+
+  if (referenceNode.Parent() && referenceNode.Parent()->Overlap())
+    // Defeatist search (If we have enough points, let's prune).
+    if (neighbors(neighbors.n_rows - 1, queryIndex) != (size_t() - 1))
+      return DBL_MAX;
+
+  // Just check the score again against the distances.
+  double bestDistance = distances(distances.n_rows - 1, queryIndex);
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;

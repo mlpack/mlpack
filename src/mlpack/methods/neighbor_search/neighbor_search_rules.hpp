@@ -9,6 +9,7 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <mlpack/core/tree/spill_tree.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -87,9 +88,33 @@ class NeighborSearchRules
    * @param referenceNode Candidate node to be recursed into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
+  template<typename Tree>
   double Rescore(const size_t queryIndex,
-                 TreeType& referenceNode,
+                 Tree& referenceNode,
                  const double oldScore) const;
+
+  /**
+   * Rescore function specialized for Spill Trees.  This function is used to
+   * update the score value when doing backtracking.  For spill trees, it
+   * implements a Hybrid sp-tree search.  If the parent node is a overlapping
+   * node and we have visited enough points, it decides to prune this node.
+   * If the parent node is a non-overlapping node, proper score is returned,
+   * so the search can continue with backtracking.
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceNode Candidate node to be recursed into.
+   * @param oldScore Old score produced by Score() (or Rescore()).
+   */
+  template<typename StatisticType,
+           typename MatType,
+           template<typename BoundMetricType, typename...> class BoundType,
+           template<typename SplitBoundType, typename SplitMatType>
+               class SplitType>
+  double Rescore(
+      const size_t queryIndex,
+      tree::SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+          referenceNode,
+      const double oldScore) const;
 
   /**
    * Get the score for recursion order.  A low score indicates priority for
