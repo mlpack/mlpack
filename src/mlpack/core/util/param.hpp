@@ -152,7 +152,7 @@
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_OUT(ID, DESC) \
-    PARAM_OUT(double, ID, DESC, "", 0.0d, false)
+    PARAM_OUT(double, ID, DESC, "", 0.0, false)
 
 /**
  * Define a string input parameter.
