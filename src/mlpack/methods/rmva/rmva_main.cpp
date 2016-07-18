@@ -75,7 +75,7 @@ PARAM_INT_IN("classes", "The number of classes.", "c", 10);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 // Test parameters.
-PARAM_STRING_OUT("test_file", "A file containing the test set.", "T");
+PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
 PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
     " test set will be written.", "o");
 
