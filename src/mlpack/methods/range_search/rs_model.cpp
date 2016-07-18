@@ -25,7 +25,9 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     xTreeRS(NULL),
     hilbertRTreeRS(NULL),
     rPlusTreeRS(NULL),
-    rPlusPlusTreeRS(NULL)
+    rPlusPlusTreeRS(NULL),
+    rpTreeMaxRS(NULL),
+    rpTreeMeanRS(NULL)
 {
   // Nothing to do.
 }
@@ -138,6 +140,16 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
 
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case RP_TREE_MAX:
+      rpTreeMaxRS = new RSType<tree::RPTreeMax>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case RP_TREE_MEAN:
+      rpTreeMeanRS = new RSType<tree::RPTreeMean>(move(referenceSet), naive,
           singleMode);
       break;
   }
@@ -261,6 +273,14 @@ void RSModel::Search(arma::mat&& querySet,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case RP_TREE_MAX:
+      rpTreeMaxRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case RP_TREE_MEAN:
+      rpTreeMeanRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -315,6 +335,14 @@ void RSModel::Search(const math::Range& range,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS->Search(range, neighbors, distances);
       break;
+
+    case RP_TREE_MAX:
+      rpTreeMaxRS->Search(range, neighbors, distances);
+      break;
+
+    case RP_TREE_MEAN:
+      rpTreeMeanRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -341,6 +369,10 @@ std::string RSModel::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case RP_TREE_MAX:
+      return "Random projection tree (max)";
+    case RP_TREE_MEAN:
+      return "Random projection tree (mean)";
     default:
       return "unknown tree";
   }
@@ -367,6 +399,10 @@ void RSModel::CleanMemory()
     delete rPlusTreeRS;
   if (rPlusPlusTreeRS)
     delete rPlusPlusTreeRS;
+  if (rpTreeMaxRS)
+    delete rpTreeMaxRS;
+  if (rpTreeMeanRS)
+    delete rpTreeMeanRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -377,4 +413,6 @@ void RSModel::CleanMemory()
   hilbertRTreeRS = NULL;
   rPlusTreeRS = NULL;
   rPlusPlusTreeRS = NULL;
+  rpTreeMaxRS = NULL;
+  rpTreeMeanRS = NULL;
 }

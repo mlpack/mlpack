@@ -394,6 +394,14 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
           epsilon);
       break;
+    case RP_TREE_MAX:
+      nSearch = new NSType<SortPolicy, tree::RPTreeMax>(naive, singleMode,
+          epsilon);
+      break;
+    case RP_TREE_MEAN:
+      nSearch = new NSType<SortPolicy, tree::RPTreeMean>(naive, singleMode,
+          epsilon);
+      break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
@@ -478,6 +486,10 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case RP_TREE_MAX:
+      return "Random projection tree";
+    case RP_TREE_MEAN:
+      return "Random projection tree";
     default:
       return "unknown tree";
   }
