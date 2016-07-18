@@ -99,14 +99,20 @@ int main(int argc, char** argv)
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
+  std::vector<size_t> dirtyDimensions;
 
   Load(inputFile, input, info, true, true);
 
   // print how many mapping exist in each dimensions
   for (size_t i = 0; i < input.n_rows; ++i)
   {
-    Log::Info << info.NumMappings(i) << " mappings in dimension " << i << "."
+    size_t numMappings = info.NumMappings(i);
+    Log::Info << numMappings << " mappings in dimension " << i << "."
         << endl;
+    if (numMappings > 0)
+    {
+      dirtyDimensions.push_back(i);
+    }
   }
 
   // Initialize imputer class
@@ -134,6 +140,7 @@ int main(int argc, char** argv)
         << endl;
   }
 
+  Timer::Start("imputation");
   if (CLI::HasParam("dimension"))
   {
     // when --dimension is specified,
@@ -142,7 +149,7 @@ int main(int argc, char** argv)
         << "to replace '" << missingValue << "' on dimension " << dimension
         << "." << endl;
 
-    imputer.Impute(input, output, missingValue, dimension);
+    imputer.Impute(input, missingValue, dimension);
   }
   else
   {
@@ -151,16 +158,17 @@ int main(int argc, char** argv)
     Log::Info << "Performing '" << strategy << "' imputation strategy "
         << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-    for (size_t i = 0; i < input.n_rows; ++i)
+    for (size_t i : dirtyDimensions)
     {
-      imputer.Impute(input, output, missingValue, i);
+      imputer.Impute(input, missingValue, i);
     }
   }
+  Timer::Stop("imputation");
 
   if (!outputFile.empty())
   {
     Log::Info << "Saving results to '" << outputFile << "'." << endl;
-    Save(outputFile, output, false);
+    Save(outputFile, input, false);
   }
 }
 
