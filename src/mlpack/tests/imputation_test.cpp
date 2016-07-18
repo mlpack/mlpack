@@ -25,6 +25,19 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(ImputationTest);
 /**
+ * Check if two matrixes are equal.
+ */
+void CheckEqual(const arma::mat& lhs, const arma::mat& rhs)
+{
+  BOOST_REQUIRE(lhs.n_rows == rhs.n_rows);
+  BOOST_REQUIRE(lhs.n_cols == rhs.n_cols);
+  for(size_t i = 0; i != lhs.n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(lhs[i], rhs[i], 1e-5);
+  }
+}
+
+/**
  * 1. Make sure a CSV is loaded correctly with mappings using MissingPolicy.
  * 2. Try Imputer object with CustomImputation method to impute data "a".
  * (It is ok to test on one method since the other ones will be covered in the
@@ -136,19 +149,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0/*dimension*/, true);
-
-  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 1), 99.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 3), 99.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 2), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
+  CheckEqual(input, output);
 }
 
 /**
@@ -200,19 +201,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0/*dimension*/, true);
-
-  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 1), 2.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 3), 2.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 2), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
+  CheckEqual(input, output);
 }
 
 /**
@@ -263,19 +252,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 1/*dimension*/, true);
-
-  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 2), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 3), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 1), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 2), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 3), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 1), 8.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 3), 8.0, 1e-5);
+  CheckEqual(input, output);
 }
 
 /**
@@ -317,13 +294,7 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0, true); // column wise
-
-  BOOST_REQUIRE_CLOSE(input(0, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(0, 1), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 0), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(1, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 0), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(input(2, 1), 4.0, 1e-5);
+  CheckEqual(input, output);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
