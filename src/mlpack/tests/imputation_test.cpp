@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0/*dimension*/, true);
-  CheckEqual(input, output);
+  CheckEqual(input, outputT);
 }
 
 /**
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0/*dimension*/, true);
-  CheckEqual(input, output);
+  CheckEqual(input, outputT);
 }
 
 /**
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 1/*dimension*/, true);
-  CheckEqual(input, output);
+  CheckEqual(input, outputT);
 }
 
 /**
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
 
   // overwrite to the input
   imputer.Impute(input, mappedValue, 0, true); // column wise
-  CheckEqual(input, output);
+  CheckEqual(input, outputT);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
