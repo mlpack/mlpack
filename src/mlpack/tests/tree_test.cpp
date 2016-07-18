@@ -1354,6 +1354,90 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
   TreeType root(dataset);
 }
 
+BOOST_AUTO_TEST_CASE(RPTreeMaxTest)
+{
+  typedef RPTreeMax<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RPTreeMeanTest)
+{
+  typedef RPTreeMean<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
 // Recursively checks that each node contains all points that it claims to have.
 template<typename TreeType>
 bool CheckPointBounds(TreeType& node)

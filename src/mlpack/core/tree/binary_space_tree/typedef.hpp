@@ -135,6 +135,20 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           bound::BallBound,
                                           MeanSplit>;
 
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPTreeMax = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMaxSplit>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPTreeMean = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMeanSplit>;
+
 } // namespace tree
 } // namespace mlpack
 

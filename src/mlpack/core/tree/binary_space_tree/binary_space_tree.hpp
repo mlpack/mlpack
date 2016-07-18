@@ -54,6 +54,8 @@ class BinarySpaceTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
+  typedef SplitType<BoundType<MetricType>, MatType> Split;
+
  private:
   //! The left child node.
   BinarySpaceTree* left;
@@ -478,6 +480,40 @@ class BinarySpaceTree
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
 
+  /**
+   * Perform the split process according to the information about the
+   * split.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   */
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const typename Split::SplitInfo& splitInfo);
+
+  /**
+   * Perform the split process according to the information about the split and
+   * return a list of changed indices.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const typename Split::SplitInfo& splitInfo,
+                      std::vector<size_t>& oldFromNew);
  protected:
   /**
    * A default constructor.  This is meant to only be used with

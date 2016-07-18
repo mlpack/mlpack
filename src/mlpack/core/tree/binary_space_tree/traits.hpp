@@ -56,6 +56,78 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool BinaryTree = true;
 };
 
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                                 RPTreeMaxSplit>>
+{
+ public:
+  /**
+   * Each binary space tree node has two children which represent
+   * non-overlapping subsets of the space which the node represents.  Therefore,
+   * children are not overlapping.
+   */
+  static const bool HasOverlappingChildren = true;
+
+  /**
+   * There is no guarantee that the first point in a node is its centroid.
+   */
+  static const bool FirstPointIsCentroid = false;
+
+  /**
+   * Points are not contained at multiple levels of the binary space tree.
+   */
+  static const bool HasSelfChildren = false;
+
+  /**
+   * Points are rearranged during building of the tree.
+   */
+  static const bool RearrangesDataset = true;
+
+  /**
+   * This is always a binary tree.
+   */
+  static const bool BinaryTree = true;
+};
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                                 RPTreeMeanSplit>>
+{
+ public:
+  /**
+   * Each binary space tree node has two children which represent
+   * non-overlapping subsets of the space which the node represents.  Therefore,
+   * children are not overlapping.
+   */
+  static const bool HasOverlappingChildren = true;
+
+  /**
+   * There is no guarantee that the first point in a node is its centroid.
+   */
+  static const bool FirstPointIsCentroid = false;
+
+  /**
+   * Points are not contained at multiple levels of the binary space tree.
+   */
+  static const bool HasSelfChildren = false;
+
+  /**
+   * Points are rearranged during building of the tree.
+   */
+  static const bool RearrangesDataset = true;
+
+  /**
+   * This is always a binary tree.
+   */
+  static const bool BinaryTree = true;
+};
+
 } // namespace tree
 } // namespace mlpack
 
