@@ -37,8 +37,8 @@ class MedianImputation
               const size_t dimension,
               const bool columnMajor = true)
   {
-    //initiate output
-    output = input;
+    // set size of the output
+    output.set_size(input.n_rows, input.n_cols);
 
     using PairType = std::pair<size_t, size_t>;
     // dimensions and indexes are saved as pairs inside this vector.
@@ -48,31 +48,53 @@ class MedianImputation
 
     if (columnMajor)
     {
-      for (size_t i = 0; i < input.n_cols; ++i)
+      for (size_t row = 0; row < input.n_rows; ++row)
       {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
+        for (size_t col = 0; col < input.n_cols; ++col)
         {
-          targets.emplace_back(dimension, i);
-        }
-        else
-        {
-          elemsToKeep.push_back(input(dimension, i));
+          if (row == dimension)
+          {
+            if (input(row, col) == mappedValue ||
+                std::isnan(input(row, col)))
+            {
+              targets.emplace_back(row, col);
+            }
+            else
+            {
+              elemsToKeep.push_back(input(row, col));
+              output(row, col) = input(row, col);
+            }
+          }
+          else
+          {
+            output(row, col) = input(row, col);
+          }
         }
       }
     }
     else
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      for (size_t col = 0; col < input.n_cols; ++col)
       {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
+        for (size_t row = 0; row < input.n_rows; ++row)
         {
-          targets.emplace_back(i, dimension);
-        }
-        else
-        {
-           elemsToKeep.push_back(input(i, dimension));
+          if (col == dimension)
+          {
+            if (input(row, col) == mappedValue ||
+                std::isnan(input(row, col)))
+            {
+              targets.emplace_back(row, col);
+            }
+            else
+            {
+              elemsToKeep.push_back(input(row, col));
+              output(row, col) = input(row, col);
+            }
+          }
+          else
+          {
+            output(row, col) = input(row, col);
+          }
         }
       }
     }

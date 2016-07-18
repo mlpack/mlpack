@@ -43,29 +43,57 @@ class CustomImputation
               const size_t dimension,
               const bool columnMajor = true)
   {
-    // initiate output
-    output = input;
+    // set size of the output
+    output.set_size(input.n_rows, input.n_cols);
 
     // replace the target value to custom value
     if (columnMajor)
     {
-      for (size_t i = 0; i < input.n_cols; ++i)
+      for (size_t row = 0; row < input.n_rows; ++row)
       {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
+        for (size_t col = 0; col < input.n_cols; ++col)
         {
-          output(dimension, i) = customValue;
+          if (row == dimension)
+          {
+            if (input(row, col) == mappedValue ||
+                std::isnan(input(row, col)))
+            {
+              output(row, col) = customValue;
+            }
+            else
+            {
+              output(row, col) = input(row, col);
+            }
+          }
+          else
+          {
+            output(row, col) = input(row, col);
+          }
         }
       }
     }
     else
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      for (size_t col = 0; col < input.n_cols; ++ col)
       {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
+        for (size_t row = 0; row < input.n_rows; ++row)
         {
-          output(i, dimension) = customValue;
+          if (col == dimension)
+          {
+            if (input(row, col) == mappedValue ||
+                std::isnan(input(row, col)))
+            {
+              output(row, col) = customValue;
+            }
+            else
+            {
+              output(row, col) = input(row, col);
+            }
+          }
+          else
+          {
+            output(row, col) = input(row, col);
+          }
         }
       }
     }

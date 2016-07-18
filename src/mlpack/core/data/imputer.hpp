@@ -79,7 +79,6 @@ class Imputer
     strategy.Impute(input, mappedValue, dimension, columnMajor);
   }
 
-
   //! Get the strategy
   const StrategyType& Strategy() const { return strategy; }
 
