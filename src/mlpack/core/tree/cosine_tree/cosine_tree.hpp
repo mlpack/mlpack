@@ -137,7 +137,7 @@ class CosineTree
    * a significant speedup when there are large number of columns to choose from
    * and when a number of samples are to be drawn from the distribution.
    *
-   * @param cDistribution Cumulative LS distibution of columns in the node.
+   * @param cDistribution Cumulative LS distribution of columns in the node.
    * @param value Randomly generated value in the range [0, 1].
    * @param start Starting index of the distribution interval to search in.
    * @param end Ending index of the distribution interval to search in.

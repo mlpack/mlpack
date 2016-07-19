@@ -22,7 +22,7 @@ namespace naive_bayes /** The Naive Bayes Classifier. */ {
  * last row of the data input to the constructor.
  *
  * Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for
- * each of the labels y_j.  Alongwith this, it also computes the classs
+ * each of the labels y_j.  Alongwith this, it also computes the class
  * probabilities P(Y = y_j).
  *
  * For classifying a data point (x_1, x_2, ..., x_n), it computes the following:
