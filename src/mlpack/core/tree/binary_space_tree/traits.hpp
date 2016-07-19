@@ -15,6 +15,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_TRAITS_HPP
 
 #include <mlpack/core/tree/tree_traits.hpp>
+#include <mlpack/core/tree/ballbound.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -60,6 +61,29 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   /**
    * This is always a binary tree.
    */
+  static const bool BinaryTree = true;
+};
+
+/**
+ * This is a specialization of the TreeType class to the BallTree tree type.
+ * The only difference with general BinarySpaceTree is that BallTree can have
+ * overlapping children.
+ * See mlpack/core/tree/tree_traits.hpp for more information.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
+    bound::BallBound, SplitType>>
+{
+ public:
+  static const bool HasOverlappingChildren = true;
+  static const bool HasDuplicatedPoints = false;
+  static const bool FirstPointIsCentroid = false;
+  static const bool HasSelfChildren = false;
+  static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;
 };
 
