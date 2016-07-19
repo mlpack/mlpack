@@ -33,10 +33,8 @@ class HollowBallBound
   typedef VecType Vec;
 
  private:
-  //! The radius of the inner ball bound.
-  ElemType innerRadius;
-  //! The radius of the outer ball bound.
-  ElemType outerRadius;
+  //! The inner and the outer radii of the bound.
+  math::RangeType<ElemType> radii;
   //! The center of the ball bound.
   VecType center;
   //! The metric used in this bound.
@@ -65,8 +63,8 @@ class HollowBallBound
   /**
    * Create the ball bound with the specified radius and center.
    *
-   * @param innerRradius Inner radius of ball bound.
-   * @param outerRradius Outer radius of ball bound.
+   * @param innerRadius Inner radius of ball bound.
+   * @param outerRadius Outer radius of ball bound.
    * @param center Center of ball bound.
    */
   HollowBallBound(const ElemType innerRadius,
@@ -86,14 +84,14 @@ class HollowBallBound
   ~HollowBallBound();
 
   //! Get the outer radius of the ball.
-  ElemType OuterRadius() const { return outerRadius; }
+  ElemType OuterRadius() const { return radii.Hi(); }
   //! Modify the outer radius of the ball.
-  ElemType& OuterRadius() { return outerRadius; }
+  ElemType& OuterRadius() { return radii.Hi(); }
 
   //! Get the innner radius of the ball.
-  ElemType InnerRadius() const { return innerRadius; }
+  ElemType InnerRadius() const { return radii.Lo(); }
   //! Modify the inner radius of the ball.
-  ElemType& InnerRadius() { return innerRadius; }
+  ElemType& InnerRadius() { return radii.Lo(); }
 
   //! Get the center point of the ball.
   const VecType& Center() const { return center; }
@@ -107,7 +105,7 @@ class HollowBallBound
    * Get the minimum width of the bound (this is same as the diameter).
    * For ball bounds, width along all dimensions remain same.
    */
-  ElemType MinWidth() const { return outerRadius * 2.0; }
+  ElemType MinWidth() const { return radii.Hi() * 2.0; }
 
   //! Get the range in a certain dimension.
   math::RangeType<ElemType> operator[](const size_t i) const;
@@ -194,7 +192,7 @@ class HollowBallBound
   /**
    * Returns the diameter of the ballbound.
    */
-  ElemType Diameter() const { return 2 * outerRadius; }
+  ElemType Diameter() const { return 2 * radii.Hi(); }
 
   //! Returns the distance metric used in this bound.
   const MetricType& Metric() const { return *metric; }
