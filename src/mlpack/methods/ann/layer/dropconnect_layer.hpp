@@ -42,7 +42,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputLayer Layer used instead of the internel linear layer.
+ * @tparam InputLayer Layer used instead of the internal linear layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
