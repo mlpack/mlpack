@@ -26,7 +26,7 @@ class XTreeAuxiliaryInformation
   { };
 
   /**
-   * Construct this whith the specified node.
+   * Construct this with the specified node.
    *
    * @param node The node that stores this auxiliary information.
    */
@@ -143,7 +143,7 @@ class XTreeAuxiliaryInformation
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
-   * returned, the update will be propogated upward.
+   * returned, the update will be propagated upward.
    * @param node The node in which the auxiliary information being update.
    */
   bool UpdateAuxiliaryInfo(TreeType* )
@@ -210,9 +210,9 @@ class XTreeAuxiliaryInformation
   size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
   //! Modify the maximum number of a normal node's children.
   size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
-  //! Return the split history of the node assosiated with this object.
+  //! Return the split history of the node associated with this object.
   const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
-  //! Modify the split history of the node assosiated with this object.
+  //! Modify the split history of the node associated with this object.
   SplitHistoryStruct& SplitHistory() { return splitHistory; }
 
   /**

@@ -84,7 +84,7 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 
 /**
  * BiSearchVisitor executes a bichromatic neighbor search on the given NSType.
- * We use template specialization to differenciate those tree types that
+ * We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, before doing neighbor search,
  * a query tree with proper leafSize is built from the querySet.
  */
@@ -145,7 +145,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
 
 /**
  * TrainVisitor sets the reference set to a new reference set on the given
- * NSType. We use template specialization to differenciate those tree types that
+ * NSType. We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, a reference tree with proper
  * leafSize is built from the referenceSet.
  */

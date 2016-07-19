@@ -57,7 +57,7 @@ class HyperplaneBase
   {};
 
   /**
-   * Project the given point on the projection vector and substract th
+   * Project the given point on the projection vector and subtract the
    * split value.
    *
    * @param point Point to be projected.

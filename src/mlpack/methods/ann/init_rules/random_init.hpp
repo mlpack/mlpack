@@ -32,7 +32,7 @@ class RandomInitialization
 
   /**
    * Initialize the random initialization rule with the given bound.
-   * Using the negative of the bound as lower bound and the postive bound as
+   * Using the negative of the bound as lower bound and the positive bound as
    * upper bound.
    *
    * @param bound The number used as lower bound
