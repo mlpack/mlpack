@@ -74,6 +74,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
 endif()
 
+set(COMPILER_SUPPORT_LIBRARIES "")
+
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
   # Currently coverage only works with GNU g++
@@ -86,6 +88,7 @@ if(BUILD_WITH_COVERAGE)
       message(FATAL_ERROR "gcov not found! Aborting...")
     endif()
 
+    set(COMPILER_SUPPORT_LIBRARIES "supc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(WARNING "Adding debug options for coverage")
     # Remove optimizations for better line coverage

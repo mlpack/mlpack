@@ -63,7 +63,8 @@ fi
 
 # initial pass
 echo "Generating primary coverage report"
-lcov -b . -c -i -d ./ -o .coverage.wtest.base >> ./coveragehistory/$current_log_file
+[[ -d ./coveragehistory/ ]] || mkdir coveragehistory
+lcov -b . -c -i -d ./ -o .coverage.wtest.base > ./coveragehistory/$current_log_file
 
 # Run the tests
 if [ "$test_case" = "ALL" ]; then
@@ -112,7 +113,6 @@ genhtml -o ./coverage/ .coverage.total
 
 # Extra: Preserve coverage file in coveragehistory folder
 coverage_file=$current_coverage_file
-[[ -d ./coveragehistory/ ]] || mkdir coveragehistory
 cp .coverage.total ./coveragehistory/$current_coverage_file
 
 # clean temp coverage files
