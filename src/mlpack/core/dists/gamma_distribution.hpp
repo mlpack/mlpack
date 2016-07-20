@@ -17,7 +17,6 @@
 namespace mlpack{
 namespace distribution{
 
-
 /**
  * Class for fitting the Gamma Distribution to a dataset.
  */
