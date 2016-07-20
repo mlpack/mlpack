@@ -7,10 +7,11 @@
 #include "gamma_distribution.hpp"
 
 #include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/polygamma.hpp>
+#include "mlpack/core/boost_backport/trigamma.hpp"
 
 using namespace mlpack;
 using namespace mlpack::distribution;
+
 
 // Returns true if computation converged.
 inline bool GammaDistribution::converged(double aOld, double aNew)
@@ -31,8 +32,7 @@ void GammaDistribution::Train(const arma::mat& rdata)
 
   // Use boost's definitions of digamma and tgamma, and std::log.
   using boost::math::digamma;
-  //using boost::math::trigamma;
-  using boost::math::polygamma;
+  using boost::math::trigamma;
   using std::log;
 
   // Allocate space for alphas and betas (Assume independent rows).
@@ -60,8 +60,7 @@ void GammaDistribution::Train(const arma::mat& rdata)
 
       // Calculate new value for alpha. 
       double nominator = meanLogx - logMeanx + log(aEst) - digamma(aEst);
-      //double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
-      double denominator = pow(aEst, 2) * (1 / aEst - polygamma(1, aEst));
+      double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
       assert (denominator != 0); // Protect against division by 0.
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
 
