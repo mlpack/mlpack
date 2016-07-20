@@ -92,6 +92,8 @@ class Population {
     for (ssize_t i=0; i<aSpecies.size(); ++i) {
       populationSize += aSpecies[i].aGenomes.size();
     }
+
+    return populationSize;
   }
 
   // Set best fitness to be the minimum of all genomes' fitness.

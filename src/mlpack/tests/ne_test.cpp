@@ -177,11 +177,11 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
 
   // Set CNE algorithm parameters.
   Parameters params;
-  params.aSpeciesSize = 1000;
+  params.aSpeciesSize = 500;
   params.aMutateRate = 0.1;
   params.aMutateSize = 0.02;
   params.aElitePercentage = 0.2;
-  params.aMaxGeneration = 500;
+  params.aMaxGeneration = 1000;
 
   // Construct seed genome for xor task.
   ssize_t id = 0;
@@ -257,12 +257,13 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   params.aMutateWeightProb = 0.2;
   params.aPerturbWeightProb = 0.9;
   params.aMutateWeightSize = 0.1;
-  params.aMutateAddLinkProb = 0.5;
+  params.aMutateAddLinkProb = 0.9;
   params.aMutateAddRecurrentLinkProb = 0;
   params.aMutateAddLoopLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.5;
+  params.aMutateAddNeuronProb = 0.6;
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
+  params.aNumSpeciesThreshold = 10;
 
   // Construct seed genome for xor task.
   ssize_t id = 0;
@@ -334,8 +335,8 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   double l = 0.5;
   double F = 10.0;
   double tau = 0.02;
-  ssize_t num_trial = 20;
-  ssize_t num_step = 200;
+  ssize_t num_trial = 10;
+  ssize_t num_step = std::pow(10, 5);
 
   // Construct task instance.
   TaskCartPole task(mc, mp, g, l, F, tau, track_limit, theta_limit, num_trial, num_step);
@@ -353,12 +354,13 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   params.aMutateWeightProb = 0.2;
   params.aPerturbWeightProb = 0.9;
   params.aMutateWeightSize = 0.1;
-  params.aMutateAddLinkProb = 0.5;
+  params.aMutateAddLinkProb = 0.8;
   params.aMutateAddRecurrentLinkProb = 0;
   params.aMutateAddLoopLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.5;
+  params.aMutateAddNeuronProb = 0.1;
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
+  params.aNumSpeciesThreshold = 10;
 
   // Set seed genome for cart pole task.
   ssize_t id = 0;
@@ -384,17 +386,12 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   neuronGenes.push_back(outputGene);
   neuronGenes.push_back(hiddenGene);
 
-  LinkGene link1(0, 5, 0, 0, true);
-  LinkGene link2(1, 5, 1, 0, true);
-  LinkGene link3(2, 5, 2, 0, true);
-  LinkGene link4(3, 5, 3, 0, true);
-  LinkGene link5(4, 5, 4, 0, true);
-  LinkGene link6(0, 6, 5, 0, true);
-  LinkGene link7(1, 6, 6, 0, true);
-  LinkGene link8(2, 6, 7, 0, true);
-  LinkGene link9(3, 6, 8, 0, true);
-  LinkGene link10(4, 6, 9, 0, true);
-  LinkGene link11(6, 5, 10, 0, true);
+  LinkGene link1(0, 6, 0, 0, true);
+  LinkGene link2(1, 6, 1, 0, true);
+  LinkGene link3(2, 6, 2, 0, true);
+  LinkGene link4(3, 6, 3, 0, true);
+  LinkGene link5(4, 6, 4, 0, true);
+  LinkGene link6(6, 5, 5, 0, true);
 
   linkGenes.push_back(link1);
   linkGenes.push_back(link2);
@@ -402,11 +399,6 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   linkGenes.push_back(link4);
   linkGenes.push_back(link5);
   linkGenes.push_back(link6);
-  linkGenes.push_back(link7);
-  linkGenes.push_back(link8);
-  linkGenes.push_back(link9);
-  linkGenes.push_back(link10);
-  linkGenes.push_back(link11);
 
   Genome seedGenome = Genome(0, 
                              neuronGenes,
@@ -419,7 +411,7 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   NEAT<TaskCartPole> neat(task, seedGenome, params);
 
   // Evolve. 
-  neat.Evolve();  // Fitness 4000 (num_trial * num_step) means passed test.
+  neat.Evolve();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

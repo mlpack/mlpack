@@ -142,6 +142,10 @@ class CNE {
 
     	// Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aSpecies.BestFitness());
+      if (aSpecies.BestFitness() == 0) {
+        printf("Task succeed in %zu iterations.\n", generation);
+        exit(0);
+      }
 
     	// Reproduce next generation.
       Reproduce();

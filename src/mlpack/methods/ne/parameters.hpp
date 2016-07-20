@@ -82,6 +82,9 @@ class Parameters {
   // Probability to turn disabled link to enabled.
   double aMutateDisabledProb;
 
+  // When number of species exceed this value, start to remove stale and weak species in population. 
+  ssize_t aNumSpeciesThreshold;
+
 };
 
 }  // namespace ne

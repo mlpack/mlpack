@@ -66,6 +66,7 @@ class NEAT {
     aMutateAddNeuronProb = params.aMutateAddNeuronProb;
     aMutateEnabledProb = params.aMutateEnabledProb;
     aMutateDisabledProb = params.aMutateDisabledProb;
+    aNumSpeciesThreshold = params.aNumSpeciesThreshold;
   }
 
   // Destructor.
@@ -304,9 +305,12 @@ class NEAT {
     }
   }
 
-  // Compare which genome is better.
+  // Compare which genome is better. Fitness smaller is better.
   static bool CompareGenome(Genome lg, Genome rg) {
-    if (lg.Fitness() < rg.Fitness()) {  // NOTICE: we assume smaller is better.
+    assert(lg.Fitness() != DBL_MAX);
+    assert(rg.Fitness() != DBL_MAX);
+
+    if (lg.Fitness() < rg.Fitness()) {
       return true;
     } else if (rg.Fitness() < lg.Fitness()) {
       return false;
@@ -554,7 +558,7 @@ class NEAT {
 
     for (ssize_t i=0; i<population.aSpecies.size(); ++i) {
       double weak = (std::floor(speciesAverageRank[i] * population.NumSpecies() / totalAverageRank)
-                     < 1);  // NOTICE: here good or not?
+                     < 1);
       if (weak) {
         population.RemoveSpecies(i);
       }
@@ -675,37 +679,31 @@ class NEAT {
   }
 
   // Reproduce next generation of population.
+  // NOTICE: steps in reproduce are also kind of flexible.
   void Reproduce() {
-    // keep best genome.
+    // keep previous best genome.
+    std::vector<Genome> childGenomes;
     Genome lastBestGenome = aPopulation.BestGenome();
+    childGenomes.push_back(lastBestGenome);
 
     // Remove weak genomes in each species.
     CullSpecies(aPopulation, aCullSpeciesPercentage);
 
     // Remove stale species, weak species.
-    if (aPopulation.aSpecies.size() > 10) {
+    if (aPopulation.aSpecies.size() > aNumSpeciesThreshold) {
       RemoveStaleSpecies(aPopulation);
-      //RemoveWeakSpecies(aPopulation);
+      RemoveWeakSpecies(aPopulation);
     }
 
     // Breed children in each species. 
     std::vector<double> speciesAverageRank;
     CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
-
-    //DEBUGGING!!!!!!!!!
-    printf("Species average rank are: ");
-    for (ssize_t s=0; s<speciesAverageRank.size(); ++s) {
-      std::cout<< speciesAverageRank[s] << "  ";
-    }
-    printf("\n");
-    //DEBUGGING!!!!!!!!!
-
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
-    std::vector<Genome> childGenomes;
+
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
-      // number of child genomes by this species.
       ssize_t numBreed = std::floor(speciesAverageRank[i] * aPopulationSize / totalAverageRank) - 1;
       ssize_t numBreedSuccess = 0;
+
       while (numBreedSuccess < numBreed) {
         Genome genome;
         bool hasBaby = BreedChild(aPopulation.aSpecies[i], genome, aCrossoverRate);
@@ -717,10 +715,9 @@ class NEAT {
     }
 
     // Keep the best in each species.
-    CullSpeciesToOne(aPopulation);  // NOTICE: I found that this makes XOR test converges fast.
+    CullSpeciesToOne(aPopulation);
 
     // Random choose species and breed child until reach population size.
-    childGenomes.push_back(lastBestGenome);
     ssize_t currentNumGenome = childGenomes.size() + aPopulation.PopulationSize();
     while (currentNumGenome < aPopulationSize) {
       ssize_t speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
@@ -733,12 +730,6 @@ class NEAT {
     }
 
     // Speciate genomes into new species.
-    std::vector<Genome> populationGenomes;
-    AggregateGenomes(aPopulation, populationGenomes);
-    aPopulation.aSpecies.clear();
-    for (ssize_t i=0; i<populationGenomes.size(); ++i) {
-      AddGenomeToSpecies(aPopulation, populationGenomes[i]);
-    }
     for (ssize_t i=0; i<childGenomes.size(); ++i) {
       AddGenomeToSpecies(aPopulation, childGenomes[i]);
     }
@@ -798,6 +789,10 @@ class NEAT {
 
       // Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
+      if (aPopulation.BestFitness() == 0) {
+        printf("Task succeed in %zu iterations.\n", generation);
+        exit(0);
+      }
 
       // Reproduce next generation.
       Reproduce();
@@ -877,6 +872,9 @@ class NEAT {
 
   // Probability to turn disabled link to enabled.
   double aMutateDisabledProb;
+
+  // Species number threshold.
+  ssize_t aNumSpeciesThreshold;
 
 };
 

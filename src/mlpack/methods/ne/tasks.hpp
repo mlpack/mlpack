@@ -140,19 +140,19 @@ class TaskCartPole {
     assert(genome.NumInput() == 5); 
     assert(genome.NumOutput() == 1);
 
-    mlpack::math::RandomSeed(1);  // If no seed set, each time the fitness will change.
+    //mlpack::math::RandomSeed(1);  // If no seed set, each time the fitness will change.
     double fitness = 0;
     for (ssize_t trial=0; trial<num_trial; ++trial) {
-      // Initialize inputs: x, x_dot, theta, theta_dot. As used by Stanley
+      // Initialize inputs: x, x_dot, theta, theta_dot. As used by Stanley.
       double x = mlpack::math::Random(-2.4, 2.4);
       double x_dot = mlpack::math::Random(-1.0, 1.0);
       double theta = mlpack::math::Random(-0.2, 0.2);
       double theta_dot = mlpack::math::Random(-1.5, 1.5);
 
       for (ssize_t step=0; step<num_step; ++step) {
-        // Convert input into range [0, 1]
+        // Scale input.
         std::vector<double> inputs = {(x + 2.4) / 4.8,
-                                      (x_dot + 0.75) / 1.5,  // ??
+                                      (x_dot + 0.75) / 1.5,
                                       (theta + theta_limit) / 0.41,
                                       (theta_dot + 1.0) / 2.0,
                                       1};  // TODO: use arma::mat for input.
@@ -173,7 +173,9 @@ class TaskCartPole {
       }
     }
 
-    return (1.0 / fitness);
+    fitness = 1 - double(fitness) / (num_trial * num_step);
+
+    return fitness;
   }
 
 };
