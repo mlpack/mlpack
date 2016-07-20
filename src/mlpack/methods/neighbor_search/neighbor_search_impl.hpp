@@ -355,8 +355,7 @@ Search(const MatType& querySet,
       distancePtr = new arma::mat; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<size_t>;
     }
-
-    if (treeOwner)
+    else if (treeOwner)
       neighborPtr = new arma::Mat<size_t>; // Reference indices need mapping.
   }
 
