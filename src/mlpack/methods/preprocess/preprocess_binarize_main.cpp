@@ -29,13 +29,13 @@ PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
     "$ mlpack_preprocess_binarize -i dataset.csv -t 5 -d 0 -o result.csv");
 
 // Define parameters for data.
-PARAM_STRING_REQ("input_file", "File containing data,", "i");
+PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
 // Define optional parameters.
-PARAM_STRING("output_file", "File to save the output,", "o", "");
-PARAM_INT("dimension", "Dimension to apply the binarization. If not set, the "
-    "program will binarize every dimension by default", "d", 0);
-PARAM_DOUBLE("threshold", "Threshold to be applied for binarization. If not "
-    "set, the threshold defaults to 0.0", "t", 0.0);
+PARAM_STRING_OUT("output_file", "File to save the output.", "o");
+PARAM_INT_IN("dimension", "Dimension to apply the binarization. If not set, the"
+    " program will binarize every dimension by default.", "d", 0);
+PARAM_DOUBLE_IN("threshold", "Threshold to be applied for binarization. If not "
+    "set, the threshold defaults to 0.0.", "t", 0.0);
 
 using namespace mlpack;
 using namespace arma;
@@ -56,11 +56,11 @@ int main(int argc, char** argv)
         << "binarize on every dimensions." << endl;
 
   if (!CLI::HasParam("threshold"))
-    Log::Warn << "You did not specify --threshold, so the threshold "
-        << "will be automatically set to '0.0'." << endl;
+    Log::Warn << "You did not specify --threshold, so the threshold will be "
+        << "automatically set to '0.0'." << endl;
 
   if (!CLI::HasParam("output_file"))
-    Log::Warn << "You did not specify --output_file, so no result will be"
+    Log::Warn << "You did not specify --output_file, so no result will be "
         << "saved." << endl;
 
   // Load the data.

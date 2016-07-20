@@ -18,10 +18,10 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
     "(--input_file), using the Viterbi algorithm.  The computed state sequence "
     "is saved to the specified output file (--output_file).");
 
-PARAM_STRING_REQ("input_file", "File containing observations,", "i");
-PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
-PARAM_STRING("output_file", "File to save predicted state sequence to.",
-    "o", "");
+PARAM_STRING_IN_REQ("input_file", "File containing observations,", "i");
+PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
+PARAM_STRING_OUT("output_file", "File to save predicted state sequence to.",
+    "o");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 

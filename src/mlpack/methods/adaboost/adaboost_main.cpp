@@ -64,27 +64,28 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "a file specified by the --output_model_file (-M) parameter.");
 
 // Input for training.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set.",
-  "l", "");
+PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
+    "");
+PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
+    "l", "");
 
 // Loading/saving of a model.
-PARAM_STRING("input_model_file", "File containing input AdaBoost model.", "m",
-    "");
-PARAM_STRING("output_model_file", "File to save trained AdaBoost model to.",
-    "M", "");
+PARAM_STRING_IN("input_model_file", "File containing input AdaBoost model.",
+    "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained AdaBoost model to.",
+    "M");
 
 // Classification options.
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING("output_file", "The file in which the predicted labels for the "
-    "test set will be written.", "o", "");
+PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
+PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+    " test set will be written.", "o");
 
 // Training options.
-PARAM_INT("iterations", "The maximum number of boosting iterations to be run. "
-    "(0 will run until convergence.)", "i", 1000);
-PARAM_DOUBLE("tolerance", "The tolerance for change in values of the weighted "
-    "error during training.", "e", 1e-10);
-PARAM_STRING("weak_learner", "The type of weak learner to use: "
+PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
+    " (0 will run until convergence.)", "i", 1000);
+PARAM_DOUBLE_IN("tolerance", "The tolerance for change in values of the "
+    "weighted error during training.", "e", 1e-10);
+PARAM_STRING_IN("weak_learner", "The type of weak learner to use: "
     "'decision_stump', or 'perceptron'.", "w", "decision_stump");
 
 /**
@@ -272,6 +273,12 @@ int main(int argc, char *argv[])
   {
     Log::Warn << "Neither --output_model_file nor --output_file are specified; "
         << "no results will be saved." << endl;
+  }
+
+  if (CLI::HasParam("output_file") && !CLI::HasParam("test_file"))
+  {
+    Log::Warn << "--output_file ignored because --test_file is not specified."
+        << endl;
   }
 
   AdaBoostModel m;
