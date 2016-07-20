@@ -12,7 +12,6 @@
   #define _BOOST_POLYGAMMA_2013_07_30_HPP_
 
 #include <boost/math/special_functions/factorials.hpp>
-#include <boost/math/special_functions/detail/polygamma.hpp>
 #include "trigamma.hpp"
 
 namespace boost { namespace math {
