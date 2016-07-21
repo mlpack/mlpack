@@ -414,4 +414,97 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   neat.Evolve();
 }
 
+/**
+ * Test NEAT by Mountain Car task.
+ */
+BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set parameters of cart pole task.
+  double x_l = -1.2;
+  double x_h = 0.5;
+  double x_dot_l = -0.07;
+  double x_dot_h = 0.07;
+  double gravity = -0.0025;
+  double goal = 0.5;
+  ssize_t num_trial = 20;
+  ssize_t num_step = 200;
+
+  // Construct task instance.
+  TaskMountainCar task(x_l, x_h, x_dot_l, x_dot_h, gravity, goal, num_trial, num_step);
+
+  // Set parameters of NEAT algorithm.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 500;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
+  params.aCompatThreshold = 1.0;
+  params.aStaleAgeThreshold = 15;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.5;
+  params.aMutateWeightProb = 0.2;
+  params.aPerturbWeightProb = 0.9;
+  params.aMutateWeightSize = 0.1;
+  params.aMutateAddLinkProb = 0.8;
+  params.aMutateAddRecurrentLinkProb = 0;
+  params.aMutateAddLoopLinkProb = 0;
+  params.aMutateAddNeuronProb = 0.1;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
+  params.aNumSpeciesThreshold = 10;
+
+  // Set seed genome for cart pole task.
+  ssize_t id = 0;
+  ssize_t numInput = 3;
+  ssize_t numOutput = 3;
+  double fitness = -1;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene1(3, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene outputGene2(4, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene outputGene3(5, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(6, HIDDEN, SIGMOID, 0.5, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene1);
+  neuronGenes.push_back(outputGene2);
+  neuronGenes.push_back(outputGene3);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 6, 0, 0, true);
+  LinkGene link2(1, 6, 1, 0, true);
+  LinkGene link3(2, 6, 2, 0, true);
+  LinkGene link4(6, 3, 3, 0, true);
+  LinkGene link5(6, 4, 4, 0, true);
+  LinkGene link6(6, 5, 5, 0, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             fitness);
+
+  // Construct NEAT instance.
+  NEAT<TaskMountainCar> neat(task, seedGenome, params);
+
+  // Evolve. 
+  neat.Evolve();
+}
+
 BOOST_AUTO_TEST_SUITE_END();

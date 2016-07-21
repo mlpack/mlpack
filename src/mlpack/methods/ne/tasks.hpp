@@ -98,16 +98,16 @@ class TaskCartPole {
 
   // Default constructor.
   TaskCartPole() {
-    double track_limit = 2.4;
-    double theta_limit = 12 * M_PI / 180.0;
-    double g = 9.81;
-    double mp = 0.1;
-    double mc = 1.0;
-    double l = 0.5;
-    double F = 10.0;
-    double tau = 0.02;
-    ssize_t num_trial = 20;
-    ssize_t num_step = 200;
+    track_limit = 2.4;
+    theta_limit = 12 * M_PI / 180.0;
+    g = 9.81;
+    mp = 0.1;
+    mc = 1.0;
+    l = 0.5;
+    F = 10.0;
+    tau = 0.02;
+    num_trial = 20;
+    num_step = 200;
   }
 
   // Parametric constructor.
@@ -173,8 +173,116 @@ class TaskCartPole {
       }
     }
 
-    fitness = 1 - double(fitness) / (num_trial * num_step);
+    fitness = 1 - fitness / (num_trial * num_step);
+    return fitness;
+  }
 
+};
+
+/**
+ * This class defines task mountain car.
+ */
+class TaskMountainCar {
+ public:
+  // Low bound of position.
+  double x_l;
+
+  // High bound of position.
+  double x_h;
+
+  // Low bound of velocity.
+  double x_dot_l;
+
+  // High bound of velocity.
+  double x_dot_h;
+
+  // Acceleration due to gravity.
+  double gravity;
+
+  // Above this value means goal reached.
+  double goal;
+
+  // Number of trials to test genomes.
+  ssize_t num_trial;
+
+  // Number of steps in each trial.
+  ssize_t num_step;
+
+  // Default constructor.
+  TaskMountainCar() {
+    x_l = -1.2;
+    x_h = 0.5;
+    x_dot_l = -0.07;
+    x_dot_h = 0.07;
+    gravity = -0.0025;
+    goal = 0.5;
+    num_trial = 20;
+    num_step = 200;
+  }
+
+  // Parametric constructor.
+  TaskMountainCar(double t_x_l, double t_x_h, double t_x_dot_l,
+                  double t_x_dot_h, double t_gravity, double t_goal,
+                  double t_num_trial, double t_num_step):
+                  x_l(t_x_l), x_h(t_x_h), x_dot_l(t_x_dot_l),
+                  x_dot_h(t_x_dot_h), gravity(t_gravity), goal(t_goal),
+                  num_trial(t_num_trial), num_step(t_num_step) {}
+
+  // Bound value to a range.
+  void Bound(double &x, double l, double h) {
+    assert(l <= h);
+
+    if (x < l) x = l;
+    if (x > h) x = h;
+  }
+
+  // Update status.
+  void Action(double action, double& x, double& x_dot) {
+    x_dot = x_dot + 0.001 * action + (gravity * cos(3 * x));
+    Bound(x_dot, x_dot_l, x_dot_h);
+    x = x + x_dot;
+    Bound(x, x_l, x_h);
+  }
+
+  // Evaluate genome's fitness for this task.
+  double EvalFitness(Genome& genome) {
+    assert(genome.NumInput() == 3); 
+    assert(genome.NumOutput() == 3);
+
+    double fitness = 0;
+    //double reward = 0;
+    for (ssize_t trial=0; trial<num_trial; ++trial) {
+      // Initialize inputs: x, x_dot.
+      double x = mlpack::math::Random(x_l, x_h);
+      double x_dot = mlpack::math::Random(x_dot_l, x_dot_h);
+
+      for (ssize_t step=0; step<num_step; ++step) {
+        // Get action.
+        std::vector<double> inputs = {x, x_dot, 1};
+        genome.Activate(inputs);
+        std::vector<double> output;
+        genome.Output(output);
+
+        double action = 0;
+        auto biggest_position = std::max_element(std::begin(output), std::end(output));
+        size_t index = std::distance(std::begin(output), biggest_position);
+        if (index == 0) action = 0;
+        if (index == 1) action = 1;
+        if (index == 2) action = -1; // NOTICE: we haven't consider equal cases. two equal or three equal.
+        
+        // Update position x and velocity x_dot.
+        Action(action, x, x_dot);
+
+        // Update fitness.
+        //reward -= 1;
+        if (x > goal) {
+          fitness += 1;
+          break;
+        }
+      }
+    }
+
+    fitness = 1 - fitness / num_trial;
     return fitness;
   }
 
