@@ -18,21 +18,22 @@
 #ifndef MLPACK_CORE_BOOST_BACKPORT_HPP
 #define MLPACK_CORE_BOOST_BACKPORT_HPP
 
-#if BOOST_VERSION < 105600
-  // Full backport.
+#include <boost/version.hpp>
+
+#if BOOST_VERSION < 105500
+  // Backported unordered_map.
   #include "mlpack/core/boost_backport/unordered_map.hpp"
-  #include "mlpack/core/boost_backport/trigamma.hpp"
-  #include "mlpack/core/boost_backport/polygamma.hpp"
-
-#elif BOOST_VERSION < 105800
-  // Backport trigamma and polygamma.
-  #include <boost/serialization/unordered_map.hpp>
-  #include "mlpack/core/boost_backport/trigamma.hpp"
-  #include "mlpack/core/boost_backport/polygamma.hpp"
-
 #else
-  // Don't backport anything.
+  // Boost's version
   #include <boost/serialization/unordered_map.hpp>
+#endif
+
+#if BOOST_VERSION < 105800
+  // Backported trigamma and polygamma.
+  #include "mlpack/core/boost_backport/trigamma.hpp"
+  #include "mlpack/core/boost_backport/polygamma.hpp"
+#else
+  // Boost's version.
   #include <boost/math/special_functions/trigamma.hpp>
   #include <boost/math/special_functions/polygamma.hpp>
 #endif
