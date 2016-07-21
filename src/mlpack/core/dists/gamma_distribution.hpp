@@ -43,12 +43,12 @@ class GammaDistribution
     ~GammaDistribution() {};
 
     /**
-     * This function trains (fits distribution parameters) to new data or data
-     * object was constructed with.
+     * This function trains (fits distribution parameters) to new data or the
+     * dataset the object owns.
      *
      * @param rdata Reference data to fit parameters to. If not specified,
      *    reference data will be used. Results are stored in the alpha and beta
-     *    vectors.
+     *    vectors (old results are removed).
      */
     void Train(const arma::mat& rdata = arma::mat());
 

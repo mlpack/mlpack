@@ -397,7 +397,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionConstructorTest)
 {
   // Empty constructor test. Make sure reference set is empty.
   GammaDistribution gDist;
-  BOOST_REQUIRE_EQUAL(arma::size(gDist.ReferenceSet()), arma::size(arma::mat()));
+  BOOST_REQUIRE_EQUAL(arma::size(gDist.ReferenceSet()),
+      arma::size(arma::mat()));
 
   // Parameterized constructor test. Make sure reference set is passed
   // correctly.
@@ -420,7 +421,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionConstructorTest)
 
   // Create Gamma object.
   GammaDistribution gDist2(rdata);
-  BOOST_REQUIRE_EQUAL(arma::size(gDist2.ReferenceSet()), arma::size(arma::mat(d, N)));
+  BOOST_REQUIRE_EQUAL(arma::size(gDist2.ReferenceSet()),
+      arma::size(arma::mat(d, N)));
 }
 
 /**
@@ -470,7 +472,6 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   // Training must estimate d' pairs of alpha and beta parameters.
   BOOST_REQUIRE_EQUAL(gDist.Alpha().n_elem, d2);
   BOOST_REQUIRE_EQUAL(gDist.Beta().n_elem, d2);
-
 }
 
 /**

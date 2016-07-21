@@ -5,13 +5,11 @@
  * Implementation of the methods of GammaDistribution.
  */
 #include "gamma_distribution.hpp"
-
 #include <boost/math/special_functions/digamma.hpp>
 //#include <boost/math/special_functions/trigamma.hpp> // Moved to prereqs.hpp
 
 using namespace mlpack;
 using namespace mlpack::distribution;
-
 
 // Returns true if computation converged.
 inline bool GammaDistribution::converged(double aOld, double aNew)
