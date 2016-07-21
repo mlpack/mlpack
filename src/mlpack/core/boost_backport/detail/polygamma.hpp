@@ -39,7 +39,7 @@
     namespace policies{
       // Forward declaration of boost::math::policies::digits_base10.
       template <class T, class Policy>
-      inline BOOST_MATH_CONSTEXPR int digits_base10(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) BOOST_NOEXCEPT;
+      inline BOOST_MATH_CONSTEXPR int digits_base10(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T));
     }
 
   }}

@@ -37,7 +37,7 @@ BOOST_MATH_CONSTEXPR int digits(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) BOOST_NOEX
 template <class T>
 BOOST_MATH_CONSTEXPR T epsilon(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) BOOST_MATH_NOEXCEPT(T);
 
-}
+} // Namespace tools
 
 namespace policies{
 
