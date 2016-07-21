@@ -15,10 +15,33 @@
 namespace mlpack {
 namespace neighbor {
 
+/**
+ * The NeighborSearchRules class is a template helper class used by
+ * NeighborSearch class when performing distance-based neighbor searches.  For
+ * each point in the query dataset, it keeps track of the k neighbors in the
+ * reference dataset which have the 'best' distance according to a given sorting
+ * policy.
+ *
+ * @tparam SortPolicy The sort policy for distances.
+ * @tparam MetricType The metric to use for computation.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ */
 template<typename SortPolicy, typename MetricType, typename TreeType>
 class NeighborSearchRules
 {
  public:
+  /**
+   * Construct the NeighborSearchRules object.  This is usually done from within
+   * the NeighborSearch class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param k Number of neighbors to search for.
+   * @param metric Instantiated metric.
+   * @param epsilon Relative approximate error.
+   * @param sameSet If true, the query and reference set are taken to be the
+   *      same, and a query point will not return itself in the results.
+   */
   NeighborSearchRules(const typename TreeType::Mat& referenceSet,
                       const typename TreeType::Mat& querySet,
                       const size_t k,
