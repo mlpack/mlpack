@@ -1,3 +1,20 @@
+### mlpack 2.0.3
+###### 2016-07-21
+  * Standardize some parameter names for programs (old names are kept for
+    reverse compatibility, but warnings will now be issued).
+
+  * RectangleTree optimizations (#721).
+
+  * Fix memory leak in NeighborSearch (#731).
+
+  * Documentation fix for k-means tutorial (#730).
+
+  * Fix TreeTraits for BallTree (#727).
+
+  * Fix incorrect parameter checks for some command-line programs.
+
+  * Fix error in HMM training with probabilities for each point (#636).
+
 ### mlpack 2.0.2
 ###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube

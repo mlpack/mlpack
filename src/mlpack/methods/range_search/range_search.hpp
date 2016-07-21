@@ -5,7 +5,7 @@
  * Defines the RangeSearch class, which performs a generalized range search on
  * points.
  *
- * This file is part of mlpack 2.0.2.
+ * This file is part of mlpack 2.0.3.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

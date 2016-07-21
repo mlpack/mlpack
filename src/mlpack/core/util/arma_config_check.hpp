@@ -8,7 +8,7 @@
  * debugging process where nobody can figure out why the stack is getting
  * mangled.
  *
- * This file is part of mlpack 2.0.2.
+ * This file is part of mlpack 2.0.3.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
