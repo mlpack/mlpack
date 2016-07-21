@@ -16,10 +16,39 @@
 namespace mlpack {
 namespace neighbor {
 
+/**
+ * The RASearchRules class is a template helper class used by RASearch class
+ * when performing rank-approximate search via random-sampling.
+ *
+ * @tparam SortPolicy The sort policy for distances.
+ * @tparam MetricType The metric to use for computation.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ */
 template<typename SortPolicy, typename MetricType, typename TreeType>
 class RASearchRules
 {
  public:
+  /**
+   * Construct the RASearchRules object.  This is usually done from within
+   * the RASearch class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param k Number of neighbors to search for.
+   * @param metric Instantiated metric.
+   * @param tau The rank-approximation in percentile of the data.
+   * @param alpha The desired success probability.
+   * @param naive If true, the rank-approximate search will be performed by
+   *      directly sampling the whole set instead of using the stratified
+   *      sampling on the tree.
+   * @param sampleAtLeaves Sample at leaves for faster but less accurate
+   *      computation.
+   * @param firstLeafExact Traverse to the first leaf without approximation.
+   * @param singleSampleLimit The limit on the largest node that can be
+   *     approximated by sampling.
+   * @param sameSet If true, the query and reference set are taken to be the
+   *      same, and a query point will not return itself in the results.
+   */
   RASearchRules(const arma::mat& referenceSet,
                 const arma::mat& querySet,
                 const size_t k,
@@ -41,6 +70,13 @@ class RASearchRules
    */
   void GetResults(arma::Mat<size_t>& neighbors, arma::mat& distances);
 
+  /**
+   * Get the distance from the query point to the reference point.
+   * This will update the list of candidates with the new point if appropriate.
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceIndex Index of reference point.
+   */
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
