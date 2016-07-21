@@ -37,9 +37,6 @@
     inline typename tools::promote_args<T>::type polygamma(const int n, T x);
     
   }}
-  
-
-
 
   namespace boost { namespace math { namespace detail{
 
