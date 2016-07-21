@@ -7,6 +7,7 @@
 #ifndef BOOST_MATH_BERNOULLI_DETAIL_HPP
 #define BOOST_MATH_BERNOULLI_DETAIL_HPP
 
+#include "math_fwd.hpp"
 #include <boost/config.hpp>
 #include <boost/detail/lightweight_mutex.hpp>
 #include <boost/utility/enable_if.hpp>

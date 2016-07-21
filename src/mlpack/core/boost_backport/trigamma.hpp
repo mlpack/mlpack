@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include <boost/math/special_functions/math_fwd.hpp>
+#include "math_fwd.hpp"
 #include <boost/math/tools/rational.hpp>
 #include <boost/math/tools/series.hpp>
 #include <boost/math/tools/promotion.hpp>

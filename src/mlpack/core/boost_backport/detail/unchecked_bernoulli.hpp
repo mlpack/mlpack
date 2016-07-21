@@ -15,7 +15,7 @@
 #include <cmath>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <boost/math/special_functions/math_fwd.hpp>
+#include "math_fwd.hpp"
 #include <boost/mpl/int.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
