@@ -228,20 +228,17 @@ class TaskMountainCar {
                   x_dot_h(t_x_dot_h), gravity(t_gravity), goal(t_goal),
                   num_trial(t_num_trial), num_step(t_num_step) {}
 
-  // Bound value to a range.
-  void Bound(double &x, double l, double h) {
-    assert(l <= h);
-
-    if (x < l) x = l;
-    if (x > h) x = h;
-  }
-
   // Update status.
   void Action(double action, double& x, double& x_dot) {
     x_dot = x_dot + 0.001 * action + (gravity * cos(3 * x));
-    Bound(x_dot, x_dot_l, x_dot_h);
+    if (x_dot < x_dot_l) x_dot = x_dot_l;
+    if (x_dot > x_dot_h) x_dot = x_dot_h;
+
     x = x + x_dot;
-    Bound(x, x_l, x_h);
+    if (x < x_l) {
+      x = x_l;
+      x_dot = 0;
+    }
   }
 
   // Evaluate genome's fitness for this task.
@@ -275,7 +272,7 @@ class TaskMountainCar {
 
         // Update fitness.
         //reward -= 1;
-        if (x == goal) {
+        if (x >= goal) {
           fitness += 1;
           break;
         }
