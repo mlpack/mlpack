@@ -17,8 +17,7 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 RASearchRules<SortPolicy, MetricType, TreeType>::
 RASearchRules(const arma::mat& referenceSet,
               const arma::mat& querySet,
-              arma::Mat<size_t>& neighbors,
-              arma::mat& distances,
+              const size_t k,
               MetricType& metric,
               const double tau,
               const double alpha,
@@ -29,8 +28,7 @@ RASearchRules(const arma::mat& referenceSet,
               const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
-    neighbors(neighbors),
-    distances(distances),
+    k(k),
     metric(metric),
     sampleAtLeaves(sampleAtLeaves),
     firstLeafExact(firstLeafExact),
@@ -42,7 +40,6 @@ RASearchRules(const arma::mat& referenceSet,
 
   // The rank approximation.
   const size_t n = referenceSet.n_cols;
-  const size_t k = neighbors.n_rows;
   const size_t t = (size_t) std::ceil(tau * (double) n / 100.0);
   if (t < k)
   {
@@ -68,7 +65,20 @@ RASearchRules(const arma::mat& referenceSet,
   Log::Info << "Minimum samples required per query: " << numSamplesReqd <<
     ", sampling ratio: " << samplingRatio << std::endl;
 
-  if (naive) // No tree traversal; just do naive sampling here.
+  // Let's build the list of candidate neighbors for each query point.
+  // It will be initialized with k candidates: (WorstDistance, size_t() - 1)
+  // The list of candidates will be updated when visiting new points with the
+  // BaseCase() method.
+  const Candidate def(SortPolicy::WorstDistance(), size_t() - 1);
+
+  std::vector<Candidate> vect(k, def);
+  CandidateList pqueue(std::less<Candidate>(), std::move(vect));
+
+  candidates.reserve(querySet.n_cols);
+  for (size_t i = 0; i < querySet.n_cols; i++)
+    candidates.push_back(pqueue);
+
+  if (naive)// No tree traversal; just do naive sampling here.
   {
     // Sample enough points.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -80,6 +90,26 @@ RASearchRules(const arma::mat& referenceSet,
     }
   }
 }
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances)
+{
+  neighbors.set_size(k, querySet.n_cols);
+  distances.set_size(k, querySet.n_cols);
+
+  for (size_t i = 0; i < querySet.n_cols; i++)
+  {
+    CandidateList& pqueue = candidates[i];
+    for (size_t j = 1; j <= k; j++)
+    {
+      neighbors(k - j, i) = pqueue.top().index;
+      distances(k - j, i) = pqueue.top().dist;
+      pqueue.pop();
+    }
+  }
+};
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline force_inline
@@ -95,16 +125,7 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
   double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
                                     referenceSet.unsafe_col(referenceIndex));
 
-  // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the position to insert it into.
-  arma::vec queryDist = distances.unsafe_col(queryIndex);
-  arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-  size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
-      distance);
-
-  // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-  if (insertPosition != (size_t() - 1))
-    InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance);
+  InsertNeighbor(queryIndex, referenceIndex, distance);
 
   numSamplesMade[queryIndex]++;
 
@@ -122,7 +143,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
   const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
       &referenceNode);
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  const double bestDistance = candidates[queryIndex].top().dist;
 
   return Score(queryIndex, referenceNode, distance, bestDistance);
 }
@@ -136,7 +157,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
   const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
       &referenceNode, baseCaseResult);
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  const double bestDistance = candidates[queryIndex].top().dist;
 
   return Score(queryIndex, referenceNode, distance, bestDistance);
 }
@@ -250,7 +271,7 @@ Rescore(const size_t queryIndex,
     return oldScore;
 
   // Just check the score again against the distances.
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  const double bestDistance = candidates[queryIndex].top().dist;
 
   // If this is better than the best distance we've seen so far,
   // maybe there will be something down this node.
@@ -350,7 +371,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = distances(distances.n_rows - 1, queryNode.Point(i))
+    const double bound = candidates[queryNode.Point(i)].top().dist
         + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
@@ -389,7 +410,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = distances(distances.n_rows - 1, queryNode.Point(i))
+    const double bound = candidates[queryNode.Point(i)].top().dist
         + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
@@ -603,7 +624,7 @@ Rescore(TreeType& queryNode,
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = distances(distances.n_rows - 1, queryNode.Point(i))
+    const double bound = candidates[queryNode.Point(i)].top().dist
         + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
@@ -775,35 +796,26 @@ Rescore(TreeType& queryNode,
 } // Rescore(node, node, oldScore)
 
 /**
- * Helper function to insert a point into the neighbors and distances matrices.
+ * Helper function to insert a point into the list of candidate points.
  *
  * @param queryIndex Index of point whose neighbors we are inserting into.
- * @param pos Position in list to insert into.
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
+inline void RASearchRules<SortPolicy, MetricType, TreeType>::
+InsertNeighbor(
     const size_t queryIndex,
-    const size_t pos,
     const size_t neighbor,
     const double distance)
 {
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (distances.n_rows - 1))
+  Candidate c(distance, neighbor);
+  CandidateList& pqueue = candidates[queryIndex];
+  if (c < pqueue.top())
   {
-    int len = (distances.n_rows - 1) - pos;
-    memmove(distances.colptr(queryIndex) + (pos + 1),
-        distances.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(neighbors.colptr(queryIndex) + (pos + 1),
-        neighbors.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
+    pqueue.pop();
+    pqueue.push(c);
   }
-
-  // Now put the new information in the right index.
-  distances(pos, queryIndex) = distance;
-  neighbors(pos, queryIndex) = neighbor;
 }
 
 } // namespace neighbor
