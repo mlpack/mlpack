@@ -16,8 +16,8 @@
 // RT = Real type (built-in floating-point types, float, double, long double) & User Defined Types
 // AT = Integer or Real type
 
-#ifndef BOOST_MATH_SPECIAL_MATH_FWD_HPP
-#define BOOST_MATH_SPECIAL_MATH_FWD_HPP
+#ifndef BOOST_MATH_SPECIAL_MATH_FWD_HPP_BACKPORT
+#define BOOST_MATH_SPECIAL_MATH_FWD_HPP_BACKPORT
 
 #ifdef _MSC_VER
 #pragma once
@@ -25,7 +25,7 @@
 
 #include <boost/math/special_functions/detail/round_fwd.hpp>
 #include <boost/math/tools/promotion.hpp> // for argument promotion.
-#include <boost/math/policies/policy.hpp>
+#include "policy.hpp"
 #include <boost/mpl/comparison.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/config/no_tr1/complex.hpp>

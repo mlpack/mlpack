@@ -8,8 +8,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef _BOOST_POLYGAMMA_2013_07_30_HPP_
-  #define _BOOST_POLYGAMMA_2013_07_30_HPP_
+#ifndef _BOOST_POLYGAMMA_2013_07_30_HPP_BACKPORT_
+  #define _BOOST_POLYGAMMA_2013_07_30_HPP_BACKPORT_
 
 #include <boost/math/special_functions/factorials.hpp>
 #include "detail/polygamma.hpp"
@@ -20,7 +20,6 @@ namespace boost { namespace math {
   template <class T, class Policy>
   inline typename tools::promote_args<T>::type 
   trigamma(T x, const Policy&);
-
 
   template <class T>
   inline typename tools::promote_args<T>::type 

@@ -3,8 +3,8 @@
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MATH_POLICY_HPP
-#define BOOST_MATH_POLICY_HPP
+#ifndef BOOST_MATH_POLICY_HPP_BACKPORT
+#define BOOST_MATH_POLICY_HPP_BACKPORT
 
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/contains.hpp>

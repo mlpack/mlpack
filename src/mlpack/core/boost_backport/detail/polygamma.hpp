@@ -8,8 +8,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_
-  #define _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_
+#ifndef _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_BACKPORT_
+  #define _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_BACKPORT_
 
   #include <cmath>
   #include <limits>
@@ -36,12 +36,6 @@
     template<class T>
     inline typename tools::promote_args<T>::type polygamma(const int n, T x);
     
-    namespace policies{
-      // Forward declaration of boost::math::policies::digits_base10.
-      template <class T, class Policy>
-      inline BOOST_MATH_CONSTEXPR int digits_base10(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T));
-    }
-
   }}
   
 
