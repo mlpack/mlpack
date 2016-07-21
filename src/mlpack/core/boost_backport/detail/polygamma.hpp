@@ -26,6 +26,25 @@
   #include <boost/mpl/int.hpp>
   #include <boost/static_assert.hpp>
   #include <boost/type_traits/is_convertible.hpp>
+  
+  // Forward declarations.
+  namespace boost {namespace math 
+    
+    // Forward declaration of boost::math::polygamma.
+    template<class T, class Policy>
+    inline typename tools::promote_args<T>::type polygamma(const int n, T x, const Policy& pol);
+    template<class T>
+    inline typename tools::promote_args<T>::type polygamma(const int n, T x);
+    
+    
+    { namespace policies{
+      // Forward declaration of boost::math::policies::digits_base10.
+      template <class T, class Policy>
+      inline BOOST_MATH_CONSTEXPR int digits_base10(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) BOOST_NOEXCEPT;
+  }}}
+  
+
+
 
   namespace boost { namespace math { namespace detail{
 

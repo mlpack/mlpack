@@ -15,6 +15,18 @@
 #include "detail/polygamma.hpp"
 #include "trigamma.hpp"
 
+// Forward declarations
+namespace boost { namespace math {
+  template <class T, class Policy>
+  inline typename tools::promote_args<T>::type 
+  trigamma(T x, const Policy&);
+
+
+  template <class T>
+  inline typename tools::promote_args<T>::type 
+  trigamma(T x);
+}}
+
 namespace boost { namespace math {
 
   
