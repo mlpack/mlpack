@@ -13,7 +13,6 @@
 
 #include <boost/math/special_functions/math_fwd.hpp>
 #include "detail/unchecked_bernoulli.hpp"
-#include "detail/bernoulli_details.hpp"
 
 namespace boost { namespace math { 
    
@@ -140,4 +139,5 @@ inline OutputIterator tangent_t2n(const int start_index,
 
 } } // namespace boost::math
 
+#include "detail/bernoulli_details.hpp"
 #endif // _BOOST_BERNOULLI_B2N_2013_05_30_HPP_

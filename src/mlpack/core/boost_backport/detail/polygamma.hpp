@@ -14,7 +14,7 @@
   #include <cmath>
   #include <limits>
   #include <boost/cstdint.hpp>
-  #include <boost/math/policies/policy.hpp>
+  #include "../policy.hpp"
   #include "../bernoulli.hpp"
   #include <boost/math/special_functions/trunc.hpp>
   #include <boost/math/special_functions/zeta.hpp>

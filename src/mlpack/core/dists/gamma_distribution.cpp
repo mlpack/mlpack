@@ -74,4 +74,3 @@ void GammaDistribution::Train(const arma::mat& rdata)
   }
   return;
 }
-
