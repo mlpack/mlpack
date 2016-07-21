@@ -60,7 +60,7 @@ class NeighborSearchRules
 
   /**
    * Get the distance from the query point to the reference point.
-   * This will update the "neighbor" matrix with the new point if appropriate
+   * This will update the list of candidates with the new point if appropriate
    * and will track the number of base cases (number of points evaluated).
    *
    * @param queryIndex Index of query point.
