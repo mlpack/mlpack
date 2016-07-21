@@ -8,12 +8,12 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef _BOOST_POLYGAMMA_2013_07_30_HPP_BACKPORT_
-  #define _BOOST_POLYGAMMA_2013_07_30_HPP_BACKPORT_
+#ifndef _BOOST_POLYGAMMA_2013_07_30_HPP_
+  #define _BOOST_POLYGAMMA_2013_07_30_HPP_
 
-#include <boost/math/special_functions/factorials.hpp>
 #include "detail/polygamma.hpp"
 #include "trigamma.hpp"
+#include <boost/math/special_functions/factorials.hpp>
 
 // Forward declarations
 namespace boost { namespace math {

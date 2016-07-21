@@ -3,14 +3,15 @@
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MATH_SF_TRIGAMMA_HPP_BACKPORT
-#define BOOST_MATH_SF_TRIGAMMA_HPP_BACKPORT
+#ifndef BOOST_MATH_SF_TRIGAMMA_HPP_
+#define BOOST_MATH_SF_TRIGAMMA_HPP_
 
 #ifdef _MSC_VER
 #pragma once
 #endif
 
 #include "math_fwd.hpp"
+#include "polygamma.hpp"
 #include <boost/math/tools/rational.hpp>
 #include <boost/math/tools/series.hpp>
 #include <boost/math/tools/promotion.hpp>
@@ -18,7 +19,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/mpl/comparison.hpp>
 #include <boost/math/tools/big_constant.hpp>
-#include "polygamma.hpp"
 
 namespace boost{
 namespace math{

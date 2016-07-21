@@ -8,14 +8,14 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_BACKPORT_
-  #define _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_BACKPORT_
+#ifndef _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_
+  #define _BOOST_POLYGAMMA_DETAIL_2013_07_30_HPP_
 
+  #include "../policy.hpp"
+  #include "../bernoulli.hpp"
   #include <cmath>
   #include <limits>
   #include <boost/cstdint.hpp>
-  #include "../policy.hpp"
-  #include "../bernoulli.hpp"
   #include <boost/math/special_functions/trunc.hpp>
   #include <boost/math/special_functions/zeta.hpp>
   #include <boost/math/special_functions/digamma.hpp>

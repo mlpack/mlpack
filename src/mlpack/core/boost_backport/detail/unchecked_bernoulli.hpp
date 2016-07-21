@@ -8,14 +8,14 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MATH_UNCHECKED_BERNOULLI_HPP_BACKPORT
-#define BOOST_MATH_UNCHECKED_BERNOULLI_HPP_BACKPORT
+#ifndef BOOST_MATH_UNCHECKED_BERNOULLI_HPP_
+#define BOOST_MATH_UNCHECKED_BERNOULLI_HPP_
 
+#include "../math_fwd.hpp"
 #include <limits>
 #include <cmath>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/constants/constants.hpp>
-#include "../math_fwd.hpp"
 #include <boost/mpl/int.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 

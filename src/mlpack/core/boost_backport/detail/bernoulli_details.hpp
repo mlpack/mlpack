@@ -4,8 +4,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MATH_BERNOULLI_DETAIL_HPP_BACKPORT
-#define BOOST_MATH_BERNOULLI_DETAIL_HPP_BACKPORT
+#ifndef BOOST_MATH_BERNOULLI_DETAIL_HPP_
+#define BOOST_MATH_BERNOULLI_DETAIL_HPP_
 
 #include "../math_fwd.hpp"
 #include <boost/config.hpp>
