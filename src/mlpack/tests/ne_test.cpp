@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   ssize_t num_step = std::pow(10, 5);
 
   // Construct task instance.
-  TaskCartPole task(mc, mp, g, l, F, tau, track_limit, theta_limit, num_trial, num_step);
+  TaskCartPole task(mc, mp, g, l, F, tau, track_limit, theta_limit, num_trial, num_step, false);
 
   // Set parameters of NEAT algorithm.
   Parameters params;
@@ -432,11 +432,11 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
   ssize_t num_step = std::pow(10, 2);
 
   // Construct task instance.
-  TaskMountainCar task(x_l, x_h, x_dot_l, x_dot_h, gravity, goal, num_trial, num_step);
+  TaskMountainCar task(x_l, x_h, x_dot_l, x_dot_h, gravity, goal, num_trial, num_step, false);
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 500;
+  params.aPopulationSize = 50;
   params.aMaxGeneration = 500;
   params.aCoeffDisjoint = 2.0;
   params.aCoeffWeightDiff = 0.4;

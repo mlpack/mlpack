@@ -26,6 +26,14 @@ namespace ne {
 template<typename FitnissFunction = ann::MeanSquaredErrorFunction>
 class TaskXor {
  public:
+  // Task success or not.
+  bool success;
+
+  // Default constructor.
+  TaskXor() {
+    success = false;
+  }
+
   // Evaluate genome's fitness for this task.
   double EvalFitness(Genome& genome) {
   	assert(genome.NumInput() == 3); 
@@ -55,8 +63,16 @@ class TaskXor {
       genome.Output(output);
   	  fitness += pow((output[0] - outputs[i]), 2);
   	}
-
+    
+    if (fitness < 10e-8) {
+      success = true;
+    }
     return fitness;  // fitness smaller is better. 0 is best.
+  }
+
+  // Whether task success or not.
+  bool Success() {
+    return success;
   }
 
 };
@@ -96,6 +112,9 @@ class TaskCartPole {
   // Number of steps in each trial.
   ssize_t num_step;
 
+  // Task success or not.
+  bool success;
+
   // Default constructor.
   TaskCartPole() {
     track_limit = 2.4;
@@ -108,15 +127,16 @@ class TaskCartPole {
     tau = 0.02;
     num_trial = 20;
     num_step = 200;
+    success = false;
   }
 
   // Parametric constructor.
   TaskCartPole(double t_mc, double t_mp, double t_g, double t_l, double t_F, 
                double t_tau, double t_track_limit, double t_theta_limit,
-               ssize_t t_num_trial, ssize_t t_num_step):
+               ssize_t t_num_trial, ssize_t t_num_step, bool t_success):
                mc(t_mc), mp(t_mp), g(t_g), l(t_l), F(t_F),
                tau(t_tau), track_limit(t_track_limit), theta_limit(t_theta_limit),
-               num_trial(t_num_trial), num_step(t_num_step) {}
+               num_trial(t_num_trial), num_step(t_num_step), success(t_success) {}
 
   // Update status.
   void Action(double action, double& x, double& x_dot, double& theta, double& theta_dot) {
@@ -174,7 +194,15 @@ class TaskCartPole {
     }
 
     fitness = 1 - fitness / (num_trial * num_step);
+    if (fitness == 0) {
+      success = true;
+    }
     return fitness;
+  }
+
+  // Whether task success or not.
+  bool Success() {
+    return success;
   }
 
 };
@@ -208,6 +236,9 @@ class TaskMountainCar {
   // Number of steps in each trial.
   ssize_t num_step;
 
+  // Task success or not.
+  bool success;
+
   // Default constructor.
   TaskMountainCar() {
     x_l = -1.2;
@@ -218,15 +249,16 @@ class TaskMountainCar {
     goal = 0.5;
     num_trial = 20;
     num_step = 200;
+    success = false;
   }
 
   // Parametric constructor.
   TaskMountainCar(double t_x_l, double t_x_h, double t_x_dot_l,
                   double t_x_dot_h, double t_gravity, double t_goal,
-                  double t_num_trial, double t_num_step):
+                  double t_num_trial, double t_num_step, bool t_success):
                   x_l(t_x_l), x_h(t_x_h), x_dot_l(t_x_dot_l),
                   x_dot_h(t_x_dot_h), gravity(t_gravity), goal(t_goal),
-                  num_trial(t_num_trial), num_step(t_num_step) {}
+                  num_trial(t_num_trial), num_step(t_num_step), success(t_success) {}
 
   // Update status.
   void Action(double action, double& x, double& x_dot) {
@@ -247,7 +279,7 @@ class TaskMountainCar {
     assert(genome.NumOutput() == 3);
 
     double fitness = 0;
-    //double reward = 0;
+    ssize_t numSuccess = 0;
     for (ssize_t trial=0; trial<num_trial; ++trial) {
       // Initialize inputs: x, x_dot.
       double x = mlpack::math::Random(x_l, x_h);
@@ -271,16 +303,25 @@ class TaskMountainCar {
         Action(action, x, x_dot);
 
         // Update fitness.
-        //reward -= 1;
+        fitness += 1;
         if (x >= goal) {
-          fitness += 1;
+          numSuccess += 1;
           break;
         }
       }
     }
-
-    fitness = 1 - fitness / num_trial;
+    
+    if (numSuccess == num_trial) {
+      success = true;
+    }
+    
+    fitness = 1 / fitness;
     return fitness;
+  }
+
+  // Whether task success or not.
+  bool Success() {
+    return success;
   }
 
 };

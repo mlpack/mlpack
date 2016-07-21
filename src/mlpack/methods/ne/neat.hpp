@@ -789,7 +789,7 @@ class NEAT {
 
       // Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
-      if (aPopulation.BestFitness() == 0) {
+      if (aTask.Success()) {
         printf("Task succeed in %zu iterations.\n", generation);
         exit(0);
       }
