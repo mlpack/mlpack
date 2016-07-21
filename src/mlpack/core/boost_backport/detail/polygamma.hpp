@@ -35,6 +35,15 @@
     inline typename tools::promote_args<T>::type polygamma(const int n, T x, const Policy& pol);
     template<class T>
     inline typename tools::promote_args<T>::type polygamma(const int n, T x);
+
+    namespace policies {
+
+      template <class T, class Policy>
+        inline int digits_base10(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) 
+        {
+          return boost::math::policies::digits<T, Policy>() * 301 / 1000L;
+        }
+    }
     
   }}
 
