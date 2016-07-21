@@ -14,6 +14,43 @@
 #include <boost/math/special_functions/math_fwd.hpp>
 #include "detail/unchecked_bernoulli.hpp"
 
+// Declare bernoulli_b2n because it's needed in bernoulli_details.hpp
+template <class T, class Policy>
+inline T bernoulli_b2n(const int i, const Policy &pol);
+
+template <class T>
+inline T bernoulli_b2n(const int i);
+
+template <class T, class OutputIterator, class Policy>
+inline OutputIterator bernoulli_b2n(const int start_index,
+                                    const unsigned number_of_bernoullis_b2n,
+                                    OutputIterator out_it,
+                                    const Policy& pol);
+
+template <class T, class OutputIterator>
+inline OutputIterator bernoulli_b2n(const int start_index,
+                                    const unsigned number_of_bernoullis_b2n,
+                                    OutputIterator out_it);
+
+template <class T, class Policy>
+inline T tangent_t2n(const int i, const Policy &pol);
+
+template <class T>
+inline T tangent_t2n(const int i);
+
+template <class T, class OutputIterator, class Policy>
+inline OutputIterator tangent_t2n(const int start_index,
+                                    const unsigned number_of_tangent_t2n,
+                                    OutputIterator out_it,
+                                    const Policy& pol);
+
+template <class T, class OutputIterator>
+inline OutputIterator tangent_t2n(const int start_index,
+                                    const unsigned number_of_tangent_t2n,
+                                    OutputIterator out_it);
+
+#include "detail/bernoulli_details.hpp"
+
 namespace boost { namespace math { 
    
 namespace detail {
@@ -139,5 +176,4 @@ inline OutputIterator tangent_t2n(const int start_index,
 
 } } // namespace boost::math
 
-#include "detail/bernoulli_details.hpp"
 #endif // _BOOST_BERNOULLI_B2N_2013_05_30_HPP_
