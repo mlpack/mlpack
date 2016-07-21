@@ -275,7 +275,7 @@ class TaskMountainCar {
 
         // Update fitness.
         //reward -= 1;
-        if (x > goal) {
+        if (x == goal) {
           fitness += 1;
           break;
         }

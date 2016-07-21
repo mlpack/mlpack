@@ -428,8 +428,8 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
   double x_dot_h = 0.07;
   double gravity = -0.0025;
   double goal = 0.5;
-  ssize_t num_trial = 20;
-  ssize_t num_step = 200;
+  ssize_t num_trial = 10;
+  ssize_t num_step = std::pow(10, 2);
 
   // Construct task instance.
   TaskMountainCar task(x_l, x_h, x_dot_l, x_dot_h, gravity, goal, num_trial, num_step);
