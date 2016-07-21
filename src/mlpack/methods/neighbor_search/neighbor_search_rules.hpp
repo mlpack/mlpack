@@ -9,6 +9,8 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <vector>
+#include <queue>
 
 namespace mlpack {
 namespace neighbor {
@@ -19,11 +21,20 @@ class NeighborSearchRules
  public:
   NeighborSearchRules(const typename TreeType::Mat& referenceSet,
                       const typename TreeType::Mat& querySet,
-                      arma::Mat<size_t>& neighbors,
-                      arma::mat& distances,
+                      const size_t k,
                       MetricType& metric,
                       const double epsilon = 0,
                       const bool sameSet = false);
+
+  /**
+   * Store the list of candidates for each query point in the given matrices.
+   *
+   * @param neighbors Matrix storing lists of neighbors for each query point.
+   * @param distances Matrix storing distances of neighbors for each query
+   *     point.
+   */
+  void GetResults(arma::Mat<size_t>& neighbors, arma::mat& distances);
+
   /**
    * Get the distance from the query point to the reference point.
    * This will update the "neighbor" matrix with the new point if appropriate
@@ -109,11 +120,34 @@ class NeighborSearchRules
   //! The query set.
   const typename TreeType::Mat& querySet;
 
-  //! The matrix the resultant neighbor indices should be stored in.
-  arma::Mat<size_t>& neighbors;
+  //! Candidate represents a possible candidate neighbor (from the reference
+  // set).
+  struct Candidate
+  {
+    //! Distance between the reference point and the query point.
+    double dist;
+    //! Index of the reference point.
+    size_t index;
+    //! Trivial constructor.
+    Candidate(double d, size_t i) :
+        dist(d),
+        index(i)
+    {};
+    //! Compare the distance of two candidates.
+    friend bool operator<(const Candidate& l, const Candidate& r)
+    {
+      return !SortPolicy::IsBetter(r.dist, l.dist);
+    };
+  };
 
-  //! The matrix the resultant neighbor distances should be stored in.
-  arma::mat& distances;
+  //! Use a priority queue to represent the list of candidate neighbors.
+  typedef std::priority_queue<Candidate> CandidateList;
+
+  //! Set of candidate neighbors for each point.
+  std::vector<CandidateList> candidates;
+
+  //! Number of neighbors to search for.
+  const size_t k;
 
   //! The instantiated metric.
   MetricType& metric;
@@ -146,16 +180,13 @@ class NeighborSearchRules
   double CalculateBound(TreeType& queryNode) const;
 
   /**
-   * Insert a point into the neighbors and distances matrices; this is a helper
-   * function.
+   * Helper function to insert a point into the list of candidate points.
    *
    * @param queryIndex Index of point whose neighbors we are inserting into.
-   * @param pos Position in list to insert into.
    * @param neighbor Index of reference point which is being inserted.
    * @param distance Distance from query point to reference point.
    */
   void InsertNeighbor(const size_t queryIndex,
-                      const size_t pos,
                       const size_t neighbor,
                       const double distance);
 };

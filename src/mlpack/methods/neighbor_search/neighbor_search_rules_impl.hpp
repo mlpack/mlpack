@@ -17,15 +17,13 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances,
+    const size_t k,
     MetricType& metric,
     const double epsilon,
     const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
-    neighbors(neighbors),
-    distances(distances),
+    k(k),
     metric(metric),
     sameSet(sameSet),
     epsilon(epsilon),
@@ -39,7 +37,40 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
   // use the this pointer.
   traversalInfo.LastQueryNode() = (TreeType*) this;
   traversalInfo.LastReferenceNode() = (TreeType*) this;
+
+  // Let's build the list of candidate neighbors for each query point.
+  // It will be initialized with k candidates: (WorstDistance, size_t() - 1)
+  // The list of candidates will be updated when visiting new points with the
+  // BaseCase() method.
+  const Candidate def(SortPolicy::WorstDistance(), size_t() - 1);
+
+  std::vector<Candidate> vect(k, def);
+  CandidateList pqueue(std::less<Candidate>(), std::move(vect));
+
+  candidates.reserve(querySet.n_cols);
+  for (size_t i = 0; i < querySet.n_cols; i++)
+    candidates.push_back(pqueue);
 }
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances)
+{
+  neighbors.set_size(k, querySet.n_cols);
+  distances.set_size(k, querySet.n_cols);
+
+  for (size_t i = 0; i < querySet.n_cols; i++)
+  {
+    CandidateList& pqueue = candidates[i];
+    for (size_t j = 1; j <= k; j++)
+    {
+      neighbors(k - j, i) = pqueue.top().index;
+      distances(k - j, i) = pqueue.top().dist;
+      pqueue.pop();
+    }
+  }
+};
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
@@ -59,16 +90,7 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
                                     referenceSet.col(referenceIndex));
   ++baseCases;
 
-  // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the position to insert it into.
-  arma::vec queryDist = distances.unsafe_col(queryIndex);
-  arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-  const size_t insertPosition = SortPolicy::SortDistance(queryDist,
-      queryIndices, distance);
-
-  // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-  if (insertPosition != (size_t() - 1))
-    InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance);
+  InsertNeighbor(queryIndex, referenceIndex, distance);
 
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
@@ -114,7 +136,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   // Compare against the best k'th distance for this query point so far.
-  double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  double bestDistance = candidates[queryIndex].top().dist;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
@@ -131,7 +153,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     return oldScore;
 
   // Just check the score again against the distances.
-  double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  double bestDistance = candidates[queryIndex].top().dist;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
@@ -354,7 +376,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
-    const double distance = distances(distances.n_rows - 1, queryNode.Point(i));
+    const double distance = candidates[queryNode.Point(i)].top().dist;
     if (SortPolicy::IsBetter(worstDistance, distance))
       worstDistance = distance;
     if (SortPolicy::IsBetter(distance, bestPointDistance))
@@ -432,35 +454,26 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 }
 
 /**
- * Helper function to insert a point into the neighbors and distances matrices.
+ * Helper function to insert a point into the list of candidate points.
  *
  * @param queryIndex Index of point whose neighbors we are inserting into.
- * @param pos Position in list to insert into.
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
+inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+InsertNeighbor(
     const size_t queryIndex,
-    const size_t pos,
     const size_t neighbor,
     const double distance)
 {
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (distances.n_rows - 1))
+  Candidate c(distance, neighbor);
+  CandidateList& pqueue = candidates[queryIndex];
+  if (c < pqueue.top())
   {
-    int len = (distances.n_rows - 1) - pos;
-    memmove(distances.colptr(queryIndex) + (pos + 1),
-        distances.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(neighbors.colptr(queryIndex) + (pos + 1),
-        neighbors.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
+    pqueue.pop();
+    pqueue.push(c);
   }
-
-  // Now put the new information in the right index.
-  distances(pos, queryIndex) = distance;
-  neighbors(pos, queryIndex) = neighbor;
 }
 
 } // namespace neighbor
