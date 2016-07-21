@@ -7,7 +7,7 @@
 #include "gamma_distribution.hpp"
 
 #include <boost/math/special_functions/digamma.hpp>
-#include "mlpack/core/boost_backport/trigamma.hpp"
+#include "mlpack/core/boost_backport/boost_backport.hpp"
 
 using namespace mlpack;
 using namespace mlpack::distribution;
