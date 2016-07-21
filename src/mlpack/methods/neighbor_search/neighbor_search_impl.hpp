@@ -367,9 +367,7 @@ Search(const MatType& querySet,
 
   // Set the size of the neighbor and distance matrices.
   neighborPtr->set_size(k, querySet.n_cols);
-  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, querySet.n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
 
@@ -538,9 +536,7 @@ Search(Tree* queryTree,
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
-  neighborPtr->fill(size_t() - 1);
   distances.set_size(k, querySet.n_cols);
-  distances.fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
@@ -610,9 +606,7 @@ Search(const size_t k,
 
   // Initialize results.
   neighborPtr->set_size(k, referenceSet->n_cols);
-  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, referenceSet->n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
