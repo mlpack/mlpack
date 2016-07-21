@@ -1005,7 +1005,7 @@ namespace boost
    typename tools::promote_args<T, U>::type relative_difference(const T&, const U&);
    template <class T, class U>
    typename tools::promote_args<T, U>::type epsilon_difference(const T&, const U&);
-
+/*
    template<class T>
    T unchecked_bernoulli_b2n(const std::size_t n);
    template <class T, class Policy>
@@ -1034,7 +1034,7 @@ namespace boost
    OutputIterator tangent_t2n(const int start_index,
                                        const unsigned number_of_bernoullis_b2n,
                                        OutputIterator out_it);
-
+*/
     } // namespace math
 } // namespace boost
 
