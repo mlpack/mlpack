@@ -26,8 +26,9 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-
+    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+option(BUILD_WITH_COVERAGE
+    "Build with support for code coverage tools (gcc only)" OFF)
 enable_testing()
 
 # Include modules in the CMake directory.
@@ -43,6 +44,11 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 endif()
+
+# These support libraries are used if we need to link against something
+# specific.
+set(COMPILER_SUPPORT_LIBRARIES_MLPACK "")
+set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
@@ -63,22 +69,60 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
      # select the right stdlib.
     if(${MACOSX_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_SHARED_LINKER_FLAGS
+          "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_MODULE_LINKER_FLAGS
+          "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
      endif()
   endif()
 
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
-  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
+  # Link everything with -lm.
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
+endif()
+
+# Setup build for test coverage
+if(BUILD_WITH_COVERAGE)
+  # Currently coverage only works with GNU g++
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Find gcov and lcov
+    find_program(GCOV gcov)
+    find_program(LCOV lcov)
+
+    if(NOT GCOV)
+      message(FATAL_ERROR
+          "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
+    endif()
+
+    set(COMPILER_MLPACK_SUPPORT_LIBRARIES
+        ${COMPILER_SUPPORT_MLPACK_LIBRARIES} "supc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline \
+        -fno-inline-small-functions -fno-default-inline -fprofile-arcs \
+        -fkeep-inline-functions")
+    message(STATUS "Adding debug compile options for code coverage.")
+    # Remove optimizations for better line coverage
+    set(DEBUG ON)
+
+    if(LCOV)
+      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
+      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
+    else()
+      message(WARNING "'lcov' not found; local coverage report is disabled. "
+          "Install 'lcov' and rerun cmake to generate local coverage report.")
+    endif()
+  else()
+    message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
+  endif()
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
-  add_definitions(-DDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  if (NOT MSVC)
+    add_definitions(-DDEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  endif ()
+
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

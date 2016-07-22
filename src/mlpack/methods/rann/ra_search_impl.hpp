@@ -347,7 +347,7 @@ Search(const MatType& querySet,
       neighborPtr = new arma::Mat<size_t>;
     }
 
-    if (treeOwner)
+    else if (treeOwner)
       neighborPtr = new arma::Mat<size_t>; // All indices need mapping.
   }
 

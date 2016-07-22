@@ -24,18 +24,17 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "components with the smallest eigenvalues.");
 
 // Parameters for program.
-PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "i");
-PARAM_STRING_REQ("output_file", "File to save modified dataset to.", "o");
-
-PARAM_INT("new_dimensionality", "Desired dimensionality of output dataset.  If "
-    "0, no dimensionality reduction is performed.", "d", 0);
-PARAM_DOUBLE("var_to_retain", "Amount of variance to retain; should be between "
-    "0 and 1.  If 1, all variance is retained.  Overrides -d.", "r", 0);
+PARAM_STRING_IN_REQ("input_file", "Input dataset to perform PCA on.", "i");
+PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
+PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
+    "If 0, no dimensionality reduction is performed.", "d", 0);
+PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
+    "between 0 and 1.  If 1, all variance is retained.  Overrides -d.", "r", 0);
 
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
 
-PARAM_STRING("decomposition_method", "Method used for the principal"
+PARAM_STRING_IN("decomposition_method", "Method used for the principal"
     "components analysis: 'exact', 'randomized', 'quic'.", "c", "exact");
 
 
@@ -54,8 +53,8 @@ void RunPCA(arma::mat& dataset,
   if (varToRetain != 0)
   {
     if (newDimension != 0)
-      Log::Warn << "New dimensionality (-d) ignored because -V was specified."
-          << endl;
+      Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
+          << "(-r) was specified." << endl;
 
     varRetained = p.Apply(dataset, varToRetain);
   }
@@ -78,6 +77,11 @@ int main(int argc, char** argv)
   string inputFile = CLI::GetParam<string>("input_file");
   arma::mat dataset;
   data::Load(inputFile, dataset);
+
+  // Issue a warning if the user did not specify an output file.
+  if (!CLI::HasParam("output_file"))
+    Log::Warn << "--output_file is not specified; no output will be "
+        << "saved." << endl;
 
   // Find out what dimension we want.
   size_t newDimension = dataset.n_rows; // No reduction, by default.
@@ -121,5 +125,6 @@ int main(int argc, char** argv)
 
   // Now save the results.
   string outputFile = CLI::GetParam<string>("output_file");
-  data::Save(outputFile, dataset);
+  if (outputFile != "")
+    data::Save(outputFile, dataset);
 }

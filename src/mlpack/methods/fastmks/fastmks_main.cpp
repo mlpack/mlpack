@@ -41,34 +41,35 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "build the cover tree can be specified with the --base option.");
 
 // Model-building parameters.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
+PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
-PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine', "
-    "'gaussian', 'epanechnikov', 'triangular', 'hyptan'.", "K", "linear");
-PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
+PARAM_STRING_IN("kernel", "Kernel type to use: 'linear', 'polynomial', "
+    "'cosine', 'gaussian', 'epanechnikov', 'triangular', 'hyptan'.", "K",
+    "linear");
+PARAM_DOUBLE_IN("base", "Base to use during cover tree construction.", "b",
+    2.0);
 
 // Kernel parameters.
-PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
-PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
-    "o", 0.0);
-PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
+PARAM_DOUBLE_IN("degree", "Degree of polynomial kernel.", "d", 2.0);
+PARAM_DOUBLE_IN("offset", "Offset of kernel (for polynomial and hyptan "
+    "kernels).", "o", 0.0);
+PARAM_DOUBLE_IN("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
     "triangular kernels).", "w", 1.0);
-PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
+PARAM_DOUBLE_IN("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 // Load/save models.
-PARAM_STRING("input_model_file", "File containing FastMKS model.", "m", "");
-PARAM_STRING("output_model_file", "File to save FastMKS model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing FastMKS model.", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save FastMKS model to.", "M");
 
 // Search preferences.
-PARAM_STRING("query_file", "File containing the query dataset.", "q", "");
-PARAM_INT("k", "Number of maximum kernels to find.", "k", 0);
+PARAM_STRING_IN("query_file", "File containing the query dataset.", "q", "");
+PARAM_INT_IN("k", "Number of maximum kernels to find.", "k", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "S");
 
-PARAM_STRING("kernels_file", "File to save kernels into.", "p", "");
-PARAM_STRING("indices_file", "File to save indices of kernels into.",
-    "i", "");
+PARAM_STRING_OUT("kernels_file", "File to save kernels into.", "p");
+PARAM_STRING_OUT("indices_file", "File to save indices of kernels into.", "i");
 
 int main(int argc, char** argv)
 {

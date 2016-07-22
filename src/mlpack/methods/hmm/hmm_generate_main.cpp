@@ -19,14 +19,13 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
     "parameters, saving them to the specified files (--output_file and "
     "--state_file)");
 
-PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
-PARAM_INT_REQ("length", "Length of sequence to generate.", "l");
+PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
+PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
 
-PARAM_STRING("output_file", "File to save observation sequence to.", "o" ,"");
-PARAM_INT("start_state", "Starting state of sequence.", "t", 0);
-PARAM_STRING("state_file", "File to save hidden state sequence to (may be left "
-    "unspecified.", "S", "");
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
+PARAM_STRING_OUT("output_file", "File to save observation sequence to.", "o");
+PARAM_STRING_OUT("state_file", "File to save hidden state sequence to.", "S");
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -68,6 +67,10 @@ struct Generate
     // Do we want to save the hidden sequence?
     if (CLI::HasParam("state_file"))
       data::Save(sequenceFile, sequence, true);
+
+    if (outputFile == "" && sequenceFile == "")
+      Log::Warn << "Neither --output_file nor --state_file are specified; no "
+          << "output will be saved." << endl;
   }
 };
 
@@ -76,9 +79,9 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (CLI::HasParam("output_file"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  if (!CLI::HasParam("output_file") && !CLI::HasParam("state_file"))
+    Log::Warn << "Neither --output_file nor --state_file are specified; no "
+        << "output will be saved!" << endl;
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

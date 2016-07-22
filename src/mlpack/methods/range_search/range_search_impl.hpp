@@ -317,7 +317,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
     // Reference indices only need to be mapped if we built the reference tree
     // ourselves.
-    if (treeOwner)
+    else if (treeOwner)
       neighborPtr = new std::vector<std::vector<size_t>>;
   }
 

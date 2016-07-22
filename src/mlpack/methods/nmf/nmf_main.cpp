@@ -44,18 +44,18 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
     "--min_residue.");
 
 // Parameters for program.
-PARAM_STRING_REQ("input_file", "Input dataset to perform NMF on.", "i");
-PARAM_STRING_REQ("w_file", "File to save the calculated W matrix to.", "W");
-PARAM_STRING_REQ("h_file", "File to save the calculated H matrix to.", "H");
-PARAM_INT_REQ("rank", "Rank of the factorization.", "r");
+PARAM_STRING_IN_REQ("input_file", "Input dataset to perform NMF on.", "i");
+PARAM_STRING_OUT("w_file", "File to save the calculated W matrix to.", "W");
+PARAM_STRING_OUT("h_file", "File to save the calculated H matrix to.", "H");
+PARAM_INT_IN_REQ("rank", "Rank of the factorization.", "r");
 
-PARAM_INT("max_iterations", "Number of iterations before NMF terminates (0 runs"
-    " until convergence.", "m", 10000);
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_DOUBLE("min_residue", "The minimum root mean square residue allowed for "
-    "each iteration, below which the program terminates.", "e", 1e-5);
+PARAM_INT_IN("max_iterations", "Number of iterations before NMF terminates (0 "
+    "runs until convergence.", "m", 10000);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_DOUBLE_IN("min_residue", "The minimum root mean square residue allowed "
+    "for each iteration, below which the program terminates.", "e", 1e-5);
 
-PARAM_STRING("update_rules", "Update rules for each iteration; ( multdist | "
+PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
     "multdiv | als ).", "u", "multdist");
 
 int main(int argc, char** argv)
@@ -91,6 +91,12 @@ int main(int argc, char** argv)
   {
     Log::Fatal << "Invalid update rules ('" << updateRules << "'); must be '"
         << "multdist', 'multdiv', or 'als'." << std::endl;
+  }
+
+  if (hOutputFile == "" && wOutputFile == "")
+  {
+    Log::Warn << "Neither --h_file nor --w_file are specified, so no output "
+        << "will be saved!" << endl;
   }
 
   // Load input dataset.
@@ -132,6 +138,8 @@ int main(int argc, char** argv)
   }
 
   // Save results.
-  data::Save(wOutputFile, W, false);
-  data::Save(hOutputFile, H, false);
+  if (wOutputFile != "")
+    data::Save(wOutputFile, W, false);
+  if (hOutputFile != "")
+    data::Save(hOutputFile, H, false);
 }
