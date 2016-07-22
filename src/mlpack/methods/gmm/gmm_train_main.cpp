@@ -40,38 +40,38 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "option.  The model with greatest log-likelihood will be taken.");
 
 // Parameters for training.
-PARAM_STRING_REQ("input_file", "File containing the data on which the model "
+PARAM_STRING_IN_REQ("input_file", "File containing the data on which the model "
     "will be fit.", "i");
-PARAM_INT_REQ("gaussians", "Number of Gaussians in the GMM.", "g");
+PARAM_INT_IN_REQ("gaussians", "Number of Gaussians in the GMM.", "g");
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 1);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("trials", "Number of trials to perform in training GMM.", "t", 1);
 
 // Parameters for EM algorithm.
-PARAM_DOUBLE("tolerance", "Tolerance for convergence of EM.", "T", 1e-10);
+PARAM_DOUBLE_IN("tolerance", "Tolerance for convergence of EM.", "T", 1e-10);
 PARAM_FLAG("no_force_positive", "Do not force the covariance matrices to be "
     "positive definite.", "P");
-PARAM_INT("max_iterations", "Maximum number of iterations of EM algorithm "
+PARAM_INT_IN("max_iterations", "Maximum number of iterations of EM algorithm "
     "(passing 0 will run until convergence).", "n", 250);
 
 // Parameters for dataset modification.
-PARAM_DOUBLE("noise", "Variance of zero-mean Gaussian noise to add to data.",
+PARAM_DOUBLE_IN("noise", "Variance of zero-mean Gaussian noise to add to data.",
     "N", 0);
 
 // Parameters for k-means initialization.
 PARAM_FLAG("refined_start", "During the initialization, use refined initial "
     "positions for k-means clustering (Bradley and Fayyad, 1998).", "r");
-PARAM_INT("samplings", "If using --refined_start, specify the number of "
+PARAM_INT_IN("samplings", "If using --refined_start, specify the number of "
     "samplings used for initial points.", "S", 100);
-PARAM_DOUBLE("percentage", "If using --refined_start, specify the percentage of"
-    " the dataset used for each sampling (should be between 0.0 and 1.0).",
+PARAM_DOUBLE_IN("percentage", "If using --refined_start, specify the percentage"
+    " of the dataset used for each sampling (should be between 0.0 and 1.0).",
     "p", 0.02);
 
 // Parameters for model saving/loading.
-PARAM_STRING("input_model_file", "File containing initial input GMM model.",
+PARAM_STRING_IN("input_model_file", "File containing initial input GMM model.",
     "m", "");
-PARAM_STRING("output_model_file", "File to save trained GMM model to.", "M",
-    "");
+PARAM_STRING_OUT("output_model_file", "File to save trained GMM model to.",
+    "M");
 
 int main(int argc, char* argv[])
 {

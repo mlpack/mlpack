@@ -56,7 +56,8 @@ class RectangleTree
   typedef MatType Mat;
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
-
+  //! The auxiliary information type held by the tree.
+  typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -76,6 +77,8 @@ class RectangleTree
   //! The number of points in the dataset contained in this node (and its
   //! children).
   size_t count;
+  //! The number of descendants of this node.
+  size_t numDescendants;
   //! The max leaf size.
   size_t maxLeafSize;
   //! The minimum leaf size.
@@ -328,11 +331,6 @@ class RectangleTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
-  //! Get the points vector for this node.
-  const std::vector<size_t>& Points() const { return points; }
-  //! Modify the points vector for this node.  Be careful!
-  std::vector<size_t>& Points() { return points; }
-
   //! Get the metric which the tree uses.
   MetricType Metric() const { return MetricType(); }
 
@@ -343,11 +341,6 @@ class RectangleTree
   size_t NumChildren() const { return numChildren; }
   //! Modify the number of child nodes.  Be careful.
   size_t& NumChildren() { return numChildren; }
-
-  //! Get the children of this node.
-  const std::vector<RectangleTree*>& Children() const { return children; }
-  //! Modify the children of this node.
-  std::vector<RectangleTree*>& Children() { return children; }
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not
@@ -424,7 +417,11 @@ class RectangleTree
    *
    * @param index Index of point for which a dataset index is wanted.
    */
-  size_t Point(const size_t index) const;
+  size_t Point(const size_t index) const { return points[index]; }
+
+  //! Modify the index of a particular point in this node.  Be very careful when
+  //! you do this!  You may make the tree invalid.
+  size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const RectangleTree* other) const
@@ -497,26 +494,6 @@ class RectangleTree
 
  private:
   /**
-   * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.  TO BE REMOVED
-   */
-  RectangleTree(const size_t begin,
-                const size_t count,
-                bound::HRectBound<MetricType> bound,
-                StatisticType stat,
-                const int maxLeafSize = 20) :
-      begin(begin),
-      count(count),
-      bound(bound),
-      stat(stat),
-      maxLeafSize(maxLeafSize) { }
-
-  RectangleTree* CopyMe()
-  {
-    return new RectangleTree(begin, count, bound, stat, maxLeafSize);
-  }
-
-  /**
    * Splits the current node, recursing up the tree.
    *
    * @param relevels Vector to track which levels have been inserted to.
@@ -534,6 +511,15 @@ class RectangleTree
 
   //! Friend access is given for the default constructor.
   friend class boost::serialization::access;
+
+  //! Give friend access for DescentType.
+  friend DescentType;
+
+  //! Give friend access for SplitType.
+  friend SplitType;
+
+  //! Give friend access for AuxiliaryInformationType.
+  friend AuxiliaryInformation;
 
  public:
   /**

@@ -49,7 +49,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   if (referenceNode.IsLeaf())
   {
     for (size_t i = 0; i < referenceNode.Count(); i++)
-      rule.BaseCase(queryIndex, referenceNode.Points()[i]);
+      rule.BaseCase(queryIndex, referenceNode.Point(i));
 
     return;
   }
@@ -59,7 +59,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
   for (size_t i = 0; i < referenceNode.NumChildren(); i++)
   {
-    nodesAndScores[i].node = referenceNode.Children()[i];
+    nodesAndScores[i].node = &(referenceNode.Child(i));
     nodesAndScores[i].score = rule.Score(queryIndex, *nodesAndScores[i].node);
   }
 
