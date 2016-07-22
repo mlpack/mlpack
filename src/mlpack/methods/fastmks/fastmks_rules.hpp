@@ -16,12 +16,27 @@ namespace mlpack {
 namespace fastmks {
 
 /**
- * The base case and pruning rules for FastMKS (fast max-kernel search).
+ * The FastMKSRules class is a template helper class used by FastMKS class when
+ * performing exact max-kernel search. For each point in the query dataset, it
+ * keeps track of the k best candidates in the reference dataset.
+ *
+ * @tparam KernelType Type of kernel to run FastMKS with.
+ * @tparam TreeType Type of tree to run FastMKS with; it must satisfy the
+ *     TreeType policy API.
  */
 template<typename KernelType, typename TreeType>
 class FastMKSRules
 {
  public:
+  /**
+   * Construct the FastMKSRules object.  This is usually done from within the
+   * FastMKS class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param k Number of candidates to search for.
+   * @param kernel Kernel to run FastMKS with.
+   */
   FastMKSRules(const typename TreeType::Mat& referenceSet,
                const typename TreeType::Mat& querySet,
                const size_t k,
@@ -30,7 +45,7 @@ class FastMKSRules
   /**
    * Store the list of candidates for each query point in the given matrices.
    *
-   * @param indices Matrix storing lists of candidate points for each query point.
+   * @param indices Matrix storing lists of candidate for each query point.
    * @param products Matrix storing kernel value for each candidate.
    */
   void GetResults(arma::Mat<size_t>& indices, arma::mat& products);
