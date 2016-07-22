@@ -41,6 +41,7 @@
 #include <mlpack/core.hpp>
 #include <vector>
 #include <string>
+#include <queue>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
@@ -298,11 +299,13 @@ class LSHSearch
    * @param queryIndex The index of the query in question
    * @param referenceIndices The vector of indices of candidate neighbors for
    *    the query.
+   * @param k Number of neighbors to search for.
    * @param neighbors Matrix holding output neighbors.
    * @param distances Matrix holding output distances.
    */
   void BaseCase(const size_t queryIndex,
                 const arma::uvec& referenceIndices,
+                const size_t k,
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances) const;
 
@@ -315,36 +318,17 @@ class LSHSearch
    * @param queryIndex The index of the query in question
    * @param referenceIndices The vector of indices of candidate neighbors for
    *    the query.
+   * @param k Number of neighbors to search for.
    * @param querySet Set of query points.
    * @param neighbors Matrix holding output neighbors.
    * @param distances Matrix holding output distances.
    */
   void BaseCase(const size_t queryIndex,
                 const arma::uvec& referenceIndices,
+                const size_t k,
                 const arma::mat& querySet,
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances) const;
-
-  /**
-   * This is a helper function that efficiently inserts better neighbor
-   * candidates into an existing set of neighbor candidates. This function is
-   * only called by the 'BaseCase' function.
-   *
-   * @param distances Matrix holding output distances.
-   * @param neighbors Matrix holding output neighbors.
-   * @param queryIndex This is the index of the query being processed currently
-   * @param pos The position of the neighbor candidate in the current list of
-   *    neighbor candidates.
-   * @param neighbor The neighbor candidate that is being inserted into the list
-   *    of the best 'k' candidates for the query in question.
-   * @param distance The distance of the query to the neighbor candidate.
-   */
-  void InsertNeighbor(arma::mat& distances,
-                      arma::Mat<size_t>& neighbors,
-                      const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance) const;
 
   /**
    * This function implements the core idea behind Multiprobe LSH. It is called
@@ -444,6 +428,28 @@ class LSHSearch
   //! The number of distance evaluations.
   size_t distanceEvaluations;
 
+  //! Candidate represents a possible candidate neighbor (from the reference
+  // set).
+  struct Candidate
+  {
+    //! Distance between the reference point and the query point.
+    double dist;
+    //! Index of the reference point.
+    size_t index;
+    //! Trivial constructor.
+    Candidate(double d, size_t i) :
+        dist(d),
+        index(i)
+    {};
+    //! Compare the distance of two candidates.
+    friend bool operator<(const Candidate& l, const Candidate& r)
+    {
+      return !SortPolicy::IsBetter(r.dist, l.dist);
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate neighbors.
+  typedef std::priority_queue<Candidate> CandidateList;
 }; // class LSHSearch
 
 } // namespace neighbor
