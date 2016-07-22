@@ -10,6 +10,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <vector>
 
 namespace mlpack {
 namespace fastmks {
@@ -23,9 +24,16 @@ class FastMKSRules
  public:
   FastMKSRules(const typename TreeType::Mat& referenceSet,
                const typename TreeType::Mat& querySet,
-               arma::Mat<size_t>& indices,
-               arma::mat& products,
+               const size_t k,
                KernelType& kernel);
+
+  /**
+   * Store the list of candidates for each query point in the given matrices.
+   *
+   * @param indices Matrix storing lists of candidate points for each query point.
+   * @param products Matrix storing kernel value for each candidate.
+   */
+  void GetResults(arma::Mat<size_t>& indices, arma::mat& products);
 
   //! Compute the base case (kernel value) between two points.
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
@@ -101,10 +109,36 @@ class FastMKSRules
   //! The query dataset.
   const typename TreeType::Mat& querySet;
 
-  //! The indices of the maximum kernel results.
-  arma::Mat<size_t>& indices;
-  //! The maximum kernels.
-  arma::mat& products;
+  //! Candidate point from the reference set.
+  struct Candidate
+  {
+    //! Kernel value calculated between a reference point and the query point.
+    double product;
+    //! Index of the reference point.
+    size_t index;
+    //! Trivial constructor.
+    Candidate(double p, size_t i) :
+        product(p),
+        index(i)
+    {};
+    //! Compare two candidates.
+    friend bool operator>(const Candidate& l, const Candidate& r)
+    {
+      return l.product > r.product;
+    };
+  };
+
+  //! Use a min heap to represent the list of candidate points.
+  //! We will use a vector and the std functions: push_heap() pop_heap().
+  //! We can not use a priority queue because we need to iterate over all the
+  //! candidates and std::priority_queue doesn't provide that interface.
+  typedef std::vector<Candidate> CandidateList;
+
+  //! Set of candidates for each point.
+  std::vector<CandidateList> candidates;
+
+  //! Number of points to search for.
+  const size_t k;
 
   //! Cached query set self-kernels (|| q || for each q).
   arma::vec queryKernels;
@@ -124,11 +158,16 @@ class FastMKSRules
   //! Calculate the bound for a given query node.
   double CalculateBound(TreeType& queryNode) const;
 
-  //! Utility function to insert neighbor into list of results.
+  /**
+   * Helper function to insert a point into the list of candidate points.
+   *
+   * @param queryIndex Index of point whose neighbors we are inserting into.
+   * @param index Index of reference point which is being inserted.
+   * @param product Kernel value for given candidate.
+   */
   void InsertNeighbor(const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
+                      const size_t index,
+                      const double product);
 
   //! For benchmarking.
   size_t baseCases;

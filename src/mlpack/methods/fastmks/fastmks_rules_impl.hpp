@@ -9,6 +9,7 @@
 
 // In case it hasn't already been included.
 #include "fastmks_rules.hpp"
+#include <algorithm>
 
 namespace mlpack {
 namespace fastmks {
@@ -17,13 +18,11 @@ template<typename KernelType, typename TreeType>
 FastMKSRules<KernelType, TreeType>::FastMKSRules(
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
-    arma::Mat<size_t>& indices,
-    arma::mat& products,
+    const size_t k,
     KernelType& kernel) :
     referenceSet(referenceSet),
     querySet(querySet),
-    indices(indices),
-    products(products),
+    k(k),
     kernel(kernel),
     lastQueryIndex(-1),
     lastReferenceIndex(-1),
@@ -46,6 +45,41 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
   // dereference null pointers.
   traversalInfo.LastQueryNode() = (TreeType*) this;
   traversalInfo.LastReferenceNode() = (TreeType*) this;
+
+  // Let's build the list of candidate points for each query point.
+  // It will be initialized with k candidates: (-DBL_MAX, size_t() - 1)
+  // The list of candidates will be updated when visiting new points with the
+  // BaseCase() method.
+  const Candidate def(-DBL_MAX, size_t() - 1);
+
+  CandidateList cList(k, def);
+  std::vector<CandidateList> tmp(querySet.n_cols, cList);
+  candidates.swap(tmp);
+}
+
+template<typename KernelType, typename TreeType>
+void FastMKSRules<KernelType, TreeType>::GetResults(
+    arma::Mat<size_t>& indices,
+    arma::mat& products)
+{
+  indices.set_size(k, querySet.n_cols);
+  products.set_size(k, querySet.n_cols);
+
+  for (size_t i = 0; i < querySet.n_cols; i++)
+  {
+    CandidateList& pqueue = candidates[i];
+    std::greater<Candidate> greater;
+    typedef typename CandidateList::iterator Iterator;
+
+    for (Iterator end = pqueue.end(); end != pqueue.begin(); --end)
+      std::pop_heap(pqueue.begin(), end, greater);
+
+    for (size_t j = 0; j < k; j++)
+    {
+      indices(j, i) = pqueue[j].index;
+      products(j, i) = pqueue[j].product;
+    }
+  }
 }
 
 template<typename KernelType, typename TreeType>
@@ -83,16 +117,7 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
   if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
     return kernelEval;
 
-  // If this is a better candidate, insert it into the list.
-  if (kernelEval < products(products.n_rows - 1, queryIndex))
-    return kernelEval;
-
-  size_t insertPosition = 0;
-  for ( ; insertPosition < products.n_rows; ++insertPosition)
-    if (kernelEval >= products(insertPosition, queryIndex))
-      break;
-
-  InsertNeighbor(queryIndex, insertPosition, referenceIndex, kernelEval);
+  InsertNeighbor(queryIndex, referenceIndex, kernelEval);
 
   return kernelEval;
 }
@@ -102,7 +127,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
                                                  TreeType& referenceNode)
 {
   // Compare with the current best.
-  const double bestKernel = products(products.n_rows - 1, queryIndex);
+  const double bestKernel = candidates[queryIndex].front().product;
 
   // See if we can perform a parent-child prune.
   const double furthestDist = referenceNode.FurthestDescendantDistance();
@@ -385,7 +410,7 @@ double FastMKSRules<KernelType, TreeType>::Rescore(const size_t queryIndex,
                                                    TreeType& /*referenceNode*/,
                                                    const double oldScore) const
 {
-  const double bestKernel = products(products.n_rows - 1, queryIndex);
+  const double bestKernel = candidates[queryIndex].front().product;
 
   return ((1.0 / oldScore) >= bestKernel) ? oldScore : DBL_MAX;
 }
@@ -432,10 +457,11 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const size_t point = queryNode.Point(i);
-    if (products(products.n_rows - 1, point) < worstPointKernel)
-      worstPointKernel = products(products.n_rows - 1, point);
+    const CandidateList& candidatesPoints = candidates[point];
+    if (candidatesPoints.front().product < worstPointKernel)
+      worstPointKernel = candidatesPoints.front().product;
 
-    if (products(products.n_rows - 1, point) == -DBL_MAX)
+    if (candidatesPoints.front().product == -DBL_MAX)
       continue; // Avoid underflow.
 
     // This should be (queryDescendantDistance + centroidDistance) for any tree
@@ -450,10 +476,10 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     // where p_j^*(p_q) is the j'th kernel candidate for query point p_q and
     // k_j^*(p_q) is K(p_q, p_j^*(p_q)).
     double worstPointCandidateKernel = DBL_MAX;
-    for (size_t j = 0; j < products.n_rows; ++j)
+    for (size_t j = 0; j < candidatesPoints.size(); ++j)
     {
-      const double candidateKernel = products(j, point) -
-          queryDescendantDistance * referenceKernels[indices(j, point)];
+      const double candidateKernel = candidatesPoints[j].product -
+          queryDescendantDistance * referenceKernels[candidatesPoints[j].index];
       if (candidateKernel < worstPointCandidateKernel)
         worstPointCandidateKernel = candidateKernel;
     }
@@ -488,34 +514,26 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
 }
 
 /**
- * Helper function to insert a point into the neighbors and distances matrices.
+ * Helper function to insert a point into the list of candidate points.
  *
  * @param queryIndex Index of point whose neighbors we are inserting into.
- * @param pos Position in list to insert into.
- * @param neighbor Index of reference point which is being inserted.
- * @param distance Distance from query point to reference point.
+ * @param index Index of reference point which is being inserted.
+ * @param product Kernel value for given candidate.
  */
 template<typename KernelType, typename TreeType>
-void FastMKSRules<KernelType, TreeType>::InsertNeighbor(const size_t queryIndex,
-                                                        const size_t pos,
-                                                        const size_t neighbor,
-                                                        const double distance)
+inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
+    const size_t queryIndex,
+    const size_t index,
+    const double product)
 {
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (products.n_rows - 1))
+  Candidate c(product, index);
+  CandidateList& pqueue = candidates[queryIndex];
+  if (c > pqueue.front())
   {
-    int len = (products.n_rows - 1) - pos;
-    memmove(products.colptr(queryIndex) + (pos + 1),
-        products.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(indices.colptr(queryIndex) + (pos + 1),
-        indices.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
+    std::pop_heap(pqueue.begin(), pqueue.end(), std::greater<Candidate>());
+    pqueue.back() = c;
+    std::push_heap(pqueue.begin(), pqueue.end(), std::greater<Candidate>());
   }
-
-  // Now put the new information in the right index.
-  products(pos, queryIndex) = distance;
-  indices(pos, queryIndex) = neighbor;
 }
 
 } // namespace fastmks

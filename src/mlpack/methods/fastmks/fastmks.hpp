@@ -12,6 +12,7 @@
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include "fastmks_stat.hpp"
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <queue>
 
 namespace mlpack {
 namespace fastmks /** Fast max-kernel search. */ {
@@ -250,13 +251,28 @@ class FastMKS
   //! The instantiated inner-product metric induced by the given kernel.
   metric::IPMetric<KernelType> metric;
 
-  //! Utility function.  Copied too many times from too many places.
-  void InsertNeighbor(arma::Mat<size_t>& indices,
-                      arma::mat& products,
-                      const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
+  //! Candidate point from the reference set.
+  struct Candidate
+  {
+    //! Kernel value calculated between a reference point and the query point.
+    double product;
+    //! Index of the reference point.
+    size_t index;
+    //! Trivial constructor.
+    Candidate(double p, size_t i) :
+        product(p),
+        index(i)
+    {};
+    //! Compare two candidates.
+    friend bool operator>(const Candidate& l, const Candidate& r)
+    {
+      return l.product > r.product;
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate points.
+  typedef std::priority_queue<Candidate, std::vector<Candidate>,
+      std::greater<Candidate>> CandidateList;
 };
 
 } // namespace fastmks
