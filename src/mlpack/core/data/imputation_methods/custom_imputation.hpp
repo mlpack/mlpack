@@ -141,6 +141,7 @@ class CustomImputation
   }
 
  private:
+  //! A user-defined value that the user wants to replace missing values with.
   T customValue;
 }; // class CustomImputation
 

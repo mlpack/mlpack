@@ -79,9 +79,20 @@ class DatasetMapper
   typename PolicyType::MappedType UnmapValue(const std::string& string,
                                             const size_t dimension);
 
+  /**
+   * MapTokens turns vector of strings into numeric variables and puts them
+   * into a given matrix. It is uses mapping policy to store categorical values
+   * to maps. How it determines whether a value is categorical and how it
+   * stores the categorical value into map and replaces with the numerical value
+   * all depends on the mapping policy object's MapTokens() funciton.
+   *
+   * @tparam eT Type of armadillo matrix.
+   * @param tokens Vector of variables inside a dimension.
+   * @param row Position of the given tokens.
+   * @param matrix Matrix to save the data into.
+   */
   template <typename eT>
-  void MapTokens(const std::vector<std::string>& tokens,
-      size_t& row,
+  void MapTokens(const std::vector<std::string>& tokens, size_t& row,
       arma::Mat<eT>& matrix);
 
   //! Return the type of a given dimension (numeric or categorical).
@@ -134,8 +145,11 @@ class DatasetMapper
   // MapType = map<dimension, pair<bimap<string, MappedType>, numMappings>>
   using MapType = std::unordered_map<size_t, std::pair<BiMapType, size_t>>;
 
+  //! maps object stores string and numerical pairs.
   MapType maps;
 
+  //! policy object tells dataset mapper how the categorical values should be
+  //  mapped to the maps object. It is used in MapString() and MapTokens().
   PolicyType policy;
 };
 
