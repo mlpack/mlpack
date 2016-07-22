@@ -27,14 +27,14 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
     "column-wise dataset, and save the result to result.csv, we could run"
     "\n\n"
     "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
-    "> -s listwise_deletion")
+    "> -s listwise_deletion");
 
-PARAM_STRING_REQ("input_file", "File containing data,", "i");
-PARAM_STRING("output_file", "File to save output", "o", "");
-PARAM_STRING("missing_value", "User defined missing value", "m", "")
-PARAM_STRING("strategy", "imputation strategy to be applied", "s", "")
-PARAM_DOUBLE("custom_value", "user_defined custom value", "c", 0.0)
-PARAM_INT("dimension", "the dimension to apply imputation", "d", 0);
+PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
+PARAM_STRING_OUT("output_file", "File to save output", "o");
+PARAM_STRING_IN("missing_value", "User defined missing value", "m", "");
+PARAM_STRING_IN("strategy", "imputation strategy to be applied", "s", "");
+PARAM_DOUBLE_IN("custom_value", "user_defined custom value", "c", 0.0);
+PARAM_INT_IN("dimension", "the dimension to apply imputation", "d", 0);
 
 using namespace mlpack;
 using namespace arma;
