@@ -21,7 +21,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 class TreeTraits<VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                                  SplitType>>
@@ -33,9 +33,15 @@ class TreeTraits<VantagePointTree<MetricType, StatisticType, MatType, BoundType,
   static const bool HasOverlappingChildren = true;
 
   /**
-   * TODO: The first point of each node is centroid.
+   * Returns true if the first point of the node is the centroid of its bound.
+   *
+   * @param node The node to check.
    */
-  static const bool FirstPointIsCentroid = false;
+  static bool FirstPointIsCentroid(const VantagePointTree<MetricType,
+      StatisticType, MatType, BoundType, SplitType>*  node)
+  {
+    return node->FirstPointIsCentroid();
+  }
 
   /**
    * Points are not contained at multiple levels of the vantage point tree.

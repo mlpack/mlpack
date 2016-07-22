@@ -3,8 +3,6 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of BallBound ball bound metric policy class.
- *
- * @experimental
  */
 #ifndef MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_BALLBOUND_IMPL_HPP

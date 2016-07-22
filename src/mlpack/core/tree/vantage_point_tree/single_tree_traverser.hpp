@@ -19,7 +19,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 class VantagePointTree<MetricType, StatisticType, MatType, BoundType,

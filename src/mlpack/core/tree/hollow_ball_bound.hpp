@@ -19,24 +19,22 @@ namespace bound {
  * specific point (center). MetricType is the custom metric type that defaults
  * to the Euclidean (L2) distance.
  *
- * @tparam MetricType metric type used in the distance measure.
- * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
+ * @tparam TMetricType metric type used in the distance measure.
+ * @tparam ElemType Type of element (float or double or similar).
  */
-template<typename MetricType = metric::LMetric<2, true>,
-         typename VecType = arma::vec>
+template<typename TMetricType = metric::LMetric<2, true>,
+         typename ElemType = double>
 class HollowBallBound
 {
  public:
-  //! The underlying data type.
-  typedef typename VecType::elem_type ElemType;
-  //! A public version of the vector type.
-  typedef VecType Vec;
+  //! A public version of the metric type.
+  typedef TMetricType MetricType;
 
  private:
   //! The inner and the outer radii of the bound.
   math::RangeType<ElemType> radii;
   //! The center of the ball bound.
-  VecType center;
+  arma::Col<ElemType> center;
   //! The metric used in this bound.
   MetricType* metric;
 
@@ -67,6 +65,7 @@ class HollowBallBound
    * @param outerRadius Outer radius of ball bound.
    * @param center Center of ball bound.
    */
+  template<typename VecType>
   HollowBallBound(const ElemType innerRadius,
                   const ElemType outerRadius,
                   const VecType& center);
@@ -94,9 +93,9 @@ class HollowBallBound
   ElemType& InnerRadius() { return radii.Lo(); }
 
   //! Get the center point of the ball.
-  const VecType& Center() const { return center; }
+  const arma::Col<ElemType>& Center() const { return center; }
   //! Modify the center point of the ball.
-  VecType& Center() { return center; }
+  arma::Col<ElemType>& Center() { return center; }
 
   //! Get the dimensionality of the ball.
   size_t Dim() const { return center.n_elem; }
@@ -113,6 +112,7 @@ class HollowBallBound
   /**
    * Determines if a point is within this bound.
    */
+  template<typename VecType>
   bool Contains(const VecType& point) const;
 
   /**
@@ -125,14 +125,15 @@ class HollowBallBound
    *
    * @param center Vector which the centroid will be written to.
    */
+  template<typename VecType>
   void Center(VecType& center) const { center = this->center; }
 
   /**
    * Calculates minimum bound-to-point squared distance.
    */
-  template<typename OtherVecType>
-  ElemType MinDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
+  template<typename VecType>
+  ElemType MinDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType>>* = 0)
       const;
 
   /**
@@ -143,9 +144,9 @@ class HollowBallBound
   /**
    * Computes maximum distance.
    */
-  template<typename OtherVecType>
-  ElemType MaxDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
+  template<typename VecType>
+  ElemType MaxDistance(const VecType& point,
+                       typename boost::enable_if<IsVector<VecType>>* = 0)
       const;
 
   /**
@@ -156,10 +157,10 @@ class HollowBallBound
   /**
    * Calculates minimum and maximum bound-to-point distance.
    */
-  template<typename OtherVecType>
+  template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
-      const OtherVecType& other,
-      typename boost::enable_if<IsVector<OtherVecType>>* = 0) const;
+      const VecType& other,
+      typename boost::enable_if<IsVector<VecType>>* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.
@@ -205,8 +206,8 @@ class HollowBallBound
 };
 
 //! A specialization of BoundTraits for this bound type.
-template<typename MetricType, typename VecType>
-struct BoundTraits<HollowBallBound<MetricType, VecType>>
+template<typename MetricType, typename ElemType>
+struct BoundTraits<HollowBallBound<MetricType, ElemType>>
 {
   //! These bounds are potentially loose in some dimensions.
   const static bool HasTightBounds = false;

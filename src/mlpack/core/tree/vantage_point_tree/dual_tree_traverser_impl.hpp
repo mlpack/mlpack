@@ -18,7 +18,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -34,7 +34,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -82,7 +82,7 @@ DualTreeTraverser<RuleType>::Traverse(
 
     // If the first point of the query node is the centroid, the query node
     // contains a point. In this case we should run the single tree traverser.
-    if (queryNode.IsFirstPointCentroid())
+    if (queryNode.FirstPointIsCentroid())
     {
       const double pointScore = rule.Score(queryNode.Point(0), referenceNode);
       ++numScores;
@@ -118,7 +118,7 @@ DualTreeTraverser<RuleType>::Traverse(
   {
     // If the reference node contains a point we should calculate all
     // base cases with this point.
-    if (referenceNode.IsFirstPointCentroid())
+    if (referenceNode.FirstPointIsCentroid())
     {
       const size_t queryEnd = queryNode.Begin() + queryNode.Count();
       for (size_t query = queryNode.Begin(); query < queryEnd; ++query)
@@ -203,7 +203,7 @@ DualTreeTraverser<RuleType>::Traverse(
   {
     // If the reference node contains a point we should calculate all
     // base cases with this point.
-    if (referenceNode.IsFirstPointCentroid())
+    if (referenceNode.FirstPointIsCentroid())
     {
       for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         rule.BaseCase(queryNode.Descendant(i), referenceNode.Point(0));
@@ -219,7 +219,7 @@ DualTreeTraverser<RuleType>::Traverse(
     double rightScore;
     typename RuleType::TraversalInfoType rightInfo;
 
-    if (queryNode.IsFirstPointCentroid())
+    if (queryNode.FirstPointIsCentroid())
     {
       leftScore = rule.Score(queryNode.Point(0), *referenceNode.Left());
       leftInfo = rule.TraversalInfo();
@@ -458,7 +458,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -478,7 +478,7 @@ DualTreeTraverser<RuleType>::Traverse(
   }
 
   // If the reference node contains a point we should calculate the base case.
-  if (referenceNode.IsFirstPointCentroid())
+  if (referenceNode.FirstPointIsCentroid())
   {
     rule.BaseCase(queryIndex, referenceNode.Point(0));
     numBaseCases++;

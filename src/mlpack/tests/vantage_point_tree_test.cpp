@@ -39,21 +39,24 @@ BOOST_AUTO_TEST_CASE(VPTreeTraitsTest)
 
 BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
 {
-  HollowBallBound<EuclideanDistance> b(2, 4, "1.0 2.0 3.0 4.0 5.0");
+  HollowBallBound<EuclideanDistance> b(2, 4, arma::vec("1.0 2.0 3.0 4.0 5.0"));
 
-  BOOST_REQUIRE_EQUAL(b.Contains("1.0 2.0 3.0 7.0 5.0"), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(arma::vec("1.0 2.0 3.0 7.0 5.0")), true);
 
-  BOOST_REQUIRE_EQUAL(b.Contains("1.0 2.0 3.0 9.0 5.0"), false);
+  BOOST_REQUIRE_EQUAL(b.Contains(arma::vec("1.0 2.0 3.0 9.0 5.0")), false);
 
-  BOOST_REQUIRE_EQUAL(b.Contains("1.0 2.0 3.0 5.0 5.0"), false);
+  BOOST_REQUIRE_EQUAL(b.Contains(arma::vec("1.0 2.0 3.0 5.0 5.0")), false);
 
-  HollowBallBound<EuclideanDistance> b2(0.5, 1, "1.0 2.0 3.0 7.0 5.0");
+  HollowBallBound<EuclideanDistance> b2(0.5, 1,
+      arma::vec("1.0 2.0 3.0 7.0 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), true);
 
-  b2 = HollowBallBound<EuclideanDistance>(2.5, 3.5, "1.0 2.0 3.0 4.5 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(2.5, 3.5,
+      arma::vec("1.0 2.0 3.0 4.5 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), true);
 
-  b2 = HollowBallBound<EuclideanDistance>(2.0, 3.5, "1.0 2.0 3.0 4.5 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(2.0, 3.5,
+      arma::vec("1.0 2.0 3.0 4.5 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), false);
 
   BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("1.0 2.0 8.0 4.0 5.0")), 1.0,
@@ -76,40 +79,50 @@ BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
   BOOST_REQUIRE_CLOSE(b.MaxDistance(arma::vec("1.0 2.0 3.0 4.0 5.0")), 4.0,
       1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(3, 4, "1.0 2.0 3.0 5.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(3, 4,
+      arma::vec("1.0 2.0 3.0 5.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(1, 2, "1.0 2.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(1, 2,
+      arma::vec("1.0 2.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0, "1.0 2.5 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0,
+      arma::vec("1.0 2.5 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.5, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0, "1.0 8.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0,
+      arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 1.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0, "1.0 8.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
+      arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0, "1.0 8.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
+      arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 12.0, 1e-5);
   
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0, "1.0 3.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
+      arma::vec("1.0 3.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 7.0, 1e-5);
 
   HollowBallBound<EuclideanDistance> b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(1.0, 2.0, "1.0 2.5 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(1.0, 2.0,
+      arma::vec("1.0 2.5 3.0 4.0 5.0"));
 
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.InnerRadius(), 0.5, 1e-5);
   
   b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0, "1.0 3.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
+      arma::vec("1.0 3.0 3.0 4.0 5.0"));
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.InnerRadius(), 0.0, 1e-5);
 
   b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 4.0, "1.0 3.0 3.0 4.0 5.0");
+  b2 = HollowBallBound<EuclideanDistance>(0.5, 4.0,
+      arma::vec("1.0 3.0 3.0 4.0 5.0"));
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.OuterRadius(), 5.0, 1e-5);
 }
@@ -127,7 +140,7 @@ void CheckBound(TreeType& tree)
   {
     if (!tree.Parent())
       BOOST_REQUIRE_EQUAL(tree.NumPoints(), 0);
-    else if (tree.IsFirstPointCentroid())
+    else if (tree.FirstPointIsCentroid())
     {
       BOOST_REQUIRE_EQUAL(tree.NumPoints(), 1);
       BOOST_REQUIRE_EQUAL(true,
@@ -181,7 +194,7 @@ void CheckSplit(TreeType& tree)
     BOOST_REQUIRE_LE(maxDist, dist);
   }
 
-  if (tree.IsFirstPointCentroid())
+  if (tree.FirstPointIsCentroid())
   {
     for (size_t k = 0; k < tree.Bound().Dim(); k++)
       BOOST_REQUIRE_EQUAL(tree.Bound().Center()[k],

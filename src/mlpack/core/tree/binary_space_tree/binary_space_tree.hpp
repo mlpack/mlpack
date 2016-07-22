@@ -456,10 +456,6 @@ class BinarySpaceTree
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
 
-  //! Returns false: The first point of this node is not the centroid
-  //! of its bound.
-  static constexpr bool IsFirstPointCentroid() { return false; }
-
  private:
   /**
    * Splits the current node, assigning its left and right children recursively.

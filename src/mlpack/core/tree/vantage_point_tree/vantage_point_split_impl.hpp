@@ -14,16 +14,16 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType, typename MatType>
-bool VantagePointSplit<BoundType, MatType>::
+template<typename BoundType, typename MatType, size_t maxNumSamples>
+bool VantagePointSplit<BoundType, MatType, maxNumSamples>::
 SplitNode(const BoundType& bound, MatType& data, const size_t begin,
     const size_t count, size_t& splitCol)
 {
-  typename BoundType::ElemType mu;
+  ElemType mu = 0;
   size_t vantagePointIndex;
 
   // Find the best vantage point
-  SelectVantagePoint(bound, data, begin, count, vantagePointIndex, mu);
+  SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
 
   // All points are equal
   if (mu == 0)
@@ -33,23 +33,23 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   data.swap_cols(begin, vantagePointIndex);
 
   arma::Col<ElemType> vantagePoint = data.col(begin);
-  splitCol = PerformSplit(bound, data, begin, count, vantagePoint, mu);
+  splitCol = PerformSplit(bound.Metric(), data, begin, count, vantagePoint, mu);
 
   assert(splitCol > begin);
   assert(splitCol < begin + count);
   return true;
 }
 
-template<typename BoundType, typename MatType>
-bool VantagePointSplit<BoundType, MatType>::
+template<typename BoundType, typename MatType, size_t maxNumSamples>
+bool VantagePointSplit<BoundType, MatType, maxNumSamples>::
 SplitNode(const BoundType& bound, MatType& data, const size_t begin,
     const size_t count, size_t& splitCol, std::vector<size_t>& oldFromNew)
 {
-  ElemType mu;
+  ElemType mu = 0;
   size_t vantagePointIndex;
 
   // Find the best vantage point
-  SelectVantagePoint(bound, data, begin, count, vantagePointIndex, mu);
+  SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
 
   // All points are equal
   if (mu == 0)
@@ -63,16 +63,18 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
 
   arma::Col<ElemType> vantagePoint = data.col(begin);
 
-  splitCol = PerformSplit(bound, data, begin, count, vantagePoint, mu, oldFromNew);
+  splitCol = PerformSplit(bound.Metric(), data, begin, count, vantagePoint, mu,
+      oldFromNew);
 
   assert(splitCol > begin);
   assert(splitCol < begin + count);
   return true;
 }
 
-template<typename BoundType, typename MatType>
+template<typename BoundType, typename MatType, size_t maxNumSamples>
 template <typename VecType>
-size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& bound,
+size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
+    const MetricType& metric,
     MatType& data,
     const size_t begin,
     const size_t count,
@@ -88,10 +90,12 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
 
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle.
-  while (AssignToLeftSubtree(bound, data, vantagePoint, left, mu) && (left <= right))
+  while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
+      (left <= right))
     left++;
 
-  while ((!AssignToLeftSubtree(bound, data, vantagePoint, right, mu)) && (left <= right) && (right > 0))
+  while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
+      (left <= right) && (right > 0))
     right--;
 
   while (left <= right)
@@ -102,14 +106,16 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
     // See how many points on the left are correct.  When they are correct,
     // increase the left counter accordingly.  When we encounter one that isn't
     // correct, stop.  We will switch it later.
-    while ((AssignToLeftSubtree(bound, data, vantagePoint, left, mu)) && (left <= right))
+    while ((AssignToLeftSubtree(metric, data, vantagePoint, left, mu)) &&
+        (left <= right))
       left++;
 
     // Now see how many points on the right are correct.  When they are correct,
     // decrease the right counter accordingly.  When we encounter one that isn't
     // correct, stop.  We will switch it with the wrong point we found in the
     // previous loop.
-    while ((!AssignToLeftSubtree(bound, data, vantagePoint, right, mu)) && (left <= right))
+    while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
+        (left <= right))
       right--;
   }
 
@@ -118,9 +124,10 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
   return left;
 }
 
-template<typename BoundType, typename MatType>
+template<typename BoundType, typename MatType, size_t maxNumSamples>
 template<typename VecType>
-size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& bound,
+size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
+    const MetricType& metric,
     MatType& data,
     const size_t begin,
     const size_t count,
@@ -138,10 +145,12 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle.
 
-  while (AssignToLeftSubtree(bound, data, vantagePoint, left, mu) && (left <= right))
+  while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
+      (left <= right))
     left++;
 
-  while ((!AssignToLeftSubtree(bound, data, vantagePoint, right, mu)) && (left <= right) && (right > 0))
+  while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
+      (left <= right) && (right > 0))
     right--;
 
   while (left <= right)
@@ -157,14 +166,16 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
     // See how many points on the left are correct.  When they are correct,
     // increase the left counter accordingly.  When we encounter one that isn't
     // correct, stop.  We will switch it later.
-    while (AssignToLeftSubtree(bound, data, vantagePoint, left, mu) && (left <= right))
+    while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
+        (left <= right))
       left++;
 
     // Now see how many points on the right are correct.  When they are correct,
     // decrease the right counter accordingly.  When we encounter one that isn't
     // correct, stop.  We will switch it with the wrong point we found in the
     // previous loop.
-    while ((!AssignToLeftSubtree(bound, data, vantagePoint, right, mu)) && (left <= right))
+    while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
+        (left <= right))
       right--;
   }
 
@@ -173,30 +184,36 @@ size_t VantagePointSplit<BoundType, MatType>::PerformSplit(const BoundType& boun
   return left;
 }
 
-template<typename BoundType, typename MatType>
-void VantagePointSplit<BoundType, MatType>::
-SelectVantagePoint(const BoundType& bound, const MatType& data,
+template<typename BoundType, typename MatType, size_t maxNumSamples>
+void VantagePointSplit<BoundType, MatType, maxNumSamples>::
+SelectVantagePoint(const MetricType& metric, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu)
 {
   arma::uvec vantagePointCandidates;
+  arma::Col<ElemType> distances(maxNumSamples);
 
   // Get no more than max(maxNumSamples, count) vantage point candidates
-  GetDistinctSamples(vantagePointCandidates, maxNumSamples, begin, count);
+  math::ObtainDistinctSamples(begin, begin + count, maxNumSamples,
+      vantagePointCandidates);
 
   ElemType bestSpread = 0;
 
-  //  Evaluate eache candidate
-  for (size_t i = 0; i < vantagePointCandidates.n_rows; i++)
+  arma::uvec samples;
+  //  Evaluate each candidate
+  for (size_t i = 0; i < vantagePointCandidates.n_elem; i++)
   {
-    arma::uvec samples;
-
-    // Get no more than max(maxNumSamples, count) random samples
-    GetDistinctSamples(samples, maxNumSamples, begin, count);
+    // Get no more than min(maxNumSamples, count) random samples
+    math::ObtainDistinctSamples(begin, begin + count, maxNumSamples, samples);
 
     // Calculate the second moment of the distance to the vantage point candidate
     // using these random samples
-    const ElemType spread = GetSecondMoment(bound, data, samples,
-        vantagePointCandidates[i]);
+    distances.set_size(samples.n_elem);
+
+    for (size_t j = 0; j < samples.n_elem; j++)
+      distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
+        data.col(samples[j]));
+
+    const ElemType spread = arma::sum(distances % distances) / samples.n_elem;
 
     if (spread > bestSpread)
     {
@@ -204,92 +221,10 @@ SelectVantagePoint(const BoundType& bound, const MatType& data,
       vantagePoint = vantagePointCandidates[i];
       //  Calculate the median value of the distance from the vantage point candidate
       //  to these samples
-      GetMedian(bound, data, samples, vantagePoint, mu);
-    }    
+      mu = arma::median(distances);
+   }    
   }
   assert(bestSpread > 0);
-}
-
-template<typename BoundType, typename MatType>
-void VantagePointSplit<BoundType, MatType>::
-GetDistinctSamples(arma::uvec& distinctSamples, const size_t numSamples,
-    const size_t begin, const size_t upperBound)
-{
-  if (upperBound > numSamples)
-  {
-    arma::Col<size_t> samples;
-
-    samples.zeros(upperBound);
-
-    for (size_t i = 0; i < numSamples; i++)
-      samples [ (size_t) math::RandInt(upperBound) ]++;
-
-    distinctSamples = arma::find(samples > 0);
-
-    distinctSamples += begin;
-  }
-  else
-  {
-    //  The node contains less points than requested
-    distinctSamples.set_size(upperBound);
-    for (size_t i = 0; i < upperBound; i++)
-      distinctSamples[i] = begin + i;
-  }
-}
-
-template<typename BoundType, typename MatType>
-void VantagePointSplit<BoundType, MatType>::
-GetMedian(const BoundType& bound, const MatType& data,
-    const arma::uvec& samples, const size_t vantagePoint, ElemType& mu)
-{
-  std::vector<SortStruct<ElemType>> sorted(samples.n_rows);
-
-  for (size_t i = 0; i < samples.n_rows; i++)
-  {
-    sorted[i].point = samples[i];
-    sorted[i].dist = bound.Metric().Evaluate(data.col(vantagePoint),
-        data.col(samples[i]));
-  }
-
-  //  Sort samples according to the distance to the vantage point
-  std::sort(sorted.begin(), sorted.end(), StructComp<ElemType>);
-
-  //  Get the midian value
-  mu = bound.Metric().Evaluate(data.col(vantagePoint),
-      data.col(sorted[sorted.size() / 2].point));
-}
-
-template<typename BoundType, typename MatType>
-typename MatType::elem_type VantagePointSplit<BoundType, MatType>::
-GetSecondMoment(const BoundType& bound, const MatType& data,
-    const arma::uvec& samples,  const size_t vantagePoint)
-{
-  ElemType moment = 0;
-
-  for (size_t i = 0; i < samples.size(); i++)
-  {
-    const ElemType dist =
-        bound.Metric().Evaluate(data.col(vantagePoint), data.col(samples[i]));
-
-    moment += dist * dist;
-  }
-
-  moment /= samples.size();
-
-  return moment;
-}
-
-template<typename BoundType, typename MatType>
-template<typename VecType>
-bool VantagePointSplit<BoundType, MatType>::
-AssignToLeftSubtree(const BoundType& bound, const MatType& mat,
-    const VecType& vantagePoint, const size_t point, const ElemType mu)
-{
-  // Return true if the point is close to the vantage point
-  if (bound.Metric().Evaluate(vantagePoint, mat.col(point)) < mu)
-    return true;
-
-  return false;
 }
 
 } // namespace tree

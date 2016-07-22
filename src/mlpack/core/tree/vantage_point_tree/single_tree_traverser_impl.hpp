@@ -20,7 +20,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -33,7 +33,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename RuleType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -52,7 +52,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 
   // If the reference node contains a point we should calculate the base case.
-  if (referenceNode.IsFirstPointCentroid())
+  if (referenceNode.FirstPointIsCentroid())
     rule.BaseCase(queryIndex, referenceNode.Point(0));
 
   // If either score is DBL_MAX, we do not recurse into that node.

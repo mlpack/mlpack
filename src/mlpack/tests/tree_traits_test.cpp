@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)
   BOOST_REQUIRE_EQUAL(b, true);
   b = TreeTraits<int>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
-  b = TreeTraits<int>::FirstPointIsCentroid;
+  b = TreeTraits<int>::FirstPointIsCentroid();
   BOOST_REQUIRE_EQUAL(b, false);
   b = TreeTraits<int>::RearrangesDataset;
   BOOST_REQUIRE_EQUAL(b, false);
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTraitsTest)
   BOOST_REQUIRE_EQUAL(b, false);
 
   // The first point is not the centroid.
-  b = TreeTraits<TreeType>::FirstPointIsCentroid;
+  b = TreeTraits<TreeType>::FirstPointIsCentroid();
   BOOST_REQUIRE_EQUAL(b, false);
 
   // The dataset gets rearranged at build time.
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeTraitsTest)
   BOOST_REQUIRE_EQUAL(b, true);
 
   // The first point is the center of the node.
-  b = TreeTraits<CoverTree<>>::FirstPointIsCentroid;
+  b = TreeTraits<CoverTree<>>::FirstPointIsCentroid();
   BOOST_REQUIRE_EQUAL(b, true);
 
   b = TreeTraits<CoverTree<>>::RearrangesDataset;

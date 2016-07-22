@@ -17,7 +17,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -45,7 +45,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -79,7 +79,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -119,7 +119,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(MatType&& data, const size_t maxLeafSize) :
@@ -145,7 +145,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -179,7 +179,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -219,7 +219,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -249,7 +249,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -284,7 +284,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -329,7 +329,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(
@@ -389,7 +389,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 VantagePointTree(VantagePointTree&& other) :
@@ -425,7 +425,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename Archive>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
@@ -448,7 +448,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   ~VantagePointTree()
@@ -465,7 +465,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline bool VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                             SplitType>::IsLeaf() const
@@ -480,7 +480,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::NumChildren() const
@@ -501,7 +501,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline
 typename VantagePointTree<MetricType, StatisticType, MatType, BoundType,
@@ -513,7 +513,7 @@ VantagePointTree<MetricType, StatisticType, MatType, BoundType,
     return 0.0;
 
   // Otherwise return the distance from the center to a corner of the bound.
-  return 0.5 * bound.Diameter();
+  return bound.OuterRadius();
 }
 
 /**
@@ -527,7 +527,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline
 typename VantagePointTree<MetricType, StatisticType, MatType, BoundType,
@@ -543,7 +543,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline
 typename VantagePointTree<MetricType, StatisticType, MatType, BoundType,
@@ -551,7 +551,7 @@ typename VantagePointTree<MetricType, StatisticType, MatType, BoundType,
 VantagePointTree<MetricType, StatisticType, MatType, BoundType,
     SplitType>::MinimumBoundDistance() const
 {
-  return bound.MinWidth() / 2.0;
+  return bound.OuterRadius();
 }
 
 /**
@@ -561,7 +561,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                        SplitType>&
@@ -581,17 +581,19 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::NumPoints() const
 {
-  // Each intermediate node contains exactly one point.
-  if (left && parent)
+  // Each left intermediate node contains exactly one point.
+  // Each right intermediate node contains no points.
+  if (firstPointIsCentroid && left)
     return 1;
-  else if(!parent)
-	return 0;
+  else if(left)
+    return 0;
 
+  // This is a leaf node.
   return count;
 }
 
@@ -602,7 +604,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::NumDescendants() const
@@ -617,7 +619,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::Descendant(const size_t index) const
@@ -632,7 +634,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
                               SplitType>::Point(const size_t index) const
@@ -644,7 +646,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     SplitNode(const size_t maxLeafSize,
@@ -689,7 +691,7 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   size_t splitBegin = begin;
   size_t splitCount = count;
 
-  if (IsFirstPointCentroid())
+  if (FirstPointIsCentroid())
   {
     splitBegin = begin + 1;
     splitCount = count - 1;
@@ -707,8 +709,8 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   // by calling their constructors (which perform this splitting process).
   left = new VantagePointTree(this, splitBegin, splitCol - splitBegin, splitter,
       maxLeafSize, true);
-  right = new VantagePointTree(this, splitCol, splitBegin + splitCount - splitCol,
-      splitter, maxLeafSize, false);
+  right = new VantagePointTree(this, splitCol,
+      splitBegin + splitCount - splitCol, splitter, maxLeafSize, false);
 
   // Calculate parent distances for those two nodes.
   arma::vec center, leftCenter, rightCenter;
@@ -728,7 +730,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 SplitNode(std::vector<size_t>& oldFromNew,
@@ -776,14 +778,14 @@ SplitNode(std::vector<size_t>& oldFromNew,
   size_t splitBegin = begin;
   size_t splitCount = count;
 
-  if (IsFirstPointCentroid())
+  if (FirstPointIsCentroid())
   {
     splitBegin = begin + 1;
     splitCount = count - 1;
   }
 
-  const bool split = splitter.SplitNode(bound, *dataset, splitBegin, splitCount, splitCol,
-      oldFromNew);
+  const bool split = splitter.SplitNode(bound, *dataset, splitBegin, splitCount,
+      splitCol, oldFromNew);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
@@ -792,24 +794,34 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new VantagePointTree(this, splitBegin, splitCol - splitBegin, oldFromNew,
-      splitter, maxLeafSize, true);
-  right = new VantagePointTree(this, splitCol, splitBegin + splitCount - splitCol,
-      oldFromNew, splitter, maxLeafSize, false);
+  left = new VantagePointTree(this, splitBegin, splitCol - splitBegin,
+      oldFromNew, splitter, maxLeafSize, true);
+  right = new VantagePointTree(this, splitCol,
+      splitBegin + splitCount - splitCol, oldFromNew, splitter, maxLeafSize,
+      false);
 
   
   // Calculate parent distances for those two nodes.
-  arma::vec center, leftCenter, rightCenter;
-  Center(center);
-  left->Center(leftCenter);
-  right->Center(rightCenter);
+  ElemType parentDistance;
+  if (firstPointIsCentroid)
+  {
+    assert(left->firstPointIsCentroid == true);
 
-  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const ElemType rightParentDistance = MetricType::Evaluate(center,
-      rightCenter);
+    parentDistance = MetricType::Evaluate(dataset->col(begin),
+        dataset->col(left->begin));
+  }
+  else
+  {
+    arma::vec center;
+    Center(center);
 
-  left->ParentDistance() = leftParentDistance;
-  right->ParentDistance() = rightParentDistance;
+    assert(left->firstPointIsCentroid == true);
+
+    parentDistance = MetricType::Evaluate(center, dataset->col(left->begin));
+  }
+
+  left->ParentDistance() = parentDistance;
+  right->ParentDistance() = parentDistance;
 }
 
 // Default constructor (private), for boost::serialization.
@@ -817,7 +829,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     VantagePointTree() :
@@ -841,7 +853,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 template<typename Archive>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::

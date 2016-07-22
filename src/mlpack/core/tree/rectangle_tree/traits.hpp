@@ -35,8 +35,15 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
 
   /**
    * There is no guarantee that the first point in a node is its centroid.
+   *
+   * @param node The node to check.
    */
-  static const bool FirstPointIsCentroid = false;
+  static constexpr bool FirstPointIsCentroid(const RectangleTree<MetricType,
+      StatisticType, MatType, SplitType, DescentType,
+      AuxiliaryInformationType>* /* node */ = NULL)
+  {
+    return false;
+  }
 
   /**
    * Points are not contained at multiple levels of the R-tree.
@@ -83,8 +90,15 @@ class TreeTraits<RectangleTree<MetricType,
 
   /**
    * There is no guarantee that the first point in a node is its centroid.
+   *
+   * @param node The node to check.
    */
-  static const bool FirstPointIsCentroid = false;
+  static constexpr bool FirstPointIsCentroid(const RectangleTree<MetricType,
+      StatisticType, MatType, RPlusTreeSplit<SplitPolicyType, SweepType>,
+      DescentType, AuxiliaryInformationType>* /* node */ = NULL)
+  {
+    return false;
+  }
 
   /**
    * Points are not contained at multiple levels of the R-tree.

@@ -3,8 +3,6 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of HollowBallBound ball bound metric policy class.
- *
- * @experimental
  */
 #ifndef MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_IMPL_HPP
@@ -12,14 +10,12 @@
 // In case it hasn't been included already.
 #include "hollow_ball_bound.hpp"
 
-#include <string>
-
 namespace mlpack {
 namespace bound {
 
 //! Empty Constructor.
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::HollowBallBound() :
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>::HollowBallBound() :
     radii(std::numeric_limits<ElemType>::lowest(),
           std::numeric_limits<ElemType>::lowest()),
     metric(new MetricType()),
@@ -31,8 +27,8 @@ HollowBallBound<MetricType, VecType>::HollowBallBound() :
  *
  * @param dimension Dimensionality of ball bound.
  */
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::HollowBallBound(const size_t dimension) :
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(const size_t dimension) :
     radii(std::numeric_limits<ElemType>::lowest(),
           std::numeric_limits<ElemType>::lowest()),
     center(dimension),
@@ -47,8 +43,9 @@ HollowBallBound<MetricType, VecType>::HollowBallBound(const size_t dimension) :
  * @param outerRadius Outer radius of hollow ball bound.
  * @param center Center of hollow ball bound.
  */
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::
+template<typename TMetricType, typename ElemType>
+template<typename VecType>
+HollowBallBound<TMetricType, ElemType>::
 HollowBallBound(const ElemType innerRadius,
                 const ElemType outerRadius,
                 const VecType& center) :
@@ -60,8 +57,8 @@ HollowBallBound(const ElemType innerRadius,
 { /* Nothing to do. */ }
 
 //! Copy Constructor. To prevent memory leaks.
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::HollowBallBound(
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(
     const HollowBallBound& other) :
     radii(other.radii),
     center(other.center),
@@ -70,8 +67,8 @@ HollowBallBound<MetricType, VecType>::HollowBallBound(
 { /* Nothing to do. */ }
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>& HollowBallBound<MetricType, VecType>::
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
 operator=(const HollowBallBound& other)
 {
   radii = other.radii;
@@ -83,8 +80,9 @@ operator=(const HollowBallBound& other)
 }
 
 //! Move constructor.
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::HollowBallBound(HollowBallBound&& other) :
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(
+    HollowBallBound&& other) :
     radii(other.radii),
     center(other.center),
     metric(other.metric),
@@ -93,23 +91,23 @@ HollowBallBound<MetricType, VecType>::HollowBallBound(HollowBallBound&& other) :
   // Fix the other bound.
   other.radii.Hi() = 0.0;
   other.radii.Lo() = 0.0;
-  other.center = VecType();
+  other.center = arma::Col<ElemType>();
   other.metric = NULL;
   other.ownsMetric = false;
 }
 
 //! Destructor to release allocated memory.
-template<typename MetricType, typename VecType>
-HollowBallBound<MetricType, VecType>::~HollowBallBound()
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>::~HollowBallBound()
 {
   if (ownsMetric)
     delete metric;
 }
 
 //! Get the range in a certain dimension.
-template<typename MetricType, typename VecType>
-math::RangeType<typename HollowBallBound<MetricType, VecType>::ElemType>
-HollowBallBound<MetricType, VecType>::operator[](const size_t i) const
+template<typename TMetricType, typename ElemType>
+math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::operator[](
+    const size_t i) const
 {
   if (radii.Hi() < 0)
     return math::Range();
@@ -120,8 +118,10 @@ HollowBallBound<MetricType, VecType>::operator[](const size_t i) const
 /**
  * Determines if a point is within the bound.
  */
-template<typename MetricType, typename VecType>
-bool HollowBallBound<MetricType, VecType>::Contains(const VecType& point) const
+template<typename TMetricType, typename ElemType>
+template<typename VecType>
+bool HollowBallBound<TMetricType, ElemType>::Contains(
+    const VecType& point) const
 {
   if (radii.Hi() < 0)
     return false;
@@ -135,8 +135,8 @@ bool HollowBallBound<MetricType, VecType>::Contains(const VecType& point) const
 /**
  * Determines if another bound is within this bound.
  */
-template<typename MetricType, typename VecType>
-bool HollowBallBound<MetricType, VecType>::Contains(
+template<typename TMetricType, typename ElemType>
+bool HollowBallBound<TMetricType, ElemType>::Contains(
     const HollowBallBound& other) const
 {
   if (radii.Hi() < 0)
@@ -161,12 +161,11 @@ bool HollowBallBound<MetricType, VecType>::Contains(
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<typename MetricType, typename VecType>
-template<typename OtherVecType>
-typename HollowBallBound<MetricType, VecType>::ElemType
-HollowBallBound<MetricType, VecType>::MinDistance(
-    const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType>>* /* junk */) const
+template<typename TMetricType, typename ElemType>
+template<typename VecType>
+ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
 {
   if (radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
@@ -184,9 +183,9 @@ HollowBallBound<MetricType, VecType>::MinDistance(
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<typename MetricType, typename VecType>
-typename HollowBallBound<MetricType, VecType>::ElemType
-HollowBallBound<MetricType, VecType>::MinDistance(const HollowBallBound& other)
+template<typename TMetricType, typename ElemType>
+ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
+    const HollowBallBound& other)
     const
 {
   if (radii.Hi() < 0 || other.radii.Hi() < 0)
@@ -209,12 +208,11 @@ HollowBallBound<MetricType, VecType>::MinDistance(const HollowBallBound& other)
 /**
  * Computes maximum distance.
  */
-template<typename MetricType, typename VecType>
-template<typename OtherVecType>
-typename HollowBallBound<MetricType, VecType>::ElemType
-HollowBallBound<MetricType, VecType>::MaxDistance(
-    const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
+template<typename TMetricType, typename ElemType>
+template<typename VecType>
+ElemType HollowBallBound<TMetricType, ElemType>::MaxDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
   if (radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
@@ -225,9 +223,9 @@ HollowBallBound<MetricType, VecType>::MaxDistance(
 /**
  * Computes maximum distance.
  */
-template<typename MetricType, typename VecType>
-typename HollowBallBound<MetricType, VecType>::ElemType
-HollowBallBound<MetricType, VecType>::MaxDistance(const HollowBallBound& other)
+template<typename TMetricType, typename ElemType>
+ElemType HollowBallBound<TMetricType, ElemType>::MaxDistance(
+  const HollowBallBound& other)
     const
 {
   if (radii.Hi() < 0)
@@ -242,12 +240,11 @@ HollowBallBound<MetricType, VecType>::MaxDistance(const HollowBallBound& other)
  *
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
-template<typename MetricType, typename VecType>
-template<typename OtherVecType>
-math::RangeType<typename HollowBallBound<MetricType, VecType>::ElemType>
-HollowBallBound<MetricType, VecType>::RangeDistance(
-    const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
+template<typename TMetricType, typename ElemType>
+template<typename VecType>
+math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
   if (radii.Hi() < 0)
     return math::Range(std::numeric_limits<ElemType>::max(),
@@ -261,9 +258,8 @@ HollowBallBound<MetricType, VecType>::RangeDistance(
   }
 }
 
-template<typename MetricType, typename VecType>
-math::RangeType<typename HollowBallBound<MetricType, VecType>::ElemType>
-HollowBallBound<MetricType, VecType>::RangeDistance(
+template<typename TMetricType, typename ElemType>
+math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
     const HollowBallBound& other) const
 {
   if (radii.Hi() < 0)
@@ -283,10 +279,10 @@ HollowBallBound<MetricType, VecType>::RangeDistance(
  * The difference lies in the way we initialize the ball bound. The way we
  * expand the bound is same.
  */
-template<typename MetricType, typename VecType>
+template<typename TMetricType, typename ElemType>
 template<typename MatType>
-const HollowBallBound<MetricType, VecType>&
-HollowBallBound<MetricType, VecType>::operator|=(const MatType& data)
+const HollowBallBound<TMetricType, ElemType>&
+HollowBallBound<TMetricType, ElemType>::operator|=(const MatType& data)
 {
   if (radii.Hi() < 0)
   {
@@ -297,14 +293,14 @@ HollowBallBound<MetricType, VecType>::operator|=(const MatType& data)
     // Now iteratively add points.
     for (size_t i = 0; i < data.n_cols; ++i)
     {
-      const ElemType dist = metric->Evaluate(center, (VecType) data.col(i));
+      const ElemType dist = metric->Evaluate(center, data.col(i));
 
       // See if the new point lies outside the bound.
       if (dist > radii.Hi())
       {
         // Move towards the new point and increase the radius just enough to
         // accommodate the new point.
-        const VecType diff = data.col(i) - center;
+        const arma::Col<ElemType> diff = data.col(i) - center;
         center += ((dist - radii.Hi()) / (2 * dist)) * diff;
         radii.Hi() = 0.5 * (dist + radii.Hi());
       }
@@ -331,9 +327,9 @@ HollowBallBound<MetricType, VecType>::operator|=(const MatType& data)
 /**
  * Expand the bound to include the given bound.
  */
-template<typename MetricType, typename VecType>
-const HollowBallBound<MetricType, VecType>&
-HollowBallBound<MetricType, VecType>::operator|=(const HollowBallBound& other)
+template<typename TMetricType, typename ElemType>
+const HollowBallBound<TMetricType, ElemType>&
+HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
 {
   if (radii.Hi() < 0)
   {
@@ -358,9 +354,9 @@ HollowBallBound<MetricType, VecType>::operator|=(const HollowBallBound& other)
 
 
 //! Serialize the BallBound.
-template<typename MetricType, typename VecType>
+template<typename TMetricType, typename ElemType>
 template<typename Archive>
-void HollowBallBound<MetricType, VecType>::Serialize(
+void HollowBallBound<TMetricType, ElemType>::Serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

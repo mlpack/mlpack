@@ -13,11 +13,14 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-template<typename BoundType, typename MatType = arma::mat>
+template<typename BoundType,
+         typename MatType = arma::mat,
+         size_t maxNumSamples = 100>
 class VantagePointSplit
 {
  public:
   typedef typename MatType::elem_type ElemType;
+  typedef typename BoundType::MetricType MetricType;
   /**
    * Split the node according to the distance to a vantage point.
    *
@@ -56,26 +59,6 @@ class VantagePointSplit
                         std::vector<size_t>& oldFromNew);
  private:
   /**
-   * The maximum number of samples used for vantage point estimation and for
-   * estimation of the median.
-   */
-  static const size_t maxNumSamples = 100;
-
-  template<typename StructElemType>
-  struct SortStruct
-  {
-    size_t point;
-    ElemType dist;
-  };
-
-  template<typename StructElemType>
-  static bool StructComp(const SortStruct<StructElemType>& s1,
-      const SortStruct<StructElemType>& s2)
-  {
-    return (s1.dist < s2.dist);
-  };
-
-  /**
    * Select the best vantage point i.e. the point with the largest second moment
    * of the distance from a number of random node points to the vantage point.
    * Firstly this methods selects no more than maxNumSamples random points.
@@ -92,7 +75,7 @@ class VantagePointSplit
    * @param mu The median value of distance form the vantage point to
    * a number of random points.
    */
-  static void SelectVantagePoint(const BoundType& bound, const MatType& data,
+  static void SelectVantagePoint(const MetricType& metric, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu);
 
   /**
@@ -109,31 +92,6 @@ class VantagePointSplit
       const size_t numSamples, const size_t begin, const size_t upperBound);
 
   /**
-   * Get the median value of the distance from a certain vantage point to a
-   * number of samples.
-   *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
-   * @param samples The indices of random samples.
-   * @param vantagePoint The vantage point.
-   * @param mu The median value.
-   */
-  static void GetMedian(const BoundType& bound, const MatType& data,
-      const arma::uvec& samples,  const size_t vantagePoint, ElemType& mu);
-
-  /**
-   * Calculate the second moment of the distance from a certain vantage point to
-   * a number of random samples.
-   *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
-   * @param samples The indices of random samples.
-   * @param vantagePoint The vantage point.
-   */
-  static ElemType GetSecondMoment(const BoundType& bound, const MatType& data,
-      const arma::uvec& samples,  const size_t vantagePoint);
-
-  /**
    * This method returns true if a point should be assigned to the left subtree
    * i.e. the distance from the point to the vantage point is less then
    * the median value. Otherwise it returns false.
@@ -145,8 +103,11 @@ class VantagePointSplit
    * @param mu The median value.
    */
   template<typename VecType>
-  static bool AssignToLeftSubtree(const BoundType& bound, const MatType& mat,
-      const VecType& vantagePoint, const size_t point, const ElemType mu);
+  static bool AssignToLeftSubtree(const MetricType& metric, const MatType& mat,
+      const VecType& vantagePoint, const size_t point, const ElemType mu)
+  {
+    return (metric.Evaluate(vantagePoint, mat.col(point)) < mu);
+  }
 
   /**
    * Perform split according to the median value and the vantage point.
@@ -159,7 +120,7 @@ class VantagePointSplit
    * @param mu The median value.
    */
   template<typename VecType>
-  static size_t PerformSplit(const BoundType& bound,
+  static size_t PerformSplit(const MetricType& metric,
                              MatType& data,
                              const size_t begin,
                              const size_t count,
@@ -179,7 +140,7 @@ class VantagePointSplit
    *    each new point.
    */
   template<typename VecType>
-  static size_t PerformSplit(const BoundType& bound,
+  static size_t PerformSplit(const MetricType& metric,
                              MatType& data,
                              const size_t begin,
                              const size_t count,

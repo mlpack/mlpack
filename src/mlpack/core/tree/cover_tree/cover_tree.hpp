@@ -374,10 +374,6 @@ class CoverTree
   //! Get the instantiated metric.
   MetricType& Metric() const { return *metric; }
 
-  //! Returns true: The first point of this node is the centroid
-  //! of its bound.
-  static constexpr bool IsFirstPointCentroid() { return true; }
-
  private:
   //! Reference to the matrix which this tree is built on.
   const MatType* dataset;

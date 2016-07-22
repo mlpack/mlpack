@@ -41,7 +41,7 @@ template<typename MetricType,
          typename MatType = arma::mat,
          template<typename BoundMetricType, typename...> class BoundType =
             bound::HollowBallBound,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
             class SplitType = VantagePointSplit>
 class VantagePointTree
 {
@@ -63,7 +63,7 @@ class VantagePointTree
   //! The number of points of the dataset contained in this node.
   size_t count;
   //! The bound object for this node.
-  BoundType<MetricType> bound;
+  BoundType<MetricType, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -460,7 +460,7 @@ class VantagePointTree
   void Center(arma::vec& center) { bound.Center(center); }
 
   //! Indicates that the first point of this node is the centroid of its bound.
-  bool IsFirstPointCentroid() const { return firstPointIsCentroid; }
+  bool FirstPointIsCentroid() const { return firstPointIsCentroid; }
 
  private:
   /**

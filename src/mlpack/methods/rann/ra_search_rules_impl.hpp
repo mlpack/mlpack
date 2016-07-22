@@ -71,10 +71,10 @@ RASearchRules(const arma::mat& referenceSet,
   if (naive) // No tree traversal; just do naive sampling here.
   {
     // Sample enough points.
+    arma::uvec distinctSamples;
     for (size_t i = 0; i < querySet.n_cols; ++i)
     {
-      arma::uvec distinctSamples;
-      RAUtil::ObtainDistinctSamples(numSamplesReqd, n, distinctSamples);
+      math::ObtainDistinctSamples(0, n, numSamplesReqd, distinctSamples);
       for (size_t j = 0; j < distinctSamples.n_elem; j++)
         BaseCase(i, (size_t) distinctSamples[j]);
     }
@@ -178,9 +178,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           // Then samplesReqd <= singleSampleLimit.
           // Hence, approximate the node by sampling enough number of points.
           arma::uvec distinctSamples;
-          RAUtil::ObtainDistinctSamples(samplesReqd,
-              referenceNode.NumDescendants(),
-                                distinctSamples);
+          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+              samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; i++)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
@@ -195,9 +194,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           {
             // Approximate node by sampling enough number of points.
             arma::uvec distinctSamples;
-            RAUtil::ObtainDistinctSamples(samplesReqd,
-                referenceNode.NumDescendants(),
-                                  distinctSamples);
+            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+                samplesReqd, distinctSamples);
             for (size_t i = 0; i < distinctSamples.n_elem; i++)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
@@ -284,8 +282,8 @@ Rescore(const size_t queryIndex,
         // Then, samplesReqd <= singleSampleLimit.  Hence, approximate the node
         // by sampling enough number of points.
         arma::uvec distinctSamples;
-        RAUtil::ObtainDistinctSamples(samplesReqd,
-            referenceNode.NumDescendants(), distinctSamples);
+        math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+            samplesReqd, distinctSamples);
         for (size_t i = 0; i < distinctSamples.n_elem; i++)
           // The counting of the samples are done in the 'BaseCase' function so
           // no book-keeping is required here.
@@ -300,8 +298,8 @@ Rescore(const size_t queryIndex,
         {
           // Approximate node by sampling enough points.
           arma::uvec distinctSamples;
-          RAUtil::ObtainDistinctSamples(samplesReqd,
-              referenceNode.NumDescendants(), distinctSamples);
+          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+              samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; i++)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
@@ -483,12 +481,12 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
         {
           // Then samplesReqd <= singleSampleLimit.  Hence, approximate node by
           // sampling enough number of points for every query in the query node.
+          arma::uvec distinctSamples;
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            arma::uvec distinctSamples;
-            RAUtil::ObtainDistinctSamples(samplesReqd,
-                referenceNode.NumDescendants(), distinctSamples);
+            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+                samplesReqd, distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; j++)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
@@ -513,12 +511,12 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           {
             // Approximate node by sampling enough number of points for every
             // query in the query node.
+            arma::uvec distinctSamples;
             for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
             {
               const size_t queryIndex = queryNode.Descendant(i);
-              arma::uvec distinctSamples;
-              RAUtil::ObtainDistinctSamples(samplesReqd,
-                  referenceNode.NumDescendants(), distinctSamples);
+              math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+                  samplesReqd, distinctSamples);
               for (size_t j = 0; j < distinctSamples.n_elem; j++)
                 // The counting of the samples are done in the 'BaseCase'
                 // function so no book-keeping is required here.
@@ -688,12 +686,12 @@ Rescore(TreeType& queryNode,
       {
         // then samplesReqd <= singleSampleLimit.  Hence, approximate the node
         // by sampling enough points for every query in the query node.
+        arma::uvec distinctSamples;
         for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         {
           const size_t queryIndex = queryNode.Descendant(i);
-          arma::uvec distinctSamples;
-          RAUtil::ObtainDistinctSamples(samplesReqd,
-              referenceNode.NumDescendants(), distinctSamples);
+          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+              samplesReqd, distinctSamples);
           for (size_t j = 0; j < distinctSamples.n_elem; j++)
             // The counting of the samples are done in the 'BaseCase'
             // function so no book-keeping is required here.
@@ -717,12 +715,12 @@ Rescore(TreeType& queryNode,
         {
           // Approximate node by sampling enough points for every query in the
           // query node.
+          arma::uvec distinctSamples;
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            arma::uvec distinctSamples;
-            RAUtil::ObtainDistinctSamples(samplesReqd,
-                referenceNode.NumDescendants(), distinctSamples);
+            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+                samplesReqd, distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; j++)
               // The counting of the samples are done in BaseCase() so no
               // book-keeping is required here.

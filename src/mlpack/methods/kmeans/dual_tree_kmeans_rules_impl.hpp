@@ -131,7 +131,8 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   // We want to set adjustedScore to be the distance between the centroid of the
   // last query node and last reference node.  We will do this by adjusting the
   // last score.  In some cases, we can just use the last base case.
-  if (queryNode.IsFirstPointCentroid() && referenceNode.IsFirstPointCentroid())
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid(&queryNode) &&
+      tree::TreeTraits<TreeType>::FirstPointIsCentroid(&referenceNode))
   {
     adjustedScore = traversalInfo.LastBaseCase();
   }
@@ -207,8 +208,9 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   // Now, check if we can prune.
   if (adjustedScore > queryNode.Stat().UpperBound())
   {
-    if (!(queryNode.IsFirstPointCentroid() &&
-        referenceNode.IsFirstPointCentroid() && score == 0.0))
+    if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid(&queryNode) &&
+        tree::TreeTraits<TreeType>::FirstPointIsCentroid(&referenceNode) &&
+        score == 0.0))
     {
       // There isn't any need to set the traversal information because no
       // descendant combinations will be visited, and those are the only
