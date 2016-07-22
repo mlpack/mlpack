@@ -223,18 +223,18 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Simple double loop.  Stupid, slow, but a good benchmark.
     for (size_t q = 0; q < querySet.n_cols; ++q)
     {
-      const Candidate def(-DBL_MAX, size_t() - 1);
+      const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
       std::vector<Candidate> cList(k, def);
-      CandidateList pqueue(std::greater<Candidate>(), std::move(cList));
+      CandidateList pqueue(CandidateCmp(), std::move(cList));
 
       for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
         const double eval = metric.Kernel().Evaluate(querySet.col(q),
                                                      referenceSet->col(r));
 
-        Candidate c(eval, r);
-        if (c > pqueue.top())
+        if (eval > pqueue.top().first)
         {
+          Candidate c = std::make_pair(eval, r);
           pqueue.pop();
           pqueue.push(c);
         }
@@ -242,8 +242,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
       for (size_t j = 1; j <= k; j++)
       {
-        indices(k - j, q) = pqueue.top().index;
-        kernels(k - j, q) = pqueue.top().product;
+        indices(k - j, q) = pqueue.top().second;
+        kernels(k - j, q) = pqueue.top().first;
         pqueue.pop();
       }
     }
@@ -352,9 +352,9 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Simple double loop.  Stupid, slow, but a good benchmark.
     for (size_t q = 0; q < referenceSet->n_cols; ++q)
     {
-      const Candidate def(-DBL_MAX, size_t() - 1);
+      const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
       std::vector<Candidate> cList(k, def);
-      CandidateList pqueue(std::greater<Candidate>(), std::move(cList));
+      CandidateList pqueue(CandidateCmp(), std::move(cList));
 
       for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
@@ -364,9 +364,9 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         const double eval = metric.Kernel().Evaluate(referenceSet->col(q),
                                                      referenceSet->col(r));
 
-        Candidate c(eval, r);
-        if (c > pqueue.top())
+        if (eval > pqueue.top().first)
         {
+          Candidate c = std::make_pair(eval, r);
           pqueue.pop();
           pqueue.push(c);
         }
@@ -374,8 +374,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
       for (size_t j = 1; j <= k; j++)
       {
-        indices(k - j, q) = pqueue.top().index;
-        kernels(k - j, q) = pqueue.top().product;
+        indices(k - j, q) = pqueue.top().second;
+        kernels(k - j, q) = pqueue.top().first;
         pqueue.pop();
       }
     }

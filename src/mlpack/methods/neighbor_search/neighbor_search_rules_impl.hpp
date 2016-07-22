@@ -42,10 +42,11 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
   // It will be initialized with k candidates: (WorstDistance, size_t() - 1)
   // The list of candidates will be updated when visiting new points with the
   // BaseCase() method.
-  const Candidate def(SortPolicy::WorstDistance(), size_t() - 1);
+  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
+      size_t() - 1);
 
   std::vector<Candidate> vect(k, def);
-  CandidateList pqueue(std::less<Candidate>(), std::move(vect));
+  CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   candidates.reserve(querySet.n_cols);
   for (size_t i = 0; i < querySet.n_cols; i++)
@@ -65,8 +66,8 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
     CandidateList& pqueue = candidates[i];
     for (size_t j = 1; j <= k; j++)
     {
-      neighbors(k - j, i) = pqueue.top().index;
-      distances(k - j, i) = pqueue.top().dist;
+      neighbors(k - j, i) = pqueue.top().second;
+      distances(k - j, i) = pqueue.top().first;
       pqueue.pop();
     }
   }
@@ -136,7 +137,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 
   // Compare against the best k'th distance for this query point so far.
-  double bestDistance = candidates[queryIndex].top().dist;
+  double bestDistance = candidates[queryIndex].top().first;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
@@ -153,7 +154,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     return oldScore;
 
   // Just check the score again against the distances.
-  double bestDistance = candidates[queryIndex].top().dist;
+  double bestDistance = candidates[queryIndex].top().first;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
@@ -376,7 +377,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
-    const double distance = candidates[queryNode.Point(i)].top().dist;
+    const double distance = candidates[queryNode.Point(i)].top().first;
     if (SortPolicy::IsBetter(worstDistance, distance))
       worstDistance = distance;
     if (SortPolicy::IsBetter(distance, bestPointDistance))
@@ -467,9 +468,10 @@ InsertNeighbor(
     const size_t neighbor,
     const double distance)
 {
-  Candidate c(distance, neighbor);
   CandidateList& pqueue = candidates[queryIndex];
-  if (c < pqueue.top())
+  Candidate c = std::make_pair(distance, neighbor);
+
+  if (CandidateCmp()(c, pqueue.top()))
   {
     pqueue.pop();
     pqueue.push(c);

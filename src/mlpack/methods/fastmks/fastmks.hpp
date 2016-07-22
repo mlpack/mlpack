@@ -251,28 +251,20 @@ class FastMKS
   //! The instantiated inner-product metric induced by the given kernel.
   metric::IPMetric<KernelType> metric;
 
-  //! Candidate point from the reference set.
-  struct Candidate
-  {
-    //! Kernel value calculated between a reference point and the query point.
-    double product;
-    //! Index of the reference point.
-    size_t index;
-    //! Trivial constructor.
-    Candidate(double p, size_t i) :
-        product(p),
-        index(i)
-    {};
-    //! Compare two candidates.
-    friend bool operator>(const Candidate& l, const Candidate& r)
+  //! Candidate represents a possible candidate point (value, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the value.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
     {
-      return l.product > r.product;
+      return c1.first > c2.first;
     };
   };
 
   //! Use a priority queue to represent the list of candidate points.
   typedef std::priority_queue<Candidate, std::vector<Candidate>,
-      std::greater<Candidate>> CandidateList;
+      CandidateCmp> CandidateList;
 };
 
 } // namespace fastmks

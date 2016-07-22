@@ -275,9 +275,10 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
   // Let's build the list of candidate neighbors for the given query point.
   // It will be initialized with k candidates:
   // (WorstDistance, referenceSet->n_cols)
-  const Candidate def(SortPolicy::WorstDistance(), referenceSet->n_cols);
+  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
+      referenceSet->n_cols);
   std::vector<Candidate> vect(k, def);
-  CandidateList pqueue(std::less<Candidate>(), std::move(vect));
+  CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
@@ -290,9 +291,9 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
         referenceSet->unsafe_col(queryIndex),
         referenceSet->unsafe_col(referenceIndex));
 
-    Candidate c(distance, referenceIndex);
+    Candidate c = std::make_pair(distance, referenceIndex);
     // If this distance is better than the worst candidate, let's insert it.
-    if (c < pqueue.top())
+    if (CandidateCmp()(c, pqueue.top()))
     {
       pqueue.pop();
       pqueue.push(c);
@@ -301,8 +302,8 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
   for (size_t j = 1; j <= k; j++)
   {
-    neighbors(k - j, queryIndex) = pqueue.top().index;
-    distances(k - j, queryIndex) = pqueue.top().dist;
+    neighbors(k - j, queryIndex) = pqueue.top().second;
+    distances(k - j, queryIndex) = pqueue.top().first;
     pqueue.pop();
   }
 }
@@ -320,9 +321,10 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
   // Let's build the list of candidate neighbors for the given query point.
   // It will be initialized with k candidates:
   // (WorstDistance, referenceSet->n_cols)
-  const Candidate def(SortPolicy::WorstDistance(), referenceSet->n_cols);
+  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
+      referenceSet->n_cols);
   std::vector<Candidate> vect(k, def);
-  CandidateList pqueue(std::less<Candidate>(), std::move(vect));
+  CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
@@ -331,9 +333,9 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
         querySet.unsafe_col(queryIndex),
         referenceSet->unsafe_col(referenceIndex));
 
-    Candidate c(distance, referenceIndex);
+    Candidate c = std::make_pair(distance, referenceIndex);
     // If this distance is better than the worst candidate, let's insert it.
-    if (c < pqueue.top())
+    if (CandidateCmp()(c, pqueue.top()))
     {
       pqueue.pop();
       pqueue.push(c);
@@ -342,8 +344,8 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 
   for (size_t j = 1; j <= k; j++)
   {
-    neighbors(k - j, queryIndex) = pqueue.top().index;
-    distances(k - j, queryIndex) = pqueue.top().dist;
+    neighbors(k - j, queryIndex) = pqueue.top().second;
+    distances(k - j, queryIndex) = pqueue.top().first;
     pqueue.pop();
   }
 }

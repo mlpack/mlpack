@@ -258,22 +258,14 @@ class CF
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
 
-  //! Candidate represents a possible recommendation.
-  struct Candidate
-  {
-    //! Value of this recommendation.
-    double value;
-    //! Item of this recommendation.
-    size_t item;
-    //! Trivial constructor.
-    Candidate(double value, size_t item) :
-        value(value),
-        item(item)
-    {};
-    //! Compare the value of two candidates.
-    friend bool operator>(const Candidate& l, const Candidate& r)
+  //! Candidate represents a possible recommendation (value, item).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the value.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
     {
-      return l.value > r.value;
+      return c1.first > c2.first;
     };
   };
 }; // class CF

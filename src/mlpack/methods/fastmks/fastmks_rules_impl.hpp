@@ -50,7 +50,7 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
   // It will be initialized with k candidates: (-DBL_MAX, size_t() - 1)
   // The list of candidates will be updated when visiting new points with the
   // BaseCase() method.
-  const Candidate def(-DBL_MAX, size_t() - 1);
+  const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
 
   CandidateList cList(k, def);
   std::vector<CandidateList> tmp(querySet.n_cols, cList);
@@ -68,16 +68,15 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
   for (size_t i = 0; i < querySet.n_cols; i++)
   {
     CandidateList& pqueue = candidates[i];
-    std::greater<Candidate> greater;
     typedef typename CandidateList::iterator Iterator;
 
     for (Iterator end = pqueue.end(); end != pqueue.begin(); --end)
-      std::pop_heap(pqueue.begin(), end, greater);
+      std::pop_heap(pqueue.begin(), end, CandidateCmp());
 
     for (size_t j = 0; j < k; j++)
     {
-      indices(j, i) = pqueue[j].index;
-      products(j, i) = pqueue[j].product;
+      indices(j, i) = pqueue[j].second;
+      products(j, i) = pqueue[j].first;
     }
   }
 }
@@ -127,7 +126,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
                                                  TreeType& referenceNode)
 {
   // Compare with the current best.
-  const double bestKernel = candidates[queryIndex].front().product;
+  const double bestKernel = candidates[queryIndex].front().first;
 
   // See if we can perform a parent-child prune.
   const double furthestDist = referenceNode.FurthestDescendantDistance();
@@ -410,7 +409,7 @@ double FastMKSRules<KernelType, TreeType>::Rescore(const size_t queryIndex,
                                                    TreeType& /*referenceNode*/,
                                                    const double oldScore) const
 {
-  const double bestKernel = candidates[queryIndex].front().product;
+  const double bestKernel = candidates[queryIndex].front().first;
 
   return ((1.0 / oldScore) >= bestKernel) ? oldScore : DBL_MAX;
 }
@@ -458,10 +457,10 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
   {
     const size_t point = queryNode.Point(i);
     const CandidateList& candidatesPoints = candidates[point];
-    if (candidatesPoints.front().product < worstPointKernel)
-      worstPointKernel = candidatesPoints.front().product;
+    if (candidatesPoints.front().first < worstPointKernel)
+      worstPointKernel = candidatesPoints.front().first;
 
-    if (candidatesPoints.front().product == -DBL_MAX)
+    if (candidatesPoints.front().first == -DBL_MAX)
       continue; // Avoid underflow.
 
     // This should be (queryDescendantDistance + centroidDistance) for any tree
@@ -478,8 +477,8 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     double worstPointCandidateKernel = DBL_MAX;
     for (size_t j = 0; j < candidatesPoints.size(); ++j)
     {
-      const double candidateKernel = candidatesPoints[j].product -
-          queryDescendantDistance * referenceKernels[candidatesPoints[j].index];
+      const double candidateKernel = candidatesPoints[j].first -
+          queryDescendantDistance * referenceKernels[candidatesPoints[j].second];
       if (candidateKernel < worstPointCandidateKernel)
         worstPointCandidateKernel = candidateKernel;
     }
@@ -526,13 +525,13 @@ inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
     const size_t index,
     const double product)
 {
-  Candidate c(product, index);
   CandidateList& pqueue = candidates[queryIndex];
-  if (c > pqueue.front())
+  if (product > pqueue.front().first)
   {
-    std::pop_heap(pqueue.begin(), pqueue.end(), std::greater<Candidate>());
+    Candidate c = std::make_pair(product, index);
+    std::pop_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
     pqueue.back() = c;
-    std::push_heap(pqueue.begin(), pqueue.end(), std::greater<Candidate>());
+    std::push_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
   }
 }
 

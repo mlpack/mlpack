@@ -95,11 +95,11 @@ void CF::GetRecommendations(const size_t numRecs,
 
     // Let's build the list of candidate recomendations for the given user.
     // Default candidate: the smallest possible value and invalid item number.
-    const Candidate def(-DBL_MAX, cleanedData.n_rows);
+    const Candidate def = std::make_pair(-DBL_MAX, cleanedData.n_rows);
     std::vector<Candidate> vect(numRecs, def);
-    typedef std::priority_queue<Candidate, std::vector<Candidate>,
-        std::greater<Candidate>> CandidateList;
-    CandidateList pqueue(std::greater<Candidate>(), std::move(vect));
+    typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+        CandidateList;
+    CandidateList pqueue(CandidateCmp(), std::move(vect));
 
     // Look through the averages column corresponding to the current user.
     for (size_t j = 0; j < averages.n_rows; ++j)
@@ -108,11 +108,11 @@ void CF::GetRecommendations(const size_t numRecs,
       if (cleanedData(j, users(i)) != 0.0)
         continue; // The user already rated the item.
 
-      Candidate c(averages[j], j);
 
       // Is the estimated value better than the worst candidate?
-      if (c > pqueue.top())
+      if (averages[i] > pqueue.top().first)
       {
+        Candidate c = std::make_pair(averages[j], j);
         pqueue.pop();
         pqueue.push(c);
       }
@@ -120,14 +120,14 @@ void CF::GetRecommendations(const size_t numRecs,
 
     for (size_t p = 1; p <= numRecs; p++)
     {
-      recommendations(numRecs - p, i) = pqueue.top().item;
-      values(numRecs - p, i) = pqueue.top().value;
+      recommendations(numRecs - p, i) = pqueue.top().second;
+      values(numRecs - p, i) = pqueue.top().first;
       pqueue.pop();
     }
 
     // If we were not able to come up with enough recommendations, issue a
     // warning.
-    if (recommendations(numRecs - 1, i) == def.item)
+    if (recommendations(numRecs - 1, i) == def.second)
       Log::Warn << "Could not provide " << numRecs << " recommendations "
           << "for user " << users(i) << " (not enough un-rated items)!"
           << std::endl;

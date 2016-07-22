@@ -428,28 +428,21 @@ class LSHSearch
   //! The number of distance evaluations.
   size_t distanceEvaluations;
 
-  //! Candidate represents a possible candidate neighbor (from the reference
-  // set).
-  struct Candidate
-  {
-    //! Distance between the reference point and the query point.
-    double dist;
-    //! Index of the reference point.
-    size_t index;
-    //! Trivial constructor.
-    Candidate(double d, size_t i) :
-        dist(d),
-        index(i)
-    {};
-    //! Compare the distance of two candidates.
-    friend bool operator<(const Candidate& l, const Candidate& r)
+  //! Candidate represents a possible candidate neighbor (distance, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the distance.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
     {
-      return !SortPolicy::IsBetter(r.dist, l.dist);
+      return !SortPolicy::IsBetter(c2.first, c1.first);
     };
   };
 
   //! Use a priority queue to represent the list of candidate neighbors.
-  typedef std::priority_queue<Candidate> CandidateList;
+  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+      CandidateList;
+
 }; // class LSHSearch
 
 } // namespace neighbor
