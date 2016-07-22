@@ -390,45 +390,8 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 /******************************/
 
 /**
- * Make sure that both the default constructor and parameterized constructor
- * create the GammaDistribution object properly.
- */
-BOOST_AUTO_TEST_CASE(GammaDistributionConstructorTest)
-{
-  // Empty constructor test. Make sure reference set is empty.
-  GammaDistribution gDist;
-  BOOST_REQUIRE_EQUAL(arma::size(gDist.ReferenceSet()),
-      arma::size(arma::mat()));
-
-  // Parameterized constructor test. Make sure reference set is passed
-  // correctly.
-  // Create an Nxd reference set
-  size_t N = 200;
-  size_t d = 3;
-  arma::mat rdata(d, N);
-  
-  double alphaReal = 5.3;
-  double betaReal = 1.5;
-
-  // Create gamma distribution.
-  std::default_random_engine generator;
-  std::gamma_distribution<double> dist(alphaReal, betaReal);
-
-  // Random generation of gamma-like points.
-  for (size_t j = 0; j < d; ++j)
-    for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(generator);
-
-  // Create Gamma object.
-  GammaDistribution gDist2(rdata);
-  BOOST_REQUIRE_EQUAL(arma::size(gDist2.ReferenceSet()),
-      arma::size(arma::mat(d, N)));
-}
-
-/**
- * Make sure that constructing an object with one reference set and then asking
- * to fit another works properly: The object retains the old reference set, but
- * fits parameters (alpha, beta) to the new reference set.
+ * Make sure that using an object to fit one reference set and then asking
+ * to fit another works properly.
  */
 BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
 {
@@ -449,8 +412,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
       rdata(j, i) = dist(generator);
 
   // Create Gamma object and call Train() on reference set.
-  GammaDistribution gDist(rdata);
-  gDist.Train();
+  GammaDistribution gDist;
+  gDist.Train(rdata);
 
   // Training must estimate d pairs of alpha and beta parameters.
   BOOST_REQUIRE_EQUAL(gDist.Alpha().n_elem, d);
@@ -491,13 +454,13 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   size_t d = 1; // Only 1 dimension is required for this.
 
   /** Iteration 1 (first parameter set) **/
-  
+
   // Create a gamma-random generator and data
   double alphaReal = 5.3;
   double betaReal = 1.5;
   std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
-  
+
   // Random generation of gamma-like points.
   arma::mat rdata(d, N);
   for (size_t j = 0; j < d; ++j)
@@ -505,8 +468,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
       rdata(j, i) = dist(generator);
 
   // Create Gamma object and call Train() on reference set.
-  GammaDistribution gDist(rdata);
-  gDist.Train();
+  GammaDistribution gDist;
+  gDist.Train(rdata);
 
   // Estimated parameter must be close to real.
   BOOST_REQUIRE_CLOSE(gDist.Alpha()[0], alphaReal, errorTolerance);
@@ -519,7 +482,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   double betaReal2 = 0.9;
   std::default_random_engine generator2;
   std::gamma_distribution<double> dist2(alphaReal2, betaReal2);
-  
+
   // Random generation of gamma-like points.
   arma::mat rdata2(d, N);
   for (size_t j = 0; j < d; ++j)
@@ -527,8 +490,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
       rdata2(j, i) = dist2(generator2);
 
   // Create Gamma object and call Train() on reference set.
-  GammaDistribution gDist2(rdata2);
-  gDist2.Train();
+  GammaDistribution gDist2;
+  gDist2.Train(rdata2);
 
   // Estimated parameter must be close to real.
   BOOST_REQUIRE_CLOSE(gDist2.Alpha()[0], alphaReal2, errorTolerance);

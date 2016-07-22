@@ -12,20 +12,19 @@ using namespace mlpack;
 using namespace mlpack::distribution;
 
 // Returns true if computation converged.
-inline bool GammaDistribution::converged(double aOld, double aNew)
+inline bool GammaDistribution::converged(const double aOld, 
+                                         const double aNew, 
+                                         const double tol)
 {
   return (std::abs(aNew - aOld) / aNew) < tol;
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-void GammaDistribution::Train(const arma::mat& rdata)
+void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 {
-  // Use pseudonym fittingSet regardless of if rdata was provided by user.
-  const arma::mat& fittingSet = 
-    rdata.n_elem == 0 ? referenceSet : rdata;
 
   // If fittingSet is empty, nothing to do.
-  if (arma::size(fittingSet) == arma::size(arma::mat()))
+  if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
   // Use boost's definitions of digamma and tgamma, and std::log.
@@ -34,17 +33,23 @@ void GammaDistribution::Train(const arma::mat& rdata)
   using std::log;
 
   // Allocate space for alphas and betas (Assume independent rows).
-  alpha.set_size(fittingSet.n_rows);
-  beta.set_size(fittingSet.n_rows);
+  alpha.set_size(rdata.n_rows);
+  beta.set_size(rdata.n_rows);
+   
+  // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
+  const arma::vec meanLogxVec = arma::mean(arma::log(rdata), 1);
+  const arma::vec meanxVec = arma::mean(rdata, 1);
+  const arma::vec logMeanxVec = arma::log(meanxVec);
 
   // Treat each dimension (i.e. row) independently.
-  for (size_t row = 0; row < fittingSet.n_rows; ++row)
+  for (size_t row = 0; row < rdata.n_rows; ++row)
   {
-    // Calculate log(mean(x)) and mean(log(x)) required for fitting process.
-    const double meanLogx = arma::mean(arma::log(fittingSet.row(row)));
-    const double meanx = arma::mean(fittingSet.row(row));
-    const double logMeanx = std::log(arma::mean(meanx));
-    
+
+    // Statistics for this row.
+    const double meanLogx = meanLogxVec(row);
+    const double meanx = meanxVec(row);
+    const double logMeanx = logMeanxVec(row);
+
     // Starting point for Generalized Newton.
     double aEst = 0.5 / (logMeanx - meanLogx);
     double aOld;
@@ -56,17 +61,18 @@ void GammaDistribution::Train(const arma::mat& rdata)
       // Needed for convergence test.
       aOld = aEst;
 
-      // Calculate new value for alpha. 
+      // Calculate new value for alpha.
       double nominator = meanLogx - logMeanx + log(aEst) - digamma(aEst);
       double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
       assert (denominator != 0); // Protect against division by 0.
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
 
       // Protect against nan values (aEst will be passed to logarithm).
-      assert(aEst > 0);
+      if (aEst <= 0)
+        throw std::logic_error("GammaDistribution parameter alpha will be <=0");
 
-    } while (! converged(aEst, aOld) );
-    
+    } while (! converged(aEst, aOld, tol) );
+
     alpha(row) = aEst;
     beta(row) = meanx/aEst;
   }
