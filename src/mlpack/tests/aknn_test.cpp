@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(AKNNTest);
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(AproxVsExact1)
+BOOST_AUTO_TEST_CASE(ApproxVsExact1)
 {
   arma::mat dataset;
 
@@ -61,12 +61,12 @@ BOOST_AUTO_TEST_CASE(AproxVsExact1)
 
     // Now perform the actual calculation.
     aknn = new KNN(dataset, false, false, epsilon);
-    arma::Mat<size_t> neighborsAprox;
-    arma::mat distancesAprox;
-    aknn->Search(dataset, 15, neighborsAprox, distancesAprox);
+    arma::Mat<size_t> neighborsApprox;
+    arma::mat distancesApprox;
+    aknn->Search(dataset, 15, neighborsApprox, distancesApprox);
 
-    for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-      REQUIRE_RELATIVE_ERR(distancesAprox(i), distancesExact(i), epsilon);
+    for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+      REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), epsilon);
 
     // Clean the memory.
     delete aknn;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(AproxVsExact1)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(AproxVsExact2)
+BOOST_AUTO_TEST_CASE(ApproxVsExact2)
 {
   arma::mat dataset;
 
@@ -92,12 +92,12 @@ BOOST_AUTO_TEST_CASE(AproxVsExact2)
   exact.Search(15, neighborsExact, distancesExact);
 
   KNN aknn(dataset, false, false, 0.05);
-  arma::Mat<size_t> neighborsAprox;
-  arma::mat distancesAprox;
-  aknn.Search(15, neighborsAprox, distancesAprox);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  aknn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesAprox(i), distancesExact(i), 0.05);
+  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), 0.05);
 }
 
 /**
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(AproxVsExact2)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleTreeAproxVsExact)
+BOOST_AUTO_TEST_CASE(SingleTreeApproxVsExact)
 {
   arma::mat dataset;
 
@@ -119,12 +119,12 @@ BOOST_AUTO_TEST_CASE(SingleTreeAproxVsExact)
   exact.Search(15, neighborsExact, distancesExact);
 
   KNN aknn(dataset, false, true, 0.05);
-  arma::Mat<size_t> neighborsAprox;
-  arma::mat distancesAprox;
-  aknn.Search(15, neighborsAprox, distancesAprox);
+  arma::Mat<size_t> neighborsApprox;
+  arma::mat distancesApprox;
+  aknn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsAprox.n_elem; i++)
-    REQUIRE_RELATIVE_ERR(distancesAprox[i], distancesExact[i], 0.05);
+  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+    REQUIRE_RELATIVE_ERR(distancesApprox[i], distancesExact[i], 0.05);
 }
 
 /**
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[12];
+  KNNModel models[14];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -300,6 +300,8 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[9] = KNNModel(KNNModel::TreeTypes::X_TREE, false);
   models[10] = KNNModel(KNNModel::TreeTypes::BALL_TREE, true);
   models[11] = KNNModel(KNNModel::TreeTypes::BALL_TREE, false);
+  models[12] = KNNModel(KNNModel::TreeTypes::HILBERT_R_TREE, true);
+  models[13] = KNNModel(KNNModel::TreeTypes::HILBERT_R_TREE, false);
 
   for (size_t j = 0; j < 3; ++j)
   {
@@ -309,7 +311,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
     arma::mat distancesExact;
     aknn.Search(queryData, 3, neighborsExact, distancesExact);
 
-    for (size_t i = 0; i < 12; ++i)
+    for (size_t i = 0; i < 14; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -321,19 +323,20 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       if (j == 2)
         models[i].BuildModel(std::move(referenceCopy), 20, true, false);
 
-      arma::Mat<size_t> neighborsAprox;
-      arma::mat distancesAprox;
+      arma::Mat<size_t> neighborsApprox;
+      arma::mat distancesApprox;
 
-      models[i].Search(std::move(queryCopy), 3, neighborsAprox, distancesAprox);
+      models[i].Search(std::move(queryCopy), 3, neighborsApprox,
+          distancesApprox);
 
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_rows, neighborsExact.n_rows);
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_cols, neighborsExact.n_cols);
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_elem, neighborsExact.n_elem);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_rows, distancesExact.n_rows);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_cols, distancesExact.n_cols);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_elem, distancesExact.n_elem);
-      for (size_t k = 0; k < distancesAprox.n_elem; ++k)
-        REQUIRE_RELATIVE_ERR(distancesAprox[k], distancesExact[k], 0.05);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_rows, neighborsExact.n_rows);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_cols, neighborsExact.n_cols);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_elem, neighborsExact.n_elem);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_rows, distancesExact.n_rows);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_cols, distancesExact.n_cols);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_elem, distancesExact.n_elem);
+      for (size_t k = 0; k < distancesApprox.n_elem; ++k)
+        REQUIRE_RELATIVE_ERR(distancesApprox[k], distancesExact[k], 0.05);
     }
   }
 }
@@ -349,7 +352,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[12];
+  KNNModel models[18];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -362,6 +365,12 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[9] = KNNModel(KNNModel::TreeTypes::X_TREE, false);
   models[10] = KNNModel(KNNModel::TreeTypes::BALL_TREE, true);
   models[11] = KNNModel(KNNModel::TreeTypes::BALL_TREE, false);
+  models[12] = KNNModel(KNNModel::TreeTypes::HILBERT_R_TREE, true);
+  models[13] = KNNModel(KNNModel::TreeTypes::HILBERT_R_TREE, false);
+  models[14] = KNNModel(KNNModel::TreeTypes::R_PLUS_TREE, true);
+  models[15] = KNNModel(KNNModel::TreeTypes::R_PLUS_TREE, false);
+  models[16] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, true);
+  models[17] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -371,7 +380,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
     arma::mat distancesExact;
     exact.Search(3, neighborsExact, distancesExact);
 
-    for (size_t i = 0; i < 12; ++i)
+    for (size_t i = 0; i < 18; ++i)
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
@@ -380,19 +389,19 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       if (j == 1)
         models[i].BuildModel(std::move(referenceCopy), 20, false, true, 0.05);
 
-      arma::Mat<size_t> neighborsAprox;
-      arma::mat distancesAprox;
+      arma::Mat<size_t> neighborsApprox;
+      arma::mat distancesApprox;
 
-      models[i].Search(3, neighborsAprox, distancesAprox);
+      models[i].Search(3, neighborsApprox, distancesApprox);
 
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_rows, neighborsExact.n_rows);
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_cols, neighborsExact.n_cols);
-      BOOST_REQUIRE_EQUAL(neighborsAprox.n_elem, neighborsExact.n_elem);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_rows, distancesExact.n_rows);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_cols, distancesExact.n_cols);
-      BOOST_REQUIRE_EQUAL(distancesAprox.n_elem, distancesExact.n_elem);
-      for (size_t k = 0; k < distancesAprox.n_elem; ++k)
-        REQUIRE_RELATIVE_ERR(distancesAprox[k], distancesExact[k], 0.05);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_rows, neighborsExact.n_rows);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_cols, neighborsExact.n_cols);
+      BOOST_REQUIRE_EQUAL(neighborsApprox.n_elem, neighborsExact.n_elem);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_rows, distancesExact.n_rows);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_cols, distancesExact.n_cols);
+      BOOST_REQUIRE_EQUAL(distancesApprox.n_elem, distancesExact.n_elem);
+      for (size_t k = 0; k < distancesApprox.n_elem; ++k)
+        REQUIRE_RELATIVE_ERR(distancesApprox[k], distancesExact[k], 0.05);
     }
   }
 }

@@ -19,6 +19,8 @@ template<typename TreeType>
 void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
                                                   std::vector<bool>& relevels)
 {
+  if (tree->Count() <= tree->MaxLeafSize())
+    return;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -30,14 +32,14 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     SplitLeafNode(copy, relevels);
     return;
   }
 
   TreeType* parent = tree->Parent();
   size_t iTree = 0;
-  for (iTree = 0; parent->Children()[iTree] != tree; iTree++);
+  for (iTree = 0; parent->children[iTree] != tree; iTree++);
 
   // Try to find splitOrder cooperating siblings in order to redistribute points
   // among them and avoid split.
@@ -54,11 +56,11 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
                         iTree + splitOrder : parent->NumChildren());
 
   for (size_t i = parent->NumChildren(); i > iNewSibling ; i--)
-    parent->Children()[i] = parent->Children()[i - 1];
+    parent->children[i] = parent->children[i - 1];
 
   parent->NumChildren()++;
 
-  parent->Children()[iNewSibling] = new TreeType(parent);
+  parent->children[iNewSibling] = new TreeType(parent);
 
   lastSibling = (iTree + splitOrder < parent->NumChildren() ?
                  iTree + splitOrder : parent->NumChildren() - 1);
@@ -91,7 +93,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
 
     SplitNonLeafNode(copy, relevels);
     return true;
@@ -100,7 +102,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   TreeType* parent = tree->Parent();
 
   size_t iTree = 0;
-  for (iTree = 0; parent->Children()[iTree] != tree; iTree++);
+  for (iTree = 0; parent->children[iTree] != tree; iTree++);
 
   // Try to find splitOrder cooperating siblings in order to redistribute
   // children among them and avoid split.
@@ -117,11 +119,11 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
                         iTree + splitOrder : parent->NumChildren());
 
   for (size_t i = parent->NumChildren(); i > iNewSibling ; i--)
-    parent->Children()[i] = parent->Children()[i - 1];
+    parent->children[i] = parent->children[i - 1];
 
   parent->NumChildren()++;
 
-  parent->Children()[iNewSibling] = new TreeType(parent);
+  parent->children[iNewSibling] = new TreeType(parent);
 
   lastSibling = (iTree + splitOrder < parent->NumChildren() ?
                  iTree + splitOrder : parent->NumChildren() - 1);
@@ -155,20 +157,20 @@ bool HilbertRTreeSplit<splitOrder>::FindCooperatingSiblings(
   size_t iUnderfullSibling;
 
   // Try to find empty space among cooperating siblings.
-  if (parent->Children()[iTree]->NumChildren() != 0)
+  if (parent->Child(iTree).NumChildren() != 0)
   {
     for (iUnderfullSibling = start; iUnderfullSibling < end;
          iUnderfullSibling++)
-      if (parent->Children()[iUnderfullSibling]->NumChildren() <
-          parent->Children()[iUnderfullSibling]->MaxNumChildren() - 1)
+      if (parent->Child(iUnderfullSibling).NumChildren() <
+          parent->Child(iUnderfullSibling).MaxNumChildren() - 1)
         break;
   }
   else
   {
     for (iUnderfullSibling = start; iUnderfullSibling < end;
          iUnderfullSibling++)
-      if (parent->Children()[iUnderfullSibling]->NumPoints() <
-          parent->Children()[iUnderfullSibling]->MaxLeafSize() - 1)
+      if (parent->Child(iUnderfullSibling).NumPoints() <
+          parent->Child(iUnderfullSibling).MaxLeafSize() - 1)
         break;
   }
 
@@ -207,7 +209,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t numChildrenPerNode, numRestChildren;
 
   for (size_t i = firstSibling; i <= lastSibling; i++)
-    numChildren += parent->Children()[i]->NumChildren();
+    numChildren += parent->Child(i).NumChildren();
 
   numChildrenPerNode = numChildren / (lastSibling - firstSibling + 1);
   numRestChildren = numChildren % (lastSibling - firstSibling + 1);
@@ -218,9 +220,9 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t iChild = 0;
   for (size_t i = firstSibling; i <= lastSibling; i++)
   {
-    for (size_t j = 0; j < parent->Children()[i]->NumChildren(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumChildren(); j++)
     {
-      children[iChild] = parent->Children()[i]->Children()[j];
+      children[iChild] = parent->Child(i).children[j];
       iChild++;
     }
   }
@@ -230,34 +232,37 @@ RedistributeNodesEvenly(const TreeType *parent,
   {
     // Since we redistribute children of a sibling we should recalculate the
     // bound.
-    parent->Children()[i]->Bound().Clear();
+    parent->Child(i).Bound().Clear();
+    parent->Child(i).numDescendants = 0;
 
     for (size_t j = 0; j < numChildrenPerNode; j++)
     {
-      parent->Children()[i]->Bound() |= children[iChild]->Bound();
-      parent->Children()[i]->Children()[j] = children[iChild];
-      children[iChild]->Parent() = parent->Children()[i];
+      parent->Child(i).Bound() |= children[iChild]->Bound();
+      parent->Child(i).numDescendants += children[iChild]->numDescendants;
+      parent->Child(i).children[j] = children[iChild];
+      children[iChild]->Parent() = parent->children[i];
       iChild++;
     }
     if (numRestChildren > 0)
     {
-      parent->Children()[i]->Bound() |= children[iChild]->Bound();
-      parent->Children()[i]->Children()[numChildrenPerNode] = children[iChild];
-      children[iChild]->Parent() = parent->Children()[i];
-      parent->Children()[i]->NumChildren() = numChildrenPerNode + 1;
+      parent->Child(i).Bound() |= children[iChild]->Bound();
+      parent->Child(i).numDescendants += children[iChild]->numDescendants;
+      parent->Child(i).children[numChildrenPerNode] = children[iChild];
+      children[iChild]->Parent() = parent->children[i];
+      parent->Child(i).NumChildren() = numChildrenPerNode + 1;
       numRestChildren--;
       iChild++;
     }
     else
     {
-      parent->Children()[i]->NumChildren() = numChildrenPerNode;
+      parent->Child(i).NumChildren() = numChildrenPerNode;
     }
-    assert(parent->Children()[i]->NumChildren() <=
-           parent->Children()[i]->MaxNumChildren());
+    assert(parent->Child(i).NumChildren() <=
+           parent->Child(i).MaxNumChildren());
 
     // Fix the largest Hilbert value of the sibling.
-    parent->Children()[i]->AuxiliaryInfo().HilbertValue().UpdateLargestValue(
-        parent->Children()[i]);
+    parent->Child(i).AuxiliaryInfo().HilbertValue().UpdateLargestValue(
+        parent->children[i]);
   }
 }
 
@@ -272,7 +277,7 @@ RedistributePointsEvenly(TreeType* parent,
   size_t numPointsPerNode, numRestPoints;
 
   for (size_t i = firstSibling; i <= lastSibling; i++)
-    numPoints += parent->Children()[i]->NumPoints();
+    numPoints += parent->Child(i).NumPoints();
 
   numPointsPerNode = numPoints / (lastSibling - firstSibling + 1);
   numRestPoints = numPoints % (lastSibling - firstSibling + 1);
@@ -283,8 +288,8 @@ RedistributePointsEvenly(TreeType* parent,
   size_t iPoint = 0;
   for (size_t i = firstSibling; i <= lastSibling; i++)
   {
-    for (size_t j = 0; j < parent->Children()[i]->NumPoints(); j++)
-      points[iPoint++] = parent->Children()[i]->Points()[j];
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+      points[iPoint++] = parent->Child(i).Point(j);
   }
 
   iPoint = 0;
@@ -292,29 +297,31 @@ RedistributePointsEvenly(TreeType* parent,
   {
     // Since we redistribute points of a sibling we should recalculate the
     // bound.
-    parent->Children()[i]->Bound().Clear();
+    parent->Child(i).Bound().Clear();
 
     size_t j;
     for (j = 0; j < numPointsPerNode; j++)
     {
-      parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
-      parent->Children()[i]->Points()[j] = points[iPoint];
+      parent->Child(i).Bound() |= parent->Dataset().col(points[iPoint]);
+      parent->Child(i).Point(j) = points[iPoint];
       iPoint++;
     }
     if (numRestPoints > 0)
     {
-      parent->Children()[i]->Bound() |= parent->Dataset().col(points[iPoint]);
-      parent->Children()[i]->Points()[j] = points[iPoint];
-      parent->Children()[i]->Count() = numPointsPerNode + 1;
+      parent->Child(i).Bound() |= parent->Dataset().col(points[iPoint]);
+      parent->Child(i).Point(j) = points[iPoint];
+      parent->Child(i).Count() = numPointsPerNode + 1;
       numRestPoints--;
       iPoint++;
     }
     else
     {
-      parent->Children()[i]->Count() = numPointsPerNode;
+      parent->Child(i).Count() = numPointsPerNode;
     }
-    assert(parent->Children()[i]->NumPoints() <=
-           parent->Children()[i]->MaxLeafSize());
+    parent->Child(i).numDescendants = parent->Child(i).Count();
+
+    assert(parent->Child(i).NumPoints() <=
+           parent->Child(i).MaxLeafSize());
   }
 
   // Fix the largest Hilbert values of the siblings.

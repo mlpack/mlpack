@@ -57,7 +57,9 @@ add_executable(mlpack_test
   perceptron_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
+  randomized_svd_test.cpp
   range_search_test.cpp
+  recurrent_network_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
   rmsprop_test.cpp
@@ -80,7 +82,6 @@ add_executable(mlpack_test
   svd_incremental_test.cpp
   nystroem_method_test.cpp
   armadillo_svd_test.cpp
-  recurrent_network_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

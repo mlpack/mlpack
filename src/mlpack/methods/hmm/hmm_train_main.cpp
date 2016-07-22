@@ -32,22 +32,23 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "transition matrix and emission probabilities; this is specifiable with "
     "--model_file.");
 
-PARAM_STRING_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_REQ("type", "Type of HMM: discrete | gaussian | gmm.", "t");
+PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
+PARAM_STRING_IN_REQ("type", "Type of HMM: discrete | gaussian | gmm.", "t");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
     "(and label sequences).", "b");
-PARAM_INT("states", "Number of hidden states in HMM (necessary, unless "
+PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
     "model_file is specified.", "n", 0);
-PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
-    " 'gmm'.", "g", 0);
-PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
-PARAM_STRING("labels_file", "Optional file of hidden states, used for "
+PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
+    " is 'gmm'.", "g", 0);
+PARAM_STRING_IN("model_file", "Pre-existing HMM model file.", "m", "");
+PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_model_file", "File to save trained HMM to.", "o", "");
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
+PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "o");
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
+    1e-5);
 PARAM_FLAG("random_initialization", "Initialize emissions and transition "
     "matrices with a uniform random distribution.", "r");
 

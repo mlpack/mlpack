@@ -1,7 +1,9 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  trainer.hpp
+  exact_svd_method.hpp
+  randomized_svd_method.hpp
+  quic_svd_method.hpp
 )
 
 # Add directory name to sources.

@@ -1,5 +1,21 @@
-### mlpack 2.0.2
+### mlpack 2.0.3
 ###### 2016-??-??
+  * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
+    now be used to control the number of extra bins that are probed, as can the
+    -T (--num_probes) option to mlpack_lsh.
+
+  * Added the Hilbert R tree to src/mlpack/core/tree/rectangle_tree/ (#664).  It
+    can be used as the typedef HilbertRTree, and it is now an option in the
+    mlpack_knn, mlpack_kfn, mlpack_range_search, and mlpack_krann command-line
+    programs.
+
+  * Added the mlpack_preprocess_split and mlpack_preprocess_binarize programs,
+    which can be used for preprocessing code (#650, #666).
+
+  * Added OpenMP support to LSHSearch and mlpack_lsh (#700).
+
+### mlpack 2.0.2
+###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).

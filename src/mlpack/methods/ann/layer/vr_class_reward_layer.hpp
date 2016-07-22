@@ -71,7 +71,7 @@ class VRClassRewardLayer
   double Forward(const arma::Mat<eT>& input, const arma::Mat<eT>& target)
   {
     reward = 0;
-    arma::uword index;
+    arma::uword index = 0;
 
     for (size_t i = 0; i < input.n_cols; i++)
     {
