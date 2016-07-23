@@ -45,25 +45,6 @@ class Imputer
 
   /**
   * Given an input dataset, replace missing values with given imputation
-  * strategy. This overload saves the result into the output matrix and does not
-  * change the input matrix.
-  *
-  * @param input Input dataset to apply imputation.
-  * @param output Armadillo matrix to save the results
-  * @oaran missingValue User defined missing value; it can be anything.
-  * @param dimension Dimension to apply the imputation.
-  */
-  void Impute(const arma::Mat<T>& input,
-              arma::Mat<T>& output,
-              const std::string& missingValue,
-              const size_t dimension)
-  {
-    T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
-    strategy.Impute(input, output, mappedValue, dimension, columnMajor);
-  }
-
-  /**
-  * Given an input dataset, replace missing values with given imputation
   * strategy. This overload does not produce output matrix, but overwrites the
   * result into the input matrix.
   *
