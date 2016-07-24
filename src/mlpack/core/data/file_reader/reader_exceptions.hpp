@@ -111,34 +111,21 @@ struct LineLengthLimitExceeded :
 
 struct WithColumnName
 {
-  WithColumnName()
-  {
-    std::fill(std::begin(columnName), std::end(columnName), 0);
-  }
-
   void ColumnName(const char* columnName)
   {
-    std::strncpy(this->columnName, columnName, maxColumnNameLength);
-    this->columnName[maxColumnNameLength] = '\0';
+    this->columnName = columnName;
   }
 
-  static constexpr int maxColumnNameLength = 63;
-  char columnName[maxColumnNameLength+1];
+  std::string columnName;
 };
 
 struct WithColumnContent
 {
-  WithColumnContent(){
-    std::memset(columnContent, 0, maxColumnContentLength+1);
-  }
-
   void ColumnContent(const char *columnContent){
-    std::strncpy(this->columnContent, columnContent, maxColumnContentLength);
-    this->columnContent[maxColumnContentLength] = '\0';
+    this->columnContent = columnContent;
   }
 
-  static constexpr int maxColumnContentLength = 63;
-  char columnContent[maxColumnContentLength+1];
+  std::string columnContent;
 };
 
 
