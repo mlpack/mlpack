@@ -16,6 +16,11 @@ set(SOURCES
   serialization_shim.hpp
   split_data.hpp
   binarize.hpp
+  file_reader/csv_reader.hpp
+  file_reader/line_reader.hpp
+  file_reader/parser.hpp
+  file_reader/policy.hpp
+  file_reader/reader_exceptions.hpp
 )
 
 # add directory name to sources
