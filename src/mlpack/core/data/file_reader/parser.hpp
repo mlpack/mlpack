@@ -62,7 +62,7 @@ void ParseLine(
 {
   for(std::size_t i=0; i<colOrder.size(); ++i){
     if(line == nullptr){
-      throw ::io::error::TooFewColumns();
+      throw error::TooFewColumns();
     }
     char*col_begin, *col_end;
     ChopNextColumn<QuotePolicy>(line, col_begin, col_end);
@@ -75,7 +75,7 @@ void ParseLine(
     }
   }
   if(line != nullptr)
-    throw ::io::error::TooManyColumns();
+    throw error::TooManyColumns();
 }
 
 template<class OverFlowPolicy>
@@ -114,8 +114,9 @@ void ParseUnsignedInteger(const char *col, T &x){
         return;
       }
       x = 10*x+y;
-    }else
+    }else{
       throw error::NoDigit();
+    }
     ++col;
   }
 }
@@ -150,8 +151,9 @@ void ParseSignedInteger(const char *col, T &x){
       ++col;
     }
     return;
-  }else if(*col == '+')
+  }else if(*col == '+'){
     ++col;
+  }
   ParseUnsignedInteger<OverFlowPolicy>(col, x);
 }
 
@@ -222,8 +224,9 @@ void ParseFloat(const char *col, T &x){
       x *= base;
     }
   }else{
-    if(*col != '\0')
+    if(*col != '\0'){
       throw error::NoDigit();
+    }
   }
 
   if(is_neg)

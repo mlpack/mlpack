@@ -188,7 +188,7 @@ class CSVReader{
     if(row[r]){
       try{
         try{
-          ::io::Parse<OverflowPolicy>(row[r], t);
+          Parse<OverflowPolicy>(row[r], t);
         }catch(error::WithColumnContent&err){
           err.ColumnContent(row[r]);
           throw;
@@ -209,7 +209,7 @@ class CSVReader{
       try{
         while(begin != end){
           if(row[r]){
-            ::io::Parse<OverflowPolicy>(row[r++], *begin);
+            Parse<OverflowPolicy>(row[r++], *begin);
           }
           ++begin;
         }
