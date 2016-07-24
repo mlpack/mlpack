@@ -112,10 +112,9 @@ private:
   {
     std::unique_ptr<std::ifstream> file(new std::ifstream(file_name, std::ios::binary));
     if(!file->is_open()){
-      int x = errno; // store errno as soon as possible, doing it after constructor call can fail.
       error::CanNotOpenFile err;
-      err.Errno(x);
       err.FileName(file_name);
+      throw err;
     }
 
     return std::unique_ptr<detail::OwningStdIOByteSourceBase>
