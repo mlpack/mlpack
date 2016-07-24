@@ -42,9 +42,13 @@ bool ParseTextFile(std::string const &filename, std::string const &separator,
     io::CSVReader<TrimPolicy>::FileDimension(filename, separator, rows, cols);
     matrix.set_size(rows, cols);
     io::CSVReader<> reader(cols, filename);
-    T *begin = &matrix[0];
-    while(reader.ReadRow(begin, begin + cols)){
-      begin += cols;
+    size_t row = 0, col = 0;
+    std::vector<T> vals(cols);
+    while(reader.ReadRow(vals)){
+      for(auto const val : vals){
+        matrix(row, col++) = val;
+      }
+      col = 0; ++row;
     }
   }catch(std::exception const&){
     success = false;
@@ -357,8 +361,6 @@ bool Load(const std::string& filename,
   if(loadType != arma::hdf5_binary){
     if(loadType == arma::csv_ascii){
       success = details::ParseTextFile<io::TrimChars<' ', '\t'>>(filename, ",", matrix);
-    }else if(loadType == arma::arma_ascii){
-      success = details::ParseTextFile<io::TrimChars<' ', ','>>(filename, "\t", matrix);
     }else{
       success = matrix.load(stream, loadType);
     }
