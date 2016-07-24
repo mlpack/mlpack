@@ -96,9 +96,7 @@ if(BUILD_WITH_COVERAGE)
 
     set(COMPILER_MLPACK_SUPPORT_LIBRARIES
         ${COMPILER_SUPPORT_MLPACK_LIBRARIES} "supc++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline \
-        -fno-inline-small-functions -fno-default-inline -fprofile-arcs \
-        -fkeep-inline-functions")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
     set(DEBUG ON)
