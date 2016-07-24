@@ -44,24 +44,30 @@ DualTreeTraverser<RuleType>::Traverse(
     VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
         referenceNode)
 {
+  typedef typename RuleType::TraversalInfoType TravInfo;
+  // This tree traverser use TraversalInfoType slightly different than other
+  // traversers. All children at one level use the same traversal information
+  // since their centroids are equal.
+
   // Increment the visit counter.
   ++numVisited;
-
-  // Store the current traversal info.
-  traversalInfo = rule.TraversalInfo();
 
   // If both are leaves, we must evaluate the base case.
   if (queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
+    TravInfo traversalInfo = rule.TraversalInfo();
+
+    if (traversalInfo.LastQueryNode() == &queryNode &&
+        traversalInfo.LastReferenceNode() == &referenceNode)
+        return; // We have already calculated this base case.
+
     // Loop through each of the points in each node.
     const size_t queryEnd = queryNode.Begin() + queryNode.Count();
     const size_t refEnd = referenceNode.Begin() + referenceNode.Count();
     for (size_t query = queryNode.Begin(); query < queryEnd; ++query)
     {
       // See if we need to investigate this point (this function should be
-      // implemented for the single-tree recursion too).  Restore the traversal
-      // information first.
-      rule.TraversalInfo() = traversalInfo;
+      // implemented for the single-tree recursion too).
       const double childScore = rule.Score(query, referenceNode);
 
       if (childScore == DBL_MAX)
@@ -80,377 +86,79 @@ DualTreeTraverser<RuleType>::Traverse(
     // We have to recurse down the query node.  In this case the recursion order
     // does not matter.
 
-    // If the first point of the query node is the centroid, the query node
-    // contains a point. In this case we should run the single tree traverser.
-    if (queryNode.FirstPointIsCentroid())
-    {
-      const double pointScore = rule.Score(queryNode.Point(0), referenceNode);
-      ++numScores;
-
-      if (pointScore != DBL_MAX)
-        Traverse(queryNode.Point(0), referenceNode);
-      else
-        ++numPrunes;
-
-      // Before recursing, we have to set the traversal information correctly.
-      rule.TraversalInfo() = traversalInfo;
-    }
-
-    const double leftScore = rule.Score(*queryNode.Left(), referenceNode);
+    const double pointScore = rule.Score(*queryNode.Central(), referenceNode);
     ++numScores;
 
-    if (leftScore != DBL_MAX)
-      Traverse(*queryNode.Left(), referenceNode);
+    // The traversal information is the same for all children.
+    TravInfo traversalInfo = rule.TraversalInfo();
+
+    if (pointScore != DBL_MAX)
+      Traverse(*queryNode.Central(), referenceNode);
     else
       ++numPrunes;
 
     // Before recursing, we have to set the traversal information correctly.
     rule.TraversalInfo() = traversalInfo;
-    const double rightScore = rule.Score(*queryNode.Right(), referenceNode);
+
+    const double innerScore = rule.Score(*queryNode.Inner(), referenceNode);
     ++numScores;
 
-    if (rightScore != DBL_MAX)
-      Traverse(*queryNode.Right(), referenceNode);
+    if (innerScore != DBL_MAX)
+      Traverse(*queryNode.Inner(), referenceNode);
+    else
+      ++numPrunes;
+
+    // Before recursing, we have to set the traversal information correctly.
+    rule.TraversalInfo() = traversalInfo;
+    const double outerScore = rule.Score(*queryNode.Outer(), referenceNode);
+    ++numScores;
+
+    if (outerScore != DBL_MAX)
+      Traverse(*queryNode.Outer(), referenceNode);
     else
       ++numPrunes;
   }
   else if (queryNode.IsLeaf() && (!referenceNode.IsLeaf()))
   {
-    // If the reference node contains a point we should calculate all
-    // base cases with this point.
-    if (referenceNode.FirstPointIsCentroid())
-    {
-      const size_t queryEnd = queryNode.Begin() + queryNode.Count();
-      for (size_t query = queryNode.Begin(); query < queryEnd; ++query)
-        rule.BaseCase(query, referenceNode.Point(0));
-      numBaseCases += queryNode.Count();
-    }
     // We have to recurse down the reference node.  In this case the recursion
-    // order does matter.  Before recursing, though, we have to set the
-    // traversal information correctly.
-    double leftScore = rule.Score(queryNode, *referenceNode.Left());
-    typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
-    rule.TraversalInfo() = traversalInfo;
-    double rightScore = rule.Score(queryNode, *referenceNode.Right());
-    numScores += 2;
-
-    if (leftScore < rightScore)
-    {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      traversalInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(queryNode, *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = traversalInfo;
-        Traverse(queryNode, *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(queryNode, *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(queryNode, *referenceNode.Left(), leftScore);
-
-      if (leftScore != DBL_MAX)
-      {
-        // Restore the left traversal info.
-        rule.TraversalInfo() = leftInfo;
-        Traverse(queryNode, *referenceNode.Left());
-      }
-      else
-        ++numPrunes;
-    }
-    else // leftScore is equal to rightScore.
-    {
-      if (leftScore == DBL_MAX)
-      {
-        numPrunes += 2;
-      }
-      else
-      {
-        // Choose the left first.  Restore the left traversal info.  Store the
-        // right traversal info.
-        traversalInfo = rule.TraversalInfo();
-        rule.TraversalInfo() = leftInfo;
-        Traverse(queryNode, *referenceNode.Left());
-
-        rightScore = rule.Rescore(queryNode, *referenceNode.Right(),
-            rightScore);
-
-        if (rightScore != DBL_MAX)
-        {
-          // Restore the right traversal info.
-          rule.TraversalInfo() = traversalInfo;
-          Traverse(queryNode, *referenceNode.Right());
-        }
-        else
-          ++numPrunes;
-      }
-    }
+    // order does matter.
+    TraverseReferenceNode(queryNode, referenceNode);
   }
   else
   {
-    // If the reference node contains a point we should calculate all
-    // base cases with this point.
-    if (referenceNode.FirstPointIsCentroid())
-    {
-      for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
-        rule.BaseCase(queryNode.Descendant(i), referenceNode.Point(0));
-      numBaseCases += queryNode.NumDescendants();
-    }
     // We have to recurse down both query and reference nodes.  Because the
-    // query descent order does not matter, we will go to the left query child
-    // first.  Before recursing, we have to set the traversal information
+    // query descent order does not matter, we will go to the central query
+    // child first.  Before recursing, we have to set the traversal information
     // correctly.
 
-    double leftScore;
-    typename RuleType::TraversalInfoType leftInfo;
-    double rightScore;
-    typename RuleType::TraversalInfoType rightInfo;
+    typename RuleType::TraversalInfoType traversalInfo;
+ 
+    // We have to calculate the base case with the central reference node.
+    // All children of a vantage point tree node use the same traversal
+    // information.
+    traversalInfo.LastQueryNode() = queryNode.Central();
+    traversalInfo.LastReferenceNode() = referenceNode.Central();
+    traversalInfo.LastBaseCase() = rule.BaseCase(queryNode.Central()->Point(0),
+        referenceNode.Central()->Point(0));
+    traversalInfo.LastScore() = traversalInfo.LastBaseCase();
+    numBaseCases++;
 
-    if (queryNode.FirstPointIsCentroid())
-    {
-      leftScore = rule.Score(queryNode.Point(0), *referenceNode.Left());
-      leftInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = traversalInfo;
-      rightScore = rule.Score(queryNode.Point(0), *referenceNode.Right());
-      numScores += 2;
-
-      if (leftScore < rightScore)
-      {
-        // Recurse to the left.  Restore the left traversal info.  Store the right
-        // traversal info.
-        rightInfo = rule.TraversalInfo();
-        rule.TraversalInfo() = leftInfo;
-        Traverse(queryNode.Point(0), *referenceNode.Left());
-
-        // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(queryNode.Point(0), *referenceNode.Right(),
-            rightScore);
-
-        if (rightScore != DBL_MAX)
-        {
-          // Restore the right traversal info.
-          rule.TraversalInfo() = rightInfo;
-          Traverse(queryNode.Point(0), *referenceNode.Right());
-        }
-        else
-          ++numPrunes;
-      }
-      else if (rightScore < leftScore)
-      {
-        // Recurse to the right.
-        Traverse(queryNode.Point(0), *referenceNode.Right());
-
-        // Is it still valid to recurse to the left?
-        leftScore = rule.Rescore(queryNode.Point(0), *referenceNode.Left(),
-            leftScore);
-
-        if (leftScore != DBL_MAX)
-        {
-          // Restore the left traversal info.
-          rule.TraversalInfo() = leftInfo;
-          Traverse(queryNode.Point(0), *referenceNode.Left());
-        }
-        else
-          ++numPrunes;
-      }
-      else
-      {
-        if (leftScore == DBL_MAX)
-        {
-          numPrunes += 2;
-        }
-        else
-        {
-          // Choose the left first.  Restore the left traversal info and store the
-          // right traversal info.
-          rightInfo = rule.TraversalInfo();
-          rule.TraversalInfo() = leftInfo;
-          Traverse(queryNode.Point(0), *referenceNode.Left());
-
-          // Is it still valid to recurse to the right?
-          rightScore = rule.Rescore(queryNode.Point(0), *referenceNode.Right(),
-              rightScore);
-
-          if (rightScore != DBL_MAX)
-          {
-            // Restore the right traversal information.
-            rule.TraversalInfo() = rightInfo;
-            Traverse(queryNode.Point(0), *referenceNode.Right());
-          }
-          else
-            ++numPrunes;
-        }
-      }
-
-      // Restore the main traversal information.
-      rule.TraversalInfo() = traversalInfo;
-    }
-
-    // Now recurse down the left node.
-    leftScore = rule.Score(*queryNode.Left(), *referenceNode.Left());
-    leftInfo = rule.TraversalInfo();
     rule.TraversalInfo() = traversalInfo;
-    rightScore = rule.Score(*queryNode.Left(), *referenceNode.Right());
-    numScores += 2;
 
-    if (leftScore < rightScore)
-    {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      rightInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Left(), *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
-          rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(*queryNode.Left(), *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(*queryNode.Left(), *referenceNode.Left(),
-          leftScore);
-
-      if (leftScore != DBL_MAX)
-      {
-        // Restore the left traversal info.
-        rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Left());
-      }
-      else
-        ++numPrunes;
-    }
-    else
-    {
-      if (leftScore == DBL_MAX)
-      {
-        numPrunes += 2;
-      }
-      else
-      {
-        // Choose the left first.  Restore the left traversal info and store the
-        // right traversal info.
-        rightInfo = rule.TraversalInfo();
-        rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Left());
-
-        // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
-            rightScore);
-
-        if (rightScore != DBL_MAX)
-        {
-          // Restore the right traversal information.
-          rule.TraversalInfo() = rightInfo;
-          Traverse(*queryNode.Left(), *referenceNode.Right());
-        }
-        else
-          ++numPrunes;
-      }
-    }
+    // Now recurse down the central node.
+    TraverseReferenceNode(*queryNode.Central(), referenceNode);
 
     // Restore the main traversal information.
     rule.TraversalInfo() = traversalInfo;
 
-    // Now recurse down the right query node.
-    leftScore = rule.Score(*queryNode.Right(), *referenceNode.Left());
-    leftInfo = rule.TraversalInfo();
+    // Now recurse down the inner node.
+    TraverseReferenceNode(*queryNode.Inner(), referenceNode);
+
+    // Restore the main traversal information.
     rule.TraversalInfo() = traversalInfo;
-    rightScore = rule.Score(*queryNode.Right(), *referenceNode.Right());
-    numScores += 2;
 
-    if (leftScore < rightScore)
-    {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      rightInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Right(), *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
-          rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(*queryNode.Right(), *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(*queryNode.Right(), *referenceNode.Left(),
-          leftScore);
-
-      if (leftScore != DBL_MAX)
-      {
-        // Restore the left traversal info.
-        rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Left());
-      }
-      else
-        ++numPrunes;
-    }
-    else
-    {
-      if (leftScore == DBL_MAX)
-      {
-        numPrunes += 2;
-      }
-      else
-      {
-        // Choose the left first.  Restore the left traversal info.  Store the
-        // right traversal info.
-        rightInfo = rule.TraversalInfo();
-        rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Left());
-
-        // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
-            rightScore);
-
-        if (rightScore != DBL_MAX)
-        {
-          // Restore the right traversal info.
-          rule.TraversalInfo() = rightInfo;
-          Traverse(*queryNode.Right(), *referenceNode.Right());
-        }
-        else
-          ++numPrunes;
-      }
-    }
+    // Now recurse down the outer query node.
+    TraverseReferenceNode(*queryNode.Outer(), referenceNode);
   }
 }
 
@@ -462,103 +170,67 @@ template<typename MetricType,
              class SplitType>
 template<typename RuleType>
 void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-DualTreeTraverser<RuleType>::Traverse(
-    const size_t queryIndex,
+DualTreeTraverser<RuleType>::TraverseReferenceNode(
+    VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+        queryNode,
     VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
         referenceNode)
 {
-  // If we are a leaf, run the base case as necessary.
-  if (referenceNode.IsLeaf())
+  typedef VantagePointTree<MetricType, StatisticType, MatType, BoundType,
+      SplitType> TreeType;
+  typedef typename RuleType::TraversalInfoType TravInfo;
+
+  // We have to recurse down the reference node.  In this case the recursion
+  // order does matter.  Before recursing, though, we have to set the
+  // traversal information correctly.
+
+  std::array<std::tuple<double, TreeType*>, 3> scores;
+
+  double score = rule.Score(queryNode, *referenceNode.Central());
+  scores[0] = std::make_tuple(score, referenceNode.Central());
+
+  // All children of a vantage point tree use the same traversal info.
+  TravInfo traversalInfo = rule.TraversalInfo();
+
+  score = rule.Score(queryNode, *referenceNode.Inner());
+  scores[1] = std::make_tuple(score, referenceNode.Inner());
+
+  score = rule.Score(queryNode, *referenceNode.Outer());
+  scores[2] = std::make_tuple(score, referenceNode.Outer());
+  numScores += 3;
+
+  // Sort the array according to the score.
+  if (std::get<0>(scores[0]) > std::get<0>(scores[1]))
+    std::swap(scores[0], scores[1]);
+  if (std::get<0>(scores[1]) > std::get<0>(scores[2]))
+    std::swap(scores[1], scores[2]);
+  if (std::get<0>(scores[0]) > std::get<0>(scores[1]))
+    std::swap(scores[0], scores[1]);
+
+  for (size_t i = 0; i < 3; i++)
   {
-    const size_t refEnd = referenceNode.Begin() + referenceNode.Count();
-    for (size_t i = referenceNode.Begin(); i < refEnd; ++i)
-      rule.BaseCase(queryIndex, i);
-    numBaseCases += referenceNode.Count();
-    return;
-  }
-
-  // If the reference node contains a point we should calculate the base case.
-  if (referenceNode.FirstPointIsCentroid())
-  {
-    rule.BaseCase(queryIndex, referenceNode.Point(0));
-    numBaseCases++;
-  }
-
-  // Store the current traversal info.
-  traversalInfo = rule.TraversalInfo();
-
-  // If either score is DBL_MAX, we do not recurse into that node.
-  double leftScore = rule.Score(queryIndex, *referenceNode.Left());
-  typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
-  rule.TraversalInfo() = traversalInfo;
-  double rightScore = rule.Score(queryIndex, *referenceNode.Right());
-  typename RuleType::TraversalInfoType rightInfo;
-
-  if (leftScore < rightScore)
-  {
-    rightInfo = rule.TraversalInfo();
-    rule.TraversalInfo() = leftInfo;
-    // Recurse to the left.
-    Traverse(queryIndex, *referenceNode.Left());
-
-    // Is it still valid to recurse to the right?
-    rightScore = rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
-
-    if (rightScore != DBL_MAX)
+    if (std::get<0>(scores[i]) == DBL_MAX)
     {
-      // Restore the right traversal info.
-      rule.TraversalInfo() = rightInfo;
-      Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
+      numPrunes += 3 - i;
+      break;
+    }
+
+    // Is it still valid to recurse to the node?
+    double rescore = 0;
+    if (i > 0)
+      rescore = rule.Rescore(queryNode, *std::get<1>(scores[i]),
+          std::get<0>(scores[i]));
+
+    if (rescore != DBL_MAX)
+    {
+      // Restore the traversal info.
+      rule.TraversalInfo() = traversalInfo;
+      Traverse(queryNode, *std::get<1>(scores[i]));
     }
     else
-      ++numPrunes;
-  }
-  else if (rightScore < leftScore)
-  {
-    // Recurse to the right.
-    Traverse(queryIndex, *referenceNode.Right());
-
-    // Is it still valid to recurse to the left?
-    leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
-
-    if (leftScore != DBL_MAX)
-    {
-      // Restore the left traversal info.
-      rule.TraversalInfo() = leftInfo;
-      Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
-    }
-    else
-      ++numPrunes;
-  }
-  else // leftScore is equal to rightScore.
-  {
-    if (leftScore == DBL_MAX)
-    {
-      numPrunes += 2; // Pruned both left and right.
-    }
-    else
-    {
-      // Choose the left first.
-      rightInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(queryIndex, *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
-          rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = rightInfo;
-        Traverse(queryIndex, *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
+      numPrunes++;
   }
 }
-
 
 } // namespace tree
 } // namespace mlpack

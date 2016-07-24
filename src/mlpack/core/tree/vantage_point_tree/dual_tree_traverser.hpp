@@ -77,18 +77,14 @@ class VantagePointTree<MetricType, StatisticType, MatType, BoundType,
   //! The number of times a base case was calculated.
   size_t numBaseCases;
 
-  //! Traversal information, held in the class so that it isn't continually
-  //! being reallocated.
-  typename RuleType::TraversalInfoType traversalInfo;
-
   /**
    * Traverse the reference tree.
    *
-   * @param queryIndex The index of the point in the query set which is being
-   *     used as the query point.
+   * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
    */
-  void Traverse(const size_t queryIndex, VantagePointTree& referenceNode);
+  void TraverseReferenceNode(VantagePointTree& queryNode,
+                             VantagePointTree& referenceNode);
 };
 
 } // namespace tree

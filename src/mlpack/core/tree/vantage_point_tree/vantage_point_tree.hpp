@@ -13,10 +13,12 @@ namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 /**
- * The vantage point tree is a variant of a binary space tree. The difference
- * from BinarySpaceTree is a presence of points in intermediate nodes.
- * If an intermediate node holds a point, this point is the centroid of the
- * bound.
+ * The vantage point tree (vantage point trees are also called metric trees)
+ * is a variant of a binary space tree. In contrast to BinarySpaceTree,
+ * each intermediate node of the vantage point tree contains exactly three
+ * children. The first child contains only one point (the vantage point).
+ * Two other children (inner and outer) may be leaf or intermediate nodes.
+ * Thus, the point of the first (central) child is the centroid of its siblings.
  *
  * This particular tree does not allow growth, so you cannot add or delete nodes
  * from it.  If you need to add or delete a node, the better procedure is to
@@ -24,8 +26,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  *
  * This tree does take one runtime parameter in the constructor, which is the
  * max leaf size to be used.
-
-  * @tparam MetricType The metric used for tree-building.  The BoundType may
+ *
+ * @tparam MetricType The metric used for tree-building.  The BoundType may
  *     place restrictions on the metrics that can be used.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
@@ -52,10 +54,12 @@ class VantagePointTree
   typedef typename MatType::elem_type ElemType;
 
  private:
-  //! The left child node.
-  VantagePointTree* left;
-  //! The right child node.
-  VantagePointTree* right;
+  //! The child node that contains only the vantage point.
+  VantagePointTree* central;
+  //! The inner child node.
+  VantagePointTree* inner;
+  //! The outer child node.
+  VantagePointTree* outer;
   //! The parent node (NULL if this is the root of the tree).
   VantagePointTree* parent;
   //! The index of the first point in the dataset contained in this node.
@@ -194,15 +198,12 @@ class VantagePointTree
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
    * @param maxLeafSize Size of each leaf in the tree.
-   * @param firstPointIsCentroid Indicates that the first point of the node is
-   *    the centroid of its bound.
    */
   VantagePointTree(VantagePointTree* parent,
                    const size_t begin,
                    const size_t count,
                    SplitType<BoundType<MetricType>, MatType>& splitter,
-                   const size_t maxLeafSize = 20,
-                   bool firstPointIsCentroid = false);
+                   const size_t maxLeafSize = 20);
 
   /**
    * Construct this node as a child of the given parent, starting at column
@@ -221,16 +222,13 @@ class VantagePointTree
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
    * @param maxLeafSize Size of each leaf in the tree.
-   * @param firstPointIsCentroid Indicates that the first point of the node is
-   *    the centroid of its bound.
    */
   VantagePointTree(VantagePointTree* parent,
                    const size_t begin,
                    const size_t count,
                    std::vector<size_t>& oldFromNew,
                    SplitType<BoundType<MetricType>, MatType>& splitter,
-                   const size_t maxLeafSize = 20,
-                   bool firstPointIsCentroid = false);
+                   const size_t maxLeafSize = 20);
 
   /**
    * Construct this node as a child of the given parent, starting at column
@@ -252,8 +250,6 @@ class VantagePointTree
    * @param newFromOld Vector which will be filled with the new positions for
    *     each old point.
    * @param maxLeafSize Size of each leaf in the tree.
-   * @param firstPointIsCentroid Indicates that the first point of the node is
-   *    the centroid of its bound.
    */
   VantagePointTree(VantagePointTree* parent,
                    const size_t begin,
@@ -261,8 +257,7 @@ class VantagePointTree
                    std::vector<size_t>& oldFromNew,
                    std::vector<size_t>& newFromOld,
                    SplitType<BoundType<MetricType>, MatType>& splitter,
-                   const size_t maxLeafSize = 20,
-                   bool firstPointIsCentroid = false);
+                   const size_t maxLeafSize = 20);
 
   /**
    * Create a vantage point tree by copying the other tree.  Be careful!  This
@@ -308,15 +303,21 @@ class VantagePointTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Gets the left child of this node.
-  VantagePointTree* Left() const { return left; }
-  //! Modify the left child of this node.
-  VantagePointTree*& Left() { return left; }
+  //! Gets the cental child of this node.
+  VantagePointTree* Central() const { return central; }
+  //! Modify the cental child of this node.
+  VantagePointTree*& Central() { return central; }
 
-  //! Gets the right child of this node.
-  VantagePointTree* Right() const { return right; }
-  //! Modify the right child of this node.
-  VantagePointTree*& Right() { return right; }
+
+  //! Gets the inner child of this node.
+  VantagePointTree* Inner() const { return inner; }
+  //! Modify the inner child of this node.
+  VantagePointTree*& Inner() { return inner; }
+
+  //! Gets the outer child of this node.
+  VantagePointTree* Outer() const { return outer; }
+  //! Modify the outer child of this node.
+  VantagePointTree*& Outer() { return outer; }
 
   //! Gets the parent of this node.
   VantagePointTree* Parent() const { return parent; }
@@ -369,7 +370,7 @@ class VantagePointTree
   VantagePointTree& Child(const size_t child) const;
 
   VantagePointTree*& ChildPtr(const size_t child)
-  { return (child == 0) ? left : right; }
+  { return (child == 0) ? central : (child == 1 ? inner : outer); }
 
   //! Return the number of points in this node.
   size_t NumPoints() const;
@@ -458,9 +459,6 @@ class VantagePointTree
 
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
-
-  //! Indicates that the first point of this node is the centroid of its bound.
-  bool FirstPointIsCentroid() const { return firstPointIsCentroid; }
 
  private:
   /**

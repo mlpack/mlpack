@@ -14,26 +14,30 @@ namespace mlpack {
 namespace tree {
 
 /**
- * The vantage point tree is a kind of the binary space tree. In contrast to
- * BinarySpaceTree, each left intermediate node of the vantage point tree
- * contains a point which is the centroid of the node. When recursively
- * splitting nodes, the VPTree class selects a vantage point and splits the node
- * according to the distance to this point. Thus, points that are closer to the
- * vantage point form the left subtree (and the vantage point is the only point
- * that the left node contains). Other points form the right subtree.
- * In such a way, the bound of each left node is a ball and the vantage point is
- * the centroid of the bound. The bound of each right node is a hollow ball
- * centered at the vantage point.
+ * The vantage point tree (which is also called the metric tree. Vantage point
+ * trees and metric trees were invented independently by Yianilos an Uhlmann) is
+ * a kind of the binary space tree. In contrast to BinarySpaceTree, each
+ * intermediate node of the vantage point tree contains three children.
+ * The first child contains exactly one point (the vantage point). When
+ * recursively splitting nodes, the VPTree class selects the vantage point and
+ * splits the node according to the distance to this point. Thus, points that
+ * are closer to the vantage point form the inner subtree. Other points form the
+ * outer subtree. The vantage point is contained in the first (central) node.
+ * In such a way, the bound of each inner and outer nodes is a hollow ball and
+ * the vantage point is the centroid of the bound.
+ *
+ * This implementation differs from the original algorithms. Namely, the central
+ * node was introduced in order to simplify dual-tree traversers.
  * 
- * For more information, see the following paper.
+ * For more information, see the following papers.
  *
  * @code
  * @inproceedings{yianilos1993vptrees,
  *   author = {Yianilos, Peter N.},
  *   title = {Data Structures and Algorithms for Nearest Neighbor Search in
- *      General Metric Spaces},
+ *       General Metric Spaces},
  *   booktitle = {Proceedings of the Fourth Annual ACM-SIAM Symposium on
- *      Discrete Algorithms},
+ *       Discrete Algorithms},
  *   series = {SODA '93},
  *   year = {1993},
  *   isbn = {0-89871-313-7},
@@ -41,7 +45,18 @@ namespace tree {
  *   numpages = {11},
  *   publisher = {Society for Industrial and Applied Mathematics},
  *   address = {Philadelphia, PA, USA}
- * } 
+ * }
+ *
+ * @article{uhlmann1991metrictrees,
+ *   author = {Jeffrey K. Uhlmann},
+ *   title = {Satisfying general proximity / similarity queries with metric
+ *       trees},
+ *   journal = {Information Processing Letters},
+ *   volume = {40},
+ *   number = {4},
+ *   pages = {175 - 179},
+ *   year = {1991},
+ * }
  * @endcode
  *
  * This template typedef satisfies the TreeType policy API.

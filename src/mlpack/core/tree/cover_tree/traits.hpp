@@ -35,14 +35,14 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
   /**
    * Each cover tree node contains only one point, and that point is its
    * centroid.
-   *
-   * @param node The node to check.
    */
-  static constexpr bool FirstPointIsCentroid(const CoverTree<MetricType,
-      StatisticType, MatType, RootPointPolicy>* /* node */ = NULL)
-  {
-    return true;
-  }
+  static const bool FirstPointIsCentroid = true;
+
+  /**
+   * There is no guarantee that the first point of the first sibling is the
+   * centroid of other siblings.
+   */
+  static const bool FirstSiblingFirstPointIsCentroid = false;
 
   /**
    * Cover trees do have self-children.

@@ -2,7 +2,7 @@
  * @file vantage_point_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
- * Implementation of class (VantagePointSplit) to split a binary space partition
+ * Implementation of class (VantagePointSplit) to split a vantage point
  * tree according to the median value of the distance to a certain vantage point.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_IMPL_HPP

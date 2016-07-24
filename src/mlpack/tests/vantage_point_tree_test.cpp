@@ -27,8 +27,8 @@ BOOST_AUTO_TEST_CASE(VPTreeTraitsTest)
 
   bool b = TreeTraits<TreeType>::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, true);
-//  b = TreeTraits<TreeType>::FirstPointIsCentroid;
-//  BOOST_REQUIRE_EQUAL(b, true);
+  b = TreeTraits<TreeType>::FirstPointIsCentroid;
+  BOOST_REQUIRE_EQUAL(b, false);
   b = TreeTraits<TreeType>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
   b = TreeTraits<TreeType>::RearrangesDataset;
@@ -138,20 +138,19 @@ void CheckBound(TreeType& tree)
   }
   else
   {
-    if (!tree.Parent())
-      BOOST_REQUIRE_EQUAL(tree.NumPoints(), 0);
-    else if (tree.FirstPointIsCentroid())
-    {
-      BOOST_REQUIRE_EQUAL(tree.NumPoints(), 1);
-      BOOST_REQUIRE_EQUAL(true,
-            tree.Bound().Contains(tree.Dataset().col(tree.Point(0))));
-    }
+    TreeType* central = tree.Central();
+    BOOST_REQUIRE_EQUAL(central->NumPoints(), 1);
+    BOOST_REQUIRE_EQUAL(true,
+        central->Bound().Contains(tree.Dataset().col(central->Point(0))));
+    BOOST_REQUIRE_EQUAL(central->Bound().InnerRadius(), 0.0);
+    BOOST_REQUIRE_EQUAL(central->Bound().OuterRadius(), 0.0);
 
-    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Left()->Bound()), true);
-    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Right()->Bound()), true);
+    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Central()->Bound()), true);
+    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Inner()->Bound()), true);
+    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Outer()->Bound()), true);
 
-    CheckBound(*tree.Left());
-    CheckBound(*tree.Right());
+    CheckBound(*tree.Inner());
+    CheckBound(*tree.Outer());
   }
 }
 
@@ -174,35 +173,38 @@ void CheckSplit(TreeType& tree)
 
   typename TreeType::ElemType maxDist = 0;
 
-  size_t pointsEnd = tree.Left()->Begin() + tree.Left()->Count();
-  for (size_t i = tree.Left()->Begin(); i < pointsEnd; i++)
+  size_t pointsEnd = tree.Inner()->Begin() + tree.Inner()->Count();
+  for (size_t i = tree.Inner()->Begin(); i < pointsEnd; i++)
   {
     typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Left()->Begin()),
-                                       tree.Dataset().col(i));
+        tree.Bound().Metric().Evaluate(tree.Dataset().col(i),
+            tree.Dataset().col(tree.Central()->Begin()));
 
     if (dist > maxDist)
       maxDist = dist;
   }
 
-  pointsEnd = tree.Right()->Begin() + tree.Right()->Count();
-  for (size_t i = tree.Right()->Begin(); i < pointsEnd; i++)
+  pointsEnd = tree.Outer()->Begin() + tree.Outer()->Count();
+  for (size_t i = tree.Outer()->Begin(); i < pointsEnd; i++)
   {
     typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(tree.Left()->Begin()),
-                                       tree.Dataset().col(i));
+        tree.Bound().Metric().Evaluate(tree.Dataset().col(i),
+            tree.Dataset().col(tree.Central()->Begin()));
     BOOST_REQUIRE_LE(maxDist, dist);
   }
 
-  if (tree.FirstPointIsCentroid())
+  for (size_t k = 0; k < tree.Bound().Dim(); k++)
   {
-    for (size_t k = 0; k < tree.Bound().Dim(); k++)
-      BOOST_REQUIRE_EQUAL(tree.Bound().Center()[k],
-          tree.Dataset().col(tree.Point(0))[k]);
+    BOOST_REQUIRE_EQUAL(tree.Inner()->Bound().Center()[k],
+        tree.Dataset().col(tree.Central()->Point(0))[k]);
+    BOOST_REQUIRE_EQUAL(tree.Outer()->Bound().Center()[k],
+        tree.Dataset().col(tree.Central()->Point(0))[k]);
+    BOOST_REQUIRE_EQUAL(tree.Central()->Bound().Center()[k],
+        tree.Dataset().col(tree.Central()->Point(0))[k]);
   }
 
-  CheckSplit(*tree.Left());
-  CheckSplit(*tree.Right());
+  CheckSplit(*tree.Inner());
+  CheckSplit(*tree.Outer());
 }
 
 BOOST_AUTO_TEST_CASE(VPTreeSplitTest)

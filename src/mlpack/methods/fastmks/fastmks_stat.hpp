@@ -44,7 +44,7 @@ class FastMKSStat
       lastKernelNode(NULL)
   {
     // Do we have to calculate the centroid?
-    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid(&node))
+    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
     {
       // If this type of tree has self-children, then maybe the evaluation is
       // already done.  These statistics are built bottom-up, so the child stat

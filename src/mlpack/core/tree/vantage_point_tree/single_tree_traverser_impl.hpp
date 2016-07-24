@@ -51,57 +51,55 @@ SingleTreeTraverser<RuleType>::Traverse(
     return;
   }
 
-  // If the reference node contains a point we should calculate the base case.
-  if (referenceNode.FirstPointIsCentroid())
-    rule.BaseCase(queryIndex, referenceNode.Point(0));
+  rule.BaseCase(queryIndex, referenceNode.Central()->Point(0));
 
   // If either score is DBL_MAX, we do not recurse into that node.
-  double leftScore = rule.Score(queryIndex, *referenceNode.Left());
-  double rightScore = rule.Score(queryIndex, *referenceNode.Right());
+  double innerScore = rule.Score(queryIndex, *referenceNode.Inner());
+  double outerScore = rule.Score(queryIndex, *referenceNode.Outer());
 
-  if (leftScore < rightScore)
+  if (innerScore < outerScore)
   {
-    // Recurse to the left.
-    Traverse(queryIndex, *referenceNode.Left());
+    // Recurse to the inner node.
+    Traverse(queryIndex, *referenceNode.Inner());
 
-    // Is it still valid to recurse to the right?
-    rightScore = rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
+    // Is it still valid to recurse to the outer node?
+    outerScore = rule.Rescore(queryIndex, *referenceNode.Outer(), outerScore);
 
-    if (rightScore != DBL_MAX)
-      Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
+    if (outerScore != DBL_MAX)
+      Traverse(queryIndex, *referenceNode.Outer()); // Recurse to the outer.
     else
       ++numPrunes;
   }
-  else if (rightScore < leftScore)
+  else if (outerScore < innerScore)
   {
-    // Recurse to the right.
-    Traverse(queryIndex, *referenceNode.Right());
+    // Recurse to the outer node.
+    Traverse(queryIndex, *referenceNode.Outer());
 
-    // Is it still valid to recurse to the left?
-    leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
+    // Is it still valid to recurse to the inner node?
+    innerScore = rule.Rescore(queryIndex, *referenceNode.Inner(), innerScore);
 
-    if (leftScore != DBL_MAX)
-      Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
+    if (innerScore != DBL_MAX)
+      Traverse(queryIndex, *referenceNode.Inner()); // Recurse to the inner.
     else
       ++numPrunes;
   }
-  else // leftScore is equal to rightScore.
+  else // innerScore is equal to outerScore.
   {
-    if (leftScore == DBL_MAX)
+    if (innerScore == DBL_MAX)
     {
-      numPrunes += 2; // Pruned both left and right.
+      numPrunes += 2; // Pruned both inner and outer nodes.
     }
     else
     {
-      // Choose the left first.
-      Traverse(queryIndex, *referenceNode.Left());
+      // Choose the inner node first.
+      Traverse(queryIndex, *referenceNode.Inner());
 
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
-          rightScore);
+      // Is it still valid to recurse to the outer node?
+      outerScore = rule.Rescore(queryIndex, *referenceNode.Outer(),
+          outerScore);
 
-      if (rightScore != DBL_MAX)
-        Traverse(queryIndex, *referenceNode.Right());
+      if (outerScore != DBL_MAX)
+        Traverse(queryIndex, *referenceNode.Outer());
       else
         ++numPrunes;
     }

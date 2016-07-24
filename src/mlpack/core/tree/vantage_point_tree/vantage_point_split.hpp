@@ -2,8 +2,8 @@
  * @file vantage_point_split.hpp
  * @author Mikhail Lozhnikov
  *
- * Definition of class VantagePointSplit, a class that splits a binary space
- * partitioning into two parts using the distance to a certain vantage point.
+ * Definition of class VantagePointSplit, a class that splits a vantage point
+ * tree into two parts using the distance to a certain vantage point.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP

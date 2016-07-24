@@ -33,15 +33,15 @@ class TreeTraits<VantagePointTree<MetricType, StatisticType, MatType, BoundType,
   static const bool HasOverlappingChildren = true;
 
   /**
-   * Returns true if the first point of the node is the centroid of its bound.
-   *
-   * @param node The node to check.
+   * The first point of the node is not the centroid of its bound.
    */
-  static bool FirstPointIsCentroid(const VantagePointTree<MetricType,
-      StatisticType, MatType, BoundType, SplitType>*  node)
-  {
-    return node->FirstPointIsCentroid();
-  }
+  static const bool FirstPointIsCentroid = false;
+
+  /**
+   * The first point of the central node (vantage point) is the centroid of
+   * its siblings.
+   */
+  static const bool FirstSiblingFirstPointIsCentroid = true;
 
   /**
    * Points are not contained at multiple levels of the vantage point tree.
