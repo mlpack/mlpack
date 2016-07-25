@@ -47,12 +47,12 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   DatasetMapper<MissingPolicy> info(policy);
   BOOST_REQUIRE(data::Load("test_file.csv", input, info) == true);
 
-  // row and column test
+  // row and column test.
   BOOST_REQUIRE_EQUAL(input.n_rows, 3);
   BOOST_REQUIRE_EQUAL(input.n_cols, 3);
 
   // Load check
-  // MissingPolicy should convert strings to nans
+  // MissingPolicy should convert strings to nans.
   BOOST_REQUIRE(std::isnan(input(0, 0)) == true);
   BOOST_REQUIRE_CLOSE(input(0, 1), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(0, 2), 8.0, 1e-5);
@@ -68,10 +68,10 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   Imputer<double,
           DatasetMapper<MissingPolicy>,
           CustomImputation<double>> imputer(info, customStrategy);
-  // convert a or nan to 99 for dimension 0
+  // convert a or nan to 99 for dimension 0.
   imputer.Impute(input, "a", 0);
 
-  // Custom imputation result check
+  // Custom imputation result check.
   BOOST_REQUIRE_CLOSE(input(0, 0), 99.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(0, 1), 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(input(0, 2), 8.0, 1e-5);
@@ -81,6 +81,31 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
   BOOST_REQUIRE_CLOSE(input(2, 0), 3.0, 1e-5);
   BOOST_REQUIRE(std::isnan(input(2, 1)) == true); // remains as NaN
   BOOST_REQUIRE_CLOSE(input(2, 2), 10.0, 1e-5);
+
+  // Now, try impute() overload with all dimensions.
+  arma::mat allInput;
+  MissingPolicy allPolicy({"a"});
+  DatasetMapper<MissingPolicy> allInfo(allPolicy);
+  BOOST_REQUIRE(data::Load("test_file.csv", allInput, allInfo) == true);
+
+  // convert missing vals to 99.
+  CustomImputation<double> allCustomStrategy(99);
+  Imputer<double,
+          DatasetMapper<MissingPolicy>,
+          CustomImputation<double>> allImputer(allInfo, allCustomStrategy);
+  // convert a or nan to 99 for all dimensions.
+  allImputer.Impute(allInput, "a");
+
+  // Custom imputation result check
+  BOOST_REQUIRE_CLOSE(allInput(0, 0), 99.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(0, 1), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(0, 2), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(1, 0), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(1, 2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(2, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(2, 1), 99.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(allInput(2, 2), 10.0, 1e-5);
 
   // Remove the file.
   remove("test_file.csv");

@@ -158,10 +158,7 @@ int main(int argc, char** argv)
     Log::Info << "Performing '" << strategy << "' imputation strategy "
         << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-    for (size_t i : dirtyDimensions)
-    {
-      imputer.Impute(input, missingValue, i);
-    }
+    imputer.Impute(input, missingValue);
   }
   Timer::Stop("imputation");
 

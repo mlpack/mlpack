@@ -44,9 +44,9 @@ class Imputer
   }
 
   /**
-  * Given an input dataset, replace missing values with given imputation
-  * strategy. This overload does not produce output matrix, but overwrites the
-  * result into the input matrix.
+  * Given an input dataset, replace missing values of a dimension with given
+  * imputation strategy. This function does not produce output matrix, but
+  * overwrites the result into the input matrix.
   *
   * @param input Input dataset to apply imputation.
   * @oaran missingValue User defined missing value; it can be anything.
@@ -58,6 +58,41 @@ class Imputer
   {
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
     strategy.Impute(input, mappedValue, dimension, columnMajor);
+  }
+
+  /**
+  * Given an input dataset, replace missing values of all dimensions with given
+  * imputation strategy. This function does not produce output matrix, but
+  * overwrites the result into the input matrix.
+  *
+  * @param input Input dataset to apply imputation.
+  * @oaran missingValue User defined missing value; it can be anything.
+  */
+  void Impute(arma::Mat<T>& input,
+              const std::string& missingValue)
+  {
+    if (columnMajor)
+    {
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (mapper.NumMappings(i) > 0)
+        {
+          T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
+          strategy.Impute(input, mappedValue, i, columnMajor);
+        }
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < input.n_rows; ++i)
+      {
+        if (mapper.NumMappings(i) > 0)
+        {
+          T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
+          strategy.Impute(input, mappedValue, i, columnMajor);
+        }
+      }
+    }
   }
 
   //! Get the strategy
