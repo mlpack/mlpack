@@ -5,8 +5,8 @@ order to backport:
  * Trigamma and polygamma function calculation for the gamma_distribution.hpp
    file (added in Boost 1.58.0, files taken from Boost 1.61.0)
 
-Therefore these files are licensed under the Boost Software License, available
-in LICENSE.txt in this directory.
+These files are licensed under the Boost Software License, available in
+LICENSE.txt in this directory.
 
 If you want a copy of mlpack without a dependence on the Boost Software License,
 then you will need to
