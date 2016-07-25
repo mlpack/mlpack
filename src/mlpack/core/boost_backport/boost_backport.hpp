@@ -20,7 +20,7 @@
 
 #include <boost/version.hpp>
 
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
   // Backported unordered_map.
   #include "mlpack/core/boost_backport/unordered_map.hpp"
 #else
