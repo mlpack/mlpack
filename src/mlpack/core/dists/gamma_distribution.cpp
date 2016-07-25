@@ -6,14 +6,26 @@
  */
 #include "gamma_distribution.hpp"
 #include <boost/math/special_functions/digamma.hpp>
-//#include <boost/math/special_functions/trigamma.hpp> // Moved to prereqs.hpp
 
 using namespace mlpack;
 using namespace mlpack::distribution;
 
+GammaDistribution::GammaDistribution(const size_t dimensionality)
+{
+  // Initialize distribution.
+  alpha.zeros(dimensionality);
+  beta.zeros(dimensionality);
+}
+
+GammaDistribution::GammaDistribution(const arma::mat& data,
+                                     const double tol)
+{
+  Train(data, tol);
+}
+
 // Returns true if computation converged.
-inline bool GammaDistribution::converged(const double aOld, 
-                                         const double aNew, 
+inline bool GammaDistribution::Converged(const double aOld,
+                                         const double aNew,
                                          const double tol)
 {
   return (std::abs(aNew - aOld) / aNew) < tol;
@@ -22,7 +34,6 @@ inline bool GammaDistribution::converged(const double aOld,
 // Fits an alpha and beta parameter to each dimension of the data.
 void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 {
-
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
@@ -35,7 +46,7 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   // Allocate space for alphas and betas (Assume independent rows).
   alpha.set_size(rdata.n_rows);
   beta.set_size(rdata.n_rows);
-   
+
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
   const arma::vec meanLogxVec = arma::mean(arma::log(rdata), 1);
   const arma::vec meanxVec = arma::mean(rdata, 1);
@@ -44,7 +55,6 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   // Treat each dimension (i.e. row) independently.
   for (size_t row = 0; row < rdata.n_rows; ++row)
   {
-
     // Statistics for this row.
     const double meanLogx = meanLogxVec(row);
     const double meanx = meanxVec(row);
@@ -69,12 +79,12 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 
       // Protect against nan values (aEst will be passed to logarithm).
       if (aEst <= 0)
-        throw std::logic_error("GammaDistribution parameter alpha will be <=0");
+        throw std::logic_error("GammaDistribution::Train(): estimated invalid "
+            "negative value for parameter alpha!");
 
-    } while (! converged(aEst, aOld, tol) );
+    } while (!Converged(aEst, aOld, tol));
 
     alpha(row) = aEst;
-    beta(row) = meanx/aEst;
+    beta(row) = meanx / aEst;
   }
-  return;
 }

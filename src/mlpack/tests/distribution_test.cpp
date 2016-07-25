@@ -416,8 +416,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   gDist.Train(rdata);
 
   // Training must estimate d pairs of alpha and beta parameters.
-  BOOST_REQUIRE_EQUAL(gDist.Alpha().n_elem, d);
-  BOOST_REQUIRE_EQUAL(gDist.Beta().n_elem, d);
+  BOOST_REQUIRE_EQUAL(gDist.Dimensionality(), d);
+  BOOST_REQUIRE_EQUAL(gDist.Dimensionality(), d);
 
   // Create a N' x d' gamma distribution, fit results without new object.
   size_t N2 = 350;
@@ -433,8 +433,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   gDist.Train(rdata2);
 
   // Training must estimate d' pairs of alpha and beta parameters.
-  BOOST_REQUIRE_EQUAL(gDist.Alpha().n_elem, d2);
-  BOOST_REQUIRE_EQUAL(gDist.Beta().n_elem, d2);
+  BOOST_REQUIRE_EQUAL(gDist.Dimensionality(), d2);
+  BOOST_REQUIRE_EQUAL(gDist.Dimensionality(), d2);
 }
 
 /**
@@ -472,8 +472,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   gDist.Train(rdata);
 
   // Estimated parameter must be close to real.
-  BOOST_REQUIRE_CLOSE(gDist.Alpha()[0], alphaReal, errorTolerance);
-  BOOST_REQUIRE_CLOSE(gDist.Beta()[0], betaReal, errorTolerance);
+  BOOST_REQUIRE_CLOSE(gDist.Alpha(0), alphaReal, errorTolerance);
+  BOOST_REQUIRE_CLOSE(gDist.Beta(0), betaReal, errorTolerance);
 
   /** Iteration 2 (different parameter set) **/
 
@@ -494,8 +494,27 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   gDist2.Train(rdata2);
 
   // Estimated parameter must be close to real.
-  BOOST_REQUIRE_CLOSE(gDist2.Alpha()[0], alphaReal2, errorTolerance);
-  BOOST_REQUIRE_CLOSE(gDist2.Beta()[0], betaReal2, errorTolerance);
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(0), alphaReal2, errorTolerance);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(0), betaReal2, errorTolerance);
+}
+
+/**
+ * Test that Train() and the constructor that takes data give the same resulting
+ * distribution.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainConstructorTest)
+{
+  const arma::mat data = arma::randu<arma::mat>(10, 500);
+
+  GammaDistribution d1(data);
+  GammaDistribution d2;
+  d2.Train(data);
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(d1.Alpha(i), d2.Alpha(i), 1e-5);
+    BOOST_REQUIRE_CLOSE(d1.Beta(i), d2.Beta(i), 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
