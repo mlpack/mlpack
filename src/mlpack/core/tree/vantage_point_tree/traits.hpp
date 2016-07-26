@@ -54,9 +54,9 @@ class TreeTraits<VantagePointTree<MetricType, StatisticType, MatType, BoundType,
   static const bool RearrangesDataset = true;
 
   /**
-   * This is always a binary tree.
+   * This is not a binary tree.
    */
-  static const bool BinaryTree = true;
+  static const bool BinaryTree = false;
 };
 
 } // namespace tree

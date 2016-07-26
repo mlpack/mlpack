@@ -79,19 +79,6 @@ class VantagePointSplit
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu);
 
   /**
-   * Find no more then max(numSamples, upperBound) random samples i.e.
-   * random points that belong to the node. Each sample belongs to
-   * the interval [begin, begin + upperBound)
-   *
-   * @param distinctSamples The vector of samples indices.
-   * @param numSamples Maximum number of samples.
-   * @param begin The least index.
-   * @param upperBound The upper bound of indices.
-   */
-  static void GetDistinctSamples(arma::uvec& distinctSamples,
-      const size_t numSamples, const size_t begin, const size_t upperBound);
-
-  /**
    * This method returns true if a point should be assigned to the left subtree
    * i.e. the distance from the point to the vantage point is less then
    * the median value. Otherwise it returns false.
