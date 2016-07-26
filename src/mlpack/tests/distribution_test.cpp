@@ -517,4 +517,26 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainConstructorTest)
   }
 }
 
+/**
+ * Test that Train() with a dataset and Train() with dataset statistics return
+ * the same results.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainStatisticsTest)
+{
+  const arma::mat data = arma::randu<arma::mat>(1, 500);
+
+  // Train object d1 with the data.
+  GammaDistribution d1(data);
+
+  // Train object d2 with the data's statistics.
+  GammaDistribution d2;
+  const arma::vec meanLogx = arma::mean(arma::log(data), 1);
+  const arma::vec meanx = arma::mean(data, 1);
+  const arma::vec logMeanx = arma::log(meanx);
+  d2.Train(logMeanx(0), meanLogx(0), meanx(0));
+
+  BOOST_REQUIRE_CLOSE(d1.Alpha(0), d2.Alpha(0), 1e-5);
+  BOOST_REQUIRE_CLOSE(d1.Beta(0), d2.Beta(0), 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

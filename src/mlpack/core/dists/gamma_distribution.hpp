@@ -77,6 +77,21 @@ class GammaDistribution
      *    smaller than tol.
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
+    
+    /**
+     * This function trains (fits distribution parameters) to a 1-dimensional
+     * dataset with pre-computed statistics logMeanx, meanLogx, meanx.
+     *
+     * @param logMeanx Is the dimension's logarithm of the mean (log(mean(x))).
+     * @param meanLogx Is the dimension's mean of logarithms (mean(log(x))).
+     * @param meanx Is the dimension's mean (mean(x)).
+     * @param tol Convergence tolerance. This is *not* an absolute measure:
+     *    It will stop the approximation once the *change* in the value is 
+     *    smaller than tol.
+     */
+    void Train(const double logMeanx, const double meanLogx, 
+               const double meanx,
+               const double tol = 1e-8);
 
     // Access to Gamma distribution parameters.
 
