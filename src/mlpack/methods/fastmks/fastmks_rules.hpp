@@ -10,6 +10,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <boost/heap/priority_queue.hpp>
 #include <vector>
 
 namespace mlpack {
@@ -129,17 +130,18 @@ class FastMKSRules
 
   //! Compare two candidates based on the value.
   struct CandidateCmp {
-    bool operator()(const Candidate& c1, const Candidate& c2)
+    bool operator()(const Candidate& c1, const Candidate& c2) const
     {
       return c1.first > c2.first;
     };
   };
 
   //! Use a min heap to represent the list of candidate points.
-  //! We will use a vector and the std functions: push_heap() pop_heap().
-  //! We can not use a priority queue because we need to iterate over all the
-  //! candidates and std::priority_queue doesn't provide that interface.
-  typedef std::vector<Candidate> CandidateList;
+  //! We will use a boost::heap::priority_queue instead of a std::priority_queue
+  //! because we need to iterate over all the candidates and std::priority_queue
+  //! doesn't provide that interface.
+  typedef boost::heap::priority_queue<Candidate,
+      boost::heap::compare<CandidateCmp>> CandidateList;
 
   //! Set of candidates for each point.
   std::vector<CandidateList> candidates;
