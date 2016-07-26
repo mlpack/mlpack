@@ -99,73 +99,84 @@ int main(int argc, char** argv)
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
-  std::vector<size_t> dirtyDimensions;
 
   Load(inputFile, input, info, true, true);
 
   // print how many mapping exist in each dimensions
+  bool isDirty = false;
   for (size_t i = 0; i < input.n_rows; ++i)
   {
     size_t numMappings = info.NumMappings(i);
-    Log::Info << numMappings << " mappings in dimension " << i << "."
-        << endl;
     if (numMappings > 0)
     {
-      dirtyDimensions.push_back(i);
+      Log::Info << "Replacing " << numMappings << " values in dimension " << i
+          << "." << endl;
+      if (!isDirty)
+      {
+        isDirty = true;
+      }
     }
   }
 
-  // Initialize imputer class
-  Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-  if (strategy == "mean")
+  if (!isDirty)
   {
+    Log::Info << "The file does not contain any user-defined missing variables."
+        << " The program did not perform any imputation." << endl;
+  }
+  else
+  {
+    // Initialize imputer class
     Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-  }
-  else if (strategy == "median")
-  {
-    Imputer<double, MapperType, MedianImputation<double>> imputer(info);
-  }
-  else if (strategy == "listwise_deletion")
-  {
-    Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
-  }
-  else if (strategy == "custom")
-  {
-    CustomImputation<double> strat(customValue);
-    Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
-  }
-  else
-  {
-    Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-        << endl;
-  }
+    if (strategy == "mean")
+    {
+      Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+    }
+    else if (strategy == "median")
+    {
+      Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+    }
+    else if (strategy == "listwise_deletion")
+    {
+      Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+    }
+    else if (strategy == "custom")
+    {
+      CustomImputation<double> strat(customValue);
+      Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
+    }
+    else
+    {
+      Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
+          << endl;
+    }
 
-  Timer::Start("imputation");
-  if (CLI::HasParam("dimension"))
-  {
-    // when --dimension is specified,
-    // the program will apply the changes to only the given dimension.
-    Log::Info << "Performing '" << strategy << "' imputation strategy "
-        << "to replace '" << missingValue << "' on dimension " << dimension
-        << "." << endl;
+    Timer::Start("imputation");
+    if (CLI::HasParam("dimension"))
+    {
+      // when --dimension is specified,
+      // the program will apply the changes to only the given dimension.
+      Log::Info << "Performing '" << strategy << "' imputation strategy "
+          << "to replace '" << missingValue << "' on dimension " << dimension
+          << "." << endl;
 
-    imputer.Impute(input, missingValue, dimension);
-  }
-  else
-  {
-    // when --dimension is not specified,
-    // the program will apply the changes to all dimensions.
-    Log::Info << "Performing '" << strategy << "' imputation strategy "
-        << "to replace '" << missingValue << "' on all dimensions." << endl;
+      imputer.Impute(input, missingValue, dimension);
+    }
+    else
+    {
+      // when --dimension is not specified,
+      // the program will apply the changes to all dimensions.
+      Log::Info << "Performing '" << strategy << "' imputation strategy "
+          << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-    imputer.Impute(input, missingValue);
-  }
-  Timer::Stop("imputation");
+      imputer.Impute(input, missingValue);
+    }
+    Timer::Stop("imputation");
 
-  if (!outputFile.empty())
-  {
-    Log::Info << "Saving results to '" << outputFile << "'." << endl;
-    Save(outputFile, input, false);
+    if (!outputFile.empty())
+    {
+      Log::Info << "Saving results to '" << outputFile << "'." << endl;
+      Save(outputFile, input, false);
+    }
   }
 }
 

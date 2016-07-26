@@ -71,26 +71,13 @@ class Imputer
   void Impute(arma::Mat<T>& input,
               const std::string& missingValue)
   {
-    if (columnMajor)
+    const size_t dimensions = columnMajor ? input.n_rows : input.n_cols;
+    for (size_t i = 0; i < dimensions; ++i)
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
+      if (mapper.NumMappings(i) > 0)
       {
-        if (mapper.NumMappings(i) > 0)
-        {
-          T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
-          strategy.Impute(input, mappedValue, i, columnMajor);
-        }
-      }
-    }
-    else
-    {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        if (mapper.NumMappings(i) > 0)
-        {
-          T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
-          strategy.Impute(input, mappedValue, i, columnMajor);
-        }
+        T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
+        strategy.Impute(input, mappedValue, i, columnMajor);
       }
     }
   }
