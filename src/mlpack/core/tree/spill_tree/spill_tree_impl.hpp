@@ -29,6 +29,8 @@ SpillTree(
     count(0),
     pointsIndex(NULL),
     overlappingNode(false),
+    splitDimension(0),
+    splitValue(0),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(new MatType(data)) // Copies the dataset.
@@ -62,6 +64,8 @@ SpillTree(
     count(0),
     pointsIndex(NULL),
     overlappingNode(false),
+    splitDimension(0),
+    splitValue(0),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(new MatType(std::move(data)))
@@ -97,6 +101,8 @@ SpillTree(
     count(0),
     pointsIndex(NULL),
     overlappingNode(false),
+    splitDimension(0),
+    splitValue(0),
     bound(parent->Dataset().n_rows),
     dataset(&parent->Dataset()) // Point to the parent's dataset.
 {
@@ -124,6 +130,8 @@ SpillTree(const SpillTree& other) :
     count(other.count),
     pointsIndex(NULL),
     overlappingNode(other.overlappingNode),
+    splitDimension(other.splitDimension),
+    splitValue(other.splitValue),
     bound(other.bound),
     stat(other.stat),
     parentDistance(other.parentDistance),
@@ -186,6 +194,8 @@ SpillTree(SpillTree&& other) :
     count(other.count),
     overlappingNode(other.overlappingNode),
     pointsIndex(other.pointsIndex),
+    splitDimension(other.splitDimension),
+    splitValue(other.splitValue),
     bound(std::move(other.bound)),
     stat(std::move(other.stat)),
     parentDistance(other.parentDistance),
@@ -448,10 +458,8 @@ void SpillTree<MetricType, StatisticType, MatType, SplitType>::
     return; // We can't split this.
   }
 
-  size_t splitDimension;
-  double splitVal;
-  const bool split = SplitType<BoundType<MetricType>, MatType>::SplitNode(
-      bound, *dataset, points, splitDimension, splitVal);
+  const bool split = SplitType<bound::HRectBound<MetricType>,
+      MatType>::SplitNode(bound, *dataset, points, splitDimension, splitValue);
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
@@ -465,7 +473,7 @@ void SpillTree<MetricType, StatisticType, MatType, SplitType>::
   std::vector<size_t> leftPoints, rightPoints;
   size_t overlapIndexLeft, overlapIndexRight;
   // Split the node.
-  overlappingNode = SplitPoints(splitDimension, splitVal, tau, rho, points,
+  overlappingNode = SplitPoints(splitDimension, splitValue, tau, rho, points,
       leftPoints, rightPoints, overlapIndexLeft, overlapIndexRight);
 
   // We don't need the information in points, so lets clean it.

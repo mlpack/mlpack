@@ -86,6 +86,10 @@ class SpillTree
   std::vector<size_t>* pointsIndex;
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
+  //! Dimension considered when splitting.
+  size_t splitDimension;
+  //! Dimension value that determines the decision boundary.
+  double splitValue;
   //! The bound object for this node.
   bound::HRectBound<MetricType> bound;
   //! Any extra data contained in the node.
@@ -230,6 +234,12 @@ class SpillTree
 
   //! Distinguish overlapping nodes from non-overlapping nodes.
   bool Overlap() const { return overlappingNode; }
+
+  //! Dimension considered when splitting.
+  size_t SplitDimension() const { return splitDimension; }
+
+  //! Dimension value that determines the decision boundary.
+  double SplitValue() const { return splitValue; }
 
   //! Get the metric that the tree uses.
   MetricType Metric() const { return MetricType(); }
