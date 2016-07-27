@@ -36,6 +36,7 @@ set(DIRS
   local_coordinate_coding
   logistic_regression
   lsh
+  lsh_model
 #  mvu
   matrix_completion
   naive_bayes
