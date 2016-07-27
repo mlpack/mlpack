@@ -1,32 +1,39 @@
 /**
- * @file neighbor_search_rules.hpp
+ * @file neighbor_search_rules_spill.hpp
  * @author Ryan Curtin
+ * @author Marcos Pividori
  *
  * Defines the pruning rules and base case rules necessary to perform a
- * tree-based search (with an arbitrary tree) for the NeighborSearch class.
+ * tree-based search with Spill Trees for the NeighborSearch class.
  */
-#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
-#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <mlpack/core/tree/spill_tree.hpp>
 
 namespace mlpack {
 namespace neighbor {
 
 /**
- * The NeighborSearchRules class is a template helper class used by
- * NeighborSearch class when performing distance-based neighbor searches.  For
- * each point in the query dataset, it keeps track of the k neighbors in the
- * reference dataset which have the 'best' distance according to a given sorting
- * policy.
+ * NeighborSearchRules specialization for Spill Trees.
+ * The main difference with the general implementation is that Score() methods
+ * consider the special case of a overlapping node.
  *
  * @tparam SortPolicy The sort policy for distances.
  * @tparam MetricType The metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
-class NeighborSearchRules
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
+    StatisticType, MatType, SplitType>>
 {
+  typedef tree::SpillTree<MetricType, StatisticType, MatType, SplitType>
+      TreeType;
  public:
   /**
    * Construct the NeighborSearchRules object.  This is usually done from within
@@ -208,9 +215,6 @@ class NeighborSearchRules
 } // namespace mlpack
 
 // Include implementation.
-#include "neighbor_search_rules_impl.hpp"
+#include "neighbor_search_rules_spill_impl.hpp"
 
-// Include specialization for Spill Trees.
-#include "neighbor_search_rules_spill.hpp"
-
-#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP

@@ -1,20 +1,26 @@
 /**
- * @file neighbor_search_rules_impl.hpp
+ * @file neighbor_search_rules_spill_impl.hpp
  * @author Ryan Curtin
+ * @author Marcos Pividori
  *
- * Implementation of NeighborSearchRules.
+ * Implementation of NeighborSearchRules for Spill Trees.
  */
-#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
-#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "neighbor_search_rules.hpp"
+#include "neighbor_search_rules_spill.hpp"
 
 namespace mlpack {
 namespace neighbor {
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
+    StatisticType, MatType, SplitType>>::NeighborSearchRules(
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
     const size_t k,
@@ -53,8 +59,13 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     candidates.push_back(pqueue);
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
+    StatisticType, MatType, SplitType>>::GetResults(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
@@ -73,19 +84,21 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
   }
 };
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
-double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
-BaseCase(const size_t queryIndex, const size_t referenceIndex)
+double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
+    StatisticType, MatType, SplitType>>::BaseCase(
+    const size_t queryIndex,
+    const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
   if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
-
-  // If we have already performed this base case, then do not perform it again.
-  if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
-    return lastBaseCase;
 
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
@@ -93,48 +106,39 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 
   InsertNeighbor(queryIndex, referenceIndex, distance);
 
-  // Cache this information for the next time BaseCase() is called.
-  lastQueryIndex = queryIndex;
-  lastReferenceIndex = referenceIndex;
-  lastBaseCase = distance;
-
   return distance;
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
   ++scores; // Count number of Score() calls.
-  double distance;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-  {
-    // The first point in the tree is the centroid.  So we can then calculate
-    // the base case between that and the query point.
-    double baseCase = -1.0;
-    if (tree::TreeTraits<TreeType>::HasSelfChildren)
-    {
-      // If the parent node is the same, then we have already calculated the
-      // base case.
-      if ((referenceNode.Parent() != NULL) &&
-          (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
-        baseCase = referenceNode.Parent()->Stat().LastDistance();
-      else
-        baseCase = BaseCase(queryIndex, referenceNode.Point(0));
 
-      // Save this evaluation.
-      referenceNode.Stat().LastDistance() = baseCase;
-    }
+  if (!referenceNode.Parent())
+    return 0;
 
-    distance = SortPolicy::CombineBest(baseCase,
-        referenceNode.FurthestDescendantDistance());
-  }
-  else
+  if (referenceNode.Parent()->Overlap()) // Defeatist search.
   {
-    distance = SortPolicy::BestPointToNodeDistance(querySet.col(queryIndex),
-        &referenceNode);
+    const double value = referenceNode.Parent()->SplitValue();
+    const size_t dim = referenceNode.Parent()->SplitDimension();
+    const bool left = &referenceNode == referenceNode.Parent()->Left();
+
+    if ((left && querySet(dim, queryIndex) <= value) ||
+        (!left && querySet(dim, queryIndex) > value))
+      return 0;
+    else
+      return DBL_MAX;
   }
+
+  double distance = SortPolicy::BestPointToNodeDistance(
+      querySet.col(queryIndex), &referenceNode);
 
   // Compare against the best k'th distance for this query point so far.
   double bestDistance = candidates[queryIndex].top().first;
@@ -143,11 +147,16 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::Rescore(
     const size_t queryIndex,
     TreeType& /* referenceNode */,
-    const double oldScore) const
+    double oldScore) const
 {
   // If we are already pruning, still prune.
   if (oldScore == DBL_MAX)
@@ -160,12 +169,33 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-  ++scores; // Count number of Score() calls.
+  ++scores; // Count number of Score() calls
+
+  if (!referenceNode.Parent())
+    return 0;
+
+  if (referenceNode.Parent()->Overlap()) // Defeatist search.
+  {
+    const double value = referenceNode.Parent()->SplitValue();
+    const size_t dim = referenceNode.Parent()->SplitDimension();
+    const bool left = &referenceNode == referenceNode.Parent()->Left();
+
+    if ((left && queryNode.Bound()[dim].Lo() <= value) ||
+        (!left && queryNode.Bound()[dim].Hi() > value))
+      return 0;
+    else
+      return DBL_MAX;
+  }
 
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);
@@ -180,14 +210,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   const double score = traversalInfo.LastScore();
   double adjustedScore;
 
-  // We want to set adjustedScore to be the distance between the centroid of the
-  // last query node and last reference node.  We will do this by adjusting the
-  // last score.  In some cases, we can just use the last base case.
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-  {
-    adjustedScore = traversalInfo.LastBaseCase();
-  }
-  else if (score == 0.0) // Nothing we can do here.
+  if (score == 0.0) // Nothing we can do here.
   {
     adjustedScore = 0.0;
   }
@@ -260,48 +283,14 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   // Can we prune?
   if (!SortPolicy::IsBetter(adjustedScore, bestDistance))
   {
-    if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
-    {
-      // There isn't any need to set the traversal information because no
-      // descendant combinations will be visited, and those are the only
-      // combinations that would depend on the traversal information.
-      return DBL_MAX;
-    }
+    // There isn't any need to set the traversal information because no
+    // descendant combinations will be visited, and those are the only
+    // combinations that would depend on the traversal information.
+    return DBL_MAX;
   }
 
-  double distance;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-  {
-    // The first point in the node is the centroid, so we can calculate the
-    // distance between the two points using BaseCase() and then find the
-    // bounds.  This is potentially loose for non-ball bounds.
-    double baseCase = -1.0;
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
-       (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
-       (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
-    {
-      // We already calculated it.
-      baseCase = traversalInfo.LastBaseCase();
-    }
-    else
-    {
-      baseCase = BaseCase(queryNode.Point(0), referenceNode.Point(0));
-    }
-
-    distance = SortPolicy::CombineBest(baseCase,
-        queryNode.FurthestDescendantDistance() +
-        referenceNode.FurthestDescendantDistance());
-
-    lastQueryIndex = queryNode.Point(0);
-    lastReferenceIndex = referenceNode.Point(0);
-    lastBaseCase = baseCase;
-
-    traversalInfo.LastBaseCase() = baseCase;
-  }
-  else
-  {
-    distance = SortPolicy::BestNodeToNodeDistance(&queryNode, &referenceNode);
-  }
+  double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
+      &referenceNode);
 
   if (SortPolicy::IsBetter(distance, bestDistance))
   {
@@ -321,13 +310,21 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::Rescore(
     TreeType& queryNode,
     TreeType& /* referenceNode */,
     const double oldScore) const
 {
   if (oldScore == DBL_MAX)
+    return oldScore;
+
+  if (oldScore == 0)
     return oldScore;
 
   // Update our bound.
@@ -338,8 +335,13 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
 
 // Calculate the bound for a given query node in its current state and update
 // it.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::
     CalculateBound(TreeType& queryNode) const
 {
   // This is an adapted form of the B(N_q) function in the paper
@@ -461,9 +463,13 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::
-InsertNeighbor(
+template<typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundT, typename SplitMatT> class SplitType,
+         typename SortPolicy,
+         typename MetricType>
+inline void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
+    MetricType, StatisticType, MatType, SplitType>>::InsertNeighbor(
     const size_t queryIndex,
     const size_t neighbor,
     const double distance)
@@ -481,4 +487,4 @@ InsertNeighbor(
 } // namespace neighbor
 } // namespace mlpack
 
-#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP

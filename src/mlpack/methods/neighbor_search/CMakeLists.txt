@@ -5,6 +5,8 @@ set(SOURCES
   neighbor_search_impl.hpp
   neighbor_search_rules.hpp
   neighbor_search_rules_impl.hpp
+  neighbor_search_rules_spill.hpp
+  neighbor_search_rules_spill_impl.hpp
   neighbor_search_stat.hpp
   ns_model.hpp
   ns_model_impl.hpp
