@@ -32,7 +32,7 @@ class NoAuxiliaryInformation
    * @param node The node in which the point is being inserted.
    * @param point The global number of the point being inserted.
    */
-  bool HandlePointInsertion(TreeType* , const size_t)
+  bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
   {
     return false;
   }
@@ -97,6 +97,24 @@ class NoAuxiliaryInformation
   {
     return false;
   }
+
+  /**
+   * The R++ tree requires to split the maximum bounding rectangle of a node
+   * that is being split. This method is intended for that. This method is only
+   * necessary for an AuxiliaryInformationType that is being used in conjunction
+   * with RPlusTreeSplit.
+   *
+   * @param treeOne The first subtree.
+   * @param treeTwo The second subtree.
+   * @param axis The axis along which the split is performed.
+   * @param cut The coordinate at which the node is split.
+   */
+  void SplitAuxiliaryInfo(TreeType* /* treeOne */,
+                          TreeType* /* treeTwo */,
+                          size_t /* axis */,
+                          typename TreeType::ElemType /* cut */)
+  { }
+
 
   /**
    * Nullify the auxiliary information in order to prevent an invalid free.

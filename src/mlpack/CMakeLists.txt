@@ -41,7 +41,10 @@ target_link_libraries(mlpack
   ${ARMADILLO_LIBRARIES}
   ${Boost_LIBRARIES}
   ${LIBXML2_LIBRARIES}
+  ${COMPILER_SUPPORT_LIBRARIES}
+  ${COMPILER_MLPACK_SUPPORT_LIBRARIES}
 )
+
 set_target_properties(mlpack
   PROPERTIES
   VERSION 2.0

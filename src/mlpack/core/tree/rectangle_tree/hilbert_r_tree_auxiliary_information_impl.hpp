@@ -47,10 +47,10 @@ HandlePointInsertion(TreeType* node, const size_t point)
 
     // Move points.
     for (size_t i = node->NumPoints(); i > pos; i--)
-      node->Points()[i] = node->Points()[i - 1];
+      node->Point(i) = node->Point(i - 1);
 
     // Insert the point.
-    node->Points()[pos] = point;
+    node->Point(pos) = point;
     node->Count()++;
   }
   else
@@ -75,16 +75,16 @@ HandleNodeInsertion(TreeType* node, TreeType* nodeToInsert, bool insertionLevel)
     // The node should be inserted according to its Hilbert value.
     for (pos = 0; pos < node->NumChildren(); pos++)
       if (HilbertValueType<ElemType>::CompareValues(
-                 node->Children()[pos]->AuxiliaryInfo().HilbertValue(),
+                 node->Child(pos).AuxiliaryInfo().HilbertValue(),
                  nodeToInsert->AuxiliaryInfo().HilbertValue()) < 0)
           break;
 
     // Move nodes.
     for (size_t i = node->NumChildren(); i > pos; i--)
-      node->Children()[i] = node->Children()[i - 1];
+      node->children[i] = node->children[i - 1];
 
     // Insert the node.
-    node->Children()[pos] = nodeToInsert;
+    node->children[pos] = nodeToInsert;
     nodeToInsert->Parent() = node;
 
     // Update the largest Hilbert value.
@@ -105,7 +105,7 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   hilbertValue.DeletePoint(node,localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
-    node->Points()[i - 1] = node->Points()[i];
+    node->Point(i - 1) = node->Point(i);
 
   node->NumPoints()--;
   return true;
@@ -120,7 +120,7 @@ HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
   hilbertValue.RemoveNode(node,nodeIndex);
 
   for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
-    node->Children()[i - 1] = node->Children()[i];
+    node->children[i - 1] = node->children[i];
 
   node->NumChildren()--;
   return true;
@@ -134,10 +134,10 @@ UpdateAuxiliaryInfo(TreeType* node)
   if (node->IsLeaf())  //  Should already be updated
     return true;
 
-  TreeType* child = node->Children()[node->NumChildren() - 1];
-  if (hilbertValue.CompareWith(child->AuxiliaryInfo().hilbertValue()) < 0)
+  TreeType& child = node->Child(node->NumChildren() - 1);
+  if (hilbertValue.CompareWith(child.AuxiliaryInfo().HilbertValue()) < 0)
   {
-    hilbertValue.Copy(node,child);
+    hilbertValue = child.AuxiliaryInfo().HilbertValue();
     return true;
   }
   return false;

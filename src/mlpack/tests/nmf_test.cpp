@@ -7,6 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/init_rules/random_acol_init.hpp>
+#include <mlpack/methods/amf/init_rules/given_init.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
@@ -131,7 +132,6 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
 
   while (sparseResidue != sparseResidue && denseResidue != denseResidue)
   {
-    mlpack::math::RandomSeed(std::time(NULL));
     mat w, h;
     sp_mat v;
     v.sprandu(20, 20, 0.3);
@@ -143,11 +143,16 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
     size_t r = 15;
 
     SimpleResidueTermination srt(1e-10, 10000);
-    AMF<SimpleResidueTermination, RandomAcolInitialization<> > nmf(srt);
-    const size_t seed = mlpack::math::RandInt(1000000);
-    mlpack::math::RandomSeed(seed); // Set random seed so results are the same.
+
+    // Get an initialization.
+    arma::mat iw, ih;
+    RandomAcolInitialization<>::Initialize(v, r, iw, ih);
+    GivenInitialization g(std::move(iw), std::move(ih));
+
+    // The GivenInitialization will force the same initialization for both
+    // Apply() calls.
+    AMF<SimpleResidueTermination, GivenInitialization> nmf(srt, g);
     nmf.Apply(v, r, w, h);
-    mlpack::math::RandomSeed(seed);
     nmf.Apply(dv, r, dw, dh);
 
     // Reconstruct matrices.
