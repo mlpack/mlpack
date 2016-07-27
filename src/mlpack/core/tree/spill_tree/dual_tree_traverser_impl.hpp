@@ -19,11 +19,10 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),

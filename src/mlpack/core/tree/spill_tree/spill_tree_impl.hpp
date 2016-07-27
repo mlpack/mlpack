@@ -15,10 +15,9 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(
     const MatType& data,
     const double tau,
@@ -49,10 +48,9 @@ SpillTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(
     MatType&& data,
     const double tau,
@@ -83,10 +81,9 @@ SpillTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(
     SpillTree* parent,
     std::vector<size_t>& points,
@@ -117,10 +114,9 @@ SpillTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(const SpillTree& other) :
     left(NULL),
     right(NULL),
@@ -180,10 +176,9 @@ SpillTree(const SpillTree& other) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(SpillTree&& other) :
     left(other.left),
     right(other.right),
@@ -216,11 +211,10 @@ SpillTree(SpillTree&& other) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
 SpillTree(
     Archive& ar,
     const typename boost::enable_if<typename Archive::is_loading>::type*) :
@@ -239,10 +233,9 @@ SpillTree(
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     ~SpillTree()
 {
   delete left;
@@ -257,11 +250,10 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline bool SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::IsLeaf() const
+inline bool SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    IsLeaf() const
 {
   return !left;
 }
@@ -272,11 +264,10 @@ inline bool SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::NumChildren() const
+inline size_t SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    NumChildren() const
 {
   if (left && right)
     return 2;
@@ -293,12 +284,11 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+inline typename SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    ElemType
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     FurthestPointDistance() const
 {
   if (!IsLeaf())
@@ -318,12 +308,11 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+inline typename SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    ElemType
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     FurthestDescendantDistance() const
 {
   return furthestDescendantDistance;
@@ -333,12 +322,11 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline typename SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::ElemType
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+inline typename SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    ElemType
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     MinimumBoundDistance() const
 {
   return bound.MinWidth() / 2.0;
@@ -350,11 +338,10 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+inline SpillTree<MetricType, StatisticType, MatType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     Child(const size_t child) const
 {
   if (child == 0)
@@ -369,11 +356,10 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::NumPoints() const
+inline size_t SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    NumPoints() const
 {
   if (IsLeaf())
     return count;
@@ -386,11 +372,10 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::NumDescendants() const
+inline size_t SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    NumDescendants() const
 {
   return count;
 }
@@ -401,11 +386,10 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::Descendant(const size_t index) const
+inline size_t SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    Descendant(const size_t index) const
 {
   if (IsLeaf())
     return (*pointsIndex)[index];
@@ -424,11 +408,10 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::Point(const size_t index) const
+inline size_t SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    Point(const size_t index) const
 {
   if (IsLeaf())
     return (*pointsIndex)[index];
@@ -439,10 +422,9 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, BoundType,
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+void SpillTree<MetricType, StatisticType, MatType, SplitType>::
     SplitNode(std::vector<size_t>& points,
               const size_t overlapIndex,
               const size_t maxLeafSize,
@@ -516,10 +498,9 @@ void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-bool SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+bool SpillTree<MetricType, StatisticType, MatType, SplitType>::
     SplitPoints(const size_t splitDimension,
                 const double splitVal,
                 const double tau,
@@ -574,10 +555,9 @@ bool SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, SplitType>::
     SpillTree() :
     left(NULL),
     right(NULL),
@@ -599,11 +579,10 @@ SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename Archive>
-void SpillTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+void SpillTree<MetricType, StatisticType, MatType, SplitType>::
     Serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;

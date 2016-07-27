@@ -55,7 +55,6 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using SPTree = SpillTree<MetricType,
                          StatisticType,
                          MatType,
-                         bound::HRectBound,
                          MidpointSplit>;
 
 /**
@@ -73,43 +72,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSPTree = SpillTree<MetricType,
                              StatisticType,
                              MatType,
-                             bound::HRectBound,
                              MeanSplit>;
-
-/**
- * A hybrid spill tree considering ball bounds. This is the same as the SPTree,
- * but the bounding shape of each node is a ball, not a hyper-rectangle.
- * This can make the ball tree advantageous in some higher-dimensional
- * situations and for some datasets.
- *
- * This template typedef satisfies the TreeType policy API.
- *
- * @see @ref trees, SpillTree, SPTree, MeanBallSPTree
- */
-template<typename MetricType, typename StatisticType, typename MatType>
-using BallSPTree = SpillTree<MetricType,
-                             StatisticType,
-                             MatType,
-                             bound::BallBound,
-                             MidpointSplit>;
-
-/**
- * A mean-split hybrid ball tree considering ball bounds.  This is the same as
- * the BallSPTree, but this particular implementation will use the mean of the
- * data in the split dimension as the value on which to split, instead of the
- * midpoint.  This can sometimes give better performance, but it is not always
- * clear which type of tree is best.
- *
- * This template typedef satisfies the TreeType policy API.
- *
- * @see @ref trees, SpillTree, BallSPTree, MeanSPTree
- */
-template<typename MetricType, typename StatisticType, typename MatType>
-using MeanBallSPTree = SpillTree<MetricType,
-                                 StatisticType,
-                                 MatType,
-                                 bound::BallBound,
-                                 MeanSplit>;
 
 } // namespace tree
 } // namespace mlpack

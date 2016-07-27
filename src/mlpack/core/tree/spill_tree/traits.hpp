@@ -22,11 +22,9 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<SpillTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>>
+class TreeTraits<SpillTree<MetricType, StatisticType, MatType, SplitType>>
 {
  public:
   /**

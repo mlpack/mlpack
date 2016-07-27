@@ -50,14 +50,10 @@ namespace tree /** Trees and tree-building procedures. */ {
  * }
  * @endcode
  *
- * @tparam MetricType The metric used for tree-building.  The BoundType may
- *     place restrictions on the metrics that can be used.
+ * @tparam MetricType The metric used for tree-building.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
- * @tparam BoundType The bound used for each node.  HRectBound, the default,
- *     requires that an LMetric<> is used for MetricType (so, EuclideanDistance,
- *     ManhattanDistance, etc.).
  * @tparam SplitType The class that partitions the dataset/points at a
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
@@ -65,8 +61,6 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename BoundMetricType, typename...> class BoundType =
-            bound::HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
             class SplitType = MidpointSplit>
 class SpillTree
@@ -93,7 +87,7 @@ class SpillTree
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
   //! The bound object for this node.
-  BoundType<MetricType> bound;
+  bound::HRectBound<MetricType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -202,9 +196,9 @@ class SpillTree
   ~SpillTree();
 
   //! Return the bound object for this node.
-  const BoundType<MetricType>& Bound() const { return bound; }
+  const bound::HRectBound<MetricType>& Bound() const { return bound; }
   //! Return the bound object for this node.
-  BoundType<MetricType>& Bound() { return bound; }
+  bound::HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }

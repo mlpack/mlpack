@@ -20,12 +20,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-class SpillTree<MetricType, StatisticType, MatType, BoundType,
-                      SplitType>::SingleTreeTraverser
+class SpillTree<MetricType, StatisticType, MatType, SplitType>::
+    SingleTreeTraverser
 {
  public:
   /**
