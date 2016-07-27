@@ -78,9 +78,7 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
     delete[] ranges;
   }
 
-  assert(splitVal != DBL_MAX);
-
-  if (maxWidth == 0) // All these points are the same.  We can't split.
+  if (maxWidth <= 0) // All these points are the same.  We can't split.
     return false;
 
   // Perform the actual splitting.  This will order the dataset such that points
@@ -157,9 +155,7 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
     delete[] ranges;
   }
 
-  assert(splitVal != DBL_MAX);
-
-  if (maxWidth == 0) // All these points are the same.  We can't split.
+  if (maxWidth <= 0) // All these points are the same.  We can't split.
     return false;
 
   // Perform the actual splitting.  This will order the dataset such that points
