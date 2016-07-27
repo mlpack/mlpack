@@ -547,7 +547,7 @@ bool SpillTree<MetricType, StatisticType, MatType, SplitType>::
   overlapIndexLeft = leftPoints.size();
   overlapIndexRight = rightPoints.size();
 
-  if (p1 <= rho && p2 <= rho)
+  if ((p1 <= rho || rightFrontier.empty()) && (p2 <= rho || leftFrontier.empty()))
   {
     leftPoints.insert(leftPoints.end(), rightFrontier.begin(),
         rightFrontier.end());
