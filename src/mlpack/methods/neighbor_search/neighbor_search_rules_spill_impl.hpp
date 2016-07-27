@@ -324,7 +324,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
   if (oldScore == DBL_MAX)
     return oldScore;
 
-  if (oldScore == 0)
+  if (oldScore == SortPolicy::BestDistance())
     return oldScore;
 
   // Update our bound.

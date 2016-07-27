@@ -330,6 +330,9 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
   if (oldScore == DBL_MAX)
     return oldScore;
 
+  if (oldScore == SortPolicy::BestDistance())
+    return oldScore;
+
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);
 
