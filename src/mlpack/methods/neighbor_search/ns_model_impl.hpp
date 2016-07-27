@@ -81,7 +81,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::SPTree>* ns) const
   {
     if (!ns->Naive() && !ns->SingleMode())
     {
-      typename NSTypeT<tree::SPTree>::Tree queryTree(std::move(querySet), tau,
+      typename NSTypeT<tree::SPTree>::Tree queryTree(std::move(querySet), 0,
           leafSize);
       ns->Search(&queryTree, k, neighbors, distances);
     }
