@@ -73,15 +73,17 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-//! Bichromatic neighbor search on the given NSType specialized for SPTrees.
+//! Bichromatic neighbor search specialized for SPTrees.
 template<typename SortPolicy>
-void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::SPTree>* ns) const
+void BiSearchVisitor<SortPolicy>::operator()(NSSpillType* ns) const
 {
   if (ns)
   {
     if (!ns->Naive() && !ns->SingleMode())
     {
-      typename NSTypeT<tree::SPTree>::Tree queryTree(std::move(querySet), 0,
+      // For Dual Tree Search on SpillTrees, the queryTree must be built with
+      // non overlapping (tau = 0).
+      typename NSSpillType::Tree queryTree(std::move(querySet), 0 /* tau*/,
           leafSize);
       ns->Search(&queryTree, k, neighbors, distances);
     }
@@ -160,9 +162,9 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-//! Train on the given NSType specialized for SPTrees.
+//! Train specialized for SPTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::SPTree>* ns) const
+void TrainVisitor<SortPolicy>::operator ()(NSSpillType* ns) const
 {
   if (ns)
   {
@@ -170,11 +172,11 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::SPTree>* ns) const
       ns->Train(std::move(referenceSet));
     else
     {
-      typename NSTypeT<tree::SPTree>::Tree* tree = new typename
-          NSTypeT<tree::SPTree>::Tree(std::move(referenceSet), tau, leafSize);
+      typename NSSpillType::Tree* tree = new typename NSSpillType::Tree(
+          std::move(referenceSet), tau, leafSize);
       ns->Train(tree);
       // Give the model ownership of the tree.
-      ns->treeOwner = true;
+      ns->neighborSearch.treeOwner = true;
     }
   }
   else
@@ -268,22 +270,30 @@ NSModel<SortPolicy>::~NSModel()
 }
 
 /**
- * Non-intrusive serialization for Neighbor Search class. We need this
- * definition because we are going to use the serialize function for boost
- * variant, which will look for a serialize function for its member types.
+ * Non-intrusive serialization for NeighborSearch class. We need this definition
+ * because we are going to use the serialize function for boost variant, which
+ * will look for a serialize function for its member types.
  */
 template<typename Archive,
          typename SortPolicy,
-         typename MetrType,
-         typename MatType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename RuleType> class TraversalType>
+                  typename TreeMatType> class TreeType>
 void serialize(
     Archive& ar,
-    NeighborSearch<SortPolicy, MetrType, MatType, TreeType, TraversalType>& ns,
+    NSType<SortPolicy, TreeType>& ns,
     const unsigned int version)
+{
+  ns.Serialize(ar, version);
+}
+
+/**
+ * Non-intrusive serialization for SpillSearch class. We need this definition
+ * because we are going to use the serialize function for boost variant, which
+ * will look for a serialize function for its member types.
+ */
+template<typename Archive>
+void serialize(Archive& ar, NSSpillType& ns, const unsigned int version)
 {
   ns.Serialize(ar, version);
 }
@@ -444,8 +454,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
           epsilon);
       break;
     case SPILL_TREE:
-      nSearch = new NSType<SortPolicy, tree::SPTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSSpillType(naive, singleMode, tau, epsilon);
       break;
   }
 

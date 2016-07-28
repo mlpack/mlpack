@@ -16,6 +16,7 @@
 #include <mlpack/core/tree/spill_tree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
+#include "spill_search.hpp"
 
 namespace mlpack {
 namespace neighbor {
@@ -34,6 +35,11 @@ using NSType = NeighborSearch<SortPolicy,
                               TreeType<metric::EuclideanDistance,
                                   NeighborSearchStat<SortPolicy>,
                                   arma::mat>::template DualTreeTraverser>;
+
+/**
+ * Alias template for euclidean spill search.
+ */
+using NSSpillType = SpillSearch<metric::EuclideanDistance, arma::mat>;
 
 template<typename SortPolicy>
 struct NSModelName
@@ -128,8 +134,8 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic neighbor search on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
-  //! Bichromatic neighbor search on the given NSType specialized for SPTrees.
-  void operator()(NSTypeT<tree::SPTree>* ns) const;
+  //! Bichromatic neighbor search specialized for SPTrees.
+  void operator()(NSSpillType* ns) const;
 
   //! Construct the BiSearchVisitor.
   BiSearchVisitor(const arma::mat& querySet,
@@ -180,8 +186,8 @@ class TrainVisitor : public boost::static_visitor<void>
   //! Train on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
-  //! Train on the given NSType specialized for SPTrees.
-  void operator()(NSTypeT<tree::SPTree>* ns) const;
+  //! Train specialized for SPTrees.
+  void operator()(NSSpillType* ns) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
   //! for BinarySpaceTrees, and tau for spill trees.
@@ -303,7 +309,7 @@ class NSModel
                  NSType<SortPolicy, tree::HilbertRTree>*,
                  NSType<SortPolicy, tree::RPlusTree>*,
                  NSType<SortPolicy, tree::RPlusPlusTree>*,
-                 NSType<SortPolicy, tree::SPTree>*> nSearch;
+                 NSSpillType*> nSearch;
 
  public:
   /**
