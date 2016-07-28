@@ -506,7 +506,8 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 Search(Tree* queryTree,
        const size_t k,
        arma::Mat<size_t>& neighbors,
-       arma::mat& distances)
+       arma::mat& distances,
+       bool sameSet)
 {
   if (k > referenceSet->n_cols)
   {
@@ -540,7 +541,7 @@ Search(Tree* queryTree,
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, querySet, k, metric, epsilon);
+  RuleType rules(*referenceSet, querySet, k, metric, epsilon, sameSet);
 
   // Create the traverser.
   TraversalType<RuleType> traverser(rules);
