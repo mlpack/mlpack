@@ -223,6 +223,14 @@ class CoverTree
   CoverTree(const CoverTree& other);
 
   /**
+   * Move constructor for a Cover Tree, possess all the members of the given
+   * tree.
+   *
+   * @param other Cover Tree to move.
+   */
+  CoverTree(CoverTree&& other);
+
+  /**
    * Create a cover tree from a boost::serialization archive.
    */
   template<typename Archive>

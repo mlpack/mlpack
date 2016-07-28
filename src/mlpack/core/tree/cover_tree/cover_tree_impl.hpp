@@ -521,6 +521,46 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
+    CoverTree&& other) :
+    dataset(other.dataset),
+    point(other.point),
+    children(std::move(other.children)),
+    scale(other.scale),
+    base(other.base),
+    stat(std::move(other.stat)),
+    numDescendants(other.numDescendants),
+    parent(other.parent),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    localMetric(other.localMetric),
+    localDataset(other.localDataset),
+    metric(other.metric),
+    distanceComps(other.distanceComps)
+{
+  // Set proper parent pointer.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->Parent() = this;
+
+  other.dataset = NULL;
+  other.point = 0;
+  other.scale = INT_MIN;
+  other.base = 0;
+  other.numDescendants = 0;
+  other.parent = NULL;
+  other.parentDistance = 0;
+  other.furthestDescendantDistance = 0;
+  other.localMetric = false;
+  other.localDataset = false;
+  other.metric = NULL;
+}
+
 // Construct from a boost::serialization archive.
 template<
     typename MetricType,
