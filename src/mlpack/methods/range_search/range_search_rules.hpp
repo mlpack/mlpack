@@ -12,7 +12,6 @@
 namespace mlpack {
 namespace range {
 
-
 /**
  * The RangeSearchRules class is a template helper class used by RangeSearch
  * class when performing range searches.

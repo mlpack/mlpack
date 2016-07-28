@@ -9,8 +9,6 @@
  * specified data set.
  */
 #include "cf.hpp"
-#include <vector>
-#include <queue>
 
 namespace mlpack {
 namespace cf {

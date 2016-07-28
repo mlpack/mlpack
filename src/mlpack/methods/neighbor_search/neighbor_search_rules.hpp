@@ -9,8 +9,6 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
-#include <vector>
-#include <queue>
 
 namespace mlpack {
 namespace neighbor {

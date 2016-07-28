@@ -10,8 +10,6 @@
 #define MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
-#include <vector>
-#include <queue>
 
 namespace mlpack {
 namespace neighbor {

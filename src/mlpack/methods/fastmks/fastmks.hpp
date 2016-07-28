@@ -12,7 +12,6 @@
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include "fastmks_stat.hpp"
 #include <mlpack/core/tree/cover_tree.hpp>
-#include <queue>
 
 namespace mlpack {
 namespace fastmks /** Fast max-kernel search. */ {

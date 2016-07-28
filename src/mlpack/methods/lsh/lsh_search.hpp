@@ -39,9 +39,6 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 
 #include <mlpack/core.hpp>
-#include <vector>
-#include <string>
-#include <queue>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>

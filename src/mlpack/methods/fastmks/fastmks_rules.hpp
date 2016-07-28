@@ -11,7 +11,6 @@
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
 #include <boost/heap/priority_queue.hpp>
-#include <vector>
 
 namespace mlpack {
 namespace fastmks {

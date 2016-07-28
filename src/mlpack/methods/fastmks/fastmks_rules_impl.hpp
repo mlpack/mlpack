@@ -9,7 +9,6 @@
 
 // In case it hasn't already been included.
 #include "fastmks_rules.hpp"
-#include <algorithm>
 
 namespace mlpack {
 namespace fastmks {
