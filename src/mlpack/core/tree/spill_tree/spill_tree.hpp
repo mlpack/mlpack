@@ -103,7 +103,9 @@ class SpillTree
   ElemType minimumBoundDistance;
   //! The dataset.  If we are the root of the tree, we own the dataset and must
   //! delete it.
-  MatType* dataset;
+  const MatType* dataset;
+  //! If true, we own the dataset and need to destroy it in the destructor.
+  bool localDataset;
 
  public:
   //! A single-tree traverser for hybrid spill trees; see
@@ -117,8 +119,8 @@ class SpillTree
 
   /**
    * Construct this as the root node of a hybrid spill tree using the given
-   * dataset.  This will copy the input matrix; if you don't want this, consider
-   * using the constructor that takes an rvalue reference and use std::move().
+   * dataset.  The dataset will not be modified during the building procedure
+   * (unlike BinarySpaceTree).
    *
    * @param data Dataset to create tree from.  This will be copied!
    * @param tau Overlapping size.
@@ -229,8 +231,6 @@ class SpillTree
 
   //! Get the dataset which the tree is built on.
   const MatType& Dataset() const { return *dataset; }
-  //! Modify the dataset which the tree is built on.  Be careful!
-  MatType& Dataset() { return *dataset; }
 
   //! Distinguish overlapping nodes from non-overlapping nodes.
   bool Overlap() const { return overlappingNode; }

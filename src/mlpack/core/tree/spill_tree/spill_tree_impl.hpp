@@ -33,7 +33,8 @@ SpillTree(
     splitValue(0),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(data)) // Copies the dataset.
+    dataset(&data),
+    localDataset(false)
 {
   std::vector<size_t> points;
   points.reserve(dataset->n_cols);
@@ -68,7 +69,8 @@ SpillTree(
     splitValue(0),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(new MatType(std::move(data)))
+    dataset(new MatType(std::move(data))),
+    localDataset(true)
 {
   std::vector<size_t> points;
   points.reserve(dataset->n_cols);
@@ -104,7 +106,8 @@ SpillTree(
     splitDimension(0),
     splitValue(0),
     bound(parent->Dataset().n_rows),
-    dataset(&parent->Dataset()) // Point to the parent's dataset.
+    dataset(&parent->Dataset()), // Point to the parent's dataset.
+    localDataset(false)
 {
   // Perform the actual splitting.
   SplitNode(points, overlapIndex, maxLeafSize, tau, rho);
@@ -137,7 +140,8 @@ SpillTree(const SpillTree& other) :
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     // Copy matrix, but only if we are the root.
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL)
+    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+    localDataset(other.parent == NULL)
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -201,7 +205,8 @@ SpillTree(SpillTree&& other) :
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     minimumBoundDistance(other.minimumBoundDistance),
-    dataset(other.dataset)
+    dataset(other.dataset),
+    localDataset(other.localDataset)
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
@@ -213,6 +218,7 @@ SpillTree(SpillTree&& other) :
   other.furthestDescendantDistance = 0.0;
   other.minimumBoundDistance = 0.0;
   other.dataset = NULL;
+  other.localDataset = false;
 }
 
 /**
@@ -252,8 +258,8 @@ SpillTree<MetricType, StatisticType, MatType, SplitType>::
   delete right;
   delete pointsIndex;
 
-  // If we're the root, delete the matrix.
-  if (!parent)
+  // If we're the root and we own the dataset, delete it.
+  if (!parent && localDataset)
     delete dataset;
 }
 
@@ -576,7 +582,8 @@ SpillTree<MetricType, StatisticType, MatType, SplitType>::
     stat(*this),
     parentDistance(0),
     furthestDescendantDistance(0),
-    dataset(NULL)
+    dataset(NULL),
+    localDataset(false)
 {
   // Nothing to do.
 }
@@ -602,7 +609,7 @@ void SpillTree<MetricType, StatisticType, MatType, SplitType>::
       delete left;
     if (right)
       delete right;
-    if (!parent)
+    if (!parent && localDataset)
       delete dataset;
   }
 
@@ -615,6 +622,9 @@ void SpillTree<MetricType, StatisticType, MatType, SplitType>::
   ar & CreateNVP(parentDistance, "parentDistance");
   ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
   ar & CreateNVP(dataset, "dataset");
+
+  if (Archive::is_loading::value && parent == NULL)
+    localDataset = true;
 
   // Save children last; otherwise boost::serialization gets confused.
   ar & CreateNVP(left, "left");
