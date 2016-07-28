@@ -314,6 +314,26 @@ SingleTreeTraversalType>::NeighborSearch(Tree* referenceTree,
     throw std::invalid_argument("epsilon must be non-negative");
 }
 
+// Construct the object.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
+                                         const bool singleMode,
+                                         const double epsilon,
+                                         const MetricType metric) :
+    NeighborSearch(new Tree(std::move(referenceTree)), singleMode, epsilon,
+        metric)
+{
+  treeOwner = true;
+}
+
 // Construct the object without a reference dataset.
 template<typename SortPolicy,
          typename MetricType,
@@ -480,7 +500,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree* referenceTree)
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
-  if (treeOwner && referenceTree)
+  if (treeOwner && this->referenceTree)
     delete this->referenceTree;
   if (setOwner && referenceSet)
     delete this->referenceSet;
@@ -489,6 +509,21 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree* referenceTree)
   this->referenceSet = &referenceTree->Dataset();
   treeOwner = false;
   setOwner = false;
+}
+
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree&& referenceTree)
+{
+  Train(new Tree(std::move(referenceTree)));
+  treeOwner = true;
 }
 
 /**
