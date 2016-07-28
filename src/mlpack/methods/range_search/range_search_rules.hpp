@@ -13,6 +13,13 @@ namespace mlpack {
 namespace range {
 
 
+/**
+ * The RangeSearchRules class is a template helper class used by RangeSearch
+ * class when performing range searches.
+ *
+ * @tparam MetricType The metric to use for computation.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ */
 template<typename MetricType, typename TreeType>
 class RangeSearchRules
 {
