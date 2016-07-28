@@ -246,7 +246,6 @@ class NeighborSearch
    * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param referenceSet Set of reference points corresponding to referenceTree.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param epsilon Relative approximate error (non-negative).
@@ -304,6 +303,8 @@ class NeighborSearch
 
   /**
    * Set the reference tree to a new reference tree.
+   *
+   * @param referenceTree Pre-built tree for reference points.
    */
   void Train(Tree* referenceTree);
 
