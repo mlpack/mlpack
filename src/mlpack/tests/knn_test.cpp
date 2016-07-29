@@ -893,7 +893,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
  * nodes, and backtracking in non-overlapping nodes) against the naive method.
  * This uses only a random reference dataset.
  */
-BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
+BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
 {
   arma::mat dataset;
   dataset.randu(50, 300); // 50 dimensional, 300 points.
@@ -910,26 +910,100 @@ BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
     if (distancesNaive(k - 1, i) > max_dist)
       max_dist = distancesNaive(k - 1, i);
 
-  // If we are sure that tau is a valid upper bound of the kth nearest neighbor
-  // of the query points, then we can be sure that we will get an exact
+  // If we are sure that tau is a valid strict upper bound of the kth nearest
+  // neighbor of the query points, then we can be sure that we will get an exact
   // solution.
-  SPTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>, arma::mat>
-      referenceTree(dataset, max_dist * 1.01 /* tau parameter */);
+  SpillSearch<> spTreeSearch(dataset, false, true,
+      max_dist * 1.01 /* tau parameter */);
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
-      spTreeSearch(&referenceTree, true);
-
-  arma::Mat<size_t> neighborsSPTree;
-  arma::mat distancesSPTree;
-  spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
-
-  for (size_t i = 0; i < neighborsSPTree.n_elem; ++i)
+  for (size_t mode = 0; mode < 2; mode++)
   {
-    BOOST_REQUIRE_EQUAL(neighborsSPTree(i), neighborsNaive(i));
-    BOOST_REQUIRE_CLOSE(distancesSPTree(i), distancesNaive(i), 1e-5);
+    switch (mode)
+    {
+      case 0: // Single Tree Search.
+        spTreeSearch.Naive() = false;
+        spTreeSearch.SingleMode() = true;
+        break;
+      case 1: // Dual Tree Search.
+        spTreeSearch.Naive() = false;
+        spTreeSearch.SingleMode() = false;
+        break;
+    }
+
+    arma::Mat<size_t> neighborsSPTree;
+    arma::mat distancesSPTree;
+    spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
+
+    for (size_t i = 0; i < neighborsSPTree.n_elem; ++i)
+    {
+      BOOST_REQUIRE_EQUAL(neighborsSPTree(i), neighborsNaive(i));
+      BOOST_REQUIRE_CLOSE(distancesSPTree(i), distancesNaive(i), 1e-5);
+    }
   }
 }
 
+/**
+ * Test hybrid sp-tree search doesn't repeat points.
+ * This uses only a random reference dataset.
+ */
+BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
+{
+  arma::mat dataset;
+  dataset.randu(50, 300); // 50 dimensional, 300 points.
+
+  const size_t k = 15;
+  double tau = 0;
+
+  for (size_t test = 0; test < 2; test++)
+  {
+    switch (test)
+    {
+      case 0:
+        tau = 0;
+        break;
+      case 1:
+        tau = 0.1;
+        break;
+    }
+
+    SpillSearch<> spTreeSearch(dataset, false, false, tau);
+    arma::Mat<size_t> neighborsSPTree;
+    arma::mat distancesSPTree;
+
+    for (size_t mode = 0; mode < 2; mode++)
+    {
+      switch (mode)
+      {
+        case 0: // Single Tree Search.
+          spTreeSearch.Naive() = false;
+          spTreeSearch.SingleMode() = true;
+          break;
+        case 1: // Dual Tree Search.
+          spTreeSearch.Naive() = false;
+          spTreeSearch.SingleMode() = false;
+          break;
+      }
+
+      spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
+
+      for (size_t i = 0; i < neighborsSPTree.n_cols; ++i)
+      {
+        // Test that at least one point was found.
+        BOOST_REQUIRE(distancesSPTree(0, i) != DBL_MAX);
+
+        for (size_t j = 0; j < neighborsSPTree.n_rows; ++j)
+        {
+          if (distancesSPTree(j, i) == DBL_MAX)
+            break;
+          // All candidates with same distances must be different points.
+          for (size_t k = j + 1; k < neighborsSPTree.n_rows &&
+              distancesSPTree(k, i) == distancesSPTree(j, i); ++k)
+            BOOST_REQUIRE(neighborsSPTree(k, i) != neighborsSPTree(j, i));
+        }
+      }
+    }
+  }
+}
 
 /**
  * Make sure sparse nearest neighbors works with kd trees.
