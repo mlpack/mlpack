@@ -552,6 +552,9 @@ Search(Tree* queryTree,
 
   rules.GetResults(*neighborPtr, distances);
 
+  Log::Info << rules.Scores() << " node combinations were scored.\n";
+  Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
   Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
