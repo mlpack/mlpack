@@ -11,6 +11,7 @@
 #include "bounds.hpp"
 #include "binary_space_tree/midpoint_split.hpp"
 #include "binary_space_tree/mean_split.hpp"
+#include "binary_space_tree/ub_tree_split.hpp"
 #include "binary_space_tree/binary_space_tree.hpp"
 #include "binary_space_tree/single_tree_traverser.hpp"
 #include "binary_space_tree/single_tree_traverser_impl.hpp"

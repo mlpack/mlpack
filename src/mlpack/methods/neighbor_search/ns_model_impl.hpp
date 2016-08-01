@@ -394,6 +394,10 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
           epsilon);
       break;
+    case UB_TREE:
+      nSearch = new NSType<SortPolicy, tree::UBTree>(naive, singleMode,
+          epsilon);
+      break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
@@ -478,6 +482,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case UB_TREE:
+      return "UB tree";
     default:
       return "unknown tree";
   }

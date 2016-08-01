@@ -135,6 +135,14 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           bound::BallBound,
                                           MeanSplit>;
 
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using UBTree = BinarySpaceTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               bound::CellBound,
+                               UBTreeSplit>;
+
 } // namespace tree
 } // namespace mlpack
 

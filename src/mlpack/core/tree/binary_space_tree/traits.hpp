@@ -80,6 +80,23 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool BinaryTree = true;
 };
 
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
+    bound::CellBound, SplitType>>
+{
+ public:
+  static const bool HasOverlappingChildren = true;
+  static const bool HasDuplicatedPoints = false;
+  static const bool FirstPointIsCentroid = false;
+  static const bool HasSelfChildren = false;
+  static const bool RearrangesDataset = true;
+  static const bool BinaryTree = true;
+};
+
 } // namespace tree
 } // namespace mlpack
 

@@ -13,5 +13,6 @@
 #include "bound_traits.hpp"
 #include "hrectbound.hpp"
 #include "ballbound.hpp"
+#include "cellbound.hpp"
 
 #endif // MLPACK_CORE_TREE_BOUNDS_HPP

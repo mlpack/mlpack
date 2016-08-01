@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  address.hpp
   ballbound.hpp
   ballbound_impl.hpp
   binary_space_tree.hpp
@@ -18,8 +19,12 @@ set(SOURCES
   binary_space_tree/single_tree_traverser_impl.hpp
   binary_space_tree/traits.hpp
   binary_space_tree/typedef.hpp
+  binary_space_tree/ub_tree_split.hpp
+  binary_space_tree/ub_tree_split_impl.hpp
   bounds.hpp
   bound_traits.hpp
+  cellbound.hpp
+  cellbound_impl.hpp
   cosine_tree/cosine_tree.hpp
   cosine_tree/cosine_tree.cpp
   cover_tree/cover_tree.hpp
