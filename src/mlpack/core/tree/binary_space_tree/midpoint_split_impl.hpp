@@ -24,6 +24,7 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
 {
   size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
+  double splitVal = DBL_MAX;
 
   // Find the split dimension.  If the bound is tight, we only need to consult
   // the bound's width.
@@ -37,6 +38,9 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       {
         maxWidth = width;
         splitDimension = d;
+
+        // Split in the midpoint of that dimension.
+        splitVal = bound[d].Mid();
       }
     }
   }
@@ -65,17 +69,17 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       {
         maxWidth = width;
         splitDimension = d;
+
+        // Split in the midpoint of that dimension.
+        splitVal = ranges[d].Mid();
       }
     }
 
     delete[] ranges;
   }
 
-  if (maxWidth == 0) // All these points are the same.  We can't split.
+  if (maxWidth <= 0) // All these points are the same.  We can't split.
     return false;
-
-  // Split in the midpoint of that dimension.
-  double splitVal = bound[splitDimension].Mid();
 
   // Perform the actual splitting.  This will order the dataset such that points
   // with value in dimension splitDimension less than or equal to splitVal are
@@ -96,6 +100,7 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
 {
   size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
+  double splitVal = DBL_MAX;
 
   // Find the split dimension.  If the bound is tight, we only need to consult
   // the bound's width.
@@ -109,6 +114,9 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       {
         maxWidth = width;
         splitDimension = d;
+
+        // Split in the midpoint of that dimension.
+        splitVal = bound[d].Mid();
       }
     }
   }
@@ -132,21 +140,23 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
     // Now, which is the widest?
     for (size_t d = 0; d < data.n_rows; d++)
     {
-      const double width = bound[d].Width();
+      const double width = ranges[d].Width();
 
       if (width > maxWidth)
       {
         maxWidth = width;
         splitDimension = d;
+
+        // Split in the midpoint of that dimension.
+        splitVal = ranges[d].Mid();
       }
     }
+
+    delete[] ranges;
   }
 
-  if (maxWidth == 0) // All these points are the same.  We can't split.
+  if (maxWidth <= 0) // All these points are the same.  We can't split.
     return false;
-
-  // Split in the midpoint of that dimension.
-  double splitVal = bound[splitDimension].Mid();
 
   // Perform the actual splitting.  This will order the dataset such that points
   // with value in dimension splitDimension less than or equal to splitVal are

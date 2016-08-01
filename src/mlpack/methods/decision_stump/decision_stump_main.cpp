@@ -51,23 +51,24 @@ PROGRAM_INFO("Decision Stump",
     "program (or others).");
 
 // Datasets we might load.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set. If "
-    "not specified, the labels are assumed to be the last row of the training "
-    "data.", "l", "");
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
+PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
+    "");
+PARAM_STRING_IN("labels_file", "A file containing labels for the training set."
+    "If not specified, the labels are assumed to be the last row of the "
+    "training data.", "l", "");
+PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
 
 // Output.
-PARAM_STRING("predictions_file", "The file in which the predicted labels for "
-    "the test set will be written.", "p", "predictions.csv");
+PARAM_STRING_OUT("predictions_file", "The file in which the predicted labels "
+    "for the test set will be written.", "p");
 
 // We may load or save a model.
-PARAM_STRING("input_model_file", "File containing decision stump model to "
+PARAM_STRING_IN("input_model_file", "File containing decision stump model to "
     "load.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained decision stump model "
-    "to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained decision stump "
+    "model to.", "M");
 
-PARAM_INT("bucket_size", "The minimum number of training points in each "
+PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
     "decision stump bucket.", "b", 6);
 
 /**

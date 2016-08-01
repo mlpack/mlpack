@@ -361,24 +361,20 @@ Search(const MatType& querySet,
       distancePtr = new arma::mat; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<size_t>;
     }
-
-    if (treeOwner)
+    else if (treeOwner)
       neighborPtr = new arma::Mat<size_t>; // Reference indices need mapping.
   }
 
   // Set the size of the neighbor and distance matrices.
   neighborPtr->set_size(k, querySet.n_cols);
-  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, querySet.n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
 
   if (naive)
   {
     // Create the helper object for the tree traversal.
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
-        epsilon);
+    RuleType rules(*referenceSet, querySet, k, metric, epsilon);
 
     // The naive brute-force traversal.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -386,12 +382,13 @@ Search(const MatType& querySet,
         rules.BaseCase(i, j);
 
     baseCases += querySet.n_cols * referenceSet->n_cols;
+
+    rules.GetResults(*neighborPtr, *distancePtr);
   }
   else if (singleMode)
   {
     // Create the helper object for the tree traversal.
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
-        epsilon);
+    RuleType rules(*referenceSet, querySet, k, metric, epsilon);
 
     // Create the traverser.
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -405,6 +402,8 @@ Search(const MatType& querySet,
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
+    rules.GetResults(*neighborPtr, *distancePtr);
   }
   else // Dual-tree recursion.
   {
@@ -416,8 +415,7 @@ Search(const MatType& querySet,
     Timer::Start("computing_neighbors");
 
     // Create the helper object for the tree traversal.
-    RuleType rules(*referenceSet, queryTree->Dataset(), *neighborPtr,
-        *distancePtr, metric, epsilon);
+    RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, epsilon);
 
     // Create the traverser.
     TraversalType<RuleType> traverser(rules);
@@ -429,6 +427,8 @@ Search(const MatType& querySet,
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
+    rules.GetResults(*neighborPtr, *distancePtr);
 
     delete queryTree;
   }
@@ -536,14 +536,11 @@ Search(Tree* queryTree,
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
-  neighborPtr->fill(size_t() - 1);
   distances.set_size(k, querySet.n_cols);
-  distances.fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, querySet, *neighborPtr, distances, metric,
-      epsilon);
+  RuleType rules(*referenceSet, querySet, k, metric, epsilon);
 
   // Create the traverser.
   TraversalType<RuleType> traverser(rules);
@@ -551,6 +548,8 @@ Search(Tree* queryTree,
 
   scores += rules.Scores();
   baseCases += rules.BaseCases();
+
+  rules.GetResults(*neighborPtr, distances);
 
   Timer::Stop("computing_neighbors");
 
@@ -607,14 +606,12 @@ Search(const size_t k,
 
   // Initialize results.
   neighborPtr->set_size(k, referenceSet->n_cols);
-  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, referenceSet->n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, *referenceSet, *neighborPtr, *distancePtr,
-      metric, epsilon, true /* don't return the same point as nearest neighbor */);
+  RuleType rules(*referenceSet, *referenceSet, k, metric, epsilon,
+      true /* don't return the same point as nearest neighbor */);
 
   if (naive)
   {
@@ -676,6 +673,8 @@ Search(const size_t k,
     // Next time we perform this search, we'll need to reset the tree.
     treeNeedsReset = true;
   }
+
+  rules.GetResults(*neighborPtr, *distancePtr);
 
   Timer::Stop("computing_neighbors");
 
