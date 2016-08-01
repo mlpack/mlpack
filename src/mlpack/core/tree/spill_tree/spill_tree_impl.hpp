@@ -219,6 +219,12 @@ SpillTree(SpillTree&& other) :
   other.minimumBoundDistance = 0.0;
   other.dataset = NULL;
   other.localDataset = false;
+
+  //Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
 }
 
 /**
