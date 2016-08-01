@@ -361,20 +361,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
   // worst distance from any child nodes (Stat().FirstBound()).  This
   // corresponds roughly to B_1(N_q) in the paper.
 
-  // The other way of bounding is to use the triangle inequality.  To do this,
-  // we find the current best kth-neighbor candidate distance of any descendant
-  // query point, and use the triangle inequality to place a bound on the
-  // distance that candidate would have to any other descendant query point.
-  // This corresponds roughly to B_2(N_q) in the paper, and is the bounding
-  // style for cover trees.
-
-  // Then, to assemble the final bound, since both bounds are valid, we simply
-  // take the better of the two.
-
   double worstDistance = SortPolicy::BestDistance();
-  double bestDistance = SortPolicy::WorstDistance();
-  double bestPointDistance = SortPolicy::WorstDistance();
-  double auxDistance = SortPolicy::WorstDistance();
 
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
@@ -382,42 +369,19 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
     const double distance = candidates[queryNode.Point(i)].top().first;
     if (SortPolicy::IsBetter(worstDistance, distance))
       worstDistance = distance;
-    if (SortPolicy::IsBetter(distance, bestPointDistance))
-      bestPointDistance = distance;
   }
-
-  auxDistance = bestPointDistance;
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double firstBound = queryNode.Child(i).Stat().FirstBound();
-    const double auxBound = queryNode.Child(i).Stat().AuxBound();
 
     if (SortPolicy::IsBetter(worstDistance, firstBound))
       worstDistance = firstBound;
-    if (SortPolicy::IsBetter(auxBound, auxDistance))
-      auxDistance = auxBound;
   }
 
-  // Add triangle inequality adjustment to best distance.  It is possible this
-  // could be tighter for some certain types of trees.
-  bestDistance = SortPolicy::CombineWorst(auxDistance,
-      2 * queryNode.FurthestDescendantDistance());
-
-  // Add triangle inequality adjustment to best distance of points in node.
-  bestPointDistance = SortPolicy::CombineWorst(bestPointDistance,
-      queryNode.FurthestPointDistance() +
-      queryNode.FurthestDescendantDistance());
-
-  if (SortPolicy::IsBetter(bestPointDistance, bestDistance))
-    bestDistance = bestPointDistance;
-
-  // At this point:
-  // worstDistance holds the value of B_1(N_q).
-  // bestDistance holds the value of B_2(N_q).
-  // auxDistance holds the value of B_aux(N_q).
+  // At this point, worstDistance holds the value of B_1(N_q).
 
   // Now consider the parent bounds.
   if (queryNode.Parent() != NULL)
@@ -428,32 +392,18 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
     if (SortPolicy::IsBetter(queryNode.Parent()->Stat().FirstBound(),
         worstDistance))
       worstDistance = queryNode.Parent()->Stat().FirstBound();
-
-    // The parent's best distance bound implies that the bound for this node
-    // must be at least as good.  Thus, if the parent best distance bound is
-    // better, then take it.
-    if (SortPolicy::IsBetter(queryNode.Parent()->Stat().SecondBound(),
-        bestDistance))
-      bestDistance = queryNode.Parent()->Stat().SecondBound();
   }
 
   // Could the existing bounds be better?
   if (SortPolicy::IsBetter(queryNode.Stat().FirstBound(), worstDistance))
     worstDistance = queryNode.Stat().FirstBound();
-  if (SortPolicy::IsBetter(queryNode.Stat().SecondBound(), bestDistance))
-    bestDistance = queryNode.Stat().SecondBound();
 
   // Cache bounds for later.
   queryNode.Stat().FirstBound() = worstDistance;
-  queryNode.Stat().SecondBound() = bestDistance;
-  queryNode.Stat().AuxBound() = auxDistance;
 
   worstDistance = SortPolicy::Relax(worstDistance, epsilon);
 
-  if (SortPolicy::IsBetter(worstDistance, bestDistance))
-    return worstDistance;
-  else
-    return bestDistance;
+  return worstDistance;
 }
 
 /**

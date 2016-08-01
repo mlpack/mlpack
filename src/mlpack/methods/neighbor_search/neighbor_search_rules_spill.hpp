@@ -19,6 +19,8 @@ namespace neighbor {
  * NeighborSearchRules specialization for Spill Trees.
  * The main difference with the general implementation is that Score() methods
  * consider the special case of a overlapping node.
+ * Also, CalculateBound() only considers B_1 bound, because we can not use B_2
+ * with spill trees.
  *
  * @tparam SortPolicy The sort policy for distances.
  * @tparam MetricType The metric to use for computation.
