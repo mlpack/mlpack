@@ -74,9 +74,12 @@ class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
-   * Get the score for recursion order.  A low score indicates priority for
-   * recursion, while DBL_MAX indicates that the node should not be recursed
-   * into at all (it should be pruned).
+   * Get the score for recursion order.  It implements a Hybrid sp-tree
+   * search.  If referenceNode's parent is a overlapping node, the score is
+   * calculated based on the splitting hyperplane: if query point is on the same
+   * side, returns 0, else DBL_MAX.
+   * If referenceNode's parent is a non-overlapping node, proper score is
+   * calculated, similar to the general Score() method.
    *
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
@@ -99,9 +102,12 @@ class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
                  const double oldScore) const;
 
   /**
-   * Get the score for recursion order.  A low score indicates priority for
-   * recursionm while DBL_MAX indicates that the node should not be recursed
-   * into at all (it should be pruned).
+   * Get the score for recursion order.  It implements a Hybrid sp-tree
+   * search.  If referenceNode's parent is a overlapping node, the score is
+   * calculated based on the splitting hyperplane: if queryNode's bound
+   * intersects the referenceNode's half space, returns 0, else DBL_MAX.
+   * If referenceNode's parent is a non-overlapping node, proper score is
+   * calculated, similar to the general Score() method.
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
