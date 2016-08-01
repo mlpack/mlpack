@@ -37,14 +37,14 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool HasOverlappingChildren = false;
 
   /**
+   * Each binary space tree node doesn't share points with any other node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
-
-  /**
-   * The tree has not got duplicated points.
-   */
-  static const bool HasDuplicatedPoints = false;
 
   /**
    * Points are not contained at multiple levels of the binary space tree.

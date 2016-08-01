@@ -34,6 +34,11 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
   static const bool HasOverlappingChildren = true;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
@@ -86,6 +91,11 @@ class TreeTraits<RectangleTree<MetricType,
    * The R+/R++ tree can't have overlapping children.
    */
   static const bool HasOverlappingChildren = false;
+
+  /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
 
   /**
    * There is no guarantee that the first point in a node is its centroid.
