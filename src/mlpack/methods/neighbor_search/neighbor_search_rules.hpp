@@ -211,6 +211,6 @@ class NeighborSearchRules
 #include "neighbor_search_rules_impl.hpp"
 
 // Include specialization for Spill Trees.
-#include "neighbor_search_rules_spill.hpp"
+#include "spill_search_rules.hpp"
 
 #endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP

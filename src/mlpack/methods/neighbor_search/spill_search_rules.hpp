@@ -1,13 +1,13 @@
 /**
- * @file neighbor_search_rules_spill.hpp
+ * @file spill_search_rules.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
  * Defines the pruning rules and base case rules necessary to perform a
  * tree-based search with Spill Trees for the NeighborSearch class.
  */
-#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP
-#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
@@ -223,6 +223,6 @@ class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
 } // namespace mlpack
 
 // Include implementation.
-#include "neighbor_search_rules_spill_impl.hpp"
+#include "spill_search_rules_impl.hpp"
 
-#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_SPILL_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_HPP

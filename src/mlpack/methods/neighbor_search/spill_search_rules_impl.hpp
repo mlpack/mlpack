@@ -1,15 +1,15 @@
 /**
- * @file neighbor_search_rules_spill_impl.hpp
+ * @file spill_search_rules_impl.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
  * Implementation of NeighborSearchRules for Spill Trees.
  */
-#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP
-#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_IMPL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "neighbor_search_rules_spill.hpp"
+#include "spill_search_rules.hpp"
 
 namespace mlpack {
 namespace neighbor {
@@ -437,4 +437,4 @@ inline void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 } // namespace neighbor
 } // namespace mlpack
 
-#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_SPILL_IMPL_HPP
+#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_SPILL_SEARCH_RULES_IMPL_HPP
