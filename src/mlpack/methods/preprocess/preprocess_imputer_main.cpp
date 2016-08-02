@@ -32,7 +32,9 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
 PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
 PARAM_STRING_OUT("output_file", "File to save output", "o");
 PARAM_STRING_IN("missing_value", "User defined missing value", "m", "");
-PARAM_STRING_IN("strategy", "imputation strategy to be applied", "s", "");
+PARAM_STRING_IN("strategy", "imputation strategy to be applied. Strategies "
+    "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.", "s"
+    , "");
 PARAM_DOUBLE_IN("custom_value", "user_defined custom value", "c", 0.0);
 PARAM_INT_IN("dimension", "the dimension to apply imputation", "d", 0);
 
@@ -92,7 +94,6 @@ int main(int argc, char** argv)
         << "'custom' strategy" << endl;
 
   arma::mat input;
-  arma::mat output;
   // Policy tells how the DatasetMapper should map the values.
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
@@ -103,7 +104,7 @@ int main(int argc, char** argv)
   Load(inputFile, input, info, true, true);
 
   // print how many mapping exist in each dimensions
-  bool isDirty = false;
+  std::vector<size_t> dirtyDimensions;
   for (size_t i = 0; i < input.n_rows; ++i)
   {
     size_t numMappings = info.NumMappings(i);
@@ -111,17 +112,14 @@ int main(int argc, char** argv)
     {
       Log::Info << "Replacing " << numMappings << " values in dimension " << i
           << "." << endl;
-      if (!isDirty)
-      {
-        isDirty = true;
-      }
+      dirtyDimensions.push_back(i);
     }
   }
 
-  if (!isDirty)
+  if (dirtyDimensions.size() == 0)
   {
-    Log::Info << "The file does not contain any user-defined missing variables."
-        << " The program did not perform any imputation." << endl;
+    Log::Debug << "The file does not contain any user-defined missing "
+        << "variables. The program did not perform any imputation." << endl;
   }
   else
   {
@@ -168,7 +166,10 @@ int main(int argc, char** argv)
       Log::Info << "Performing '" << strategy << "' imputation strategy "
           << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-      imputer.Impute(input, missingValue);
+      for (size_t i : dirtyDimensions)
+      {
+        imputer.Impute(input, missingValue, i);
+      }
     }
     Timer::Stop("imputation");
 

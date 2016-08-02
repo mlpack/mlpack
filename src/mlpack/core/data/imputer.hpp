@@ -60,28 +60,6 @@ class Imputer
     strategy.Impute(input, mappedValue, dimension, columnMajor);
   }
 
-  /**
-  * Given an input dataset, replace missing values of all dimensions with given
-  * imputation strategy. This function does not produce output matrix, but
-  * overwrites the result into the input matrix.
-  *
-  * @param input Input dataset to apply imputation.
-  * @oaran missingValue User defined missing value; it can be anything.
-  */
-  void Impute(arma::Mat<T>& input,
-              const std::string& missingValue)
-  {
-    const size_t dimensions = columnMajor ? input.n_rows : input.n_cols;
-    for (size_t i = 0; i < dimensions; ++i)
-    {
-      if (mapper.NumMappings(i) > 0)
-      {
-        T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, i));
-        strategy.Impute(input, mappedValue, i, columnMajor);
-      }
-    }
-  }
-
   //! Get the strategy
   const StrategyType& Strategy() const { return strategy; }
 
