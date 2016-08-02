@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
   if (dirtyDimensions.size() == 0)
   {
-    Log::Debug << "The file does not contain any user-defined missing "
+    Log::Warn << "The file does not contain any user-defined missing "
         << "variables. The program did not perform any imputation." << endl;
   }
   else
