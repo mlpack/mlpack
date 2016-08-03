@@ -89,9 +89,9 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   {
     const size_t nextIndex = pointSelector.Select(unvisited, data);
 
-    ProcessPoint(data, unvisited, nextIndex, assignments, currentCluster,
-        neighbors, distances);
-    ++currentCluster;
+    // currentCluster will only be incremented if a cluster was created.
+    currentCluster = ProcessPoint(data, unvisited, nextIndex, assignments,
+        currentCluster, neighbors, distances);
   }
 
   return currentCluster;
@@ -99,7 +99,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
-void DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
     const MatType& data,
     boost::dynamic_bitset<>& unvisited,
     const size_t index,
@@ -116,6 +116,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
   {
     // Mark the point as noise (leave assignments[index] unset) and return.
     unvisited[index] = false;
+    return currentCluster;
   }
   else
   {
@@ -134,6 +135,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
       ProcessPoint(data, unvisited, neighbors[index][j], assignments,
           currentCluster, neighbors, distances, false);
     }
+    return currentCluster + 1;
   }
 }
 

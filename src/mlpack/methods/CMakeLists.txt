@@ -21,6 +21,7 @@ set(DIRS
   amf
   ann
   cf
+  dbscan
   decision_stump
   det
   emst

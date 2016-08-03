@@ -52,14 +52,14 @@ class DBSCAN
   size_t minPoints;
 
   template<typename MatType>
-  void ProcessPoint(const MatType& data,
-                    boost::dynamic_bitset<>& unvisited,
-                    const size_t index,
-                    arma::Row<size_t>& assignments,
-                    const size_t currentCluster,
-                    const std::vector<std::vector<size_t>>& neighbors,
-                    const std::vector<std::vector<double>>& distances,
-                    const bool topLevel = true);
+  size_t ProcessPoint(const MatType& data,
+                      boost::dynamic_bitset<>& unvisited,
+                      const size_t index,
+                      arma::Row<size_t>& assignments,
+                      const size_t currentCluster,
+                      const std::vector<std::vector<size_t>>& neighbors,
+                      const std::vector<std::vector<double>>& distances,
+                      const bool topLevel = true);
 };
 
 } // namespace dbscan
