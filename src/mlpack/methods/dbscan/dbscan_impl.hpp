@@ -84,7 +84,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
 
   // Initialize to all true; false means it's been visited.
-  boost::dynamic_bitset<> unvisited(data.n_cols, 1);
+  boost::dynamic_bitset<> unvisited(data.n_cols);
+  unvisited.set();
   while (unvisited.any())
   {
     const size_t nextIndex = pointSelector.Select(unvisited, data);
