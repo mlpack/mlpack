@@ -22,6 +22,7 @@ set(DIRS
   approx_kfn
   amf
   cf
+  dbscan
   decision_stump
   decision_tree
   det
