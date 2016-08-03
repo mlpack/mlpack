@@ -121,6 +121,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
   }
   else
   {
+    assignments[index] = currentCluster;
+
     // New cluster.
     for (size_t j = 0; j < neighbors[index].size(); ++j)
     {
