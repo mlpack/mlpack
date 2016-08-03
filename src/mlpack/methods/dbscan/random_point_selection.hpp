@@ -27,18 +27,17 @@ class RandomPointSelection
     const size_t index = math::RandInt(max);
 
     // Select the index'th unvisited point.
-    size_t i = 0;
     size_t found = 0;
     for (size_t i = 0; i < unvisited.size(); ++i)
     {
       if (unvisited[i])
         ++found;
 
-      if (found == index)
-        break;
+      if (found > index)
+        return i;
     }
 
-    return i;
+    return 0; // Not sure if it is possible to get here.
   }
 };
 
