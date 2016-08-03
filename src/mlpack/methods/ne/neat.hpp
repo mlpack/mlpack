@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <numeric>
+#include <algorithm>
 
 #include <mlpack/core.hpp>
 
@@ -38,6 +39,16 @@ struct NeuronInnovation {
 };
 
 /**
+ * This is enumeration of link types.
+ */
+enum LinkType {
+  FORWARD_LINK = 0,
+  BACKWARD_LINK,
+  RECURRENT_LINK,
+  BIAS_LINK
+};
+
+/**
  * This class implements  NEAT algorithm.
  */
 template<typename TaskType>
@@ -60,9 +71,10 @@ class NEAT {
     aMutateWeightProb = params.aMutateWeightProb;
     aPerturbWeightProb = params.aPerturbWeightProb;
     aMutateWeightSize = params.aMutateWeightSize;
-    aMutateAddLinkProb = params.aMutateAddLinkProb;
+    aMutateAddForwardLinkProb = params.aMutateAddForwardLinkProb;
+    aMutateAddBackwardLinkProb = params.aMutateAddBackwardLinkProb;
     aMutateAddRecurrentLinkProb = params.aMutateAddRecurrentLinkProb;
-    aMutateAddLoopLinkProb = params.aMutateAddLoopLinkProb;
+    aMutateAddBiasLinkProb = params.aMutateAddBiasLinkProb;
     aMutateAddNeuronProb = params.aMutateAddNeuronProb;
     aMutateEnabledProb = params.aMutateEnabledProb;
     aMutateDisabledProb = params.aMutateDisabledProb;
@@ -125,32 +137,81 @@ class NEAT {
 
   // Mutate: add new link to genome.
   void MutateAddLink(Genome& genome,
-                     double mutateAddLinkProb,
-                     double mutateAddRecurrentLinkProb,
-                     double mutateAddLoopLinkProb) {
+                     LinkType linkType,
+                     double mutateAddLinkProb) {
     // Whether mutate or not.
     double p = mlpack::math::Random();
     if (p > mutateAddLinkProb) return;
 
     if (genome.aNeuronGenes.size() == 0) return;
 
-    // Select from neuron
-    ssize_t fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
-    ssize_t fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+    // Select from neuron and to neuron.
+    ssize_t fromNeuronIdx = -1;
+    ssize_t fromNeuronId = -1;
+    ssize_t toNeuronIdx = -1;
+    ssize_t toNeuronId = -1;
 
-    // Select to neuron which cannot be input.
-    ssize_t toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
-    ssize_t toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+    switch (linkType) {
+      case FORWARD_LINK:
+        // Select from neuron.
+        fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
+        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
 
-    // Handle same depth connection, recurrent connection and loop connection.
-    if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth()) {
-      return;
-    } else if (fromNeuronId == toNeuronId) {
-      p = mlpack::math::Random();
-      if (p >= mutateAddRecurrentLinkProb) return;
-    } else if (genome.aNeuronGenes[fromNeuronIdx].Depth() > genome.aNeuronGenes[toNeuronIdx].Depth()) {
-      p = mlpack::math::Random();
-      if (p >= mutateAddLoopLinkProb) return;
+        // Select to neuron which cannot be input.
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
+        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+
+        // Don't allow same depth connection.
+        if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth()) {
+          return;
+        }
+
+        // Swap if backward.
+        if (genome.aNeuronGenes[fromNeuronIdx].Depth() > genome.aNeuronGenes[toNeuronIdx].Depth()) {
+          std::swap(fromNeuronIdx, toNeuronIdx);
+          std::swap(fromNeuronId, toNeuronId);
+        }
+
+        break;
+      case BACKWARD_LINK:
+        // Select from neuron.
+        fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
+        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+
+        // Select to neuron which cannot be input.
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
+        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+
+        // Don't allow same depth connection.
+        if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth()) {
+          return;
+        }
+
+        // Swap if forward.
+        if (genome.aNeuronGenes[fromNeuronIdx].Depth() < genome.aNeuronGenes[toNeuronIdx].Depth()) {
+          std::swap(fromNeuronIdx, toNeuronIdx);
+          std::swap(fromNeuronId, toNeuronId);
+        }
+
+        break;
+      case RECURRENT_LINK:
+        // Select recurrent neuron.
+        fromNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size());
+        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+        toNeuronIdx = fromNeuronIdx;
+        toNeuronId = fromNeuronId;
+        break;
+      case BIAS_LINK:
+        // Set from neuron as the BIAS neuron.
+        fromNeuronIdx = genome.NumInput() - 1;
+        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+
+        // Select to neuron which cannot be input.
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
+        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+        break;
+      default:
+        return;
     }
 
     // Check link already exist or not.
@@ -607,11 +668,38 @@ class NEAT {
     // Mutate weights.
     MutateWeight(genome, aMutateWeightProb, aPerturbWeightProb, aMutateWeightSize);
 
-    // Mutate add link.
-    double p = aMutateAddLinkProb;
+    // Mutate add forward link.
+    double p = aMutateAddForwardLinkProb;
     while (p > 0) {  // so p can be bigger than 1 and mutate can happen multiple times.
       if (mlpack::math::Random() < p) {
-        MutateAddLink(genome, aMutateAddLinkProb, aMutateAddRecurrentLinkProb, aMutateAddLoopLinkProb);
+        MutateAddLink(genome, FORWARD_LINK, aMutateAddForwardLinkProb);
+      }
+      --p;
+    }
+
+    // Mutate add backward link.
+    p = aMutateAddBackwardLinkProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateAddLink(genome, BACKWARD_LINK, aMutateAddBackwardLinkProb);
+      }
+      --p;
+    }
+
+    // Mutate add recurrent link.
+    p = aMutateAddRecurrentLinkProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateAddLink(genome, RECURRENT_LINK, aMutateAddRecurrentLinkProb);
+      }
+      --p;
+    }
+
+    // Mutate add bias link.
+    p = aMutateAddBiasLinkProb;
+    while (p > 0) {
+      if (mlpack::math::Random() < p) {
+        MutateAddLink(genome, BIAS_LINK, aMutateAddBiasLinkProb);
       }
       --p;
     }
@@ -855,14 +943,17 @@ class NEAT {
   // The Gaussian noise variance when mutating genome weights.
   double aMutateWeightSize;
 
-  // Probability to add link to genome.
-  double aMutateAddLinkProb;
+  // Probability to add a forward link
+  double aMutateAddForwardLinkProb;
+
+  // Probability to add a backward link.
+  double aMutateAddBackwardLinkProb;
 
   // Probability to add a recurrent link.
   double aMutateAddRecurrentLinkProb;
 
-  // Probability to add a loop link.
-  double aMutateAddLoopLinkProb;
+  // Probability to add a bias link.
+  double aMutateAddBiasLinkProb;
 
   // Probability to add neuron to genome.
   double aMutateAddNeuronProb;
