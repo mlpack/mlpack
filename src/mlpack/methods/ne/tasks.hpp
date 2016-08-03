@@ -9,6 +9,8 @@
 
 #include <cstddef>
 #include <cmath>
+#include <queue>
+#include <boost/math/special_functions/sign.hpp>
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
@@ -16,6 +18,7 @@
 #include "link_gene.hpp"
 #include "neuron_gene.hpp"
 #include "genome.hpp"
+#include "utils.hpp"
 
 namespace mlpack {
 namespace ne {
@@ -197,6 +200,360 @@ class TaskCartPole {
     if (fitness == 0) {
       success = true;
     }
+    return fitness;
+  }
+
+  // Whether task success or not.
+  bool Success() {
+    return success;
+  }
+
+};
+
+/**
+ * This class defines task double pole balancing.
+ */
+class TaskDoublePole {
+ public:
+  // Magnitude of control force.
+  double F;
+
+  // Gravity.
+  double g;
+
+  // Half length of pole 1.
+  double l_1;
+
+  // Half length of pole 2.
+  double l_2;
+
+  // Mass of pole 1.
+  double mp_1;
+
+  // Mass of pole 2.
+  double mp_2;
+
+  // Mass of cart.
+  double mc;
+
+  // The coefficient of friction for the hinge. (We set the same for both hinge)
+  double mup;
+  
+  // The coefficient of friction for the cart on the track.
+  double muc;
+
+  // Track limits.
+  double track_limit;
+
+  // Angle limits.
+  double theta_limit;
+
+  // Integration time stamp.
+  double tau;
+
+  // Number of steps in each trial.
+  ssize_t num_step;
+
+  // Random init state or not.
+  bool random_init_state;
+
+  // Markov or not (Markov means know velocity).
+  bool markov;
+
+  // Task success or not.
+  bool success;
+
+  // Default constructor.
+  TaskDoublePole() {
+    track_limit = 2.4;
+    theta_limit = 36 * M_PI / 180.0;  
+    F = 10.0;
+    g = -9.8;
+    l_1 = 0.5;
+    l_2 = 0.05;
+    mc = 1.0;
+    mp_1 = 0.1;
+    mp_2 = 0.01;
+    mup = 0.000002;
+    muc = 0;
+    num_step = 100000;
+    tau = 0.01;
+    random_init_state = false;
+    markov = true;
+    success = false;
+  }
+
+  // Parametric constructor.
+  TaskDoublePole(bool is_markov) {
+    track_limit = 2.4;
+    theta_limit = 36 * M_PI / 180.0;  
+    F = 10.0;
+    g = -9.8;
+    l_1 = 0.5;
+    l_2 = 0.05;
+    mc = 1.0;
+    mp_1 = 0.1;
+    mp_2 = 0.01;
+    mup = 0.000002;
+    muc = 0;
+    num_step = 100000;
+    tau = 0.01;
+    random_init_state = false;
+    markov = is_markov;
+    success = false;
+  }
+
+  /**
+   * Calculate derivatives of 6 states.
+   * state = [x, x', theta1, theta1', theta2, theta2'].
+   * state_dot = [x', x'', theta1', theta1'', theta', theta2'']
+   * The result will be used in RK4.
+   */
+  void step(double action, const std::vector<double>& state, std::vector<double>& state_dot) {
+    // Pre-calculate some value to accelerate program.
+    double force = action * F;  // action is -1 or 1.
+    double costheta_1 = cos(state[2]);
+    double sintheta_1 = sin(state[2]);
+    double gsintheta_1 = g * sintheta_1;
+    double costheta_2 = cos(state[4]);
+    double sintheta_2  = sin(state[4]);
+    double gsintheta_2 = g * sintheta_2;
+    double ml_1   = mp_1 * l_1;
+    double ml_2   = mp_2 * l_2;
+    double temp_1 = mup * state[3] / ml_1;
+    double temp_2 = mup * state[5] / ml_2;
+    
+    double fi_1 = (ml_1 * state[3] * state[3] * sintheta_1) +
+                  (0.75 * mp_1 * costheta_1 * (temp_1 + gsintheta_1));
+    double fi_2 = (ml_2 * state[5] * state[5] * sintheta_2) +
+                  (0.75 * mp_2 * costheta_2 * (temp_2 + gsintheta_2));
+
+    double mi_1 = mp_1 * (1 - (0.75 * costheta_1 * costheta_1));
+    double mi_2 = mp_2 * (1 - (0.75 * costheta_2 * costheta_2));
+    
+    // Calculate derivatives of states.
+    state_dot[0] = state[1];
+    state_dot[2] = state[3];
+    state_dot[4] = state[5];
+    state_dot[1] = (force - muc * sgn<double>(state[1]) + fi_1 + fi_2) / (mi_1 + mi_2 + mc);
+    state_dot[3] = -0.75 * (state_dot[1] * costheta_1 + gsintheta_1 + temp_1) / l_1;
+    state_dot[5] = -0.75 * (state_dot[1] * costheta_2 + gsintheta_2 + temp_2) / l_2;
+  }
+
+  /**
+   * Use Runge-Kutta 4th order methods to update states.
+   */
+  void RK4(double action, std::vector<double>& state, const std::vector<double>& state_dot) {
+    double h2 = 0.5 * tau;
+    double h6 = tau / 6.0;
+    std::vector<double> dym(6);
+    std::vector<double> dyt(6);
+    std::vector<double> yt(6);
+
+    for (int i = 0; i < 6; ++i) { 
+      yt[i] = state[i] + h2 * state_dot[i];
+    }
+
+    step(action, yt, dyt);
+
+    for (int i = 0; i < 6; ++i) {
+      yt[i] = state[i]+ h2 * dyt[i];
+    }
+
+    step(action, yt, dym);
+
+    for (int i = 0; i < 6; ++i) {
+      yt[i] = state[i] + tau * dym[i];
+      dym[i] += dyt[i];
+    }
+
+    step(action, yt, dyt);
+
+    for (int i = 0; i < 6; ++i) {
+      state[i] += h6 * (state_dot[i] + dyt[i] + 2.0 * dym[i]);
+    }
+  }
+
+  /**
+   * Run action for a step to update state.
+   */
+  void Action(double action, std::vector<double>& state, std::vector<double>& state_dot) {
+    for (int i = 0; i < 2; ++i) {
+      step(action, state, state_dot);
+      RK4(action, state, state_dot);
+    }
+  }
+
+  // Initialize double pole balancing system states.
+  void InitState(bool rand, std::vector<double>& state) {
+    state.clear();
+
+    if (rand) {
+      state.push_back(mlpack::math::RandInt(0, 5000) / 1000.0 - 2.4);  // cart's initial position x
+      state.push_back(mlpack::math::RandInt(0, 2000) / 1000.0 - 1.0);  // cart's initial speed x_dot
+      state.push_back(mlpack::math::RandInt(0, 400) / 1000.0 - 0.2);  // pole_1 initial angle theta1
+      state.push_back(mlpack::math::RandInt(0, 400) / 1000.0 - 0.2);  // pole_1 initial angular velocity theta1_dot
+      state.push_back(mlpack::math::RandInt(0, 3000) / 1000.0 - 0.4);  // pole_2 initial angle theta2
+      state.push_back(mlpack::math::RandInt(0, 3000) / 1000.0 - 0.4);  // pole_2 initial angular velocity theta2_dot
+    } else {
+      state.push_back(0);
+      state.push_back(0);
+      state.push_back(0.07);  // set pole_1 to one degree (in radians)
+      state.push_back(0);
+      state.push_back(0);
+      state.push_back(0);
+    }
+  }
+
+  // Whether cart outside bounds.
+  bool OutsideBounds(std::vector<double>& state) {
+    return (abs(state[0]) >= track_limit ||
+            abs(state[2]) >= theta_limit ||
+            abs(state[4]) >= theta_limit);
+  }
+
+  // Markovian: velocity information is provided to the network input.
+  double EvalMarkov(Genome& genome, size_t numStep) {
+    assert(genome.NumInput() == 7); // 6 state input + 1 bias.
+    assert(genome.NumOutput() == 1);
+    
+    std::vector<double> state(6);
+    InitState(random_init_state, state);
+    std::vector<double> state_dot(6);
+
+    size_t step = 0;
+    while (step < numStep) {
+      // Input normalized states to genome and get output action.
+      std::vector<double> inputs = { state[0] / 4.80, state[1] / 2.00, state[2] / 0.52,
+                                     state[3] / 2.00, state[4] / 0.52, state[5] / 2.00,
+                                     1 };
+      genome.Activate(inputs);
+      std::vector<double> output;
+      genome.Output(output);    
+      double action = output[0];
+      if (output[0] < 0.5) {
+        action = -1;
+      } else {
+        action = 1;
+      }
+
+      // Update states with action: advances one time step.
+      Action(action, state, state_dot);
+      if (OutsideBounds(state)) break;
+      step += 1;
+    }
+
+    return step;
+  }
+
+  // Non-Markovian: no velocity is provided.
+  double EvalNonMarkov(Genome& genome, size_t numStep) {
+    assert(genome.NumInput() == 4); // 3 state input + 1 bias. No velocity inputs.
+    assert(genome.NumOutput() == 1);
+    
+    std::vector<double> state(6);
+    InitState(random_init_state, state);
+    std::vector<double> state_dot(6);
+
+    std::queue<double> lastValues;
+
+    size_t step = 0;
+    while (step < numStep) {
+      // Input normalized states to genome and get output action.
+      std::vector<double> inputs = { state[0] / 4.80, state[2] / 0.52, state[4] / 0.52, 1 };
+      genome.Activate(inputs);
+      std::vector<double> output;
+      genome.Output(output);    
+      double action = output[0];
+      if (output[0] < 0.5) {
+        action = -1;
+      } else {
+        action = 1;
+      }
+
+      // Update states with action: advances one time step.
+      Action(action, state, state_dot);
+      if (OutsideBounds(state)) break;
+
+      // To calculate Gruau's fitness.
+      double value = abs(state[0]) + abs(state[1]) + abs(state[2]) + abs(state[3]);
+      lastValues.push(value);
+      if (lastValues.size() == 101) lastValues.pop();  // keep last 100 values.
+
+      step += 1;
+    }
+
+    // Calculate Gruau's fitness.
+    double score;
+    if (step >= 100) {
+      double jiggle = 0;
+      while (!lastValues.empty()) {
+        jiggle += lastValues.front();
+        lastValues.pop();
+      }
+
+      score = 0.1 * step / 1000.0 + 0.9 * 0.75 / jiggle;
+    } else {
+      score = 0.1 * step / 1000.0;
+    }
+    
+    return score;
+  }
+
+  // Generalization test. Test 625 different initial states.
+  // Return how many initials states can be balanced.
+  int GeneralizationTest(Genome& genome) {
+    std::vector<double> stateEvals = {0.05, 0.25, 0.5, 0.75, 0.95};
+
+    int balanced = 0;
+    int testNumber = 0;
+    for (int i1 = 0; i1 < 5; ++i1) {
+      for (int i2 = 0; i2 < 5; ++i2) {
+        for (int i3 = 0; i3 < 5; ++i3) {
+          for (int i4 = 0; i4 < 5; ++i4) {
+            double x = stateEvals[i1] * 4.32 - 2.16;
+            double x_dot = stateEvals[i2] * 2.70 - 1.35;
+            double theta1 = stateEvals[i3] * 0.12566304 - 0.06283152;
+            double theta1_dot = stateEvals[i4] * 0.30019504 - 0.15009752;
+            std::vector<double> state = {x, x_dot, theta1, theta1_dot, 0, 0};
+
+            testNumber += 1;
+
+            double score = EvalNonMarkov(genome, 1000);
+            if (score > 999) balanced += 1;
+          }
+        }
+      }
+    }
+
+    return balanced;
+  }
+
+  // Evaluate fitness of a genome.
+  double EvalFitness(Genome& genome) {
+    double fitness = DBL_MAX;
+
+    if (markov) {
+      fitness = EvalMarkov(genome, 100000);
+    } else {
+      double score = EvalNonMarkov(genome, 100000);
+      fitness = score;
+      
+      // If passed 100000 step testing, continue with generalization testing.
+      if (score > 99999) {
+        int balanced = GeneralizationTest(genome);
+
+        if (balanced > 200) {
+          fitness = 100000;
+        }
+      }
+    }
+
+    if (fitness == 100000) {
+      success = true;
+    }
+
+    fitness = -fitness;
     return fitness;
   }
 

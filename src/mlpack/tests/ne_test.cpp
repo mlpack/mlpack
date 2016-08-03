@@ -415,6 +415,182 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
 }
 
 /**
+ * Test NEAT by Markov Double Pole task.
+ */
+BOOST_AUTO_TEST_CASE(NENeatMarkovDoublePoleTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set parameters of cart pole task.
+  bool markov = true;
+
+  // Construct task instance.
+  TaskDoublePole task(markov);
+
+  // Set parameters of NEAT algorithm.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 500;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
+  params.aCompatThreshold = 1.0;
+  params.aStaleAgeThreshold = 15;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.5;
+  params.aMutateWeightProb = 0.2;
+  params.aPerturbWeightProb = 0.9;
+  params.aMutateWeightSize = 0.1;
+  params.aMutateAddLinkProb = 0.8;
+  params.aMutateAddRecurrentLinkProb = 0;
+  params.aMutateAddLoopLinkProb = 0;
+  params.aMutateAddNeuronProb = 0.1;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
+  params.aNumSpeciesThreshold = 10;
+
+  // Set seed genome for Markov double pole task.
+  ssize_t id = 0;
+  ssize_t numInput = 7;
+  ssize_t numOutput = 1;
+  double fitness = DBL_MAX;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene3(2, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene4(3, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene5(4, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene6(5, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene biasGene(6, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(7, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(8, HIDDEN, SIGMOID, 0.5, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(inputGene3);
+  neuronGenes.push_back(inputGene4);
+  neuronGenes.push_back(inputGene5);
+  neuronGenes.push_back(inputGene6);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 8, 0, 0, true);
+  LinkGene link2(1, 8, 1, 0, true);
+  LinkGene link3(2, 8, 2, 0, true);
+  LinkGene link4(3, 8, 3, 0, true);
+  LinkGene link5(4, 8, 4, 0, true);
+  LinkGene link6(5, 8, 5, 0, true);
+  LinkGene link7(6, 8, 6, 0, true);
+  LinkGene link8(8, 7, 7, 0, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+  linkGenes.push_back(link6);
+  linkGenes.push_back(link7);
+  linkGenes.push_back(link8);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             fitness);
+
+  // Construct NEAT instance.
+  NEAT<TaskDoublePole> neat(task, seedGenome, params);
+
+  // Evolve. 
+  neat.Evolve();
+}
+
+/**
+ * Test NEAT by Non-Markov Double Pole task.
+ */
+BOOST_AUTO_TEST_CASE(NENeatNonMarkovDoublePoleTest)
+{
+  mlpack::math::RandomSeed(1);
+
+  // Set parameters of cart pole task.
+  bool markov = false;
+
+  // Construct task instance.
+  TaskDoublePole task(markov);
+
+  // Set parameters of NEAT algorithm.
+  Parameters params;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 500;
+  params.aCoeffDisjoint = 2.0;
+  params.aCoeffWeightDiff = 0.4;
+  params.aCompatThreshold = 1.0;
+  params.aStaleAgeThreshold = 15;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.5;
+  params.aMutateWeightProb = 0.2;
+  params.aPerturbWeightProb = 0.9;
+  params.aMutateWeightSize = 0.1;
+  params.aMutateAddLinkProb = 0.8;
+  params.aMutateAddRecurrentLinkProb = 0;
+  params.aMutateAddLoopLinkProb = 0;
+  params.aMutateAddNeuronProb = 0.1;
+  params.aMutateEnabledProb = 0.2;
+  params.aMutateDisabledProb = 0.2;
+  params.aNumSpeciesThreshold = 10;
+
+  // Set seed genome for Markov double pole task.
+  ssize_t id = 0;
+  ssize_t numInput = 4;
+  ssize_t numOutput = 1;
+  double fitness = DBL_MAX;
+  std::vector<NeuronGene> neuronGenes;
+  std::vector<LinkGene> linkGenes;
+
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene inputGene3(2, INPUT, LINEAR, 0, 0, 0);
+  NeuronGene biasGene(3, BIAS, LINEAR, 0, 0, 0);
+  NeuronGene outputGene(4, OUTPUT, SIGMOID, 1, 0, 0);
+  NeuronGene hiddenGene(5, HIDDEN, SIGMOID, 0.5, 0, 0);
+
+  neuronGenes.push_back(inputGene1);
+  neuronGenes.push_back(inputGene2);
+  neuronGenes.push_back(inputGene3);
+  neuronGenes.push_back(biasGene);
+  neuronGenes.push_back(outputGene);
+  neuronGenes.push_back(hiddenGene);
+
+  LinkGene link1(0, 5, 0, 0, true);
+  LinkGene link2(1, 5, 1, 0, true);
+  LinkGene link3(2, 5, 2, 0, true);
+  LinkGene link4(3, 5, 3, 0, true);
+  LinkGene link5(5, 4, 4, 0, true);
+
+  linkGenes.push_back(link1);
+  linkGenes.push_back(link2);
+  linkGenes.push_back(link3);
+  linkGenes.push_back(link4);
+  linkGenes.push_back(link5);
+
+  Genome seedGenome = Genome(0, 
+                             neuronGenes,
+                             linkGenes,
+                             numInput,
+                             numOutput,
+                             fitness);
+
+  // Construct NEAT instance.
+  NEAT<TaskDoublePole> neat(task, seedGenome, params);
+
+  // Evolve. 
+  neat.Evolve();
+}
+
+/**
  * Test NEAT by Mountain Car task.
  */
 BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)

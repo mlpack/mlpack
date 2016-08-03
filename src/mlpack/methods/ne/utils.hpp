@@ -21,6 +21,7 @@ namespace ne {
 /**
  * Definitions of different activate functions.
  */
+
 inline double sigmoid(double x) {  // TODO: make it faster. More parameters?
   return 1.0 / (1.0 + exp(-x));
 }
@@ -70,6 +71,15 @@ double RandFloat() {
 double RandFloat(double x, double y) {
   boost::random::uniform_real_distribution<> dist(x, y);
   return dist(rng);
+}
+
+/**
+ * Definitions of other functions.
+ */
+
+// Return the sign of a number.
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
 }
 
 }  // namespace mlpack
