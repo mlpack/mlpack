@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(OneClusterTest)
 {
   // Make sure that if we have points in the unit box, and if we set epsilon
   // large enough, all points end up as in one cluster.
-  arma::mat points(10, 1000, arma::fill::randu);
+  arma::mat points(10, 200, arma::fill::randu);
 
   DBSCAN<> d(2.0, 2);
 
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(OneClusterTest)
  */
 BOOST_AUTO_TEST_CASE(TinyEpsilonTest)
 {
-  arma::mat points(10, 1000, arma::fill::randu);
+  arma::mat points(10, 200, arma::fill::randu);
 
   DBSCAN<> d(1e-50, 2);
 
