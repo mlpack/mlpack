@@ -447,7 +447,7 @@ class TaskDoublePole {
   }
 
   // Non-Markovian: no velocity is provided.
-  double EvalNonMarkov(Genome& genome, size_t numStep) {
+  double EvalNonMarkov(Genome& genome, size_t numStep, double& GuruFitness) {
     assert(genome.NumInput() == 4); // 3 state input + 1 bias. No velocity inputs.
     assert(genome.NumOutput() == 1);
     
@@ -492,12 +492,12 @@ class TaskDoublePole {
         lastValues.pop();
       }
 
-      score = 0.1 * step / 1000.0 + 0.9 * 0.75 / jiggle;
+      GuruFitness = 0.1 * step / 1000.0 + 0.9 * 0.75 / jiggle;  // Currently, it is useless.
     } else {
-      score = 0.1 * step / 1000.0;
+      GuruFitness = 0.1 * step / 1000.0;
     }
     
-    return score;
+    return step;
   }
 
   // Generalization test. Test 625 different initial states.
@@ -519,7 +519,8 @@ class TaskDoublePole {
 
             testNumber += 1;
 
-            double score = EvalNonMarkov(genome, 1000);
+            double GuruFitness = 0;
+            double score = EvalNonMarkov(genome, 1000, GuruFitness);
             if (score > 999) balanced += 1;
           }
         }
@@ -536,7 +537,8 @@ class TaskDoublePole {
     if (markov) {
       fitness = EvalMarkov(genome, 100000);
     } else {
-      double score = EvalNonMarkov(genome, 100000);
+      double GuruFitness = 0;
+      double score = EvalNonMarkov(genome, 100000, GuruFitness);
       fitness = score;
       
       // If passed 100000 step testing, continue with generalization testing.
