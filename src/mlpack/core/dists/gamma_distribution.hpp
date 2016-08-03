@@ -89,8 +89,9 @@ class GammaDistribution
      *    It will stop the approximation once the *change* in the value is 
      *    smaller than tol.
      */
-    void Train(const double logMeanx, const double meanLogx, 
-               const double meanx,
+    void Train(const arma::vec& logMeanx, 
+               const arma::vec& meanLogx, 
+               const arma::vec& meanx,
                const double tol = 1e-8);
 
     // Access to Gamma distribution parameters.

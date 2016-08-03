@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainStatisticsTest)
   const arma::vec meanLogx = arma::mean(arma::log(data), 1);
   const arma::vec meanx = arma::mean(data, 1);
   const arma::vec logMeanx = arma::log(meanx);
-  d2.Train(logMeanx(0), meanLogx(0), meanx(0));
+  d2.Train(logMeanx, meanLogx, meanx);
 
   BOOST_REQUIRE_CLOSE(d1.Alpha(0), d2.Alpha(0), 1e-5);
   BOOST_REQUIRE_CLOSE(d1.Beta(0), d2.Beta(0), 1e-5);
