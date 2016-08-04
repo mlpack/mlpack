@@ -28,7 +28,9 @@ class DBSCAN
    * @param minPoints Minimum number of points for each cluster.
    */
   DBSCAN(const double epsilon,
-         const size_t minPoints);
+         const size_t minPoints,
+         RangeSearchType rangeSearch = RangeSearchType(),
+         PointSelectionPolicy pointSelector = PointSelectionPolicy());
 
   template<typename MatType>
   size_t Cluster(const MatType& data,
@@ -46,10 +48,10 @@ class DBSCAN
                  arma::mat& centroids);
 
  private:
-  RangeSearchType rangeSearch;
-  PointSelectionPolicy pointSelector;
   double epsilon;
   size_t minPoints;
+  RangeSearchType rangeSearch;
+  PointSelectionPolicy pointSelector;
 
   template<typename MatType>
   size_t ProcessPoint(const MatType& data,
