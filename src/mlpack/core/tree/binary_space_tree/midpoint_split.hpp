@@ -67,23 +67,6 @@ class MidpointSplit
                         size_t& splitCol,
                         std::vector<size_t>& oldFromNew);
 
-  /**
-   * Determines the midpoint value in the dimension with maximum width.
-   *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the tree.
-   * @param points Vector of indexes of points to be considered.
-   * @param splitDimension This will be filled with the dimension the node is to
-   *    be split on.
-   * @param splitVal This will be filled with the mid point value of
-   *    splitDimension.
-   * @return Flag to determine if split is possible.
-   */
-  static bool SplitNode(const BoundType& bound,
-                        const MatType& data,
-                        const std::vector<size_t>& points,
-                        size_t& splitDimension,
-                        double& splitVal);
  private:
   /**
    * Reorder the dataset into two parts such that they lie on either side of
