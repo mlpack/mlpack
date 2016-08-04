@@ -50,4 +50,28 @@ BOOST_AUTO_TEST_CASE(TinyEpsilonTest)
     BOOST_REQUIRE_EQUAL(assignments[i], SIZE_MAX);
 }
 
+/**
+ * Check that outliers are properly labeled as noise.
+ */
+BOOST_AUTO_TEST_CASE(OutlierTest)
+{
+  arma::mat points(2, 200, arma::fill::randu);
+
+  // Add 3 outliers.
+  points.col(15) = arma::vec("10.3 1.6");
+  points.col(45) = arma::vec("-100 0.0");
+  points.col(101) = arma::vec("1.5 1.5");
+
+  DBSCAN<> d(0.1, 3);
+
+  arma::Row<size_t> assignments;
+  const size_t clusters = d.Cluster(points, assignments);
+
+  BOOST_REQUIRE_GT(clusters, 0);
+  BOOST_REQUIRE_EQUAL(assignments.n_elem, points.n_cols);
+  BOOST_REQUIRE_EQUAL(assignments[15], SIZE_MAX);
+  BOOST_REQUIRE_EQUAL(assignments[45], SIZE_MAX);
+  BOOST_REQUIRE_EQUAL(assignments[101], SIZE_MAX);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
