@@ -18,8 +18,14 @@ int main(int argc, char* argv[])
   // Generate a random point set.
   size_t N = 5000;
   size_t d = 10;
-  arma::mat A(d, N, arma::fill::randu);
-  LSHModel<> model(A, 0.7, 0.25, 2);
+  arma::mat rdata(d, N, arma::fill::randu);
+  LSHModel<> model(rdata, 0.7, 0.25, 2);
+
+  arma::mat qdata(d, 1, arma::fill::randu);
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  LSHSearch<> lsh = model.LSHObject(1, 1, 1.0, 99901, 500);
+  lsh.Search(qdata, 1, neighbors, distances);
 
   return 0;
 }

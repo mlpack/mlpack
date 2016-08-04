@@ -130,7 +130,7 @@ class LSHModel
     * @param secondHashSize The second level hash width.
     * @param bucketSize The second level bucket size.
     */
-   LSHSearch<SortPolicy>* LSHObject(
+   LSHSearch<SortPolicy> LSHObject(
        const size_t numProjIn = 0,
        const size_t numTablesIn = 0,
        const double hashWidthIn = 0.0,
@@ -281,8 +281,8 @@ class LSHModel
    //! Reference dataset.
    const arma::mat* referenceSet;
 
-   //! Vector of LSHSearch objects.
-   std::vector< LSHSearch<SortPolicy> > lshObjectVector;
+   //! LSHSearch Object Vector.
+   std::vector<LSHSearch<SortPolicy>> lshObjectVector;
 
    //! Statistic: average squared distance of points.
    double meanDist;

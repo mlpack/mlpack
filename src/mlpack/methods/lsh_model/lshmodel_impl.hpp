@@ -171,7 +171,7 @@ ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes,
 
 // Construct and return an LSH object.
 template <typename SortPolicy, typename ObjectiveFunction>
-LSHSearch<SortPolicy>* LSHModel<SortPolicy, ObjectiveFunction>::
+LSHSearch<SortPolicy> LSHModel<SortPolicy, ObjectiveFunction>::
 LSHObject(const size_t numProjIn,
           const size_t numTablesIn,
           const double hashWidthIn,
@@ -193,22 +193,12 @@ LSHObject(const size_t numProjIn,
   if (hashWidthOut == 0.0)
     hashWidthOut = this->hashWidth;
 
-  std::cout << *referenceSet;
-
-  //TODO This causes a bad_alloc... I'm doing something wrong with the
-  //referenceSet.
-  /*
-  // Construct an object and return it.
-  LSHSearch<>* lshObject = new LSHSearch<>(
-      *referenceSet, numProjOut, numTablesOut, hashWidthOut,
+  LSHSearch<> lsh(*referenceSet, numProjOut, numTablesOut, hashWidthOut,
       secondHashSize, bucketSize);
-  return lshObject;
-  */
 
-  LSHSearch<>* lshObject = new LSHSearch<>();
-  return lshObject;
+  lshObjectVector.push_back(lsh);
 
-
+  return lshObjectVector[lshObjectVector.size() - 1];
 }
 
 // Fit a curve to the data provided.
