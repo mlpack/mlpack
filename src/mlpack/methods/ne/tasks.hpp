@@ -484,7 +484,6 @@ class TaskDoublePole {
     }
 
     // Calculate Gruau's fitness.
-    double score;
     if (step >= 100) {
       double jiggle = 0;
       while (!lastValues.empty()) {

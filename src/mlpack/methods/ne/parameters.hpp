@@ -55,7 +55,7 @@ class Parameters {
   // Percentage to remove in each species.
   double aCullSpeciesPercentage;
 
-  // Probability to mutate a genome's weight
+  // Probability to mutate a genome's weight.
   double aMutateWeightProb;
 
   // Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
@@ -64,7 +64,7 @@ class Parameters {
   // The Gaussian noise variance when mutating genome weights.
   double aMutateWeightSize;
 
-  // Probability to add a forward link
+  // Probability to add a forward link.
   double aMutateAddForwardLinkProb;
 
   // Probability to add a backward link.

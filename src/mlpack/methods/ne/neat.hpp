@@ -839,6 +839,7 @@ class NEAT {
   void Evaluate() {
     for (ssize_t i=0; i<aPopulation.aSpecies.size(); ++i) {
       for (ssize_t j=0; j<aPopulation.aSpecies[i].aGenomes.size(); ++j) {
+        aPopulation.aSpecies[i].aGenomes[j].Flush();
         double fitness = aTask.EvalFitness(aPopulation.aSpecies[i].aGenomes[j]);
         aPopulation.aSpecies[i].aGenomes[j].Fitness(fitness);
       }
@@ -934,7 +935,7 @@ class NEAT {
   // Percentage to remove in each species.
   double aCullSpeciesPercentage;
 
-  // Probability to mutate a genome's weight
+  // Probability to mutate a genome's weight.
   double aMutateWeightProb;
 
   // Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
@@ -943,7 +944,7 @@ class NEAT {
   // The Gaussian noise variance when mutating genome weights.
   double aMutateWeightSize;
 
-  // Probability to add a forward link
+  // Probability to add a forward link.
   double aMutateAddForwardLinkProb;
 
   // Probability to add a backward link.
