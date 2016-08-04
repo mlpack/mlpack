@@ -19,8 +19,8 @@ namespace mlpack {
 namespace neighbor {
 
 // Constructor sets variables and trains the object.
-template <typename SortPolicy>
-LSHModel<SortPolicy>::LSHModel(const arma::mat &referenceSet,
+template <typename SortPolicy, typename ObjectiveFunction>
+LSHModel<SortPolicy, ObjectiveFunction>::LSHModel(const arma::mat &referenceSet,
                    const double minRecall,
                    const double sampleSize,
                    const size_t k)
@@ -33,16 +33,16 @@ LSHModel<SortPolicy>::LSHModel(const arma::mat &referenceSet,
 }
 
 // Destructor must de-allocate any referenceSet and LSHSearch objects we own.
-template <typename SortPolicy>
-LSHModel<SortPolicy>::~LSHModel()
+template <typename SortPolicy, typename ObjectiveFunction>
+LSHModel<SortPolicy, ObjectiveFunction>::~LSHModel()
 {
   if (ownsSet)
     delete referenceSet;
 };
 
 // Trains the object.
-template <typename SortPolicy>
-void LSHModel<SortPolicy>::Train(const arma::mat &referenceSet,
+template <typename SortPolicy, typename ObjectiveFunction>
+void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSet,
                      const double minRecall,
                      const double sampleSize,
                      const size_t k)
@@ -106,6 +106,7 @@ void LSHModel<SortPolicy>::Train(const arma::mat &referenceSet,
 
   // Number of samples to create for modeling the Gamma Distributions
   size_t regressionExamples = 50; // TODO: parameter?
+
   // Number of points to use as queries.
   size_t numAnchors = (size_t) std::round(0.1 * numSamples);
   arma::mat queryMat = sampleSet.cols(0, numAnchors - 1);
@@ -140,9 +141,10 @@ void LSHModel<SortPolicy>::Train(const arma::mat &referenceSet,
   Timer::Stop("neighbors_distances");
 
   // Step 5. Model the arithmetic and geometric mean according to the paper.
-  // This will produce 6 parameters (aE, bE, cE, aG, bG, cG) for each value of k
-  // from 1 to the k specified by the user.
-  ApproximateKNNStatistics(referenceSizes, Ek, Gk);
+  // This will produce 6 parameters (aE, bE, cE, aG, bG, cG).
+  // Vector of k values.
+  arma::Col<size_t> kValues = arma::linspace<arma::Col<size_t>>(1, k, k);
+  ApproximateKNNStatistics(referenceSizes, kValues, Ek, Gk);
 
   // Step 6. Fit Gamma distributions to pairwise distances and kNN distances,
   // generated or estimated in steps 3 and 5.
@@ -151,38 +153,30 @@ void LSHModel<SortPolicy>::Train(const arma::mat &referenceSet,
   // keeping recall above minimum.
 }
 
-// Fit two predictors for each k.
-template <typename SortPolicy>
-void LSHModel<SortPolicy>::ApproximateKNNStatistics(
-    arma::Col<size_t> referenceSizes,
-    arma::mat Ek,
-    arma::mat Gk)
+// Fit two predictors, one for arithmetic mean E and one for geometric mean G.
+template <typename SortPolicy, typename ObjectiveFunction>
+void LSHModel<SortPolicy, ObjectiveFunction>::
+ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes,
+                         const arma::Col<size_t>& kValues,
+                         const arma::mat& Ek,
+                         const arma::mat& Gk)
 {
-  size_t k = Ek.n_cols;
-
-  // Clear vectors and set them to correct size.
-  aMeanPredictors.clear();
-  gMeanPredictors.clear();
-  aMeanPredictors.resize(k);
-  gMeanPredictors.resize(k);
-
-  // Fit two predictors per value of k.
-  for (size_t i = 0; i < k; ++i)
-  {
-    aMeanPredictors[i] = DistanceStatisticPredictor(
-        referenceSizes, Ek.col(i), i);
-    gMeanPredictors[i] = DistanceStatisticPredictor(
-        referenceSizes, Gk.col(i), i);
-  }
+  double aError = aMeanPredictor.Train(referenceSizes, kValues, Ek);
+  Log::Info << "L_BFGS Converged for arithmetic mean with error "
+    << aError << "." << std::endl;
+  double gError = gMeanPredictor.Train(referenceSizes, kValues, Gk);
+  Log::Info << "L_BFGS Converged for geometric mean with error "
+    << gError << "." << std::endl;
 }
 
 // Construct and return an LSH object.
-template <typename SortPolicy>
-LSHSearch<SortPolicy>* LSHModel<SortPolicy>::LSHObject(const size_t numProjIn,
-                                           const size_t numTablesIn,
-                                           const double hashWidthIn,
-                                           const size_t secondHashSize,
-                                           const size_t bucketSize)
+template <typename SortPolicy, typename ObjectiveFunction>
+LSHSearch<SortPolicy>* LSHModel<SortPolicy, ObjectiveFunction>::
+LSHObject(const size_t numProjIn,
+          const size_t numTablesIn,
+          const double hashWidthIn,
+          const size_t secondHashSize,
+          const size_t bucketSize)
 {
   // Values for the object to be created with (specified by user or default).
   size_t numProjOut = numProjIn;
@@ -218,22 +212,34 @@ LSHSearch<SortPolicy>* LSHModel<SortPolicy>::LSHObject(const size_t numProjIn,
 }
 
 // Fit a curve to the data provided.
-template<typename SortPolicy>
-void LSHModel<SortPolicy>::DistanceStatisticPredictor::Train(
+template<typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::DistanceStatisticPredictor::Train(
     const arma::Col<size_t>& inputSize,
-    const arma::vec& statistic)
+    const arma::Col<size_t>& kValues,
+    const arma::mat& statistic)
 {
-  Log::Warn << "Not implemented yet! " << std::endl;
+  // Objective function for fitting the E(x, k) curve to the statistic.
+  ObjectiveFunction f(inputSize, kValues, statistic);
 
-  alpha = beta = gamma = 1;
-  beta++;
-  alpha+=2;
+  // Optimizer. Use L_BFGS (TODO: Make this a template parameter?)
+  mlpack::optimization::L_BFGS<ObjectiveFunction> opt(f);
+
+  // Get an initial point from the optimizer.
+  arma::mat currentPoint = f.GetInitialPoint();
+  double result = opt.Optimize(currentPoint);
+
+  // Optimizer is done - set alpha, beta, gamma.
+  this->alpha = currentPoint(0, 0);
+  this->beta = currentPoint(1, 0);
+  this->gamma = currentPoint(2, 0);
+
+  return result;
 }
 
 // Serialize the object and save to a file.
-template <typename SortPolicy>
+template <typename SortPolicy, typename ObjectiveFunction>
 template<typename Archive>
-void LSHModel<SortPolicy>::Serialize(Archive& ar)
+void LSHModel<SortPolicy, ObjectiveFunction>::Serialize(Archive& ar)
 {
   //TODO: implement this.
 }

@@ -42,13 +42,21 @@
 
 // For returning LSHSearch objects.
 #include <mlpack/methods/lsh/lsh_search.hpp>
+// For template parameters and kNN search (if nescessary).
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
+// For curve fitting.
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+// Default objective function.
+#include "objectivefunction.hpp"
 
 namespace mlpack {
 namespace neighbor {
 
-template <typename SortPolicy = NearestNeighborSort>
+template <
+    typename SortPolicy = NearestNeighborSort,
+    typename ObjectiveFunction = DefaultObjectiveFunction
+      >
 class LSHModel
 {
  public:
@@ -154,7 +162,7 @@ class LSHModel
     * This is a helper class that uses the function a * k^b * N^c for some
     * parameters a, b, c that have been fit to either predict the arithmetic or
     * geometric mean of the squared distance of a point to its k-nearest
-    * neighbor, given some dataset size N.
+    * neighbor, given some dataset size N and its k-nearest neighbor.
     */
    class DistanceStatisticPredictor
    {
@@ -162,12 +170,20 @@ class LSHModel
       //! Empty constructor.
       DistanceStatisticPredictor() { };
 
-      //! Construct with training set.
+      /** 
+       * Function to construct with training set.
+       *
+       * @param inputSize A vector of input sizes. The first input variable of 
+       *     the regression.
+       * @param kValues A vector of k values. The second input variable of the
+       *     regression.
+       * @param statistic A vector of responses - the value of the statistic for
+       *     each given inputSize.
+       */
       DistanceStatisticPredictor(const arma::Col<size_t>& inputSize, 
-                                 const arma::vec& statistic,
-                                 size_t k) 
-        : k(k)
-      { Train(inputSize, statistic); };
+                                 const arma::Col<size_t>& kValues,
+                                 const arma::mat& statistic) 
+      { Train(inputSize, kValues, statistic); };
       
       //! Default destructor.
       ~DistanceStatisticPredictor() { };
@@ -175,12 +191,16 @@ class LSHModel
       /**
        * Function that fits the alpha, beta and gamma parameters.
        *
-       * @param inputSize A vector of input sizes. The input variable of the
+       * @param inputSize A vector of input sizes. The first input variable of 
+       *     the regression.
+       * @param kValues A vector of k values. The second input variable of the
        *     regression.
        * @param statistic A vector of responses - the value of the statistic for
        *     each given inputSize.
        */
-      void Train(const arma::Col<size_t>& inputSize, const arma::vec& statistic);
+      double Train(const arma::Col<size_t>& inputSize, 
+                 const arma::Col<size_t>& kValues,
+                 const arma::mat& statistic);
 
       /** 
        * Evaluate the statistic for a given dataset size.
@@ -188,7 +208,7 @@ class LSHModel
        * @param N - a new input size for which to evaluate the expected
        *     statistic.
        */
-      double Predict(size_t N) 
+      double Predict(size_t N, size_t k) 
       { return alpha * std::pow(k, beta) * std::pow(N, gamma); };
 
       //! Set the alpha parameter.
@@ -209,39 +229,36 @@ class LSHModel
       //! Get the gamma parameter.
       double Gamma(void) { return gamma; };
 
-      //! Set the k parameter.
-      void K(double kIn) { k = kIn; };
-
-      //! Get the k parameter.
-      double K(void) { return k; };
 
     private:
       double alpha;
       double beta;
       double gamma;
-      double k;
    };
 
-   //! Vector of DistanceStatisticPredictors for arithmetic mean.
-   std::vector<DistanceStatisticPredictor> aMeanPredictors;
+   //! DistanceStatisticPredictor for arithmetic mean.
+   DistanceStatisticPredictor aMeanPredictor;
 
-   //! Vector of DistanceStatisticPredictors for geometric mean.
-   std::vector<DistanceStatisticPredictor> gMeanPredictors;
+   //! DistanceStatisticPredictor for geometric mean.
+   DistanceStatisticPredictor gMeanPredictor;
    
    /**
-    * Function that fits two DistanceStatisticPredictors for each k - one
+    * Function that fits two DistanceStatisticPredictors - one
     * to predict arithmetic mean and one to preduct geometric mean.
     *
     * @param referenceSizes The number of reference points for each kNN search.
+    * @param kValues The rank of the neighbors used for the statistic, for
+    *     example k = 5 means Ek is the arithmetic mean of the 5th-nearest
+    *     neighbor for different sample sizes.
     * @param Ek The arithmetic mean of the squared distances of a point and its
     *      k-nearest neighbor. One column per k.
     * @param Gk The geometric mean of the squared distances of a point and its
     *      k-nearest neighbor. One column per k.
     */
-   void ApproximateKNNStatistics(
-       arma::Col<size_t> referenceSizes, 
-       arma::mat Ek, 
-       arma::mat Gk);
+   void ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes, 
+                                 const arma::Col<size_t>& kValues,
+                                 const arma::mat& Ek, 
+                                 const arma::mat& Gk);
 
    //! Flag that tracks if we own the reference set.
    bool ownsSet;
