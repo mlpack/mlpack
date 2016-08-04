@@ -13,10 +13,15 @@ namespace mlpack {
 namespace dbscan {
 
 template<typename RangeSearchType, typename PointSelectionPolicy>
-DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(const double epsilon,
-                                                      const size_t minPoints) :
+DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
+    const double epsilon,
+    const size_t minPoints,
+    RangeSearchType rangeSearch,
+    PointSelectionPolicy pointSelector) :
     epsilon(epsilon),
-    minPoints(minPoints)
+    minPoints(minPoints),
+    rangeSearch(rangeSearch),
+    pointSelector(pointSelector)
 {
   // Nothing to do.
 }
