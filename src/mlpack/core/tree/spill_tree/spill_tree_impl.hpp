@@ -670,6 +670,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   ar & CreateNVP(count, "count");
   ar & CreateNVP(pointsIndex, "pointsIndex");
   ar & CreateNVP(overlappingNode, "overlappingNode");
+  ar & CreateNVP(hyperplane, "hyperplane");
   ar & CreateNVP(bound, "bound");
   ar & CreateNVP(stat, "statistic");
   ar & CreateNVP(parentDistance, "parentDistance");

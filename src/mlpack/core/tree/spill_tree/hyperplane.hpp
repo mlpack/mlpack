@@ -124,6 +124,16 @@ class HyperplaneBase
       return 0;
     return projVect.Project(bound).Lo() > splitVal;
   };
+
+  /**
+   * Serialization.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(projVect, "projVect");
+    ar & data::CreateNVP(splitVal, "splitVal");
+  };
 };
 
 /**

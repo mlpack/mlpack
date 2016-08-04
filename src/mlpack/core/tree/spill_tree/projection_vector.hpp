@@ -68,6 +68,15 @@ class AxisParallelProjVector
   {
     return bound[dim];
   };
+
+  /**
+   * Serialization.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(dim, "dim");
+  };
 };
 
 /**
@@ -121,6 +130,15 @@ class ProjVector
     const double center = Project(bound.Center());
     const double radius = bound.Radius();
     return math::Range(center - radius, center + radius);
+  };
+
+  /**
+   * Serialization.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(projVect, "projVect");
   };
 };
 
