@@ -18,8 +18,9 @@ namespace neighbor {
 // Construct the object.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
+SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     const MatType& referenceSetIn,
     const bool naive,
     const bool singleMode,
@@ -37,8 +38,9 @@ SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
 // Construct the object.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
+SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     MatType&& referenceSetIn,
     const bool naive,
     const bool singleMode,
@@ -56,8 +58,9 @@ SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
 // Construct the object.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
+SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     Tree* referenceTree,
     const bool singleMode,
     const double tau,
@@ -74,8 +77,9 @@ SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
 // Construct the object without a reference dataset.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
+SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     const bool naive,
     const bool singleMode,
     const double tau,
@@ -91,8 +95,9 @@ SpillSearch<MetricType, MatType, SplitType>::SpillSearch(
 // Clean memory.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-SpillSearch<MetricType, MatType, SplitType>::
+SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 ~SpillSearch()
 {
   /* Nothing to do */
@@ -100,8 +105,9 @@ SpillSearch<MetricType, MatType, SplitType>::
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Train(const MatType& referenceSet)
 {
   if (Naive())
@@ -118,8 +124,9 @@ Train(const MatType& referenceSet)
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Train(MatType&& referenceSetIn)
 {
   if (Naive())
@@ -136,8 +143,9 @@ Train(MatType&& referenceSetIn)
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Train(Tree* referenceTree)
 {
   neighborSearch.Train(referenceTree);
@@ -145,8 +153,9 @@ Train(Tree* referenceTree)
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Search(const MatType& querySet,
        const size_t k,
        arma::Mat<size_t>& neighbors,
@@ -165,8 +174,9 @@ Search(const MatType& querySet,
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Search(Tree* queryTree,
        const size_t k,
        arma::Mat<size_t>& neighbors,
@@ -177,8 +187,9 @@ Search(Tree* queryTree,
 
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 Search(const size_t k,
        arma::Mat<size_t>& neighbors,
        arma::mat& distances)
@@ -198,9 +209,10 @@ Search(const size_t k,
 //! Serialize SpillSearch.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
 template<typename Archive>
-void SpillSearch<MetricType, MatType, SplitType>::
+void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
     Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(neighborSearch, "neighborSearch");

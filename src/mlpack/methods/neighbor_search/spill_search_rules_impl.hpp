@@ -16,11 +16,12 @@ namespace neighbor {
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
-    StatisticType, MatType, SplitType>>::NeighborSearchRules(
+    StatisticType, MatType, HyperplaneType, SplitType>>::NeighborSearchRules(
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
     const size_t k,
@@ -61,11 +62,12 @@ NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
-    StatisticType, MatType, SplitType>>::GetResults(
+    StatisticType, MatType, HyperplaneType, SplitType>>::GetResults(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
@@ -86,12 +88,13 @@ void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
 double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
-    StatisticType, MatType, SplitType>>::BaseCase(
+    StatisticType, MatType, HyperplaneType, SplitType>>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -111,11 +114,12 @@ double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::Score(
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
@@ -126,12 +130,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 
   if (referenceNode.Parent()->Overlap()) // Defeatist search.
   {
-    const double value = referenceNode.Parent()->SplitValue();
-    const size_t dim = referenceNode.Parent()->SplitDimension();
-    const bool left = &referenceNode == referenceNode.Parent()->Left();
-
-    if ((left && querySet(dim, queryIndex) <= value) ||
-        (!left && querySet(dim, queryIndex) > value))
+    if (referenceNode.HalfSpaceContains(querySet.col(queryIndex)))
       return 0;
     else
       return DBL_MAX;
@@ -149,11 +148,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::Rescore(
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::Rescore(
     const size_t queryIndex,
     TreeType& /* referenceNode */,
     double oldScore) const
@@ -171,11 +171,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::Score(
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
@@ -186,12 +187,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 
   if (referenceNode.Parent()->Overlap()) // Defeatist search.
   {
-    const double value = referenceNode.Parent()->SplitValue();
-    const size_t dim = referenceNode.Parent()->SplitDimension();
-    const bool left = &referenceNode == referenceNode.Parent()->Left();
-
-    if ((left && queryNode.Bound()[dim].Lo() <= value) ||
-        (!left && queryNode.Bound()[dim].Hi() > value))
+    if (referenceNode.HalfSpaceIntersects(queryNode))
       return 0;
     else
       return DBL_MAX;
@@ -312,11 +308,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::Rescore(
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::Rescore(
     TreeType& queryNode,
     TreeType& /* referenceNode */,
     const double oldScore) const
@@ -337,11 +334,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
 // it.
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::
     CalculateBound(TreeType& queryNode) const
 {
   // This is an adapted form of the B(N_q) function in the paper
@@ -415,11 +413,13 @@ inline double NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
  */
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 inline void NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<
-    MetricType, StatisticType, MatType, SplitType>>::InsertNeighbor(
+    MetricType, StatisticType, MatType, HyperplaneType, SplitType>>::
+    InsertNeighbor(
     const size_t queryIndex,
     const size_t neighbor,
     const double distance)

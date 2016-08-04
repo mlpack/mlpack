@@ -29,6 +29,7 @@ namespace neighbor /** Neighbor-search routines.  These include
 // Forward declaration.
 template<typename MetricType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType>
 class SpillSearch;
 
@@ -337,6 +338,7 @@ class NeighborSearch
 
   template<typename MetricT,
            typename MatT,
+           template<typename HyperplaneMetricType> class HyperplaneType,
            template<typename SplitBoundT, typename SplitMatT> class SplitType>
   friend class SpillSearch;
 }; // class NeighborSearch

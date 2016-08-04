@@ -38,20 +38,22 @@ class TrainVisitor;
  */
 template<typename MetricType = mlpack::metric::EuclideanDistance,
          typename MatType = arma::mat,
+         template<typename HyperplaneMetricType>
+             class HyperplaneType = tree::AxisOrthogonalHyperplane,
          template<typename SplitBoundT, typename SplitMatT> class SplitType =
-             tree::MidpointSplit>
+             tree::MidpointSpaceSplit>
 class SpillSearch
 {
  public:
   //! Convenience typedef.
   typedef tree::SpillTree<MetricType, NeighborSearchStat<NearestNeighborSort>,
-      MatType, SplitType> Tree;
+      MatType, HyperplaneType, SplitType> Tree;
 
   template<typename TreeMetricType,
            typename TreeStatType,
            typename TreeMatType>
   using TreeType = tree::SpillTree<TreeMetricType, TreeStatType, TreeMatType,
-      SplitType>;
+      HyperplaneType, SplitType>;
 
   /**
    * Initialize the SpillSearch object, passing a reference dataset (this is

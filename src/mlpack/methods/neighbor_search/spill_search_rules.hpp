@@ -28,13 +28,14 @@ namespace neighbor {
  */
 template<typename StatisticType,
          typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitBoundT, typename SplitMatT> class SplitType,
          typename SortPolicy,
          typename MetricType>
 class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
-    StatisticType, MatType, SplitType>>
+    StatisticType, MatType, HyperplaneType, SplitType>>
 {
-  typedef tree::SpillTree<MetricType, StatisticType, MatType, SplitType>
+  typedef tree::SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>
       TreeType;
  public:
   /**
