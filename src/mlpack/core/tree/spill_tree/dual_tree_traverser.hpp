@@ -21,10 +21,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-class SpillTree<MetricType, StatisticType, MatType, SplitType>::
+class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     DualTreeTraverser
 {
  public:

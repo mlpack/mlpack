@@ -19,10 +19,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-SpillTree<MetricType, StatisticType, MatType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
@@ -31,13 +32,14 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-void SpillTree<MetricType, StatisticType, MatType, SplitType>::
+void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    SpillTree<MetricType, StatisticType, MatType, SplitType>&
+    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
         referenceNode)
 {
   // If we are a leaf, run the base case as necessary.

@@ -19,10 +19,11 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-SpillTree<MetricType, StatisticType, MatType, SplitType>::
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -34,13 +35,16 @@ DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename SplitBoundType, typename SplitMatType>
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename RuleType>
-void SpillTree<MetricType, StatisticType, MatType, SplitType>::
+void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 DualTreeTraverser<RuleType>::Traverse(
-    SpillTree<MetricType, StatisticType, MatType, SplitType>& queryNode,
-    SpillTree<MetricType, StatisticType, MatType, SplitType>& referenceNode)
+    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+        queryNode,
+    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+        referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;

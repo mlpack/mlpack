@@ -9,7 +9,8 @@
 #include <mlpack/core.hpp>
 
 #include "../statistic.hpp"
-#include "../binary_space_tree/midpoint_split.hpp"
+#include "space_split.hpp"
+#include "hyperplane.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -54,6 +55,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
+ * @tparam HyperplaneType The splitting hyperplane class.
  * @tparam SplitType The class that partitions the dataset/points at a
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
@@ -61,8 +63,10 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename SplitBoundType, typename SplitMatType>
-            class SplitType = MidpointSplit>
+         template<typename HyperplaneMetricType>
+            class HyperplaneType = AxisOrthogonalHyperplane,
+         template<typename SplitMetricType, typename SplitMatType>
+            class SplitType = MidpointSpaceSplit>
 class SpillTree
 {
  public:
@@ -70,6 +74,8 @@ class SpillTree
   typedef MatType Mat;
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
+  //! The bound type.
+  typedef typename HyperplaneType<MetricType>::BoundType BoundType;
 
  private:
   //! The left child node.
@@ -86,12 +92,10 @@ class SpillTree
   std::vector<size_t>* pointsIndex;
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
-  //! Dimension considered when splitting.
-  size_t splitDimension;
-  //! Dimension value that determines the decision boundary.
-  double splitValue;
+  //! Splitting hyperplane represented by this node.
+  HyperplaneType<MetricType> hyperplane;
   //! The bound object for this node.
-  bound::HRectBound<MetricType> bound;
+  BoundType bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -200,9 +204,9 @@ class SpillTree
   ~SpillTree();
 
   //! Return the bound object for this node.
-  const bound::HRectBound<MetricType>& Bound() const { return bound; }
+  const BoundType& Bound() const { return bound; }
   //! Return the bound object for this node.
-  bound::HRectBound<MetricType>& Bound() { return bound; }
+  BoundType& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -233,11 +237,8 @@ class SpillTree
   //! Distinguish overlapping nodes from non-overlapping nodes.
   bool Overlap() const { return overlappingNode; }
 
-  //! Dimension considered when splitting.
-  size_t SplitDimension() const { return splitDimension; }
-
-  //! Dimension value that determines the decision boundary.
-  double SplitValue() const { return splitValue; }
+  //! Get the Hyperplane instance.
+  const HyperplaneType<MetricType>& Hyperplane() const { return hyperplane; }
 
   //! Get the metric that the tree uses.
   MetricType Metric() const { return MetricType(); }
@@ -310,6 +311,15 @@ class SpillTree
    */
   size_t Point(const size_t index) const;
 
+  //! Determines if the node's half space intersects the given node.
+  bool HalfSpaceIntersects(const SpillTree& other) const;
+
+  //! Determines if the node's half space contains the given point.
+  template<typename VecType>
+  bool HalfSpaceContains(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+
   //! Return the minimum distance to another node.
   ElemType MinDistance(const SpillTree* other) const
   {
@@ -378,8 +388,6 @@ class SpillTree
   /**
    * Split the list of points.
    *
-   * @param splitDimension Dimension to consider when splitting.
-   * @param splitVal Dimension value that determines the decision boundary.
    * @param tau Overlapping size.
    * @param rho Balance threshold.
    * @param points Vector of indexes of points to be included.
@@ -387,9 +395,7 @@ class SpillTree
    * @param rightPoints Indexes of points to be included in right child.
    * @return Flag to know if the overlapping buffer was included.
    */
-  bool SplitPoints(const size_t splitDimension,
-                   const double splitVal,
-                   const double tau,
+  bool SplitPoints(const double tau,
                    const double rho,
                    const std::vector<size_t>& points,
                    std::vector<size_t>& leftPoints,

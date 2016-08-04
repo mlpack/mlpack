@@ -11,8 +11,7 @@
 
 // In case it hasn't been included yet.
 #include "../spill_tree.hpp"
-#include "../binary_space_tree/midpoint_split.hpp"
-#include "../binary_space_tree/mean_split.hpp"
+#include "space_split.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -55,7 +54,8 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using SPTree = SpillTree<MetricType,
                          StatisticType,
                          MatType,
-                         MidpointSplit>;
+                         AxisOrthogonalHyperplane,
+                         MidpointSpaceSplit>;
 
 /**
  * A mean-split hybrid spill tree.  This is the same as the SPTree, but this
@@ -72,7 +72,47 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSPTree = SpillTree<MetricType,
                              StatisticType,
                              MatType,
-                             MeanSplit>;
+                             AxisOrthogonalHyperplane,
+                             MeanSpaceSplit>;
+
+/**
+ * A hybrid spill tree considering general splitting hyperplanes (not
+ * necessarily axis-orthogonal).  This particular implementation will consider
+ * the midpoint of the projection of the data in the vector determined by the
+ * farthest pair of points.  This can sometimes give better performance, but
+ * generally it doesn't because it takes O(d) to calculate the projection of the
+ * query point when deciding which node to traverse, while when using a
+ * axis-orthogonal hyperplane, as SPTree does, we can do it in O(1).
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, SpillTree, SPTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using NonOrtSPTree = SpillTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               Hyperplane,
+                               MidpointSpaceSplit>;
+
+/**
+ * A mean-split hybrid spill tree considering general splitting hyperplanes (not
+ * necessarily axis-orthogonal).  This is the same as the NonOrtSPTree, but this
+ * particular implementation will use the mean of the data in the split
+ * projection as the value on which to split, instead of the midpoint.
+ * This can sometimes give better performance, but it is not always clear which
+ * type of tree is best.
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, SpillTree, MeanSPTree, NonOrtSPTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using NonOrtMeanSPTree = SpillTree<MetricType,
+                                   StatisticType,
+                                   MatType,
+                                   Hyperplane,
+                                   MeanSpaceSplit>;
 
 } // namespace tree
 } // namespace mlpack

@@ -80,6 +80,10 @@ set(SOURCES
   spill_tree/spill_tree_impl.hpp
   spill_tree/dual_tree_traverser.hpp
   spill_tree/dual_tree_traverser_impl.hpp
+  spill_tree/hyperplane.hpp
+  spill_tree/projection_vector.hpp
+  spill_tree/space_split.hpp
+  spill_tree/space_split_impl.hpp
   spill_tree/single_tree_traverser.hpp
   spill_tree/single_tree_traverser_impl.hpp
   spill_tree/traits.hpp
