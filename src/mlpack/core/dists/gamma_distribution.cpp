@@ -23,6 +23,16 @@ GammaDistribution::GammaDistribution(const arma::mat& data,
   Train(data, tol);
 }
 
+GammaDistribution::GammaDistribution(const arma::vec& alpha, 
+                                     const arma::vec& beta)
+{
+  if (beta.n_elem != alpha.n_elem)
+    throw std::runtime_error("Alpha and beta vector dimensions mismatch.");
+
+  this->alpha = alpha;
+  this->beta = beta;
+}
+
 // Returns true if computation converged.
 inline bool GammaDistribution::Converged(const double aOld,
                                          const double aNew,
@@ -30,6 +40,7 @@ inline bool GammaDistribution::Converged(const double aOld,
 {
   return (std::abs(aNew - aOld) / aNew) < tol;
 }
+
 
 // Fits an alpha and beta parameter to each dimension of the data.
 void GammaDistribution::Train(const arma::mat& rdata, const double tol)
@@ -51,6 +62,13 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   // Call the statistics-only GammaDistribution::Train() function to fit the
   // parameters. That function does all the work so we're done.
   Train(logMeanxVec, meanLogxVec, meanxVec, tol);
+}
+
+// Fits an alpha and beta parameter according to observation probabilities.
+void GammaDistribution::Train(const arma::mat& observations, 
+                              const arma::vec& probabilities,
+                              const double tol)
+{
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
@@ -116,4 +134,85 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
     alpha(row) = aEst;
     beta(row) = meanx / aEst;
   }
+}
+
+// Returns the probability of the provided observations.
+void GammaDistribution::Probability(const arma::mat& observations, 
+                                    arma::vec& probabilities) const
+{
+  size_t numObs = observations.n_cols;
+
+  // Set all equal to 1 (multiplication neutral).
+  probabilities.ones(numObs);
+
+  // Compute denominator only once for each dimension.
+  arma::vec denominators(alpha.n_elem);
+  for (size_t d = 0; d < alpha.n_elem; ++d)
+    denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
+
+  // Compute probability of each observation.
+  for (size_t i = 0; i < numObs; ++i)
+  {
+    for (size_t d = 0; d < observations.n_rows; ++d)
+    {
+      // Compute probability using Multiplication Law.
+      probabilities(i) *= 
+        std::pow(observations(d, i), alpha(d) - 1) *
+        std::exp(-observations(d, i) / beta(d)) /
+        denominators(d);
+    }
+  }
+}
+
+// Returns the probability of one observation (x) for one of the Gamma's
+// dimensions.
+double GammaDistribution::Probability(double x, size_t dim) const
+{
+  return 
+    std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) / 
+    (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
+}
+
+// Returns the log probability of the provided observations.
+void GammaDistribution::LogProbability(const arma::mat& observations, 
+                                       arma::vec& LogProbabilities) const
+{
+  size_t numObs = observations.n_cols;
+
+  // Set all equal to 0 (addition neutral).
+  LogProbabilities.zeros(numObs);
+
+  // Compute denominator only once for each dimension.
+  arma::vec denominators(alpha.n_elem);
+  for (size_t d = 0; d < alpha.n_elem; ++d)
+    denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
+
+  // Compute probability of each observation.
+  for (size_t i = 0; i < numObs; ++i)
+  {
+    for (size_t d = 0; d < observations.n_rows; ++d)
+    {
+      // Compute probability using Multiplication Law and Logarithm addition
+      // property.
+      LogProbabilities(i) += std::log( 
+        std::pow(observations(d, i), alpha(d) - 1) 
+        * std::exp(-observations(d, i) / beta(d)) 
+        / denominators(d));
+    }
+  }
+}
+
+// Returns a gamma-random d-dimensional vector.
+arma::vec GammaDistribution::Random() const
+{
+  arma::vec randVec(alpha.n_elem);
+
+  std::default_random_engine generator;
+  for (size_t d = 0; d < alpha.n_elem; ++d)
+  {
+    std::gamma_distribution<double> dist(alpha(d), beta(d));
+    randVec(d) = dist(generator);
+  }
+
+  return randVec;
 }
