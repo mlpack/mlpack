@@ -153,12 +153,11 @@ class SpillTree
             const double rho = 0.7);
 
   /**
-   * Construct this node as a child of the given parent, starting at column
-   * begin and using count points.  The ordering of that subset of points in the
-   * parent's data matrix will be modified!  This is used for recursive
-   * tree-building by the other constructors which don't specify point indices.
+   * Construct this node as a child of the given parent, including the given
+   * list of points.  This is used for recursive tree-building by the other
+   * constructors which don't specify point indices.
    *
-   * @param parent Parent of this node.  Its dataset will be modified!
+   * @param parent Parent of this node.
    * @param points Vector of indexes of points to be included in this node.
    * @param tau Overlapping size.
    * @param maxLeafSize Size of each leaf in the tree.
@@ -179,8 +178,8 @@ class SpillTree
   SpillTree(const SpillTree& other);
 
   /**
-   * Move constructor for a SpillTree; possess all the members of the
-   * given tree.
+   * Move constructor for a SpillTree; possess all the members of the given
+   * tree.
    *
    * @param other tree to be moved.
    */
