@@ -10,7 +10,7 @@
 #include <mlpack/methods/ann/pooling_rules/mean_pooling.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

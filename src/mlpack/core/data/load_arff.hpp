@@ -42,10 +42,10 @@ void LoadARFF(const std::string& filename, arma::Mat<eT>& matrix);
  * @param info DatasetInfo object; can be default-constructed or pre-existing
  *     from another call to LoadARFF().
  */
-template<typename eT>
+template<typename eT, typename PolicyType>
 void LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetInfo& info);
+              DatasetMapper<PolicyType>& info);
 
 } // namespace data
 } // namespace mlpack

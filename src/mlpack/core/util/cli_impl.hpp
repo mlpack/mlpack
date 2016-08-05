@@ -9,6 +9,7 @@
 
 // In case it has not already been included.
 #include "cli.hpp"
+#include "prefixedoutstream.hpp"
 
 // Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
@@ -20,47 +21,82 @@ namespace mlpack {
  *     CheckValue.
  *
  * @tparam T The type of the parameter.
- * @param identifier The name of the parameter, eg foo in bar/foo.
+ * @param identifier The name of the parameter, eg foo.
  * @param description A string description of the parameter.
- * @param parent The name of the parent of the parameter,
- *   eg bar/foo in bar/foo/buzz.
- * @param required If required, the program will refuse to run
- *   unless the parameter is specified.
+ * @param alias Short name of the parameter.
+ * @param required If required, the program will refuse to run unless the
+ *     parameter is specified.
+ * @param input If true, the parameter is an input parameter (not an output
+ *     parameter).
  */
 template<typename T>
-void CLI::Add(const std::string& path,
+void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
-              bool required)
+              const bool required,
+              const bool input)
 {
+  // Temporarily define color code escape sequences.
+  #ifndef _WIN32
+    #define BASH_RED "\033[0;31m"
+    #define BASH_CLEAR "\033[0m"
+  #else
+    #define BASH_RED ""
+    #define BASH_CLEAR ""
+  #endif
+
+  // Temporary outstream object for detecting duplicate identifiers.
+  util::PrefixedOutStream outstr(std::cerr,
+        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+  #undef BASH_RED
+  #undef BASH_CLEAR
+
+  // Define identifier and alias maps.
+  gmap_t& gmap = GetSingleton().globalValues;
+  amap_t& amap = GetSingleton().aliasValues;
+
+  // If found in current map, print fatal error and terminate the program.
+  if (gmap.count(identifier))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same identifiers." << std::endl;
+  if (amap.count(alias))
+    outstr << "Parameter --" << identifier << "(-" << alias << ") "
+           << "is defined multiple times with same alias." << std::endl;
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId =
+          alias.length() ? identifier + "," + alias : identifier;
 
   // Add the alias, if necessary
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost program_options.
   desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
-  gmap_t& gmap = GetSingleton().globalValues;
-
   ParamData data;
   T tmp = T();
 
   data.desc = description;
-  data.name = path;
+  data.name = identifier;
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
+
+  // Depending on whether or not the option is input or output, add it to the
+  // appropriate list.
+  if (input)
+    GetSingleton().inputOptions.push_front(identifier);
+  else
+    GetSingleton().outputOptions.push_front(identifier);
 }
 
 // We specialize this in cli.cpp.
@@ -73,7 +109,7 @@ bool& CLI::GetParam<bool>(const std::string& identifier);
  *   more or less valid value is returned.
  *
  * @tparam T The type of the parameter.
- * @param identifier The full pathname of the parameter.
+ * @param identifier The full name of the parameter.
  *
  * @return The value of the parameter.  Use CLI::CheckValue to determine if it's
  *     valid.

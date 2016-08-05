@@ -5,8 +5,8 @@
  * Definition of the DropConnectLayer class, which implements a regularizer
  * that randomly sets connections to zero. Preventing units from co-adapting.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 

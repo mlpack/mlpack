@@ -20,336 +20,7 @@
 #include "timers.hpp"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
-
-/**
- * Document an executable.  Only one instance of this macro should be
- * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
- *
- * @see mlpack::CLI, PARAM_FLAG(), PARAM_INT(), PARAM_DOUBLE(), PARAM_STRING(),
- * PARAM_VECTOR(), PARAM_INT_REQ(), PARAM_DOUBLE_REQ(), PARAM_STRING_REQ(),
- * PARAM_VECTOR_REQ().
- *
- * @param NAME Short string representing the name of the program.
- * @param DESC Long string describing what the program does and possibly a
- *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by CLI (however, you can explicitly specify newlines to denote
- *     new paragraphs).
- */
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC);
-
-/**
- * Define a flag parameter.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_FLAG(ID, DESC, ALIAS) \
-    PARAM_FLAG_INTERNAL(ID, DESC, ALIAS);
-
-/**
- * Define an integer parameter.
- *
- * The parameter can then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_INT(ID, DESC, ALIAS, DEF) \
-    PARAM(int, ID, DESC, ALIAS, DEF, false)
-
-/**
- * Define a floating-point parameter.  You should use PARAM_DOUBLE instead.
- *
- * The parameter can then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_FLOAT(ID, DESC, ALIAS, DEF) \
-    PARAM(float, ID, DESC, ALIAS, DEF, false)
-
-/**
- * Define a double parameter.
- *
- * The parameter can then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_DOUBLE(ID, DESC, ALIAS, DEF) \
-    PARAM(double, ID, DESC, ALIAS, DEF, false)
-
-/**
- * Define a string parameter.
- *
- * The parameter can then be specified on the command line with
- * --ID=value. If ALIAS is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_STRING(ID, DESC, ALIAS, DEF) \
-    PARAM(std::string, ID, DESC, ALIAS, DEF, false)
-
-/**
- * Define a vector parameter.
- *
- * The parameter can then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_VECTOR(T, ID, DESC, ALIAS) \
-    PARAM(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
-
-// A required flag doesn't make sense and isn't given here.
-
-/**
- * Define a required integer parameter.
- *
- * The parameter must then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_INT_REQ(ID, DESC, ALIAS) PARAM(int, ID, DESC, ALIAS, 0, true)
-
-/**
- * Define a required floating-point parameter.  You should probably use a double
- * instead.
- *
- * The parameter must then be specified on the command line with
- * --ID=value. If ALIAS is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_FLOAT_REQ(ID, DESC, ALIAS) PARAM(float, ID, DESC, ALIAS, 0.0f, \
-    true)
-
-/**
- * Define a required double parameter.
- *
- * The parameter must then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_DOUBLE_REQ(ID, DESC, ALIAS) PARAM(double, ID, DESC, ALIAS, \
-    0.0f, true)
-
-/**
- * Define a required string parameter.
- *
- * The parameter must then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_STRING_REQ(ID, DESC, ALIAS) PARAM(std::string, ID, DESC, \
-    ALIAS, "", true);
-
-/**
- * Define a required vector parameter.
- *
- * The parameter must then be specified on the command line with
- * --ID=value.
- *
- * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::CLI, PROGRAM_INFO()
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
- */
-#define PARAM_VECTOR_REQ(T, ID, DESC, ALIAS) PARAM(std::vector<T>, ID, DESC, \
-    ALIAS, std::vector<T>(), true);
-
-/**
- * @cond
- * Don't document internal macros.
- */
-
-// These are ugly, but necessary utility functions we must use to generate a
-// unique identifier inside of the PARAM() module.
-#define JOIN(x, y) JOIN_AGAIN(x, y)
-#define JOIN_AGAIN(x, y) x ## y
-/** @endcond */
-
-/**
- * Define an input parameter.  Don't use this function; use the other ones above
- * that call it.  Note that we are using the __LINE__ macro for naming these
- * actual parameters when __COUNTER__ does not exist, which is a bit of an ugly
- * hack... but this is the preprocessor, after all.  We don't have much choice
- * other than ugliness.
- *
- * @param T Type of the parameter.
- * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
- * @param ALIAS Alias for this parameter (one letter).
- * @param DEF Default value of the parameter.
- * @param REQ Whether or not parameter is required (boolean value).
- */
-#ifdef __COUNTER__
-  #define PARAM(T, ID, DESC, ALIAS, DEF, REQ) static mlpack::util::Option<T> \
-      JOIN(io_option_dummy_object_, __COUNTER__) \
-      (false, DEF, ID, DESC, ALIAS, REQ);
-
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __COUNTER__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
-
-#else
-  // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
-  // don't think we can absolutely guarantee success, but it should be "good
-  // enough".  We use the __LINE__ macro and the type of the parameter to try
-  // and get a good guess at something unique.
-  #define PARAM(T, ID, DESC, ALIAS, DEF, REQ) static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
-      DESC, ALIAS, REQ);
-
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __LINE__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
-
-#endif
+#include "param.hpp"
 
 /**
  * The TYPENAME macro is used internally to convert a type into a string.
@@ -384,7 +55,7 @@ struct ParamData
   boost::any value;
   //! True if this parameter was passed in via command line or file.
   bool wasPassed;
-  //! True if the wasPassed value should not be ignored
+  //! True if the wasPassed value should not be ignored.
   bool isFlag;
 };
 
@@ -526,11 +197,13 @@ class CLI
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    *    ("").
    * @param required Indicates if parameter must be set on command line.
+   * @param input If true, the parameter is an input (not output) parameter.
    */
   static void Add(const std::string& path,
                   const std::string& description,
                   const std::string& alias = "",
-                  bool required = false);
+                  const bool required = false,
+                  const bool input = true);
 
   /**
    * Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this
@@ -542,12 +215,14 @@ class CLI
    * @param description Short string description of the parameter.
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    * @param required Indicates if parameter must be set on command line.
+   * @param input If true, the parameter is an input (not output) parameter.
    */
   template<class T>
   static void Add(const std::string& identifier,
                   const std::string& description,
                   const std::string& alias = "",
-                  bool required = false);
+                  const bool required = false,
+                  const bool input = true);
 
   /**
    * Adds a flag parameter to the hierarchy; use PARAM_FLAG() instead of this.
@@ -635,12 +310,10 @@ class CLI
    */
   static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
 
- /**
-   * Parses a stream for arguments.
-   *
-   * @param stream The stream to be parsed.
+  /**
+   * Print the value of any output options on stdout.
    */
-  static void ParseStream(std::istream& stream);
+  static void PrintOutput();
 
   /**
    * Print out the current hierarchy.
@@ -673,8 +346,13 @@ class CLI
   //! Values of the options given by user.
   po::variables_map vmap;
 
-  //! Pathnames of required options.
+  //! Identifier names of required options.
   std::list<std::string> requiredOptions;
+
+  //! Pathnames of input options.
+  std::list<std::string> inputOptions;
+  //! Pathnames of output options.
+  std::list<std::string> outputOptions;
 
   //! Map of global values.
   typedef std::map<std::string, ParamData> gmap_t;
@@ -727,15 +405,6 @@ class CLI
    * program is terminated.
    */
   static void RequiredOptions();
-
-  /**
-   * Cleans up input pathnames, rendering strings such as /foo/bar
-   * and foo/bar/ equivalent inputs.
-   *
-   * @param str Input string.
-   * @return Sanitized string.
-   */
-  static std::string SanitizeString(const std::string& str);
 
   /**
    * Parses the values given on the command line, overriding any default values.

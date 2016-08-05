@@ -78,7 +78,7 @@ class GaussianDistribution
 
   /**
    * Calculates the multivariate Gaussian probability density function for each
-   * data point (column) in the given matrix
+   * data point (column) in the given matrix.
    *
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.

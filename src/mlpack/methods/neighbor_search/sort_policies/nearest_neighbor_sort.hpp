@@ -27,24 +27,6 @@ class NearestNeighborSort
 {
  public:
   /**
-   * Return the index in the vector where the new distance should be inserted,
-   * or (size_t() - 1) if it should not be inserted (i.e. if it is not any
-   * better than any of the existing points in the list).  The list should be
-   * sorted such that the best point is the first in the list.  The actual
-   * insertion is not performed.
-   *
-   * @param list Vector of existing distance points, sorted such that the best
-   *     point is first in the list.
-   * @param new_distance Distance to try to insert
-   *
-   * @return size_t containing the position to insert into, or (size_t() - 1)
-   *     if the new distance should not be inserted.
-   */
-  static size_t SortDistance(const arma::vec& list,
-                             const arma::Col<size_t>& indices,
-                             double newDistance);
-
-  /**
    * Return whether or not value is "better" than ref.  In this case, that means
    * that the value is less than or equal to the reference.
    *
@@ -149,6 +131,21 @@ class NearestNeighborSort
     if (a == DBL_MAX || b == DBL_MAX)
       return DBL_MAX;
     return a + b;
+  }
+
+  /**
+   * Return the given value relaxed.
+   *
+   * @param value Value to relax.
+   * @param epsilon Relative error (non-negative).
+   *
+   * @return double Value relaxed.
+   */
+  static inline double Relax(const double value, const double epsilon)
+  {
+    if (value == DBL_MAX)
+      return DBL_MAX;
+    return (1 / (1 + epsilon)) * value;
   }
 };
 

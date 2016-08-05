@@ -15,7 +15,7 @@ namespace tree {
 
 template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
-                                                       const arma::vec& point)
+                                                       const size_t point)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -28,14 +28,14 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
-      v1 *= node->Children()[i]->Bound()[j].Width();
-      v2 *= node->Children()[i]->Bound()[j].Contains(point[j]) ?
-          node->Children()[i]->Bound()[j].Width() :
-          (node->Children()[i]->Bound()[j].Hi() < point[j] ?
-              (point[j] - node->Children()[i]->Bound()[j].Lo()) :
-              (node->Children()[i]->Bound()[j].Hi() - point[j]));
+      v1 *= node->Child(i).Bound()[j].Width();
+      v2 *= node->Child(i).Bound()[j].Contains(node->Dataset().col(point)[j]) ?
+          node->Child(i).Bound()[j].Width() :
+          (node->Child(i).Bound()[j].Hi() < node->Dataset().col(point)[j] ?
+              (node->Dataset().col(point)[j] - node->Child(i).Bound()[j].Lo()) :
+              (node->Child(i).Bound()[j].Hi() - node->Dataset().col(point)[j]));
     }
 
     assert(v2 - v1 >= 0);
@@ -72,17 +72,17 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
-      v1 *= node->Children()[i]->Bound()[j].Width();
-      v2 *= node->Children()[i]->Bound()[j].Contains(insertedNode->Bound()[j]) ?
-          node->Children()[i]->Bound()[j].Width() :
-          (insertedNode->Bound()[j].Contains(node->Children()[i]->Bound()[j]) ?
+      v1 *= node->Child(i).Bound()[j].Width();
+      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?
+          node->Child(i).Bound()[j].Width() :
+          (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j]) ?
           insertedNode->Bound()[j].Width() :
-          (insertedNode->Bound()[j].Lo() < node->Children()[i]->Bound()[j].Lo()
-          ? (node->Children()[i]->Bound()[j].Hi() -
+          (insertedNode->Bound()[j].Lo() < node->Child(i).Bound()[j].Lo()
+          ? (node->Child(i).Bound()[j].Hi() -
           insertedNode->Bound()[j].Lo()) : (insertedNode->Bound()[j].Hi() -
-          node->Children()[i]->Bound()[j].Lo())));
+          node->Child(i).Bound()[j].Lo())));
     }
 
     assert(v2 - v1 >= 0);

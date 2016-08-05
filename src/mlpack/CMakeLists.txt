@@ -22,6 +22,11 @@ endif ()
 # MLPACK_SRCS is set in the subdirectories.
 add_library(mlpack ${MLPACK_SRCS})
 
+if (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
+        (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1)))
+  include(../../CMake/NewCXX11.cmake)
+endif ()
+
 # Generate export symbols for Windows, instead of adding __declspec(dllimport)
 # and __declspec(dllexport) everywhere.  However, those modifiers are still
 # necessary for global variables (of which there are a few in mlpack).
@@ -36,7 +41,10 @@ target_link_libraries(mlpack
   ${ARMADILLO_LIBRARIES}
   ${Boost_LIBRARIES}
   ${LIBXML2_LIBRARIES}
+  ${COMPILER_SUPPORT_LIBRARIES}
+  ${COMPILER_MLPACK_SUPPORT_LIBRARIES}
 )
+
 set_target_properties(mlpack
   PROPERTIES
   VERSION 2.0

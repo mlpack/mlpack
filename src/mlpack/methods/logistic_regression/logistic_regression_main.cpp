@@ -69,33 +69,38 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "be either 0 or 1.");
 
 // Training parameters.
-PARAM_STRING("training_file", "A file containing the training set (the matrix "
-    "of predictors, X).", "t", "");
-PARAM_STRING("labels_file", "A file containing labels (0 or 1) for the points "
-    "in the training set (y).", "l", "");
+PARAM_STRING_IN("training_file", "A file containing the training set (the "
+    "matrix of predictors, X).", "t", "");
+PARAM_STRING_IN("labels_file", "A file containing labels (0 or 1) for the "
+    "points in the training set (y).", "l", "");
 
 // Optimizer parameters.
-PARAM_DOUBLE("lambda", "L2-regularization parameter for training.", "L", 0.0);
-PARAM_STRING("optimizer", "Optimizer to use for training ('lbfgs' or 'sgd').",
-    "O", "lbfgs");
-PARAM_DOUBLE("tolerance", "Convergence tolerance for optimizer.", "e", 1e-10);
-PARAM_INT("max_iterations", "Maximum iterations for optimizer (0 indicates no "
-    "limit).", "n", 10000);
-PARAM_DOUBLE("step_size", "Step size for SGD and mini-batch SGD optimizers.",
+PARAM_DOUBLE_IN("lambda", "L2-regularization parameter for training.", "L",
+    0.0);
+PARAM_STRING_IN("optimizer", "Optimizer to use for training ('lbfgs' or "
+    "'sgd').", "O", "lbfgs");
+PARAM_DOUBLE_IN("tolerance", "Convergence tolerance for optimizer.", "e",
+    1e-10);
+PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
+    "no limit).", "n", 10000);
+PARAM_DOUBLE_IN("step_size", "Step size for SGD and mini-batch SGD optimizers.",
     "s", 0.01);
-PARAM_INT("batch_size", "Batch size for mini-batch SGD.", "b", 50);
+PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing existing model (parameters).",
-    "m", "");
-PARAM_STRING("output_model_file", "File to save trained logistic regression "
-    "model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing existing model "
+    "(parameters).", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained logistic regression"
+    " model to.", "M");
 
 // Testing.
-PARAM_STRING("test_file", "File containing test dataset.", "T", "");
-PARAM_STRING("output_file", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "");
-PARAM_DOUBLE("decision_boundary", "Decision boundary for prediction; if the "
+PARAM_STRING_IN("test_file", "File containing test dataset.", "T", "");
+PARAM_STRING_OUT("output_file", "If --test_file is specified, this file is "
+    "where the predictions for the test set will be saved.", "o");
+PARAM_STRING_OUT("output_probabilities_file", "If --test_file is specified, "
+    "this file is where the class probabilities for the test set will be "
+    "saved.", "p");
+PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 
@@ -116,6 +121,8 @@ int main(int argc, char** argv)
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const string testFile = CLI::GetParam<string>("test_file");
   const string outputFile = CLI::GetParam<string>("output_file");
+  const string outputProbabilitiesFile =
+      CLI::GetParam<string>("output_probabilities_file");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
 
   // One of inputFile and modelFile must be specified.
@@ -260,13 +267,24 @@ int main(int argc, char** argv)
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    Log::Info << "Predicting classes of points in '" << testFile << "'."
-        << endl;
-    model.Predict(testSet, predictions, decisionBoundary);
-
-    // Save the results, if necessary.
     if (!outputFile.empty())
+    {
+      Log::Info << "Predicting classes of points in '" << testFile << "'."
+          << endl;
+      model.Classify(testSet, predictions, decisionBoundary);
+
       data::Save(outputFile, predictions, false);
+    }
+
+    if (!outputProbabilitiesFile.empty())
+    {
+      Log::Info << "Calculating class probabilities of points in '" << testFile
+          << "'." << endl;
+      arma::mat probabilities;
+      model.Classify(testSet, probabilities);
+
+      data::Save(outputProbabilitiesFile, probabilities, false);
+    }
   }
 
   if (!outputModelFile.empty())

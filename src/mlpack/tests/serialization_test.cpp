@@ -7,7 +7,7 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
@@ -354,12 +354,12 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
 
 BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
 {
-  BallBound<arma::vec, MahalanobisDistance<>> b(100);
+  BallBound<MahalanobisDistance<>, arma::vec> b(100);
   b.Center().randu();
   b.Radius() = 14.0;
   b.Metric().Covariance().randu(100, 100);
 
-  BallBound<arma::vec, MahalanobisDistance<>> xmlB, textB, binaryB;
+  BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
 
   SerializeObjectAll(b, xmlB, textB, binaryB);
 
@@ -1210,8 +1210,8 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
   for (size_t i = 0; i < lsh.NumProjections(); ++i)
   {
-    CheckMatrices(lsh.Projection(i), xmlLsh.Projection(i),
-        textLsh.Projection(i), binaryLsh.Projection(i));
+    CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
+        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
   }
 
   CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
@@ -1225,8 +1225,16 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
-  CheckMatrices(lsh.SecondHashTable(), xmlLsh.SecondHashTable(),
-      textLsh.SecondHashTable(), binaryLsh.SecondHashTable());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      xmlLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      textLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      binaryLsh.SecondHashTable().size());
+
+  for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
+  CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
+      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
 }
 
 // Make sure serialization works for the decision stump.

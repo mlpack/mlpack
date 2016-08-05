@@ -1,8 +1,8 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  dataset_info.hpp
-  dataset_info_impl.hpp
+  dataset_mapper.hpp
+  dataset_mapper_impl.hpp
   extension.hpp
   format.hpp
   load.hpp
@@ -14,6 +14,9 @@ set(SOURCES
   save.hpp
   save_impl.hpp
   serialization_shim.hpp
+  split_data.hpp
+  imputer.hpp
+  binarize.hpp
 )
 
 # add directory name to sources

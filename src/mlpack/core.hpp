@@ -51,7 +51,6 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
- * - mlpack_allkrann
  * - mlpack_cf
  * - mlpack_decision_stump
  * - mlpack_det
@@ -69,6 +68,7 @@
  * - mlpack_kfn
  * - mlpack_kmeans
  * - mlpack_knn
+ * - mlpack_krann
  * - mlpack_lars
  * - mlpack_linear_regression
  * - mlpack_local_coordinate_coding
@@ -189,6 +189,11 @@
  *   - Palash Ahuja <abhor902@gmail.com>
  *   - Yannis Mentekidis <mentekid@gmail.com>
  *   - Ranjan Mondal <ranjan.rev@gmail.com>
+ *   - Mikhail Lozhnikov <lozhnikovma@gmail.com>
+ *   - Marcos Pividori <marcos.pividori@gmail.com>
+ *   - Keon Kim <kwk236@gmail.com>
+ *   - Nilay Jain <nilayjain13@gmail.com>
+ *   - Peter Lehner <peter.lehner@dlr.de>
  */
 
 // First, include all of the prerequisites.
@@ -210,6 +215,7 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
+#include <mlpack/core/dists/gamma_distribution.hpp>
 //mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
@@ -227,6 +233,11 @@
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
+
+// Use OpenMP if compiled with -DHAS_OPENMP.
+#ifdef HAS_OPENMP
+  #include <omp.h>
+#endif
 
 // Use Armadillo's C++ version detection.
 #ifdef ARMA_USE_CXX11

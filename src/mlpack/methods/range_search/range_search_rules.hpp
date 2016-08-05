@@ -7,12 +7,18 @@
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
 
-#include "../neighbor_search/ns_traversal_info.hpp"
+#include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
 namespace range {
 
-
+/**
+ * The RangeSearchRules class is a template helper class used by RangeSearch
+ * class when performing range searches.
+ *
+ * @tparam MetricType The metric to use for computation.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ */
 template<typename MetricType, typename TreeType>
 class RangeSearchRules
 {
@@ -96,7 +102,7 @@ class RangeSearchRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

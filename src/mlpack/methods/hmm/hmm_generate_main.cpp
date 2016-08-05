@@ -19,15 +19,13 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
     "parameters, saving them to the specified files (--output_file and "
     "--state_file)");
 
-PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
-PARAM_INT_REQ("length", "Length of sequence to generate.", "l");
+PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
+PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
 
-PARAM_INT("start_state", "Starting state of sequence.", "t", 0);
-PARAM_STRING("output_file", "File to save observation sequence to.", "o",
-    "output.csv");
-PARAM_STRING("state_file", "File to save hidden state sequence to (may be left "
-    "unspecified.", "S", "");
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
+PARAM_STRING_OUT("output_file", "File to save observation sequence to.", "o");
+PARAM_STRING_OUT("state_file", "File to save hidden state sequence to.", "S");
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -51,6 +49,8 @@ struct Generate
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
     const size_t length = (size_t) CLI::GetParam<int>("length");
+    const string outputFile = CLI::GetParam<string>("output_file");
+    const string sequenceFile = CLI::GetParam<string>("state_file");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
@@ -61,13 +61,16 @@ struct Generate
     hmm.Generate(length, observations, sequence, startState);
 
     // Now save the output.
-    const string outputFile = CLI::GetParam<string>("output_file");
-    data::Save(outputFile, observations, true);
+    if (CLI::HasParam("output_file"))
+      data::Save(outputFile, observations, true);
 
     // Do we want to save the hidden sequence?
-    const string sequenceFile = CLI::GetParam<string>("state_file");
-    if (sequenceFile != "")
+    if (CLI::HasParam("state_file"))
       data::Save(sequenceFile, sequence, true);
+
+    if (outputFile == "" && sequenceFile == "")
+      Log::Warn << "Neither --output_file nor --state_file are specified; no "
+          << "output will be saved." << endl;
   }
 };
 
@@ -75,6 +78,10 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
+
+  if (!CLI::HasParam("output_file") && !CLI::HasParam("state_file"))
+    Log::Warn << "Neither --output_file nor --state_file are specified; no "
+        << "output will be saved!" << endl;
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

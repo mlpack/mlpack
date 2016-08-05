@@ -40,12 +40,15 @@ class RAModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
-    X_TREE
+    X_TREE,
+    HILBERT_R_TREE,
+    R_PLUS_TREE,
+    R_PLUS_PLUS_TREE
   };
 
  private:
   //! The type of tree being used.
-  int treeType;
+  TreeTypes treeType;
   //! The leaf size of the tree being used (useful only for the kd-tree).
   size_t leafSize;
 
@@ -73,13 +76,19 @@ class RAModel
   RAType<tree::RStarTree>* rStarTreeRA;
   //! Non-NULL if the X tree is used.
   RAType<tree::XTree>* xTreeRA;
+  //! Non-NULL if the Hilbert R tree is used.
+  RAType<tree::HilbertRTree>* hilbertRTreeRA;
+  //! Non-NULL if the R+ tree is used.
+  RAType<tree::RPlusTree>* rPlusTreeRA;
+  //! Non-NULL if the R++ tree is used.
+  RAType<tree::RPlusPlusTree>* rPlusPlusTreeRA;
 
  public:
   /**
    * Initialize the RAModel with the given type and whether or not a random
    * basis should be used.
    */
-  RAModel(int treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  RAModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   //! Clean memory, if necessary.
   ~RAModel();
@@ -132,9 +141,9 @@ class RAModel
   size_t& LeafSize();
 
   //! Get the type of tree being used.
-  int TreeType() const;
+  TreeTypes TreeType() const;
   //! Modify the type of tree being used.
-  int& TreeType();
+  TreeTypes& TreeType();
 
   //! Get whether or not a random basis is being used.
   bool RandomBasis() const;
