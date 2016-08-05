@@ -18,8 +18,12 @@ int main(int argc, char* argv[])
   // Generate a random point set.
   size_t N = 5000;
   size_t d = 10;
+  size_t k = 5;
+  double sampleSize = 0.25;
+  double minRecall = 0.4;
   arma::mat rdata(d, N, arma::fill::randu);
-  LSHModel<> model(rdata, 0.7, 0.25, 2);
+  LSHModel<> model(rdata, sampleSize, k);
+  model.Predict(N, k, minRecall);
 
   arma::mat qdata(d, 1, arma::fill::randu);
   arma::Mat<size_t> neighbors;

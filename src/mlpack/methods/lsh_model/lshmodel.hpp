@@ -49,6 +49,8 @@
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 // Default objective function.
 #include "objectivefunction.hpp"
+// Gamma distribution for modeling squared distances.
+#include <mlpack/core/dists/gamma_distribution.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -62,7 +64,7 @@ class LSHModel
  public:
 
    //! Empty Constructor. Do nothing
-   LSHModel(){ /* Do nothing. */ };
+   LSHModel(){ referenceSet = NULL; };
 
    /** Parameterized Constructor. This function initializes the object and
     * trains it with the provided reference set.
@@ -70,9 +72,6 @@ class LSHModel
     * @param referenceSet The data that will be used as a reference set for LSH
     *     to run queries against. We will fit distributions based on this data
     *     and produce good parameters for it.
-    * @param minRecall The minimum recall we want to guarantee. The parameters
-    *     we will estimate will try to keep average recall of LSH above this.
-    *     Must be in [0, 1).
     * @param sampleSize The percentage of the reference set to sample for the
     *     estimation. Naive all-kNN will be run on this sample, so if it is too
     *     big, training will be very slow. Must be in [0, 1)
@@ -80,7 +79,6 @@ class LSHModel
     */
    LSHModel(
        const arma::mat &referenceSet,
-       const double minRecall,
        const double sampleSize,
        const size_t k);
 
@@ -88,34 +86,44 @@ class LSHModel
    ~LSHModel();
 
    /**
-    * Trains the LSHModel. Fits distributions using referenceSet and then looks
-    * for LSH parameters that would return recalls larger than minRecall in the
-    * lowest cost (selectivity) possible.
+    * Trains the LSHModel. Train() uses a sample that is sampleRate * |N| to
+    * estimate parameters of the dataset. The estimated parameters are:
+    *   * Arithmetic mean of pairwise distances of random points in the sample.
+    *   * Geometric mean for the pairwise distnaces
+    *   * Arithmetic mean of distance random point to its k-th nearest neighbor 
+    *       as a function of |N|, the number of points.
+    *   * Geometric mean of the same distance.
     *
-    * The model can estimate good values for the parameters:
-    *   * numProj: Number of projections per projection table.
-    *   * numTables: Number of projection tables.
-    *   * hashWidth: Hash width of the LSH hash.
-    *   * numProbes: Number of probes for multiprobe LSH.
-    *
-    * Train stores the computed parameters in the LSHModel object's variables.
+    * Train() does not find LSH Parameters - it only estimates the dataset
+    * parameters. You have to call Predict() to find LSH Parameters.
     *
     * @param referenceSet The data that will be used as a reference set for LSH
     *     to run queries against. We will fit distributions based on this data
     *     and produce good parameters for it.
-    * @param minRecall The minimum recall we want to guarantee. The parameters
-    *     we will estimate will try to keep average recall of LSH above this.
-    *     Must be in [0, 1).
-    * @param sampleSize The percentage of the reference set to sample for the
+    * @param sampleRate The percentage of the reference set to sample for the
     *     estimation. Naive all-kNN will be run on this sample, so if it is too
     *     big, training will be very slow. Must be in [0, 1)
-    * @param k The number of nearest neighbors wanted for each query.
+    * @param maxKValue The maximum number of nearest neighbors for each query to
+    *     train for.
     */
-   void Train(
-       const arma::mat &referenceSet,
-       const double minRecall,
-       const double sampleSize,
-       const size_t k);
+   void Train(const arma::mat& referenceSet, 
+              const double sampleRate = 0.1,
+              const size_t maxKValue = 32);
+
+   /**
+    * Predict() finds LSH parameters that should work well for the dataset the 
+    * LSHModel was trained for. 
+    * Warning: If the k specified is larger than the maxKValue passed to
+    * Train(), Train() will be called again. This might have adverse effects to
+    * performance.
+    *
+    * @param datasetSize The size of the dataset that will be used.
+    * @param k The number of k-nearest neighbors LSH must find.
+    * @param minRecall The minimum acceptable recall we want to tune for.
+    */
+   void Predict(const size_t datasetSize, 
+                const size_t k, 
+                const double minRecall);
 
    /**
     * This function returns an LSHSearch object trained with the parameters
@@ -157,6 +165,23 @@ class LSHModel
    void Serialize(Archive& ar);
 
  private:
+   /**
+    * Function that fits two DistanceStatisticPredictors - one
+    * to predict arithmetic mean and one to preduct geometric mean.
+    *
+    * @param referenceSizes The number of reference points for each kNN search.
+    * @param kValues The rank of the neighbors used for the statistic, for
+    *     example k = 5 means Ek is the arithmetic mean of the 5th-nearest
+    *     neighbor for different sample sizes.
+    * @param Ek The arithmetic mean of the squared distances of a point and its
+    *      k-nearest neighbor. One column per k.
+    * @param Gk The geometric mean of the squared distances of a point and its
+    *      k-nearest neighbor. One column per k.
+    */
+   void ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes, 
+                                 const arma::Col<size_t>& kValues,
+                                 const arma::mat& Ek, 
+                                 const arma::mat& Gk);
 
    /**
     * This is a helper class that uses the function a * k^b * N^c for some
@@ -229,7 +254,6 @@ class LSHModel
       //! Get the gamma parameter.
       double Gamma(void) { return gamma; };
 
-
     private:
       double alpha;
       double beta;
@@ -241,30 +265,15 @@ class LSHModel
 
    //! DistanceStatisticPredictor for geometric mean.
    DistanceStatisticPredictor gMeanPredictor;
-   
-   /**
-    * Function that fits two DistanceStatisticPredictors - one
-    * to predict arithmetic mean and one to preduct geometric mean.
-    *
-    * @param referenceSizes The number of reference points for each kNN search.
-    * @param kValues The rank of the neighbors used for the statistic, for
-    *     example k = 5 means Ek is the arithmetic mean of the 5th-nearest
-    *     neighbor for different sample sizes.
-    * @param Ek The arithmetic mean of the squared distances of a point and its
-    *      k-nearest neighbor. One column per k.
-    * @param Gk The geometric mean of the squared distances of a point and its
-    *      k-nearest neighbor. One column per k.
-    */
-   void ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes, 
-                                 const arma::Col<size_t>& kValues,
-                                 const arma::mat& Ek, 
-                                 const arma::mat& Gk);
+
+   //! (k+1)-dimensional gamma distribution for predicting squared distances.
+   mlpack::distribution::GammaDistribution distancesDistribution;
 
    //! Flag that tracks if we own the reference set.
    bool ownsSet;
 
-   //! Flag that tracks if we own an LSHSearch object.
-   bool ownsLSHObject;
+   //! Maximum k value the object is trained for.
+   size_t maxKValue;
 
    //! Number of projections per table.
    size_t numProj;

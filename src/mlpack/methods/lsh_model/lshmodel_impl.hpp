@@ -20,16 +20,16 @@ namespace neighbor {
 
 // Constructor sets variables and trains the object.
 template <typename SortPolicy, typename ObjectiveFunction>
-LSHModel<SortPolicy, ObjectiveFunction>::LSHModel(const arma::mat &referenceSet,
-                   const double minRecall,
-                   const double sampleSize,
-                   const size_t k)
+LSHModel<SortPolicy, ObjectiveFunction>::
+LSHModel(const arma::mat &referenceSet,
+         const double sampleSize,
+         const size_t k)
 {
   // We don't own the set - we just point to it.
   ownsSet = false;
   this->referenceSet = &referenceSet;
 
-  Train(referenceSet, minRecall, sampleSize, k);
+  Train(referenceSet, sampleSize, k);
 }
 
 // Destructor must de-allocate any referenceSet and LSHSearch objects we own.
@@ -42,36 +42,37 @@ LSHModel<SortPolicy, ObjectiveFunction>::~LSHModel()
 
 // Trains the object.
 template <typename SortPolicy, typename ObjectiveFunction>
-void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSet,
-                     const double minRecall,
-                     const double sampleSize,
-                     const size_t k)
+void LSHModel<SortPolicy, ObjectiveFunction>::Train(
+    const arma::mat &referenceSet,
+    const double sampleRate,
+    const size_t k)
 {
-  // TODO: Implement
-
-  // Sanity Check: Verify that recall and sampleSize are in [0, 1).
-  if (minRecall >= 1 || minRecall < 0)
-    throw std::runtime_error("Recall must be floating point number in [0, 1)");
-
-  if (sampleSize > 1 || sampleSize <= 0)
+  // Sanity check - sample rate must be in (0, 1].
+  if (sampleRate > 1 || sampleRate <= 0)
     throw std::runtime_error(
         "Sampling rate must be floating point number in (0, 1]");
 
-  const size_t numPoints = referenceSet.n_cols; // Points in original set.
+  // Update the object's max K value information.
+  maxKValue = k;
+
+  // Save pointer to training set.
+  this->referenceSet = &referenceSet;
 
   // Step 1. Select a random sample of the dataset. We will work with only that
   // sample.
+
   arma::vec sampleHelper(referenceSet.n_cols, arma::fill::randu);
 
   // Keep a sample of the dataset: We have uniformly random numbers in [0, 1],
-  // so we expect about N*sampleSize of them to be in [0, sampleSize).
+  // so we expect about N*sampleRate of them to be in [0, sampleRate).
   arma::mat sampleSet = referenceSet.cols(
-        arma::find(sampleHelper < sampleSize));
+        arma::find(sampleHelper < sampleRate));
   // Shuffle to be impartial (in case dataset is sorted in some way).
   sampleSet = arma::shuffle(sampleSet);
   const size_t numSamples = sampleSet.n_cols; // Points in sampled set.
 
-  Log::Info << "Sampled " << numSamples << " points to train with." << std::endl;
+  Log::Info << "Training model with " << numSamples << " points in sample set."
+    << std::endl;
 
   // Step 2. Compute all-vs-all distances of points in the sample.
   // The distance matrix is symmetric, so we only compute elements above the
@@ -89,9 +90,9 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSe
   // Step 3. Estimate statistics of these distances: log(mean(d)), mean(log(d)),
   // mean(d).
   distances = arma::pow(distances, 2);
-  meanDist = arma::mean(distances);
-  logMeanDist = std::log(meanDist);
-  meanLogDist = arma::mean(arma::log(distances));
+  this->meanDist = arma::mean(distances);
+  this->logMeanDist = std::log(meanDist);
+  this->meanLogDist = arma::mean(arma::log(distances));
 
   // Step 4. Select a small part of the sample as 'anchor points'. Use the rest
   // of the sample as the reference set. Find the k-Nearest Neighbors' distances
@@ -101,7 +102,7 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSe
   // The geometric mean of N numbers is the Nth root of the product of the
   // numbers. Through logarithmic properties though, this becomes computable
   // through exponentiating the mean of the logarithms of x:
-  // mean(log(x)) = geometricmean(x).
+  // exp(mean(log(x))) = geometricmean(x).
 
   // Number of samples to create for modeling the Gamma Distributions
   size_t regressionExamples = 50; // TODO: parameter?
@@ -119,8 +120,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSe
   arma::mat Ek(regressionExamples, k);
   arma::mat Gk(regressionExamples, k);
 
-  Timer::Start("neighbors_distances");
   // For each referenceSize, calculate the kNN of the anchors
+  Log::Info.ignoreInput = true; // Ignore kNN output.
   for (size_t i = 0; i < regressionExamples; ++i)
   {
     // TODO: Since we've already computed this, avoid calling kNN?
@@ -137,19 +138,69 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSe
     Ek.row(i) = arma::mean(kNNDistances.t());
     Gk.row(i) = arma::exp(arma::mean(arma::log(kNNDistances.t()), 0));
   }
-  Timer::Stop("neighbors_distances");
+  Log::Info.ignoreInput = false; // Keep giving normal output.
 
   // Step 5. Model the arithmetic and geometric mean according to the paper.
   // This will produce 6 parameters (aE, bE, cE, aG, bG, cG).
   // Vector of k values.
+  Timer::Start("neighbor_statistic_regression");
   arma::Col<size_t> kValues = arma::linspace<arma::Col<size_t>>(1, k, k);
   ApproximateKNNStatistics(referenceSizes, kValues, Ek, Gk);
+  Timer::Stop("neighbor_statistic_regression");
+}
+
+// Predict parameters for LSH that will have acceptable recall.
+template <typename SortPolicy, typename ObjectiveFunction>
+void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
+                                                      const size_t k,
+                                                      const double minRecall)
+{
+  // Sanity check. Recall can't be greater/equal to 1, or negative.
+  if (minRecall < 0 || minRecall >=1)
+    throw std::runtime_error("minRecall must be in [0, 1)");
+
+  // If the object wasn't trained, die here.
+  if (referenceSet == NULL)
+    Log::Fatal << "Attempt to use Predict() on untrained Object. Exiting."
+        << std::endl;
+
+  // Before proceeding, if requested K is larger than the k we trained with,
+  // re-train the object.
+  if (k > maxKValue)
+  {
+
+    // Otherwise, warn the user of the re-training and re-train.
+    Log::Warn << "Larger k requested; Re-training the LSHModel "
+      "with default sampling rate and new k." << std::endl;
+    Train(*referenceSet, 0.1, k); // Default sampling rate.
+  }
+  // Steps 1 - 5 happen in Train().
 
   // Step 6. Fit Gamma distributions to pairwise distances and kNN distances,
   // generated or estimated in steps 3 and 5.
+  // Gamma distribution for pairwise distances.
+  arma::vec logMeanVec(k + 1), meanLogVec(k + 1), meanVec(k + 1);
+  // Statistics were computed in Train()
+  meanVec(0) = this->meanDist;
+  logMeanVec(0) = this->logMeanDist;
+  meanLogVec(0) = this->meanLogDist;
+  // Train gamma and put in gammaDists[0].
+
+  Timer::Start("fitting_distributions");
+  for (size_t i = 1; i <= k; ++i)
+  {
+    meanVec(i) = aMeanPredictor.Predict(datasetSize, k);
+    logMeanVec(i) = std::log(meanVec(i));
+    // log(geometricMean) = \frac{1}{n} \sum(lnx_i) = mean(lnx) = meanLog
+    meanLogVec(i) = std::log(gMeanPredictor.Predict(datasetSize, k));
+  }
+  // Fit the distribution.
+  distancesDistribution.Train(logMeanVec, meanLogVec, meanVec);
+  Timer::Stop("fitting_distributions");
 
   // Step 7. Run Binary search on parameter space to minimize selectivity while
   // keeping recall above minimum.
+
 }
 
 // Fit two predictors, one for arithmetic mean E and one for geometric mean G.
