@@ -258,7 +258,8 @@ class Genome {
     
     // Set input neurons.
     for (ssize_t i=0; i<aNumInput; ++i) {
-      aNeuronGenes[i].Activation(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+      aNeuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+      aNeuronGenes[i].Activation(input[i]);
     }
 
     // Activate hidden and output neurons.
