@@ -103,7 +103,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using BallTree = BinarySpaceTree<MetricType,
                                  StatisticType,
                                  MatType,
-                                 bound::HRectBound,
+                                 bound::BallBound,
                                  MidpointSplit>;
 
 /**
@@ -132,7 +132,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           StatisticType,
                                           MatType,
-                                          bound::HRectBound,
+                                          bound::BallBound,
                                           MeanSplit>;
 
 } // namespace tree

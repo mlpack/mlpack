@@ -29,11 +29,14 @@ class RSModel
     R_TREE,
     R_STAR_TREE,
     BALL_TREE,
-    X_TREE
+    X_TREE,
+    HILBERT_R_TREE,
+    R_PLUS_TREE,
+    R_PLUS_PLUS_TREE
   };
 
  private:
-  int treeType;
+  TreeTypes treeType;
   size_t leafSize;
 
   //! If true, we randomly project the data into a new basis before search.
@@ -60,6 +63,12 @@ class RSModel
   RSType<tree::BallTree>* ballTreeRS;
   //! X tree based range search object (NULL if not in use).
   RSType<tree::XTree>* xTreeRS;
+  //! Hilbert R tree based range search object (NULL if not in use).
+  RSType<tree::HilbertRTree>* hilbertRTreeRS;
+  //! R+ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusTree>* rPlusTreeRS;
+  //! R++ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
 
  public:
   /**
@@ -69,7 +78,7 @@ class RSModel
    * @param treeType Type of tree to use.
    * @param randomBasis Whether or not to use a random basis.
    */
-  RSModel(const int treeType = TreeTypes::KD_TREE,
+  RSModel(const TreeTypes treeType = TreeTypes::KD_TREE,
           const bool randomBasis = false);
 
   /**
@@ -100,9 +109,9 @@ class RSModel
   size_t& LeafSize() { return leafSize; }
 
   //! Get the type of tree.
-  int TreeType() const { return treeType; }
+  TreeTypes TreeType() const { return treeType; }
   //! Modify the type of tree (don't do this after the model has been built).
-  int& TreeType() { return treeType; }
+  TreeTypes& TreeType() { return treeType; }
 
   //! Get whether a random basis is used.
   bool RandomBasis() const { return randomBasis; }

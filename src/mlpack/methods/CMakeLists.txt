@@ -8,6 +8,7 @@ if (BUILD_CLI_EXECUTABLES)
   )
   target_link_libraries(mlpack_${name}
     mlpack
+    ${COMPILER_SUPPORT_LIBRARIES}
   )
   install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
 endif ()
@@ -15,6 +16,7 @@ endmacro ()
 
 # Recurse into each method mlpack provides.
 set(DIRS
+  preprocess
   adaboost
   amf
   ann
@@ -45,8 +47,10 @@ set(DIRS
   perceptron
   quic_svd
   radical
+  randomized_svd
   range_search
   rann
+  rmva
   regularized_svd
   softmax_regression
   sparse_autoencoder

@@ -29,6 +29,38 @@
 namespace mlpack {
 namespace data {
 
+namespace details{
+
+template<typename Tokenizer>
+std::vector<std::string> ToTokens(Tokenizer &lineTok)
+{
+  std::vector<std::string> tokens;
+  std::transform(std::begin(lineTok), std::end(lineTok),
+                 std::back_inserter(tokens),
+                 [&tokens](std::string const &str)
+  {
+    std::string trimmedToken(str);
+    boost::trim(trimmedToken);
+    return std::move(trimmedToken);
+  });
+
+  return tokens;
+}
+
+inline
+void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
+                     std::vector<std::string> &output,
+                     size_t index)
+{
+  output.clear();
+  for(size_t i = 0; i != input.size(); ++i)
+  {
+    output.emplace_back(input[i][index]);
+  }
+}
+
+}
+
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
 {
@@ -37,7 +69,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
     X = arma::trans(X);
     return false;
   }
-  catch (std::bad_alloc& exception)
+  catch (std::bad_alloc&)
   {
 #if (ARMA_VERSION_MAJOR >= 4) || \
     ((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR >= 930))
@@ -301,10 +333,10 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetInfo& info,
+          DatasetMapper<PolicyType>& info,
           const bool fatal,
           const bool transpose)
 {
@@ -377,94 +409,49 @@ bool Load(const std::string& filename,
     if (transpose)
     {
       matrix.set_size(cols, rows);
-      info = DatasetInfo(cols);
+      info = DatasetMapper<PolicyType>(info.Policy(), cols);
     }
     else
     {
       matrix.set_size(rows, cols);
-      info = DatasetInfo(rows);
+      info = DatasetMapper<PolicyType>(info.Policy(), rows);
     }
 
     stream.close();
     stream.open(filename, std::fstream::in);
 
-    // Extract line by line.
-    std::stringstream token;
-    size_t row = 0;
-    while (!stream.bad() && !stream.fail() && !stream.eof())
+    if(transpose)
     {
-      std::getline(stream, buffer, '\n');
-
-      // Look at each token.  Unfortunately we have to do this character by
-      // character, because things may be escaped in quotes.
-      Tokenizer lineTok(buffer, sep);
-      size_t col = 0;
-      for (Tokenizer::iterator it = lineTok.begin(); it != lineTok.end(); ++it)
+      std::vector<std::vector<std::string>> tokensArray;
+      std::vector<std::string> tokens;
+      while (!stream.bad() && !stream.fail() && !stream.eof())
       {
-        // Attempt to extract as type eT.  If that fails, we'll assume it's a
-        // string and map it (which may involve retroactively mapping everything
-        // we've seen so far).
-        token.clear();
-        token.str(*it);
-
-        eT val = eT(0);
-        token >> val;
-
-        if (token.fail())
+        // Extract line by line.
+        std::getline(stream, buffer, '\n');
+        Tokenizer lineTok(buffer, sep);
+        tokens = details::ToTokens(lineTok);
+        if(tokens.size() == cols)
         {
-          // Conversion failed; but it may be a NaN or inf.  Armadillo has
-          // convenient functions to check.
-          if (!arma::diskio::convert_naninf(val, token.str()))
-          {
-            // We need to perform a mapping.
-            const size_t dim = (transpose) ? col : row;
-            if (info.Type(dim) == Datatype::numeric)
-            {
-              // We must map everything we have seen up to this point and change
-              // the values in the matrix.
-              if (transpose)
-              {
-                // Whatever we've seen so far has successfully mapped to an eT.
-                // So we need to print it back to a string.  We'll use
-                // Armadillo's functionality for that.
-                for (size_t i = 0; i < row; ++i)
-                {
-                  std::stringstream sstr;
-                  arma::arma_ostream::print_elem(sstr, matrix.at(i, col),
-                      false);
-                  eT newVal = info.MapString(sstr.str(), col);
-                  matrix.at(i, col) = newVal;
-                }
-              }
-              else
-              {
-                for (size_t i = 0; i < col; ++i)
-                {
-                  std::stringstream sstr;
-                  arma::arma_ostream::print_elem(sstr, matrix.at(row, i),
-                      false);
-                  eT newVal = info.MapString(sstr.str(), row);
-                  matrix.at(row, i) = newVal;
-                }
-              }
-            }
-
-            // Strip whitespace from either side of the string.
-            std::string trimmedToken(token.str());
-            boost::trim(trimmedToken);
-            val = info.MapString(trimmedToken, dim);
-          }
+          tokensArray.emplace_back(std::move(tokens));
         }
-
-        if (transpose)
-          matrix(col, row) = val;
-        else
-          matrix(row, col) = val;
-
-        ++col;
       }
-
-      ++row;
+      for(size_t i = 0; i != cols; ++i)
+      {
+        details::TransPoseTokens(tokensArray, tokens, i);
+        info.MapTokens(tokens, i, matrix);
+      }
+    }
+    else
+    {
+      size_t row = 0;
+      while (!stream.bad() && !stream.fail() && !stream.eof())
+      {
+        // Extract line by line.
+        std::getline(stream, buffer, '\n');
+        Tokenizer lineTok(buffer, sep);
+        info.MapTokens(details::ToTokens(lineTok), row, matrix);
+        ++row;
+      }
     }
   }
   else if (extension == "arff")

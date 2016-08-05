@@ -34,7 +34,7 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
     "neighbors in the file 'neighbors.csv':"
     "\n\n"
-    "$ mlpack_nn --k=5 --reference_file=input.csv "
+    "$ mlpack_knn --k=5 --reference_file=input.csv "
     "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
     "\n\n"
     "The output files are organized such that row i and column j in the "
@@ -44,36 +44,40 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
+PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
-PARAM_STRING("distances_file", "File to output distances into.", "d", "");
-PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
+PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained kNN model.", "m",
-    "");
-PARAM_STRING("output_model_file", "If specified, the kNN model will be saved "
-    "to the given file.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
+    "m", "");
+PARAM_STRING_OUT("output_model_file", "If specified, the kNN model will be "
+    "saved to the given file.", "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
+PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
+    "");
+PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, and R* trees).", "l", 20);
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
+    "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus'.", "t", "kd");
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
+    "trees, R* trees, X trees, Hilbert R trees, R+ trees and R++ trees).", "l",
+    20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
-PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
+PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
+PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
+    "search with given relative error.", "e", 0);
 
 // Convenience typedef.
 typedef NSModel<NearestNeighborSort> KNNModel;
@@ -137,10 +141,14 @@ int main(int argc, char *argv[])
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
   if (lsInt < 1)
-  {
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than 0." << endl;
-  }
+
+  // Sanity check on epsilon.
+  const double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be non-negative. "
+        << endl;
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<NearestNeighborSort> knn;
@@ -153,7 +161,7 @@ int main(int argc, char *argv[])
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
-    int tree = 0;
+    KNNModel::TreeTypes tree = KNNModel::KD_TREE;
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")
@@ -166,9 +174,16 @@ int main(int argc, char *argv[])
       tree = KNNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KNNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KNNModel::HILBERT_R_TREE;
+    else if (treeType == "r-plus")
+      tree = KNNModel::R_PLUS_TREE;
+    else if (treeType == "r-plus-plus")
+      tree = KNNModel::R_PLUS_PLUS_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
+          << "'r-plus' and 'r-plus-plus'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -180,7 +195,8 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
+        epsilon);
   }
   else
   {
@@ -196,6 +212,7 @@ int main(int argc, char *argv[])
     knn.SingleMode() = CLI::HasParam("single_mode");
     knn.Naive() = CLI::HasParam("naive");
     knn.LeafSize() = size_t(lsInt);
+    knn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.

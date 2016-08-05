@@ -17,20 +17,21 @@ namespace util {
  * Registers a parameter with CLI.
  */
 template<typename N>
-Option<N>::Option(bool ignoreTemplate,
-                  N defaultValue,
+Option<N>::Option(const bool ignoreTemplate,
+                  const N defaultValue,
                   const std::string& identifier,
                   const std::string& description,
                   const std::string& alias,
-                  bool required)
+                  const bool required,
+                  const bool input)
 {
   if (ignoreTemplate)
   {
-    CLI::Add(identifier, description, alias, required);
+    CLI::Add(identifier, description, alias, required, input);
   }
   else
   {
-    CLI::Add<N>(identifier, description, alias, required);
+    CLI::Add<N>(identifier, description, alias, required, input);
     CLI::GetParam<N>(identifier) = defaultValue;
   }
 }

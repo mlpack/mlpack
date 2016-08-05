@@ -14,7 +14,7 @@
 #include <stack>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -1272,10 +1272,6 @@ void GenerateVectorOfTree(TreeType* node,
                           size_t depth,
                           std::vector<TreeType*>& v);
 
-template<typename MetricType>
-bool DoBoundsIntersect(HRectBound<MetricType>& a,
-                       HRectBound<MetricType>& b);
-
 /**
  * Exhaustive kd-tree test based on #125.
  *
@@ -1344,7 +1340,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
       for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound()));
+            BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));
 
       depth *= 2;
     }
@@ -1428,26 +1424,6 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(root);
   }
-}
-
-template<typename MetricType>
-bool DoBoundsIntersect(HRectBound<MetricType>& a,
-                       HRectBound<MetricType>& b)
-{
-  size_t dimensionality = a.Dim();
-
-  Range r_a;
-  Range r_b;
-
-  for (size_t i = 0; i < dimensionality; i++)
-  {
-    r_a = a[i];
-    r_b = b[i];
-    if (r_a < r_b || r_a > r_b) // If a does not overlap b at all.
-      return false;
-  }
-
-  return true;
 }
 
 template<typename TreeType>
@@ -1541,7 +1517,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
       for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound()));
+            BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));
 
       depth *= 2;
     }

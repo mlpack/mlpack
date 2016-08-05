@@ -61,8 +61,6 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   for (size_t i = 0; i < centroids.n_cols; ++i)
     if (counts(i) != 0)
       newCentroids.col(i) /= counts(i);
-    else
-      newCentroids.col(i).fill(DBL_MAX); // Invalid value.
 
   distanceCalculations += centroids.n_cols * dataset.n_cols;
 
