@@ -526,21 +526,21 @@ BOOST_AUTO_TEST_CASE(NENeatNonMarkovDoublePoleTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 200;
-  params.aMaxGeneration = 5000;
+  params.aPopulationSize = 50;
+  params.aMaxGeneration = 50000;
   params.aCoeffDisjoint = 2.0;
   params.aCoeffWeightDiff = 0.4;
   params.aCompatThreshold = 1.0;
   params.aStaleAgeThreshold = 15;
   params.aCrossoverRate = 0.8;
-  params.aCullSpeciesPercentage = 0.5;
+  params.aCullSpeciesPercentage = 0.7;
   params.aMutateWeightProb = 0.2;
   params.aPerturbWeightProb = 0.5;
   params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 2.0;
-  params.aMutateAddBackwardLinkProb = 1.0;
-  params.aMutateAddRecurrentLinkProb = 1.0;
-  params.aMutateAddBiasLinkProb = 0.9;
+  params.aMutateAddForwardLinkProb = 0.9;
+  params.aMutateAddBackwardLinkProb = 0.8;
+  params.aMutateAddRecurrentLinkProb = 0.8;
+  params.aMutateAddBiasLinkProb = 0.7;
   params.aMutateAddNeuronProb = 0.7;
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
