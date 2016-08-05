@@ -63,13 +63,12 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(const arma::mat &referenceSe
   // sample.
   arma::vec sampleHelper(referenceSet.n_cols, arma::fill::randu);
 
-  // Keep a sample of the dataset. Shuffle to be impartial (in case reference
-  // set is sorted).
-  arma::mat sampleSet = arma::shuffle(referenceSet.cols(
-        // We have uniformly random numbers in [0, 1], so we expect about
-        // N*sampleSize of them to be in [0, sampleSize).
-        arma::find(sampleHelper < sampleSize)
-        ));
+  // Keep a sample of the dataset: We have uniformly random numbers in [0, 1],
+  // so we expect about N*sampleSize of them to be in [0, sampleSize).
+  arma::mat sampleSet = referenceSet.cols(
+        arma::find(sampleHelper < sampleSize));
+  // Shuffle to be impartial (in case dataset is sorted in some way).
+  sampleSet = arma::shuffle(sampleSet);
   const size_t numSamples = sampleSet.n_cols; // Points in sampled set.
 
   Log::Info << "Sampled " << numSamples << " points to train with." << std::endl;
