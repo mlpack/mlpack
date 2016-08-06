@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(VPTreeTraitsTest)
   b = TreeTraits<TreeType>::RearrangesDataset;
   BOOST_REQUIRE_EQUAL(b, true);
   b = TreeTraits<TreeType>::BinaryTree;
-  BOOST_REQUIRE_EQUAL(b, true);
+  BOOST_REQUIRE_EQUAL(b, false);
 }
 
 BOOST_AUTO_TEST_CASE(HollowBallBoundTest)

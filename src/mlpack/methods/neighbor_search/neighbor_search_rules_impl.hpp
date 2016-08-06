@@ -282,11 +282,15 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     traversalInfo.LastBaseCase() = baseCase;
   }
   else if (tree::TreeTraits<TreeType>::FirstSiblingFirstPointIsCentroid &&
-      queryNode.Parent() && referenceNode.Parent())
+      queryNode.Parent() && referenceNode.Parent() &&
+      !queryNode.IsLeaf() && !referenceNode.IsLeaf())
   {
     // The first point of the first sibling is the centroid, so we have to
     // calculate the distance between the centroids if we have not calculated
     // that yet.
+    // We can not use this property if the traverser does not recurse down
+    // the query or the reference node since two siblings may be traversed
+    // in two different branches of the recursion.
     double baseCase;
 
     TreeType* firstQuerySibling = &queryNode.Parent()->Child(0);
