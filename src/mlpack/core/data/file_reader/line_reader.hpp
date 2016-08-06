@@ -97,7 +97,7 @@ private:
 class LineReader{
 private:
   //blockLen equal to the limit of one line
-  static constexpr size_t blockLen = 1<<24;
+  static constexpr int blockLen = 1<<24;
 
   detail::SynchronousReader reader;
   std::vector<char> buffer;
