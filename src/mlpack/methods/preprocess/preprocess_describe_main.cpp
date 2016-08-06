@@ -90,7 +90,7 @@ double Skewness(const arma::rowvec& input,
   else
   {
     // Calculate Sample Skewness
-    skewness = n * M3 / ((n-1) * (n-2) * S3);
+    skewness = n * M3 / ((n - 1) * (n - 2) * S3);
   }
   return skewness;
 }
@@ -121,8 +121,8 @@ double Kurtosis(const arma::rowvec& input,
   {
     // Calculate Sample Excess Kurtosis
     double S4 = pow(fStd, 4);
-    double norm3 = (3 * (n-1) * (n-1)) / ((n-2) * (n-3));
-    double normC = (n * (n+1))/((n-1) * (n-2) * (n-3));
+    double norm3 = (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+    double normC = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
     double normM = M4 / S4;
     kurtosis = normC * normM - norm3;
   }
@@ -158,10 +158,10 @@ int main(int argc, char** argv)
 
   // Generate boost format recipe.
   const string widthPrecision("%-"+
-    to_string(width)+ "." +
-    to_string(precision));
+      to_string(width)+ "." +
+      to_string(precision));
   const string widthOnly("%-"+
-    to_string(width)+ ".");
+      to_string(width)+ ".");
   string stringFormat = "";
   string numberFormat = "";
   for (size_t i = 0; i < 11; ++i)
