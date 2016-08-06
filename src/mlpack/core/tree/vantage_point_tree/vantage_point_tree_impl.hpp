@@ -680,15 +680,6 @@ void VantagePointTree<MetricType, StatisticType, MatType, BoundType, SplitType>:
   if (count > 0)
     bound |= dataset->cols(begin, begin + count - 1);
 
-  VantagePointTree* tree = this;
-
-  while (tree->Parent() != NULL)
-  {
-    tree->Parent()->Bound() |= tree->Bound();
-    tree->Parent()->furthestDescendantDistance = 0.5 *
-			tree->Parent()->Bound().Diameter();
-    tree = tree->Parent();
-  }
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
 
@@ -762,16 +753,6 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   if (count > 0)
     bound |= dataset->cols(begin, begin + count - 1);
-
-  VantagePointTree* tree = this;
-
-  while (tree->Parent() != NULL)
-  {
-    tree->Parent()->Bound() |= tree->Bound();
-    tree->Parent()->furthestDescendantDistance = 0.5 *
-			tree->Parent()->Bound().Diameter();
-    tree = tree->Parent();
-  }
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();

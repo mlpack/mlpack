@@ -130,11 +130,21 @@ BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
 template<typename TreeType>
 void CheckBound(TreeType& tree)
 {
+  typedef typename TreeType::ElemType ElemType;
   if (tree.IsLeaf())
   {
+    // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumPoints(); i++)
-      BOOST_REQUIRE_EQUAL(true,
-          tree.Bound().Contains(tree.Dataset().col(tree.Point(i))));
+    {
+      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+        tree.Dataset().col(tree.Point(i)));
+
+      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), dist  *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+
+      BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+    }
   }
   else
   {
@@ -145,9 +155,18 @@ void CheckBound(TreeType& tree)
     BOOST_REQUIRE_EQUAL(central->Bound().InnerRadius(), 0.0);
     BOOST_REQUIRE_EQUAL(central->Bound().OuterRadius(), 0.0);
 
-    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Central()->Bound()), true);
-    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Inner()->Bound()), true);
-    BOOST_REQUIRE_EQUAL(tree.Bound().Contains(tree.Outer()->Bound()), true);
+    // Ensure that the bound contains all descendant points.
+    for (size_t i = 0; i < tree.NumDescendants(); i++)
+    {
+      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
+        tree.Dataset().col(tree.Descendant(i)));
+
+      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), dist  *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+
+      BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+    }
 
     CheckBound(*tree.Inner());
     CheckBound(*tree.Outer());
