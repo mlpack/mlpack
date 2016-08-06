@@ -32,8 +32,8 @@
 #ifndef MLPACK_CORE_DATA_FILE_READER_CSV_READER_HPP
 #define MLPACK_CORE_DATA_FILE_READER_CSV_READER_HPP
 
-#include "line_reader.hpp"
-#include "parser.hpp"
+#include <mlpack/core/data/file_reader/line_reader.hpp>
+#include <mlpack/core/data/file_reader/parser.hpp>
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>

@@ -32,7 +32,7 @@
 #ifndef MLPACK_CORE_DATA_FILE_READER_PARSER_HPP
 #define MLPACK_CORE_DATA_FILE_READER_PARSER_HPP
 
-#include "policy.hpp"
+#include <mlpack/core/data/file_reader/policy.hpp>
 
 #include <limits>
 #include <vector>

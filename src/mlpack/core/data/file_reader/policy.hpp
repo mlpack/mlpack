@@ -32,7 +32,7 @@
 #ifndef MLPACK_CORE_DATA_FILE_READER_POLICY_HPP
 #define MLPACK_CORE_DATA_FILE_READER_POLICY_HPP
 
-#include "reader_exceptions.hpp"
+#include <mlpack/core/data/file_reader/reader_exceptions.hpp>
 
 namespace mlpack{
 
