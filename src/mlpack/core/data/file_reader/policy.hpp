@@ -5,11 +5,6 @@ namespace mlpack{
 
 namespace io{
 
-//typedef unsigned ignore_column;
-//static const ignore_column ignore_no_column = 0;
-//static const ignore_column ignore_extra_column = 1;
-//static const ignore_column ignore_missing_column = 2;
-
 #include <limits>
 
 template<char ... TrimCharList>
