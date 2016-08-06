@@ -36,10 +36,9 @@ SpillTree(
     dataset(&data),
     localDataset(false)
 {
-  std::vector<size_t> points;
-  points.reserve(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
-    points.push_back(i);
+  arma::Col<size_t> points(dataset->n_cols);
+  for (size_t i = 0; i < points.n_elem; i++)
+    points[i] = i;
 
   // Do the actual splitting of this node.
   SplitNode(points, maxLeafSize, tau, rho);
@@ -72,10 +71,9 @@ SpillTree(
     dataset(new MatType(std::move(data))),
     localDataset(true)
 {
-  std::vector<size_t> points;
-  points.reserve(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
-    points.push_back(i);
+  arma::Col<size_t> points(dataset->n_cols);
+  for (size_t i = 0; i < points.n_elem; i++)
+    points[i] = i;
 
   // Do the actual splitting of this node.
   SplitNode(points, maxLeafSize, tau, rho);
@@ -93,7 +91,7 @@ template<typename MetricType,
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     SpillTree* parent,
-    std::vector<size_t>& points,
+    arma::Col<size_t>& points,
     const double tau,
     const size_t maxLeafSize,
     const double rho) :
@@ -157,7 +155,7 @@ SpillTree(const SpillTree& other) :
 
   // If vector of indexes, copy it.
   if (other.pointsIndex)
-    pointsIndex = new std::vector<size_t>(*other.pointsIndex);
+    pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
 
   // Propagate matrix, but only if we are the root.
   if (parent == NULL)
@@ -500,24 +498,24 @@ template<typename MetricType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    SplitNode(std::vector<size_t>& points,
+    SplitNode(arma::Col<size_t>& points,
               const size_t maxLeafSize,
               const double tau,
               const double rho)
 {
   // We need to expand the bounds of this node properly.
-  for (size_t i = 0; i < points.size(); i++)
-    bound |= dataset->cols(points[i], points[i]);
+  for (size_t i = 0; i < points.n_elem; i++)
+    bound |= dataset->col(points[i]);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // Now, check if we need to split at all.
-  if (points.size() <= maxLeafSize)
+  if (points.n_elem <= maxLeafSize)
   {
-    pointsIndex = new std::vector<size_t>();
+    pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->size();
+    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -527,18 +525,18 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // same, we can't split them.
   if (!split)
   {
-    pointsIndex = new std::vector<size_t>();
+    pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->size();
+    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
-  std::vector<size_t> leftPoints, rightPoints;
+  arma::Col<size_t> leftPoints, rightPoints;
   // Split the node.
   overlappingNode = SplitPoints(tau, rho, points, leftPoints, rightPoints);
 
   // We don't need the information in points, so lets clean it.
-  std::vector<size_t>().swap(points);
+  arma::Col<size_t>().swap(points);
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
@@ -571,48 +569,80 @@ template<typename MetricType,
 bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitPoints(const double tau,
                 const double rho,
-                const std::vector<size_t>& points,
-                std::vector<size_t>& leftPoints,
-                std::vector<size_t>& rightPoints)
+                const arma::Col<size_t>& points,
+                arma::Col<size_t>& leftPoints,
+                arma::Col<size_t>& rightPoints)
 {
-  std::vector<size_t> leftFrontier, rightFrontier;
+  arma::vec projections(points.n_elem);
+  size_t left = 0, right = 0, leftFrontier = 0, rightFrontier = 0;
 
-  // Perform the actual splitting.  This will order the dataset such that points
-  // with projection value less than or equal to zero are included in leftPoints
-  // and points with projection value greater than zero are included in
-  // rightPoints.
-  for (size_t i = 0; i < points.size(); i++)
+  // Count the number of points to the left/right of the splitting hyperplane.
+  for (size_t i = 0; i < points.n_elem; i++)
   {
-    const double proj = hyperplane.Project(dataset->col(points[i]));
-    if (proj <= 0)
+    // Store projection value for future use.
+    projections[i] = hyperplane.Project(dataset->col(points[i]));
+    if (projections[i] <= 0)
     {
-      leftPoints.push_back(points[i]);
-      if (proj > -tau)
-        leftFrontier.push_back(points[i]);
+      left++;
+      if (projections[i] > -tau)
+        leftFrontier++;
     }
     else
     {
-      rightPoints.push_back(points[i]);
-      if (proj < tau)
-        rightFrontier.push_back(points[i]);
+      right++;
+      if (projections[i] < tau)
+        rightFrontier++;
     }
   }
 
-  const double p1 = double (leftPoints.size() + rightFrontier.size()) /
-      points.size();
-  const double p2 = double (rightPoints.size() + leftFrontier.size()) /
-      points.size();
+  const double p1 = double (left + rightFrontier) / points.n_elem;
+  const double p2 = double (right + leftFrontier) / points.n_elem;
 
-  if ((p1 <= rho || rightFrontier.empty()) &&
-      (p2 <= rho || leftFrontier.empty()))
+  if ((p1 <= rho || rightFrontier == 0) &&
+      (p2 <= rho || leftFrontier == 0))
   {
-    leftPoints.insert(leftPoints.end(), rightFrontier.begin(),
-        rightFrontier.end());
-    rightPoints.insert(rightPoints.end(), leftFrontier.begin(),
-        leftFrontier.end());
+    // Perform the actual splitting considering the overlapping buffer.  Points
+    // with projection value in the range (-tau, tau) are included in both,
+    // leftPoints and rightPoints.
+    leftPoints.resize(left + rightFrontier);
+    rightPoints.resize(right + leftFrontier);
+    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+    {
+      if (projections[i] < tau || projections[i] <= 0)
+      {
+        leftPoints[lc] = points[i];
+        lc++;
+      }
+      if (projections[i] > -tau)
+      {
+        rightPoints[rc] = points[i];
+        rc++;
+      }
+    }
+    // Return true, because it is a overlapping node.
     return true;
   }
 
+  // Perform the actual splitting ignoring the overlapping buffer.  Points
+  // with projection value less than or equal to zero are included in leftPoints
+  // and points with projection value greater than zero are included in
+  // rightPoints.
+  leftPoints.resize(left);
+  rightPoints.resize(right);
+  for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+  {
+    if (projections[i] <= 0)
+    {
+      leftPoints[lc] = points[i];
+      lc++;
+    }
+    else
+    {
+      rightPoints[rc] = points[i];
+      rc++;
+    }
+  }
+  // Return false, because it isn't a overlapping node.
   return false;
 }
 

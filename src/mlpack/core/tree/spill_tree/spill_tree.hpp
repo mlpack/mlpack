@@ -89,7 +89,7 @@ class SpillTree
   size_t count;
   //! The list of indexes of points contained in this node (non-null for
   //! leaf nodes).
-  std::vector<size_t>* pointsIndex;
+  arma::Col<size_t>* pointsIndex;
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
   //! Splitting hyperplane represented by this node.
@@ -164,7 +164,7 @@ class SpillTree
    * @param rho Balance threshold.
    */
   SpillTree(SpillTree* parent,
-            std::vector<size_t>& points,
+            arma::Col<size_t>& points,
             const double tau = 0,
             const size_t maxLeafSize = 20,
             const double rho = 0.7);
@@ -379,7 +379,7 @@ class SpillTree
    * @param tau Overlapping size.
    * @param rho Balance threshold.
    */
-  void SplitNode(std::vector<size_t>& points,
+  void SplitNode(arma::Col<size_t>& points,
                  const size_t maxLeafSize,
                  const double tau,
                  const double rho);
@@ -396,9 +396,9 @@ class SpillTree
    */
   bool SplitPoints(const double tau,
                    const double rho,
-                   const std::vector<size_t>& points,
-                   std::vector<size_t>& leftPoints,
-                   std::vector<size_t>& rightPoints);
+                   const arma::Col<size_t>& points,
+                   arma::Col<size_t>& leftPoints,
+                   arma::Col<size_t>& rightPoints);
  protected:
   /**
    * A default constructor.  This is meant to only be used with

@@ -19,7 +19,7 @@ template<typename HyperplaneType>
 bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
     const typename HyperplaneType::BoundType& bound,
     const MatType& data,
-    const std::vector<size_t>& points,
+    const arma::Col<size_t>& points,
     HyperplaneType& hyp)
 {
   typename HyperplaneType::ProjVectorType projVector;
@@ -30,9 +30,9 @@ bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
     return false;
 
   double splitVal = 0.0;
-  for (size_t i = 0; i < points.size(); i++)
+  for (size_t i = 0; i < points.n_elem; i++)
     splitVal += projVector.Project(data.col(points[i]));
-  splitVal /= points.size();
+  splitVal /= points.n_elem;
 
   hyp = HyperplaneType(projVector, splitVal);
 
@@ -44,7 +44,7 @@ template<typename HyperplaneType>
 bool MidpointSpaceSplit<MetricType, MatType>::SplitSpace(
     const typename HyperplaneType::BoundType& bound,
     const MatType& data,
-    const std::vector<size_t>& points,
+    const arma::Col<size_t>& points,
     HyperplaneType& hyp)
 {
   typename HyperplaneType::ProjVectorType projVector;
@@ -63,7 +63,7 @@ template<typename MetricType, typename MatType>
 bool SpaceSplit<MetricType, MatType>::GetProjVector(
     const bound::HRectBound<MetricType>& bound,
     const MatType& data,
-    const std::vector<size_t>& /* points */,
+    const arma::Col<size_t>& /* points */,
     AxisParallelProjVector& projVector,
     double& midValue)
 {
@@ -97,18 +97,18 @@ template<typename BoundType>
 bool SpaceSplit<MetricType, MatType>::GetProjVector(
     const BoundType& /* bound */,
     const MatType& data,
-    const std::vector<size_t>& points,
+    const arma::Col<size_t>& points,
     ProjVector& projVector,
     double& midValue)
 {
   MetricType metric;
 
   // Efficiently estimate the farthest pair of points in the given set.
-  size_t fst = points[rand() % points.size()];
+  size_t fst = points[rand() % points.n_elem];
   size_t snd = points[0];
   double max = metric.Evaluate(data.col(fst), data.col(snd));
 
-  for (size_t i = 1; i < points.size(); i++)
+  for (size_t i = 1; i < points.n_elem; i++)
   {
     double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)
@@ -120,7 +120,7 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
 
   std::swap(fst, snd);
 
-  for (size_t i = 0; i < points.size(); i++)
+  for (size_t i = 0; i < points.n_elem; i++)
   {
     double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)

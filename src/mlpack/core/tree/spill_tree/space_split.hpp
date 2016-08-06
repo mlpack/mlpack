@@ -33,7 +33,7 @@ class MeanSpaceSplit
   static bool SplitSpace(
       const typename HyperplaneType::BoundType& bound,
       const MatType& data,
-      const std::vector<size_t>& points,
+      const arma::Col<size_t>& points,
       HyperplaneType& hyp);
 };
 
@@ -55,7 +55,7 @@ class MidpointSpaceSplit
   static bool SplitSpace(
       const typename HyperplaneType::BoundType& bound,
       const MatType& data,
-      const std::vector<size_t>& points,
+      const arma::Col<size_t>& points,
       HyperplaneType& hyp);
 };
 
@@ -78,7 +78,7 @@ class SpaceSplit
   static bool GetProjVector(
       const bound::HRectBound<MetricType>& bound,
       const MatType& data,
-      const std::vector<size_t>& points,
+      const arma::Col<size_t>& points,
       AxisParallelProjVector& projVector,
       double& midValue);
 
@@ -98,7 +98,7 @@ class SpaceSplit
   static bool GetProjVector(
       const BoundType& bound,
       const MatType& data,
-      const std::vector<size_t>& points,
+      const arma::Col<size_t>& points,
       ProjVector& projVector,
       double& midValue);
 };
