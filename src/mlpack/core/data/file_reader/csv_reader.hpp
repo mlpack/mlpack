@@ -35,7 +35,6 @@
 #include "reader_exceptions.hpp"
 #include "line_reader.hpp"
 #include "parser.hpp"
-#include "policy.hpp"
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
