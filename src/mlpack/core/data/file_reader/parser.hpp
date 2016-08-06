@@ -115,7 +115,7 @@ void ParseUnsignedInteger(const char *col, T &x){
     if('0' <= *col && *col <= '9'){
       T y = *col - '0';
       if(x > (std::numeric_limits<T>::max()-y)/10){
-        OverFlowPolicy::OnOverFlow(x);
+        OverFlowPolicy().template OnOverFlow<T>(x);
         return;
       }
       x = 10*x+y;
@@ -147,7 +147,7 @@ void ParseSignedInteger(const char *col, T &x){
       if('0' <= *col && *col <= '9'){
         T y = *col - '0';
         if(x < (std::numeric_limits<T>::min()+y)/10){
-          OverFlowPolicy::OnUnderFlow(x);
+          OverFlowPolicy().template OnUnderFlow<T>(x);
           return;
         }
         x = 10*x-y;
