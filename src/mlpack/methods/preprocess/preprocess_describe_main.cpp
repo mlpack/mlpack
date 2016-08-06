@@ -46,25 +46,25 @@ PARAM_INT_IN("width", "Width of the output table.", "w", 8);
 PARAM_FLAG("population", "If specified, the program will calculate statistics "
     "assuming the dataset is the population. By default, the program will "
     "assume the dataset as a sample.", "P");
+PARAM_FLAG("rowMajor", "If specified, the program will calculate statistics "
+    "assuming the dataset is organized in row major. By default, the program "
+    "will assume the dataset is a column major.", "r");
 
 /**
-* Calculates the sum of deviations to the Nth Power
+* Calculates the sum of deviations to the Nth Power.
 *
-* @param input Vector that captures a dimension of a dataset
+* @param input Vector that captures a dimension of a dataset.
 * @param rowMean Mean of the given vector.
-* @return sum of nth power deviations
+* @param n Degree of power.
+* @return sum of nth power deviations.
 */
 double SumNthPowerDeviations(const arma::rowvec& input,
-    const double& rowMean,
-    const size_t Nth) // Degree of Power
+    const double& fMean,
+    size_t n) // Degree of Power
 {
-  double sum = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
-  {
-    sum += pow(input(i) - rowMean, Nth);
-  }
-  return sum;
+  return arma::sum(arma::pow(input - fMean, static_cast<double>(n)));
 }
+
 /**
  * Calculates Skewness of the given vector.
  *
@@ -74,18 +74,18 @@ double SumNthPowerDeviations(const arma::rowvec& input,
  * @return Skewness of the given vector.
  */
 double Skewness(const arma::rowvec& input,
-    const double& rowStd,
-    const double& rowMean,
+    const double& fStd,
+    const double& fMean,
     const bool population)
 {
   double skewness = 0;
-  double S3 = pow(rowStd, 3);
-  double M3 = SumNthPowerDeviations(input, rowMean, 3);
-  double n = input.n_elem;
+  const double S3 = pow(fStd, 3);
+  const double M3 = SumNthPowerDeviations(input, fMean, 3);
+  const double n = input.n_elem;
   if (population)
   {
     // Calculate Population Skewness
-    skewness = n * M3 / (n * n * S3);
+    skewness = M3 / (n * S3);
   }
   else
   {
@@ -94,8 +94,9 @@ double Skewness(const arma::rowvec& input,
   }
   return skewness;
 }
+
 /**
- * Calculates kurtosis of the given vector.
+ * Calculates excess kurtosis of the given vector.
  *
  * @param input Vector that captures a dimension of a dataset
  * @param rowStd Standard Deviation of the given vector.
@@ -103,23 +104,23 @@ double Skewness(const arma::rowvec& input,
  * @return Kurtosis of the given vector.
  */
 double Kurtosis(const arma::rowvec& input,
-    const double& rowStd,
-    const double& rowMean,
+    const double& fStd,
+    const double& fMean,
     const bool population)
 {
   double kurtosis = 0;
-  double M4 = SumNthPowerDeviations(input, rowMean, 4);
-  double n = input.n_elem;
+  const double M4 = SumNthPowerDeviations(input, fMean, 4);
+  const double n = input.n_elem;
   if (population)
   {
     // Calculate Population Excess Kurtosis
-    double M2 = SumNthPowerDeviations(input, rowMean, 2);
+    double M2 = SumNthPowerDeviations(input, fMean, 2);
     kurtosis = n * (M4 / pow(M2, 2)) - 3;
   }
   else
   {
     // Calculate Sample Excess Kurtosis
-    double S4 = pow(rowStd, 4);
+    double S4 = pow(fStd, 4);
     double norm3 = (3 * (n-1) * (n-1)) / ((n-2) * (n-3));
     double normC = (n * (n+1))/((n-1) * (n-2) * (n-3));
     double normM = M4 / S4;
@@ -127,6 +128,7 @@ double Kurtosis(const arma::rowvec& input,
   }
   return kurtosis;
 }
+
 /**
  * Calculates standard error of standard deviation.
  *
@@ -134,9 +136,9 @@ double Kurtosis(const arma::rowvec& input,
  * @param rowStd Standard Deviation of the given vector.
  * @return Standard error of the stanrdard devation of the given vector.
  */
-double StandardError(const arma::rowvec& input, const double rowStd)
+double StandardError(const size_t size, const double& fStd)
 {
-   return rowStd / sqrt(input.n_elem);
+   return fStd / sqrt(size);
 }
 
 int main(int argc, char** argv)
@@ -148,10 +150,11 @@ int main(int argc, char** argv)
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
   const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
   const bool population = CLI::HasParam("population");
+  const bool rowMajor = CLI::HasParam("rowMajor");
 
   // Load the data
   arma::mat data;
-  data::Load(inputFile, data, false, true /*transpose*/);
+  data::Load(inputFile, data);
 
   // Generate boost format recipe.
   const string widthPrecision("%-"+
@@ -173,57 +176,49 @@ int main(int argc, char** argv)
       % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
       % "range" % "skew" % "kurt" % "SE" << endl;
 
+  // Lambda function to print out the results.
+  auto printStatResults = [&](size_t dim, bool rowMajor)
+  {
+    arma::rowvec feature;
+    if (rowMajor)
+      feature = arma::conv_to<arma::rowvec>::from(data.col(dim));
+    else
+      feature = data.row(dim);
+
+    // f at the front means "feature"
+    const double fMax = arma::max(feature);
+    const double fMin = arma::min(feature);
+    const double fMean = arma::mean(feature);
+    const double fStd = arma::stddev(feature, population);
+
+    // Print statistics of the given fension.
+    Log::Info << boost::format(numberFormat)
+        % dim
+        % arma::var(feature, population)
+        % fMean
+        % fStd
+        % arma::median(feature)
+        % fMin
+        % fMax
+        % (fMax - fMin) // range
+        % Skewness(feature, fStd, fMean, population)
+        % Kurtosis(feature, fStd, fMean, population)
+        % StandardError(feature.n_elem, fStd)
+        << endl;
+  };
+
   // If the user specified dimension, describe statistics of the given
   // dimension. If it dimension not specified, describe all dimensions.
-  if (CLI::HasParam("dimension"))
+  if(CLI::HasParam("dimension"))
   {
-    // Extract row of the data with the given dimension.
-    arma::rowvec row = data.row(dimension);
-    // These variables are kept for future calculations.
-    double rowMax = arma::max(row);
-    double rowMin = arma::min(row);
-    double rowMean = arma::mean(row);
-    double rowStd = arma::stddev(row, population);
-
-    // Print statistics of the given dimension.
-    Log::Info << boost::format(numberFormat)
-        % dimension
-        % arma::var(row, population)
-        % rowMean
-        % rowStd
-        % arma::median(row)
-        % rowMin
-        % rowMax
-        % (rowMax - rowMin) // range
-        % Skewness(row, rowStd, rowMean, population)
-        % Kurtosis(row, rowStd, rowMean, population)
-        % StandardError(row, rowStd) << endl;
+    printStatResults(dimension, rowMajor);
   }
   else
   {
-    for (size_t i = 0; i < data.n_rows; ++i)
+    const size_t dimensions = rowMajor ? data.n_cols : data.n_rows;
+    for(size_t i = 0; i < dimensions; ++i)
     {
-      // Extract each dimension of the data.
-      arma::rowvec row = data.row(i);
-      // These variables are kept for future calculations.
-      double rowMax = arma::max(row);
-      double rowMin = arma::min(row);
-      double rowMean = arma::mean(row);
-      double rowStd = arma::stddev(row, population);
-
-      // Print statistics of the row i.
-      Log::Info << boost::format(numberFormat)
-          % i
-          % arma::var(row, population)
-          % rowMean
-          % rowStd
-          % arma::median(row)
-          % rowMin
-          % rowMax
-          % (rowMax - rowMin) // range
-          % Skewness(row, rowStd, rowMean, population)
-          % Kurtosis(row, rowStd, rowMean, population)
-          % StandardError(row, rowStd) << endl;
+      printStatResults(i, rowMajor);
     }
   }
   Timer::Stop("statistics");
