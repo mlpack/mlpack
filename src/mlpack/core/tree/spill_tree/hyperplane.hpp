@@ -81,8 +81,6 @@ class HyperplaneBase
   bool Left(const VecType& point,
             typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {
-    if (splitVal == DBL_MAX)
-      return 0;
     return Project(point) <= 0;
   };
 
@@ -96,8 +94,6 @@ class HyperplaneBase
   bool Right(const VecType& point,
             typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {
-    if (splitVal == DBL_MAX)
-      return 0;
     return Project(point) > 0;
   };
 
@@ -109,7 +105,7 @@ class HyperplaneBase
   bool Left(const BoundType& bound) const
   {
     if (splitVal == DBL_MAX)
-      return 0;
+      return true;
     return projVect.Project(bound).Hi() <= splitVal;
   };
 
@@ -121,7 +117,7 @@ class HyperplaneBase
   bool Right(const BoundType& bound) const
   {
     if (splitVal == DBL_MAX)
-      return 0;
+      return false;
     return projVect.Project(bound).Lo() > splitVal;
   };
 
