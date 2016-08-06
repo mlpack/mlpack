@@ -1,5 +1,5 @@
-#ifndef POLICY_HPP
-#define POLICY_HPP
+#ifndef MLPACK_CORE_DATA_FILE_READER_POLICY_HPP
+#define MLPACK_CORE_DATA_FILE_READER_POLICY_HPP
 
 namespace mlpack{
 

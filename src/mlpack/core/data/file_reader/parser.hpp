@@ -29,6 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef MLPACK_CORE_DATA_FILE_READER_PARSER_HPP
+#define MLPACK_CORE_DATA_FILE_READER_PARSER_HPP
+
 #include "policy.hpp"
 
 #include <limits>
@@ -252,3 +255,5 @@ void Parse(char*, T&){
 } //namespace io
 
 } //namespace mlpack
+
+#endif
