@@ -47,7 +47,7 @@ class NeuronGene {
   NeuronGene() {}
 
   // Parametric constructor.
-  NeuronGene(ssize_t id,
+  NeuronGene(int id,
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
              double depth,
@@ -89,10 +89,10 @@ class NeuronGene {
   }  
 
   // Get neuron id.
-  ssize_t Id() const { return aId; }
+  int Id() const { return aId; }
 
   // Set neuron id.
-  void Id(ssize_t id) { aId = id; }
+  void Id(int id) { aId = id; }
 
   // Get neuron type.
   NeuronType Type() const { return aType; }
@@ -149,7 +149,7 @@ class NeuronGene {
 
  private:
   // Neuron id.
-  ssize_t aId;
+  int aId;
 
   // Neuron type.
   NeuronType aType;

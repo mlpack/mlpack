@@ -35,14 +35,14 @@ class Species {
   }
 
   // Parametric constructor.
-  Species(Genome& seedGenome, ssize_t speciesSize) {
+  Species(Genome& seedGenome, int speciesSize) {
     aId = 0;
     aStaleAge = 0;
     aBestFitness = DBL_MAX; 
     aNextGenomeId = speciesSize;
 
     // Create genomes from seed Genome and randomize weight.
-    for (ssize_t i=0; i<speciesSize; ++i) {
+    for (int i=0; i<speciesSize; ++i) {
       Genome genome = seedGenome;
       genome.Id(i);
       aGenomes.push_back(genome);
@@ -68,16 +68,16 @@ class Species {
   }
 
   // Set id.
-  void Id(ssize_t id) { aId = id; }
+  void Id(int id) { aId = id; }
 
   // Get id.
-  ssize_t Id() const { return aId; }
+  int Id() const { return aId; }
 
   // Set age.
-  void StaleAge(ssize_t staleAge) { aStaleAge = staleAge; }
+  void StaleAge(int staleAge) { aStaleAge = staleAge; }
 
   // Get age.
-  ssize_t StaleAge() const { return aStaleAge; }
+  int StaleAge() const { return aStaleAge; }
 
   // Set best fitness.
   void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
@@ -86,7 +86,7 @@ class Species {
   double BestFitness() const { return aBestFitness; }
 
   // Get species size.
-  ssize_t SpeciesSize() const { return aGenomes.size(); }
+  int SpeciesSize() const { return aGenomes.size(); }
 
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitnessAndGenome() {
@@ -94,7 +94,7 @@ class Species {
       return;
 
     aBestFitness = aGenomes[0].Fitness();
-    for (ssize_t i=0; i<aGenomes.size(); ++i) {
+    for (int i=0; i<aGenomes.size(); ++i) {
       if (aGenomes[i].Fitness() < aBestFitness) {
         aBestFitness = aGenomes[i].Fitness();
         aBestGenome = aGenomes[i];
@@ -119,10 +119,10 @@ class Species {
 
  private:
   // Id of species.
-  ssize_t aId;
+  int aId;
 
   // Stale age (how many generations that its best fitness doesn't improve) of species.
-  ssize_t aStaleAge;
+  int aStaleAge;
 
   // Best fitness.
   double aBestFitness;
@@ -131,7 +131,7 @@ class Species {
   Genome aBestGenome;
 
   // Next genome id.
-  ssize_t aNextGenomeId;
+  int aNextGenomeId;
 
 };
 

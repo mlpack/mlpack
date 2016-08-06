@@ -93,9 +93,9 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
   mlpack::math::RandomSeed(1);
 
   // Construct seed genome for xor task.
-  ssize_t id = 0;
-  ssize_t numInput = 3;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 3;
+  int numOutput = 1;
   double fitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -184,9 +184,9 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   params.aMaxGeneration = 1000;
 
   // Construct seed genome for xor task.
-  ssize_t id = 0;
-  ssize_t numInput = 3;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 3;
+  int numOutput = 1;
   double fitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -267,9 +267,9 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   params.aNumSpeciesThreshold = 10;
 
   // Construct seed genome for xor task.
-  ssize_t id = 0;
-  ssize_t numInput = 3;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 3;
+  int numOutput = 1;
   double fitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -336,8 +336,8 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   double l = 0.5;
   double F = 10.0;
   double tau = 0.02;
-  ssize_t num_trial = 10;
-  ssize_t num_step = std::pow(10, 5);
+  int num_trial = 10;
+  int num_step = std::pow(10, 5);
 
   // Construct task instance.
   TaskCartPole task(mc, mp, g, l, F, tau, track_limit, theta_limit, num_trial, num_step, false);
@@ -365,9 +365,9 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   params.aNumSpeciesThreshold = 10;
 
   // Set seed genome for cart pole task.
-  ssize_t id = 0;
-  ssize_t numInput = 5;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 5;
+  int numOutput = 1;
   double fitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -452,9 +452,9 @@ BOOST_AUTO_TEST_CASE(NENeatMarkovDoublePoleTest)
   params.aNumSpeciesThreshold = 10;
 
   // Set seed genome for Markov double pole task.
-  ssize_t id = 0;
-  ssize_t numInput = 7;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 7;
+  int numOutput = 1;
   double fitness = DBL_MAX;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -526,30 +526,30 @@ BOOST_AUTO_TEST_CASE(NENeatNonMarkovDoublePoleTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 50;
-  params.aMaxGeneration = 50000;
+  params.aPopulationSize = 500;
+  params.aMaxGeneration = 20000;
   params.aCoeffDisjoint = 2.0;
   params.aCoeffWeightDiff = 0.4;
   params.aCompatThreshold = 1.0;
   params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.8;
-  params.aCullSpeciesPercentage = 0.7;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.5;
+  params.aCrossoverRate = 0.75;
+  params.aCullSpeciesPercentage = 0.8;
+  params.aMutateWeightProb = 0.8;
+  params.aPerturbWeightProb = 0.9;
   params.aMutateWeightSize = 0.1;
   params.aMutateAddForwardLinkProb = 0.9;
-  params.aMutateAddBackwardLinkProb = 0.8;
-  params.aMutateAddRecurrentLinkProb = 0.8;
-  params.aMutateAddBiasLinkProb = 0.7;
-  params.aMutateAddNeuronProb = 0.7;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
+  params.aMutateAddBackwardLinkProb = 0.6;
+  params.aMutateAddRecurrentLinkProb = 0.6;
+  params.aMutateAddBiasLinkProb = 0.4;
+  params.aMutateAddNeuronProb = 0.4;
+  params.aMutateEnabledProb = 0.3;
+  params.aMutateDisabledProb = 0.3;
+  params.aNumSpeciesThreshold = 20;
 
   // Set seed genome for Markov double pole task.
-  ssize_t id = 0;
-  ssize_t numInput = 4;
-  ssize_t numOutput = 1;
+  int id = 0;
+  int numInput = 4;
+  int numOutput = 1;
   double fitness = DBL_MAX;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
@@ -608,8 +608,8 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
   double x_dot_h = 0.07;
   double gravity = -0.0025;
   double goal = 0.5;
-  ssize_t num_trial = 10;
-  ssize_t num_step = std::pow(10, 2);
+  int num_trial = 10;
+  int num_step = std::pow(10, 2);
 
   // Construct task instance.
   TaskMountainCar task(x_l, x_h, x_dot_l, x_dot_h, gravity, goal, num_trial, num_step, false);
@@ -637,9 +637,9 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
   params.aNumSpeciesThreshold = 10;
 
   // Set seed genome for cart pole task.
-  ssize_t id = 0;
-  ssize_t numInput = 3;
-  ssize_t numOutput = 3;
+  int id = 0;
+  int numInput = 3;
+  int numOutput = 3;
   double fitness = -1;
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;

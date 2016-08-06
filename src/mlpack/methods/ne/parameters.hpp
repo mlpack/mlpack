@@ -20,10 +20,10 @@ namespace ne {
 class Parameters {
  public:
   // Species size.
-  ssize_t aSpeciesSize;
+  int aSpeciesSize;
 
   // Number of generations to evolve.
-  ssize_t aMaxGeneration;
+  int aMaxGeneration;
 
   // Mutation rate.
   double aMutateRate;
@@ -35,7 +35,7 @@ class Parameters {
   double aElitePercentage;
 
   // Population size.
-  ssize_t aPopulationSize;
+  int aPopulationSize;
 
   // Efficient for disjoint.
   double aCoeffDisjoint;
@@ -47,7 +47,7 @@ class Parameters {
   double aCompatThreshold;
 
   // Threshold for species stale age.
-  ssize_t aStaleAgeThreshold;
+  int aStaleAgeThreshold;
 
   // Crossover rate.
   double aCrossoverRate;
@@ -86,7 +86,7 @@ class Parameters {
   double aMutateDisabledProb;
 
   // When number of species exceed this value, start to remove stale and weak species in population. 
-  ssize_t aNumSpeciesThreshold;
+  int aNumSpeciesThreshold;
 
 };
 

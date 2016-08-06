@@ -47,7 +47,7 @@ class CNE {
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution. Can we use exponential distribution?
   static void MutateWeightsBiased(Genome& genome, double mutateProb, double mutateSize) {
-    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {
+    for (int i=0; i<genome.aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();  // rand 0~1
       if (p < mutateProb) {
         double deltaW = mlpack::math::RandNormal(0, mutateSize);
@@ -61,7 +61,7 @@ class CNE {
   // initialization prob distribution with probability p.
   // TODO: here we use uniform distribution. Can we use exponential distribution?
   static void MutateWeightsUnbiased(Genome& genome, double mutateProb, double mutateSize) {
-    for (ssize_t i=0; i<genome.aLinkGenes.size(); ++i) {
+    for (int i=0; i<genome.aLinkGenes.size(); ++i) {
       double p = mlpack::math::Random();
       if (p < mutateProb) {
         double weight = mlpack::math::RandNormal(0, mutateSize);
@@ -78,7 +78,7 @@ class CNE {
                                Genome& child2Genome) {
     child1Genome = momGenome;
     child2Genome = dadGenome;
-    for (ssize_t i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
+    for (int i=0; i<momGenome.aLinkGenes.size(); ++i) { // assume genome are the same structure.
       double t = mlpack::math::RandNormal();
       if (t>0) {  // prob = 0.5
         child1Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
@@ -106,13 +106,13 @@ class CNE {
     aSpecies.SortGenomes();
 
     // Select parents from elite genomes and crossover.
-    ssize_t numElite = floor(aElitePercentage * aSpeciesSize);
-    ssize_t numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
+    int numElite = floor(aElitePercentage * aSpeciesSize);
+    int numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
     numElite = aSpeciesSize - numDrop;
-    for (ssize_t i=numElite; i<aSpeciesSize-1; ++i) {
+    for (int i=numElite; i<aSpeciesSize-1; ++i) {
       // Randomly select two parents from elite genomes.
-      ssize_t idx1 = RandInt(0, numElite);
-      ssize_t idx2 = RandInt(0, numElite);
+      int idx1 = RandInt(0, numElite);
+      int idx2 = RandInt(0, numElite);
 
       // Crossover to get two children genomes.
       CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
@@ -120,7 +120,7 @@ class CNE {
     }
 
     // Keep the best genome and mutate the rests.
-    for (ssize_t i=1; i<aSpeciesSize; ++i) {
+    for (int i=1; i<aSpeciesSize; ++i) {
       MutateWeightsBiased(aSpecies.aGenomes[i], aMutateRate, aMutateSize);
     }
   }
@@ -128,13 +128,13 @@ class CNE {
   // Evolution of species.
   void Evolve() {
     // Generate initial species at random.
-    ssize_t generation = 0;
+    int generation = 0;
     InitSpecies();
     
     // Repeat
     while (generation < aMaxGeneration) {
     	// Evaluate all genomes in the species.
-      for (ssize_t i=0; i<aSpecies.SpeciesSize(); ++i) {
+      for (int i=0; i<aSpecies.SpeciesSize(); ++i) {
         double fitness = aTask.EvalFitness(aSpecies.aGenomes[i]);
         aSpecies.aGenomes[i].Fitness(fitness);
       }
@@ -164,10 +164,10 @@ class CNE {
   Species aSpecies;
 
   // Species size.
-  ssize_t aSpeciesSize;
+  int aSpeciesSize;
 
   // Max number of generation to evolve.
-  ssize_t aMaxGeneration;
+  int aMaxGeneration;
 
   // Mutation rate.
   double aMutateRate;

@@ -110,10 +110,10 @@ class TaskCartPole {
   double theta_limit;
 
   // Number of trials to test genomes.
-  ssize_t num_trial;
+  int num_trial;
 
   // Number of steps in each trial.
-  ssize_t num_step;
+  int num_step;
 
   // Task success or not.
   bool success;
@@ -136,7 +136,7 @@ class TaskCartPole {
   // Parametric constructor.
   TaskCartPole(double t_mc, double t_mp, double t_g, double t_l, double t_F, 
                double t_tau, double t_track_limit, double t_theta_limit,
-               ssize_t t_num_trial, ssize_t t_num_step, bool t_success):
+               int t_num_trial, int t_num_step, bool t_success):
                mc(t_mc), mp(t_mp), g(t_g), l(t_l), F(t_F),
                tau(t_tau), track_limit(t_track_limit), theta_limit(t_theta_limit),
                num_trial(t_num_trial), num_step(t_num_step), success(t_success) {}
@@ -165,14 +165,14 @@ class TaskCartPole {
 
     //mlpack::math::RandomSeed(1);  // If no seed set, each time the fitness will change.
     double fitness = 0;
-    for (ssize_t trial=0; trial<num_trial; ++trial) {
+    for (int trial=0; trial<num_trial; ++trial) {
       // Initialize inputs: x, x_dot, theta, theta_dot. As used by Stanley.
       double x = mlpack::math::Random(-2.4, 2.4);
       double x_dot = mlpack::math::Random(-1.0, 1.0);
       double theta = mlpack::math::Random(-0.2, 0.2);
       double theta_dot = mlpack::math::Random(-1.5, 1.5);
 
-      for (ssize_t step=0; step<num_step; ++step) {
+      for (int step=0; step<num_step; ++step) {
         // Scale input.
         std::vector<double> inputs = {(x + 2.4) / 4.8,
                                       (x_dot + 0.75) / 1.5,
@@ -252,7 +252,7 @@ class TaskDoublePole {
   double tau;
 
   // Number of steps in each trial.
-  ssize_t num_step;
+  int num_step;
 
   // Random init state or not.
   bool random_init_state;
@@ -413,7 +413,7 @@ class TaskDoublePole {
   }
 
   // Markovian: velocity information is provided to the network input.
-  double EvalMarkov(Genome& genome, size_t numStep) {
+  double EvalMarkov(Genome& genome, int numStep) {
     assert(genome.NumInput() == 7); // 6 state input + 1 bias.
     assert(genome.NumOutput() == 1);
     
@@ -421,7 +421,7 @@ class TaskDoublePole {
     InitState(random_init_state, state);
     std::vector<double> state_dot(6);
 
-    size_t step = 0;
+    int step = 0;
     while (step < numStep) {
       // Input normalized states to genome and get output action.
       std::vector<double> inputs = { state[0] / 4.80, state[1] / 2.00, state[2] / 0.52,
@@ -447,7 +447,7 @@ class TaskDoublePole {
   }
 
   // Non-Markovian: no velocity is provided.
-  double EvalNonMarkov(Genome& genome, size_t numStep, double& GuruFitness) {
+  double EvalNonMarkov(Genome& genome, int numStep, double& GuruFitness) {
     assert(genome.NumInput() == 4); // 3 state input + 1 bias. No velocity inputs.
     assert(genome.NumOutput() == 1);
     
@@ -457,7 +457,7 @@ class TaskDoublePole {
 
     std::queue<double> lastValues;
 
-    size_t step = 0;
+    int step = 0;
     while (step < numStep) {
       // Input normalized states to genome and get output action.
       std::vector<double> inputs = { state[0] / 4.80, state[2] / 0.52, state[4] / 0.52, 1 };
@@ -589,10 +589,10 @@ class TaskMountainCar {
   double goal;
 
   // Number of trials to test genomes.
-  ssize_t num_trial;
+  int num_trial;
 
   // Number of steps in each trial.
-  ssize_t num_step;
+  int num_step;
 
   // Task success or not.
   bool success;
@@ -637,13 +637,13 @@ class TaskMountainCar {
     assert(genome.NumOutput() == 3);
 
     double fitness = 0;
-    ssize_t numSuccess = 0;
-    for (ssize_t trial=0; trial<num_trial; ++trial) {
+    int numSuccess = 0;
+    for (int trial=0; trial<num_trial; ++trial) {
       // Initialize inputs: x, x_dot.
       double x = mlpack::math::Random(x_l, x_h);
       double x_dot = mlpack::math::Random(x_dot_l, x_dot_h);
 
-      for (ssize_t step=0; step<num_step; ++step) {
+      for (int step=0; step<num_step; ++step) {
         // Get action.
         std::vector<double> inputs = {x, x_dot, 1};
         genome.Activate(inputs);
@@ -652,7 +652,7 @@ class TaskMountainCar {
 
         double action = 0;
         auto biggest_position = std::max_element(std::begin(output), std::end(output));
-        size_t index = std::distance(std::begin(output), biggest_position);
+        int index = std::distance(std::begin(output), biggest_position);
         if (index == 0) action = 0;
         if (index == 1) action = 1;
         if (index == 2) action = -1; // NOTICE: we haven't consider equal cases. two equal or three equal.

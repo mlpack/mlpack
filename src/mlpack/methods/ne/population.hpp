@@ -35,7 +35,7 @@ class Population {
   }
 
   // Parametric constructor.
-  Population(Genome& seedGenome, ssize_t populationSize) {
+  Population(Genome& seedGenome, int populationSize) {
     aBestFitness = DBL_MAX;
     Species species(seedGenome, populationSize);
     aSpecies.push_back(species);  // NOTICE: we don't speciate.
@@ -72,24 +72,24 @@ class Population {
   Genome BestGenome() const { return aBestGenome; }
 
   // Set next species id.
-  void NextSpeciesId(ssize_t nextSpeciesId) { aNextSpeciesId = nextSpeciesId; }
+  void NextSpeciesId(int nextSpeciesId) { aNextSpeciesId = nextSpeciesId; }
 
   // Get next species id.
-  ssize_t NextSpeciesId() const { return aNextSpeciesId; }
+  int NextSpeciesId() const { return aNextSpeciesId; }
 
   // Set next genome id.
-  void NextGenomeId(ssize_t nextGenomeId) { aNextGenomeId = nextGenomeId; }
+  void NextGenomeId(int nextGenomeId) { aNextGenomeId = nextGenomeId; }
 
   // Get next genome id.
-  ssize_t NextGenomeId() const { return aNextGenomeId; }
+  int NextGenomeId() const { return aNextGenomeId; }
 
   // Get species number.
-  ssize_t NumSpecies() const { return aSpecies.size(); }
+  int NumSpecies() const { return aSpecies.size(); }
 
   // Get population size.
-  ssize_t PopulationSize() const {
-    ssize_t populationSize = 0;
-    for (ssize_t i=0; i<aSpecies.size(); ++i) {
+  int PopulationSize() const {
+    int populationSize = 0;
+    for (int i=0; i<aSpecies.size(); ++i) {
       populationSize += aSpecies[i].aGenomes.size();
     }
 
@@ -99,8 +99,8 @@ class Population {
   // Set best fitness to be the minimum of all genomes' fitness.
   void SetBestFitnessAndGenome() {
     aBestFitness = DBL_MAX;
-    for (ssize_t i=0; i<aSpecies.size(); ++i) {
-      for (ssize_t j=0; j<aSpecies[i].aGenomes.size(); ++j) {
+    for (int i=0; i<aSpecies.size(); ++i) {
+      for (int j=0; j<aSpecies[i].aGenomes.size(); ++j) {
         if (aSpecies[i].aGenomes[j].Fitness() < aBestFitness) {
           aBestFitness = aSpecies[i].aGenomes[j].Fitness();
           aBestGenome = aSpecies[i].aGenomes[j];
@@ -117,15 +117,15 @@ class Population {
   }
 
   // Remove species.
-  void RemoveSpecies(ssize_t idx) {
+  void RemoveSpecies(int idx) {
     aSpecies.erase(aSpecies.begin() + idx);
   }
 
   // ReassignGenomesId
   void ReassignGenomeId() {
-    ssize_t id = -1;
-    for (ssize_t i=0; i<aSpecies.size(); ++i) {
-      for (ssize_t j=0; j<aSpecies[i].aGenomes.size(); ++j) {
+    int id = -1;
+    for (int i=0; i<aSpecies.size(); ++i) {
+      for (int j=0; j<aSpecies[i].aGenomes.size(); ++j) {
         ++id;
         aSpecies[i].aGenomes[j].Id(id);
       }
@@ -141,10 +141,10 @@ class Population {
   Genome aBestGenome;
 
   // Next species id.
-  ssize_t aNextSpeciesId;
+  int aNextSpeciesId;
 
   // Next genome id.
-  ssize_t aNextGenomeId;
+  int aNextGenomeId;
 
 };
 
