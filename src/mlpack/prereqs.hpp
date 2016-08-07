@@ -55,11 +55,9 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
-#if BOOST_VERSION < 105500 // Old versions don't have unordered_map support.
-  #include "core/boost_backport/unordered_map.hpp"
-#else
-  #include <boost/serialization/unordered_map.hpp>
-#endif
+// boost_backport.hpp handles the version and backporting of serialization (and
+// other) features.
+#include "mlpack/core/boost_backport/boost_backport.hpp"
 // Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
 // any issue by setting BOOST_PFTO to nothing.
 #ifndef BOOST_PFTO

@@ -904,6 +904,10 @@ BOOST_AUTO_TEST_CASE(RPlusTreeOverlapTest)
 
   CheckOverlap(rPlusTree);
 
+  // Children can not be overlapping.
+  bool b = TreeTraits<TreeType>::HasOverlappingChildren;
+  BOOST_REQUIRE_EQUAL(b, false);
+
   // Ensure that all leaf nodes are at the same level.
   BOOST_REQUIRE_EQUAL(GetMinLevel(rPlusTree), GetMaxLevel(rPlusTree));
   BOOST_REQUIRE_EQUAL(rPlusTree.TreeDepth(), GetMinLevel(rPlusTree));
@@ -1018,6 +1022,10 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeBoundTest)
   TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
 
   CheckRPlusPlusTreeBound(rPlusPlusTree);
+
+  // Children can not be overlapping.
+  bool b = TreeTraits<TreeType>::HasOverlappingChildren;
+  BOOST_REQUIRE_EQUAL(b, false);
 
   BOOST_REQUIRE_EQUAL(GetMinLevel(rPlusPlusTree), GetMaxLevel(rPlusPlusTree));
   BOOST_REQUIRE_EQUAL(rPlusPlusTree.TreeDepth(), GetMinLevel(rPlusPlusTree));

@@ -429,6 +429,9 @@ class CNN
 
   //! Locally stored backward error.
   arma::mat error;
+
+  //! Locally stored sample size.
+  size_t sampleSize;
 }; // class CNN
 
 } // namespace ann

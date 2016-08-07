@@ -262,40 +262,23 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
             << std::endl;
 }
 
-template<typename SortPolicy>
-void LSHSearch<SortPolicy>::InsertNeighbor(arma::mat& distances,
-                                           arma::Mat<size_t>& neighbors,
-                                           const size_t queryIndex,
-                                           const size_t pos,
-                                           const size_t neighbor,
-                                           const double distance) const
-{
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (distances.n_rows - 1))
-  {
-    const size_t len = (distances.n_rows - 1) - pos;
-    memmove(distances.colptr(queryIndex) + (pos + 1),
-        distances.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(neighbors.colptr(queryIndex) + (pos + 1),
-        neighbors.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
-  }
-
-  // Now put the new information in the right index.
-  distances(pos, queryIndex) = distance;
-  neighbors(pos, queryIndex) = neighbor;
-}
-
 // Base case where the query set is the reference set.  (So, we can't return
 // ourselves as the nearest neighbor.)
 template<typename SortPolicy>
 inline force_inline
 void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
                                      const arma::uvec& referenceIndices,
+                                     const size_t k,
                                      arma::Mat<size_t>& neighbors,
                                      arma::mat& distances) const
 {
+  // Let's build the list of candidate neighbors for the given query point.
+  // It will be initialized with k candidates:
+  // (WorstDistance, referenceSet->n_cols)
+  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
+      referenceSet->n_cols);
+  std::vector<Candidate> vect(k, def);
+  CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
@@ -308,17 +291,20 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
         referenceSet->unsafe_col(queryIndex),
         referenceSet->unsafe_col(referenceIndex));
 
-    // If this distance is better than any of the current candidates, the
-    // SortDistance() function will give us the position to insert it into.
-    arma::vec queryDist = distances.unsafe_col(queryIndex);
-    arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-    size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
-        distance);
+    Candidate c = std::make_pair(distance, referenceIndex);
+    // If this distance is better than the worst candidate, let's insert it.
+    if (CandidateCmp()(c, pqueue.top()))
+    {
+      pqueue.pop();
+      pqueue.push(c);
+    }
+  }
 
-    // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-    if (insertPosition != (size_t() - 1))
-      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-          referenceIndex, distance);
+  for (size_t j = 1; j <= k; j++)
+  {
+    neighbors(k - j, queryIndex) = pqueue.top().second;
+    distances(k - j, queryIndex) = pqueue.top().first;
+    pqueue.pop();
   }
 }
 
@@ -327,10 +313,19 @@ template<typename SortPolicy>
 inline force_inline
 void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
                                      const arma::uvec& referenceIndices,
+                                     const size_t k,
                                      const arma::mat& querySet,
                                      arma::Mat<size_t>& neighbors,
                                      arma::mat& distances) const
 {
+  // Let's build the list of candidate neighbors for the given query point.
+  // It will be initialized with k candidates:
+  // (WorstDistance, referenceSet->n_cols)
+  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
+      referenceSet->n_cols);
+  std::vector<Candidate> vect(k, def);
+  CandidateList pqueue(CandidateCmp(), std::move(vect));
+
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
     const size_t referenceIndex = referenceIndices[j];
@@ -338,20 +333,23 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
         querySet.unsafe_col(queryIndex),
         referenceSet->unsafe_col(referenceIndex));
 
-    // If this distance is better than any of the current candidates, the
-    // SortDistance() function will give us the position to insert it into.
-    arma::vec queryDist = distances.unsafe_col(queryIndex);
-    arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
-    size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
-        distance);
+    Candidate c = std::make_pair(distance, referenceIndex);
+    // If this distance is better than the worst candidate, let's insert it.
+    if (CandidateCmp()(c, pqueue.top()))
+    {
+      pqueue.pop();
+      pqueue.push(c);
+    }
+  }
 
-    // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-    if (insertPosition != (size_t() - 1))
-      InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
-          referenceIndex, distance);
-
+  for (size_t j = 1; j <= k; j++)
+  {
+    neighbors(k - j, queryIndex) = pqueue.top().second;
+    distances(k - j, queryIndex) = pqueue.top().first;
+    pqueue.pop();
   }
 }
+
 template<typename SortPolicy>
 inline force_inline
 double LSHSearch<SortPolicy>::PerturbationScore(
@@ -794,8 +792,6 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   // Set the size of the neighbor and distance matrices.
   resultingNeighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);
-  distances.fill(SortPolicy::WorstDistance());
-  resultingNeighbors.fill(referenceSet->n_cols);
 
   // If the user asked for 0 nearest neighbors... uh... we're done.
   if (k == 0)
@@ -854,7 +850,7 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
-    BaseCase(i, refIndices, querySet, resultingNeighbors, distances);
+    BaseCase(i, refIndices, k, querySet, resultingNeighbors, distances);
   }
 
   Timer::Stop("computing_neighbors");
@@ -877,8 +873,6 @@ Search(const size_t k,
   // This is monochromatic search; the query set is the reference set.
   resultingNeighbors.set_size(k, referenceSet->n_cols);
   distances.set_size(k, referenceSet->n_cols);
-  distances.fill(SortPolicy::WorstDistance());
-  resultingNeighbors.fill(referenceSet->n_cols);
 
   // If the user requested more than the available number of additional probing
   // bins, set Teffective to maximum T. Maximum T is 2^numProj - 1
@@ -933,7 +927,7 @@ Search(const size_t k,
 
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
-    BaseCase(i, refIndices, resultingNeighbors, distances);
+    BaseCase(i, refIndices, k, resultingNeighbors, distances);
   }
 
   Timer::Stop("computing_neighbors");

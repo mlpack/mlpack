@@ -42,21 +42,26 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "predictions from a test file can be saved into the file specified by the "
     "--output_predictions option.");
 
-PARAM_STRING("input_file", "File containing covariates (X).", "i", "");
-PARAM_STRING("responses_file", "File containing y (responses/observations).",
+PARAM_STRING_IN("input_file", "File containing covariates (X).", "i", "");
+PARAM_STRING_IN("responses_file", "File containing y (responses/observations).",
     "r", "");
 
-PARAM_STRING("input_model_file", "File to load model from.", "m", "");
-PARAM_STRING("output_model_file", "File to save model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File to load model from.", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save model to.", "M");
 
-PARAM_STRING("test_file", "File containing points to regress on (test points).",
-    "t", "");
-PARAM_STRING("output_predictions", "If --test_file is specified, this "
-    "file is where the predicted responses will be saved.", "o", "");
+PARAM_STRING_IN("test_file", "File containing points to regress on (test "
+    "points).", "t", "");
 
-PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty.", "l",
+// Kept for reverse compatibility until mlpack 3.0.0.
+PARAM_STRING_OUT("output_predictions", "If --test_file is specified, this file "
+    "is where the predicted responses will be saved.", "");
+// This is the future name of the parameter.
+PARAM_STRING_OUT("output_predictions_file", "If --test_file is specified, this "
+    "file is where the predicted responses will be saved.", "o");
+
+PARAM_DOUBLE_IN("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
-PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty.", "L",
+PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
     0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
@@ -75,7 +80,23 @@ int main(int argc, char* argv[])
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::HasParam("use_cholesky");
 
-  // Check parameters -- make sure everything given makes sense.
+  // Reverse compatibility.  We can remove these for mlpack 3.0.0.
+  if (CLI::HasParam("output_predictions") &&
+      CLI::HasParam("output_predictions_file"))
+    Log::Fatal << "Cannot specify both --output_predictions and "
+        << "--output_predictions_file!" << endl;
+
+  if (CLI::HasParam("output_predictions"))
+  {
+    Log::Warn << "--output_predictions is deprecated and will be removed in "
+        << "mlpack 3.0.0; use --output_predictions_file instead." << endl;
+    CLI::GetParam<string>("output_predictions_file") =
+        CLI::GetParam<string>("output_predictions");
+  }
+
+  // Check parameters -- make sure everything given makes sense.  These checks
+  // can be simplified to HasParam() after the reverse compatibility options are
+  // removed.
   if (CLI::HasParam("input_file") && !CLI::HasParam("responses_file"))
     Log::Fatal << "--input_file (-i) is specified, but --responses_file (-r) is"
         << " not!" << endl;
@@ -93,17 +114,19 @@ int main(int argc, char* argv[])
     Log::Fatal << "Both --input_file (-i) and --input_model_file (-m) are "
         << "specified, but only one may be specified!" << endl;
 
-  if (!CLI::HasParam("output_predictions") &&
+  if ((CLI::GetParam<string>("output_predictions_file") == "") &&
       !CLI::HasParam("output_model_file"))
-    Log::Warn << "--output_predictions (-o) and --output_model_file (-M) "
+    Log::Warn << "--output_predictions_file (-o) and --output_model_file (-M) "
         << "are not specified; no results will be saved!" << endl;
 
-  if (CLI::HasParam("output_predictions") && !CLI::HasParam("test_file"))
-    Log::Warn << "--output_predictions (-o) specified, but --test_file "
+  if ((CLI::GetParam<string>("output_predictions_file") == "") &&
+      !CLI::HasParam("test_file"))
+    Log::Warn << "--output_predictions_file (-o) specified, but --test_file "
         << "(-t) is not; no results will be saved." << endl;
 
-  if (CLI::HasParam("test_file") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions "
+  if (CLI::HasParam("test_file") &&
+      (CLI::GetParam<string>("output_predictions_file") == ""))
+    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
         << "(-o) is not; no results will be saved." << endl;
 
   // Initialize the object.
@@ -163,10 +186,10 @@ int main(int argc, char* argv[])
     lars.Predict(testPoints.t(), predictions, false);
 
     // Save test predictions.  One per line, so, don't transpose on save.
-    if (CLI::HasParam("output_predictions"))
+    if (CLI::GetParam<string>("output_predictions_file") != "")
     {
       const string outputPredictionsFile =
-        CLI::GetParam<string>("output_predictions");
+        CLI::GetParam<string>("output_predictions_file");
       data::Save(outputPredictionsFile, predictions, true, false);
     }
   }

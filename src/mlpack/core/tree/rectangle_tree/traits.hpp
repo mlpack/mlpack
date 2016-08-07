@@ -56,6 +56,54 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
   static const bool BinaryTree = false;
 };
 
+/**
+ * Since the R+/R++ tree can not have overlapping children, we should define
+ * traits for the R+/R++ tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitPolicyType,
+         template<typename> class SweepType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+class TreeTraits<RectangleTree<MetricType,
+    StatisticType,
+    MatType,
+    RPlusTreeSplit<SplitPolicyType,
+                   SweepType>,
+    DescentType,
+    AuxiliaryInformationType>>
+{
+ public:
+  /**
+   * The R+/R++ tree can't have overlapping children.
+   */
+  static const bool HasOverlappingChildren = false;
+
+  /**
+   * There is no guarantee that the first point in a node is its centroid.
+   */
+  static const bool FirstPointIsCentroid = false;
+
+  /**
+   * Points are not contained at multiple levels of the R-tree.
+   */
+  static const bool HasSelfChildren = false;
+
+  /**
+   * Points are rearranged during building of the tree.
+   * THIS MAY NOT BE TRUE.  IT'S HARD TO DYNAMICALLY INSERT POINTS
+   * AND REARRANGE THE MATRIX
+   */
+  static const bool RearrangesDataset = false;
+
+  /**
+   * This tree is not necessarily a binary tree.
+   */
+  static const bool BinaryTree = false;
+};
+
 } // namespace tree
 } // namespace mlpack
 

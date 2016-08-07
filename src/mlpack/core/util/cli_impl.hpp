@@ -21,18 +21,20 @@ namespace mlpack {
  *     CheckValue.
  *
  * @tparam T The type of the parameter.
- * @param identifier The name of the parameter, eg foo in bar/foo.
+ * @param identifier The name of the parameter, eg foo.
  * @param description A string description of the parameter.
- * @param parent The name of the parent of the parameter,
- *   eg bar/foo in bar/foo/buzz.
- * @param required If required, the program will refuse to run
- *   unless the parameter is specified.
+ * @param alias Short name of the parameter.
+ * @param required If required, the program will refuse to run unless the
+ *     parameter is specified.
+ * @param input If true, the parameter is an input parameter (not an output
+ *     parameter).
  */
 template<typename T>
 void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
-              bool required)
+              const bool required,
+              const bool input)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -88,6 +90,13 @@ void CLI::Add(const std::string& identifier,
   // If the option is required, add it to the required options list.
   if (required)
     GetSingleton().requiredOptions.push_front(identifier);
+
+  // Depending on whether or not the option is input or output, add it to the
+  // appropriate list.
+  if (input)
+    GetSingleton().inputOptions.push_front(identifier);
+  else
+    GetSingleton().outputOptions.push_front(identifier);
 }
 
 // We specialize this in cli.cpp.

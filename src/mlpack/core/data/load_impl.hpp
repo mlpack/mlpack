@@ -59,43 +59,6 @@ void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
   }
 }
 
-template<typename eT>
-void MapToNumerical(const std::vector<std::string> &tokens,
-                    size_t &row,
-                    DatasetInfo &info,
-                    arma::Mat<eT> &matrix)
-{
-  auto notNumber = [](const std::string &str)
-  {
-    eT val(0);
-    std::stringstream token;
-    token.str(str);
-    token>>val;
-    return token.fail();
-  };
-
-  const bool notNumeric = std::any_of(std::begin(tokens),
-                                      std::end(tokens), notNumber);
-  if(notNumeric)
-  {
-    for(size_t i = 0; i != tokens.size(); ++i)
-    {
-      const eT val = static_cast<eT>(info.MapString(tokens[i], row));
-      matrix.at(row, i) = val;
-    }
-  }
-  else
-  {
-    std::stringstream token;
-    for(size_t i = 0; i != tokens.size(); ++i)
-    {
-      token.str(tokens[i]);
-      token>>matrix.at(row, i);
-      token.clear();
-    }
-  }
-}
-
 }
 
 template<typename eT>
@@ -370,10 +333,10 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetInfo& info,
+          DatasetMapper<PolicyType>& info,
           const bool fatal,
           const bool transpose)
 {
@@ -446,16 +409,16 @@ bool Load(const std::string& filename,
     if (transpose)
     {
       matrix.set_size(cols, rows);
-      info = DatasetInfo(cols);
+      info = DatasetMapper<PolicyType>(info.Policy(), cols);
     }
     else
     {
       matrix.set_size(rows, cols);
-      info = DatasetInfo(rows);
+      info = DatasetMapper<PolicyType>(info.Policy(), rows);
     }
 
     stream.close();
-    stream.open(filename, std::fstream::in);    
+    stream.open(filename, std::fstream::in);
 
     if(transpose)
     {
@@ -475,8 +438,7 @@ bool Load(const std::string& filename,
       for(size_t i = 0; i != cols; ++i)
       {
         details::TransPoseTokens(tokensArray, tokens, i);
-        details::MapToNumerical(tokens, i,
-                                info, matrix);
+        info.MapTokens(tokens, i, matrix);
       }
     }
     else
@@ -487,8 +449,7 @@ bool Load(const std::string& filename,
         // Extract line by line.
         std::getline(stream, buffer, '\n');
         Tokenizer lineTok(buffer, sep);
-        details::MapToNumerical(details::ToTokens(lineTok), row,
-                                info, matrix);
+        info.MapTokens(details::ToTokens(lineTok), row, matrix);
         ++row;
       }
     }

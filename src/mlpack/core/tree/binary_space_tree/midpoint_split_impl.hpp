@@ -37,6 +37,9 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       {
         maxWidth = width;
         splitInfo.splitDimension = d;
+
+        // Split in the midpoint of that dimension.
+        splitInfo.splitVal = bound[d].Mid();
       }
     }
   }
@@ -65,13 +68,15 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       {
         maxWidth = width;
         splitInfo.splitDimension = d;
+        // Split in the midpoint of that dimension.
+        splitInfo.splitVal = ranges[d].Mid();
       }
     }
 
     delete[] ranges;
   }
 
-  if (maxWidth == 0) // All these points are the same.  We can't split.
+  if (maxWidth <= 0) // All these points are the same.  We can't split.
     return false;
 
   // Split in the midpoint of that dimension.

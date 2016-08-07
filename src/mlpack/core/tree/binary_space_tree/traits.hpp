@@ -8,6 +8,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_TRAITS_HPP
 
 #include <mlpack/core/tree/tree_traits.hpp>
+#include <mlpack/core/tree/ballbound.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -41,6 +42,11 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
+   * The tree has not got duplicated points.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * Points are not contained at multiple levels of the binary space tree.
    */
   static const bool HasSelfChildren = false;
@@ -68,6 +74,11 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    * Children of a random projection tree node may overlap.
    */
   static const bool HasOverlappingChildren = true;
+
+  /**
+   * The tree has not got duplicated points.
+   */
+  static const bool HasDuplicatedPoints = false;
 
   /**
    * There is no guarantee that the first point in a node is its centroid.
@@ -104,6 +115,11 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool HasOverlappingChildren = true;
 
   /**
+   * The tree has not got duplicated points.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
@@ -121,6 +137,29 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   /**
    * This is always a binary tree.
    */
+  static const bool BinaryTree = true;
+};
+
+/**
+ * This is a specialization of the TreeType class to the BallTree tree type.
+ * The only difference with general BinarySpaceTree is that BallTree can have
+ * overlapping children.
+ * See mlpack/core/tree/tree_traits.hpp for more information.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
+    bound::BallBound, SplitType>>
+{
+ public:
+  static const bool HasOverlappingChildren = true;
+  static const bool HasDuplicatedPoints = false;
+  static const bool FirstPointIsCentroid = false;
+  static const bool HasSelfChildren = false;
+  static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;
 };
 
