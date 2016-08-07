@@ -114,16 +114,16 @@ double Kurtosis(const arma::rowvec& input,
   if (population)
   {
     // Calculate Population Excess Kurtosis
-    double M2 = SumNthPowerDeviations(input, fMean, 2);
+    const double M2 = SumNthPowerDeviations(input, fMean, 2);
     kurtosis = n * (M4 / pow(M2, 2)) - 3;
   }
   else
   {
     // Calculate Sample Excess Kurtosis
-    double S4 = pow(fStd, 4);
-    double norm3 = (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
-    double normC = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
-    double normM = M4 / S4;
+    const double S4 = pow(fStd, 4);
+    const double norm3 = (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+    const double normC = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
+    const double normM = M4 / S4;
     kurtosis = normC * normM - norm3;
   }
   return kurtosis;
@@ -164,6 +164,8 @@ int main(int argc, char** argv)
       to_string(width)+ ".");
   string stringFormat = "";
   string numberFormat = "";
+
+  // We are going to print 11 different categories.
   for (size_t i = 0; i < 11; ++i)
   {
     stringFormat += widthOnly + "s";
