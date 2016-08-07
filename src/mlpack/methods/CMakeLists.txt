@@ -56,6 +56,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   nystroem_method
+  ne
 )
 
 foreach(dir ${DIRS})
