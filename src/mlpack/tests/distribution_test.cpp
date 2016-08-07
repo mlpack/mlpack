@@ -539,6 +539,32 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainStatisticsTest)
   BOOST_REQUIRE_CLOSE(d1.Beta(0), d2.Beta(0), 1e-5);
 }
 
+/**
+ * Tests that Random() generates points that can be reasonably well fit by the
+ * distribution that generated them.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionRandomTest)
+{
+  const arma::vec a("2.0 2.5 3.0"), b("0.4 0.6 1.3");
+  const size_t numPoints = 2000;
+
+  // Distribution to generate points.
+  GammaDistribution d1(a, b);
+  arma::mat data(3, numPoints); // 3-d points.
+
+  for (size_t i = 0; i < numPoints; ++i)
+    //std::cout << d1.Random() << "====" << std::endl;
+    data.col(i) = d1.Random();
+  
+  // Distribution to fit points.
+  GammaDistribution d2(data);
+  for (size_t i = 0; i < 3; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(d2.Alpha(i), a(i), 10); // Within 10%
+    BOOST_REQUIRE_CLOSE(d2.Beta(i), b(i), 10);
+  }
+}
+
 BOOST_AUTO_TEST_CASE(GammaDistributionProbabilityTest)
 {
   // Train two 1-dimensional distributions.
