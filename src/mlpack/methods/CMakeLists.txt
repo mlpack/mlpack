@@ -24,7 +24,7 @@ set(DIRS
   decision_stump
   det
   emst
-#  fastmks
+  fastmks
   gmm
   hmm
   hoeffding_trees
