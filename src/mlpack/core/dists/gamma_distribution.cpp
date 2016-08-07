@@ -206,11 +206,11 @@ arma::vec GammaDistribution::Random() const
 {
   arma::vec randVec(alpha.n_elem);
 
-  std::default_random_engine generator;
   for (size_t d = 0; d < alpha.n_elem; ++d)
   {
     std::gamma_distribution<double> dist(alpha(d), beta(d));
-    randVec(d) = dist(generator);
+    // Use the mlpack random object.
+    randVec(d) = dist(mlpack::math::randGen);
   }
 
   return randVec;
