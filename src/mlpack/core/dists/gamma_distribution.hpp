@@ -86,7 +86,8 @@ class GammaDistribution
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
     
-    /** Fits an alpha and beta parameter according to observation probabilities.
+    /** 
+     * Fits an alpha and beta parameter according to observation probabilities.
      * 
      * @param observations The reference data, one observation per column
      * @param probabilities The probability of each observation. One value per
@@ -96,8 +97,8 @@ class GammaDistribution
      *    smaller than tol.
      */
     void Train(const arma::mat& observations, 
-                                  const arma::vec& probabilities,
-                                  const double tol = 1e-8);
+               const arma::vec& probabilities,
+               const double tol = 1e-8);
     
     /**
      * This function trains (fits distribution parameters) to a dataset with
@@ -160,7 +161,7 @@ class GammaDistribution
      *     observation.
      */
     void LogProbability(const arma::mat& observations, 
-                     arma::vec& LogProbabilities) const;
+                        arma::vec& LogProbabilities) const;
 
     /**
      * This function returns an observation of this distribution

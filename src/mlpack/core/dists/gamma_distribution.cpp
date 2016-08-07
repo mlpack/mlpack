@@ -41,7 +41,6 @@ inline bool GammaDistribution::Converged(const double aOld,
   return (std::abs(aNew - aOld) / aNew) < tol;
 }
 
-
 // Fits an alpha and beta parameter to each dimension of the data.
 void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 {
@@ -156,10 +155,10 @@ void GammaDistribution::Probability(const arma::mat& observations,
     for (size_t d = 0; d < observations.n_rows; ++d)
     {
       // Compute probability using Multiplication Law.
-      probabilities(i) *= 
-        std::pow(observations(d, i), alpha(d) - 1) *
-        std::exp(-observations(d, i) / beta(d)) /
-        denominators(d);
+      double factor = std::exp(-observations(d, i) / beta(d));
+      double numerator = std::pow(observations(d, i), alpha(d) - 1);
+      
+      probabilities(i) *= factor * numerator / denominators(d);
     }
   }
 }
@@ -194,10 +193,10 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
     {
       // Compute probability using Multiplication Law and Logarithm addition
       // property.
-      LogProbabilities(i) += std::log( 
-        std::pow(observations(d, i), alpha(d) - 1) 
-        * std::exp(-observations(d, i) / beta(d)) 
-        / denominators(d));
+      double factor = std::exp(-observations(d, i) / beta(d));
+      double numerator = std::pow(observations(d, i), alpha(d) - 1);
+
+      LogProbabilities(i) += std::log( numerator * factor / denominators(d));
     }
   }
 }
