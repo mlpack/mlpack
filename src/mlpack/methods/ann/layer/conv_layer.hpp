@@ -44,7 +44,7 @@ class ConvLayer
    * @param inMaps The number of input maps.
    * @param outMaps The number of output maps.
    * @param wfilter Width of the filter/kernel.
-   * @param wfilter Height of the filter/kernel.
+   * @param hfilter Height of the filter/kernel.
    * @param xStride Stride of filter application in the x direction.
    * @param yStride Stride of filter application in the y direction.
    * @param wPad Spatial padding width of the input.
@@ -80,17 +80,23 @@ class ConvLayer
   template<typename eT>
   void Forward(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
+    if (wPad != 0 || hPad != 0)
+      Pad(input, wPad, hPad, paddedInput);
+    
     const size_t wConv = ConvOutSize(input.n_rows, wfilter, xStride, wPad);
     const size_t hConv = ConvOutSize(input.n_cols, hfilter, yStride, hPad);
-
     output = arma::zeros<arma::Cube<eT> >(wConv, hConv, outMaps);
     for (size_t outMap = 0, outMapIdx = 0; outMap < outMaps; outMap++)
     {
       for (size_t inMap = 0; inMap < inMaps; inMap++, outMapIdx++)
       {
         arma::Mat<eT> convOutput;
-        ForwardConvolutionRule::Convolution(input.slice(inMap),
-            weights.slice(outMap), convOutput);
+        if (wPad != 0 || hPad != 0)
+          ForwardConvolutionRule::Convolution(paddedInput.slice(inMap),
+              weights.slice(outMapIdx), convOutput);
+        else
+          ForwardConvolutionRule::Convolution(input.slice(inMap),
+              weights.slice(outMapIdx), convOutput);
 
         output.slice(outMap) += convOutput;
       }
@@ -125,8 +131,10 @@ class ConvLayer
         arma::Mat<eT> output;
         BackwardConvolutionRule::Convolution(gy.slice(inMap), rotatedFilter,
             output);
-
-        g.slice(outMap) += output;
+        g.slice(outMap) += output.submat(rotatedFilter.n_rows / 2,
+                              rotatedFilter.n_cols / 2, 
+                              rotatedFilter.n_rows / 2 + g.n_rows - 1,
+                              rotatedFilter.n_cols / 2 + g.n_cols - 1);
       }
     }
   }
@@ -143,6 +151,9 @@ class ConvLayer
                 const arma::Cube<eT>& d,
                 arma::Cube<eT>& g)
   {
+    if (wPad != 0 || hPad != 0)
+      Pad(input, wPad, hPad, paddedInput);
+    
     g = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
         weights.n_slices);
 
@@ -150,12 +161,15 @@ class ConvLayer
     {
       for (size_t inMap = 0, s = outMap; inMap < inMaps; inMap++, s += outMaps)
       {
-        arma::Cube<eT> inputSlices = input.slices(inMap, inMap);
+        arma::Cube<eT> inputSlices;
+        if (wPad != 0 || hPad != 0)
+          inputSlices = paddedInput.slices(inMap, inMap);  
+        else
+          inputSlices = input.slices(inMap, inMap);
         arma::Cube<eT> deltaSlices = d.slices(outMap, outMap);
 
         arma::Cube<eT> output;
         GradientConvolutionRule::Convolution(inputSlices, deltaSlices, output);
-
         for (size_t i = 0; i < output.n_slices; i++)
           g.slice(s) += output.slice(i);
       }
@@ -187,6 +201,10 @@ class ConvLayer
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the paddedInput.
+  InputDataType const& PaddedInput() const { return paddedInput; }
+  //! Modify the paddedInput.
+  InputDataType& PaddedInput() { return paddedInput; }
   /**
    * Serialize the layer.
    */
@@ -206,7 +224,7 @@ class ConvLayer
 
  private:
   /*
-   * Rotates a 3rd-order tesor counterclockwise by 180 degrees.
+   * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
    * @param output The rotated output.
@@ -251,6 +269,26 @@ class ConvLayer
     return std::floor(size + p * 2 - k) / s + 1;
   }
 
+  template<typename eT>
+  void Pad(const arma::Mat<eT>& input, size_t wPad, size_t hPad, arma::Mat<eT>& output)
+  {
+    if (output.n_rows != input.n_rows + wPad * 2 ||
+        output.n_cols != input.n_cols + hPad * 2)
+      output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2);  
+    output.submat(wPad, hPad, 
+          wPad + input.n_rows - 1,
+          hPad + input.n_cols - 1) = input;
+  }
+
+  template<typename eT>
+  void Pad(const arma::Cube<eT>& input, size_t wPad, size_t hPad, arma::Cube<eT>& output)
+  {
+    output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2, input.n_slices);
+    for (size_t i = 0; i < input.n_slices; ++i)
+      Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
+    
+  }
+
   //! Locally-stored filter/kernel width.
   size_t wfilter;
 
@@ -289,6 +327,9 @@ class ConvLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored paddedInput parameter object.
+  InputDataType paddedInput;
 }; // class ConvLayer
 
 //! Layer traits for the convolution layer.
@@ -317,3 +358,4 @@ class LayerTraits<ConvLayer<ForwardConvolutionRule,
 } // namespace mlpack
 
 #endif
+

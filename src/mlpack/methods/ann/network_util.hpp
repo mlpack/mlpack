@@ -233,6 +233,88 @@ LayerWeights(InitializationRuleType& initializeRule,
              size_t offset,
              P& output);
 
+/**
+ * Run a single iteration of the feed forward algorithm, using the given
+ * input and target vector, store the calculated error into the error
+ * vector.
+ */
+
+template<size_t I, typename DataType, typename... Tp>
+void Forward(const DataType& input, std::tuple<Tp...>& network);
+
+template<size_t I, typename... Tp>
+typename std::enable_if<I == sizeof...(Tp), void>::type
+ForwardTail(std::tuple<Tp...>& network);
+
+template<size_t I, typename... Tp>
+typename std::enable_if<I < sizeof...(Tp), void>::type
+ForwardTail(std::tuple<Tp...>& network);
+
+
+/**
+ * Link the calculated activation with the connection layer.
+ */
+template<size_t I, typename... Tp>
+typename std::enable_if<I == sizeof...(Tp), void>::type
+LinkParameter(std::tuple<Tp...>& /* unused */);
+
+template<size_t I, typename... Tp>
+typename std::enable_if<I < sizeof...(Tp), void>::type
+LinkParameter(std::tuple<Tp...>& network);
+
+/**
+ * Run a single iteration of the feed backward algorithm, using the given
+ * error of the output layer. Note that we iterate backward through the
+ * layer modules.
+ */
+template<size_t I, typename DataType, typename... Tp>
+typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
+Backward(const DataType& error, std::tuple<Tp...>& network);
+
+template<size_t I, typename DataType, typename... Tp>
+typename std::enable_if<I == (sizeof...(Tp)), void>::type
+BackwardTail(const DataType& /* unused */,
+             std::tuple<Tp...>& /* unused */);
+
+template<size_t I, typename DataType, typename... Tp>
+typename std::enable_if<I < (sizeof...(Tp)), void>::type
+BackwardTail(const DataType& error, std::tuple<Tp...>& network);
+
+template<
+    typename LayerTypes,
+    size_t I,
+    size_t Max,
+    typename... Tp
+>
+typename std::enable_if<I == Max, void>::type
+UpdateGradients(std::tuple<Tp...>& /* unused */);
+
+template<
+    typename LayerTypes,
+    size_t I,
+    size_t Max,
+    typename... Tp
+>
+typename std::enable_if<I < Max, void>::type
+UpdateGradients(std::tuple<Tp...>& network);
+
+template<typename T, typename P, typename D>
+typename std::enable_if<
+    HasGradientCheck<T, P&(T::*)()>::value, void>::type
+Update(T& layer, P& /* unused */, D& delta);
+
+template<typename T, typename P, typename D>
+typename std::enable_if<
+    !HasGradientCheck<T, P&(T::*)()>::value, void>::type
+Update(T& /* unused */, P& /* unused */, D& /* unused */);
+
+template<typename eT>
+void Pad(const arma::Mat<eT>& input, size_t wPad, 
+          size_t hPad, arma::Mat<eT>& output);
+
+template<typename eT>
+void Pad(const arma::Cube<eT>& input, size_t wPad, 
+        size_t hPad, arma::Cube<eT>& output);
 } // namespace ann
 } // namespace mlpack
 
@@ -240,3 +322,4 @@ LayerWeights(InitializationRuleType& initializeRule,
 #include "network_util_impl.hpp"
 
 #endif
+

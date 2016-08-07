@@ -275,7 +275,164 @@ LayerWeights(InitializationRuleType& /* initializeRule */,
   return 0;
 }
 
+/**
+ * Link the calculated activation with the connection layer.
+ */
+template<size_t I = 1, typename... Tp>
+typename std::enable_if<I == sizeof...(Tp), void>::type
+LinkParameter(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
+
+template<size_t I = 1, typename... Tp>
+typename std::enable_if<I < sizeof...(Tp), void>::type
+LinkParameter(std::tuple<Tp...>& network)
+{
+  if (!LayerTraits<typename std::remove_reference<
+      decltype(std::get<I>(network))>::type>::IsBiasLayer)
+  {
+    std::get<I>(network).InputParameter() = std::get<I - 1>(
+        network).OutputParameter();
+  }
+
+  LinkParameter<I + 1, Tp...>(network);
+}
+
+/**
+ * Run a single iteration of the feed forward algorithm, using the given
+ * input and target vector, store the calculated error into the error
+ * vector.
+ */
+
+template<size_t I = 0, typename DataType, typename... Tp>
+void Forward(const DataType& input, std::tuple<Tp...>& network)
+{
+  std::get<I>(network).InputParameter() = input;
+
+  std::get<I>(network).Forward(std::get<I>(network).InputParameter(),
+                         std::get<I>(network).OutputParameter());
+
+  ForwardTail<I + 1, Tp...>(network);
+}
+
+template<size_t I = 1, typename... Tp>
+typename std::enable_if<I == sizeof...(Tp), void>::type
+ForwardTail(std::tuple<Tp...>& network)
+{
+  LinkParameter(network);
+}
+
+template<size_t I = 1, typename... Tp>
+typename std::enable_if<I < sizeof...(Tp), void>::type
+ForwardTail(std::tuple<Tp...>& network)
+{
+  std::get<I>(network).Forward(std::get<I - 1>(network).OutputParameter(),
+      std::get<I>(network).OutputParameter());
+
+  ForwardTail<I + 1, Tp...>(network);
+}
+
+
+
+/**
+ * Run a single iteration of the feed backward algorithm, using the given
+ * error of the output layer. Note that we iterate backward through the
+ * layer modules.
+ */
+template<size_t I = 1, typename DataType, typename... Tp>
+typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
+Backward(const DataType& error, std::tuple<Tp...>& network)
+{
+  std::get<sizeof...(Tp) - I>(network).Backward(
+      std::get<sizeof...(Tp) - I>(network).OutputParameter(), error,
+      std::get<sizeof...(Tp) - I>(network).Delta());
+
+  BackwardTail<I + 1, DataType, Tp...>(error, network);
+}
+
+template<size_t I = 1, typename DataType, typename... Tp>
+typename std::enable_if<I == (sizeof...(Tp)), void>::type
+BackwardTail(const DataType& /* unused */,
+             std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
+
+template<size_t I = 1, typename DataType, typename... Tp>
+typename std::enable_if<I < (sizeof...(Tp)), void>::type
+BackwardTail(const DataType& error, std::tuple<Tp...>& network)
+{
+  std::get<sizeof...(Tp) - I>(network).Backward(
+      std::get<sizeof...(Tp) - I>(network).OutputParameter(),
+      std::get<sizeof...(Tp) - I + 1>(network).Delta(),
+      std::get<sizeof...(Tp) - I>(network).Delta());
+
+  BackwardTail<I + 1, DataType, Tp...>(error, network);
+}
+
+
+/**
+ * Iterate through all layer modules and update the the gradient using the
+ * layer defined optimizer.
+ */
+template<
+    typename LayerTypes,
+    size_t I = 0,
+    size_t Max = std::tuple_size<LayerTypes>::value - 1,
+    typename... Tp
+>
+typename std::enable_if<I == Max, void>::type
+UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
+
+template<
+    typename LayerTypes,
+    size_t I = 0,
+    size_t Max = std::tuple_size<LayerTypes>::value - 1,
+    typename... Tp
+>
+typename std::enable_if<I < Max, void>::type
+UpdateGradients(std::tuple<Tp...>& network)
+{
+  Update(std::get<I>(network), std::get<I>(network).OutputParameter(),
+         std::get<I + 1>(network).Delta());
+
+  UpdateGradients<LayerTypes, I + 1, Max, Tp...>(network);
+}
+
+template<typename T, typename P, typename D>
+typename std::enable_if<
+    HasGradientCheck<T, P&(T::*)()>::value, void>::type
+Update(T& layer, P& /* unused */, D& delta)
+{
+  layer.Gradient(layer.InputParameter(), delta, layer.Gradient());
+}
+
+template<typename T, typename P, typename D>
+typename std::enable_if<
+    !HasGradientCheck<T, P&(T::*)()>::value, void>::type
+Update(T& /* unused */, P& /* unused */, D& /* unused */)
+{
+  /* Nothing to do here */
+}
+
+
+template<typename eT>
+void Pad(const arma::Mat<eT>& input, size_t wPad, size_t hPad, arma::Mat<eT>& output)
+{
+  if (output.n_rows != input.n_rows + wPad * 2 ||
+      output.n_cols != input.n_cols + hPad * 2)
+    output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2);  
+  output.submat(wPad, hPad, 
+        wPad + input.n_rows - 1,
+        hPad + input.n_cols - 1) = input;
+}
+
+template<typename eT>
+void Pad(const arma::Cube<eT>& input, size_t wPad, size_t hPad, arma::Cube<eT>& output)
+{
+  output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2, input.n_slices);
+  for (size_t i = 0; i < input.n_slices; ++i)
+    Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
+}
+
+
 } // namespace ann
 } // namespace mlpack
 
 #endif
+
