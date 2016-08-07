@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
 /**
  * The singular value error of the obtained SVD should be small.
  */
-BOOST_AUTO_TEST_CASE(QUICSVDSigularValueError)
+BOOST_AUTO_TEST_CASE(QUICSVDSingularValueError)
 {
   arma::mat U = arma::randn<arma::mat>(3, 20);
   arma::mat V = arma::randn<arma::mat>(10, 3);
@@ -67,6 +67,15 @@ BOOST_AUTO_TEST_CASE(QUICSVDSigularValueError)
   // The sigular value error should be small.
   double error = arma::norm(s1 - s3);
   BOOST_REQUIRE_SMALL(error, 0.05);
+}
+
+BOOST_AUTO_TEST_CASE(QUICSVDSameDimensionTest)
+{
+  arma::mat dataset = arma::randn<arma::mat>(10, 10);
+
+  // Obtain the SVD using default parameters.
+  arma::mat u, v, sigma;
+  svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
