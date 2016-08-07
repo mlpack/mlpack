@@ -413,8 +413,9 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
     }
     else
     {
-      cosines(i) = arma::norm_dot(dataset.col(indices[splitPointIndex]),
-                                  dataset.col(indices[i]));
+      cosines(i) =
+          std::abs(arma::norm_dot(dataset.col(indices[splitPointIndex]),
+                                  dataset.col(indices[i])));
     }
   }
 }
