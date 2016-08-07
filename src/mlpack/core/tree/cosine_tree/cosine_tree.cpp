@@ -81,7 +81,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
   arma::vec tempVector = arma::zeros(dataset.n_rows);
-  root.L2Error(0);
+  root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
   treeQueue.push(&root);
 
