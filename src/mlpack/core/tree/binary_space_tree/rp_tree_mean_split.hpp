@@ -9,6 +9,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MEAN_SPLIT_HPP
 
 #include <mlpack/core.hpp>
+#include "rp_tree_max_split.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -133,6 +134,8 @@ class RPTreeMeanSplit
                             const arma::uvec& samples,
                             arma::Col<ElemType>& mean,
                             ElemType& splitVal);
+
+  friend RPTreeMaxSplit<BoundType, MatType>;
 };
 
 } // namespace tree

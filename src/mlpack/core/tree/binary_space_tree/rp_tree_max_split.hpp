@@ -68,13 +68,6 @@ class RPTreeMaxSplit
  private:
 
   /**
-   * Get a random unit vector of size direction.n_elem.
-   *
-   * @param direction The variable into which the method saves the vector.
-   */
-  static void GetRandomDirection(arma::Col<ElemType>& direction);
-
-  /**
    * Get random deviation from the median of points multiplied by the direction
    * obtained in GetRandomDirection().
    *

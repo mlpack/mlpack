@@ -26,8 +26,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     hilbertRTreeRS(NULL),
     rPlusTreeRS(NULL),
     rPlusPlusTreeRS(NULL),
-    rpTreeMaxRS(NULL),
-    rpTreeMeanRS(NULL)
+    rpTreeRS(NULL),
+    maxSplitPRTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -139,18 +139,18 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       break;
 
     case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
+      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet),
+          naive, singleMode);
+      break;
+
+    case RP_TREE:
+      rpTreeRS = new RSType<tree::RPTree>(move(referenceSet), naive,
           singleMode);
       break;
 
-    case RP_TREE_MAX:
-      rpTreeMaxRS = new RSType<tree::RPTreeMax>(move(referenceSet), naive,
-          singleMode);
-      break;
-
-    case RP_TREE_MEAN:
-      rpTreeMeanRS = new RSType<tree::RPTreeMean>(move(referenceSet), naive,
-          singleMode);
+    case MAX_SPLIT_RP_TREE:
+      maxSplitPRTreeRS = new RSType<tree::MaxSplitRPTree>(move(referenceSet),
+          naive, singleMode);
       break;
   }
 
@@ -274,12 +274,12 @@ void RSModel::Search(arma::mat&& querySet,
       rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
       break;
 
-    case RP_TREE_MAX:
-      rpTreeMaxRS->Search(querySet, range, neighbors, distances);
+    case RP_TREE:
+      rpTreeRS->Search(querySet, range, neighbors, distances);
       break;
 
-    case RP_TREE_MEAN:
-      rpTreeMeanRS->Search(querySet, range, neighbors, distances);
+    case MAX_SPLIT_RP_TREE:
+      maxSplitPRTreeRS->Search(querySet, range, neighbors, distances);
       break;
   }
 }
@@ -336,12 +336,12 @@ void RSModel::Search(const math::Range& range,
       rPlusPlusTreeRS->Search(range, neighbors, distances);
       break;
 
-    case RP_TREE_MAX:
-      rpTreeMaxRS->Search(range, neighbors, distances);
+    case RP_TREE:
+      rpTreeRS->Search(range, neighbors, distances);
       break;
 
-    case RP_TREE_MEAN:
-      rpTreeMeanRS->Search(range, neighbors, distances);
+    case MAX_SPLIT_RP_TREE:
+      maxSplitPRTreeRS->Search(range, neighbors, distances);
       break;
   }
 }
@@ -369,10 +369,10 @@ std::string RSModel::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
-    case RP_TREE_MAX:
-      return "Random projection tree (max)";
-    case RP_TREE_MEAN:
-      return "Random projection tree (mean)";
+    case RP_TREE:
+      return "Random projection tree (mean split)";
+    case MAX_SPLIT_RP_TREE:
+      return "Random projection tree (max split)";
     default:
       return "unknown tree";
   }
@@ -399,10 +399,10 @@ void RSModel::CleanMemory()
     delete rPlusTreeRS;
   if (rPlusPlusTreeRS)
     delete rPlusPlusTreeRS;
-  if (rpTreeMaxRS)
-    delete rpTreeMaxRS;
-  if (rpTreeMeanRS)
-    delete rpTreeMeanRS;
+  if (rpTreeRS)
+    delete rpTreeRS;
+  if (maxSplitPRTreeRS)
+    delete maxSplitPRTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -413,6 +413,6 @@ void RSModel::CleanMemory()
   hilbertRTreeRS = NULL;
   rPlusTreeRS = NULL;
   rPlusPlusTreeRS = NULL;
-  rpTreeMaxRS = NULL;
-  rpTreeMeanRS = NULL;
+  rpTreeRS = NULL;
+  maxSplitPRTreeRS = NULL;
 }

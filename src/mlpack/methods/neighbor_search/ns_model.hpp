@@ -257,8 +257,8 @@ class NSModel
     HILBERT_R_TREE,
     R_PLUS_TREE,
     R_PLUS_PLUS_TREE,
-    RP_TREE_MAX,
-    RP_TREE_MEAN
+    RP_TREE,
+    MAX_SPLIT_RP_TREE
   };
 
  private:
@@ -287,8 +287,8 @@ class NSModel
                  NSType<SortPolicy, tree::HilbertRTree>*,
                  NSType<SortPolicy, tree::RPlusTree>*,
                  NSType<SortPolicy, tree::RPlusPlusTree>*,
-                 NSType<SortPolicy, tree::RPTreeMax>*,
-                 NSType<SortPolicy, tree::RPTreeMean>*> nSearch;
+                 NSType<SortPolicy, tree::RPTree>*,
+                 NSType<SortPolicy, tree::MaxSplitRPTree>*> nSearch;
 
  public:
   /**

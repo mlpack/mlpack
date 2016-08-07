@@ -9,6 +9,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MAX_SPLIT_IMPL_HPP
 
 #include "rp_tree_max_split.hpp"
+#include "rp_tree_mean_split.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -23,41 +24,14 @@ bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
   splitInfo.direction.zeros(data.n_rows);
 
   // Get the normal to the hyperplane.
-  GetRandomDirection(splitInfo.direction);
+  RPTreeMeanSplit<BoundType, MatType>::GetRandomDirection(
+      splitInfo.direction);
 
   // Get the value according to which we will perform the split.
   if (!GetSplitVal(data, begin, count, splitInfo.direction, splitInfo.splitVal))
     return false;
 
   return true;
-}
-
-template<typename BoundType, typename MatType>
-void RPTreeMaxSplit<BoundType, MatType>::GetRandomDirection(
-    arma::Col<ElemType>& direction)
-{
-  arma::Col<ElemType> origin;
-
-  origin.zeros(direction.n_rows);
-
-  for (size_t k = 0; k < direction.n_rows; k++)
-    direction[k] = math::Random(-1.0, 1.0);
-
-  ElemType length = metric::EuclideanDistance::Evaluate(origin, direction);
-
-  if (length > 0)
-    direction /= length;
-  else
-  {
-    // If the vector is equal to 0, choose an arbitrary dimension.
-    size_t k = math::RandInt(direction.n_rows);
-
-    direction[k] = 1.0;
-
-    length = metric::EuclideanDistance::Evaluate(origin, direction);
-
-    direction[k] /= length;
-  }
 }
 
 template<typename BoundType, typename MatType>

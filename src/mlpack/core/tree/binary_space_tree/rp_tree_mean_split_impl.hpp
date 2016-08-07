@@ -102,28 +102,21 @@ template<typename BoundType, typename MatType>
 void RPTreeMeanSplit<BoundType, MatType>::GetRandomDirection(
     arma::Col<ElemType>& direction)
 {
-  arma::Col<ElemType> origin;
+  direction.randu(); // Fill with [0, 1].
+  direction -= 0.5;  // Shift to [-0.5, 0.5].
 
-  origin.zeros(direction.n_rows);
+  // Get the length of the vector.
+  const ElemType norm = arma::norm(direction);
 
-  for (size_t k = 0; k < direction.n_rows; k++)
-    direction[k] = math::Random(-1.0, 1.0);
-
-  ElemType length = metric::EuclideanDistance::Evaluate(origin, direction);
-
-  if (length > 0)
-    direction /= length;
-  else
+  if (norm == 0)
   {
     // If the vector is equal to 0, choose an arbitrary dimension.
     size_t k = math::RandInt(direction.n_rows);
 
     direction[k] = 1.0;
-
-    length = metric::EuclideanDistance::Evaluate(origin, direction);
-
-    direction[k] /= length;
   }
+  else
+    direction /= norm; // Normalize the vector.
 }
 
 template<typename BoundType, typename MatType>
@@ -133,17 +126,15 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetDotMedian(
     const arma::Col<ElemType>& direction,
     ElemType& splitVal)
 {
-  std::vector<ElemType> values(samples.n_elem);
+  arma::Col<ElemType> values(samples.n_elem);
 
   for (size_t k = 0; k < samples.n_elem; k++)
     values[k] = arma::dot(data.col(samples[k]), direction);
 
-  std::sort(values.begin(), values.end());
-
-  if (values[0] == values[values.size() - 1])
+  if (arma::min(values) == arma::max(values))
     return false;
 
-  splitVal = values[values.size() / 2];
+  splitVal = arma::median(values);
 
   return true;
 }
@@ -155,15 +146,11 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
     arma::Col<ElemType>& mean,
     ElemType& splitVal)
 {
-  std::vector<ElemType> values(samples.n_elem);
+  arma::Col<ElemType> values(samples.n_elem);
 
-  mean.zeros(data.n_rows);
+  mean = arma::mean(data.cols(samples));
 
-  for (size_t k = 0; k < samples.n_elem; k++)
-    mean += data.col(samples[k]);
-
-  mean /= samples.n_elem;
-  arma::Col<ElemType> tmp(data.n_elem);
+  arma::Col<ElemType> tmp(data.n_rows);
 
   for (size_t k = 0; k < samples.n_elem; k++)
   {
@@ -173,12 +160,10 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
     values[k] = arma::dot(tmp, tmp);
   }
 
-  std::sort(values.begin(), values.end());
-
-  if (values[0] == values[values.size() - 1])
+  if (arma::min(values) == arma::max(values))
     return false;
 
-  splitVal = values[values.size() / 2];
+  splitVal = arma::median(values);
 
   return true;
 }

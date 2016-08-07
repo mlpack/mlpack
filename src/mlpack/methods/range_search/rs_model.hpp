@@ -33,8 +33,8 @@ class RSModel
     HILBERT_R_TREE,
     R_PLUS_TREE,
     R_PLUS_PLUS_TREE,
-    RP_TREE_MAX,
-    RP_TREE_MEAN
+    RP_TREE,
+    MAX_SPLIT_RP_TREE
   };
 
  private:
@@ -71,12 +71,12 @@ class RSModel
   RSType<tree::RPlusTree>* rPlusTreeRS;
   //! R++ tree based range search object (NULL if not in use).
   RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
-  //! Random projection tree (max) based range search object
-  //! (NULL if not in use).
-  RSType<tree::RPTreeMax>* rpTreeMaxRS;
   //! Random projection tree (mean) based range search object
   //! (NULL if not in use).
-  RSType<tree::RPTreeMean>* rpTreeMeanRS;
+  RSType<tree::RPTree>* rpTreeRS;
+  //! Random projection tree (max) based range search object
+  //! (NULL if not in use).
+  RSType<tree::MaxSplitRPTree>* maxSplitPRTreeRS;
 
  public:
   /**

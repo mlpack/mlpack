@@ -65,9 +65,7 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 {
  public:
   /**
-   * Each binary space tree node has two children which represent
-   * non-overlapping subsets of the space which the node represents.  Therefore,
-   * children are not overlapping.
+   * Children of a random projection tree node may overlap.
    */
   static const bool HasOverlappingChildren = true;
 
@@ -101,9 +99,7 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 {
  public:
   /**
-   * Each binary space tree node has two children which represent
-   * non-overlapping subsets of the space which the node represents.  Therefore,
-   * children are not overlapping.
+   * Children of a random projection tree node may overlap.
    */
   static const bool HasOverlappingChildren = true;
 
