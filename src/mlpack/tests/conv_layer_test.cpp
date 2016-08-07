@@ -1,5 +1,3 @@
-/**
- * @file conv_layer_test.cpp
  * @author Nilay Jain
  *
  * Tests the convolution layer.
@@ -52,10 +50,26 @@ void ConvLayerTest()
   arma::cube output(5, 5, 1);
   output.slice(0) = input.slice(0) * 4;
   arma::cube convOutput;
-  conv3.Forward(input, convOutput);
-  Test(convOutput, output);
-}
+  conv3.InputParameter() = input;
+  conv3.Forward(conv3.InputParameter(), conv3.OutputParameter());
+  Test(conv3.OutputParameter(), output);
+  
+  arma::cube error = arma::ones(5, 5, 1);
+  conv3.Backward(conv3.InputParameter(), error, conv3.Delta());
+  Test(conv3.Delta(), arma::ones(5, 5, 4));
 
+  arma::cube delta = arma::zeros(5, 5, 1);
+  delta(2, 2, 0) = 1;
+  conv3.Gradient(conv3.InputParameter(), delta, conv3.Gradient());
+  arma::cube gradOut(3, 3, 4);
+  arma::mat grad_w;
+  grad_w << 7 << 8 << 9 << arma::endr
+        << 12 << 13 << 14 << arma::endr
+        << 17 << 18 << 19;
+  for (size_t i = 0; i < gradOut.n_slices; ++i)
+    gradOut.slice(i) = grad_w;
+  Test(conv3.Gradient(), gradOut);
+}
 //! tests the forward pass for the conv_layer.
 BOOST_AUTO_TEST_CASE(ForwardPassTest)
 {
