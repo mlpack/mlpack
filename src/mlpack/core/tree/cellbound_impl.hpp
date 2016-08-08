@@ -1,10 +1,9 @@
 /**
  * @file cellbound_impl.hpp
+ * @author Mikhail Lozhnikov
  *
- * Implementation of hyper-rectangle bound policy class.
- * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
- *
- * @experimental
+ * Implementation of the CellBound class. The class describes a bound that
+ * consists of a number of hyperrectangles.
  */
 #ifndef MLPACK_CORE_TREE_CELLBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_CELLBOUND_IMPL_HPP
@@ -179,14 +178,15 @@ void CellBound<MetricType, ElemType>::AddBound(
   assert(loCorner.n_elem == dim);
   assert(hiCorner.n_elem == dim);
 
+  // If the subrectangle is not contained entirely in the outer rectangle,
+  // we shrink it.
   for (size_t k = 0; k < dim; k++)
   {
-    loBound(k, numBounds) =  loCorner[k] +
-        math::ClampNonNegative(bounds[k].Lo() - loCorner[k]);
+    loBound(k, numBounds) = std::max(loCorner[k], bounds[k].Lo());
 
-    hiBound(k, numBounds) = bounds[k].Hi() -
-        math::ClampNonNegative(bounds[k].Hi() - hiCorner[k]);
+    hiBound(k, numBounds) = std::min(bounds[k].Hi(), hiCorner[k]);
 
+    // This should never happen.
     if (loBound(k, numBounds) > hiBound(k, numBounds))
       return;
   }
@@ -205,26 +205,37 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
 
   assert(tmpHiAddress.n_elem > 0);
 
+  // We have to calculate the number of subrectangles since the maximum number
+  // of hyperrectangles is restricted.
   size_t numCorners = 0;
   for (size_t pos = numEqualBits + 1; pos < order * tmpHiAddress.n_elem; pos++)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // This hyperrectangle is not contained entirely in the bound.
+    // So, the number of hyperrectangles should be increased.
     if (tmpHiAddress[row] & ((AddressElemType) 1 << bit))
       numCorners++;
 
+    // We ran out of the limit of hyperrectangles. In that case we enlare
+    // the last hyperrectangle.
     if (numCorners >= maxNumBounds / 2)
       tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
   }
 
   size_t pos = order * tmpHiAddress.n_elem - 1;
 
+  // Find the last hyperrectangle and add it to the bound.
   for ( ; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // All last bits after pos of tmpHiAddress are equal to 1 and
+    // All last bits of tmpLoAddress (after pos) are equal to 0.
+    // Thus, tmpHiAddress corresponds to the high corner of the enlarged
+    // rectangle and tmpLoAddress corresponds to the lower corner.
     if (!(tmpHiAddress[row] & ((AddressElemType) 1 << bit)))
     {
       addr::AddressToPoint(loCorner, tmpLoAddress);
@@ -233,9 +244,11 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
       AddBound(loCorner, hiCorner);
       break;
     }
+    // Nullify the bit that corresponds to this step.
     tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
   }
 
+  // Add the enlarged rectangle if we have not done that.
   if (pos == numEqualBits)
   {
     addr::AddressToPoint(loCorner, tmpLoAddress);
@@ -249,17 +262,22 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // The lower bound should correspond to this step.
     tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
 
     if (tmpHiAddress[row] & ((AddressElemType) 1 << bit))
     {
+      // This hyperrectangle is contained entirely in the bound and do not
+      // overlap with other hyperrectangles since loAddress is less than
+      // tmpLoAddress and tmpHiAddress is less that the lower addresses
+      // of hyperrectangles that we have added previously.
       tmpHiAddress[row] ^= (AddressElemType) 1 << bit;
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner);
     }
-
+    // The high bound should correspond to this step.
     tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
   }
 }
@@ -272,26 +290,37 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
   arma::Col<ElemType> loCorner(tmpHiAddress.n_elem);
   arma::Col<ElemType> hiCorner(tmpHiAddress.n_elem);
 
+  // We have to calculate the number of subrectangles since the maximum number
+  // of hyperrectangles is restricted.
   size_t numCorners = 0;
   for (size_t pos = numEqualBits + 1; pos < order * tmpHiAddress.n_elem; pos++)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // This hyperrectangle is not contained entirely in the bound.
+    // So, the number of hyperrectangles should be increased.
     if (!(tmpLoAddress[row] & ((AddressElemType) 1 << bit)))
       numCorners++;
 
+    // We ran out of the limit of hyperrectangles. In that case we enlare
+    // the last hyperrectangle.
     if (numCorners >= maxNumBounds / 2)
       tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
   }
 
   size_t pos = order * tmpHiAddress.n_elem - 1;
 
+  // Find the last hyperrectangle and add it to the bound.
   for ( ; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // All last bits after pos of tmpHiAddress are equal to 1 and
+    // All last bits of tmpLoAddress (after pos) are equal to 0.
+    // Thus, tmpHiAddress corresponds to the high corner of the enlarged
+    // rectangle and tmpLoAddress corresponds to the lower corner.
     if (tmpLoAddress[row] & ((AddressElemType) 1 << bit))
     {
       addr::AddressToPoint(loCorner, tmpLoAddress);
@@ -300,9 +329,12 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
       AddBound(loCorner, hiCorner);
       break;
     }
+    // Enlarge the hyperrectangle at this step since it is contained
+    // entirely in the bound.
     tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
   }
 
+  // Add the enlarged rectangle if we have not done that.
   if (pos == numEqualBits)
   {
     addr::AddressToPoint(loCorner, tmpLoAddress);
@@ -316,17 +348,24 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
+    // The high bound should correspond to this step.
     tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
 
     if (!(tmpLoAddress[row] & ((AddressElemType) 1 << bit)))
     {
+      // This hyperrectangle is contained entirely in the bound and do not
+      // overlap with other hyperrectangles since hiAddress is greater than
+      // tmpHiAddress and tmpLoAddress is greater that the high addresses
+      // of hyperrectangles that we have added previously.
       tmpLoAddress[row] ^= (AddressElemType) 1 << bit;
+
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner);
     }
 
+    // The lower bound should correspond to this step.
     tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
   }
 }
@@ -336,11 +375,14 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
 {
   numBounds = 0;
 
+  // Calculate the number of equal leading bits of the lower address and
+  // the high address.
   size_t row = 0;
   for ( ; row < hiAddress.n_elem; row++)
     if (loAddress[row] != hiAddress[row])
       break;
 
+  // If the high address is equal to the lower address.
   if (row == hiAddress.n_elem)
   {
     for (size_t i = 0; i < dim; i++)
@@ -348,7 +390,6 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
     }
-
     numBounds = 1;
 
     return;
@@ -362,6 +403,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
 
   if ((row == hiAddress.n_elem - 1) && (bit == order - 1))
   {
+    // If the addresses differ in the last bit.
     for (size_t i = 0; i < dim; i++)
     {
       loBound(i, 0) = bounds[i].Lo();
@@ -374,7 +416,6 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
   }
 
   size_t numEqualBits = row * order + bit;
-
   InitHighBound(numEqualBits);
   InitLowerBound(numEqualBits);
 
@@ -382,6 +423,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
 
   if (numBounds == 0)
   {
+    // I think this should never happen.
     for (size_t i = 0; i < dim; i++)
     {
       loBound(i, 0) = bounds[i].Lo();
@@ -390,7 +432,6 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
 
     numBounds = 1;
   }
-  assert(numBounds > 0);
 }
 
 /**

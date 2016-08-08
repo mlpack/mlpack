@@ -1,6 +1,30 @@
 /**
  * @file cellbound.hpp
+ * @author Mikhail Lozhnikov
  *
+ * Definition of the CellBound class. The class describes a bound that consists
+ * of a number of hyperrectangles. These hyperrectangles do not overlap each
+ * other. The bound is limited by an outer hyperrectangle and two addresses,
+ * the lower address and the high address. Thus, the bound contains all points
+ * included between the lower and the high addresses.
+ *
+ * The notion of addresses is described in the following paper.
+ * @code
+ * @inproceedings{bayer1997,
+ *   author = {Bayer, Rudolf},
+ *   title = {The Universal B-Tree for Multidimensional Indexing: General
+ *       Concepts},
+ *   booktitle = {Proceedings of the International Conference on Worldwide
+ *       Computing and Its Applications},
+ *   series = {WWCA '97},
+ *   year = {1997},
+ *   isbn = {3-540-63343-X},
+ *   pages = {198--209},
+ *   numpages = {12},
+ *   publisher = {Springer-Verlag},
+ *   address = {London, UK, UK},
+ * }
+ * @endcode
  */
 #ifndef MLPACK_CORE_TREE_CELLBOUND_HPP
 #define MLPACK_CORE_TREE_CELLBOUND_HPP
@@ -19,6 +43,8 @@ template<typename MetricType = metric::LMetric<2, true>,
 class CellBound
 {
  public:
+  //! Depending on the precision of the tree element type, we may need to use
+  //! uint32_t or uint64_t.
   typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
                                     uint32_t,
                                     uint64_t>::type AddressElemType;
@@ -61,18 +87,22 @@ class CellBound
   const math::RangeType<ElemType>& operator[](const size_t i) const
   { return bounds[i]; }
 
+  //! Get lower address.
   arma::Col<AddressElemType>& LoAddress() { return loAddress; }
-
+  //! Modify lower address.
   const arma::Col<AddressElemType>& LoAddress() const {return loAddress; }
   
+  //! Get high address.
   arma::Col<AddressElemType>& HiAddress() { return hiAddress; }
-
+  //! Modify high address.
   const arma::Col<AddressElemType>& HiAddress() const {return hiAddress; }
 
+  //! Get lower bound of each subrectangle.
   const arma::Mat<ElemType>& LoBound() const { return loBound; }
-
+  //! Get high bound of each subrectangle.
   const arma::Mat<ElemType>& HiBound() const { return hiBound; }
 
+  //! Get the number of subrectangles.
   size_t NumBounds() const { return numBounds; }
 
   //! Get the minimum width of the bound.
@@ -159,6 +189,10 @@ class CellBound
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
+  /**
+   * Calculate the bounds of all subrectangles. You should set the lower and the
+   * high addresses.
+   */
   void UpdateAddressBounds();
 
   /**
@@ -173,24 +207,48 @@ class CellBound
   void Serialize(Archive& ar, const unsigned int version);
 
  private:
+  //! The precision of the tree element type.
   static constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
+  //! Maximum number of subrectangles.
   const size_t maxNumBounds = 10;
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
   math::RangeType<ElemType>* bounds;
+  //! Lower bounds of subrectangles.
   arma::Mat<ElemType> loBound;
+  //! High bounds of subrectangles.
   arma::Mat<ElemType> hiBound;
+  //! The numbre of subrectangles.
   size_t numBounds;
-
+  //! The lowest address that the bound may contain.
   arma::Col<AddressElemType> loAddress;
+  //! The highest address that the bound may contain.
   arma::Col<AddressElemType> hiAddress;
-
+  //! The minimal width of the outer rectangle.
   ElemType minWidth;
 
+  /**
+   * Add a subrectangle to the bound.
+   *
+   * @param loCorner The lower corner of the subrectangle that is being added.
+   * @param hiCorner The high corner of the subrectangle that is being added.
+   */
   void AddBound(const arma::Col<ElemType>& loCorner,
                 const arma::Col<ElemType>& hiCorner);
+  /**
+   * Initialize all subrectangles that touches the lower address.
+   *
+   * @param numEqualBits The number of equal leading bits of the lower address
+   * and the high address.
+   */
   void InitHighBound(size_t numEqualBits);
+  /**
+   * Initialize all subrectangles that touches the high address.
+   *
+   * @param numEqualBits The number of equal leading bits of the lower address
+   * and the high address.
+   */
   void InitLowerBound(size_t numEqualBits);
 };
 

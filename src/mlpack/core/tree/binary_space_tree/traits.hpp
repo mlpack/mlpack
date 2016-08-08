@@ -80,6 +80,12 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool BinaryTree = true;
 };
 
+/**
+ * This is a specialization of the TreeType class to the UBTree tree type.
+ * The only difference with general BinarySpaceTree is that UBTree can have
+ * overlapping children.
+ * See mlpack/core/tree/tree_traits.hpp for more information.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,

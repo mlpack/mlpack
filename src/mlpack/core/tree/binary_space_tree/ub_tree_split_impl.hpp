@@ -1,5 +1,9 @@
 /**
  * @file ub_tree_split_impl.hpp
+ * @author Mikhail Lozhnikov
+ *
+ * Implementation of UBTreeSplit, a class that splits a node according
+ * to the median address of points contained in the node.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_UB_TREE_SPLIT_IMPL_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_UB_TREE_SPLIT_IMPL_HPP
@@ -20,15 +24,25 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
   if (begin == 0 && count == data.n_cols)
   {
+    // Calculate all addresses.
     InitializeAddresses(data);
 
+    // Probably this is not a good idea. Maybe it is better to get
+    // a number of distinct samples and find the median.
     std::sort(addresses.begin(), addresses.end(), ComparePair);
 
+    // Rearrange dataset.
     PerformSplit(data, count);
   }
 
+  // The bound shouldn't contain too many subrectangles.
+  // In order to minimize the number of hyperrectangles we set last bits
+  // of the last address in the node to 1 and last bits of the first  address
+  // in the next node to zero in such a way that the ordering is not
+  // disturbed.
   if (begin + count < data.n_cols)
   {
+    // Omit leading equal bits.
     size_t row = 0;
     arma::Col<AddressElemType>& lo = addresses[begin + count - 1].first;
     const arma::Col<AddressElemType>& hi = addresses[begin + count].first;
@@ -46,6 +60,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
 
     bit++;
 
+    // Replace insignificant bits.
     if (bit == order)
     {
       bit = 0;
@@ -62,8 +77,15 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
       for (; bit < order; bit++)
         lo[row] |= ((AddressElemType) 1 << (order - 1 - bit)); 
   }
+
+  // The bound shouldn't contain too many subrectangles.
+  // In order to minimize the number of hyperrectangles we set last bits
+  // of the first address in the next node to 0 and last bits of the last
+  // address in the previous node to 1 in such a way that the ordering is not
+  // disturbed.
   if (begin > 0)
   {
+    // Omit leading equal bits.
     size_t row = 0;
     const arma::Col<AddressElemType>& lo = addresses[begin - 1].first;
     arma::Col<AddressElemType>& hi = addresses[begin].first;
@@ -81,6 +103,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
 
     bit++;
 
+    // Replace insignificant bits.
     if (bit == order)
     {
       bit = 0;
@@ -98,12 +121,15 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
         hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit)); 
   }
 
+  // Set the minimum and the maximum addresses.
   for (size_t k = 0; k < bound.Dim(); k++)
   {
     bound.LoAddress()[k] = addresses[begin].first[k];
     bound.HiAddress()[k] = addresses[begin + count - 1].first[k];
   }
   bound.UpdateAddressBounds();
+
+  // Since the dataset is sorted we can easily get the split column.
   splitCol = begin + count / 2;
   
   return true;
@@ -214,12 +240,11 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
 template<typename BoundType, typename MatType>
 void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
 {
-//  addresses.set_size(data.n_rows, data.n_cols);
   addresses.resize(data.n_cols);
 
+  // Calculate all addresses.
   for (size_t i = 0; i < data.n_cols; i++)
   {
-//    address.col(i) = CalculateAddress(data.col(i));
     addresses[i].first.zeros(data.n_rows);
     bound::addr::PointToAddress(addresses[i].first, data.col(i));
     addresses[i].second = i;

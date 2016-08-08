@@ -23,10 +23,11 @@ BOOST_AUTO_TEST_CASE(AddressTest)
   arma::Mat<ElemType> dataset(8, 1000);
 
   dataset.randu();
-
+  dataset -= 0.5;
   arma::Col<AddressElemType> address(dataset.n_rows);
   arma::Col<ElemType> point(dataset.n_rows);
 
+  // Ensure that this is one-to-one transform.
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
     addr::PointToAddress(address, dataset.col(i));
@@ -35,6 +36,7 @@ BOOST_AUTO_TEST_CASE(AddressTest)
     for (size_t k = 0; k < dataset.n_rows; k++)
       BOOST_REQUIRE_CLOSE(dataset(k, i), point[k], 1e-13);
   }
+
 }
 
 template<typename TreeType>
@@ -56,6 +58,7 @@ void CheckSplit(const TreeType& tree)
 
   arma::Col<AddressElemType> address(tree.Bound().Dim());
 
+  // Find the highest address of the left node.
   for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
   {
     addr::PointToAddress(address,
@@ -65,6 +68,7 @@ void CheckSplit(const TreeType& tree)
       hi = address;
   }
 
+  // Find the lowest address of the right node.
   for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
   {
     addr::PointToAddress(address,
@@ -74,6 +78,7 @@ void CheckSplit(const TreeType& tree)
       lo = address;
   }
 
+  // Addresses in the left node should be less than addresses in the right node.
   BOOST_REQUIRE_LE(addr::CompareAddresses(hi, lo), 0);
 
   CheckSplit(*tree.Left());
@@ -99,11 +104,13 @@ void CheckBound(const TreeType& tree)
   {
     arma::Col<ElemType> point = tree.Dataset().col(tree.Descendant(i));
 
+    // Check that the point is contained in the bound.
     BOOST_REQUIRE_EQUAL(true, tree.Bound().Contains(point));
 
     const arma::Mat<ElemType>& loBound = tree.Bound().LoBound();
     const arma::Mat<ElemType>& hiBound = tree.Bound().HiBound();
 
+    // Ensure that there is a hyperrectangle that contains the point.
     bool success = false;
     for (size_t j = 0; j < tree.Bound().NumBounds(); j++)
     {
@@ -142,6 +149,7 @@ BOOST_AUTO_TEST_CASE(UBTreeBoundTest)
   CheckBound(tree);
 }
 
+// Ensure that MinDistance() and MaxDistance() works correctly.
 template<typename TreeType, typename MetricType>
 void CheckDistance(TreeType& tree, TreeType* node = NULL)
 {

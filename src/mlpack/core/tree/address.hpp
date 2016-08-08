@@ -115,14 +115,21 @@ void AddressToPoint(VecType& point, const AddressType& address)
           (order - 1 - i));
     }
 
-
   for (size_t i = 0; i < rearrangedAddress.n_elem; i++)
   {
     bool sgn = rearrangedAddress(i) & ((AddressElemType) 1 << (order - 1));
 
+    if (!sgn)
+    {
+      rearrangedAddress(i) = ((AddressElemType) 1 << (order - 1)) - 1 -
+          rearrangedAddress(i);
+    }
+
     // Extract the mantissa.
     AddressElemType tmp = (AddressElemType) 1 << numMantBits;
     AddressElemType mantissa = rearrangedAddress(i) & (tmp - 1);
+    if (mantissa == 0)
+      mantissa = 1;
 
     VecElemType normalizedVal = (VecElemType) mantissa / tmp;
 
@@ -136,6 +143,13 @@ void AddressToPoint(VecType& point, const AddressType& address)
     e += std::numeric_limits<VecElemType>::min_exponent;
 
     point(i) = std::ldexp(normalizedVal, e);
+    if (std::isinf(point(i)))
+    {
+      if (point(i) > 0)
+        point(i) = std::numeric_limits<VecElemType>::max();
+      else
+        point(i) = std::numeric_limits<VecElemType>::lowest();
+    }
   }
 }
 
