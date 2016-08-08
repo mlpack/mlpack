@@ -32,6 +32,8 @@ set(SOURCES
   cover_tree/traits.hpp
   cover_tree/typedef.hpp
   example_tree.hpp
+  hollow_ball_bound.hpp
+  hollow_ball_bound_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   rectangle_tree.hpp
@@ -78,6 +80,17 @@ set(SOURCES
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
+  vantage_point_tree.hpp
+  vantage_point_tree/dual_tree_traverser.hpp
+  vantage_point_tree/dual_tree_traverser_impl.hpp
+  vantage_point_tree/single_tree_traverser.hpp
+  vantage_point_tree/single_tree_traverser_impl.hpp
+  vantage_point_tree/traits.hpp
+  vantage_point_tree/typedef.hpp
+  vantage_point_tree/vantage_point_split.hpp
+  vantage_point_tree/vantage_point_split_impl.hpp
+  vantage_point_tree/vantage_point_tree.hpp
+  vantage_point_tree/vantage_point_tree_impl.hpp
 )
 
 # add directory name to sources
