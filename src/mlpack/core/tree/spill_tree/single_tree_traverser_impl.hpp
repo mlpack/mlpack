@@ -50,45 +50,39 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
   else
   {
-    // If either score is DBL_MAX, we do not recurse into that node.
-    double leftScore = rule.Score(queryIndex, *referenceNode.Left());
-    double rightScore = rule.Score(queryIndex, *referenceNode.Right());
-
-    if (leftScore < rightScore)
+    if(referenceNode.Overlap())
     {
-      // Recurse to the left.
-      Traverse(queryIndex, *referenceNode.Left());
+      // If referenceNode is a overlapping node we do defeatist search. In this
+      // case, it is enough to calculate the score of only one child node. As we
+      // know that the query point can't be at both sides of the splitting
+      // hyperplane, the possible scores for the references child nodes are:
+      // 0 or DBL_MAX.
+      double leftScore = rule.Score(queryIndex, *referenceNode.Left());
 
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
-
-      if (rightScore != DBL_MAX)
-        Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(queryIndex, *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
-
-      if (leftScore != DBL_MAX)
-        Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
-      else
-        ++numPrunes;
-    }
-    else // leftScore is equal to rightScore.
-    {
-      if (leftScore == DBL_MAX)
+      if (leftScore == 0)
       {
-        numPrunes += 2; // Pruned both left and right.
+        // Recurse to the left.
+        Traverse(queryIndex, *referenceNode.Left());
+        // Prune the right node.
+        ++numPrunes;
       }
       else
       {
-        // Choose the left first.
+        // Recurse to the right.
+        Traverse(queryIndex, *referenceNode.Right());
+        // Prune the left node.
+        ++numPrunes;
+      }
+    }
+    else
+    {
+      // If either score is DBL_MAX, we do not recurse into that node.
+      double leftScore = rule.Score(queryIndex, *referenceNode.Left());
+      double rightScore = rule.Score(queryIndex, *referenceNode.Right());
+
+      if (leftScore < rightScore)
+      {
+        // Recurse to the left.
         Traverse(queryIndex, *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
@@ -96,9 +90,43 @@ SingleTreeTraverser<RuleType>::Traverse(
             rightScore);
 
         if (rightScore != DBL_MAX)
-          Traverse(queryIndex, *referenceNode.Right());
+          Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
         else
           ++numPrunes;
+      }
+      else if (rightScore < leftScore)
+      {
+        // Recurse to the right.
+        Traverse(queryIndex, *referenceNode.Right());
+
+        // Is it still valid to recurse to the left?
+        leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
+
+        if (leftScore != DBL_MAX)
+          Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
+        else
+          ++numPrunes;
+      }
+      else // leftScore is equal to rightScore.
+      {
+        if (leftScore == DBL_MAX)
+        {
+          numPrunes += 2; // Pruned both left and right.
+        }
+        else
+        {
+          // Choose the left first.
+          Traverse(queryIndex, *referenceNode.Left());
+
+          // Is it still valid to recurse to the right?
+          rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
+              rightScore);
+
+          if (rightScore != DBL_MAX)
+            Traverse(queryIndex, *referenceNode.Right());
+          else
+            ++numPrunes;
+        }
       }
     }
   }
