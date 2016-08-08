@@ -7,7 +7,6 @@
 #ifndef MLPACK_METHODS_NE_NEAT_HPP
 #define MLPACK_METHODS_NE_NEAT_HPP
 
-#include <cstddef>
 #include <cstdio>
 #include <numeric>
 #include <algorithm>
@@ -858,7 +857,7 @@ class NEAT {
   }
 
   // Evolve.
-  void Evolve() {
+  bool Evolve() {
     // Generate initial species at random.
     int generation = 0;
     InitPopulation();
@@ -880,13 +879,15 @@ class NEAT {
       printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
       if (aTask.Success()) {
         printf("Task succeed in %zu iterations.\n", generation);
-        exit(0);
+        return true;
       }
 
       // Reproduce next generation.
       Reproduce();
       ++generation;
     }
+
+    return false;
   }
   
  private:

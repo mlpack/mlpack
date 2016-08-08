@@ -7,8 +7,6 @@
 #ifndef MLPACK_METHODS_NE_PARAMETERS_HPP
 #define MLPACK_METHODS_NE_PARAMETERS_HPP
 
-#include <cstddef>
-
 #include <mlpack/core.hpp>
 
 namespace mlpack {

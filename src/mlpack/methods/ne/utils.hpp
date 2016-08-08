@@ -7,7 +7,6 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <cstddef>
 #include <cmath>
 #include <ctime>
 

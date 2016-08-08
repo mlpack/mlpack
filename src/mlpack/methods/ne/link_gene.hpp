@@ -7,8 +7,6 @@
 #ifndef MLPACK_METHODS_NE_LINK_GENE_HPP
 #define MLPACK_METHODS_NE_LINK_GENE_HPP
 
-#include <cstddef>
-
 #include <mlpack/core.hpp>
 
 namespace mlpack {
@@ -17,12 +15,18 @@ namespace ne {
 /**
  * This class defines a link gene.
  */
-class LinkGene {
+class LinkGene
+{
  public:
-  // Default constructor.
-  LinkGene() {}
-
-  // Parametric constructor.
+  /**
+   * Parametric constructor. Construct the LinkGene object with the given parameters.
+   *
+   * @param fromNeuronId The id of from neuron.
+   * @param toNeuronId The id of to neuron.
+   * @param innovationId Innovation id of this link.
+   * @param weight Weight of this link.
+   * @param enabled Whether this link is enabled or not.
+   */
   LinkGene(int fromNeuronId,
   	       int toNeuronId,
   	       int innovationId,
@@ -35,8 +39,13 @@ class LinkGene {
     aEnabled(enabled)
   {}
 
-  // Copy constructor.
-  LinkGene(const LinkGene& linkGene) {
+  /**
+   * Copy constructor. Construct this link by copy another link.
+   *
+   * @param linkGene The link used to copy.
+   */
+  LinkGene(const LinkGene& linkGene)
+  {
   	aFromNeuronId = linkGene.aFromNeuronId;
   	aToNeuronId = linkGene.aToNeuronId;
   	aInnovationId = linkGene.aInnovationId;
@@ -44,12 +53,15 @@ class LinkGene {
     aEnabled = linkGene.aEnabled;
   }
 
-  // Destructor.
-  ~LinkGene() {}
-
-  // Operator =.
-  LinkGene& operator =(const LinkGene& linkGene) {
-    if (this != &linkGene) {
+  /**
+   * Operator =.
+   *
+   * @param linkGene The link to be compared with.
+   */
+  LinkGene& operator =(const LinkGene& linkGene)
+  {
+    if (this != &linkGene)
+    {
       aFromNeuronId = linkGene.aFromNeuronId;
       aToNeuronId = linkGene.aToNeuronId;
       aInnovationId = linkGene.aInnovationId;
@@ -60,47 +72,80 @@ class LinkGene {
     return *this;
   }
 
-  // Set aFromNeuronId.
+  /**
+   * Set aFromNeuronId.
+   *
+   * @param fromNeuronId The value to set.
+   */
   void FromNeuronId(int fromNeuronId) { aFromNeuronId = fromNeuronId; } 
 
-  // Get aFromNeuronId.
+  /**
+   * Get aFromNeuronId.
+   */
   int FromNeuronId() const { return aFromNeuronId; }
 
-  // Set aToNeuronId.
+  /**
+   * Set aToNeuronId.
+   *
+   * @param toNeuronId The value to set.
+   */
   void ToNeuronId(int toNeuronId) { aToNeuronId = toNeuronId; }
 
-  // Get aToNeuronId.
+  /**
+   * Get aToNeuronId.
+   */
   int ToNeuronId() const { return aToNeuronId; }
 
-  // Set aInnovationId.
+  /**
+   * Set aInnovationId.
+   *
+   * @param innovationId The value to set.
+   */
   void InnovationId(int innovationId) { aInnovationId = innovationId; }
 
-  // Get aInnovationId.
+  /**
+   * Get aInnovationId.
+   */
   int InnovationId() const { return aInnovationId; }
 
-  // Set aWeight.
+  /**
+   * Set aWeight.
+   *
+   * @param weight The value to set.
+   */
   void Weight(double weight) { aWeight = weight; }
 
-  // Get aWeight.
+  /**
+   * Get aWeight.
+   */
   double Weight() const { return aWeight; }
 
-  // Set aEnabled.
+  /**
+   * Set aEnabled.
+   *
+   * @param enabled The value to set.
+   */
   void Enabled(bool enabled) { aEnabled = enabled; }
 
-  // Get aEnabled.
+  /**
+   * Get aEnabled.
+   */
   bool Enabled() const { return aEnabled; }
 
  private:
-  // The IDs of neurons connected by this link.
-  int aFromNeuronId, aToNeuronId;
+  //! The if of neuron that this link starts from.
+  int aFromNeuronId;
 
-  // Link weight.
+  //! The id of neuron that this link ends to.
+  int aToNeuronId;
+
+  //! Link weight.
   double aWeight;
 
-  // Link innovation ID.
+  //! Link innovation ID.
   int aInnovationId;
 
-  // Enabled or not.
+  //! Enabled or not.
   bool aEnabled;
  
 };

@@ -7,7 +7,6 @@
 #ifndef MLPACK_METHODS_NE_TASKS_HPP
 #define MLPACK_METHODS_NE_TASKS_HPP
 
-#include <cstddef>
 #include <cmath>
 #include <queue>
 #include <boost/math/special_functions/sign.hpp>

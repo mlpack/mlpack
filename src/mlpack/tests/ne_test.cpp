@@ -4,7 +4,6 @@
  *
  * Test file for NE (Neural Evolution).
  */
-#include <cstddef>
 #include <cmath>
 
 #include <mlpack/core.hpp>
