@@ -15,17 +15,20 @@ namespace tree /** Trees and tree-building procedures. */ {
 
 template<typename BoundType,
          typename MatType = arma::mat,
-         size_t maxNumSamples = 100>
+         size_t MaxNumSamples = 100>
 class VantagePointSplit
 {
  public:
+  //! The matrix element type.
   typedef typename MatType::elem_type ElemType;
+  //! The bounding shape type.
   typedef typename BoundType::MetricType MetricType;
+
   /**
    * Split the node according to the distance to a vantage point.
    *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
+   * @param bound The bound used by the tree.
+   * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.
@@ -41,8 +44,8 @@ class VantagePointSplit
   /**
    * Split the node according to the distance to a vantage point.
    *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
+   * @param bound The bound used by the tree.
+   * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.
@@ -59,15 +62,15 @@ class VantagePointSplit
                         std::vector<size_t>& oldFromNew);
  private:
   /**
-   * Select the best vantage point i.e. the point with the largest second moment
-   * of the distance from a number of random node points to the vantage point.
-   * Firstly this methods selects no more than maxNumSamples random points.
-   * Then it evaluates each point i.e. calcilates the corresponding second
-   * moment and selects the point with the largest moment. Each random point
-   * belongs to the node.
+   * Select the best vantage point, i.e., the point with the largest second
+   * moment of the distance from a number of random node points to the vantage
+   * point.  Firstly this method selects no more than MaxNumSamples random
+   * points.  Then it evaluates each point, i.e., calculates the corresponding
+   * second moment and selects the point with the largest moment. Each random
+   * point belongs to the node.
    *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
+   * @param metric The metric used by the tree.
+   * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.
@@ -75,33 +78,41 @@ class VantagePointSplit
    * @param mu The median value of distance form the vantage point to
    * a number of random points.
    */
-  static void SelectVantagePoint(const MetricType& metric, const MatType& data,
-    const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu);
+  static void SelectVantagePoint(const MetricType& metric,
+                                 const MatType& data,
+                                 const size_t begin,
+                                 const size_t count,
+                                 size_t& vantagePoint,
+                                 ElemType& mu);
 
   /**
-   * This method returns true if a point should be assigned to the left subtree
-   * i.e. the distance from the point to the vantage point is less then
-   * the median value. Otherwise it returns false.
+   * This method returns true if a point should be assigned to the left subtree,
+   * i.e., if the distance from the point to the vantage point is less then the
+   * median value. Otherwise it returns false.
    *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
+   * @param metric The metric used by the tree.
+   * @param data The dataset used by the tree.
    * @param vantagePoint The vantage point.
    * @param point The point that is being assigned.
    * @param mu The median value.
    */
   template<typename VecType>
-  static bool AssignToLeftSubtree(const MetricType& metric, const MatType& mat,
-      const VecType& vantagePoint, const size_t point, const ElemType mu)
+  static bool AssignToLeftSubtree(const MetricType& metric,
+                                  const MatType& mat,
+                                  const VecType& vantagePoint,
+                                  const size_t point,
+                                  const ElemType mu)
   {
     return (metric.Evaluate(vantagePoint, mat.col(point)) < mu);
   }
 
   /**
    * Perform split according to the median value and the vantage point.
-   * 
-   * @param data The dataset used by the binary space tree.
+   *
+   * @param metric The metric used by the tree.
+   * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
+   *      this node.
    * @param count Number of points in this node.
    * @param vantagePoint The vantage point.
    * @param mu The median value.
@@ -116,8 +127,9 @@ class VantagePointSplit
 
   /**
    * Perform split according to the median value and the vantage point.
-   * 
-   * @param data The dataset used by the binary space tree.
+   *
+   * @param metric The metric used by the tree.
+   * @param data The dataset used by the tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.

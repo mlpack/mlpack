@@ -14,18 +14,18 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType, typename MatType, size_t maxNumSamples>
-bool VantagePointSplit<BoundType, MatType, maxNumSamples>::
+template<typename BoundType, typename MatType, size_t MaxNumSamples>
+bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
 SplitNode(const BoundType& bound, MatType& data, const size_t begin,
     const size_t count, size_t& splitCol)
 {
   ElemType mu = 0;
   size_t vantagePointIndex;
 
-  // Find the best vantage point
+  // Find the best vantage point.
   SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
 
-  // All points are equal
+  // If all points are equal, we can't split.
   if (mu == 0)
     return false;
 
@@ -40,24 +40,24 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   return true;
 }
 
-template<typename BoundType, typename MatType, size_t maxNumSamples>
-bool VantagePointSplit<BoundType, MatType, maxNumSamples>::
+template<typename BoundType, typename MatType, size_t MaxNumSamples>
+bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
 SplitNode(const BoundType& bound, MatType& data, const size_t begin,
     const size_t count, size_t& splitCol, std::vector<size_t>& oldFromNew)
 {
   ElemType mu = 0;
   size_t vantagePointIndex;
 
-  // Find the best vantage point
+  // Find the best vantage point.
   SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
 
-  // All points are equal
+  // If all points are equal, we can't split.
   if (mu == 0)
     return false;
 
   // The first point of the left child is centroid.
   data.swap_cols(begin, vantagePointIndex);
-  size_t t = oldFromNew[begin];
+  const size_t t = oldFromNew[begin];
   oldFromNew[begin] = oldFromNew[vantagePointIndex];
   oldFromNew[vantagePointIndex] = t;
 
@@ -71,9 +71,9 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   return true;
 }
 
-template<typename BoundType, typename MatType, size_t maxNumSamples>
+template<typename BoundType, typename MatType, size_t MaxNumSamples>
 template <typename VecType>
-size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
+size_t VantagePointSplit<BoundType, MatType, MaxNumSamples>::PerformSplit(
     const MetricType& metric,
     MatType& data,
     const size_t begin,
@@ -124,9 +124,9 @@ size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
   return left;
 }
 
-template<typename BoundType, typename MatType, size_t maxNumSamples>
+template<typename BoundType, typename MatType, size_t MaxNumSamples>
 template<typename VecType>
-size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
+size_t VantagePointSplit<BoundType, MatType, MaxNumSamples>::PerformSplit(
     const MetricType& metric,
     MatType& data,
     const size_t begin,
@@ -184,16 +184,16 @@ size_t VantagePointSplit<BoundType, MatType, maxNumSamples>::PerformSplit(
   return left;
 }
 
-template<typename BoundType, typename MatType, size_t maxNumSamples>
-void VantagePointSplit<BoundType, MatType, maxNumSamples>::
+template<typename BoundType, typename MatType, size_t MaxNumSamples>
+void VantagePointSplit<BoundType, MatType, MaxNumSamples>::
 SelectVantagePoint(const MetricType& metric, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu)
 {
   arma::uvec vantagePointCandidates;
-  arma::Col<ElemType> distances(maxNumSamples);
+  arma::Col<ElemType> distances(MaxNumSamples);
 
-  // Get no more than max(maxNumSamples, count) vantage point candidates
-  math::ObtainDistinctSamples(begin, begin + count, maxNumSamples,
+  // Get no more than max(MaxNumSamples, count) vantage point candidates
+  math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
       vantagePointCandidates);
 
   ElemType bestSpread = 0;
@@ -202,16 +202,16 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   //  Evaluate each candidate
   for (size_t i = 0; i < vantagePointCandidates.n_elem; i++)
   {
-    // Get no more than min(maxNumSamples, count) random samples
-    math::ObtainDistinctSamples(begin, begin + count, maxNumSamples, samples);
+    // Get no more than min(MaxNumSamples, count) random samples
+    math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
 
-    // Calculate the second moment of the distance to the vantage point candidate
-    // using these random samples
+    // Calculate the second moment of the distance to the vantage point
+    // candidate using these random samples.
     distances.set_size(samples.n_elem);
 
     for (size_t j = 0; j < samples.n_elem; j++)
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
-        data.col(samples[j]));
+          data.col(samples[j]));
 
     const ElemType spread = arma::sum(distances % distances) / samples.n_elem;
 
@@ -219,10 +219,10 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
     {
       bestSpread = spread;
       vantagePoint = vantagePointCandidates[i];
-      //  Calculate the median value of the distance from the vantage point candidate
-      //  to these samples
+      // Calculate the median value of the distance from the vantage point
+      // candidate to these samples.
       mu = arma::median(distances);
-   }    
+    }
   }
   assert(bestSpread > 0);
 }

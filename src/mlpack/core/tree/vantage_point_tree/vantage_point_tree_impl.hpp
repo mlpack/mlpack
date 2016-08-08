@@ -583,13 +583,13 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                       SplitType>&
+                        SplitType>&
     VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                    SplitType>::Child(const size_t child) const
+                     SplitType>::Child(const size_t child) const
 {
   if (child == 0)
     return *central;
-  else if(child == 1)
+  else if (child == 1)
     return *inner;
   else
     return *outer;
@@ -605,7 +605,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::NumPoints() const
+                               SplitType>::NumPoints() const
 {
   if (!IsLeaf())
     return 0;
@@ -624,7 +624,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::NumDescendants() const
+                               SplitType>::NumDescendants() const
 {
   return count;
 }
@@ -639,7 +639,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::Descendant(const size_t index) const
+                               SplitType>::Descendant(const size_t index) const
 {
   return (begin + index);
 }
@@ -654,7 +654,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType, size_t...>
              class SplitType>
 inline size_t VantagePointTree<MetricType, StatisticType, MatType, BoundType,
-                              SplitType>::Point(const size_t index) const
+                               SplitType>::Point(const size_t index) const
 {
   return (begin + index);
 }
@@ -786,13 +786,14 @@ SplitNode(std::vector<size_t>& oldFromNew,
   outer = new VantagePointTree(this, splitCol, begin + count - splitCol,
       oldFromNew, splitter, maxLeafSize);
 
-  
   // Calculate parent distances for those two nodes.
   ElemType parentDistance;
 
   if (parent)
+  {
     parentDistance = MetricType::Evaluate(dataset->col(parent->begin),
         dataset->col(begin));
+  }
   else
   {
     arma::vec center;
