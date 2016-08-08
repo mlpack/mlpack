@@ -59,8 +59,8 @@ PARAM_FLAG("rowMajor", "If specified, the program will calculate statistics "
 * @return sum of nth power deviations.
 */
 double SumNthPowerDeviations(const arma::rowvec& input,
-    const double& fMean,
-    size_t n) // Degree of Power
+                             const double& fMean,
+                             size_t n)
 {
   return arma::sum(arma::pow(input - fMean, static_cast<double>(n)));
 }
@@ -74,9 +74,9 @@ double SumNthPowerDeviations(const arma::rowvec& input,
  * @return Skewness of the given vector.
  */
 double Skewness(const arma::rowvec& input,
-    const double& fStd,
-    const double& fMean,
-    const bool population)
+                const double& fStd,
+                const double& fMean,
+                const bool population)
 {
   double skewness = 0;
   const double S3 = pow(fStd, 3);
@@ -104,9 +104,9 @@ double Skewness(const arma::rowvec& input,
  * @return Kurtosis of the given vector.
  */
 double Kurtosis(const arma::rowvec& input,
-    const double& fStd,
-    const double& fMean,
-    const bool population)
+                const double& fStd,
+                const double& fMean,
+                const bool population)
 {
   double kurtosis = 0;
   const double M4 = SumNthPowerDeviations(input, fMean, 4);
