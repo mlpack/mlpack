@@ -9,9 +9,8 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_TYPEDEF_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_TYPEDEF_HPP
 
-// In case it hasn't been included yet.
-#include "../spill_tree.hpp"
-#include "space_split.hpp"
+#include "../space_split/mean_space_split.hpp"
+#include "../space_split/midpoint_space_split.hpp"
 
 namespace mlpack {
 namespace tree {

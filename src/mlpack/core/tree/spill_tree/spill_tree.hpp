@@ -7,10 +7,8 @@
 #define MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_HPP
 
 #include <mlpack/core.hpp>
-
+#include "../space_split/midpoint_space_split.hpp"
 #include "../statistic.hpp"
-#include "space_split.hpp"
-#include "hyperplane.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
