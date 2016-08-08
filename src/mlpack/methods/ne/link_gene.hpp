@@ -19,6 +19,11 @@ class LinkGene
 {
  public:
   /**
+   * Default constructor.
+   */
+  LinkGene() {}
+
+  /**
    * Parametric constructor. Construct the LinkGene object with the given parameters.
    *
    * @param fromNeuronId The id of from neuron.

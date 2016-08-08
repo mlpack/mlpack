@@ -45,6 +45,11 @@ class NeuronGene
 {
  public:
   /**
+   * Default constructor.
+   */
+  NeuronGene() {}
+  
+  /**
    * Parametric constructor.
    *
    * @param id Neuron's ID.

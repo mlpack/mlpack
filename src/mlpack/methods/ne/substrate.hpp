@@ -19,15 +19,17 @@ namespace ne {
 /**
  * This class defines a substrate.
  */
-class Substrate {
+class Substrate
+{
  public:
+  //! Coordinates of nodes.
   std::vector<std::vector<double>> aNodeCoordinates;
+
+  //! Genome created from the substrate nodes.
   Genome aGenome;
 
 
  private:
-
-
 
 };
 
