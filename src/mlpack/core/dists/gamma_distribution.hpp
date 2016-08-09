@@ -85,34 +85,37 @@ class GammaDistribution
      *    smaller than tol.
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
-    
-    /** 
+
+    /**
      * Fits an alpha and beta parameter according to observation probabilities.
-     * 
+     * This method is not yet implemented.
+     *
      * @param observations The reference data, one observation per column
      * @param probabilities The probability of each observation. One value per
      *     column of the observations matrix.
      * @param tol Convergence tolerance. This is *not* an absolute measure:
      *    It will stop the approximation once the *change* in the value is 
      *    smaller than tol.
-     */
-    void Train(const arma::mat& observations, 
+     *
+    void Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const double tol = 1e-8);
-    
+     */
+
     /**
      * This function trains (fits distribution parameters) to a dataset with
      * pre-computed statistics logMeanx, meanLogx, meanx for each dimension.
      *
-     * @param logMeanxVec Is each dimension's logarithm of the mean (log(mean(x))).
+     * @param logMeanxVec Is each dimension's logarithm of the mean
+     *     (log(mean(x))).
      * @param meanLogxVec Is each dimension's mean of logarithms (mean(log(x))).
      * @param meanxVec Is each dimension's mean (mean(x)).
      * @param tol Convergence tolerance. This is *not* an absolute measure:
-     *    It will stop the approximation once the *change* in the value is 
+     *    It will stop the approximation once the *change* in the value is
      *    smaller than tol.
      */
-    void Train(const arma::vec& logMeanxVec, 
-               const arma::vec& meanLogxVec, 
+    void Train(const arma::vec& logMeanxVec,
+               const arma::vec& meanLogxVec,
                const arma::vec& meanxVec,
                const double tol = 1e-8);
 
@@ -131,7 +134,7 @@ class GammaDistribution
      * @param observations Matrix of observations, one per column.
      * @param probabilities column vector of probabilities, one per observation.
      */
-    void Probability(const arma::mat& observations, 
+    void Probability(const arma::mat& observations,
                      arma::vec& Probabilities) const;
 
     /*
@@ -157,10 +160,10 @@ class GammaDistribution
      * independent, so the product rule is used.
      *
      * @param observations Matrix of observations, one per column.
-     * @param logProbabilities column vector of log probabilities, one per 
+     * @param logProbabilities column vector of log probabilities, one per
      *     observation.
      */
-    void LogProbability(const arma::mat& observations, 
+    void LogProbability(const arma::mat& observations,
                         arma::vec& LogProbabilities) const;
 
     /**
@@ -190,13 +193,15 @@ class GammaDistribution
     arma::vec beta;
 
     /**
-     * This is a small function that returns true if the update of alpha is smaller
-     * than the tolerance ratio.
+     * This is a small function that returns true if the update of alpha is
+     * smaller than the tolerance ratio.
      *
-     * @param aOld old value of parameter we want to estimate (alpha in our case).
-     * @param aNew new value of parameter (the value after 1 iteration from aOld).
+     * @param aOld old value of parameter we want to estimate (alpha in our
+     *      case).
+     * @param aNew new value of parameter (the value after 1 iteration from
+     *      aOld).
      * @param tol Convergence tolerance. Relative measure (see documentation of
-     * GammaDistribution::Train)
+     *      GammaDistribution::Train).
      */
     inline bool Converged(const double aOld,
                           const double aNew,

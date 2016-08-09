@@ -454,9 +454,6 @@ class VantagePointTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
 

@@ -63,13 +63,6 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   Train(logMeanxVec, meanLogxVec, meanxVec, tol);
 }
 
-// Fits an alpha and beta parameter according to observation probabilities.
-void GammaDistribution::Train(const arma::mat& observations, 
-                              const arma::vec& probabilities,
-                              const double tol)
-{
-}
-
 // Fits an alpha and beta parameter to each dimension of the data.
 void GammaDistribution::Train(const arma::vec& logMeanxVec, 
                               const arma::vec& meanLogxVec,
