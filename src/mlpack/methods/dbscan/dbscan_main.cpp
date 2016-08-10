@@ -31,7 +31,7 @@ PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
 PARAM_STRING_IN("tree_type", "If using single-tree or dual-tree search, the "
     "type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', "
     "'r-plus-plus', 'cover', 'ball').", "t", "kd");
-PARAM_FLAG("single", "If set, single-tree range search (not dual-tree) "
+PARAM_FLAG("single_mode", "If set, single-tree range search (not dual-tree) "
     "will be used.", "S");
 PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
     "will be used.", "N");
@@ -48,7 +48,7 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   data::Load(CLI::GetParam<string>("input_file"), dataset);
 
   const double epsilon = CLI::GetParam<double>("epsilon");
-  const size_t minSize = (size_t) CLI::GetParam<size_t>("min_size");
+  const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
 
   DBSCAN<RangeSearchType> d(epsilon, minSize, rs);
 

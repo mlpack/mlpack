@@ -85,8 +85,10 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
+  Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
   rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
+  Log::Info << "Range search complete." << std::endl;
 
   // Initialize to all true; false means it's been visited.
   boost::dynamic_bitset<> unvisited(data.n_cols);
@@ -94,6 +96,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   while (unvisited.any())
   {
     const size_t nextIndex = pointSelector.Select(unvisited, data);
+    Log::Info << "Inspect point " << nextIndex << "; " << unvisited.count()
+        << " unvisited points remain." << std::endl;
 
     // currentCluster will only be incremented if a cluster was created.
     currentCluster = ProcessPoint(data, unvisited, nextIndex, assignments,
