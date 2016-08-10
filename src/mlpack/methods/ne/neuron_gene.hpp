@@ -89,6 +89,11 @@ class NeuronGene
   }
 
   /**
+   * Destructor.
+   */
+  ~NeuronGene() {}
+
+  /**
    * Operator =.
    *
    * @param neuronGene The neuron to be compared with.

@@ -82,6 +82,11 @@ class Genome
   }
 
   /**
+   * Destructor.
+   */
+  ~Genome() {}
+
+  /**
    * Operator =.
    *
    * @param genome The genome to be compared with.

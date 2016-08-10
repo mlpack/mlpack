@@ -33,7 +33,7 @@ class CNE
    * Parametric constructor.
    *
    * @param task The task to solve.
-   * @param seedGenome The genome to initialize population.
+   * @param seedGenome The genome to initialize species.
    * @param params The Parameter object that contains algorithm parameters.
    */
   CNE(TaskType task, Genome& seedGenome, Parameters& params)
@@ -46,6 +46,28 @@ class CNE
     aMutateSize = params.aMutateSize;
     aElitePercentage = params.aElitePercentage;
   }
+
+  /**
+   * Parametric constructor with default algorithm parameters.
+   *
+   * @param task The task to solve.
+   * @param seedGenome The genome to initialize species.
+   */
+  CNE(TaskType task, Genome& seedGenome)
+  {
+    aTask = task;
+    aSeedGenome = seedGenome;
+    aSpeciesSize = 500;
+    aMaxGeneration = 5000;
+    aMutateRate = 0.1;
+    aMutateSize = 0.02;
+    aElitePercentage = 0.2;
+  }
+
+  /**
+   * Destructor.
+   */
+  ~CNE() {}
 
   /** 
    * Soft weight mutation: add a Gaussian random value to genome link weights.

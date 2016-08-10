@@ -51,6 +51,11 @@ class Population
   }
 
   /**
+   * Destructor.
+   */
+  ~Population() {}
+
+  /**
    * Operator =.
    *
    * @param population The population to be compared with.

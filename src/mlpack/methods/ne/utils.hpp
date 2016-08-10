@@ -18,67 +18,85 @@ namespace mlpack {
 namespace ne {
 
 /**
- * Definitions of different activate functions.
+ * Activation function: SIGMOID.
  */
-
-inline double sigmoid(double x) {  // TODO: make it faster. More parameters?
+inline double sigmoid(double x)
+{  // TODO: make it faster. More parameters?
   return 1.0 / (1.0 + exp(-x));
 }
 
-inline double relu(double x) {
+/**
+ * Activation function: RELU
+ */
+inline double relu(double x)
+{
   return (x > 0)? x:0;
 }
 
 /**
- * Definitions of random number generation functions.
+ * Random number generator.
  */
-
-// Random number generator.
 RNGType rng;
 
-// Set seed for random number generator
-void Seed(int seedVal) {
+/**
+ * Set seed for random number generator.
+ */
+void Seed(int seedVal)
+{
   rng.seed(seedVal);
 }
 
-// Set seed by time for random number generator
-void TimeSeed() {
+/**
+ * Set seed by time for random number generator.
+ */
+void TimeSeed()
+{
   rng.seed(time(0));
 }
 
-// Returns randomly either 1 or -1
-int RandPosNeg() {
+/**
+ * Returns randomly either 1 or -1.
+ */
+int RandPosNeg()
+{
   boost::random::uniform_int_distribution<> dist(0, 1);
   return dist(rng);
 }
 
-// Returns a random integer between [x, y]
-// in case of ( 0 .. 1 ) returns 0
-int RandInt(int x, int y) {
+/**
+ * Returns a random integer between [x, y]
+ * in case of ( 0 .. 1 ) returns 0.
+ */
+int RandInt(int x, int y)
+{
 	boost::random::uniform_int_distribution<> dist(x, y);
     return dist(rng);
 }
 
-// Return a random float between [0, 1]
-double RandFloat() {
+/**
+ * Return a random float between [0, 1]
+ */
+double RandFloat()
+{
   boost::random::uniform_01<> dist;
   return dist(rng);
-  
 }
 
-// Return a random float between [x, y]
-double RandFloat(double x, double y) {
+/**
+ * Return a random float between [x, y]
+ */
+double RandFloat(double x, double y)
+{
   boost::random::uniform_real_distribution<> dist(x, y);
   return dist(rng);
 }
 
 /**
- * Definitions of other functions.
+ * Return the sign of a number.
  */
-
-// Return the sign of a number.
-template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
+template <typename T> int sgn(T val)
+{
+  return (T(0) < val) - (val < T(0));
 }
 
 }  // namespace mlpack

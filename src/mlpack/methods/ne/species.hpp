@@ -59,6 +59,11 @@ class Species
   }
 
   /**
+   * Destructor.
+   */
+  ~Species() {}
+
+  /**
    * Operator =.
    *
    * @param species Compare with this species.
