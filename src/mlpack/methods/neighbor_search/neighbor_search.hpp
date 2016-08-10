@@ -166,6 +166,16 @@ class NeighborSearch
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
+  /**
+   * Copy the given NeighborSearch object (this may consume a lot of memory; be
+   * careful!).
+   */
+  NeighborSearch(const NeighborSearch& other);
+
+  /**
+   * Take possession of the given NeighborSearch object.
+   */
+  NeighborSearch(NeighborSearch&& other);
 
   /**
    * Delete the NeighborSearch object. The tree is the only member we are
