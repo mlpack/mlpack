@@ -105,6 +105,131 @@ BOOST_AUTO_TEST_CASE(SpillTreeConstructionParentTest)
 }
 
 /**
+ * Auxiliary function to execute the same test for different flavours of Spill
+ * Trees.
+ */
+template<typename SpillType>
+void SpillTreeHyperplaneTestAux()
+{
+  arma::mat dataset;
+  dataset.randu(3, 1000); // 1000 points in 3 dimensions.
+
+  for (size_t cases = 0; cases < 3; cases++)
+  {
+    double tau;
+    switch (cases)
+    {
+      case 0:
+        tau = 0;
+        break;
+      case 1:
+        tau = 0.05;
+        break;
+      case 2:
+        tau = 0.1;
+        break;
+    }
+
+    // Let's check node by node, that points in the left child are considered to
+    // the left by the splitting hyperplane, and the same for points in the
+    // right child.
+    SpillType tree(dataset, tau);
+
+    std::stack<SpillType*> nodes;
+    nodes.push(&tree);
+    while (!nodes.empty())
+    {
+      SpillType* node = nodes.top();
+      nodes.pop();
+
+      if (node->Overlap())
+      {
+        // We have a overlapping node.
+        if (node->Left())
+        {
+          // Let's check that points in the left child are projected to values
+          // in the range: (-inf, tau]
+          size_t numDesc = node->Left()->NumDescendants();
+          for (size_t i = 0; i < numDesc; i++)
+          {
+            size_t descIndex = node->Left()->Descendant(i);
+            BOOST_REQUIRE_LE(
+                node->Hyperplane().Project(node->Dataset().col(descIndex)),
+                tau);
+          }
+        }
+        if (node->Right())
+        {
+          // Let's check that points in the right child are projected to values
+          // in the range: (-tau, inf)
+          size_t numDesc = node->Right()->NumDescendants();
+          for (size_t i = 0; i < numDesc; i++)
+          {
+            size_t descIndex = node->Right()->Descendant(i);
+            BOOST_REQUIRE_GT(
+                node->Hyperplane().Project(node->Dataset().col(descIndex)),
+                -tau);
+          }
+        }
+      }
+      else
+      {
+        // We have a non-overlapping node.
+        if (node->Left())
+        {
+          // Let's check that points in the left child are considered to the
+          // left by the splitting hyperplane.
+          size_t numDesc = node->Left()->NumDescendants();
+          for (size_t i = 0; i < numDesc; i++)
+          {
+            size_t descIndex = node->Left()->Descendant(i);
+            BOOST_REQUIRE(
+                node->Hyperplane().Left(node->Dataset().col(descIndex)));
+          }
+        }
+        if (node->Right())
+        {
+          // Let's check that points in the right child are considered to the
+          // right by the splitting hyperplane.
+          size_t numDesc = node->Right()->NumDescendants();
+          for (size_t i = 0; i < numDesc; i++)
+          {
+            size_t descIndex = node->Right()->Descendant(i);
+            BOOST_REQUIRE(
+                node->Hyperplane().Right(node->Dataset().col(descIndex)));
+          }
+        }
+      }
+
+      if (node->Left())
+        nodes.push(node->Left());
+
+      if (node->Right())
+        nodes.push(node->Right());
+    }
+  }
+}
+
+/**
+ * Test to make sure that the points in the left child are considered to the
+ * left by the node's splitting hyperplane, and the same for points in the
+ * right child.
+ */
+BOOST_AUTO_TEST_CASE(SpillTreeHyperplaneTest)
+{
+  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType1;
+  typedef NonOrtSPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType2;
+  typedef MeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType3;
+  typedef NonOrtMeanSPTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      SpillType4;
+
+  SpillTreeHyperplaneTestAux<SpillType1>();
+  SpillTreeHyperplaneTestAux<SpillType2>();
+  SpillTreeHyperplaneTestAux<SpillType3>();
+  SpillTreeHyperplaneTestAux<SpillType4>();
+}
+
+/**
  * Simple test for the move constructor.
  */
 BOOST_AUTO_TEST_CASE(SpillTreeMoveDatasetTest)
