@@ -166,6 +166,55 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    const RangeSearch& other) :
+    oldFromNewReferences(other.oldFromNewReferences),
+    referenceTree(other.naive ? NULL : new Tree(*other.referenceTree)),
+    referenceSet(other.naive ? new MatType(*other.referenceSet) :
+        &referenceTree->Dataset()),
+    treeOwner(!other.naive),
+    setOwner(other.naive),
+    naive(other.naive),
+    singleMode(other.singleMode),
+    metric(other.metric),
+    baseCases(other.baseCases),
+    scores(other.scores)
+{
+  // Nothing to do.
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    RangeSearch&& other) :
+    oldFromNewReferences(std::move(other.oldFromNewReferences)),
+    referenceTree(other.naive ? NULL : std::move(other.referenceTree)),
+    referenceSet(other.naive ? std::move(other.referenceSet) :
+        &referenceTree->Dataset()),
+    treeOwner(other.treeOwner),
+    setOwner(other.setOwner),
+    naive(other.naive),
+    singleMode(other.singleMode),
+    metric(std::move(other.metric)),
+    baseCases(other.baseCases),
+    scores(other.scores)
+{
+  other.referenceTree = NULL;
+  other.referenceSet = new arma::mat(); // Empty dataset.
+  other.treeOwner = false;
+  other.setOwner = true;
+  other.baseCases = 0;
+  other.scores = 0;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)
@@ -291,6 +340,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
         << ") do not match!";
     throw std::invalid_argument(oss.str());
   }
+
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
 
   Timer::Start("range_search/computing_neighbors");
 
@@ -464,6 +517,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
+
   Timer::Start("range_search/computing_neighbors");
 
   // Get a reference to the query set.
@@ -530,6 +587,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
+
   Timer::Start("range_search/computing_neighbors");
 
   // Here, we will use the query set as the reference set.

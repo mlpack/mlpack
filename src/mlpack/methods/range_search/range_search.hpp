@@ -128,6 +128,17 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
+   * Copy constructor: this will copy any trees, so it may not be a great idea
+   * to call this!
+   */
+  RangeSearch(const RangeSearch& other);
+
+  /**
+   * Move constructor: take possession of all the members of the other model.
+   */
+  RangeSearch(RangeSearch&& other);
+
+  /**
    * Destroy the RangeSearch object.  If trees were created, they will be
    * deleted.
    */

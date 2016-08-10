@@ -1162,7 +1162,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 /**
  * Test that the move constructor works.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+BOOST_AUTO_TEST_CASE(TreeMoveConstructorTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
   arma::mat copy(dataset);
@@ -1401,7 +1401,7 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 
   // Build the tree ourselves.
-  std::vector<size_t> oldFromNewReferences;
+  vector<size_t> oldFromNewReferences;
   RangeSearch<>::Tree tree(dataset);
   RangeSearch<> ra(&tree);
 
@@ -1417,5 +1417,72 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   BOOST_REQUIRE_EQUAL(distances.size(), 50);
 }
 
+/**
+ * Make sure the copy constructor works.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorTest)
+{
+  arma::mat dataset(5, 100, arma::fill::randu);
+
+  RangeSearch<> r(dataset);
+  RangeSearch<> r2(r);
+
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  r.Search(math::Range(0.2, 0.5), neighbors, distances);
+  r2.Search(math::Range(0.2, 0.5), neighbors2, distances2);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Make sure the move constructor works.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset(5, 100, arma::fill::randu);
+
+  RangeSearch<> r(dataset);
+  RangeSearch<> rCopy(r);
+  RangeSearch<> r2(std::move(rCopy));
+
+  vector<vector<double>> distances, distancesCopy, distances2;
+  vector<vector<size_t>> neighbors, neighborsCopy, neighbors2;
+
+  // Search with all three objects.  The second should give no results.
+  r.Search(math::Range(0.2, 0.5), neighbors, distances);
+  rCopy.Search(math::Range(0.2, 0.5), neighborsCopy, distancesCopy);
+  r2.Search(math::Range(0.2, 0.5), neighbors2, distances2);
+
+  BOOST_REQUIRE_EQUAL(distancesCopy.size(), 0);
+  BOOST_REQUIRE_EQUAL(neighborsCopy.size(), 0);
+
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();
