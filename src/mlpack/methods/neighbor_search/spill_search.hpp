@@ -68,6 +68,8 @@ class SpillSearch
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param tau Overlapping size (non-negative).
+   * @param leafSize Max size of each leaf in the tree.
+   * @param rho Balance threshold (non-negative).
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
@@ -75,6 +77,8 @@ class SpillSearch
               const bool naive = false,
               const bool singleMode = false,
               const double tau = 0,
+              const double leafSize = 20,
+              const double rho = 0.7,
               const double epsilon = 0,
               const MetricType metric = MetricType());
 
@@ -91,6 +95,8 @@ class SpillSearch
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param tau Overlapping size (non-negative).
+   * @param leafSize Max size of each leaf in the tree.
+   * @param rho Balance threshold (non-negative).
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
@@ -98,6 +104,8 @@ class SpillSearch
               const bool naive = false,
               const bool singleMode = false,
               const double tau = 0,
+              const double leafSize = 20,
+              const double rho = 0.7,
               const double epsilon = 0,
               const MetricType metric = MetricType());
 
@@ -113,12 +121,16 @@ class SpillSearch
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param tau Overlapping size (non-negative).
+   * @param leafSize Max size of each leaf in the tree.
+   * @param rho Balance threshold (non-negative).
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
   SpillSearch(Tree* referenceTree,
               const bool singleMode = false,
               const double tau = 0,
+              const double leafSize = 20,
+              const double rho = 0.7,
               const double epsilon = 0,
               const MetricType metric = MetricType());
 
@@ -131,12 +143,16 @@ class SpillSearch
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param tau Overlapping size (non-negative).
+   * @param leafSize Max size of each leaf in the tree.
+   * @param rho Balance threshold (non-negative).
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
   SpillSearch(const bool naive = false,
               const bool singleMode = false,
               const double tau = 0,
+              const double leafSize = 20,
+              const double rho = 0.7,
               const double epsilon = 0,
               const MetricType metric = MetricType());
 
@@ -262,6 +278,12 @@ class SpillSearch
   //! Access the overlapping size.
   double Tau() const { return tau; }
 
+  //! Access the balance threshold.
+  double Rho() const { return rho; }
+
+  //! Access the leaf size.
+  double LeafSize() const { return leafSize; }
+
   //! Access the reference dataset.
   const MatType& ReferenceSet() const { return neighborSearch.ReferenceSet(); }
 
@@ -276,6 +298,12 @@ class SpillSearch
 
   //! Overlapping size.
   double tau;
+
+  //! Balance threshold.
+  double rho;
+
+  //! Max leaf size.
+  double leafSize;
 
   //! The NSModel class should have access to internal members.
   template<typename SortPolicy>

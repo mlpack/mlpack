@@ -25,13 +25,19 @@ SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     const bool naive,
     const bool singleMode,
     const double tau,
+    const double leafSize,
+    const double rho,
     const double epsilon,
     const MetricType metric) :
     neighborSearch(naive, singleMode, epsilon, metric),
-    tau(tau)
+    tau(tau),
+    rho(rho),
+    leafSize(leafSize)
 {
   if (tau < 0)
     throw std::invalid_argument("tau must be non-negative");
+  if (rho < 0 || rho > 1)
+    throw std::invalid_argument("rho must be in the range [0,1]");
   Train(referenceSetIn);
 }
 
@@ -45,13 +51,19 @@ SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     const bool naive,
     const bool singleMode,
     const double tau,
+    const double leafSize,
+    const double rho,
     const double epsilon,
     const MetricType metric) :
     neighborSearch(naive, singleMode, epsilon, metric),
-    tau(tau)
+    tau(tau),
+    rho(rho),
+    leafSize(leafSize)
 {
   if (tau < 0)
     throw std::invalid_argument("tau must be non-negative");
+  if (rho < 0 || rho > 1)
+    throw std::invalid_argument("rho must be in the range [0,1]");
   Train(std::move(referenceSetIn));
 }
 
@@ -64,13 +76,19 @@ SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     Tree* referenceTree,
     const bool singleMode,
     const double tau,
+    const double leafSize,
+    const double rho,
     const double epsilon,
     const MetricType metric) :
     neighborSearch(singleMode, epsilon, metric),
-    tau(tau)
+    tau(tau),
+    rho(rho),
+    leafSize(leafSize)
 {
   if (tau < 0)
     throw std::invalid_argument("tau must be non-negative");
+  if (rho < 0 || rho > 1)
+    throw std::invalid_argument("rho must be in the range [0,1]");
   Train(referenceTree);
 }
 
@@ -83,13 +101,19 @@ SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::SpillSearch(
     const bool naive,
     const bool singleMode,
     const double tau,
+    const double leafSize,
+    const double rho,
     const double epsilon,
     const MetricType metric) :
     neighborSearch(naive, singleMode, epsilon, metric),
-    tau(tau)
+    tau(tau),
+    rho(rho),
+    leafSize(leafSize)
 {
   if (tau < 0)
     throw std::invalid_argument("tau must be non-negative");
+  if (rho < 0 || rho > 1)
+    throw std::invalid_argument("rho must be in the range [0,1]");
 }
 
 // Clean memory.
@@ -115,7 +139,7 @@ Train(const MatType& referenceSet)
   else
   {
     // Build reference tree with proper value for tau.
-    Tree* tree = new Tree(referenceSet, tau);
+    Tree* tree = new Tree(referenceSet, tau, leafSize, rho);
     neighborSearch.Train(tree);
     // Give the model ownership of the tree.
     neighborSearch.treeOwner = true;
@@ -134,7 +158,7 @@ Train(MatType&& referenceSetIn)
   else
   {
     // Build reference tree with proper value for tau.
-    Tree* tree = new Tree(std::move(referenceSetIn), tau);
+    Tree* tree = new Tree(std::move(referenceSetIn), tau, leafSize, rho);
     neighborSearch.Train(tree);
     // Give the model ownership of the tree.
     neighborSearch.treeOwner = true;
@@ -167,7 +191,7 @@ Search(const MatType& querySet,
   {
     // For Dual Tree Search on SpillTrees, the queryTree must be built with non
     // overlapping (tau = 0).
-    Tree queryTree(querySet, 0 /* tau */);
+    Tree queryTree(querySet, 0 /* tau */, leafSize, rho);
     neighborSearch.Search(&queryTree, k, neighbors, distances);
   }
 }
@@ -201,7 +225,7 @@ Search(const size_t k,
     // For Dual Tree Search on SpillTrees, the queryTree must be built with non
     // overlapping (tau = 0). If the referenceTree was built with a non-zero
     // value for tau, we need to build a new queryTree.
-    Tree queryTree(ReferenceSet(), 0 /* tau */);
+    Tree queryTree(ReferenceSet(), 0 /* tau */, leafSize, rho);
     neighborSearch.Search(&queryTree, k, neighbors, distances, true);
   }
 }
@@ -217,6 +241,8 @@ void SpillSearch<MetricType, MatType, HyperplaneType, SplitType>::
 {
   ar & data::CreateNVP(neighborSearch, "neighborSearch");
   ar & data::CreateNVP(tau, "tau");
+  ar & data::CreateNVP(rho, "rho");
+  ar & data::CreateNVP(leafSize, "leafSize");
 }
 
 } // namespace neighbor

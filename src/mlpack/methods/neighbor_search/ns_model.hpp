@@ -110,6 +110,8 @@ class BiSearchVisitor : public boost::static_visitor<void>
   const size_t leafSize;
   //! Overlapping size (for spill trees).
   const double tau;
+  //! Balance threshold (for spill trees).
+  const double rho;
 
   //! Bichromatic neighbor search on the given NSType considering the leafSize.
   template<typename NSType>
@@ -143,7 +145,8 @@ class BiSearchVisitor : public boost::static_visitor<void>
                   arma::Mat<size_t>& neighbors,
                   arma::mat& distances,
                   const size_t leafSize,
-                  const double tau);
+                  const double tau,
+                  const double rho);
 };
 
 /**
@@ -162,6 +165,8 @@ class TrainVisitor : public boost::static_visitor<void>
   size_t leafSize;
   //! Overlapping size (for spill trees).
   const double tau;
+  //! Balance threshold (for spill trees).
+  const double rho;
 
   //! Train on the given NSType considering the leafSize.
   template<typename NSType>
@@ -190,10 +195,11 @@ class TrainVisitor : public boost::static_visitor<void>
   void operator()(NSSpillType* ns) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
-  //! for BinarySpaceTrees, and tau for spill trees.
+  //! for BinarySpaceTrees, and tau and rho for spill trees.
   TrainVisitor(arma::mat&& referenceSet,
                const size_t leafSize,
-               const double tau);
+               const double tau,
+               const double rho);
 };
 
 /**
@@ -289,6 +295,8 @@ class NSModel
 
   //! Overlapping size (for spill trees).
   double tau;
+  //! Balance threshold (for spill trees).
+  double rho;
 
   //! If true, random projections are used.
   bool randomBasis;
@@ -347,6 +355,10 @@ class NSModel
   //! Expose tau.
   double Tau() const { return tau; }
   double& Tau() { return tau; }
+
+  //! Expose rho.
+  double Rho() const { return rho; }
+  double& Rho() { return rho; }
 
   //! Expose treeType.
   TreeTypes TreeType() const { return treeType; }

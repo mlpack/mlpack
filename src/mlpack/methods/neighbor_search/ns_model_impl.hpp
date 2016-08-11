@@ -34,13 +34,15 @@ BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
                                              arma::Mat<size_t>& neighbors,
                                              arma::mat& distances,
                                              const size_t leafSize,
-                                             const double tau) :
+                                             const double tau,
+                                             const double rho) :
     querySet(querySet),
     k(k),
     neighbors(neighbors),
     distances(distances),
     leafSize(leafSize),
-    tau(tau)
+    tau(tau),
+    rho(rho)
 {}
 
 //! Default Bichromatic neighbor search on the given NSType instance.
@@ -84,7 +86,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSSpillType* ns) const
       // For Dual Tree Search on SpillTrees, the queryTree must be built with
       // non overlapping (tau = 0).
       typename NSSpillType::Tree queryTree(std::move(querySet), 0 /* tau*/,
-          leafSize);
+          leafSize, rho);
       ns->Search(&queryTree, k, neighbors, distances);
     }
     else
@@ -126,10 +128,12 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 template<typename SortPolicy>
 TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
                                        const size_t leafSize,
-                                       const double tau) :
+                                       const double tau,
+                                       const double rho) :
     referenceSet(std::move(referenceSet)),
     leafSize(leafSize),
-    tau(tau)
+    tau(tau),
+    rho(rho)
 {}
 
 //! Default Train on the given NSType instance.
@@ -173,7 +177,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSSpillType* ns) const
     else
     {
       typename NSSpillType::Tree* tree = new typename NSSpillType::Tree(
-          std::move(referenceSet), tau, leafSize);
+          std::move(referenceSet), tau, leafSize, rho);
       ns->Train(tree);
       // Give the model ownership of the tree.
       ns->neighborSearch.treeOwner = true;
@@ -257,6 +261,7 @@ NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
     leafSize(20),
     tau(0),
+    rho(0.7),
     randomBasis(randomBasis)
 {
   // Nothing to do.
@@ -307,6 +312,7 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
   ar & data::CreateNVP(treeType, "treeType");
   ar & data::CreateNVP(leafSize, "leafSize");
   ar & data::CreateNVP(tau, "tau");
+  ar & data::CreateNVP(rho, "rho");
   ar & data::CreateNVP(randomBasis, "randomBasis");
   ar & data::CreateNVP(q, "q");
 
@@ -454,11 +460,11 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
           epsilon);
       break;
     case SPILL_TREE:
-      nSearch = new NSSpillType(naive, singleMode, tau, epsilon);
+      nSearch = new NSSpillType(naive, singleMode, tau, leafSize, rho, epsilon);
       break;
   }
 
-  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau);
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau, rho);
   boost::apply_visitor(tn, nSearch);
 
   if (!naive)
@@ -491,7 +497,7 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
         << std::endl;
 
   BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
-      leafSize, tau);
+      leafSize, tau, rho);
   boost::apply_visitor(search, nSearch);
 }
 

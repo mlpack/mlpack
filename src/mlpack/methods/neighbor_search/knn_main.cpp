@@ -70,6 +70,7 @@ PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and Spill "
     "trees).", "l", 20);
 PARAM_DOUBLE_IN("tau", "Overlapping size (for spill trees).", "u", 0);
+PARAM_DOUBLE_IN("rho", "Balance threshold (for spill trees).", "b", 0.7);
 
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
@@ -117,6 +118,9 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("tau"))
       Log::Warn << "--tau (-u) will be ignored because --input_model_file"
           << " is specified." << endl;
+    if (CLI::HasParam("rho"))
+      Log::Warn << "--rho (-b) will be ignored because --input_model_file"
+          << " is specified." << endl;
     if (CLI::HasParam("random_basis"))
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
@@ -156,6 +160,14 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid tau: " << tau << ".  Must be non-negative. " << endl;
   if (CLI::HasParam("tau") && "spill" != CLI::GetParam<string>("tree_type"))
     Log::Fatal << "Tau parameter is only valid for spill trees." << endl;
+
+  // Sanity check on rho.
+  const double rho = CLI::GetParam<double>("rho");
+  if (rho < 0 || rho > 1)
+    Log::Fatal << "Invalid rho: " << rho << ".  Must be in the range [0,1]. "
+        << endl;
+  if (CLI::HasParam("rho") && "spill" != CLI::GetParam<string>("tree_type"))
+    Log::Fatal << "Rho parameter is only valid for spill trees." << endl;
 
   // Sanity check on epsilon.
   const double epsilon = CLI::GetParam<double>("epsilon");
@@ -204,6 +216,7 @@ int main(int argc, char *argv[])
     knn.RandomBasis() = randomBasis;
     knn.LeafSize() = size_t(lsInt);
     knn.Tau() = tau;
+    knn.Rho() = rho;
 
     arma::mat referenceSet;
     data::Load(referenceFile, referenceSet, true);
@@ -231,6 +244,7 @@ int main(int argc, char *argv[])
     knn.LeafSize() = size_t(lsInt);
     knn.Epsilon() = epsilon;
     knn.Tau() = tau;
+    knn.Rho() = rho;
   }
 
   // Perform search, if desired.
