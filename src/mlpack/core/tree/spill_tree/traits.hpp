@@ -54,6 +54,12 @@ class TreeTraits<SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
    * This is always a binary tree.
    */
   static const bool BinaryTree = true;
+
+  /**
+   * Spill trees have duplicated points, so NumDescendants() could count a given
+   * point twice.
+   */
+  static const bool UniqueNumDescendants = false;
 };
 
 } // namespace tree

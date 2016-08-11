@@ -98,6 +98,12 @@ class TreeTraits
    * This is true if the tree always has only two children.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * This is true if the NumDescendants() method doesn't include duplicated
+   * points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

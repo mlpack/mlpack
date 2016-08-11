@@ -55,6 +55,12 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    * This is always a binary tree.
    */
   static const bool BinaryTree = true;
+
+  /**
+   * Binary space trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 /**
@@ -78,6 +84,7 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool HasSelfChildren = false;
   static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

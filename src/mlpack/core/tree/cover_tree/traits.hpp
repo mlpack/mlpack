@@ -52,6 +52,11 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
    * The cover tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * NumDescendants() represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree
