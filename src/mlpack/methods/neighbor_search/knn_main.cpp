@@ -305,13 +305,18 @@ int main(int argc, char *argv[])
           << "values than the set of distances being queried!" << endl;
 
       double effectiveError = 0;
+      size_t cases = 0;
       for (size_t i = 0; i < distances.n_elem; i++)
       {
         if (distancesExact(i) != 0 && distances(i) != DBL_MAX)
+        {
           effectiveError += (distances(i) - distancesExact(i)) /
               distancesExact(i);
+          cases++;
+        }
       }
-      effectiveError /= distances.n_elem;
+      if (cases)
+        effectiveError /= cases;
 
       Log::Info << "Effective error: " << effectiveError << endl;
     }
