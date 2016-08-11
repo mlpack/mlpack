@@ -59,6 +59,11 @@ class LinkGene
   }
 
   /**
+   * Destructor.
+   */
+  ~LinkGene() {}
+
+  /**
    * Operator =.
    *
    * @param linkGene The link to be compared with.
