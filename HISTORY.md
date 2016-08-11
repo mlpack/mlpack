@@ -1,5 +1,12 @@
-### mlpack 2.0.3
+### mlpack 2.x.x
 ###### 2016-??-??
+  * Fixed CoverTree to properly handle single-point datasets.
+
+  * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
+    some datasets (#717).
+
+### mlpack 2.0.3
+###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
     now be used to control the number of extra bins that are probed, as can the
     -T (--num_probes) option to mlpack_lsh.

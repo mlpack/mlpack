@@ -3,8 +3,6 @@
  *
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
- *
- * @experimental
  */
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
