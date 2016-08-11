@@ -14,6 +14,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
+#include <mlpack/core/tree/vantage_point_tree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 #include "spill_search.hpp"
@@ -283,7 +284,8 @@ class NSModel
     HILBERT_R_TREE,
     R_PLUS_TREE,
     R_PLUS_PLUS_TREE,
-    SPILL_TREE
+    SPILL_TREE,
+    VP_TREE
   };
 
  private:
@@ -317,6 +319,7 @@ class NSModel
                  NSType<SortPolicy, tree::HilbertRTree>*,
                  NSType<SortPolicy, tree::RPlusTree>*,
                  NSType<SortPolicy, tree::RPlusPlusTree>*,
+                 NSType<SortPolicy, tree::VPTree>*,
                  NSSpillType*> nSearch;
 
  public:

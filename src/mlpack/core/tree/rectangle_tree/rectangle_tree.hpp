@@ -489,9 +489,6 @@ class RectangleTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
  private:
   /**
    * Splits the current node, recursing up the tree.

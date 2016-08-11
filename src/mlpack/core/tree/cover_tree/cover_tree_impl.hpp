@@ -46,7 +46,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset.n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -96,7 +99,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -131,7 +137,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset.n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -182,7 +191,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -218,7 +230,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset->n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -268,7 +283,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -303,7 +321,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset->n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -353,7 +374,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);

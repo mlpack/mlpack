@@ -400,8 +400,10 @@ Search(const MatType& querySet,
     scores += rules.Scores();
     baseCases += rules.BaseCases();
 
-    Log::Info << rules.Scores() << " node combinations were scored.\n";
-    Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+    Log::Info << rules.Scores() << " node combinations were scored."
+        << std::endl;
+    Log::Info << rules.BaseCases() << " base cases were calculated."
+        << std::endl;
 
     rules.GetResults(*neighborPtr, *distancePtr);
   }
@@ -425,8 +427,10 @@ Search(const MatType& querySet,
     scores += rules.Scores();
     baseCases += rules.BaseCases();
 
-    Log::Info << rules.Scores() << " node combinations were scored.\n";
-    Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+    Log::Info << rules.Scores() << " node combinations were scored."
+        << std::endl;
+    Log::Info << rules.BaseCases() << " base cases were calculated."
+        << std::endl;
 
     rules.GetResults(*neighborPtr, *distancePtr);
 
@@ -550,6 +554,9 @@ Search(Tree* queryTree,
   scores += rules.Scores();
   baseCases += rules.BaseCases();
 
+  Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
+  Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;
+
   rules.GetResults(*neighborPtr, distances);
 
   Log::Info << rules.Scores() << " node combinations were scored.\n";
@@ -638,8 +645,10 @@ Search(const size_t k,
     scores += rules.Scores();
     baseCases += rules.BaseCases();
 
-    Log::Info << rules.Scores() << " node combinations were scored.\n";
-    Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+    Log::Info << rules.Scores() << " node combinations were scored."
+        << std::endl;
+    Log::Info << rules.BaseCases() << " base cases were calculated."
+        << std::endl;
   }
   else
   {
@@ -671,8 +680,10 @@ Search(const size_t k,
     scores += rules.Scores();
     baseCases += rules.BaseCases();
 
-    Log::Info << rules.Scores() << " node combinations were scored.\n";
-    Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+    Log::Info << rules.Scores() << " node combinations were scored."
+        << std::endl;
+    Log::Info << rules.BaseCases() << " base cases were calculated."
+        << std::endl;
 
     // Next time we perform this search, we'll need to reset the tree.
     treeNeedsReset = true;

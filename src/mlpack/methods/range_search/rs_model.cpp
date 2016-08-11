@@ -25,7 +25,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     xTreeRS(NULL),
     hilbertRTreeRS(NULL),
     rPlusTreeRS(NULL),
-    rPlusPlusTreeRS(NULL)
+    rPlusPlusTreeRS(NULL),
+    vpTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -138,6 +139,11 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
 
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case VP_TREE:
+      vpTreeRS = new RSType<tree::VPTree>(move(referenceSet), naive,
           singleMode);
       break;
   }
@@ -261,6 +267,10 @@ void RSModel::Search(arma::mat&& querySet,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case VP_TREE:
+      vpTreeRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -315,6 +325,10 @@ void RSModel::Search(const math::Range& range,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS->Search(range, neighbors, distances);
       break;
+
+    case VP_TREE:
+      vpTreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -341,6 +355,8 @@ std::string RSModel::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case VP_TREE:
+      return "Vantage point tree";
     default:
       return "unknown tree";
   }
@@ -367,6 +383,8 @@ void RSModel::CleanMemory()
     delete rPlusTreeRS;
   if (rPlusPlusTreeRS)
     delete rPlusPlusTreeRS;
+  if (vpTreeRS)
+    delete vpTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -377,4 +395,5 @@ void RSModel::CleanMemory()
   hilbertRTreeRS = NULL;
   rPlusTreeRS = NULL;
   rPlusPlusTreeRS = NULL;
+  vpTreeRS = NULL;
 }

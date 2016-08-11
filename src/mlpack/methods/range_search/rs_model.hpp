@@ -13,6 +13,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/vantage_point_tree.hpp>
 
 #include "range_search.hpp"
 
@@ -32,7 +33,8 @@ class RSModel
     X_TREE,
     HILBERT_R_TREE,
     R_PLUS_TREE,
-    R_PLUS_PLUS_TREE
+    R_PLUS_PLUS_TREE,
+    VP_TREE
   };
 
  private:
@@ -69,6 +71,8 @@ class RSModel
   RSType<tree::RPlusTree>* rPlusTreeRS;
   //! R++ tree based range search object (NULL if not in use).
   RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
+  //! VP tree based range search object (NULL if not in use).
+  RSType<tree::VPTree>* vpTreeRS;
 
  public:
   /**

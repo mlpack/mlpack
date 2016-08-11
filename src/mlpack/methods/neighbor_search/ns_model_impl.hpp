@@ -459,6 +459,10 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
           epsilon);
       break;
+    case VP_TREE:
+      nSearch = new NSType<SortPolicy, tree::VPTree>(naive, singleMode,
+          epsilon);
+      break;
     case SPILL_TREE:
       nSearch = new NSSpillType(naive, singleMode, tau, leafSize, rho, epsilon);
       break;
@@ -548,6 +552,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R++ tree";
     case SPILL_TREE:
       return "Spill tree";
+    case VP_TREE:
+      return "Vantage point tree";
     default:
       return "unknown tree";
   }

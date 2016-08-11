@@ -63,12 +63,12 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'cover', 'r', "
     "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill'.",
     "t", "kd");
-PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and Spill "
-    "trees).", "l", 20);
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
+    "trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees "
+    "and spill trees).", "l", 20);
 PARAM_DOUBLE_IN("tau", "Overlapping size (for spill trees).", "u", 0);
 PARAM_DOUBLE_IN("rho", "Balance threshold (for spill trees).", "b", 0.7);
 
@@ -213,10 +213,12 @@ int main(int argc, char *argv[])
       tree = KNNModel::R_PLUS_PLUS_TREE;
     else if (treeType == "spill")
       tree = KNNModel::SPILL_TREE;
+    else if (treeType == "vp")
+      tree = KNNModel::VP_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
-          << "'r-plus', 'r-plus-plus' and 'spill'." << endl;
+          << "'r-plus', 'r-plus-plus', 'vp' and 'spill'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
