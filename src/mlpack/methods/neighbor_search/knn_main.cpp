@@ -130,6 +130,9 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("naive"))
       Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
           << "specified." << endl;
+    if (CLI::HasParam("single_mode"))
+      Log::Warn << "--single_mode (-S) will be ignored because --input_model_file is "
+          << "specified." << endl;
   }
 
   // The user should give something to do...
@@ -240,14 +243,6 @@ int main(int argc, char *argv[])
     Log::Info << "Loaded kNN model from '" << inputModelFile << "' (trained on "
         << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
         << endl;
-
-    // Adjust singleMode and naive if necessary.
-    knn.SingleMode() = CLI::HasParam("single_mode");
-    knn.Naive() = CLI::HasParam("naive");
-    knn.LeafSize() = size_t(lsInt);
-    knn.Epsilon() = epsilon;
-    knn.Tau() = tau;
-    knn.Rho() = rho;
   }
 
   // Perform search, if desired.
