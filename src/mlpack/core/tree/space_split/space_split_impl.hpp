@@ -88,7 +88,7 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
     return false;
 
   // Calculate the normalized projection vector.
-  projVector = ProjVector(arma::normalise(data.col(snd) - data.col(fst)));
+  projVector = ProjVector(data.col(snd) - data.col(fst));
 
   arma::vec midPoint = (data.col(snd) + data.col(fst)) / 2;
 

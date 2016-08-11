@@ -8,7 +8,7 @@
 #define MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 
 #include <mlpack/core.hpp>
-
+#include "../bounds.hpp"
 namespace mlpack {
 namespace tree {
 
@@ -102,7 +102,7 @@ class ProjVector
    * @param vect Vector to be considered.
    */
   ProjVector(const arma::vec& vect) :
-      projVect(vect)
+      projVect(arma::normalise(vect))
   {};
 
   /**
