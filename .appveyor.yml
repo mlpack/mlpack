@@ -25,7 +25,7 @@ build_script:
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\armadillo-6.500.5\build\armadillo.sln" /m /verbosity:quiet /p:Configuration=Release;Platform=x64'
   - cd C:\projects\mlpack && mkdir build && cd build
   - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-6.500.5/include" -DARMADILLO_LIBRARY:FILEPATH="C:\projects\mlpack\armadillo-6.500.5\build\Debug\armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:\projects\mlpack\boost.1.60.0.0\lib\native\include" -DBOOST_LIBRARYDIR:PATH="C:\projects\mlpack\boost_libs" -DDEBUG=ON -DPROFILE=ON ..
-  - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\build\mlpack.sln" /m /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /nologo /p:BuildInParallel=true /p:Configuration=Release;Platform=x64'
+  - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\build\mlpack.sln" /m /verbosity:minimal /nologo /p:BuildInParallel=true /p:Configuration=Release;Platform=x64'
   - 7z a mlpack-windows-no-libs.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.exe"
   - 7z a mlpack-windows.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
 
