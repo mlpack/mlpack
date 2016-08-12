@@ -1,24 +1,24 @@
 /**
- * @file binary_space_tree.hpp
+ * @file vantage_point_tree.hpp
  *
- * Definition of generalized binary space partitioning tree (BinarySpaceTree).
+ * Definition of the vantage point tree.
  */
-#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
-#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
-#include <mlpack/core.hpp>
+#ifndef MLPACK_CORE_TREE_VANTAGE_POINT_TREE_VANTAGE_POINT_TREE_HPP
+#define MLPACK_CORE_TREE_VANTAGE_POINT_TREE_VANTAGE_POINT_TREE_HPP
 
-#include "../statistic.hpp"
-#include "midpoint_split.hpp"
+#include "vantage_point_split.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 /**
- * A binary space partitioning tree, such as a KD-tree or a ball tree.  Once the
- * bound and type of dataset is defined, the tree will construct itself.  Call
- * the constructor with the dataset to build the tree on, and the entire tree
- * will be built.
+ * The vantage point tree (vantage point trees are also called metric trees)
+ * is a variant of a binary space tree. In contrast to BinarySpaceTree,
+ * each intermediate node of the vantage point tree contains exactly three
+ * children. The first child contains only one point (the vantage point).
+ * Two other children (inner and outer) may be leaf or intermediate nodes.
+ * Thus, the point of the first (central) child is the centroid of its siblings.
  *
  * This particular tree does not allow growth, so you cannot add or delete nodes
  * from it.  If you need to add or delete a node, the better procedure is to
@@ -32,9 +32,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
- * @tparam BoundType The bound used for each node.  HRectBound, the default,
- *     requires that an LMetric<> is used for MetricType (so, EuclideanDistance,
- *     ManhattanDistance, etc.).
+ * @tparam BoundType The bound used for each node.  Currently only
+ *    HollowBallBound is supported.
  * @tparam SplitType The class that partitions the dataset/points at a
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
@@ -43,10 +42,10 @@ template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          template<typename BoundMetricType, typename...> class BoundType =
-            bound::HRectBound,
-         template<typename SplitBoundType, typename SplitMatType>
-            class SplitType = MidpointSplit>
-class BinarySpaceTree
+            bound::HollowBallBound,
+         template<typename SplitBoundType, typename SplitMatType, size_t...>
+            class SplitType = VantagePointSplit>
+class VantagePointTree
 {
  public:
   //! So other classes can use TreeType::Mat.
@@ -54,23 +53,21 @@ class BinarySpaceTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
-  typedef SplitType<BoundType<MetricType>, MatType> Split;
-
  private:
-  //! The left child node.
-  BinarySpaceTree* left;
-  //! The right child node.
-  BinarySpaceTree* right;
+  //! The child node that contains only the vantage point.
+  VantagePointTree* central;
+  //! The inner child node.
+  VantagePointTree* inner;
+  //! The outer child node.
+  VantagePointTree* outer;
   //! The parent node (NULL if this is the root of the tree).
-  BinarySpaceTree* parent;
-  //! The index of the first point in the dataset contained in this node (and
-  //! its children).
+  VantagePointTree* parent;
+  //! The index of the first point in the dataset contained in this node.
   size_t begin;
-  //! The number of points of the dataset contained in this node (and its
-  //! children).
+  //! The number of points of the dataset contained in this node.
   size_t count;
   //! The bound object for this node.
-  BoundType<MetricType> bound;
+  BoundType<MetricType, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -83,32 +80,32 @@ class BinarySpaceTree
   //! The dataset.  If we are the root of the tree, we own the dataset and must
   //! delete it.
   MatType* dataset;
+  //! Indicates that the first point of the node is the centroid of its bound.
+  bool firstPointIsCentroid;
 
  public:
-  //! A single-tree traverser for binary space trees; see
+  //! A single-tree traverser for the vantage point tree; see
   //! single_tree_traverser.hpp for implementation.
   template<typename RuleType>
   class SingleTreeTraverser;
 
-  //! A dual-tree traverser for binary space trees; see dual_tree_traverser.hpp.
+  //! A dual-tree traverser for the vantage point tree;
+  //! see dual_tree_traverser.hpp.
   template<typename RuleType>
   class DualTreeTraverser;
 
-  template<typename RuleType>
-  class BreadthFirstDualTreeTraverser;
-
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will copy the input matrix; if you don't want this, consider
    * using the constructor that takes an rvalue reference and use std::move().
    *
    * @param data Dataset to create tree from.  This will be copied!
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(const MatType& data, const size_t maxLeafSize = 20);
+  VantagePointTree(const MatType& data, const size_t maxLeafSize = 20);
 
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will copy the input matrix and modify its ordering; a
    * mapping of the old point indices to the new point indices is filled.  If
    * you don't want the matrix to be copied, consider using the constructor that
@@ -119,12 +116,12 @@ class BinarySpaceTree
    *     each new point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(const MatType& data,
-                  std::vector<size_t>& oldFromNew,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(const MatType& data,
+                   std::vector<size_t>& oldFromNew,
+                   const size_t maxLeafSize = 20);
 
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will copy the input matrix and modify its ordering; a
    * mapping of the old point indices to the new point indices is filled, as
    * well as a mapping of the new point indices to the old point indices.  If
@@ -138,13 +135,13 @@ class BinarySpaceTree
    *     each old point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(const MatType& data,
-                  std::vector<size_t>& oldFromNew,
-                  std::vector<size_t>& newFromOld,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(const MatType& data,
+                   std::vector<size_t>& oldFromNew,
+                   std::vector<size_t>& newFromOld,
+                   const size_t maxLeafSize = 20);
 
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will take ownership of the data matrix; if you don't want
    * this, consider using the constructor that takes a const reference to a
    * dataset.
@@ -152,11 +149,11 @@ class BinarySpaceTree
    * @param data Dataset to create tree from.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(MatType&& data,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(MatType&& data,
+                   const size_t maxLeafSize = 20);
 
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will take ownership of the data matrix; a mapping of the
    * old point indices to the new point indices is filled.  If you don't want
    * the matrix to have its ownership taken, consider using the constructor that
@@ -167,12 +164,12 @@ class BinarySpaceTree
    *     each new point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(MatType&& data,
-                  std::vector<size_t>& oldFromNew,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(MatType&& data,
+                   std::vector<size_t>& oldFromNew,
+                   const size_t maxLeafSize = 20);
 
   /**
-   * Construct this as the root node of a binary space tree using the given
+   * Construct this as the root node of a vantage point tree using the given
    * dataset.  This will take ownership of the data matrix; a mapping of the old
    * point indices to the new point indices is filled, as well as a mapping of
    * the new point indices to the old point indices.  If you don't want the
@@ -186,10 +183,10 @@ class BinarySpaceTree
    *     each old point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(MatType&& data,
-                  std::vector<size_t>& oldFromNew,
-                  std::vector<size_t>& newFromOld,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(MatType&& data,
+                   std::vector<size_t>& oldFromNew,
+                   std::vector<size_t>& newFromOld,
+                   const size_t maxLeafSize = 20);
 
   /**
    * Construct this node as a child of the given parent, starting at column
@@ -202,11 +199,11 @@ class BinarySpaceTree
    * @param count Number of points to use to construct tree.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(BinarySpaceTree* parent,
-                  const size_t begin,
-                  const size_t count,
-                  SplitType<BoundType<MetricType>, MatType>& splitter,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(VantagePointTree* parent,
+                   const size_t begin,
+                   const size_t count,
+                   SplitType<BoundType<MetricType>, MatType>& splitter,
+                   const size_t maxLeafSize = 20);
 
   /**
    * Construct this node as a child of the given parent, starting at column
@@ -226,12 +223,12 @@ class BinarySpaceTree
    *     each new point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(BinarySpaceTree* parent,
-                  const size_t begin,
-                  const size_t count,
-                  std::vector<size_t>& oldFromNew,
-                  SplitType<BoundType<MetricType>, MatType>& splitter,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(VantagePointTree* parent,
+                   const size_t begin,
+                   const size_t count,
+                   std::vector<size_t>& oldFromNew,
+                   SplitType<BoundType<MetricType>, MatType>& splitter,
+                   const size_t maxLeafSize = 20);
 
   /**
    * Construct this node as a child of the given parent, starting at column
@@ -254,27 +251,27 @@ class BinarySpaceTree
    *     each old point.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(BinarySpaceTree* parent,
-                  const size_t begin,
-                  const size_t count,
-                  std::vector<size_t>& oldFromNew,
-                  std::vector<size_t>& newFromOld,
-                  SplitType<BoundType<MetricType>, MatType>& splitter,
-                  const size_t maxLeafSize = 20);
+  VantagePointTree(VantagePointTree* parent,
+                   const size_t begin,
+                   const size_t count,
+                   std::vector<size_t>& oldFromNew,
+                   std::vector<size_t>& newFromOld,
+                   SplitType<BoundType<MetricType>, MatType>& splitter,
+                   const size_t maxLeafSize = 20);
 
   /**
-   * Create a binary space tree by copying the other tree.  Be careful!  This
+   * Create a vantage point tree by copying the other tree.  Be careful!  This
    * can take a long time and use a lot of memory.
    *
    * @param other Tree to be replicated.
    */
-  BinarySpaceTree(const BinarySpaceTree& other);
+  VantagePointTree(const VantagePointTree& other);
 
   /**
-   * Move constructor for a BinarySpaceTree; possess all the members of the
+   * Move constructor for a VantagePointTree; possess all the members of the
    * given tree.
    */
-  BinarySpaceTree(BinarySpaceTree&& other);
+  VantagePointTree(VantagePointTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.
@@ -282,7 +279,7 @@ class BinarySpaceTree
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
   template<typename Archive>
-  BinarySpaceTree(
+  VantagePointTree(
       Archive& ar,
       const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
 
@@ -291,7 +288,7 @@ class BinarySpaceTree
    * their destructors in turn.  This will invalidate any pointers or references
    * to any nodes which are children of this one.
    */
-  ~BinarySpaceTree();
+  ~VantagePointTree();
 
   //! Return the bound object for this node.
   const BoundType<MetricType>& Bound() const { return bound; }
@@ -300,26 +297,32 @@ class BinarySpaceTree
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
-  //! Return the statistic object for this node.
+  //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Gets the left child of this node.
-  BinarySpaceTree* Left() const { return left; }
-  //! Modify the left child of this node.
-  BinarySpaceTree*& Left() { return left; }
+  //! Gets the cental child of this node.
+  VantagePointTree* Central() const { return central; }
+  //! Modify the cental child of this node.
+  VantagePointTree*& Central() { return central; }
 
-  //! Gets the right child of this node.
-  BinarySpaceTree* Right() const { return right; }
-  //! Modify the right child of this node.
-  BinarySpaceTree*& Right() { return right; }
+
+  //! Gets the inner child of this node.
+  VantagePointTree* Inner() const { return inner; }
+  //! Modify the inner child of this node.
+  VantagePointTree*& Inner() { return inner; }
+
+  //! Gets the outer child of this node.
+  VantagePointTree* Outer() const { return outer; }
+  //! Modify the outer child of this node.
+  VantagePointTree*& Outer() { return outer; }
 
   //! Gets the parent of this node.
-  BinarySpaceTree* Parent() const { return parent; }
+  VantagePointTree* Parent() const { return parent; }
   //! Modify the parent of this node.
-  BinarySpaceTree*& Parent() { return parent; }
+  VantagePointTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
   const MatType& Dataset() const { return *dataset; }
@@ -334,7 +337,8 @@ class BinarySpaceTree
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not
-   * a leaf node, then the distance is 0 because the node holds no points.
+   * a leaf node, then the distance is 0 because the node holds no points or
+   * the only point is the centroid.
    */
   ElemType FurthestPointDistance() const;
 
@@ -363,18 +367,16 @@ class BinarySpaceTree
    *
    * @param child Index of child to return.
    */
-  BinarySpaceTree& Child(const size_t child) const;
+  VantagePointTree& Child(const size_t child) const;
 
-  BinarySpaceTree*& ChildPtr(const size_t child)
-  { return (child == 0) ? left : right; }
+  VantagePointTree*& ChildPtr(const size_t child)
+  { return (child == 0) ? central : (child == 1 ? inner : outer); }
 
-  //! Return the number of points in this node (0 if not a leaf).
+  //! Return the number of points in this node.
   size_t NumPoints() const;
 
   /**
-   * Return the number of descendants of this node.  For a non-leaf in a binary
-   * space tree, this is the number of points at the descendant leaves.  For a
-   * leaf, this is the number of points in the leaf.
+   * Return the number of descendants of this node.
    */
   size_t NumDescendants() const;
 
@@ -398,19 +400,19 @@ class BinarySpaceTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const BinarySpaceTree* other) const
+  ElemType MinDistance(const VantagePointTree* other) const
   {
     return bound.MinDistance(other->Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const BinarySpaceTree* other) const
+  ElemType MaxDistance(const VantagePointTree* other) const
   {
     return bound.MaxDistance(other->Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree* other) const
+  math::RangeType<ElemType> RangeDistance(const VantagePointTree* other) const
   {
     return bound.RangeDistance(other->Bound());
   }
@@ -477,40 +479,6 @@ class BinarySpaceTree
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
 
-  /**
-   * Perform the split process according to the information about the
-   * split.
-   *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
-   * @param count Number of points in this node.
-   * @param splitInfo The information about the split.
-   */
-  size_t PerformSplit(MatType& data,
-                      const size_t begin,
-                      const size_t count,
-                      const typename Split::SplitInfo& splitInfo);
-
-  /**
-   * Perform the split process according to the information about the split and
-   * return a list of changed indices.
-   *
-   * @param bound The bound used for this node.
-   * @param data The dataset used by the binary space tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
-   * @param count Number of points in this node.
-   * @param splitInfo The information about the split.
-   * @param oldFromNew Vector which will be filled with the old positions for
-   *    each new point.
-   */
-  size_t PerformSplit(MatType& data,
-                      const size_t begin,
-                      const size_t count,
-                      const typename Split::SplitInfo& splitInfo,
-                      std::vector<size_t>& oldFromNew);
  protected:
   /**
    * A default constructor.  This is meant to only be used with
@@ -518,7 +486,7 @@ class BinarySpaceTree
    * This does not return a valid tree!  The method must be protected, so that
    * the serialization shim can work with the default constructor.
    */
-  BinarySpaceTree();
+  VantagePointTree();
 
   //! Friend access is given for the default constructor.
   friend class boost::serialization::access;
@@ -535,9 +503,6 @@ class BinarySpaceTree
 } // namespace mlpack
 
 // Include implementation.
-#include "binary_space_tree_impl.hpp"
+#include "vantage_point_tree_impl.hpp"
 
-// Include everything else, if necessary.
-#include "../binary_space_tree.hpp"
-
-#endif
+#endif // MLPACK_CORE_TREE_VANTAGE_POINT_TREE_VANTAGE_POINT_TREE_HPP

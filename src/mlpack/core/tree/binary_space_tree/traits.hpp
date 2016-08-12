@@ -42,6 +42,12 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
+   * There is no guarantee that the first point of the first sibling is the
+   * centroid of other siblings.
+   */
+  static const bool FirstSiblingFirstPointIsCentroid = false;
+
+  /**
    * The tree has not got duplicated points.
    */
   static const bool HasDuplicatedPoints = false;
@@ -86,6 +92,12 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
+   * There is no guarantee that the first point of the first sibling is the
+   * centroid of other siblings.
+   */
+  static const bool FirstSiblingFirstPointIsCentroid = false;
+
+  /**
    * Points are not contained at multiple levels of the binary space tree.
    */
   static const bool HasSelfChildren = false;
@@ -125,6 +137,12 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
+   * There is no guarantee that the first point of the first sibling is the
+   * centroid of other siblings.
+   */
+  static const bool FirstSiblingFirstPointIsCentroid = false;
+
+  /**
    * Points are not contained at multiple levels of the binary space tree.
    */
   static const bool HasSelfChildren = false;
@@ -158,6 +176,7 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool HasOverlappingChildren = true;
   static const bool HasDuplicatedPoints = false;
   static const bool FirstPointIsCentroid = false;
+  static const bool FirstSiblingFirstPointIsCentroid = false;
   static const bool HasSelfChildren = false;
   static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;

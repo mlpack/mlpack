@@ -26,6 +26,7 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     hilbertRTreeRS(NULL),
     rPlusTreeRS(NULL),
     rPlusPlusTreeRS(NULL),
+    vpTreeRS(NULL),
     rpTreeRS(NULL),
     maxSplitPRTreeRS(NULL)
 {
@@ -141,6 +142,11 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet),
           naive, singleMode);
+      break;
+
+    case VP_TREE:
+      vpTreeRS = new RSType<tree::VPTree>(move(referenceSet), naive,
+          singleMode);
       break;
 
     case RP_TREE:
@@ -274,6 +280,10 @@ void RSModel::Search(arma::mat&& querySet,
       rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
       break;
 
+    case VP_TREE:
+      vpTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
     case RP_TREE:
       rpTreeRS->Search(querySet, range, neighbors, distances);
       break;
@@ -336,6 +346,10 @@ void RSModel::Search(const math::Range& range,
       rPlusPlusTreeRS->Search(range, neighbors, distances);
       break;
 
+    case VP_TREE:
+      vpTreeRS->Search(range, neighbors, distances);
+      break;
+
     case RP_TREE:
       rpTreeRS->Search(range, neighbors, distances);
       break;
@@ -369,6 +383,8 @@ std::string RSModel::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case VP_TREE:
+      return "Vantage point tree";
     case RP_TREE:
       return "Random projection tree (mean split)";
     case MAX_SPLIT_RP_TREE:
@@ -399,6 +415,8 @@ void RSModel::CleanMemory()
     delete rPlusTreeRS;
   if (rPlusPlusTreeRS)
     delete rPlusPlusTreeRS;
+  if (vpTreeRS)
+    delete vpTreeRS;
   if (rpTreeRS)
     delete rpTreeRS;
   if (maxSplitPRTreeRS)
@@ -413,6 +431,7 @@ void RSModel::CleanMemory()
   hilbertRTreeRS = NULL;
   rPlusTreeRS = NULL;
   rPlusPlusTreeRS = NULL;
+  vpTreeRS = NULL;
   rpTreeRS = NULL;
   maxSplitPRTreeRS = NULL;
 }
