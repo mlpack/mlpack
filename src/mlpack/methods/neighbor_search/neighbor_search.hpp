@@ -225,6 +225,35 @@ class NeighborSearch
                  const MetricType metric = MetricType());
 
   /**
+   * Initialize the NeighborSearch object with a copy of the given
+   * pre-constructed reference tree (this is the tree built on the points that
+   * will be searched).  Optionally, choose to use single-tree mode.  Naive mode
+   * is not available as an option for this constructor.  Additionally, an
+   * instantiated distance metric can be given, for cases where the distance
+   * metric holds data.
+   *
+   * This method will copy the given tree.  You can avoid this copy by using the
+   * construct that takes a rvalue reference to the tree.
+   *
+   * @note
+   * Mapping the points of the matrix back to their original indices is not done
+   * when this constructor is used, so if the tree type you are using maps
+   * points (like BinarySpaceTree), then you will have to perform the re-mapping
+   * manually.
+   * @endnote
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   * @param singleMode Whether single-tree computation should be used (as
+   *      opposed to dual-tree computation).
+   * @param epsilon Relative approximate error (non-negative).
+   * @param metric Instantiated distance metric.
+   */
+  NeighborSearch(Tree& referenceTree,
+                 const bool singleMode = false,
+                 const double epsilon = 0,
+                 const MetricType metric = MetricType());
+
+  /**
    * Initialize the NeighborSearch object with the given pre-constructed
    * reference tree (this is the tree built on the points that will be
    * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
@@ -338,6 +367,16 @@ class NeighborSearch
    * @param referenceTree Pre-built tree for reference points.
    */
   void Train(Tree* referenceTree);
+
+  /**
+   * Set the reference tree as a copy of the given reference tree.
+   *
+   * This method will copy the given tree.  You can avoid this copy by using the
+   * Train() method that takes a rvalue reference to the tree.
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   */
+  void Train(Tree& referenceTree);
 
   /**
    * Set the reference tree to a new reference tree.

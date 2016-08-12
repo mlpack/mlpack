@@ -324,6 +324,26 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+SingleTreeTraversalType>::NeighborSearch(Tree& referenceTree,
+                                         const bool singleMode,
+                                         const double epsilon,
+                                         const MetricType metric) :
+    NeighborSearch(new Tree(referenceTree), singleMode, epsilon,
+        metric)
+{
+  treeOwner = true;
+}
+
+// Construct the object.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
                                          const bool singleMode,
                                          const double epsilon,
@@ -509,6 +529,21 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree* referenceTree)
   this->referenceSet = &referenceTree->Dataset();
   treeOwner = false;
   setOwner = false;
+}
+
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree& referenceTree)
+{
+  Train(new Tree(referenceTree));
+  treeOwner = true;
 }
 
 template<typename SortPolicy,
