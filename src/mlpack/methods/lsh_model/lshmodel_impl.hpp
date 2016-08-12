@@ -49,8 +49,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
 {
   // Sanity check - sample rate must be in (0, 1].
   if (sampleRate > 1 || sampleRate <= 0)
-    throw std::runtime_error(
-        "Sampling rate must be floating point number in (0, 1]");
+    Log::Fatal << "Sampling rate must be floating point number in (0, 1]"
+        << std::endl;
 
   // Update the object's max K value information.
   maxKValue = k;
@@ -60,7 +60,6 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
 
   // Step 1. Select a random sample of the dataset. We will work with only that
   // sample.
-
   arma::vec sampleHelper(referenceSet.n_cols, arma::fill::randu);
 
   // Keep a sample of the dataset: We have uniformly random numbers in [0, 1],
@@ -125,8 +124,10 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
   for (size_t i = 0; i < regressionExamples; ++i)
   {
     // TODO: Since we've already computed this, avoid calling kNN?
+
     // Reference set for kNN
-    arma::mat refMat = sampleSet.cols(numAnchors, numAnchors + referenceSizes(i) );
+    arma::mat refMat = sampleSet.cols(numAnchors,
+        numAnchors + referenceSizes(i));
 
     arma::Mat<size_t> neighbors; // Not going to be used but required.
     arma::mat kNNDistances; // What we need.
@@ -149,6 +150,7 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
   Timer::Stop("neighbor_statistic_regression");
 }
 
+
 // Predict parameters for LSH that will have acceptable recall.
 template <typename SortPolicy, typename ObjectiveFunction>
 void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
@@ -157,7 +159,7 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
 {
   // Sanity check. Recall can't be greater/equal to 1, or negative.
   if (minRecall < 0 || minRecall >=1)
-    throw std::runtime_error("minRecall must be in [0, 1)");
+    Log::Fatal << "Parameter minRecall must be in [0, 1)" << std::endl;
 
   // If the object wasn't trained, die here.
   if (referenceSet == NULL)
@@ -174,7 +176,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
       "with default sampling rate and new k." << std::endl;
     Train(*referenceSet, 0.1, k); // Default sampling rate.
   }
-  // Steps 1 - 5 happen in Train().
+
+  // Note: Steps 1 - 5 happen in Train().
 
   // Step 6. Fit Gamma distributions to pairwise distances and kNN distances,
   // generated or estimated in steps 3 and 5.
@@ -189,6 +192,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   Timer::Start("fitting_distributions");
   for (size_t i = 1; i <= k; ++i)
   {
+    // Use the arithmetic and geometric mean predictors that were trained in
+    // Train() to estimate the statistics for the given datasetSize and k.
     meanVec(i) = aMeanPredictor.Predict(datasetSize, k);
     logMeanVec(i) = std::log(meanVec(i));
     // log(geometricMean) = \frac{1}{n} \sum(lnx_i) = mean(lnx) = meanLog
@@ -197,6 +202,9 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   // Fit the distribution.
   distancesDistribution.Train(logMeanVec, meanLogVec, meanVec);
   Timer::Stop("fitting_distributions");
+
+  // See if works
+  //GenerateTemplateSequence(3, 0.5, 8);
 
   // Step 7. Run Binary search on parameter space to minimize selectivity while
   // keeping recall above minimum.
@@ -251,6 +259,211 @@ LSHObject(const size_t numProjIn,
   return lshObjectVector[lshObjectVector.size() - 1];
 }
 
+// Helper function to generate perturbations.
+template<typename SortPolicy, typename ObjectiveFunction>
+inline force_inline
+double LSHModel<SortPolicy, ObjectiveFunction>::PerturbationScore(
+    const std::vector<bool>& A,
+    const arma::vec& scores) const
+{
+  double score = 0.0;
+  for (size_t i = 0; i < A.size(); ++i)
+    if (A[i])
+      score += scores(i); // add scores of non-zero indices
+  return score;
+}
+
+// Helper function to generate perturbations.
+template<typename SortPolicy, typename ObjectiveFunction>
+inline force_inline
+bool LSHModel<SortPolicy, ObjectiveFunction>::PerturbationShift(
+    std::vector<bool>& A) const
+{
+  size_t maxPos = 0;
+  for (size_t i = 0; i < A.size(); ++i)
+    if (A[i] == 1) // Marked true.
+      maxPos = i;
+
+  if (maxPos + 1 < A.size()) // Otherwise, this is an invalid vector.
+  {
+    A[maxPos] = 0;
+    A[maxPos + 1] = 1;
+    return true; // valid
+  }
+  return false; // invalid
+}
+
+// Helper function to generate perturbations.
+template<typename SortPolicy, typename ObjectiveFunction>
+inline force_inline
+bool LSHModel<SortPolicy, ObjectiveFunction>::PerturbationExpand(
+    std::vector<bool>& A) const
+{
+  // Find the last '1' in A.
+  size_t maxPos = 0;
+  for (size_t i = 0; i < A.size(); ++i)
+    if (A[i]) // Marked true.
+      maxPos = i;
+
+  if (maxPos + 1 < A.size()) // Otherwise, this is an invalid vector.
+  {
+    A[maxPos + 1] = 1;
+    return true;
+  }
+  return false;
+}
+
+// Helper function to generate perturbations.
+template<typename SortPolicy, typename ObjectiveFunction>
+inline force_inline
+bool LSHModel<SortPolicy, ObjectiveFunction>::PerturbationValid(
+    const std::vector<bool>& A,
+    size_t numProj) const
+{
+  // Use check to mark dimensions we have seen before in A. If a dimension is
+  // seen twice (or more), A is not a valid perturbation.
+  std::vector<bool> check(numProj);
+
+  if (A.size() > 2 * numProj)
+    return false; // This should never happen.
+
+  // Check that we only see each dimension once. If not, vector is not valid.
+  for (size_t i = 0; i < A.size(); ++i)
+  {
+    // Only check dimensions that were included.
+    if (!A[i])
+      continue;
+
+    // If dimesnion is unseen thus far, mark it as seen.
+    if (check[i % numProj] == false)
+      check[i % numProj] = true;
+    else
+      return false; // If dimension was seen before, set is not valid.
+  }
+  // If we didn't fail, set is valid.
+  return true;
+}
+
+// Generate a probing sequence for a given M, W and T.
+template <typename SortPolicy, typename ObjectiveFunction>
+void LSHModel<SortPolicy, ObjectiveFunction>::GenerateTemplateSequence(
+    size_t numProj,
+    double hashWidth,
+    size_t numProbes)
+{
+  // If no additional probes requested, stop here.
+  if (numProbes == 0)
+    return;
+
+  // If number of additional probes exceeds possible, set to max possible.
+  if (numProbes > ((1 << numProj) - 1))
+    numProbes = (1 << numProj) - 1;
+
+  // Calculate the expected scores based on Multi-probe LSH paper.
+  arma::vec scores(2 * numProj);
+  double M = (double) numProj; // To avoid integer division headache.
+  // "Positive" scores.
+  for (size_t j = 0; j < numProj; ++j)
+    scores(j) = pow(hashWidth, 2) * (j + 1 * (j + 2))/(4 * (M + 1) * (M + 2));
+  // "Negative" scores.
+  for (size_t j = numProj; j < 2 * numProj; ++j)
+    scores(j) = pow(hashWidth, 2) *
+      (1 -
+       (2 * M + 1 - (j + 1))/(M + 1) +
+       ((2 * M + 1 - (j + 1)) * (2 * M + 2 - (j + 1)))/(4 * (M + 1) * (M + 2)));
+  cout << scores << endl;
+
+  // A "+1" signifies a positive perturbation, a "-1" a negative one.
+  arma::Col<short int> actions(2 * numProj); // will be [1 ... -1 ...]
+  actions.rows(0, numProj - 1) = // First numProj rows.
+    arma::ones< arma::Col<short int> > (numProj); // 1s
+  actions.rows(numProj, (2 * numProj) - 1) = // Last numProj rows.
+    -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
+
+  // The "acting dimension", or which of the numProj dimension to increase or
+  // reduce according to the "actions".
+  arma::Col<size_t> positions(2 * numProj); // Will be [0 1 2 ... 0 1 2 ...].
+  positions.rows(0, numProj - 1) =
+    arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
+  positions.rows(numProj, 2 * numProj - 1) =
+    arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
+
+  // Sort all three vectors so smaller scoring perturbations are first.
+  arma::uvec sortidx = arma::sort_index(scores);
+  scores = scores(sortidx);
+  actions = actions(sortidx);
+  positions = positions(sortidx);
+
+  // From LSHSearch::GetAdditionalProbingBins. TODO: Modularize?
+
+  // Perturbation sets (A) mark with 1 the (score, action, dimension) positions
+  // included in a given perturbation vector. Other spaces are 0.
+  std::vector<bool> Ao(2 * numProj);
+  Ao[0] = 1; // Smallest vector includes only smallest score.
+
+  std::vector< std::vector<bool> > perturbationSets;
+  perturbationSets.push_back(Ao); // Storage of perturbation sets.
+
+  std::priority_queue<
+    std::pair<double, size_t>,        // contents: pairs of (score, index)
+    std::vector<                      // container: vector of pairs
+      std::pair<double, size_t>
+      >,
+    std::greater< std::pair<double, size_t> > // comparator of pairs
+  > minHeap; // our minheap
+
+  // Start by adding the lowest scoring set to the minheap.
+  minHeap.push( std::make_pair(PerturbationScore(Ao, scores), 0) );
+
+  // Loop invariable: after pvec iterations, additionalProbingBins contains pvec
+  // valid codes of the lowest-scoring bins (bins most likely to contain
+  // neighbors of the query).
+
+  // Allocate 1 column per perturbed "code".
+  this->templateSequence.zeros(numProj, numProbes);
+  for (size_t pvec = 0; pvec < numProbes; ++pvec)
+  {
+    std::vector<bool> Ai;
+    do
+    {
+      // Get the perturbation set corresponding to the minimum score.
+      Ai = perturbationSets[ minHeap.top().second ];
+      minHeap.pop(); // .top() returns, .pop() removes
+
+      // Shift operation on Ai (replace max with max+1).
+      std::vector<bool> As = Ai;
+      if (PerturbationShift(As) && PerturbationValid(As, numProj))
+        // Don't add invalid sets.
+      {
+        perturbationSets.push_back(As); // add shifted set to sets
+        minHeap.push(
+            std::make_pair(PerturbationScore(As, scores),
+            perturbationSets.size() - 1));
+      }
+
+      // Expand operation on Ai (add max+1 to set).
+      std::vector<bool> Ae = Ai;
+      if (PerturbationExpand(Ae) && PerturbationValid(Ae, numProj))
+        // Don't add invalid sets.
+      {
+        perturbationSets.push_back(Ae); // add expanded set to sets
+        minHeap.push(
+            std::make_pair(PerturbationScore(Ae, scores),
+            perturbationSets.size() - 1));
+      }
+
+    } while (!PerturbationValid(Ai, numProj));//Discard invalid perturbations
+
+    // Found valid perturbation set Ai. Construct perturbation vector from set.
+    for (size_t pos = 0; pos < Ai.size(); ++pos)
+    {
+      // If Ai[pos] is marked, set template to +/- 1.
+      if (Ai[pos] == 1)
+        templateSequence(positions(pos), pvec) = actions(pos);
+    }
+  }
+}
+
 // Fit a curve to the data provided.
 template<typename SortPolicy, typename ObjectiveFunction>
 double LSHModel<SortPolicy, ObjectiveFunction>::DistanceStatisticPredictor::Train(
@@ -266,7 +479,10 @@ double LSHModel<SortPolicy, ObjectiveFunction>::DistanceStatisticPredictor::Trai
 
   // Get an initial point from the optimizer.
   arma::mat currentPoint = f.GetInitialPoint();
+  // Silence debug output of L_BFGS (TODO: remove)
+  Log::Debug.ignoreInput = true;
   double result = opt.Optimize(currentPoint);
+  Log::Debug.ignoreInput = false;
 
   // Optimizer is done - set alpha, beta, gamma.
   this->alpha = currentPoint(0, 0);
