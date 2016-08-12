@@ -639,8 +639,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
               SplitType<BoundType<MetricType>, MatType>& splitter)
 {
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -696,10 +695,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
           const size_t maxLeafSize,
           SplitType<BoundType<MetricType>, MatType>& splitter)
 {
-  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -742,6 +739,46 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename BoundType2>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(BoundType2& boundToUpdate)
+{
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
+{
+  if (!parent)
+  {
+    if (count > 0)
+      boundToUpdate |= dataset->cols(begin, begin + count - 1);
+    return;
+  }
+
+  if (parent->left != NULL && parent->left != this)
+  {
+    boundToUpdate.HollowCenter() = parent->left->bound.Center();
+    boundToUpdate.InnerRadius() = std::numeric_limits<ElemType>::max();
+  }
+
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
 // Default constructor (private), for boost::serialization.
