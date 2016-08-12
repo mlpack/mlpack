@@ -217,6 +217,30 @@
     PARAM_OUT(std::string, ID, DESC, ALIAS, "", false)
 
 /**
+ * Define a matrix input parameter.
+ */
+//#define PARAM_MATRIX_IN(ID, DESC, ALIAS, TRANSPOSE) \
+//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, false, TRANPOSE, true)
+
+#define PARAM_MATRIX_IN(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, true)
+
+//#define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS, TRANSPOSE) \
+//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, true, TRANSPOSE, true)
+
+#define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, true, true, true)
+
+/**
+ * Define a matrix output parameter.
+ */
+//#define PARAM_MATRIX_OUT(ID, DESC, ALIAS, TRANSPOSE) \
+//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, false, TRANSPOSE, false)
+
+#define PARAM_MATRIX_OUT(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
+
+/**
  * Define a vector input parameter.
  *
  * The parameter can then be specified on the command line with
@@ -394,9 +418,14 @@
       JOIN(cli_option_dummy_object_out_, __COUNTER__) \
       (false, DEF, ID, DESC, ALIAS, REQ, false);
 
+  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::mat> \
+      JOIN(cli_option_dummy_matrix_, __COUNTER__) \
+      (ID, DESC, ALIAS, REQ, IN, TRANS);
+
   /** @cond Don't document internal macros. */
   #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __COUNTER__) \
+      mlpack::util::Option<bool> JOIN(cli_option_flag_object_, __COUNTER__) \
       (ID, DESC, ALIAS);
   /** @endcond */
 
@@ -407,17 +436,22 @@
   // and get a good guess at something unique.
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
+      JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
       (false, DEF, ID, DESC, ALIAS, REQ, true);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_out_, __LINE__), opt) \
+      JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
       (false, DEF, ID, DESC, ALIAS, REQ, false);
+
+  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::mat> \
+      JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
+      (ID, DESC, ALIAS, REQ, IN, TRANS);
 
   /** @cond Don't document internal macros. */
   #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __LINE__) \
+      mlpack::util::Option<bool> JOIN(cli_option_flag_object_, __LINE__) \
       (ID, DESC, ALIAS);
   /** @endcond */
 

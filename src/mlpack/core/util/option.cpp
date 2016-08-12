@@ -32,3 +32,14 @@ ProgramDoc::ProgramDoc(const std::string& programName,
   // Register this with CLI.
   CLI::RegisterProgramDoc(this);
 }
+
+Option<arma::mat>::Option(const std::string& identifier,
+                          const std::string& description,
+                          const std::string& alias,
+                          const bool required,
+                          const bool input,
+                          const bool noTranspose)
+{
+  CLI::Add<arma::mat>(identifier, description, alias, required, input,
+      noTranspose);
+}

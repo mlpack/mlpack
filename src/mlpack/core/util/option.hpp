@@ -65,6 +65,34 @@ class Option
 };
 
 /**
+ * A specialization for Armadillo matrices.
+ */
+template<>
+class Option<arma::mat>
+{
+ public:
+  /**
+   * Construct an Option matrix object.  When constructed, it will register
+   * itself with CLI.  The default is always an empty matrix.
+   *
+   * @param identifier The name of the option (no dashes in front; for --help,
+   *      we would pass "help").
+   * @param description A short string describing the option.
+   * @param alias Short name of the parameter.
+   * @param required Whether or not the option is required at runtime.
+   * @param input Whether or not the option is an input option.
+   * @param transpose Whether or not the matrix should be transposed on a
+   *      load/save operation.
+   */
+  Option(const std::string& identifier,
+         const std::string& description,
+         const std::string& alias,
+         const bool required = false,
+         const bool input = true,
+         const bool transpose = false);
+};
+
+/**
  * A static object whose constructor registers program documentation with the
  * CLI class.  This should not be used outside of CLI itself, and you should use
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc

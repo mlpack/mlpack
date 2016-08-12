@@ -28,13 +28,16 @@ namespace mlpack {
  *     parameter is specified.
  * @param input If true, the parameter is an input parameter (not an output
  *     parameter).
+ * @param noTranspose If true and the parameter is a matrix type, then the
+ *     matrix will not be transposed when it is loaded.
  */
 template<typename T>
 void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
               const bool required,
-              const bool input)
+              const bool input,
+              const bool noTranspose)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -69,7 +72,7 @@ void CLI::Add(const std::string& identifier,
   std::string progOptId =
           alias.length() ? identifier + "," + alias : identifier;
 
-  // Add the alias, if necessary
+  // Add the alias, if necessary.
   AddAlias(alias, identifier);
 
   // Add the option to boost program_options.
@@ -84,6 +87,7 @@ void CLI::Add(const std::string& identifier,
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
+  data.noTranspose = noTranspose;
 
   gmap[identifier] = data;
 
@@ -102,6 +106,9 @@ void CLI::Add(const std::string& identifier,
 // We specialize this in cli.cpp.
 template<>
 bool& CLI::GetParam<bool>(const std::string& identifier);
+
+template<>
+arma::mat& CLI::GetParam<arma::mat>(const std::string& identifier);
 
 /**
  * @brief Returns the value of the specified parameter.

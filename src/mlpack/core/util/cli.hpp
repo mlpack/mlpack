@@ -22,6 +22,8 @@
 #include "version.hpp"
 #include "param.hpp"
 
+#include <mlpack/prereqs.hpp>
+
 /**
  * The TYPENAME macro is used internally to convert a type into a string.
  */
@@ -57,6 +59,9 @@ struct ParamData
   bool wasPassed;
   //! True if the wasPassed value should not be ignored.
   bool isFlag;
+  //! True if this is a matrix that should not be transposed.  Ignored if the
+  //! parameter is not a matrix.
+  bool noTranspose;
 };
 
 /**
@@ -189,8 +194,7 @@ class CLI
  public:
   /**
    * Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this
-   * (i.e. PARAM_INT()). Uses char* and not std::string since the vast majority
-   * of use cases will be literal strings.
+   * (i.e. PARAM_INT()).
    *
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
@@ -198,12 +202,15 @@ class CLI
    *    ("").
    * @param required Indicates if parameter must be set on command line.
    * @param input If true, the parameter is an input (not output) parameter.
+   * @param noTranspose If the parameter is a matrix and this is true, then the
+   *      matrix will not be transposed on loading.
    */
   static void Add(const std::string& path,
                   const std::string& description,
                   const std::string& alias = "",
                   const bool required = false,
-                  const bool input = true);
+                  const bool input = true,
+                  const bool noTranspose = false);
 
   /**
    * Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this
@@ -216,13 +223,16 @@ class CLI
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    * @param required Indicates if parameter must be set on command line.
    * @param input If true, the parameter is an input (not output) parameter.
+   * @param noTranspose If the parameter is a matrix and this is true, then the
+   *      matrix will not be transposed on loading.
    */
   template<class T>
   static void Add(const std::string& identifier,
                   const std::string& description,
                   const std::string& alias = "",
                   const bool required = false,
-                  const bool input = true);
+                  const bool input = true,
+                  const bool noTranspose = false);
 
   /**
    * Adds a flag parameter to the hierarchy; use PARAM_FLAG() instead of this.
@@ -311,6 +321,11 @@ class CLI
   static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
 
   /**
+   * Save any output matrices.
+   */
+  static void SaveMatrices();
+
+  /**
    * Print the value of any output options on stdout.
    */
   static void PrintOutput();
@@ -377,6 +392,9 @@ class CLI
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
+  //! Holds any data matrices that are loaded or need to be saved.
+  std::map<std::string, arma::mat> matrices;
+
  public:
   //! Pointer to the ProgramDoc object.
   util::ProgramDoc *doc;
@@ -426,6 +444,15 @@ class CLI
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
 };
+
+// We specialize this for matrices.
+template<>
+void CLI::Add<arma::mat>(const std::string& identifier,
+                         const std::string& description,
+                         const std::string& alias,
+                         const bool required,
+                         const bool input,
+                         const bool noTranspose);
 
 } // namespace mlpack
 

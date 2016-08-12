@@ -24,7 +24,7 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "components with the smallest eigenvalues.");
 
 // Parameters for program.
-PARAM_STRING_IN_REQ("input_file", "Input dataset to perform PCA on.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
 PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
 PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
     "If 0, no dimensionality reduction is performed.", "d", 0);
@@ -74,9 +74,7 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Load input dataset.
-  string inputFile = CLI::GetParam<string>("input_file");
-  arma::mat dataset;
-  data::Load(inputFile, dataset);
+  arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
   if (!CLI::HasParam("output_file"))

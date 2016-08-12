@@ -12,6 +12,9 @@
 #include "cli.hpp"
 #include "log.hpp"
 
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
+
 using namespace mlpack;
 using namespace mlpack::util;
 
@@ -50,6 +53,9 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI()
 {
+  // Save any output matrices.
+  SaveMatrices();
+
   // We need to print any output options.
   PrintOutput();
 
@@ -105,7 +111,8 @@ void CLI::Add(const std::string& identifier,
               const std::string& description,
               const std::string& alias,
               const bool required,
-              const bool input)
+              const bool input,
+              const bool noTranspose)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
@@ -128,6 +135,7 @@ void CLI::Add(const std::string& identifier,
   data.name = identifier;
   data.isFlag = false;
   data.wasPassed = false;
+  data.noTranspose = noTranspose;
 
   gmap[identifier] = data;
 
@@ -143,6 +151,86 @@ void CLI::Add(const std::string& identifier,
     GetSingleton().outputOptions.push_front(identifier);
 
   return;
+}
+
+/**
+ * Adds a matrix parameter to the hierarchy.
+ */
+template<>
+void CLI::Add<arma::mat>(const std::string& identifier,
+                         const std::string& description,
+                         const std::string& alias,
+                         const bool required,
+                         const bool input,
+                         const bool noTranspose)
+{
+  // Temporarily define color code escape sequences.
+  #ifndef _WIN32
+    #define BASH_RED "\033[0;31m"
+    #define BASH_CLEAR "\033[0m"
+  #else
+    #define BASH_RED ""
+    #define BASH_CLEAR ""
+  #endif
+
+  // Temporary outstream object for detecting duplicate identifiers.
+  util::PrefixedOutStream outstr(std::cerr,
+        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+  #undef BASH_RED
+  #undef BASH_CLEAR
+
+  // We'll be calling the option <identifier>_file.
+  const std::string cliName = identifier + "_file";
+
+  // Define identifier and alias maps.
+  gmap_t& gmap = GetSingleton().globalValues;
+  amap_t& amap = GetSingleton().aliasValues;
+
+  // If found in current map, print fatal error and terminate the program.
+  if (gmap.count(identifier))
+    outstr << "Parameter --" << cliName << "(-" << alias << ") "
+           << "is defined multiple times with same identifiers." << std::endl;
+  if (amap.count(alias))
+    outstr << "Parameter --" << cliName << "(-" << alias << ") "
+           << "is defined multiple times with same alias." << std::endl;
+
+  po::options_description& desc = CLI::GetSingleton().desc;
+  // Must make use of boost syntax here.
+  std::string progOptId =
+          alias.length() ? cliName + "," + alias : cliName;
+
+  // Add the alias, if necessary.
+  AddAlias(alias, cliName);
+
+  // Add the option to boost program_options.
+  desc.add_options()(progOptId.c_str(), po::value<std::string>(),
+      description.c_str());
+
+  // Make sure the appropriate metadata is inserted into gmap.
+  ParamData data;
+  data.desc = description;
+  data.name = cliName;
+  data.tname = TYPENAME(std::string);
+  data.value = boost::any(std::string());
+  data.wasPassed = false;
+  data.noTranspose = noTranspose;
+
+  gmap[identifier] = data;
+
+  // If the option is required, add it to the required options list.
+  if (required)
+    GetSingleton().requiredOptions.push_front(cliName);
+
+  // Depending on whether or not the option is input or output, add it to the
+  // appropriate list.
+  if (input)
+    GetSingleton().inputOptions.push_front(cliName);
+  else
+    GetSingleton().outputOptions.push_front(cliName);
+
+  // Lastly, add a new matrix to the list of matrices.
+  GetSingleton().matrices[identifier] = arma::mat();
 }
 
 /*
@@ -180,6 +268,7 @@ void CLI::AddFlag(const std::string& identifier,
   data.name = std::string(identifier);
   data.isFlag = true;
   data.wasPassed = false;
+  data.noTranspose = false; // This will be ignored.
 
   gmap[data.name] = data;
 }
@@ -277,32 +366,71 @@ bool CLI::HasParam(const std::string& key)
 template<>
 bool& CLI::GetParam<bool>(const std::string& key)
 {
-  std::string used_key = key;
+  std::string usedKey = key;
   po::variables_map vmap = GetSingleton().vmap;
   gmap_t& gmap = GetSingleton().globalValues;
 
   // Take any possible alias into account.
   amap_t& amap = GetSingleton().aliasValues;
   if (amap.count(key))
-    used_key = amap[key];
+    usedKey = amap[key];
 
   // Does the parameter exist at all?
-  int isInGmap = gmap.count(used_key);
+  int isInGmap = gmap.count(usedKey);
 
   // Check if the parameter is boolean; if it is, we just want to see if it was
   // passed.
-  if (isInGmap)
-    return gmap[used_key].wasPassed;
+  if (!isInGmap)
+    Log::Fatal << "Parameter '--" << key << "' does not exist in this program."
+        << std::endl;
 
-  // The parameter was not passed in; terminate the program.
-  Log::Fatal << "Parameter '--" << key << "' does not exist in this program."
-      << std::endl;
+  return gmap[usedKey].wasPassed;
+}
 
-  // These lines will never be reached, but must be here to make the compiler
-  // happy.
-  bool* trash = new bool;
-  *trash = false;
-  return *trash;
+/**
+ * Get a matrix parameter.  This means that we have to check if a string with
+ * the parameter name plus "_file" was passed, and load that matrix.
+ */
+template<>
+arma::mat& CLI::GetParam<arma::mat>(const std::string& key)
+{
+  // Get the full name of the parameter (including the "_file").
+  std::string fullName, matrixName;
+  amap_t& amap = GetSingleton().aliasValues;
+  if (amap.count(key))
+  {
+    fullName = amap[key];
+    matrixName = fullName.substr(0, fullName.size() - 5);
+  }
+  else
+  {
+    fullName = key + "_file";
+    matrixName = key;
+  }
+
+  gmap_t& gmap = GetSingleton().globalValues;
+  if (!gmap.count(fullName))
+    Log::Fatal << "Parameter '--" << fullName << "' does not exist in this "
+        << "program." << std::endl;
+
+  // Is this an input or an output parameter?
+  std::list<std::string> iOpt = GetSingleton().inputOptions;
+  const bool input =
+      (std::find(iOpt.begin(), iOpt.end(), fullName) != iOpt.end());
+  if (input)
+  {
+    // We may need to load the matrix first.
+    if (GetSingleton().matrices[matrixName].n_elem == 0 &&
+        CLI::HasParam(fullName))
+    {
+      const std::string filename = CLI::GetParam<std::string>(fullName);
+      data::Load(filename, GetSingleton().matrices[matrixName], true,
+          !gmap[fullName].noTranspose);
+    }
+  }
+
+  // Get the matrix to be returned.
+  return GetSingleton().matrices[key];
 }
 
 /**
@@ -458,6 +586,39 @@ void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
           Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\""
               << " is defined multiple times." << std::endl;
         }
+      }
+    }
+  }
+}
+
+// Saves any output matrices.
+void CLI::SaveMatrices()
+{
+  std::map<std::string, arma::mat>& mats = GetSingleton().matrices;
+  std::map<std::string, arma::mat>::iterator it;
+
+  gmap_t& gmap = GetSingleton().globalValues;
+
+  for (it = mats.begin(); it != mats.end(); ++it)
+  {
+    // For each matrix, we must check if it is an input or output matrix.
+    const std::string matName = it->first;
+    const std::string fullName = matName + "_file";
+    if (!gmap.count(fullName))
+      Log::Fatal << "Unknown matrix parameter '" << matName << "'!"
+          << std::endl;
+
+    std::list<std::string> oOpt = GetSingleton().outputOptions;
+    const bool output =
+        (std::find(oOpt.begin(), oOpt.end(), fullName) != oOpt.end());
+    if (output)
+    {
+      // Save the matrix, if it is not empty and if the user wants it saved.
+      if (it->second.n_elem > 0 && CLI::HasParam(fullName))
+      {
+        const std::string filename = CLI::GetParam<std::string>(fullName);
+        // Failures to save are nonfatal.
+        data::Save(filename, it->second, false, !gmap[fullName].noTranspose);
       }
     }
   }
