@@ -350,6 +350,7 @@ class NEAT
                             HIDDEN,
                             SIGMOID,  // TODO: make it random??
                             (fromNeuron.Depth() + toNeuron.Depth()) / 2,
+                            std::vector<double>(),
                             0,
                             0);
       LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),
@@ -390,6 +391,7 @@ class NEAT
                           HIDDEN,
                           SIGMOID,  // TODO: make it random??
                           (fromNeuron.Depth() + toNeuron.Depth()) / 2,
+                          std::vector<double>(),
                           0,
                           0);
     LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),

@@ -56,6 +56,7 @@ class NeuronGene
    * @param type Neuron's type: INPUT, BIAS, HIDDEN, OUTPUT.
    * @param actFuncType The type of activation function.
    * @param depth The depth of the neuron.
+   * @param coordinate The coordinate of the neuron.
    * @param input Neuron's input value.
    * @param activation Neuron's activation value.
    */
@@ -63,12 +64,14 @@ class NeuronGene
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
              double depth,
+             std::vector<double> coordinate,
   	         double input,
              double activation):
     aId(id),
     aType(type),
     aActFuncType(actFuncType),
     aDepth(depth),
+    aCoordinate(coordinate),
     aInput(input),
     aActivation(activation)
   {}
@@ -84,6 +87,7 @@ class NeuronGene
   	aType = neuronGene.aType;
   	aActFuncType = neuronGene.aActFuncType;
     aDepth = neuronGene.aDepth;
+    aCoordinate = neuronGene.aCoordinate;
   	aInput = neuronGene.aInput;
     aActivation = neuronGene.aActivation;
   }
@@ -106,6 +110,7 @@ class NeuronGene
       aType = neuronGene.aType;
       aActFuncType = neuronGene.aActFuncType;
       aDepth = neuronGene.aDepth;
+      aCoordinate = neuronGene.aCoordinate;
       aInput = neuronGene.aInput;
       aActivation = neuronGene.aActivation;
     }
@@ -174,6 +179,16 @@ class NeuronGene
   void Depth(double depth) { aDepth = depth; }
 
   /**
+   * Get neuron coordinates.
+   */
+  std::vector<double> Coordinate() const { return aCoordinate; }
+
+  /**
+   * Set neuron coordinates.
+   */
+  void Coordinate(const std::vector<double>& coordinate) { aCoordinate = coordinate; }
+
+  /**
    * Calculate activation based on current input.
    */
   void CalcActivation()
@@ -217,6 +232,9 @@ class NeuronGene
   //! Depth. INPUT and BIAS is 0, OUTPUT is 1. HIDDEN is between 0 and 1. 
   //! Calculate activate by sequence.
   double aDepth;
+
+  //! Coordinate of neuron.
+  std::vector<double> aCoordinate;
 
 };
 
