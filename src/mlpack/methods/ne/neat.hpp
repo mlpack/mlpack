@@ -40,6 +40,7 @@ struct LinkInnovation
 struct NeuronInnovation
 {
   int splitLinkInnovId;
+  ActivationFuncType actFuncType;
   int newNeuronId;
   int newInputLinkInnovId;
   int newOutputLinkInnovId;
@@ -127,11 +128,12 @@ class NEAT
    *
    * @param splitLinkInnovId The innovation id of the link to be split.
    */
-  int CheckNeuronInnovation(int splitLinkInnovId)
+  int CheckNeuronInnovation(int splitLinkInnovId, ActivationFuncType actFuncType)
   {
     for (int i=0; i<aNeuronInnovations.size(); ++i)
     {
-      if (aNeuronInnovations[i].splitLinkInnovId == splitLinkInnovId)
+      if (aNeuronInnovations[i].splitLinkInnovId == splitLinkInnovId &&
+          aNeuronInnovations[i].actFuncType == actFuncType)
       {
         return i;
       }
@@ -319,8 +321,9 @@ class NEAT
    *
    * @param genome Add neuron to this genome.
    * @param mutateAddNeuronProb The probability to add new neuron to a genome.
+   * @param randomActFuncType Whether the activation function of new neuron is random or not.
    */
-  void MutateAddNeuron(Genome& genome, double mutateAddNeuronProb)
+  void MutateAddNeuron(Genome& genome, double mutateAddNeuronProb, bool randomActFuncType)
   {
     // Whether mutate or not.
     double p = mlpack::math::Random();
@@ -341,14 +344,19 @@ class NEAT
 
     // Check innovation already exist or not.
     int splitLinkInnovId = genome.aLinkGenes[linkIdx].InnovationId();
-    int innovIdx = CheckNeuronInnovation(splitLinkInnovId);
+    ActivationFuncType actFuncType = SIGMOID;
+    if (randomActFuncType) 
+    {
+      actFuncType = static_cast<ActivationFuncType>(rand() % ActivationFuncType::COUNT);
+    }
+    int innovIdx = CheckNeuronInnovation(splitLinkInnovId, actFuncType);
 
     // If existing innovation.
     if (innovIdx != -1)
     {
       NeuronGene neuronGene(aNeuronInnovations[innovIdx].newNeuronId,
                             HIDDEN,
-                            SIGMOID,  // TODO: make it random??
+                            actFuncType,
                             (fromNeuron.Depth() + toNeuron.Depth()) / 2,
                             std::vector<double>(),
                             0,
@@ -389,7 +397,7 @@ class NEAT
     // Add neuron, input link, output link.
     NeuronGene neuronGene(neuronInnov.newNeuronId,
                           HIDDEN,
-                          SIGMOID,  // TODO: make it random??
+                          actFuncType,
                           (fromNeuron.Depth() + toNeuron.Depth()) / 2,
                           std::vector<double>(),
                           0,
@@ -978,7 +986,7 @@ class NEAT
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddNeuron(genome, aMutateAddNeuronProb);
+        MutateAddNeuron(genome, aMutateAddNeuronProb, false);
       }
       --p;
     }

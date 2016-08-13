@@ -36,6 +36,8 @@ enum ActivationFuncType
     TANH,
     LINEAR,
     RELU,
+
+    COUNT  //  Used to count how many activation types.
 };
 
 /**
