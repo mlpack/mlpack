@@ -147,6 +147,26 @@ class NearestNeighborSort
       return DBL_MAX;
     return (1 / (1 + epsilon)) * value;
   }
+
+  /**
+   * Convert the given distance into a score.  Lower scores are better, so in
+   * the case of nearest neighbor sort where lower distances are better, we just
+   * return the distance.
+   */
+  static inline double ConvertToScore(const double distance)
+  {
+    return distance;
+  }
+
+  /**
+   * Convert the given score to a distance.  This is the inverse of the
+   * operation provided by ConvertToScore().  For nearest neighbor search, there
+   * is no need for any change.
+   */
+  static inline double ConvertToDistance(const double score)
+  {
+    return score;
+  }
 };
 
 } // namespace neighbor
