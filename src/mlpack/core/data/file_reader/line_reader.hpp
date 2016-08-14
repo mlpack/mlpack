@@ -50,7 +50,7 @@ namespace detail{
 
 class OwningStdIOByteSourceBase
 {
-public:
+ public:
   explicit OwningStdIOByteSourceBase(std::unique_ptr<std::ifstream> file):
     file(std::move(file)){
     std::ios_base::sync_with_stdio(false);
@@ -66,12 +66,12 @@ public:
     std::ios_base::sync_with_stdio(true);
   }
 
-private:
+ private:
   std::unique_ptr<std::ifstream> file;
 };
 
 class SynchronousReader{
-public:
+ public:
   void Init(std::unique_ptr<OwningStdIOByteSourceBase> arg_byte_source){
     byteSource = std::move(arg_byte_source);
   }
@@ -88,7 +88,8 @@ public:
   int FinishRead(){
     return byteSource->Read(buffer, desiredByteCount);
   }
-private:
+
+ private:
   std::unique_ptr<OwningStdIOByteSourceBase> byteSource;
   char *buffer;
   int desiredByteCount;
@@ -97,61 +98,7 @@ private:
 } //namespace details
 
 class LineReader{
-private:
-  //blockLen equal to the limit of one line
-  static constexpr int blockLen = 1<<24;
-
-  detail::SynchronousReader reader;
-  std::vector<char> buffer;
-  int dataBegin;
-  int dataEnd;
-  int lineLength;
-
-  std::string fileName;
-  size_t fileLine;
-
-  static std::unique_ptr<detail::OwningStdIOByteSourceBase> OpenFile(const char *file_name)
-  {
-    std::unique_ptr<std::ifstream> file(new std::ifstream(file_name, std::ios::binary));
-    if(!file->is_open()){
-      error::CanNotOpenFile err;
-      err.FileName(file_name);
-      throw err;
-    }
-
-    return std::unique_ptr<detail::OwningStdIOByteSourceBase>
-        (new detail::OwningStdIOByteSourceBase(std::move(file)));
-  }
-
-  void Init(std::unique_ptr<detail::OwningStdIOByteSourceBase> byteSource)
-  {
-    fileLine = 0;
-    lineLength = 0;
-
-    //Allocate 48MBytes to store char of files
-    //First block store the string we want to handle
-    //Second block store the extra string to handle
-    //after the First block is consumed
-    //Third block is the "prepare block", use to read more
-    //data from the file
-    buffer.resize(3*blockLen);
-    dataBegin = 0;
-    dataEnd = byteSource->Read(&buffer[0], 2*blockLen);
-
-    //Ignore UTF-8 BOM
-    if(dataEnd >= 3 && buffer[0] == '\xEF' && buffer[1] == '\xBB' && buffer[2] == '\xBF'){
-      dataBegin = 3;
-    }
-
-    //If the data of file is >= 2*blockLen, we need to do
-    //the prepare of reading more data
-    if(dataEnd == 2*blockLen){
-      reader.Init(std::move(byteSource));
-      reader.PrepareRead(&buffer[0] + 2*blockLen, blockLen);
-    }
-  }
-
-public:
+ public:
   LineReader() = delete;
   LineReader(const LineReader&) = delete;
   LineReader&operator=(const LineReader&) = delete;
@@ -250,6 +197,60 @@ public:
     lineLength = lineEnd - dataBegin - 1;
     dataBegin = lineEnd + 1;
     return ret;
+  }
+
+ private:
+  //blockLen equal to the limit of one line
+  static constexpr int blockLen = 1<<24;
+
+  detail::SynchronousReader reader;
+  std::vector<char> buffer;
+  int dataBegin;
+  int dataEnd;
+  int lineLength;
+
+  std::string fileName;
+  size_t fileLine;
+
+  static std::unique_ptr<detail::OwningStdIOByteSourceBase> OpenFile(const char *file_name)
+  {
+    std::unique_ptr<std::ifstream> file(new std::ifstream(file_name, std::ios::binary));
+    if(!file->is_open()){
+      error::CanNotOpenFile err;
+      err.FileName(file_name);
+      throw err;
+    }
+
+    return std::unique_ptr<detail::OwningStdIOByteSourceBase>
+        (new detail::OwningStdIOByteSourceBase(std::move(file)));
+  }
+
+  void Init(std::unique_ptr<detail::OwningStdIOByteSourceBase> byteSource)
+  {
+    fileLine = 0;
+    lineLength = 0;
+
+    //Allocate 48MBytes to store char of files
+    //First block store the string we want to handle
+    //Second block store the extra string to handle
+    //after the First block is consumed
+    //Third block is the "prepare block", use to read more
+    //data from the file
+    buffer.resize(3*blockLen);
+    dataBegin = 0;
+    dataEnd = byteSource->Read(&buffer[0], 2*blockLen);
+
+    //Ignore UTF-8 BOM
+    if(dataEnd >= 3 && buffer[0] == '\xEF' && buffer[1] == '\xBB' && buffer[2] == '\xBF'){
+      dataBegin = 3;
+    }
+
+    //If the data of file is >= 2*blockLen, we need to do
+    //the prepare of reading more data
+    if(dataEnd == 2*blockLen){
+      reader.Init(std::move(byteSource));
+      reader.PrepareRead(&buffer[0] + 2*blockLen, blockLen);
+    }
   }
 };
 
