@@ -197,13 +197,13 @@ struct DoubleQuoteEscape
 struct ThrowOnOverflow
 {
   template<class T>
-  static void OnOverflow(T&)
+  static void OnOverFlow(T&)
   {
     throw error::IntegerOverflow();
   }
 
   template<class T>
-  static void OnUnderflow(T&)
+  static void OnUnderFlow(T&)
   {
     throw error::IntegerUnderflow();
   }
