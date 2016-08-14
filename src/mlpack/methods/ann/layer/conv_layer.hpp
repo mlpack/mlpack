@@ -136,10 +136,12 @@ class ConvLayer
         arma::Mat<eT> output;
         BackwardConvolutionRule::Convolution(gy.slice(inMap), rotatedFilter,
             output);
-        g.slice(outMap) += output.submat(rotatedFilter.n_rows / 2,
-                              rotatedFilter.n_cols / 2, 
-                              rotatedFilter.n_rows / 2 + g.n_rows - 1,
-                              rotatedFilter.n_cols / 2 + g.n_cols - 1);
+
+        if (wPad != 0 || hPad != 0)
+          g.slice(outMap) += output.submat(rotatedFilter.n_rows / 2,
+                            rotatedFilter.n_cols / 2, 
+                            rotatedFilter.n_rows / 2 + g.n_rows - 1,
+                            rotatedFilter.n_cols / 2 + g.n_cols - 1);
       }
     }
   }

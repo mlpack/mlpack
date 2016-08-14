@@ -1,3 +1,5 @@
+/**
+ * @file conv_layer_test.cpp
  * @author Nilay Jain
  *
  * Tests the convolution layer.
@@ -32,20 +34,18 @@ void ConvLayerTest()
   arma::cube input(5, 5, 4);
   for (size_t i = 0; i < input.n_slices; ++i)
   {
-    int vec_idx = 0, row_idx = 0;
+    int vecIdx = 0;
     for (size_t j = 0; j < input.n_rows; ++j)
     {
-      input.slice(i).row(j) = a.subvec(vec_idx, vec_idx + 4).t();
-      vec_idx += 5;
+      input.slice(i).row(j) = a.subvec(vecIdx, vecIdx + 4).t();
+      vecIdx += 5;
     }
   }
   ConvLayer<> conv3(4, 1, 3, 3, 1, 1, 1, 1);
-  arma::mat id3 = arma::zeros<arma::mat>(3, 3);
-  id3(1, 1) = 1;  
-  arma::cube conv3_w(3, 3, 4 * 1);
-  for (size_t i = 0; i < conv3_w.n_slices; ++i) 
-    conv3_w.slice(i) = id3;
-  conv3.Weights() = conv3_w;
+  arma::cube conv3W = arma::zeros<arma::cube>(3, 3, 4 * 1);
+  for (size_t i = 0; i < conv3W.n_slices; ++i) 
+    conv3W(1, 1, i) = 1;
+  conv3.Weights() = conv3W;
   
   arma::cube output(5, 5, 1);
   output.slice(0) = input.slice(0) * 4;
@@ -58,18 +58,16 @@ void ConvLayerTest()
   conv3.Backward(conv3.InputParameter(), error, conv3.Delta());
   Test(conv3.Delta(), arma::ones(5, 5, 4));
 
-  arma::cube delta = arma::zeros(5, 5, 1);
+  arma::cube delta = arma::zeros<arma::cube>(5, 5, 1);
   delta(2, 2, 0) = 1;
+  arma::mat grad = conv3.InputParameter().slice(0).submat(1, 1, 3, 3);
+  arma::cube gradCube(3, 3, 4);
+  for (size_t i = 0; i < conv3.InputParameter().n_slices; ++i)
+    gradCube.slice(i) = grad;
   conv3.Gradient(conv3.InputParameter(), delta, conv3.Gradient());
-  arma::cube gradOut(3, 3, 4);
-  arma::mat grad_w;
-  grad_w << 7 << 8 << 9 << arma::endr
-        << 12 << 13 << 14 << arma::endr
-        << 17 << 18 << 19;
-  for (size_t i = 0; i < gradOut.n_slices; ++i)
-    gradOut.slice(i) = grad_w;
-  Test(conv3.Gradient(), gradOut);
+  Test(gradCube, conv3.Gradient());
 }
+
 //! tests the forward pass for the conv_layer.
 BOOST_AUTO_TEST_CASE(ForwardPassTest)
 {
