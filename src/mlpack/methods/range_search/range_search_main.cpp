@@ -70,11 +70,11 @@ PARAM_DOUBLE_IN("min", "Lower bound in range.", "L", 0.0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'cover', 'r', "
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'cover', 'r', "
     "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus'.", "t", "kd");
-PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, R* trees, X trees, Hilbert R trees, R+ trees and R++ trees).", "l",
-    20);
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
+    "trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees and R++ "
+    "trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -182,10 +182,12 @@ int main(int argc, char *argv[])
       tree = RSModel::R_PLUS_TREE;
     else if (treeType == "r-plus-plus")
       tree = RSModel::R_PLUS_PLUS_TREE;
+    else if (treeType == "vp")
+      tree = RSModel::VP_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
           << "'kd', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
-          << "'r-plus' and 'r-plus-plus'." << endl;
+          << "'r-plus', 'r-plus-plus' and 'vp'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;
