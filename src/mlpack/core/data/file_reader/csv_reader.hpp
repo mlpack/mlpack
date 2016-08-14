@@ -32,8 +32,10 @@
 #ifndef MLPACK_CORE_DATA_FILE_READER_CSV_READER_HPP
 #define MLPACK_CORE_DATA_FILE_READER_CSV_READER_HPP
 
-#include <mlpack/core/data/file_reader/line_reader.hpp>
-#include <mlpack/core/data/file_reader/parser.hpp>
+#include "reader_exceptions.hpp"
+#include "line_reader.hpp"
+#include "parser.hpp"
+#include "policy.hpp"
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
@@ -186,7 +188,7 @@ class CSVReader{
     if(row[r]){
       try{
         try{
-          Parse<OverflowPolicy>(row[r], t);
+          ::io::Parse<OverflowPolicy>(row[r], t);
         }catch(error::WithColumnContent&err){
           err.ColumnContent(row[r]);
           throw;
@@ -207,7 +209,7 @@ class CSVReader{
       try{
         while(begin != end){
           if(row[r]){
-            Parse<OverflowPolicy>(row[r++], *begin);
+            ::io::Parse<OverflowPolicy>(row[r++], *begin);
           }
           ++begin;
         }
