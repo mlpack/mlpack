@@ -43,19 +43,7 @@ namespace io{
 template<char ... TrimCharList>
 struct TrimChars
 {
-private:
-  constexpr static bool IsTrimChar(char)
-  {
-    return false;
-  }
-
-  template<class ...OtherTrimChars>
-  constexpr static bool IsTrimChar(char c, char trimChar, OtherTrimChars...otherTrimChars)
-  {
-    return c == trimChar || IsTrimChar(c, otherTrimChars...);
-  }
-
-public:
+ public:
   static void Trim(char*&strBegin, char*&strEnd)
   {
     while(strBegin != strEnd && IsTrimChar(*strBegin, TrimCharList...))
@@ -67,6 +55,18 @@ public:
       --strEnd;
     }
     *strEnd = '\0';
+  }
+
+ private:
+  constexpr static bool IsTrimChar(char)
+  {
+    return false;
+  }
+
+  template<class ...OtherTrimChars>
+  constexpr static bool IsTrimChar(char c, char trimChar, OtherTrimChars...otherTrimChars)
+  {
+    return c == trimChar || IsTrimChar(c, otherTrimChars...);
   }
 };
 
@@ -81,8 +81,14 @@ struct NoComment
 
 template<char ... CommentStartCharList>
 struct SingleLineComment
-{
-private:
+{ 
+ public:
+  static bool IsComment(const char* line)
+  {
+    return IsCommentStartChar(*line, CommentStartCharList...);
+  }
+
+ private:
   constexpr static bool IsCommentStartChar(char)
   {
     return false;
@@ -93,12 +99,6 @@ private:
                                            OtherCommentStartChars...othercommentstartchars)
   {
     return c == commentstartchar || IsCommentStartChar(c, othercommentstartchars...);
-  }
-
-public:
-  static bool IsComment(const char* line)
-  {
-    return IsCommentStartChar(*line, CommentStartCharList...);
   }
 };
 
