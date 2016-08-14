@@ -211,7 +211,7 @@ void ParseFloat(const char *col, T &x){
     if(e != 0){
       T base;
       if(e < 0){
-        base = 0.1;
+        base = static_cast<T>(0.1);
         e = -e;
       }else{
         base = 10;
