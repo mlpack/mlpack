@@ -8,6 +8,9 @@
   * Added mlpack_preprocess_describe program, which can be used to print
     statistics on a given dataset (#742).
 
+  * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
+    KFN class), leading to orders-of-magnitude speedups in some cases.
+
 ### mlpack 2.0.3
 ###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
