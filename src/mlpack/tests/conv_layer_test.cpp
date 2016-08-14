@@ -17,7 +17,7 @@ using namespace mlpack::ann;
 BOOST_AUTO_TEST_SUITE(ConvLayerTest);
 void Test(arma::mat m1, arma::mat m2)
 {
-  for (size_t i = 0; i < m1.n_cols; ++i)
+  for (size_t i = 0; i < m1.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(m1(i), m2(i), 1e-2);  
 }
 
