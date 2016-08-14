@@ -194,7 +194,7 @@ struct DoubleQuoteEscape
   }
 };
 
-struct ThrowOnOverflow
+struct ThrowOnOverFlow
 {
   template<class T>
   static void OnOverFlow(T&)

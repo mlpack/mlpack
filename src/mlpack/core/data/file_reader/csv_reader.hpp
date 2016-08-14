@@ -48,7 +48,7 @@ namespace io{
 
 template<class TrimPolicy = TrimChars<' ', '\t'>,
          class QuotePolicy = NoQuoteEscape<','>,
-         class OverflowPolicy = ThrowOnOverflow,
+         class OverflowPolicy = ThrowOnOverFlow,
          class CommentPolicy = NoComment
          >
 class CSVReader{
