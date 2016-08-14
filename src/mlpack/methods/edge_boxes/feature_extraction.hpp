@@ -26,7 +26,7 @@ class StructuredForests
    */ 
   StructuredForests(FeatureParameters F);
 
-  void PrepareData(const MatType& Images, const MatType& Boundaries,\
+  void PrepareData(const MatType& Images, const MatType& Boundaries,
             const MatType& Segmentations);
 
   /**
@@ -42,7 +42,7 @@ class StructuredForests
    * @param inf a large double value.
    * @param d Output vector which stores distance transform of f.
    */
-  void DistanceTransform1D(const arma::vec& f, const size_t n,\
+  void DistanceTransform1D(const arma::vec& f, const size_t n,
                            const double inf, arma::vec& d);
   
   /**
@@ -72,8 +72,8 @@ class StructuredForests
    * @param SSFtr Output the Self Similarity Features
    * @param table a helper vector required to convert image to LAB space.
    */
-  void GetFeatures(const MatType &Image, arma::umat &loc,\
-                   CubeType& RegFtr, CubeType& SSFtr,\
+  void GetFeatures(const MatType &Image, arma::umat &loc,
+                   CubeType& RegFtr, CubeType& SSFtr,
                    const arma::vec& table);
 
   /**
@@ -102,7 +102,7 @@ class StructuredForests
    * @param ssCh Channels used in calculating Self Similarity Features.
    * @param table a vector which helps in converting image from RGB to LUV.
    */
-  void GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch,\
+  void GetShrunkChannels(const CubeType& InImage, CubeType &reg_ch,
                   CubeType &ss_ch, const arma::vec& table);
   
   /**
@@ -111,7 +111,7 @@ class StructuredForests
    * @param InImage Input Image in RGB color space.
    * @param OutImage Ouptut Image in LUV color space.
    */
-  void RGB2LUV(const CubeType& InImage, CubeType& OutImage,\
+  void RGB2LUV(const CubeType& InImage, CubeType& OutImage,
                    const arma::vec& table);
   
   /**
@@ -247,7 +247,7 @@ class StructuredForests
    */
   size_t IndexMin(arma::vec& k);
 
-  size_t Discretize(const MatType& labels, const size_t nClass,\
+  size_t Discretize(const MatType& labels, const size_t nClass,
            const size_t nSample, arma::vec& DiscreteLabels);
 };
 
@@ -256,6 +256,7 @@ class StructuredForests
 } // namespace mlpack
 #include "feature_extraction_impl.hpp"
 #endif
+
 
 
 

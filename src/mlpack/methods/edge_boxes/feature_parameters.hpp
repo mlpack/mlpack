@@ -5,8 +5,8 @@
  * Implementation of feature parameter class.
  */
 
-#ifndef MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_IMPL_HPP
-#define MLPACK_METHODS_EDGE_BOXES_STRUCTURED_TREE_IMPL_HPP
+#ifndef MLPACK_METHODS_EDGE_BOXES_FEATURE_PARAMETERS_HPP
+#define MLPACK_METHODS_EDGE_BOXES_FEATURE_PARAMETERS_HPP
 
 namespace mlpack {
 namespace structured_tree {
@@ -15,8 +15,6 @@ namespace structured_tree {
 class FeatureParameters
 {
  public:
-
-  FeatureParameters(){} //default constructor
 
   //! getter and setter methods for all the fields in class.
   void NumImages(size_t value) { numImages = value; }
@@ -123,7 +121,8 @@ class FeatureParameters
   size_t numTree;
 };
  
-}
-}
+} // namespace structured_tree
+} // namespace mlpack
 #include "feature_extraction.hpp"
 #endif
+

@@ -9,7 +9,6 @@
 
 using namespace mlpack;
 using namespace mlpack::structured_tree;
-using namespace std;
 
 int main(int argc, char** argv)
 {
@@ -45,7 +44,7 @@ int main(int argc, char** argv)
   nms: if true apply non-maximum suppression to edges
   */
 
-  FeatureParameters params = FeatureParameters();
+  FeatureParameters params;
   params.NumImages(2);
   params.RowSize(321);
   params.ColSize(481);
@@ -65,8 +64,6 @@ int main(int argc, char** argv)
   params.NumCell(5);
   params.NumTree(8);
   StructuredForests <arma::mat, arma::cube> SF(params);
-//  arma::uvec x(2);
-  //SF.GetFeatureDimension(x);
   
   arma::mat segmentations, boundaries, images;
   data::Load("/home/nilay/example/small_images.csv", images);
@@ -74,9 +71,10 @@ int main(int argc, char** argv)
   data::Load("/home/nilay/example/small_segmentation_1.csv", segmentations);
 
   SF.PrepareData(images, boundaries, segmentations);
-  cout << "PrepareData done." << endl;
+  std::cout << "PrepareData done." << std::endl;
   return 0;
 }
+
 
 
 

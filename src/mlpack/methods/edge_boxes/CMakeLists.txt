@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  feature_parameters.hpp
   feature_extraction.hpp
   feature_extraction_impl.hpp
 )
