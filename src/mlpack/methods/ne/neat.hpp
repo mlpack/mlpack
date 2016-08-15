@@ -1147,7 +1147,6 @@ class NEAT
 
   /**
    * Evaluate genomes in population.
-   *
    * Set genomes' fitness, species' and population's best fitness and genome.
    */
   void Evaluate()
