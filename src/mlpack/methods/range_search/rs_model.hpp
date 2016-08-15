@@ -13,7 +13,6 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
-#include <mlpack/core/tree/vantage_point_tree.hpp>
 
 #include "range_search.hpp"
 

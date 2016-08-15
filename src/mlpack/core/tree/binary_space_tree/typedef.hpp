@@ -135,6 +135,64 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           bound::BallBound,
                                           MeanSplit>;
 
+/**
+ * The vantage point tree (which is also called the metric tree. Vantage point
+ * trees and metric trees were invented independently by Yianilos an Uhlmann) is
+ * a kind of the binary space tree. When recursively splitting nodes, the VPTree
+ * class selects the vantage point and splits the node according to the distance
+ * to this point. Thus, points that are closer to the vantage point form the
+ * inner subtree. Other points form the outer subtree. The vantage point is
+ * contained in the first (inner) node.
+ *
+ * This implementation differs from the original algorithms. Namely, vantage
+ * points are not contained in intermediate nodes. The tree has points only in
+ * the leaves of the tree.
+ *
+ * For more information, see the following papers.
+ *
+ * @code
+ * @inproceedings{yianilos1993vptrees,
+ *   author = {Yianilos, Peter N.},
+ *   title = {Data Structures and Algorithms for Nearest Neighbor Search in
+ *       General Metric Spaces},
+ *   booktitle = {Proceedings of the Fourth Annual ACM-SIAM Symposium on
+ *       Discrete Algorithms},
+ *   series = {SODA '93},
+ *   year = {1993},
+ *   isbn = {0-89871-313-7},
+ *   pages = {311--321},
+ *   numpages = {11},
+ *   publisher = {Society for Industrial and Applied Mathematics},
+ *   address = {Philadelphia, PA, USA}
+ * }
+ *
+ * @article{uhlmann1991metrictrees,
+ *   author = {Jeffrey K. Uhlmann},
+ *   title = {Satisfying general proximity / similarity queries with metric
+ *       trees},
+ *   journal = {Information Processing Letters},
+ *   volume = {40},
+ *   number = {4},
+ *   pages = {175 - 179},
+ *   year = {1991},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, VantagePointTree, VPTree
+ */
+template<typename BoundType,
+         typename MatType = arma::mat>
+using VPTreeSplit = VantagePointSplit<BoundType, MatType, 100>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using VPTree = BinarySpaceTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               bound::HollowBallBound,
+                               VPTreeSplit>;
+
 } // namespace tree
 } // namespace mlpack
 

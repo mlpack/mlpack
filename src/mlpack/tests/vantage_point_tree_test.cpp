@@ -7,7 +7,7 @@
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/core/tree/vantage_point_tree.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(VPTreeTraitsTest)
   b = TreeTraits<TreeType>::RearrangesDataset;
   BOOST_REQUIRE_EQUAL(b, true);
   b = TreeTraits<TreeType>::BinaryTree;
-  BOOST_REQUIRE_EQUAL(b, false);
+  BOOST_REQUIRE_EQUAL(b, true);
 }
 
 BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
@@ -137,9 +137,12 @@ void CheckBound(TreeType& tree)
     for (size_t i = 0; i < tree.NumPoints(); i++)
     {
       ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
-        tree.Dataset().col(tree.Point(i)));
+          tree.Dataset().col(tree.Point(i)));
+      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+          tree.Bound().HollowCenter(),
+          tree.Dataset().col(tree.Point(i)));
 
-      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), dist  *
+      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), hollowDist  *
           (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
 
       BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
@@ -148,28 +151,24 @@ void CheckBound(TreeType& tree)
   }
   else
   {
-    TreeType* central = tree.Central();
-    BOOST_REQUIRE_EQUAL(central->NumPoints(), 1);
-    BOOST_REQUIRE_EQUAL(true,
-        central->Bound().Contains(tree.Dataset().col(central->Point(0))));
-    BOOST_REQUIRE_EQUAL(central->Bound().InnerRadius(), 0.0);
-    BOOST_REQUIRE_EQUAL(central->Bound().OuterRadius(), 0.0);
-
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumDescendants(); i++)
     {
       ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
-        tree.Dataset().col(tree.Descendant(i)));
+          tree.Dataset().col(tree.Descendant(i)));
+      ElemType hollowDist = tree.Bound().Metric().Evaluate(
+          tree.Bound().HollowCenter(),
+          tree.Dataset().col(tree.Descendant(i)));
 
-      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), dist  *
+      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), hollowDist  *
           (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
 
       BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
           (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
 
-    CheckBound(*tree.Inner());
-    CheckBound(*tree.Outer());
+    CheckBound(*tree.Left());
+    CheckBound(*tree.Right());
   }
 }
 
@@ -182,59 +181,6 @@ BOOST_AUTO_TEST_CASE(VPTreeBoundTest)
 
   TreeType tree(dataset);
   CheckBound(tree);
-}
-
-template<typename TreeType>
-void CheckSplit(TreeType& tree)
-{
-  if(tree.IsLeaf())
-    return;
-
-  typename TreeType::ElemType maxDist = 0;
-
-  size_t pointsEnd = tree.Inner()->Begin() + tree.Inner()->Count();
-  for (size_t i = tree.Inner()->Begin(); i < pointsEnd; i++)
-  {
-    typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(i),
-            tree.Dataset().col(tree.Central()->Begin()));
-
-    if (dist > maxDist)
-      maxDist = dist;
-  }
-
-  pointsEnd = tree.Outer()->Begin() + tree.Outer()->Count();
-  for (size_t i = tree.Outer()->Begin(); i < pointsEnd; i++)
-  {
-    typename TreeType::ElemType dist =
-        tree.Bound().Metric().Evaluate(tree.Dataset().col(i),
-            tree.Dataset().col(tree.Central()->Begin()));
-    BOOST_REQUIRE_LE(maxDist, dist);
-  }
-
-  for (size_t k = 0; k < tree.Bound().Dim(); k++)
-  {
-    BOOST_REQUIRE_EQUAL(tree.Inner()->Bound().Center()[k],
-        tree.Dataset().col(tree.Central()->Point(0))[k]);
-    BOOST_REQUIRE_EQUAL(tree.Outer()->Bound().Center()[k],
-        tree.Dataset().col(tree.Central()->Point(0))[k]);
-    BOOST_REQUIRE_EQUAL(tree.Central()->Bound().Center()[k],
-        tree.Dataset().col(tree.Central()->Point(0))[k]);
-  }
-
-  CheckSplit(*tree.Inner());
-  CheckSplit(*tree.Outer());
-}
-
-BOOST_AUTO_TEST_CASE(VPTreeSplitTest)
-{
-  typedef VPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-
-  arma::mat dataset(8, 1000);
-  dataset.randu();
-
-  TreeType tree(dataset);
-  CheckSplit(tree);
 }
 
 BOOST_AUTO_TEST_CASE(VPTreeTest)

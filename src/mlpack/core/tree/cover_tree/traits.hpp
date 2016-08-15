@@ -39,12 +39,6 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
   static const bool FirstPointIsCentroid = true;
 
   /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
-
-  /**
    * Cover trees do have self-children.
    */
   static const bool HasSelfChildren = true;
