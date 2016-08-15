@@ -134,9 +134,12 @@ class NeighborSearch
    * Additionally, an instantiated distance metric can be given, for cases where
    * the distance metric holds data.
    *
-   * There is no copying of the data matrices in this constructor (because
-   * tree-building is not necessary), so this is the constructor to use when
-   * copies absolutely must be avoided.
+   * This method is deprecated and will be removed in mlpack 3.0.0! Constructors
+   * taking a reference to the reference tree are prefered.
+   *
+   * This method won't take ownership of the given tree. There is no copying of
+   * the data matrices in this constructor (because  tree-building is not
+   * necessary).
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -150,10 +153,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(Tree* referenceTree,
-                 const NeighborSearchMode mode = DUAL_TREE_MODE,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  DEPRECATED NeighborSearch(Tree* referenceTree,
+                            const NeighborSearchMode mode = DUAL_TREE_MODE,
+                            const double epsilon = 0,
+                            const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -281,10 +284,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(Tree* referenceTree,
-                 const bool singleMode,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  DEPRECATED NeighborSearch(Tree* referenceTree,
+                            const bool singleMode,
+                            const double epsilon = 0,
+                            const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object with the given pre-constructed
@@ -364,9 +367,12 @@ class NeighborSearch
   /**
    * Set the reference tree to a new reference tree.
    *
+   * This method is deprecated and will be removed in mlpack 3.0.0! Train()
+   * methods taking a reference to the reference tree are prefered.
+   *
    * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(Tree* referenceTree);
+  DEPRECATED void Train(Tree* referenceTree);
 
   /**
    * Set the reference tree as a copy of the given reference tree.
