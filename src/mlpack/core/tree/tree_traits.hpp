@@ -84,12 +84,6 @@ class TreeTraits
   static const bool FirstPointIsCentroid = false;
 
   /**
-   * This is true if the first point of the first sibling is the centroid of
-   * other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
-
-  /**
    * This is true if the points contained in the first child of a node
    * (Child(0)) are also contained in that node.
    */

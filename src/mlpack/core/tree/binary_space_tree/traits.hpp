@@ -42,12 +42,6 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
-
-  /**
    * The tree has not got duplicated points.
    */
   static const bool HasDuplicatedPoints = false;
@@ -68,6 +62,11 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool BinaryTree = true;
 };
 
+/**
+ * This is a specialization of the TreeType class to the max-split random
+ * projection tree. The only difference with general BinarySpaceTree is that the
+ * tree can have overlapping children.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -92,12 +91,6 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool FirstPointIsCentroid = false;
 
   /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
-
-  /**
    * Points are not contained at multiple levels of the binary space tree.
    */
   static const bool HasSelfChildren = false;
@@ -113,6 +106,11 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   static const bool BinaryTree = true;
 };
 
+/**
+ * This is a specialization of the TreeType class to the mean-split random
+ * projection tree. The only difference with general BinarySpaceTree is that the
+ * tree can have overlapping children.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -135,12 +133,6 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
-
-  /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
 
   /**
    * Points are not contained at multiple levels of the binary space tree.
@@ -176,7 +168,29 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool HasOverlappingChildren = true;
   static const bool HasDuplicatedPoints = false;
   static const bool FirstPointIsCentroid = false;
-  static const bool FirstSiblingFirstPointIsCentroid = false;
+  static const bool HasSelfChildren = false;
+  static const bool RearrangesDataset = true;
+  static const bool BinaryTree = true;
+};
+
+/**
+ * This is a specialization of the TreeType class to an arbitrary tree with
+ * HollowBallBound (currently only the vantage point tree is supported).
+ * The only difference with general BinarySpaceTree is that the tree can have
+ * overlapping children.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
+    bound::HollowBallBound, SplitType>>
+{
+ public:
+  static const bool HasOverlappingChildren = true;
+  static const bool HasDuplicatedPoints = false;
+  static const bool FirstPointIsCentroid = false;
   static const bool HasSelfChildren = false;
   static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;

@@ -354,7 +354,8 @@ class LSHSearch
    * @param scores vector containing score of each perturbation.
   */
   double PerturbationScore(const std::vector<bool>& A,
-                                  const arma::vec& scores) const;
+                           const arma::vec& scores) const;
+
   /**
    * Inline function used by GetAdditionalProbingBins. The vector shift operation
    * replaces the largest element of a vector A with (largest element) + 1.

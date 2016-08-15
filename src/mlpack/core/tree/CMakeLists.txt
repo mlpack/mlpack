@@ -20,6 +20,8 @@ set(SOURCES
   binary_space_tree/rp_tree_mean_split_impl.hpp
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
+  binary_space_tree/vantage_point_split.hpp
+  binary_space_tree/vantage_point_split_impl.hpp
   binary_space_tree/traits.hpp
   binary_space_tree/typedef.hpp
   bounds.hpp
@@ -84,17 +86,6 @@ set(SOURCES
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
-  vantage_point_tree.hpp
-  vantage_point_tree/dual_tree_traverser.hpp
-  vantage_point_tree/dual_tree_traverser_impl.hpp
-  vantage_point_tree/single_tree_traverser.hpp
-  vantage_point_tree/single_tree_traverser_impl.hpp
-  vantage_point_tree/traits.hpp
-  vantage_point_tree/typedef.hpp
-  vantage_point_tree/vantage_point_split.hpp
-  vantage_point_tree/vantage_point_split_impl.hpp
-  vantage_point_tree/vantage_point_tree.hpp
-  vantage_point_tree/vantage_point_tree_impl.hpp
 )
 
 # add directory name to sources
