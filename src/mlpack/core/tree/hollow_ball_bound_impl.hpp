@@ -291,7 +291,7 @@ math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
       range.Lo() = dist - radii.Hi();
     else
     {
-      // Check  if the point is situated in the hole.
+      // Check if the point is situated in the hole.
       range.Lo() = math::ClampNonNegative(radii.Lo() -
           metric->Evaluate(point, hollowCenter));
     }

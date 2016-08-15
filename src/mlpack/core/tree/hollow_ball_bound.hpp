@@ -102,7 +102,7 @@ class HollowBallBound
 
   //! Get the center point of the hollow.
   const arma::Col<ElemType>& HollowCenter() const { return hollowCenter; }
-  //! Modify the center point od the hollow.
+  //! Modify the center point of the hollow.
   arma::Col<ElemType>& HollowCenter() { return hollowCenter; }
 
   //! Get the dimensionality of the ball.
