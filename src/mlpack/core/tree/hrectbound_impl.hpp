@@ -196,7 +196,7 @@ inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
   else if (MetricType::Power == 2)
   {
     if (MetricType::TakeRoot)
-      return std::sqrt(sum) * 0.5;
+      return (ElemType) std::sqrt(sum) * 0.5;
     else
       return sum * 0.25;
   }
@@ -256,7 +256,7 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   else if (MetricType::Power == 2)
   {
     if (MetricType::TakeRoot)
-      return std::sqrt(sum) * 0.5;
+      return (ElemType) std::sqrt(sum) * 0.5;
     else
       return sum * 0.25;
   }
@@ -302,7 +302,7 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     if (MetricType::Power == 1)
       return sum;
     else if (MetricType::Power == 2)
-      return std::sqrt(sum);
+      return (ElemType) std::sqrt(sum);
     else
       return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
   }
@@ -343,7 +343,7 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     if (MetricType::Power == 1)
       return sum;
     else if (MetricType::Power == 2)
-      return std::sqrt(sum);
+      return (ElemType) std::sqrt(sum);
     else
       return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
   }
@@ -404,7 +404,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
     if (MetricType::Power == 1)
       return math::RangeType<ElemType>(loSum, hiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>(std::sqrt(loSum), std::sqrt(hiSum));
+      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+                                       (ElemType) std::sqrt(hiSum));
     else
     {
       return math::RangeType<ElemType>(
@@ -479,7 +480,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
     if (MetricType::Power == 1)
       return math::RangeType<ElemType>(loSum, hiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>(std::sqrt(loSum), std::sqrt(hiSum));
+      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+                                       (ElemType) std::sqrt(hiSum));
     else
     {
       return math::RangeType<ElemType>(
