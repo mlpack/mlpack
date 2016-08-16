@@ -14,7 +14,6 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
-#include <mlpack/core/tree/vantage_point_tree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 #include "spill_search.hpp"
