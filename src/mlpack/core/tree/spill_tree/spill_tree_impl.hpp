@@ -613,15 +613,9 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
     {
       if (projections[i] < tau || projections[i] <= 0)
-      {
-        leftPoints[lc] = points[i];
-        lc++;
-      }
+        leftPoints[lc++] = points[i];
       if (projections[i] > -tau)
-      {
-        rightPoints[rc] = points[i];
-        rc++;
-      }
+        rightPoints[rc++] = points[i];
     }
     // Return true, because it is a overlapping node.
     return true;
@@ -636,15 +630,9 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
   {
     if (projections[i] <= 0)
-    {
-      leftPoints[lc] = points[i];
-      lc++;
-    }
+      leftPoints[lc++] = points[i];
     else
-    {
-      rightPoints[rc] = points[i];
-      rc++;
-    }
+      rightPoints[rc++] = points[i];
   }
   // Return false, because it isn't a overlapping node.
   return false;
