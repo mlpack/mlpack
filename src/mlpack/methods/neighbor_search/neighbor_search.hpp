@@ -30,6 +30,15 @@ namespace neighbor /** Neighbor-search routines.  These include
 template<typename SortPolicy>
 class TrainVisitor;
 
+//! NeighborSearchMode represents the different neighbor search modes available.
+enum NeighborSearchMode
+{
+  NAIVE_MODE,
+  SINGLE_TREE_MODE,
+  DUAL_TREE_MODE,
+  GREEDY_SINGLE_TREE_MODE
+};
+
 /**
  * The NeighborSearch class is a template class for performing distance-based
  * neighbor searches.  It takes a query dataset and a reference dataset (or just
@@ -73,15 +82,6 @@ class NeighborSearch
   //! Convenience typedef.
   typedef TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType> Tree;
 
-  //! SearchMode represents the different neighbor search modes available.
-  enum SearchMode
-  {
-    NAIVE_MODE,
-    SINGLE_TREE_MODE,
-    DUAL_TREE_MODE,
-    GREEDY_SINGLE_TREE_MODE
-  };
-
   /**
    * Initialize the NeighborSearch object, passing a reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
@@ -100,7 +100,7 @@ class NeighborSearch
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(const MatType& referenceSet,
-                 const SearchMode mode = DUAL_TREE_MODE,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
@@ -122,7 +122,7 @@ class NeighborSearch
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(MatType&& referenceSet,
-                 const SearchMode mode = DUAL_TREE_MODE,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
@@ -151,7 +151,7 @@ class NeighborSearch
    * @param metric Instantiated distance metric.
    */
   NeighborSearch(Tree* referenceTree,
-                 const SearchMode mode = DUAL_TREE_MODE,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
@@ -164,7 +164,7 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
-  NeighborSearch(const SearchMode mode = DUAL_TREE_MODE,
+  NeighborSearch(const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
@@ -412,8 +412,10 @@ class NeighborSearch
   //! Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
 
+  //! Access the search mode.
+  NeighborSearchMode SearchMode() const { return searchMode; }
   //! Modify the search mode.
-  void SetSearchMode(const SearchMode mode);
+  void SetSearchMode(const NeighborSearchMode mode);
 
   //! Access whether or not search is done in naive linear scan mode.
   bool Naive() const { return naive; }
@@ -453,7 +455,7 @@ class NeighborSearch
   bool setOwner;
 
   //! Indicates the neighbor search mode.
-  SearchMode searchMode;
+  NeighborSearchMode searchMode;
   //! Indicates if O(n^2) naive search is being used.
   bool naive;
   //! Indicates if single-tree search is being used (as opposed to dual-tree).

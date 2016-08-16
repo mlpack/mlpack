@@ -75,7 +75,7 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(const MatType& referenceSetIn,
-                                         const SearchMode mode,
+                                         const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(mode == NAIVE_MODE ? NULL :
@@ -106,7 +106,7 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(MatType&& referenceSetIn,
-                                         const SearchMode mode,
+                                         const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(mode == NAIVE_MODE ? NULL :
@@ -138,7 +138,7 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(Tree* referenceTree,
-                                         const SearchMode mode,
+                                         const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(referenceTree),
@@ -168,7 +168,7 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(const SearchMode mode,
+SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(NULL),
@@ -1129,7 +1129,7 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::SetSearchMode(
-    const SearchMode mode)
+    const NeighborSearchMode mode)
 {
   searchMode = mode;
   switch (mode)
