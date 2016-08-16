@@ -667,7 +667,10 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   // Perform the actual splitting.  This will order the dataset such that points
   // that belong to the left subtree are on the left of splitCol, and points
   // from the right subtree are on the right side of splitCol.
-   splitCol = PerformSplit(*dataset, begin, count, splitInfo);
+  splitCol = PerformSplit(*dataset, begin, count, splitInfo);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -731,6 +734,9 @@ SplitNode(std::vector<size_t>& oldFromNew,
   // that belong to the left subtree are on the left of splitCol, and points
   // from the right subtree are on the right side of splitCol.
   splitCol = PerformSplit(*dataset, begin, count, splitInfo, oldFromNew);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).

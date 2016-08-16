@@ -25,7 +25,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
   arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  GetDistinctSamples(samples, begin, count, numSamples);
+  math::ObtainDistinctSamples(begin, begin + count, numSamples, samples);
 
   // Find the average distance between points.
   ElemType averageDistanceSq = GetAveragePointDistance(data, samples);
@@ -59,25 +59,6 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
   }
 
   return true;
-}
-
-template<typename BoundType, typename MatType>
-void RPTreeMeanSplit<BoundType, MatType>::GetDistinctSamples(
-    arma::uvec& distinctSamples,
-    const size_t begin,
-    const size_t count,
-    const size_t numSamples)
-{
-  arma::Col<size_t> samples;
-
-  samples.zeros(count);
-
-  for (size_t i = 0; i < numSamples; i++)
-    samples [ (size_t) math::RandInt(count) ]++;
-
-  distinctSamples = arma::find(samples > 0);
-
-  distinctSamples += begin;
 }
 
 template<typename BoundType, typename MatType>
@@ -131,10 +112,15 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetDotMedian(
   for (size_t k = 0; k < samples.n_elem; k++)
     values[k] = arma::dot(data.col(samples[k]), direction);
 
-  if (arma::min(values) == arma::max(values))
+  const ElemType maximum = arma::max(values);
+  const ElemType minimum = arma::min(values);
+  if (minimum == maximum)
     return false;
 
   splitVal = arma::median(values);
+
+  if (splitVal == maximum)
+    splitVal = minimum;
 
   return true;
 }
@@ -148,7 +134,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
 {
   arma::Col<ElemType> values(samples.n_elem);
 
-  mean = arma::mean(data.cols(samples));
+  mean = arma::mean(data.cols(samples), 1);
 
   arma::Col<ElemType> tmp(data.n_rows);
 
@@ -160,10 +146,15 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
     values[k] = arma::dot(tmp, tmp);
   }
 
-  if (arma::min(values) == arma::max(values))
+  const ElemType maximum = arma::max(values);
+  const ElemType minimum = arma::min(values);
+  if (minimum == maximum)
     return false;
 
   splitVal = arma::median(values);
+
+  if (splitVal == maximum)
+    splitVal = minimum;
 
   return true;
 }

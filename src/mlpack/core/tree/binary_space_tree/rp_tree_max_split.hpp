@@ -83,20 +83,6 @@ class RPTreeMaxSplit
                                      const arma::Col<ElemType>& direction);
 
   /**
-   * Obtain a number of random distinct samples from the dataset. All samples
-   * belong to [begin, begin + count).
-   *
-   * @param distinctSamples The indices of the samples.
-   * @param begin The lower bound of indices.
-   * @param count The number of point candidates.
-   * @param numSamples The maximum number of samples.
-   */
-  static void GetDistinctSamples(arma::uvec& distinctSamples,
-                                 const size_t begin,
-                                 const size_t count,
-                                 const size_t numSamples);
-
-  /**
    * This method finds the position of the hyperplane that will split the node.
    *
    * @param data The dataset used by the binary space tree.

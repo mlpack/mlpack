@@ -69,25 +69,6 @@ GetRandomDeviation(const MatType& data,
 }
 
 template<typename BoundType, typename MatType>
-void RPTreeMaxSplit<BoundType, MatType>::GetDistinctSamples(
-    arma::uvec& distinctSamples,
-    const size_t begin,
-    const size_t count,
-    const size_t numSamples)
-{
-  arma::Col<size_t> samples;
-
-  samples.zeros(count);
-
-  for (size_t i = 0; i < numSamples; i++)
-    samples [ (size_t) math::RandInt(count) ]++;
-
-  distinctSamples = arma::find(samples > 0);
-
-  distinctSamples += begin;
-}
-
-template<typename BoundType, typename MatType>
 bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
     const MatType& data,
     const size_t begin,
@@ -100,26 +81,29 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  GetDistinctSamples(samples, begin, count, numSamples);
+  math::ObtainDistinctSamples(begin, begin + count, numSamples, samples);
 
-  std::vector<ElemType> values(samples.n_elem);
+  arma::Col<ElemType> values(samples.n_elem);
 
   // Find the median of scalar products of the samples and the normal vector.
   for (size_t k = 0; k < samples.n_elem; k++)
     values[k] = arma::dot(data.col(samples[k]), direction);
 
-  std::sort(values.begin(), values.end());
-
-  if (values[0] == values[values.size() - 1])
+  const ElemType maximum = arma::max(values);
+  const ElemType minimum = arma::min(values);
+  if (minimum == maximum)
     return false;
 
-  splitVal = values[values.size() / 2];
+  splitVal = arma::median(values);
 
   // Add a random deviation to the median.
   // This algorithm differs from the method suggested in the
   // random projection tree paper.
-  splitVal += math::Random((values[values.size() / 2] - values[0]) * 0.75,
-      (values[values.size() - 1] - values[values.size() / 2]) * 0.75);
+  splitVal += math::Random((minimum - splitVal) * 0.75,
+      (maximum - splitVal) * 0.75);
+
+  if (splitVal == maximum)
+    splitVal = minimum;
 
   return true;
 }

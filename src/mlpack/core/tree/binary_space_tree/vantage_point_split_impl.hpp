@@ -31,8 +31,6 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
 
   splitInfo = SplitInfo(bound.Metric(), data.col(vantagePointIndex), mu);
 
-  assert(splitCol > begin);
-  assert(splitCol < begin + count);
   return true;
 }
 
