@@ -480,9 +480,7 @@ double LSHModel<SortPolicy, ObjectiveFunction>::DistanceStatisticPredictor::Trai
   // Get an initial point from the optimizer.
   arma::mat currentPoint = f.GetInitialPoint();
   // Silence debug output of L_BFGS (TODO: remove)
-  Log::Debug.ignoreInput = true;
   double result = opt.Optimize(currentPoint);
-  Log::Debug.ignoreInput = false;
 
   // Optimizer is done - set alpha, beta, gamma.
   this->alpha = currentPoint(0, 0);
