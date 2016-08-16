@@ -265,6 +265,25 @@ class SpillTree
   size_t NumChildren() const;
 
   /**
+   * Return the nearest child node to the given query point.  If this is a leaf
+   * node, it will return a reference to itself.
+   */
+  template<typename VecType>
+  SpillTree& GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the furthest child node to the given query point.  If this is a leaf
+   * node, it will return a reference to itself.
+   */
+  template<typename VecType>
+  SpillTree& GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */

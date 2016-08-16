@@ -294,6 +294,24 @@ class CoverTree
   //! Modify the statistic for this node.
   StatisticType& Stat() { return stat; }
 
+  /**
+   * Return the nearest child node to the given query point.  If this is a leaf
+   * node, it will return a reference to itself.
+   */
+  template<typename VecType>
+  CoverTree& GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+
+  /**
+   * Return the furthest child node to the given query point.  If this is a leaf
+   * node, it will return a reference to itself.
+   */
+  template<typename VecType>
+  CoverTree& GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+
   //! Return the minimum distance to another node.
   ElemType MinDistance(const CoverTree* other) const;
 

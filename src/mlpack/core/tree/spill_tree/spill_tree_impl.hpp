@@ -307,6 +307,54 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 }
 
 /**
+ * Return the nearest child node to the given query point.  If this is a leaf
+ * node, it will return a reference to itself.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+    GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return *this;
+  if (left && (!right || left->MinDistance(point) <= right->MinDistance(point)))
+        return *left;
+  return *right;
+}
+
+/**
+ * Return the furthest child node to the given query point.  If this is a leaf
+ * node, it will return a reference to itself.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+    GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return *this;
+  if (left && (!right || left->MaxDistance(point) > right->MaxDistance(point)))
+        return *left;
+  return *right;
+}
+
+/**
  * Return a bound on the furthest point in the node from the center.  This
  * returns 0 unless the node is a leaf.
  */

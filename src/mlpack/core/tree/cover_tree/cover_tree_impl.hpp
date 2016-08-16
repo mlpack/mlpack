@@ -606,6 +606,69 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Descendant(
   return (size_t() - 1);
 }
 
+/**
+ * Return the nearest child node to the given query point.  If this is a leaf
+ * node, it will return a reference to itself.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+template<typename VecType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*) const
+{
+  if (IsLeaf())
+    return *this;
+
+  double bestDistance = DBL_MAX;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    double distance = children[i]->MinDistance(point);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return *children[bestIndex];
+}
+
+/**
+ * Return the furthest child node to the given query point.  If this is a leaf
+ * node, it will return a reference to itself.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+template<typename VecType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*) const
+{
+  if (IsLeaf())
+    return *this;
+
+  double bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    double distance = children[i]->MaxDistance(point);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return *children[bestIndex];
+}
+
 template<
     typename MetricType,
     typename StatisticType,
