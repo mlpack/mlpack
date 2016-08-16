@@ -78,7 +78,8 @@ class NeighborSearch
   {
     NAIVE_MODE,
     SINGLE_TREE_MODE,
-    DUAL_TREE_MODE
+    DUAL_TREE_MODE,
+    GREEDY_SINGLE_TREE_MODE
   };
 
   /**

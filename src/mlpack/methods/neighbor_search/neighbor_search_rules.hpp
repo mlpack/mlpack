@@ -77,6 +77,14 @@ class NeighborSearchRules
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
+   * Get the child node with the best score.
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceNode Candidate node to be recursed into.
+   */
+  TreeType& GetBestChild(const size_t queryIndex, TreeType& referenceNode);
+
+  /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
    * for recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).  This is used when the score has already
