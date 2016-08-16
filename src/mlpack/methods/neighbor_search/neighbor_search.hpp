@@ -289,6 +289,20 @@ class NeighborSearch
   static double EffectiveError(arma::mat& foundDistances,
                                arma::mat& realDistances);
 
+  /**
+   * Calculate the recall (% of neighbors found) given the list of found
+   * neighbors and the true set of neighbors.  The recall returned will be in
+   * the range [0, 1].
+   *
+   * @param foundNeighbors Matrix storing lists of calculated neighbors for each
+   *     query point.
+   * @param realNeighbors Matrix storing lists of true best neighbors for each
+   *     query point.
+   * @return Recall.
+   */
+  static double Recall(arma::Mat<size_t>& foundNeighbors,
+                       arma::Mat<size_t>& realNeighbors);
+
   //! Return the total number of base case evaluations performed during the last
   //! search.
   size_t BaseCases() const { return baseCases; }

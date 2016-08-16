@@ -752,6 +752,35 @@ TraversalType>::EffectiveError(arma::mat& foundDistances,
   return effectiveError;
 }
 
+//! Calculate the recall.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class TraversalType>
+double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+TraversalType>::Recall(arma::Mat<size_t>& foundNeighbors,
+                       arma::Mat<size_t>& realNeighbors)
+{
+  if (foundNeighbors.n_rows != realNeighbors.n_rows ||
+      foundNeighbors.n_cols != realNeighbors.n_cols)
+    throw std::invalid_argument("matrices provided must have equal size");
+
+  size_t found = 0;
+  for (size_t col = 0; col < foundNeighbors.n_cols; ++col)
+    for (size_t row = 0; row < foundNeighbors.n_rows; ++row)
+      for (size_t nei = 0; nei < realNeighbors.n_rows; ++nei)
+        if (foundNeighbors(row, col) == realNeighbors(nei, col))
+        {
+          found++;
+          break;
+        }
+
+  return ((double) found) / realNeighbors.n_elem;
+}
+
 //! Serialize the NeighborSearch model.
 template<typename SortPolicy,
          typename MetricType,

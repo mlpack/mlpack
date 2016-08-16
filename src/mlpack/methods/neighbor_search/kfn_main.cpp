@@ -49,6 +49,8 @@ PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 PARAM_STRING_IN("true_distances_file", "File of true distances to compute "
     "the effective error (average relative error) (it is printed when -v is "
     "specified).", "D", "");
+PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute the "
+    "recall (it is printed when -v is specified).", "T", "");
 
 // The option exists to load or save models.
 PARAM_STRING_IN("input_model_file", "File containing pre-trained kFN model.",
@@ -288,10 +290,26 @@ int main(int argc, char *argv[])
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
         Log::Fatal << "The true distances file must have the same number of "
-          << "values than the set of distances being queried!" << endl;
+            << "values than the set of distances being queried!" << endl;
 
       Log::Info << "Effective error: " << KFN::EffectiveError(distances,
           trueDistances) << endl;
+    }
+
+    // Calculate the recall, if desired.
+    if (CLI::HasParam("true_neighbors_file"))
+    {
+      const string trueNeighborsFile = CLI::GetParam<string>(
+          "true_neighbors_file");
+      arma::Mat<size_t> trueNeighbors;
+      data::Load(trueNeighborsFile, trueNeighbors, true);
+
+      if (trueNeighbors.n_rows != neighbors.n_rows ||
+          trueNeighbors.n_cols != neighbors.n_cols)
+        Log::Fatal << "The true neighbors file must have the same number of "
+            << "values than the set of neighbors being queried!" << endl;
+
+      Log::Info << "Recall: " << KFN::Recall(neighbors, trueNeighbors) << endl;
     }
   }
 
