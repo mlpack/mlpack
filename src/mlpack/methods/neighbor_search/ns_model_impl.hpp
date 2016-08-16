@@ -208,21 +208,26 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   }
 }
 
-//! Expose the SingleMode method of the given NSType.
+//! Construct the SetSearchModeVisitor object with the given mode.
+SetSearchModeVisitor::SetSearchModeVisitor(NeighborSearchMode searchMode) :
+    searchMode(searchMode)
+{}
+
+//! Set the search mode.
 template<typename NSType>
-bool& SingleModeVisitor::operator()(NSType* ns) const
+void SetSearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->SingleMode();
+    return ns->SetSearchMode(searchMode);
   throw std::runtime_error("no neighbor search model initialized");
 }
 
-//! Expose the Naive method of the given NSType.
+//! Return the search mode.
 template<typename NSType>
-bool& NaiveVisitor::operator()(NSType* ns) const
+NeighborSearchMode SearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->Naive();
+    return ns->SearchMode();
   throw std::runtime_error("no neighbor search model initialized");
 }
 
@@ -331,30 +336,18 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
   return boost::apply_visitor(ReferenceSetVisitor(), nSearch);
 }
 
-//! Expose singleMode.
+//! Access the search mode.
 template<typename SortPolicy>
-bool NSModel<SortPolicy>::SingleMode() const
+NeighborSearchMode NSModel<SortPolicy>::SearchMode() const
 {
-  return boost::apply_visitor(SingleModeVisitor(), nSearch);
+  return boost::apply_visitor(SearchModeVisitor(), nSearch);
 }
 
+//! Modify the search mode.
 template<typename SortPolicy>
-bool& NSModel<SortPolicy>::SingleMode()
+void NSModel<SortPolicy>::SetSearchMode(const NeighborSearchMode mode)
 {
-  return boost::apply_visitor(SingleModeVisitor(), nSearch);
-}
-
-//! Expose Naive.
-template<typename SortPolicy>
-bool NSModel<SortPolicy>::Naive() const
-{
-  return boost::apply_visitor(NaiveVisitor(), nSearch);
-}
-
-template<typename SortPolicy>
-bool& NSModel<SortPolicy>::Naive()
-{
-  return boost::apply_visitor(NaiveVisitor(), nSearch);
+  return boost::apply_visitor(SetSearchModeVisitor(mode), nSearch);
 }
 
 template<typename SortPolicy>
@@ -373,8 +366,7 @@ double& NSModel<SortPolicy>::Epsilon()
 template<typename SortPolicy>
 void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
                                      const size_t leafSize,
-                                     const bool naive,
-                                     const bool singleMode,
+                                     const NeighborSearchMode searchMode,
                                      const double epsilon)
 {
   this->leafSize = leafSize;
@@ -417,7 +409,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   if (randomBasis)
     referenceSet = q * referenceSet;
 
-  if (!naive)
+  if (searchMode != NAIVE_MODE)
   {
     Timer::Start("tree_building");
     Log::Info << "Building reference tree..." << std::endl;
@@ -426,60 +418,52 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      nSearch = new NSType<SortPolicy, tree::KDTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::KDTree>(searchMode, epsilon);
       break;
     case COVER_TREE:
-      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(naive,
-          singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(searchMode,
+          epsilon);
       break;
     case R_TREE:
-      nSearch = new NSType<SortPolicy, tree::RTree>(naive, singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::RTree>(searchMode, epsilon);
       break;
     case R_STAR_TREE:
-      nSearch = new NSType<SortPolicy, tree::RStarTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::RStarTree>(searchMode, epsilon);
       break;
     case BALL_TREE:
-      nSearch = new NSType<SortPolicy, tree::BallTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::BallTree>(searchMode, epsilon);
       break;
     case X_TREE:
-      nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::XTree>(searchMode, epsilon);
       break;
     case HILBERT_R_TREE:
-      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(searchMode, epsilon);
       break;
     case R_PLUS_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPlusTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::RPlusTree>(searchMode, epsilon);
       break;
     case R_PLUS_PLUS_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
+      nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(searchMode,
           epsilon);
       break;
     case VP_TREE:
-      nSearch = new NSType<SortPolicy, tree::VPTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::VPTree>(searchMode, epsilon);
       break;
     case RP_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::RPTree>(searchMode, epsilon);
       break;
     case MAX_RP_TREE:
-      nSearch = new NSType<SortPolicy, tree::MaxRPTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::MaxRPTree>(searchMode, epsilon);
       break;
     case SPILL_TREE:
-      nSearch = new SpillKNN(naive, singleMode, epsilon);
+      nSearch = new SpillKNN(searchMode, epsilon);
       break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau, rho);
   boost::apply_visitor(tn, nSearch);
 
-  if (!naive)
+  if (searchMode != NAIVE_MODE)
   {
     Timer::Stop("tree_building");
     Log::Info << "Tree built." << std::endl;
@@ -498,15 +482,23 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
     querySet = q * querySet;
 
   Log::Info << "Searching for " << k << " neighbors with ";
-  if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
-    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
-  else
-    Log::Info << "brute-force (naive) search..." << std::endl;
-  if (Epsilon() != 0 && !Naive())
-    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
-        << std::endl;
+
+  switch (SearchMode())
+  {
+    case NAIVE_MODE:
+      Log::Info << "brute-force (naive) search..." << std::endl;
+      break;
+    case SINGLE_TREE_MODE:
+      Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case DUAL_TREE_MODE:
+      Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case GREEDY_SINGLE_TREE_MODE:
+      Log::Info << "greedy single-tree " << TreeName() << " search..."
+          << std::endl;
+      break;
+  }
 
   BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
       leafSize, tau, rho);
@@ -520,13 +512,25 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::mat& distances)
 {
   Log::Info << "Searching for " << k << " neighbors with ";
-  if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
-    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
-  else
-    Log::Info << "brute-force (naive) search..." << std::endl;
-  if (Epsilon() != 0 && !Naive())
+
+  switch (SearchMode())
+  {
+    case NAIVE_MODE:
+      Log::Info << "brute-force (naive) search..." << std::endl;
+      break;
+    case SINGLE_TREE_MODE:
+      Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case DUAL_TREE_MODE:
+      Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case GREEDY_SINGLE_TREE_MODE:
+      Log::Info << "greedy single-tree " << TreeName() << " search..."
+          << std::endl;
+      break;
+  }
+
+  if (Epsilon() != 0 && SearchMode() != NAIVE_MODE)
     Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
         << std::endl;
 
