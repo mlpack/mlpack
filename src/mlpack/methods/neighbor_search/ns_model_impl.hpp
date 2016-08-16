@@ -208,11 +208,6 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   }
 }
 
-//! Construct the SetSearchModeVisitor object with the given mode.
-SetSearchModeVisitor::SetSearchModeVisitor(NeighborSearchMode searchMode) :
-    searchMode(searchMode)
-{}
-
 //! Set the search mode.
 template<typename NSType>
 void SetSearchModeVisitor::operator()(NSType* ns) const

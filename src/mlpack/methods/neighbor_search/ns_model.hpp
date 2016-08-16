@@ -215,7 +215,9 @@ class SetSearchModeVisitor : public boost::static_visitor<void>
   NeighborSearchMode searchMode;
  public:
   //! Construct the SetSearchModeVisitor object with the given mode.
-  SetSearchModeVisitor(NeighborSearchMode searchMode);
+  SetSearchModeVisitor(const NeighborSearchMode searchMode) :
+      searchMode(searchMode)
+  {};
 
   //! Set the search mode.
   template<typename NSType>
