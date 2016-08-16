@@ -74,8 +74,10 @@ PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'cover', 'r', "
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
     "trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees "
     "and spill trees).", "l", 20);
-PARAM_DOUBLE_IN("tau", "Overlapping size (for spill trees).", "u", 0);
-PARAM_DOUBLE_IN("rho", "Balance threshold (for spill trees).", "b", 0.7);
+PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
+    0);
+PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
+    0.7);
 
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
