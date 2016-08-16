@@ -283,10 +283,15 @@ template<typename Archive,
          typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class TraversalType>
 void serialize(
     Archive& ar,
-    NSType<SortPolicy, TreeType>& ns,
+    NeighborSearch<SortPolicy,
+                   metric::EuclideanDistance,
+                   arma::mat,
+                   TreeType,
+                   TraversalType>& ns,
     const unsigned int version)
 {
   ns.Serialize(ar, version);
