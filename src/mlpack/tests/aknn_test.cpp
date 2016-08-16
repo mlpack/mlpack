@@ -260,16 +260,16 @@ BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
   arma::mat distancesExact;
   exact.Search(dataset, k, neighborsExact, distancesExact);
 
-  double max_dist = 0;
+  double maxDist = 0;
   for (size_t i = 0; i < neighborsExact.n_cols; ++i)
-    if (distancesExact(k - 1, i) > max_dist)
-      max_dist = distancesExact(k - 1, i);
+    if (distancesExact(k - 1, i) > maxDist)
+      maxDist = distancesExact(k - 1, i);
 
   // If we are sure that tau is a valid upper bound of the kth nearest neighbor
   // of the query points, then we can be sure that we will satisfy the
   // requirements on the relative error.
   SPTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>, arma::mat>
-      referenceTree(dataset, max_dist * 1.01 /* tau parameter */);
+      referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
       spTreeSearch(&referenceTree, true, 0.05);

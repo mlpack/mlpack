@@ -905,16 +905,16 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
   arma::mat distancesNaive;
   naive.Search(dataset, k, neighborsNaive, distancesNaive);
 
-  double max_dist = 0;
+  double maxDist = 0;
   for (size_t i = 0; i < neighborsNaive.n_cols; ++i)
-    if (distancesNaive(k - 1, i) > max_dist)
-      max_dist = distancesNaive(k - 1, i);
+    if (distancesNaive(k - 1, i) > maxDist)
+      maxDist = distancesNaive(k - 1, i);
 
   // If we are sure that tau is a valid strict upper bound of the kth nearest
   // neighbor of the query points, then we can be sure that we will get an exact
   // solution.
   SpillSearch<> spTreeSearch(dataset, false, true,
-      max_dist * 1.01 /* tau parameter */);
+      maxDist * 1.01 /* tau parameter */);
 
   for (size_t mode = 0; mode < 2; mode++)
   {
