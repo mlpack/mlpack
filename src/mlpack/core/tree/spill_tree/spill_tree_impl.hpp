@@ -36,9 +36,11 @@ SpillTree(
     dataset(&data),
     localDataset(false)
 {
-  arma::Col<size_t> points(dataset->n_cols);
-  for (size_t i = 0; i < points.n_elem; i++)
-    points[i] = i;
+  arma::Col<size_t> points;
+  if (dataset->n_cols > 0)
+    // Fill points with all possible indexes: 0 .. (dataset->n_cols - 1).
+    points = arma::linspace<arma::Col<size_t>>(0, dataset->n_cols - 1,
+        dataset->n_cols);
 
   // Do the actual splitting of this node.
   SplitNode(points, maxLeafSize, tau, rho);
@@ -71,9 +73,11 @@ SpillTree(
     dataset(new MatType(std::move(data))),
     localDataset(true)
 {
-  arma::Col<size_t> points(dataset->n_cols);
-  for (size_t i = 0; i < points.n_elem; i++)
-    points[i] = i;
+  arma::Col<size_t> points;
+  if (dataset->n_cols > 0)
+    // Fill points with all possible indexes: 0 .. (dataset->n_cols - 1).
+    points = arma::linspace<arma::Col<size_t>>(0, dataset->n_cols - 1,
+        dataset->n_cols);
 
   // Do the actual splitting of this node.
   SplitNode(points, maxLeafSize, tau, rho);
