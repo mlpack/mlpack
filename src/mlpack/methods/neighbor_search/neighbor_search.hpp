@@ -190,7 +190,7 @@ class NeighborSearch
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(const MatType& referenceSet,
-                 const bool naive = false,
+                 const bool naive,
                  const bool singleMode = false,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
@@ -218,7 +218,7 @@ class NeighborSearch
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(MatType&& referenceSet,
-                 const bool naive = false,
+                 const bool naive,
                  const bool singleMode = false,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
@@ -252,7 +252,7 @@ class NeighborSearch
    * @param metric Instantiated distance metric.
    */
   NeighborSearch(Tree* referenceTree,
-                 const bool singleMode = false,
+                 const bool singleMode,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
@@ -269,7 +269,7 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
-  NeighborSearch(const bool naive = false,
+  NeighborSearch(const bool naive,
                  const bool singleMode = false,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
