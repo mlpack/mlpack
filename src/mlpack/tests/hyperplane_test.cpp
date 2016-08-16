@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(HyperplaneEmptyConstructor)
 /**
  * Ensure that we get the correct hyperplane given the projection vector.
  */
-BOOST_AUTO_TEST_CASE(HyperplaneProjectionTest)
+BOOST_AUTO_TEST_CASE(ProjectionTest)
 {
   // General hyperplane.
   ProjVector projVect1(arma::vec("1 1"));
@@ -81,7 +81,14 @@ BOOST_AUTO_TEST_CASE(HyperplaneProjectionTest)
   b1.Radius() = 1.41;
   BOOST_REQUIRE(!h1.Right(b1));
   BOOST_REQUIRE(!h1.Left(b1));
+}
 
+/**
+ * Ensure that we get the correct AxisOrthogonalHyperplane given the
+ * AxisParallelProjVector.
+ */
+BOOST_AUTO_TEST_CASE(AxisOrthogonalProjectionTest)
+{
   // AxisParallel hyperplane.
   AxisParallelProjVector projVect2(1);
   AxisOrthogonalHyperplane<EuclideanDistance> h2(projVect2, 1);
