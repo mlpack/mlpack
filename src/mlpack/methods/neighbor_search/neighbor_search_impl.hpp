@@ -829,8 +829,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, *referenceSet, k, metric, true
-      /* don't return the same point as nearest neighbor */);
+  RuleType rules(*referenceSet, *referenceSet, k, metric, epsilon,
+      true /* don't return the same point as nearest neighbor */);
 
   switch (searchMode)
   {
