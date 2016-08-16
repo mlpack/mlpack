@@ -143,6 +143,103 @@ class NEAT
   int aNumSpeciesThreshold;
 
   /**
+   * Default constructor.
+   */
+  NEAT()
+  {
+    mlpack::math::RandomSeed(1);
+
+    // Set NEAT algorithm parameters.
+    Parameters params;
+    params.aPopulationSize = 500;
+    params.aMaxGeneration = 500;
+    params.aCoeffDisjoint = 2.0;
+    params.aCoeffWeightDiff = 0.4;
+    params.aCompatThreshold = 1.0;
+    params.aStaleAgeThreshold = 15;
+    params.aCrossoverRate = 0.75;
+    params.aCullSpeciesPercentage = 0.5;
+    params.aMutateWeightProb = 0.2;
+    params.aPerturbWeightProb = 0.9;
+    params.aMutateWeightSize = 0.1;
+    params.aMutateAddForwardLinkProb = 0.9;
+    params.aMutateAddBackwardLinkProb = 0;
+    params.aMutateAddRecurrentLinkProb = 0;
+    params.aMutateAddBiasLinkProb = 0;
+    params.aMutateAddNeuronProb = 0.6;
+    params.aMutateEnabledProb = 0.2;
+    params.aMutateDisabledProb = 0.2;
+    params.aNumSpeciesThreshold = 10;
+
+    // Construct seed genome for xor task.
+    int id = 0;
+    int numInput = 3;
+    int numOutput = 1;
+    double fitness = -1;
+    std::vector<NeuronGene> neuronGenes;
+    std::vector<LinkGene> linkGenes;
+
+    NeuronGene inputGene1(0, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+    NeuronGene inputGene2(1, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+    NeuronGene biasGene(2, BIAS, LINEAR, 0, std::vector<double>(), 0, 0);
+    NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, std::vector<double>(), 0, 0);
+    NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, std::vector<double>(), 0, 0);
+
+    neuronGenes.push_back(inputGene1);
+    neuronGenes.push_back(inputGene2);
+    neuronGenes.push_back(biasGene);
+    neuronGenes.push_back(outputGene);
+    neuronGenes.push_back(hiddenGene);
+
+    LinkGene link1(0, 3, 0, 0, true);
+    LinkGene link2(1, 3, 1, 0, true);
+    LinkGene link3(2, 3, 2, 0, true);
+    LinkGene link4(0, 4, 3, 0, true);
+    LinkGene link5(1, 4, 4, 0, true);
+    LinkGene link6(2, 4, 5, 0, true);
+    LinkGene link7(4, 3, 6, 0, true);
+
+    linkGenes.push_back(link1);
+    linkGenes.push_back(link2);
+    linkGenes.push_back(link3);
+    linkGenes.push_back(link4);
+    linkGenes.push_back(link5);
+    linkGenes.push_back(link6);
+    linkGenes.push_back(link7);
+
+    Genome seedGenome = Genome(0, 
+                               neuronGenes,
+                               linkGenes,
+                               numInput,
+                               numOutput,
+                               fitness);
+
+    // Set neat members. (Except task.)
+    aSeedGenome = seedGenome;
+    aNextNeuronId = seedGenome.NumNeuron();
+    aNextLinkInnovId = seedGenome.NumLink();
+    aPopulationSize = params.aPopulationSize;
+    aMaxGeneration = params.aMaxGeneration;
+    aCoeffDisjoint = params.aCoeffDisjoint;
+    aCoeffWeightDiff = params.aCoeffWeightDiff;
+    aCompatThreshold = params.aCompatThreshold;
+    aStaleAgeThreshold = params.aStaleAgeThreshold;
+    aCrossoverRate = params.aCrossoverRate;
+    aCullSpeciesPercentage = params.aCullSpeciesPercentage;
+    aMutateWeightProb = params.aMutateWeightProb;
+    aPerturbWeightProb = params.aPerturbWeightProb;
+    aMutateWeightSize = params.aMutateWeightSize;
+    aMutateAddForwardLinkProb = params.aMutateAddForwardLinkProb;
+    aMutateAddBackwardLinkProb = params.aMutateAddBackwardLinkProb;
+    aMutateAddRecurrentLinkProb = params.aMutateAddRecurrentLinkProb;
+    aMutateAddBiasLinkProb = params.aMutateAddBiasLinkProb;
+    aMutateAddNeuronProb = params.aMutateAddNeuronProb;
+    aMutateEnabledProb = params.aMutateEnabledProb;
+    aMutateDisabledProb = params.aMutateDisabledProb;
+    aNumSpeciesThreshold = params.aNumSpeciesThreshold;
+  }
+
+  /**
    * Parametric constructor.
    *
    * @param task The task to solve.

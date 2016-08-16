@@ -43,6 +43,11 @@ class Substrate
   double aWeightThreshold;
 
   /**
+   * Default constructor.
+   */
+  Substrate() {}
+
+  /**
    * Parametric constructor.
    *
    * @param coordinates The coordinates of substrate nodes. 
@@ -140,9 +145,8 @@ class Substrate
         {
           // Run cppn to query link weight.
           std::vector<double> input = genome.aNeuronGenes[i].Coordinate();
-          input.insert(input.end(),
-          	           genome.aNeuronGenes[j].Coordinate().begin(),
-          	           genome.aNeuronGenes[j].Coordinate().end());
+          std::vector<double> input2 = genome.aNeuronGenes[j].Coordinate();
+          input.insert(input.end(), input2.begin(), input2.end());
           input.push_back(1);  // Bias.
 
           cppn.Activate(input);
@@ -151,7 +155,7 @@ class Substrate
 
           // Create new link if weight bigger than threshold.
           double weight = output[0];
-          if (abs(weight) > aWeightThreshold)
+          if (std::fabs(weight) > aWeightThreshold)
           {
             LinkGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
             genome.aLinkGenes.push_back(link);
