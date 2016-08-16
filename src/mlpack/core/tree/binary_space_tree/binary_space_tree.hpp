@@ -339,7 +339,7 @@ class BinarySpaceTree
   template<typename VecType>
   BinarySpaceTree& GetNearestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   /**
    * Return the furthest child node to the given query point.  If this is a leaf
@@ -348,7 +348,7 @@ class BinarySpaceTree
   template<typename VecType>
   BinarySpaceTree& GetFurthestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not

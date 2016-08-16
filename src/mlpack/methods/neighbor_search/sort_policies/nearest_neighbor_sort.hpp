@@ -77,6 +77,7 @@ class NearestNeighborSort
                                        const TreeType* referenceNode,
                                        const TreeType* referenceChildNode,
                                        const double centerToCenterDistance);
+
   /**
    * Return the best possible distance between a node and a point.  In our case,
    * this is the minimum distance between the tree node and the point using the
@@ -96,6 +97,17 @@ class NearestNeighborSort
   static double BestPointToNodeDistance(const VecType& queryPoint,
                                         const TreeType* referenceNode,
                                         const double pointToCenterDistance);
+
+  /**
+   * Return the best child according to this sort policy. In this case it will
+   * return the one with the minimum distance.
+   */
+  template<typename VecType, typename TreeType>
+  static TreeType& GetBestChild(const VecType& queryPoint,
+                                TreeType& referenceNode)
+  {
+    return referenceNode.GetNearestChild(queryPoint);
+  };
 
   /**
    * Return what should represent the worst possible distance with this

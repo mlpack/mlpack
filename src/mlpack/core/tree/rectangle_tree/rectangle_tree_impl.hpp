@@ -579,7 +579,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;
@@ -614,7 +614,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;

@@ -301,7 +301,7 @@ class CoverTree
   template<typename VecType>
   CoverTree& GetNearestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   /**
    * Return the furthest child node to the given query point.  If this is a leaf
@@ -310,7 +310,7 @@ class CoverTree
   template<typename VecType>
   CoverTree& GetFurthestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const CoverTree* other) const;

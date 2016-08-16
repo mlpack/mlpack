@@ -95,6 +95,17 @@ class FurthestNeighborSort
                                         const double pointToCenterDistance);
 
   /**
+   * Return the best child according to this sort policy. In this case it will
+   * return the one with the maximum distance.
+   */
+  template<typename VecType, typename TreeType>
+  static TreeType& GetBestChild(const VecType& queryPoint,
+                                TreeType& referenceNode)
+  {
+    return referenceNode.GetFurthestChild(queryPoint);
+  };
+
+  /**
    * Return what should represent the worst possible distance with this
    * particular sort policy.  In our case, this should be the minimum possible
    * distance, 0.

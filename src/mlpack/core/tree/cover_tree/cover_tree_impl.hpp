@@ -618,7 +618,7 @@ template<typename VecType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;
@@ -650,7 +650,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;

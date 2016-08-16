@@ -499,7 +499,7 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;
@@ -523,7 +523,7 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
+    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
     return *this;
