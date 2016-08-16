@@ -26,7 +26,7 @@ bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
   double midValue;
 
   if (!SpaceSplit<MetricType, MatType>::GetProjVector(bound, data, points,
-    projVector, midValue))
+      projVector, midValue))
     return false;
 
   double splitVal = 0.0;

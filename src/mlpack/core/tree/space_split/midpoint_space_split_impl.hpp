@@ -26,7 +26,7 @@ bool MidpointSpaceSplit<MetricType, MatType>::SplitSpace(
   double midValue;
 
   if (!SpaceSplit<MetricType, MatType>::GetProjVector(bound, data, points,
-    projVector, midValue))
+      projVector, midValue))
     return false;
 
   hyp = HyperplaneType(projVector, midValue);
