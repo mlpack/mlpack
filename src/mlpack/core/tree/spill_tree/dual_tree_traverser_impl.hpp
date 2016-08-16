@@ -155,7 +155,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if(referenceNode.Overlap())
+        if (referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode is at both sides
@@ -259,7 +259,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if(referenceNode.Overlap())
+        if (referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode.Left() is at both
@@ -348,7 +348,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if(referenceNode.Overlap())
+        if (referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode.Right() is at

@@ -275,7 +275,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
 
  /*
   // If we haven't yet reinserted on this level, we try doing so now.
-  if(relevels[tree->TreeDepth()]) {
+  if (relevels[tree->TreeDepth()]) {
     relevels[tree->TreeDepth()] = false;
     // We sort the points by decreasing centroid to centroid distance.
     // We then remove the first p entries and reinsert them at the root.
@@ -283,7 +283,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
     while(root->Parent() != NULL)
       root = root->Parent();
     size_t p = tree->MaxNumChildren() * 0.3; // The paper says this works the best.
-    if(p == 0) {
+    if (p == 0) {
       SplitNonLeafNode(tree, relevels);
       return false;
     }
@@ -313,10 +313,10 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
 
     // If we went below min fill, delete this node and reinsert all children.
     //SOMETHING IS WRONG.  SHOULD NOT GO BELOW MIN FILL.
-//    if(!startBelowMinFill && tree->NumChildren() < tree->MinNumChildren())
+//    if (!startBelowMinFill && tree->NumChildren() < tree->MinNumChildren())
 //    std::cout<<"MINFILLERROR "<< p << ", " << tree->NumChildren() << "; " << tree->MaxNumChildren()<<std::endl;
 
-//    if(tree->NumChildren() < tree->MinNumChildren()) {
+//    if (tree->NumChildren() < tree->MinNumChildren()) {
 //      std::vector<RectangleTree<RStarTreeSplit, DescentType, StatisticType, MatType>*> rmNodes(tree->NumChildren());
 //      for(size_t i = 0; i < rmNodes.size(); i++) {
 //        rmNodes[i] = tree->Children()[i];

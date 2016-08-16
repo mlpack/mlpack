@@ -143,7 +143,7 @@ double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
   for(size_t i = 1; i != maxIterations; i++, currentFunction++)
   {
     // Is this iteration the start of a sequence?
-    if((currentFunction % numFunctions) == 0)
+    if ((currentFunction % numFunctions) == 0)
     {
       // Reset the counter variables.
       overallObjective = 0;

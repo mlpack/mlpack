@@ -50,7 +50,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
   else
   {
-    if(referenceNode.Overlap())
+    if (referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node we do defeatist search. In this
       // case, it is enough to calculate the score of only one child node. As we
