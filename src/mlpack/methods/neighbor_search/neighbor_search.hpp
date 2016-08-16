@@ -271,6 +271,24 @@ class NeighborSearch
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
+  /**
+   * Calculate the average relative error (effective error) between the
+   * distances calculated and the true distances provided.  The input matrices
+   * must have the same size.
+   *
+   * Cases where the true distance is zero (the same point) or the calculated
+   * distance is SortPolicy::WorstDistance() (didn't find enough points) will be
+   * ignored.
+   *
+   * @param foundDistances Matrix storing lists of calculated distances for each
+   *     query point.
+   * @param realDistances Matrix storing lists of true best distances for each
+   *     query point.
+   * @return Average relative error.
+   */
+  static double EffectiveError(arma::mat& foundDistances,
+                               arma::mat& realDistances);
+
   //! Return the total number of base case evaluations performed during the last
   //! search.
   size_t BaseCases() const { return baseCases; }

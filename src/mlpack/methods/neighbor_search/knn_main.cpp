@@ -48,6 +48,9 @@ PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
 PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
+PARAM_STRING_IN("true_distances_file", "File of true distances to compute "
+    "the effective error (average relative error) (it is printed when -v is "
+    "specified).", "D", "");
 
 // The option exists to load or save models.
 PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
@@ -82,9 +85,6 @@ PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
-PARAM_STRING_IN("effective_error", "If specified, will compare the results "
-    "against the provided distances file, and will print the average relative "
-    "error.", "E", "");
 
 // Convenience typedef.
 typedef NSModel<NearestNeighborSort> KNNModel;
@@ -294,31 +294,20 @@ int main(int argc, char *argv[])
       data::Save(CLI::GetParam<string>("distances_file"), distances);
 
     // Calculate the effective error, if desired.
-    if (CLI::HasParam("effective_error"))
+    if (CLI::HasParam("true_distances_file"))
     {
-      const string exactFile = CLI::GetParam<string>("effective_error");
-      arma::mat distancesExact;
-      data::Load(exactFile, distancesExact, true);
+      const string trueDistancesFile = CLI::GetParam<string>(
+          "true_distances_file");
+      arma::mat trueDistances;
+      data::Load(trueDistancesFile, trueDistances, true);
 
-      if (distancesExact.n_elem != distances.n_elem)
-        Log::Fatal << "The effective error file must have the same number of "
-          << "values than the set of distances being queried!" << endl;
+      if (trueDistances.n_rows != distances.n_rows ||
+          trueDistances.n_cols != distances.n_cols)
+        Log::Fatal << "The true distances file must have the same number of "
+            << "values than the set of distances being queried!" << endl;
 
-      double effectiveError = 0;
-      size_t cases = 0;
-      for (size_t i = 0; i < distances.n_elem; i++)
-      {
-        if (distancesExact(i) != 0 && distances(i) != DBL_MAX)
-        {
-          effectiveError += (distances(i) - distancesExact(i)) /
-              distancesExact(i);
-          cases++;
-        }
-      }
-      if (cases)
-        effectiveError /= cases;
-
-      Log::Info << "Effective error: " << effectiveError << endl;
+      Log::Info << "Effective error: " << KNN::EffectiveError(distances,
+          trueDistances) << endl;
     }
   }
 

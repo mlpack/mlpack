@@ -716,6 +716,42 @@ Search(const size_t k,
   }
 }
 
+//! Calculate the average relative error.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class TraversalType>
+double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+TraversalType>::EffectiveError(arma::mat& foundDistances,
+                               arma::mat& realDistances)
+{
+  if (foundDistances.n_rows != realDistances.n_rows ||
+      foundDistances.n_cols != realDistances.n_cols)
+    throw std::invalid_argument("matrices provided must have equal size");
+
+  double effectiveError = 0;
+  size_t numCases = 0;
+
+  for (size_t i = 0; i < foundDistances.n_elem; i++)
+  {
+    if (realDistances(i) != 0 &&
+        foundDistances(i) != SortPolicy::WorstDistance())
+    {
+      effectiveError += fabs(foundDistances(i) - realDistances(i)) /
+          realDistances(i);
+      numCases++;
+    }
+  }
+
+  if (numCases)
+    effectiveError /= numCases;
+
+  return effectiveError;
+}
+
 //! Serialize the NeighborSearch model.
 template<typename SortPolicy,
          typename MetricType,
