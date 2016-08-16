@@ -46,9 +46,9 @@ PARAM_INT_IN("width", "Width of the output table.", "w", 8);
 PARAM_FLAG("population", "If specified, the program will calculate statistics "
     "assuming the dataset is the population. By default, the program will "
     "assume the dataset as a sample.", "P");
-PARAM_FLAG("rowMajor", "If specified, the program will calculate statistics "
-    "assuming the dataset is organized in row major. By default, the program "
-    "will assume the dataset is a column major.", "r");
+PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
+    "across rows, not across columns.  (Remember that in mlpack, a column "
+    "represents a point, so this option is generally not necessary.)", "r");
 
 /**
 * Calculates the sum of deviations to the Nth Power.
@@ -84,12 +84,12 @@ double Skewness(const arma::rowvec& input,
   const double n = input.n_elem;
   if (population)
   {
-    // Calculate Population Skewness
+    // Calculate population skewness
     skewness = M3 / (n * S3);
   }
   else
   {
-    // Calculate Sample Skewness
+    // Calculate sample skewness.
     skewness = n * M3 / ((n - 1) * (n - 2) * S3);
   }
   return skewness;
@@ -113,13 +113,13 @@ double Kurtosis(const arma::rowvec& input,
   const double n = input.n_elem;
   if (population)
   {
-    // Calculate Population Excess Kurtosis
+    // Calculate population excess kurtosis.
     const double M2 = SumNthPowerDeviations(input, fMean, 2);
     kurtosis = n * (M4 / pow(M2, 2)) - 3;
   }
   else
   {
-    // Calculate Sample Excess Kurtosis
+    // Calculate sample excess kurtosis.
     const double S4 = pow(fStd, 4);
     const double norm3 = (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
     const double normC = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
@@ -150,18 +150,16 @@ int main(int argc, char** argv)
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
   const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
   const bool population = CLI::HasParam("population");
-  const bool rowMajor = CLI::HasParam("rowMajor");
+  const bool rowMajor = CLI::HasParam("row_major");
 
-  // Load the data
+  // Load the data.
   arma::mat data;
   data::Load(inputFile, data);
 
   // Generate boost format recipe.
-  const string widthPrecision("%-"+
-      to_string(width)+ "." +
+  const string widthPrecision("%-" + to_string(width) + "." +
       to_string(precision));
-  const string widthOnly("%-"+
-      to_string(width)+ ".");
+  const string widthOnly("%-" + to_string(width) + ".");
   string stringFormat = "";
   string numberFormat = "";
 
@@ -173,13 +171,13 @@ int main(int argc, char** argv)
   }
 
   Timer::Start("statistics");
-  // Headers
+  // Print the headers.
   Log::Info << boost::format(stringFormat)
       % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
       % "range" % "skew" % "kurt" % "SE" << endl;
 
   // Lambda function to print out the results.
-  auto printStatResults = [&](size_t dim, bool rowMajor)
+  auto PrintStatResults = [&](size_t dim, bool rowMajor)
   {
     arma::rowvec feature;
     if (rowMajor)
@@ -187,13 +185,13 @@ int main(int argc, char** argv)
     else
       feature = data.row(dim);
 
-    // f at the front means "feature"
+    // f at the front of the variable names means "feature".
     const double fMax = arma::max(feature);
     const double fMin = arma::min(feature);
     const double fMean = arma::mean(feature);
     const double fStd = arma::stddev(feature, population);
 
-    // Print statistics of the given fension.
+    // Print statistics of the given dimension.
     Log::Info << boost::format(numberFormat)
         % dim
         % arma::var(feature, population)
@@ -210,17 +208,17 @@ int main(int argc, char** argv)
   };
 
   // If the user specified dimension, describe statistics of the given
-  // dimension. If it dimension not specified, describe all dimensions.
-  if(CLI::HasParam("dimension"))
+  // dimension. If a dimension is not specified, describe all dimensions.
+  if (CLI::HasParam("dimension"))
   {
-    printStatResults(dimension, rowMajor);
+    PrintStatResults(dimension, rowMajor);
   }
   else
   {
     const size_t dimensions = rowMajor ? data.n_cols : data.n_rows;
-    for(size_t i = 0; i < dimensions; ++i)
+    for (size_t i = 0; i < dimensions; ++i)
     {
-      printStatResults(i, rowMajor);
+      PrintStatResults(i, rowMajor);
     }
   }
   Timer::Stop("statistics");

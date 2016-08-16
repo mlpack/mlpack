@@ -475,6 +475,23 @@ class BinarySpaceTree
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
 
+  /**
+   * Update the bound of the current node. This method does not take into
+   * account bound-specific properties.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  template<typename BoundType2>
+  void UpdateBound(BoundType2& boundToUpdate);
+
+  /**
+   * Update the bound of the current node. This method is designed for
+   * HollowBallBound only.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
+
  protected:
   /**
    * A default constructor.  This is meant to only be used with
