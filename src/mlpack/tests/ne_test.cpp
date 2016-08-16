@@ -16,6 +16,8 @@
 #include <mlpack/methods/ne/species.hpp>
 #include <mlpack/methods/ne/cne.hpp>
 #include <mlpack/methods/ne/neat.hpp>
+#include <mlpack/methods/ne/substrate.hpp>
+#include <mlpack/methods/ne/hyperneat.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

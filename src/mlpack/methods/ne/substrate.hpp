@@ -83,27 +83,29 @@ class Substrate
     std::vector<NeuronGene> neuronGenes;
     std::vector<LinkGene> linkGenes;
 
+    int numNodes = aCoordinates.size();
+
     // Set neurons.
-    for (int i = 0; i < numInput; ++i)
+    for (int i = 0; i < numNodes; ++i)
     {
       if (i < aNumInput - 1)  // Input nodes.
       {
-        NeuronGene inputGene(i, INPUT, LINEAR, 0, aInputCoordinates[i], 0, 0);
+        NeuronGene inputGene(i, INPUT, LINEAR, 0, aCoordinates[i], 0, 0);
         neuronGenes.push_back(inputGene);
       }
       else if (i == aNumInput - 1)  // Bias node.
       {
-        NeuronGene biasGene(i, BIAS, LINEAR, 0, std::vector<double>(), 0, 0);
+        NeuronGene biasGene(i, BIAS, LINEAR, 0, aCoordinates[i], 0, 0);
         neuronGenes.push_back(biasGene);  	
       }
       else if (i >= aNumInput && i < aNumInput + aNumOutput)  // Output nodes.
       {
-        NeuronGene outputGene(i, OUTPUT, SIGMOID, 1, aOutputCoordinates[i], 0, 0);
+        NeuronGene outputGene(i, OUTPUT, SIGMOID, 1, aCoordinates[i], 0, 0);
         neuronGenes.push_back(outputGene);
       }
       else  // Hidden nodes.
       {
-        NeuronGene hiddenGene(i, HIDDEN, SIGMOID, aDepths[i], aHiddenCoordinates[i], 0, 0);
+        NeuronGene hiddenGene(i, HIDDEN, SIGMOID, aDepths[i], aCoordinates[i], 0, 0);
         neuronGenes.push_back(hiddenGene);
       }      
     }
@@ -151,7 +153,7 @@ class Substrate
           double weight = output[0];
           if (abs(weight) > aWeightThreshold)
           {
-            LineGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
+            LinkGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
             genome.aLinkGenes.push_back(link);
           }
         }

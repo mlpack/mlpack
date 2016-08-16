@@ -64,6 +64,84 @@ template<typename TaskType>
 class NEAT
 {
  public:
+  //! Task to solve.
+  TaskType aTask;
+
+  //! Seed genome. It is used for init population.
+  Genome aSeedGenome;
+
+  //! Population to evolve.
+  Population aPopulation;
+
+  //! Population size.
+  int aPopulationSize;
+
+  //! List of link innovations.
+  std::vector<LinkInnovation> aLinkInnovations;
+
+  //! List of neuron innovations.
+  std::vector<NeuronInnovation> aNeuronInnovations;
+
+  //! Next neuron id.
+  int aNextNeuronId;
+
+  //! Next link id.
+  int aNextLinkInnovId;
+
+  //! Max number of generation to evolve.
+  int aMaxGeneration;
+
+  //! Efficient for disjoint.
+  double aCoeffDisjoint;
+
+  //! Efficient for weight difference.
+  double aCoeffWeightDiff;
+
+  //! Threshold for judge whether belong to same species.
+  double aCompatThreshold;
+
+  //! Threshold for species stale age.
+  int aStaleAgeThreshold;
+
+  //! Crossover rate.
+  double aCrossoverRate;
+
+  //! Percentage to remove in each species.
+  double aCullSpeciesPercentage;
+
+  //! Probability to mutate a genome's weight.
+  double aMutateWeightProb;
+
+  //! Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
+  double aPerturbWeightProb;
+
+  //! The Gaussian noise variance when mutating genome weights.
+  double aMutateWeightSize;
+
+  //! Probability to add a forward link.
+  double aMutateAddForwardLinkProb;
+
+  //! Probability to add a backward link.
+  double aMutateAddBackwardLinkProb;
+
+  //! Probability to add a recurrent link.
+  double aMutateAddRecurrentLinkProb;
+
+  //! Probability to add a bias link.
+  double aMutateAddBiasLinkProb;
+
+  //! Probability to add neuron to genome.
+  double aMutateAddNeuronProb;
+
+  //! Probability to turn enabled link to disabled.
+  double aMutateEnabledProb;
+
+  //! Probability to turn disabled link to enabled.
+  double aMutateDisabledProb;
+
+  //! Species number threshold.
+  int aNumSpeciesThreshold;
+
   /**
    * Parametric constructor.
    *
@@ -1218,83 +1296,6 @@ class NEAT
   }
   
  private:
-  //! Task to solve.
-  TaskType aTask;
-
-  //! Seed genome. It is used for init population.
-  Genome aSeedGenome;
-
-  //! Population to evolve.
-  Population aPopulation;
-
-  //! Population size.
-  int aPopulationSize;
-
-  //! List of link innovations.
-  std::vector<LinkInnovation> aLinkInnovations;
-
-  //! List of neuron innovations.
-  std::vector<NeuronInnovation> aNeuronInnovations;
-
-  //! Next neuron id.
-  int aNextNeuronId;
-
-  //! Next link id.
-  int aNextLinkInnovId;
-
-  //! Max number of generation to evolve.
-  int aMaxGeneration;
-
-  //! Efficient for disjoint.
-  double aCoeffDisjoint;
-
-  //! Efficient for weight difference.
-  double aCoeffWeightDiff;
-
-  //! Threshold for judge whether belong to same species.
-  double aCompatThreshold;
-
-  //! Threshold for species stale age.
-  int aStaleAgeThreshold;
-
-  //! Crossover rate.
-  double aCrossoverRate;
-
-  //! Percentage to remove in each species.
-  double aCullSpeciesPercentage;
-
-  //! Probability to mutate a genome's weight.
-  double aMutateWeightProb;
-
-  //! Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
-  double aPerturbWeightProb;
-
-  //! The Gaussian noise variance when mutating genome weights.
-  double aMutateWeightSize;
-
-  //! Probability to add a forward link.
-  double aMutateAddForwardLinkProb;
-
-  //! Probability to add a backward link.
-  double aMutateAddBackwardLinkProb;
-
-  //! Probability to add a recurrent link.
-  double aMutateAddRecurrentLinkProb;
-
-  //! Probability to add a bias link.
-  double aMutateAddBiasLinkProb;
-
-  //! Probability to add neuron to genome.
-  double aMutateAddNeuronProb;
-
-  //! Probability to turn enabled link to disabled.
-  double aMutateEnabledProb;
-
-  //! Probability to turn disabled link to enabled.
-  double aMutateDisabledProb;
-
-  //! Species number threshold.
-  int aNumSpeciesThreshold;
 
 };
 
