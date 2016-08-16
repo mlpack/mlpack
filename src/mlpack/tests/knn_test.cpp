@@ -972,17 +972,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
 
     for (size_t mode = 0; mode < 2; mode++)
     {
-      switch (mode)
-      {
-        case 0: // Single Tree Search.
-          spTreeSearch.Naive() = false;
-          spTreeSearch.SingleMode() = true;
-          break;
-        case 1: // Dual Tree Search.
-          spTreeSearch.Naive() = false;
-          spTreeSearch.SingleMode() = false;
-          break;
-      }
+      spTreeSearch.SingleMode() = (mode == 0);
 
       spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
 
