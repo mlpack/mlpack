@@ -38,6 +38,8 @@ set(SOURCES
   cover_tree/traits.hpp
   cover_tree/typedef.hpp
   example_tree.hpp
+  greedy_single_tree_traverser.hpp
+  greedy_single_tree_traverser_impl.hpp
   hollow_ball_bound.hpp
   hollow_ball_bound_impl.hpp
   hrectbound.hpp

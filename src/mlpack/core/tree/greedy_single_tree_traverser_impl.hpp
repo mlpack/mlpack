@@ -23,7 +23,7 @@ GreedySingleTreeTraverser<TreeType, RuleType>::GreedySingleTreeTraverser(
 { /* Nothing to do. */ }
 
 template<typename TreeType, typename RuleType>
-GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
+void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
@@ -38,7 +38,7 @@ GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     // We are prunning all but one child.
     numPrunes += referenceNode.NumChildren() - 1;
     // Recurse the best child.
-    TreeTyp& bestChild = rule.GetBestChild(queryIndex, referenceNode);
+    TreeType& bestChild = rule.GetBestChild(queryIndex, referenceNode);
     Traverse(queryIndex, bestChild);
   }
 }
