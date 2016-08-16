@@ -368,11 +368,13 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, false, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
+            0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, true, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), 20,
+            SINGLE_TREE_MODE, 0.05);
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, true, false);
+        models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;
@@ -442,9 +444,11 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, false, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
+            0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, true, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), 20,
+            SINGLE_TREE_MODE, 0.05);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;

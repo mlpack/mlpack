@@ -87,6 +87,7 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
+PARAM_FLAG("greedy", "If true, greedy single-tree search is used.", "G");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
@@ -191,8 +192,20 @@ int main(int argc, char *argv[])
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<NearestNeighborSort> knn;
+
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
+  const bool greedy = CLI::HasParam("greedy");
+
+  NeighborSearchMode searchMode;
+  if (naive)
+    searchMode = NAIVE_MODE;
+  else if (singleMode)
+    searchMode = SINGLE_TREE_MODE;
+  else if (greedy)
+    searchMode = GREEDY_SINGLE_TREE_MODE;
+  else searchMode = DUAL_TREE_MODE;
+
   if (CLI::HasParam("reference_file"))
   {
     // Get all the parameters.
@@ -245,8 +258,7 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
-        epsilon);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
@@ -254,8 +266,8 @@ int main(int argc, char *argv[])
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
 
-    knn.SingleMode() = CLI::HasParam("single_mode");
-    knn.Naive() = CLI::HasParam("naive");
+    // Adjust search mode.
+    knn.SetSearchMode(searchMode);
     knn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the

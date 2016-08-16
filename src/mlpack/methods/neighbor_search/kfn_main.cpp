@@ -80,6 +80,7 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "s");
+PARAM_FLAG("greedy", "If true, greedy single-tree search is used.", "G");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate furthest neighbor"
     " search with given relative error. Must be in the range [0,1).", "e", 0);
 PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
@@ -179,8 +180,20 @@ int main(int argc, char *argv[])
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<FurthestNeighborSort> kfn;
+
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
+  const bool greedy = CLI::HasParam("greedy");
+
+  NeighborSearchMode searchMode;
+  if (naive)
+    searchMode = NAIVE_MODE;
+  else if (singleMode)
+    searchMode = SINGLE_TREE_MODE;
+  else if (greedy)
+    searchMode = GREEDY_SINGLE_TREE_MODE;
+  else searchMode = DUAL_TREE_MODE;
+
   if (CLI::HasParam("reference_file"))
   {
     // Get all the parameters.
@@ -227,8 +240,7 @@ int main(int argc, char *argv[])
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
-        epsilon);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
@@ -236,8 +248,8 @@ int main(int argc, char *argv[])
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
 
-    kfn.SingleMode() = CLI::HasParam("single_mode");
-    kfn.Naive() = CLI::HasParam("naive");
+    // Adjust search mode.
+    kfn.SetSearchMode(searchMode);
     kfn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
