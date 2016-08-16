@@ -140,8 +140,7 @@ using AxisOrthogonalHyperplane = HyperplaneBase<bound::HRectBound<MetricType>,
     AxisParallelProjVector>;
 
 /**
- * AxisOrthogonalHyperplane represents a general hyperplane (not necessarily
- * axis-orthogonal).
+ * Hyperplane represents a general hyperplane (not necessarily axis-orthogonal).
  */
 template<typename MetricType>
 using Hyperplane = HyperplaneBase<bound::BallBound<MetricType>, ProjVector>;
