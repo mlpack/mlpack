@@ -102,80 +102,91 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
   }
   else if (queryNode.IsLeaf() && (!referenceNode.IsLeaf()))
   {
-    // We have to recurse down the reference node.  In this case the recursion
-    // order does matter.  Before recursing, though, we have to set the
-    // traversal information correctly.
-    double leftScore = rule.Score(queryNode, *referenceNode.Left());
-    typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
-    rule.TraversalInfo() = traversalInfo;
-    double rightScore = rule.Score(queryNode, *referenceNode.Right());
-    numScores += 2;
-
-    if (leftScore < rightScore)
+    if (Defeatist && referenceNode.Overlap())
     {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      traversalInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(queryNode, *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = traversalInfo;
+      // If referenceNode is a overlapping node let's do defeatist search.
+      bool traverseLeft = referenceNode.Left()->HalfSpaceIntersects(queryNode);
+      bool traverseRight = referenceNode.Right()->HalfSpaceIntersects(
+          queryNode);
+      if (traverseLeft && !traverseRight)
+        Traverse(queryNode, *referenceNode.Left());
+      else if (!traverseLeft && traverseRight)
         Traverse(queryNode, *referenceNode.Right());
-      }
       else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(queryNode, *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(queryNode, *referenceNode.Left(), leftScore);
-
-      if (leftScore != DBL_MAX)
       {
-        // Restore the left traversal info.
+        // If we can't decide which child node to traverse, this means that
+        // queryNode is at both sides of the splitting hyperplane. So, as
+        // queryNode is a leafNode, all we can do is single tree search for each
+        // point in the query node.
+        const size_t queryEnd = queryNode.NumPoints();
+        DefeatistSingleTreeTraverser<RuleType> st(rule);
+        // Loop through each of the points in query node.
+        for (size_t query = 0; query < queryEnd; ++query)
+        {
+          const size_t queryIndex = queryNode.Point(query);
+          // See if we need to investigate this point.
+          const double childScore = rule.Score(queryIndex, referenceNode);
+
+          if (childScore == DBL_MAX)
+            continue; // We can't improve this particular point.
+
+          st.Traverse(queryIndex, referenceNode);
+        }
+      }
+    }
+    else
+    {
+      // We have to recurse down the reference node.  In this case the recursion
+      // order does matter.  Before recursing, though, we have to set the
+      // traversal information correctly.
+      double leftScore = rule.Score(queryNode, *referenceNode.Left());
+      typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
+      rule.TraversalInfo() = traversalInfo;
+      double rightScore = rule.Score(queryNode, *referenceNode.Right());
+      numScores += 2;
+
+      if (leftScore < rightScore)
+      {
+        // Recurse to the left.  Restore the left traversal info.  Store the right
+        // traversal info.
+        traversalInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
         Traverse(queryNode, *referenceNode.Left());
-      }
-      else
-        ++numPrunes;
-    }
-    else // leftScore is equal to rightScore.
-    {
-      if (leftScore == DBL_MAX)
-      {
-        numPrunes += 2;
-      }
-      else
-      {
-        if (Defeatist && referenceNode.Overlap())
+
+        // Is it still valid to recurse to the right?
+        rightScore = rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
+
+        if (rightScore != DBL_MAX)
         {
-          // If referenceNode is a overlapping node and we can't decide which
-          // child node to traverse, this means that queryNode is at both sides
-          // of the splitting hyperplane. So, as queryNode is a leafNode, all we
-          // can do is single tree search for each point in the query node.
-          const size_t queryEnd = queryNode.NumPoints();
-          SingleTreeTraverser<RuleType> st(rule);
-          // Loop through each of the points in query node.
-          for (size_t query = 0; query < queryEnd; ++query)
-          {
-            const size_t queryIndex = queryNode.Point(query);
-            // See if we need to investigate this point.
-            const double childScore = rule.Score(queryIndex, referenceNode);
+          // Restore the right traversal info.
+          rule.TraversalInfo() = traversalInfo;
+          Traverse(queryNode, *referenceNode.Right());
+        }
+        else
+          ++numPrunes;
+      }
+      else if (rightScore < leftScore)
+      {
+        // Recurse to the right.
+        Traverse(queryNode, *referenceNode.Right());
 
-            if (childScore == DBL_MAX)
-              continue; // We can't improve this particular point.
+        // Is it still valid to recurse to the left?
+        leftScore = rule.Rescore(queryNode, *referenceNode.Left(), leftScore);
 
-            st.Traverse(queryIndex, referenceNode);
-          }
+        if (leftScore != DBL_MAX)
+        {
+          // Restore the left traversal info.
+          rule.TraversalInfo() = leftInfo;
+          Traverse(queryNode, *referenceNode.Left());
+        }
+        else
+          ++numPrunes;
+      }
+      else // leftScore is equal to rightScore.
+      {
+        if (leftScore == DBL_MAX)
+        {
+          numPrunes += 2;
         }
         else
         {
@@ -202,71 +213,98 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
   }
   else
   {
-    // We have to recurse down both query and reference nodes.  Because the
-    // query descent order does not matter, we will go to the left query child
-    // first.  Before recursing, we have to set the traversal information
-    // correctly.
-    double leftScore = rule.Score(*queryNode.Left(), *referenceNode.Left());
-    typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
-    rule.TraversalInfo() = traversalInfo;
-    double rightScore = rule.Score(*queryNode.Left(), *referenceNode.Right());
-    typename RuleType::TraversalInfoType rightInfo;
-    numScores += 2;
-
-    if (leftScore < rightScore)
+    if (Defeatist && referenceNode.Overlap())
     {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      rightInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Left(), *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
-          rightScore);
-
-      if (rightScore != DBL_MAX)
-      {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(*queryNode.Left(), *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(*queryNode.Left(), *referenceNode.Left(),
-          leftScore);
-
-      if (leftScore != DBL_MAX)
-      {
-        // Restore the left traversal info.
-        rule.TraversalInfo() = leftInfo;
+      // If referenceNode is a overlapping node let's do defeatist search.
+      bool traverseLeft = referenceNode.Left()->HalfSpaceIntersects(
+          *queryNode.Left());
+      bool traverseRight = referenceNode.Right()->HalfSpaceIntersects(
+          *queryNode.Left());
+      if (traverseLeft && !traverseRight)
         Traverse(*queryNode.Left(), *referenceNode.Left());
-      }
+      else if (!traverseLeft && traverseRight)
+        Traverse(*queryNode.Left(), *referenceNode.Right());
       else
-        ++numPrunes;
+      {
+        // If we can't decide which child node to traverse, this means that
+        // queryNode.Left() is at both sides of the splitting hyperplane. So,
+        // let's recurse down only the query node.
+        Traverse(*queryNode.Left(), referenceNode);
+      }
+
+      traverseLeft = referenceNode.Left()->HalfSpaceIntersects(
+          *queryNode.Right());
+      traverseRight = referenceNode.Right()->HalfSpaceIntersects(
+          *queryNode.Right());
+      if (traverseLeft && !traverseRight)
+        Traverse(*queryNode.Right(), *referenceNode.Left());
+      else if (!traverseLeft && traverseRight)
+        Traverse(*queryNode.Right(), *referenceNode.Right());
+      else
+      {
+        // If we can't decide which child node to traverse, this means that
+        // queryNode.Right() is at both sides of the splitting hyperplane. So,
+        // let's recurse down only the query node.
+        Traverse(*queryNode.Right(), referenceNode);
+      }
     }
     else
     {
-      if (leftScore == DBL_MAX)
+      // We have to recurse down both query and reference nodes.  Because the
+      // query descent order does not matter, we will go to the left query child
+      // first.  Before recursing, we have to set the traversal information
+      // correctly.
+      double leftScore = rule.Score(*queryNode.Left(), *referenceNode.Left());
+      typename RuleType::TraversalInfoType leftInfo = rule.TraversalInfo();
+      rule.TraversalInfo() = traversalInfo;
+      double rightScore = rule.Score(*queryNode.Left(), *referenceNode.Right());
+      typename RuleType::TraversalInfoType rightInfo;
+      numScores += 2;
+
+      if (leftScore < rightScore)
       {
-        numPrunes += 2;
+        // Recurse to the left.  Restore the left traversal info.  Store the right
+        // traversal info.
+        rightInfo = rule.TraversalInfo();
+        rule.TraversalInfo() = leftInfo;
+        Traverse(*queryNode.Left(), *referenceNode.Left());
+
+        // Is it still valid to recurse to the right?
+        rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
+            rightScore);
+
+        if (rightScore != DBL_MAX)
+        {
+          // Restore the right traversal info.
+          rule.TraversalInfo() = rightInfo;
+          Traverse(*queryNode.Left(), *referenceNode.Right());
+        }
+        else
+          ++numPrunes;
+      }
+      else if (rightScore < leftScore)
+      {
+        // Recurse to the right.
+        Traverse(*queryNode.Left(), *referenceNode.Right());
+
+        // Is it still valid to recurse to the left?
+        leftScore = rule.Rescore(*queryNode.Left(), *referenceNode.Left(),
+            leftScore);
+
+        if (leftScore != DBL_MAX)
+        {
+          // Restore the left traversal info.
+          rule.TraversalInfo() = leftInfo;
+          Traverse(*queryNode.Left(), *referenceNode.Left());
+        }
+        else
+          ++numPrunes;
       }
       else
       {
-        if (Defeatist && referenceNode.Overlap())
+        if (leftScore == DBL_MAX)
         {
-          // If referenceNode is a overlapping node and we can't decide which
-          // child node to traverse, this means that queryNode.Left() is at both
-          // sides of the splitting hyperplane. So, let's recurse down only the
-          // query node.
-          Traverse(*queryNode.Left(), referenceNode);
+          numPrunes += 2;
         }
         else
         {
@@ -290,72 +328,61 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
             ++numPrunes;
         }
       }
-    }
 
-    // Restore the main traversal information.
-    rule.TraversalInfo() = traversalInfo;
+      // Restore the main traversal information.
+      rule.TraversalInfo() = traversalInfo;
 
-    // Now recurse down the right query node.
-    leftScore = rule.Score(*queryNode.Right(), *referenceNode.Left());
-    leftInfo = rule.TraversalInfo();
-    rule.TraversalInfo() = traversalInfo;
-    rightScore = rule.Score(*queryNode.Right(), *referenceNode.Right());
-    numScores += 2;
+      // Now recurse down the right query node.
+      leftScore = rule.Score(*queryNode.Right(), *referenceNode.Left());
+      leftInfo = rule.TraversalInfo();
+      rule.TraversalInfo() = traversalInfo;
+      rightScore = rule.Score(*queryNode.Right(), *referenceNode.Right());
+      numScores += 2;
 
-    if (leftScore < rightScore)
-    {
-      // Recurse to the left.  Restore the left traversal info.  Store the right
-      // traversal info.
-      rightInfo = rule.TraversalInfo();
-      rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Right(), *referenceNode.Left());
-
-      // Is it still valid to recurse to the right?
-      rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
-          rightScore);
-
-      if (rightScore != DBL_MAX)
+      if (leftScore < rightScore)
       {
-        // Restore the right traversal info.
-        rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Right());
-      }
-      else
-        ++numPrunes;
-    }
-    else if (rightScore < leftScore)
-    {
-      // Recurse to the right.
-      Traverse(*queryNode.Right(), *referenceNode.Right());
-
-      // Is it still valid to recurse to the left?
-      leftScore = rule.Rescore(*queryNode.Right(), *referenceNode.Left(),
-          leftScore);
-
-      if (leftScore != DBL_MAX)
-      {
-        // Restore the left traversal info.
+        // Recurse to the left.  Restore the left traversal info.  Store the right
+        // traversal info.
+        rightInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
         Traverse(*queryNode.Right(), *referenceNode.Left());
-      }
-      else
-        ++numPrunes;
-    }
-    else
-    {
-      if (leftScore == DBL_MAX)
-      {
-        numPrunes += 2;
-      }
-      else
-      {
-        if (Defeatist && referenceNode.Overlap())
+
+        // Is it still valid to recurse to the right?
+        rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
+            rightScore);
+
+        if (rightScore != DBL_MAX)
         {
-          // If referenceNode is a overlapping node and we can't decide which
-          // child node to traverse, this means that queryNode.Right() is at
-          // both sides of the splitting hyperplane. So, let's recurse down only
-          // the query node.
-          Traverse(*queryNode.Right(), referenceNode);
+          // Restore the right traversal info.
+          rule.TraversalInfo() = rightInfo;
+          Traverse(*queryNode.Right(), *referenceNode.Right());
+        }
+        else
+          ++numPrunes;
+      }
+      else if (rightScore < leftScore)
+      {
+        // Recurse to the right.
+        Traverse(*queryNode.Right(), *referenceNode.Right());
+
+        // Is it still valid to recurse to the left?
+        leftScore = rule.Rescore(*queryNode.Right(), *referenceNode.Left(),
+            leftScore);
+
+        if (leftScore != DBL_MAX)
+        {
+          // Restore the left traversal info.
+          rule.TraversalInfo() = leftInfo;
+          Traverse(*queryNode.Right(), *referenceNode.Left());
+        }
+        else
+          ++numPrunes;
+      }
+      else
+      {
+        if (leftScore == DBL_MAX)
+        {
+          numPrunes += 2;
         }
         else
         {

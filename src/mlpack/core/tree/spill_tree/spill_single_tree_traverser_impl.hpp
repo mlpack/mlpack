@@ -53,27 +53,13 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
   {
     if (Defeatist && referenceNode.Overlap())
     {
-      // If referenceNode is a overlapping node we do defeatist search. In this
-      // case, it is enough to calculate the score of only one child node. As we
-      // know that the query point can't be at both sides of the splitting
-      // hyperplane, the possible scores for the references child nodes are:
-      // 0 or DBL_MAX.
-      double leftScore = rule.Score(queryIndex, *referenceNode.Left());
-
-      if (leftScore == 0)
-      {
-        // Recurse to the left.
+      // If referenceNode is a overlapping node we do defeatist search.
+      if (referenceNode.Left()->HalfSpaceContains(
+          rule.QuerySet().col(queryIndex)))
         Traverse(queryIndex, *referenceNode.Left());
-        // Prune the right node.
-        ++numPrunes;
-      }
       else
-      {
-        // Recurse to the right.
         Traverse(queryIndex, *referenceNode.Right());
-        // Prune the left node.
-        ++numPrunes;
-      }
+      ++numPrunes;
     }
     else
     {

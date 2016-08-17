@@ -134,6 +134,9 @@ class NeighborSearchRules
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Access the query set.
+  const typename TreeType::Mat& QuerySet() { return querySet; }
+
  protected:
   //! The reference set.
   const typename TreeType::Mat& referenceSet;
@@ -209,8 +212,5 @@ class NeighborSearchRules
 
 // Include implementation.
 #include "neighbor_search_rules_impl.hpp"
-
-// Include specialization for Spill Trees.
-#include "spill_search_rules.hpp"
 
 #endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP

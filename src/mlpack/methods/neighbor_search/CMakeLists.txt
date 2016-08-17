@@ -14,8 +14,6 @@ set(SOURCES
   sort_policies/furthest_neighbor_sort_impl.hpp
   spill_search.hpp
   spill_search_impl.hpp
-  spill_search_rules.hpp
-  spill_search_rules_impl.hpp
   typedef.hpp
   unmap.hpp
   unmap.cpp
