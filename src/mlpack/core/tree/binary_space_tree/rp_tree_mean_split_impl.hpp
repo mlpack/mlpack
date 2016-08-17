@@ -40,7 +40,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
     splitInfo.direction.zeros(data.n_rows);
 
     // Get a random normal vector.
-    GetRandomDirection(splitInfo.direction);
+    math::RandVector(splitInfo.direction);
 
     // Get the median value of the scalar products of the normal and the
     // sampled points. The node will be split according to this value.
@@ -77,27 +77,6 @@ GetAveragePointDistance(
   dist /= (samples.n_elem * (samples.n_elem - 1) / 2);
 
   return dist;
-}
-
-template<typename BoundType, typename MatType>
-void RPTreeMeanSplit<BoundType, MatType>::GetRandomDirection(
-    arma::Col<ElemType>& direction)
-{
-  direction.randu(); // Fill with [0, 1].
-  direction -= 0.5;  // Shift to [-0.5, 0.5].
-
-  // Get the length of the vector.
-  const ElemType norm = arma::norm(direction);
-
-  if (norm == 0)
-  {
-    // If the vector is equal to 0, choose an arbitrary dimension.
-    size_t k = math::RandInt(direction.n_rows);
-
-    direction[k] = 1.0;
-  }
-  else
-    direction /= norm; // Normalize the vector.
 }
 
 template<typename BoundType, typename MatType>

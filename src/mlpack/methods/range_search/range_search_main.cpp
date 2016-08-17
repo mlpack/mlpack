@@ -70,9 +70,9 @@ PARAM_DOUBLE_IN("min", "Lower bound in range.", "L", 0.0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp-tree', "
-    "'max-split-rp-tree', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', "
-    "'r-plus', 'r-plus-plus'.", "t", "kd");
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
+    "'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
+    "'r-plus-plus'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
     "vp trees, random projection trees, R trees, R* trees, X trees, "
     "Hilbert R trees, R+ trees and R++ trees).", "l", 20);
@@ -185,15 +185,14 @@ int main(int argc, char *argv[])
       tree = RSModel::R_PLUS_PLUS_TREE;
     else if (treeType == "vp")
       tree = RSModel::VP_TREE;
-    else if (treeType == "rp-tree")
+    else if (treeType == "rp")
       tree = RSModel::RP_TREE;
-    else if (treeType == "max-split-rp-tree")
-      tree = RSModel::MAX_SPLIT_RP_TREE;
+    else if (treeType == "max-rp")
+      tree = RSModel::MAX_RP_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
-          << "'kd', 'vp', 'rp-tree-max', 'rp-tree-mean', 'cover', 'r', "
-          << "'r-star', 'x', 'ball', 'hilbert-r', 'r-plus' and 'r-plus-plus'."
-          << endl;
+          << "'kd', 'vp', 'rp', 'max-rp', 'cover', 'r', 'r-star', 'x', 'ball', "
+          << "'hilbert-r', 'r-plus' and 'r-plus-plus'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;

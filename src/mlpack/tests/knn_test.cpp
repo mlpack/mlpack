@@ -1000,8 +1000,8 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[19] = KNNModel(KNNModel::TreeTypes::VP_TREE, false);
   models[20] = KNNModel(KNNModel::TreeTypes::RP_TREE, true);
   models[21] = KNNModel(KNNModel::TreeTypes::RP_TREE, false);
-  models[22] = KNNModel(KNNModel::TreeTypes::MAX_SPLIT_RP_TREE, true);
-  models[23] = KNNModel(KNNModel::TreeTypes::MAX_SPLIT_RP_TREE, false);
+  models[22] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1078,8 +1078,8 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[19] = KNNModel(KNNModel::TreeTypes::VP_TREE, false);
   models[20] = KNNModel(KNNModel::TreeTypes::RP_TREE, true);
   models[21] = KNNModel(KNNModel::TreeTypes::RP_TREE, false);
-  models[22] = KNNModel(KNNModel::TreeTypes::MAX_SPLIT_RP_TREE, true);
-  models[23] = KNNModel(KNNModel::TreeTypes::MAX_SPLIT_RP_TREE, false);
+  models[22] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {

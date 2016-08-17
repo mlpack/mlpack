@@ -1272,8 +1272,8 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
   models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
   models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
-  models[22] = RSModel(RSModel::TreeTypes::MAX_SPLIT_RP_TREE, true);
-  models[23] = RSModel(RSModel::TreeTypes::MAX_SPLIT_RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1354,8 +1354,8 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
   models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
   models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
-  models[22] = RSModel(RSModel::TreeTypes::MAX_SPLIT_RP_TREE, true);
-  models[23] = RSModel(RSModel::TreeTypes::MAX_SPLIT_RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {

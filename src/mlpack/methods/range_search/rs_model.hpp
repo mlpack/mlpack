@@ -35,7 +35,7 @@ class RSModel
     R_PLUS_PLUS_TREE,
     VP_TREE,
     RP_TREE,
-    MAX_SPLIT_RP_TREE
+    MAX_RP_TREE
   };
 
  private:
@@ -79,7 +79,7 @@ class RSModel
   RSType<tree::RPTree>* rpTreeRS;
   //! Random projection tree (max) based range search object
   //! (NULL if not in use).
-  RSType<tree::MaxSplitRPTree>* maxSplitPRTreeRS;
+  RSType<tree::MaxRPTree>* maxPRTreeRS;
 
  public:
   /**

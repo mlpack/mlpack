@@ -78,13 +78,6 @@ class RPTreeMeanSplit
  private:
 
   /**
-   * Get a random unit vector of size direction.n_elem.
-   *
-   * @param direction The variable into which the method saves the vector.
-   */
-  static void GetRandomDirection(arma::Col<ElemType>& direction);
-
-  /**
    * Get the average distance between points in the dataset.
    *
    * @param data The dataset used by the binary space tree.
@@ -120,8 +113,6 @@ class RPTreeMeanSplit
                             const arma::uvec& samples,
                             arma::Col<ElemType>& mean,
                             ElemType& splitVal);
-
-  friend RPTreeMaxSplit<BoundType, MatType>;
 };
 
 } // namespace tree

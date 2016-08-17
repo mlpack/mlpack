@@ -28,7 +28,7 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rPlusPlusTreeRS(NULL),
     vpTreeRS(NULL),
     rpTreeRS(NULL),
-    maxSplitPRTreeRS(NULL)
+    maxPRTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -154,8 +154,8 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
           singleMode);
       break;
 
-    case MAX_SPLIT_RP_TREE:
-      maxSplitPRTreeRS = new RSType<tree::MaxSplitRPTree>(move(referenceSet),
+    case MAX_RP_TREE:
+      maxPRTreeRS = new RSType<tree::MaxRPTree>(move(referenceSet),
           naive, singleMode);
       break;
   }
@@ -288,8 +288,8 @@ void RSModel::Search(arma::mat&& querySet,
       rpTreeRS->Search(querySet, range, neighbors, distances);
       break;
 
-    case MAX_SPLIT_RP_TREE:
-      maxSplitPRTreeRS->Search(querySet, range, neighbors, distances);
+    case MAX_RP_TREE:
+      maxPRTreeRS->Search(querySet, range, neighbors, distances);
       break;
   }
 }
@@ -354,8 +354,8 @@ void RSModel::Search(const math::Range& range,
       rpTreeRS->Search(range, neighbors, distances);
       break;
 
-    case MAX_SPLIT_RP_TREE:
-      maxSplitPRTreeRS->Search(range, neighbors, distances);
+    case MAX_RP_TREE:
+      maxPRTreeRS->Search(range, neighbors, distances);
       break;
   }
 }
@@ -384,11 +384,11 @@ std::string RSModel::TreeName() const
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
     case VP_TREE:
-      return "Vantage point tree";
+      return "vantage point tree";
     case RP_TREE:
-      return "Random projection tree (mean split)";
-    case MAX_SPLIT_RP_TREE:
-      return "Random projection tree (max split)";
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
     default:
       return "unknown tree";
   }
@@ -419,8 +419,8 @@ void RSModel::CleanMemory()
     delete vpTreeRS;
   if (rpTreeRS)
     delete rpTreeRS;
-  if (maxSplitPRTreeRS)
-    delete maxSplitPRTreeRS;
+  if (maxPRTreeRS)
+    delete maxPRTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -433,5 +433,5 @@ void RSModel::CleanMemory()
   rPlusPlusTreeRS = NULL;
   vpTreeRS = NULL;
   rpTreeRS = NULL;
-  maxSplitPRTreeRS = NULL;
+  maxPRTreeRS = NULL;
 }

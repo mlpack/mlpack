@@ -220,7 +220,7 @@ using VPTree = BinarySpaceTree<MetricType,
  */
 
 template<typename MetricType, typename StatisticType, typename MatType>
-using MaxSplitRPTree = BinarySpaceTree<MetricType,
+using MaxRPTree = BinarySpaceTree<MetricType,
                                   StatisticType,
                                   MatType,
                                   bound::HRectBound,

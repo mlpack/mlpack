@@ -24,8 +24,7 @@ bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
   splitInfo.direction.zeros(data.n_rows);
 
   // Get the normal to the hyperplane.
-  RPTreeMeanSplit<BoundType, MatType>::GetRandomDirection(
-      splitInfo.direction);
+  math::RandVector(splitInfo.direction);
 
   // Get the value according to which we will perform the split.
   if (!GetSplitVal(data, begin, count, splitInfo.direction, splitInfo.splitVal))

@@ -259,7 +259,7 @@ class NSModel
     R_PLUS_PLUS_TREE,
     VP_TREE,
     RP_TREE,
-    MAX_SPLIT_RP_TREE
+    MAX_RP_TREE
   };
 
  private:
@@ -290,7 +290,7 @@ class NSModel
                  NSType<SortPolicy, tree::RPlusPlusTree>*,
                  NSType<SortPolicy, tree::VPTree>*,
                  NSType<SortPolicy, tree::RPTree>*,
-                 NSType<SortPolicy, tree::MaxSplitRPTree>*> nSearch;
+                 NSType<SortPolicy, tree::MaxRPTree>*> nSearch;
 
  public:
   /**

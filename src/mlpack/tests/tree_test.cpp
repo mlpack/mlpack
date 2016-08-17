@@ -1354,9 +1354,9 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
   TreeType root(dataset);
 }
 
-BOOST_AUTO_TEST_CASE(MaxSplitRPTreeTest)
+BOOST_AUTO_TEST_CASE(MaxRPTreeTest)
 {
-  typedef MaxSplitRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
@@ -1486,9 +1486,9 @@ void CheckMaxRPTreeSplit(const TreeType& tree)
   CheckMaxRPTreeSplit(*tree.Right());
 }
 
-BOOST_AUTO_TEST_CASE(MaxSplitRPTreeSplitTest)
+BOOST_AUTO_TEST_CASE(MaxRPTreeSplitTest)
 {
-  typedef MaxSplitRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   arma::mat dataset;
   dataset.randu(8, 1000);
   TreeType root(dataset);

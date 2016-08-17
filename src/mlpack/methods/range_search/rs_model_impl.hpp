@@ -74,8 +74,8 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
       ar & CreateNVP(rpTreeRS, "range_search_model");
       break;
 
-    case MAX_SPLIT_RP_TREE:
-      ar & CreateNVP(maxSplitPRTreeRS, "range_search_model");
+    case MAX_RP_TREE:
+      ar & CreateNVP(maxPRTreeRS, "range_search_model");
       break;
   }
 }
@@ -104,8 +104,8 @@ inline const arma::mat& RSModel::Dataset() const
     return vpTreeRS->ReferenceSet();
   else if (rpTreeRS)
     return rpTreeRS->ReferenceSet();
-  else if (maxSplitPRTreeRS)
-    return maxSplitPRTreeRS->ReferenceSet();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -134,8 +134,8 @@ inline bool RSModel::SingleMode() const
     return vpTreeRS->SingleMode();
   else if (rpTreeRS)
     return rpTreeRS->SingleMode();
-  else if (maxSplitPRTreeRS)
-    return maxSplitPRTreeRS->SingleMode();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -164,8 +164,8 @@ inline bool& RSModel::SingleMode()
     return vpTreeRS->SingleMode();
   else if (rpTreeRS)
     return rpTreeRS->SingleMode();
-  else if (maxSplitPRTreeRS)
-    return maxSplitPRTreeRS->SingleMode();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -194,8 +194,8 @@ inline bool RSModel::Naive() const
     return vpTreeRS->Naive();
   else if (rpTreeRS)
     return rpTreeRS->Naive();
-  else if (maxSplitPRTreeRS)
-    return maxSplitPRTreeRS->Naive();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -224,8 +224,8 @@ inline bool& RSModel::Naive()
     return vpTreeRS->Naive();
   else if (rpTreeRS)
     return rpTreeRS->Naive();
-  else if (maxSplitPRTreeRS)
-    return maxSplitPRTreeRS->Naive();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
