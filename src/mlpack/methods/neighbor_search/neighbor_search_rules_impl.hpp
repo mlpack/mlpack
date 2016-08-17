@@ -331,10 +331,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     TreeType& /* referenceNode */,
     const double oldScore) const
 {
-  if (oldScore == DBL_MAX)
-    return oldScore;
-
-  if (oldScore == SortPolicy::BestDistance())
+  if (oldScore == DBL_MAX || oldScore == 0.0)
     return oldScore;
 
   const double distance = SortPolicy::ConvertToDistance(oldScore);
