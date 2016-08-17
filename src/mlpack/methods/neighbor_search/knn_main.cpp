@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
     // Notify the user of parameters that will be only be considered for query
     // tree.
     if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will only be considered for the query tree,
-          "because --input_model_file is specified." << endl;
+      Log::Warn << "--leaf_size (-l) will only be considered for the query "
+          "tree, because --input_model_file is specified." << endl;
   }
 
   // The user should give something to do...
@@ -306,6 +306,10 @@ int main(int argc, char *argv[])
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances_file"))
     {
+      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+        Log::Warn << "--true_distances_file (-D) specified on exact neighbor "
+            << "search." << endl;
+
       const string trueDistancesFile = CLI::GetParam<string>(
           "true_distances_file");
       arma::mat trueDistances;
@@ -323,6 +327,10 @@ int main(int argc, char *argv[])
     // Calculate the recall, if desired.
     if (CLI::HasParam("true_neighbors_file"))
     {
+      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+        Log::Warn << "--true_neighbors_file (-T) specified on exact neighbor "
+            << "search." << endl;
+
       const string trueNeighborsFile = CLI::GetParam<string>(
           "true_neighbors_file");
       arma::Mat<size_t> trueNeighbors;
