@@ -232,6 +232,77 @@ BOOST_AUTO_TEST_CASE(SpillTreeHyperplaneTest)
 /**
  * Simple test for the move constructor.
  */
+BOOST_AUTO_TEST_CASE(SpillTreeMoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType tree(dataset);
+
+  TreeType* left = tree.Left();
+  TreeType* right = tree.Right();
+  size_t numDesc = tree.NumDescendants();
+
+  TreeType newTree(std::move(tree));
+
+  BOOST_REQUIRE(tree.Left() == NULL);
+  BOOST_REQUIRE(tree.Right() == NULL);
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 0);
+
+  BOOST_REQUIRE_EQUAL(newTree.Left(), left);
+  BOOST_REQUIRE_EQUAL(newTree.Right(), right);
+  BOOST_REQUIRE_EQUAL(newTree.NumDescendants(), numDesc);
+  if (left)
+  {
+    BOOST_REQUIRE(newTree.Left() != NULL);
+    BOOST_REQUIRE_EQUAL(newTree.Left()->Parent(), &newTree);
+  }
+  if (right)
+  {
+    BOOST_REQUIRE(newTree.Right() != NULL);
+    BOOST_REQUIRE_EQUAL(newTree.Right()->Parent(), &newTree);
+  }
+}
+
+/**
+ * Simple test for the copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(SpillTreeCopyConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType* tree = new TreeType(dataset);
+
+  TreeType* left = tree->Left();
+  TreeType* right = tree->Right();
+  size_t numDesc = tree->NumDescendants();
+
+  // Copy the tree.
+  TreeType newTree(*tree);
+
+  delete tree;
+
+  BOOST_REQUIRE_EQUAL(newTree.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(newTree.Dataset().n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(newTree.NumDescendants(), numDesc);
+  if (left)
+  {
+    BOOST_REQUIRE(newTree.Left() != left);
+    BOOST_REQUIRE(newTree.Left() != NULL);
+    BOOST_REQUIRE_EQUAL(newTree.Left()->Parent(), &newTree);
+  }
+  if (right)
+  {
+    BOOST_REQUIRE(newTree.Right() != right);
+    BOOST_REQUIRE(newTree.Right() != NULL);
+    BOOST_REQUIRE_EQUAL(newTree.Right()->Parent(), &newTree);
+  }
+}
+
+/**
+ * Simple test for the constructor that takes a rvalue reference to the dataset.
+ */
 BOOST_AUTO_TEST_CASE(SpillTreeMoveDatasetTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
