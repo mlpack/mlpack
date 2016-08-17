@@ -293,8 +293,12 @@ class SpillSearch
 
  private:
   //! Internal instance of NeighborSearch class.
-  NeighborSearch<NearestNeighborSort, MetricType, MatType, TreeType>
-      neighborSearch;
+  NeighborSearch<NearestNeighborSort,
+                 MetricType,
+                 MatType,
+                 TreeType,
+                 Tree::template DefeatistDualTreeTraverser,
+                 Tree::template DefeatistSingleTreeTraverser> neighborSearch;
 
   //! Overlapping size.
   double tau;
