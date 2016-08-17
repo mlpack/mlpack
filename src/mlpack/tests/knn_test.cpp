@@ -918,17 +918,7 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
 
   for (size_t mode = 0; mode < 2; mode++)
   {
-    switch (mode)
-    {
-      case 0: // Single Tree Search.
-        spTreeSearch.Naive() = false;
-        spTreeSearch.SingleMode() = true;
-        break;
-      case 1: // Dual Tree Search.
-        spTreeSearch.Naive() = false;
-        spTreeSearch.SingleMode() = false;
-        break;
-    }
+    spTreeSearch.SingleMode() = (mode == 0);
 
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;
@@ -952,19 +942,10 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
   dataset.randu(50, 300); // 50 dimensional, 300 points.
 
   const size_t k = 15;
-  double tau = 0;
 
   for (size_t test = 0; test < 2; test++)
   {
-    switch (test)
-    {
-      case 0:
-        tau = 0;
-        break;
-      case 1:
-        tau = 0.1;
-        break;
-    }
+    double tau = test * 0.1;
 
     SpillSearch<> spTreeSearch(dataset, false, false, tau);
     arma::Mat<size_t> neighborsSPTree;

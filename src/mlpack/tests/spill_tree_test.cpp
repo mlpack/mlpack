@@ -116,19 +116,7 @@ void SpillTreeHyperplaneTestAux()
 
   for (size_t cases = 0; cases < 3; cases++)
   {
-    double tau;
-    switch (cases)
-    {
-      case 0:
-        tau = 0;
-        break;
-      case 1:
-        tau = 0.05;
-        break;
-      case 2:
-        tau = 0.1;
-        break;
-    }
+    double tau = cases * 0.05;
 
     // Let's check node by node, that points in the left child are considered to
     // the left by the splitting hyperplane, and the same for points in the
