@@ -119,24 +119,20 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("tree_type"))
       Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
           << " is specified." << endl;
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("tau"))
-      Log::Warn << "--tau (-u) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("rho"))
-      Log::Warn << "--rho (-b) will be ignored because --input_model_file"
-          << " is specified." << endl;
     if (CLI::HasParam("random_basis"))
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
-          << "specified." << endl;
-    if (CLI::HasParam("single_mode"))
-      Log::Warn << "--single_mode (-S) will be ignored because --input_model_file is "
-          << "specified." << endl;
+    if (CLI::HasParam("tau"))
+      Log::Warn << "--tau (-u) will be ignored because --input_model_file is "
+          "specified." << endl;
+    if (CLI::HasParam("rho"))
+      Log::Warn << "--rho (-b) will be ignored because --input_model_file is "
+          "specified." << endl;
+    // Notify the user of parameters that will be only be considered for query
+    // tree.
+    if (CLI::HasParam("leaf_size"))
+      Log::Warn << "--leaf_size (-l) will only be considered for the query tree,
+          "because --input_model_file is specified." << endl;
   }
 
   // The user should give something to do...
@@ -245,6 +241,16 @@ int main(int argc, char *argv[])
     // Load the model from file.
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
+
+    knn.SingleMode() = CLI::HasParam("single_mode");
+    knn.Naive() = CLI::HasParam("naive");
+    knn.Epsilon() = epsilon;
+
+    // If leaf_size wasn't provided, let's consider the current value in the
+    // loaded model.  Else, update it (only considered when building the query
+    // tree).
+    if (CLI::HasParam("leaf_size"))
+      knn.LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kNN model from '" << inputModelFile << "' (trained on "
         << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
