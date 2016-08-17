@@ -109,15 +109,36 @@ class SpillTree
   //! If true, we own the dataset and need to destroy it in the destructor.
   bool localDataset;
 
- public:
-  //! A single-tree traverser for hybrid spill trees; see
-  //! single_tree_traverser.hpp for implementation.
-  template<typename RuleType>
-  class SingleTreeTraverser;
+  //! A generic single-tree traverser for hybrid spill trees; see
+  //! spill_single_tree_traverser.hpp for implementation.  The Defeatist
+  //! template parameter determines if the traverser must do defeatist search on
+  //! overlapping nodes.
+  template<typename RuleType, bool Defeatist = false>
+  class SpillSingleTreeTraverser;
 
-  //! A dual-tree traverser for hybrid spill trees; see dual_tree_traverser.hpp.
+  //! A generic dual-tree traverser for hybrid spill trees; see
+  //! spill_dual_tree_traverser.hpp for implementation.  The Defeatist
+  //! template parameter determines if the traverser must do defeatist search on
+  //! overlapping nodes.
+  template<typename RuleType, bool Defeatist = false>
+  class SpillDualTreeTraverser;
+
+ public:
+  //! A single-tree traverser for hybrid spill trees.
   template<typename RuleType>
-  class DualTreeTraverser;
+  using SingleTreeTraverser = SpillSingleTreeTraverser<RuleType, false>;
+
+  //! A defeatist single-tree traverser for hybrid spill trees.
+  template<typename RuleType>
+  using DefeatistSingleTreeTraverser = SpillSingleTreeTraverser<RuleType, true>;
+
+  //! A dual-tree traverser for hybrid spill trees.
+  template<typename RuleType>
+  using DualTreeTraverser = SpillDualTreeTraverser<RuleType, false>;
+
+  //! A defeatist dual-tree traverser for hybrid spill trees.
+  template<typename RuleType>
+  using DefeatistDualTreeTraverser = SpillDualTreeTraverser<RuleType, true>;
 
   /**
    * Construct this as the root node of a hybrid spill tree using the given

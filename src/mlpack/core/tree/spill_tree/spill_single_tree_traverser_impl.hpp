@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser_impl.hpp
+ * @file spill_single_tree_traverser_impl.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
@@ -7,11 +7,11 @@
  * given set of rules which indicate the branches which can be pruned and the
  * order in which to recurse.  This traverser is a depth-first traverser.
  */
-#ifndef MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
-#define MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#define MLPACK_CORE_TREE_SPILL_TREE_SPILL_SINGLE_TREE_TRAVERSER_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "single_tree_traverser.hpp"
+#include "spill_single_tree_traverser.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -22,9 +22,10 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
+SpillSingleTreeTraverser<RuleType, Defeatist>::SpillSingleTreeTraverser(
+    RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
@@ -35,9 +36,9 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SingleTreeTraverser<RuleType>::Traverse(
+SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
     const size_t queryIndex,
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
         referenceNode)
@@ -50,7 +51,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
   else
   {
-    if (referenceNode.Overlap())
+    if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node we do defeatist search. In this
       // case, it is enough to calculate the score of only one child node. As we

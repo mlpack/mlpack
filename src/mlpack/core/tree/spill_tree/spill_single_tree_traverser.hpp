@@ -1,14 +1,16 @@
 /**
- * @file single_tree_traverser.hpp
+ * @file spill_single_tree_traverser.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
  * A nested class of SpillTree which traverses the entire tree with a
  * given set of rules which indicate the branches which can be pruned and the
  * order in which to recurse.  This traverser is a depth-first traverser.
+ * The Defeatist template parameter determines if the traversers must do
+ * defeatist search on overlapping nodes.
  */
-#ifndef MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_HPP
-#define MLPACK_CORE_TREE_SPILL_TREE_SINGLE_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_SINGLE_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_SPILL_TREE_SPILL_SINGLE_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -23,15 +25,15 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    SingleTreeTraverser
+    SpillSingleTreeTraverser
 {
  public:
   /**
    * Instantiate the single tree traverser with the given rule set.
    */
-  SingleTreeTraverser(RuleType& rule);
+  SpillSingleTreeTraverser(RuleType& rule);
 
   /**
    * Traverse the tree with the given point.
@@ -59,6 +61,6 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 } // namespace mlpack
 
 // Include implementation.
-#include "single_tree_traverser_impl.hpp"
+#include "spill_single_tree_traverser_impl.hpp"
 
 #endif

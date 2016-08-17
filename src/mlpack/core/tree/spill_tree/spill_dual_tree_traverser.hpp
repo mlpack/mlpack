@@ -1,15 +1,17 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file spill_dual_tree_traverser.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
- * Defines the DualTreeTraverser for the SpillTree tree type.  This is a
+ * Defines the SpillDualTreeTraverser for the SpillTree tree type.  This is a
  * nested class of SpillTree which traverses two trees in a depth-first
  * manner with a given set of rules which indicate the branches which can be
  * pruned and the order in which to recurse.
+ * The Defeatist template parameter determines if the traversers must do
+ * defeatist search on overlapping nodes.
  */
-#ifndef MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_HPP
-#define MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_HPP
+#ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_HPP
+#define MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -24,15 +26,15 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    DualTreeTraverser
+    SpillDualTreeTraverser
 {
  public:
   /**
    * Instantiate the dual-tree traverser with the given rule set.
    */
-  DualTreeTraverser(RuleType& rule);
+  SpillDualTreeTraverser(RuleType& rule);
 
   /**
    * Traverse the two trees.  This does not reset the number of prunes.
@@ -89,7 +91,7 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 } // namespace mlpack
 
 // Include implementation.
-#include "dual_tree_traverser_impl.hpp"
+#include "spill_dual_tree_traverser_impl.hpp"
 
-#endif // MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_HPP
+#endif // MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_HPP
 

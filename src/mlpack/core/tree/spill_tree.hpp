@@ -10,10 +10,10 @@
 #include <mlpack/core.hpp>
 #include "bounds.hpp"
 #include "spill_tree/spill_tree.hpp"
-#include "spill_tree/single_tree_traverser.hpp"
-#include "spill_tree/single_tree_traverser_impl.hpp"
-#include "spill_tree/dual_tree_traverser.hpp"
-#include "spill_tree/dual_tree_traverser_impl.hpp"
+#include "spill_tree/spill_single_tree_traverser.hpp"
+#include "spill_tree/spill_single_tree_traverser_impl.hpp"
+#include "spill_tree/spill_dual_tree_traverser.hpp"
+#include "spill_tree/spill_dual_tree_traverser_impl.hpp"
 #include "spill_tree/traits.hpp"
 #include "spill_tree/typedef.hpp"
 

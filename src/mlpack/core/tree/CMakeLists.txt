@@ -90,10 +90,10 @@ set(SOURCES
   spill_tree.hpp
   spill_tree/spill_tree.hpp
   spill_tree/spill_tree_impl.hpp
-  spill_tree/dual_tree_traverser.hpp
-  spill_tree/dual_tree_traverser_impl.hpp
-  spill_tree/single_tree_traverser.hpp
-  spill_tree/single_tree_traverser_impl.hpp
+  spill_tree/spill_dual_tree_traverser.hpp
+  spill_tree/spill_dual_tree_traverser_impl.hpp
+  spill_tree/spill_single_tree_traverser.hpp
+  spill_tree/spill_single_tree_traverser_impl.hpp
   spill_tree/traits.hpp
   spill_tree/typedef.hpp
   statistic.hpp

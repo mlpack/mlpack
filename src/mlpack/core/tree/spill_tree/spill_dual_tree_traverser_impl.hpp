@@ -1,17 +1,17 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file spill_dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
- * Implementation of the DualTreeTraverser for SpillTree.  This is a way
+ * Implementation of the SpillDualTreeTraverser for SpillTree.  This is a way
  * to perform a dual-tree traversal of two trees.  The trees must be the same
  * type.
  */
-#ifndef MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
-#define MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_IMPL_HPP
+#define MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "dual_tree_traverser.hpp"
+#include "spill_dual_tree_traverser.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -22,9 +22,10 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
+SpillDualTreeTraverser<RuleType, Defeatist>::SpillDualTreeTraverser(
+    RuleType& rule) :
     rule(rule),
     numPrunes(0),
     numVisited(0),
@@ -38,9 +39,9 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-template<typename RuleType>
+template<typename RuleType, bool Defeatist>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-DualTreeTraverser<RuleType>::Traverse(
+SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
         queryNode,
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
@@ -155,7 +156,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if (referenceNode.Overlap())
+        if (Defeatist && referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode is at both sides
@@ -259,7 +260,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if (referenceNode.Overlap())
+        if (Defeatist && referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode.Left() is at both
@@ -348,7 +349,7 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       else
       {
-        if (referenceNode.Overlap())
+        if (Defeatist && referenceNode.Overlap())
         {
           // If referenceNode is a overlapping node and we can't decide which
           // child node to traverse, this means that queryNode.Right() is at
@@ -385,4 +386,4 @@ DualTreeTraverser<RuleType>::Traverse(
 } // namespace tree
 } // namespace mlpack
 
-#endif // MLPACK_CORE_TREE_SPILL_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
+#endif // MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_IMPL_HPP
