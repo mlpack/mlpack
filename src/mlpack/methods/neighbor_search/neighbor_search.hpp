@@ -67,7 +67,11 @@ template<typename SortPolicy = NearestNeighborSort,
          template<typename RuleType> class TraversalType =
              TreeType<MetricType,
                       NeighborSearchStat<SortPolicy>,
-                      MatType>::template DualTreeTraverser>
+                      MatType>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<MetricType,
+                      NeighborSearchStat<SortPolicy>,
+                      MatType>::template SingleTreeTraverser>
 class NeighborSearch
 {
  public:
