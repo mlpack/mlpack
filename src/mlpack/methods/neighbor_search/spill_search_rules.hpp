@@ -35,8 +35,8 @@ template<typename StatisticType,
 class NeighborSearchRules<SortPolicy, MetricType, tree::SpillTree<MetricType,
     StatisticType, MatType, HyperplaneType, SplitType>>
 {
-  typedef tree::SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>
-      TreeType;
+  typedef tree::SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+      SplitType> TreeType;
  public:
   /**
    * Construct the NeighborSearchRules object.  This is usually done from within
