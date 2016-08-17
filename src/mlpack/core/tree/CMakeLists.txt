@@ -88,6 +88,7 @@ set(SOURCES
   space_split/space_split.hpp
   space_split/space_split_impl.hpp
   spill_tree.hpp
+  spill_tree/is_spill_tree.hpp
   spill_tree/spill_tree.hpp
   spill_tree/spill_tree_impl.hpp
   spill_tree/spill_dual_tree_traverser.hpp

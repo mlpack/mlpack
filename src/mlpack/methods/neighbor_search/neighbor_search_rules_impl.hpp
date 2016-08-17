@@ -9,6 +9,7 @@
 
 // In case it hasn't been included yet.
 #include "neighbor_search_rules.hpp"
+#include <mlpack/core/tree/spill_tree/is_spill_tree.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -455,6 +456,10 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   queryNode.Stat().AuxBound() = auxDistance;
 
   worstDistance = SortPolicy::Relax(worstDistance, epsilon);
+
+  // We can't consider B_2 for Spill Trees.
+  if (tree::IsSpillTree<TreeType>::value)
+    return worstDistance;
 
   if (SortPolicy::IsBetter(worstDistance, bestDistance))
     return worstDistance;

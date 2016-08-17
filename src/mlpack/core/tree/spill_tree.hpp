@@ -9,6 +9,7 @@
 
 #include <mlpack/core.hpp>
 #include "bounds.hpp"
+#include "spill_tree/is_spill_tree.hpp"
 #include "spill_tree/spill_tree.hpp"
 #include "spill_tree/spill_single_tree_traverser.hpp"
 #include "spill_tree/spill_single_tree_traverser_impl.hpp"
