@@ -313,13 +313,17 @@ void serialize(Archive& ar, NSSpillType& ns, const unsigned int version)
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::Serialize(Archive& ar,
-                                    const unsigned int /* version */)
+void NSModel<SortPolicy>::Serialize(Archive& ar, const unsigned int version)
 {
   ar & data::CreateNVP(treeType, "treeType");
-  ar & data::CreateNVP(leafSize, "leafSize");
-  ar & data::CreateNVP(tau, "tau");
-  ar & data::CreateNVP(rho, "rho");
+  // Backward compatibility: older versions of NSModel didn't include these
+  // parameters.
+  if (version > 0)
+  {
+    ar & data::CreateNVP(leafSize, "leafSize");
+    ar & data::CreateNVP(tau, "tau");
+    ar & data::CreateNVP(rho, "rho");
+  }
   ar & data::CreateNVP(randomBasis, "randomBasis");
   ar & data::CreateNVP(q, "q");
 
