@@ -38,6 +38,7 @@ class MeanSplit
     //! The split in dimension splitDimension is based on this value.
     double splitVal;
   };
+
   /**
    * Find the partition of the node. This method fills up the dimension
    * that will be used to split the node and the value according which the split

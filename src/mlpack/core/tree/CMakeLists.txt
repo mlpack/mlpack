@@ -88,6 +88,24 @@ set(SOURCES
   rectangle_tree/r_plus_plus_tree_split_policy.hpp
   rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
   rectangle_tree/r_plus_plus_tree_auxiliary_information_impl.hpp
+  space_split/hyperplane.hpp
+  space_split/mean_space_split.hpp
+  space_split/mean_space_split_impl.hpp
+  space_split/midpoint_space_split.hpp
+  space_split/midpoint_space_split_impl.hpp
+  space_split/projection_vector.hpp
+  space_split/space_split.hpp
+  space_split/space_split_impl.hpp
+  spill_tree.hpp
+  spill_tree/is_spill_tree.hpp
+  spill_tree/spill_tree.hpp
+  spill_tree/spill_tree_impl.hpp
+  spill_tree/spill_dual_tree_traverser.hpp
+  spill_tree/spill_dual_tree_traverser_impl.hpp
+  spill_tree/spill_single_tree_traverser.hpp
+  spill_tree/spill_single_tree_traverser_impl.hpp
+  spill_tree/traits.hpp
+  spill_tree/typedef.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp

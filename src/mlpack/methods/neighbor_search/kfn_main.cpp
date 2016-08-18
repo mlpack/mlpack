@@ -46,6 +46,11 @@ PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
 PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
 PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
+PARAM_STRING_IN("true_distances_file", "File of true distances to compute "
+    "the effective error (average relative error) (it is printed when -v is "
+    "specified).", "D", "");
+PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute the "
+    "recall (it is printed when -v is specified).", "T", "");
 
 // The option exists to load or save models.
 PARAM_STRING_IN("input_model_file", "File containing pre-trained kFN model.",
@@ -111,15 +116,14 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("tree_type"))
       Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
           << " is specified." << endl;
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
-          << " is specified." << endl;
     if (CLI::HasParam("random_basis"))
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
-          << "specified." << endl;
+    // Notify the user of parameters that will be only be considered for query
+    // tree.
+    if (CLI::HasParam("leaf_size"))
+      Log::Warn << "--leaf_size (-l) will only be considered for the query "
+          "tree, because --input_model_file is specified." << endl;
   }
 
   // The user should give something to do...
@@ -226,15 +230,19 @@ int main(int argc, char *argv[])
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
 
+    kfn.SingleMode() = CLI::HasParam("single_mode");
+    kfn.Naive() = CLI::HasParam("naive");
+    kfn.Epsilon() = epsilon;
+
+    // If leaf_size wasn't provided, let's consider the current value in the
+    // loaded model.  Else, update it (only considered when building the query
+    // tree).
+    if (CLI::HasParam("leaf_size"))
+      kfn.LeafSize() = size_t(lsInt);
+
     Log::Info << "Loaded kFN model from '" << inputModelFile << "' (trained on "
         << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
         << endl;
-
-    // Adjust singleMode and naive if necessary.
-    kfn.SingleMode() = CLI::HasParam("single_mode");
-    kfn.Naive() = CLI::HasParam("naive");
-    kfn.LeafSize() = size_t(lsInt);
-    kfn.Epsilon() = epsilon;
   }
 
   // Perform search, if desired.
@@ -280,6 +288,47 @@ int main(int argc, char *argv[])
       data::Save(CLI::GetParam<string>("neighbors_file"), neighbors);
     if (CLI::HasParam("distances_file"))
       data::Save(CLI::GetParam<string>("distances_file"), distances);
+
+    // Calculate the effective error, if desired.
+    if (CLI::HasParam("true_distances_file"))
+    {
+      if (kfn.Epsilon() == 0)
+        Log::Warn << "--true_distances_file (-D) specified on exact neighbor "
+            << "search." << endl;
+
+      const string trueDistancesFile = CLI::GetParam<string>(
+          "true_distances_file");
+      arma::mat trueDistances;
+      data::Load(trueDistancesFile, trueDistances, true);
+
+      if (trueDistances.n_rows != distances.n_rows ||
+          trueDistances.n_cols != distances.n_cols)
+        Log::Fatal << "The true distances file must have the same number of "
+            << "values than the set of distances being queried!" << endl;
+
+      Log::Info << "Effective error: " << KFN::EffectiveError(distances,
+          trueDistances) << endl;
+    }
+
+    // Calculate the recall, if desired.
+    if (CLI::HasParam("true_neighbors_file"))
+    {
+      if (kfn.Epsilon() == 0)
+        Log::Warn << "--true_neighbors_file (-T) specified on exact neighbor "
+            << "search." << endl;
+
+      const string trueNeighborsFile = CLI::GetParam<string>(
+          "true_neighbors_file");
+      arma::Mat<size_t> trueNeighbors;
+      data::Load(trueNeighborsFile, trueNeighbors, true);
+
+      if (trueNeighbors.n_rows != neighbors.n_rows ||
+          trueNeighbors.n_cols != neighbors.n_cols)
+        Log::Fatal << "The true neighbors file must have the same number of "
+            << "values than the set of neighbors being queried!" << endl;
+
+      Log::Info << "Recall: " << KFN::Recall(neighbors, trueNeighbors) << endl;
+    }
   }
 
   if (CLI::HasParam("output_model_file"))

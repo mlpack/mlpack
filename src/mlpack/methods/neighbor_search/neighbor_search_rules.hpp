@@ -134,6 +134,9 @@ class NeighborSearchRules
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Access the query set.
+  const typename TreeType::Mat& QuerySet() { return querySet; }
+
  protected:
   //! The reference set.
   const typename TreeType::Mat& referenceSet;
