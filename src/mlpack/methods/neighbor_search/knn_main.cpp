@@ -154,6 +154,14 @@ int main(int argc, char *argv[])
         << "is not being performed because k (--k) is not specified!  No "
         << "results will be saved." << endl;
 
+  if (!CLI::HasParam("k") && CLI::HasParam("true_neighbors_file"))
+    Log::Warn << "--true_neighbors_file (-T) ignored because no search is being"
+        << " performed (--k is not specified)." << endl;
+
+  if (!CLI::HasParam("k") && CLI::HasParam("true_distances_file"))
+    Log::Warn << "--true_distances_file (-D) ignored because no search is being"
+        << " performed (--k is not specified)." << endl;
+
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
   if (lsInt < 1)
@@ -311,8 +319,8 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("true_distances_file"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << "--true_distances_file (-D) specified on exact neighbor "
-            << "search." << endl;
+        Log::Warn << "--true_distances_file (-D) specified, but the search is "
+            << "exact, so there is no need to calculate the error!" << endl;
 
       const string trueDistancesFile = CLI::GetParam<string>(
           "true_distances_file");
@@ -332,8 +340,8 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("true_neighbors_file"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << "--true_neighbors_file (-T) specified on exact neighbor "
-            << "search." << endl;
+        Log::Warn << "--true_neighbors_file (-T) specified, but the search is "
+            << "exact, so there is no need to calculate the recall!" << endl;
 
       const string trueNeighborsFile = CLI::GetParam<string>(
           "true_neighbors_file");
