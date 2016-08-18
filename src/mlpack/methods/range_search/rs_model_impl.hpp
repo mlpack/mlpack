@@ -69,6 +69,14 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
     case VP_TREE:
       ar & CreateNVP(vpTreeRS, "range_search_model");
       break;
+
+    case RP_TREE:
+      ar & CreateNVP(rpTreeRS, "range_search_model");
+      break;
+
+    case MAX_RP_TREE:
+      ar & CreateNVP(maxPRTreeRS, "range_search_model");
+      break;
   }
 }
 
@@ -94,6 +102,10 @@ inline const arma::mat& RSModel::Dataset() const
     return rPlusPlusTreeRS->ReferenceSet();
   else if (vpTreeRS)
     return vpTreeRS->ReferenceSet();
+  else if (rpTreeRS)
+    return rpTreeRS->ReferenceSet();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -120,6 +132,10 @@ inline bool RSModel::SingleMode() const
     return rPlusPlusTreeRS->SingleMode();
   else if (vpTreeRS)
     return vpTreeRS->SingleMode();
+  else if (rpTreeRS)
+    return rpTreeRS->SingleMode();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -146,6 +162,10 @@ inline bool& RSModel::SingleMode()
     return rPlusPlusTreeRS->SingleMode();
   else if (vpTreeRS)
     return vpTreeRS->SingleMode();
+  else if (rpTreeRS)
+    return rpTreeRS->SingleMode();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -172,6 +192,10 @@ inline bool RSModel::Naive() const
     return rPlusPlusTreeRS->Naive();
   else if (vpTreeRS)
     return vpTreeRS->Naive();
+  else if (rpTreeRS)
+    return rpTreeRS->Naive();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -198,6 +222,10 @@ inline bool& RSModel::Naive()
     return rPlusPlusTreeRS->Naive();
   else if (vpTreeRS)
     return vpTreeRS->Naive();
+  else if (rpTreeRS)
+    return rpTreeRS->Naive();
+  else if (maxPRTreeRS)
+    return maxPRTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }

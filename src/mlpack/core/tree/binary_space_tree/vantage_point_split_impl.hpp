@@ -17,7 +17,7 @@ namespace tree {
 template<typename BoundType, typename MatType, size_t MaxNumSamples>
 bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
 SplitNode(const BoundType& bound, MatType& data, const size_t begin,
-    const size_t count, size_t& splitCol)
+    const size_t count, SplitInfo& splitInfo)
 {
   ElemType mu = 0;
   size_t vantagePointIndex;
@@ -29,159 +29,9 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
   if (mu == 0)
     return false;
 
-  // The first point of the left child is centroid.
-  data.swap_cols(begin, vantagePointIndex);
+  splitInfo = SplitInfo(bound.Metric(), data.col(vantagePointIndex), mu);
 
-  arma::Col<ElemType> vantagePoint = data.col(begin);
-  splitCol = PerformSplit(bound.Metric(), data, begin, count, vantagePoint, mu);
-
-  assert(splitCol > begin);
-  assert(splitCol < begin + count);
   return true;
-}
-
-template<typename BoundType, typename MatType, size_t MaxNumSamples>
-bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
-SplitNode(const BoundType& bound, MatType& data, const size_t begin,
-    const size_t count, size_t& splitCol, std::vector<size_t>& oldFromNew)
-{
-  ElemType mu = 0;
-  size_t vantagePointIndex;
-
-  // Find the best vantage point.
-  SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
-
-  // If all points are equal, we can't split.
-  if (mu == 0)
-    return false;
-
-  // The first point of the left child is centroid.
-  data.swap_cols(begin, vantagePointIndex);
-  const size_t t = oldFromNew[begin];
-  oldFromNew[begin] = oldFromNew[vantagePointIndex];
-  oldFromNew[vantagePointIndex] = t;
-
-  arma::Col<ElemType> vantagePoint = data.col(begin);
-
-  splitCol = PerformSplit(bound.Metric(), data, begin, count, vantagePoint, mu,
-      oldFromNew);
-
-  assert(splitCol > begin);
-  assert(splitCol < begin + count);
-  return true;
-}
-
-template<typename BoundType, typename MatType, size_t MaxNumSamples>
-template <typename VecType>
-size_t VantagePointSplit<BoundType, MatType, MaxNumSamples>::PerformSplit(
-    const MetricType& metric,
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    const VecType& vantagePoint,
-    const ElemType mu)
-{
-  // This method modifies the input dataset.  We loop both from the left and
-  // right sides of the points contained in this node.  The points closer to
-  // the vantage point should be on the left side of the matrix, and the farther
-  // from the vantage point should be on the right side of the matrix.
-  size_t left = begin;
-  size_t right = begin + count - 1;
-
-  // First half-iteration of the loop is out here because the termination
-  // condition is in the middle.
-  while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
-      (left <= right))
-    left++;
-
-  while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
-      (left <= right) && (right > 0))
-    right--;
-
-  while (left <= right)
-  {
-    // Swap columns.
-    data.swap_cols(left, right);
-
-    // See how many points on the left are correct.  When they are correct,
-    // increase the left counter accordingly.  When we encounter one that isn't
-    // correct, stop.  We will switch it later.
-    while ((AssignToLeftSubtree(metric, data, vantagePoint, left, mu)) &&
-        (left <= right))
-      left++;
-
-    // Now see how many points on the right are correct.  When they are correct,
-    // decrease the right counter accordingly.  When we encounter one that isn't
-    // correct, stop.  We will switch it with the wrong point we found in the
-    // previous loop.
-    while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
-        (left <= right))
-      right--;
-  }
-
-  Log::Assert(left == right + 1);
-
-  return left;
-}
-
-template<typename BoundType, typename MatType, size_t MaxNumSamples>
-template<typename VecType>
-size_t VantagePointSplit<BoundType, MatType, MaxNumSamples>::PerformSplit(
-    const MetricType& metric,
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    const VecType& vantagePoint,
-    const ElemType mu,
-    std::vector<size_t>& oldFromNew)
-{
-  // This method modifies the input dataset.  We loop both from the left and
-  // right sides of the points contained in this node.  The points closer to
-  // the vantage point should be on the left side of the matrix, and the farther
-  // from the vantage point should be on the right side of the matrix.
-  size_t left = begin;
-  size_t right = begin + count - 1;
-
-  // First half-iteration of the loop is out here because the termination
-  // condition is in the middle.
-
-  while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
-      (left <= right))
-    left++;
-
-  while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
-      (left <= right) && (right > 0))
-    right--;
-
-  while (left <= right)
-  {
-    // Swap columns.
-    data.swap_cols(left, right);
-
-    // Update the indices for what we changed.
-    size_t t = oldFromNew[left];
-    oldFromNew[left] = oldFromNew[right];
-    oldFromNew[right] = t;
-
-    // See how many points on the left are correct.  When they are correct,
-    // increase the left counter accordingly.  When we encounter one that isn't
-    // correct, stop.  We will switch it later.
-    while (AssignToLeftSubtree(metric, data, vantagePoint, left, mu) &&
-        (left <= right))
-      left++;
-
-    // Now see how many points on the right are correct.  When they are correct,
-    // decrease the right counter accordingly.  When we encounter one that isn't
-    // correct, stop.  We will switch it with the wrong point we found in the
-    // previous loop.
-    while ((!AssignToLeftSubtree(metric, data, vantagePoint, right, mu)) &&
-        (left <= right))
-      right--;
-  }
-
-  Log::Assert(left == right + 1);
-
-  return left;
 }
 
 template<typename BoundType, typename MatType, size_t MaxNumSamples>

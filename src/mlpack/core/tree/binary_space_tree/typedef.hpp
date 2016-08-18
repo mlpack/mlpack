@@ -193,6 +193,73 @@ using VPTree = BinarySpaceTree<MetricType,
                                bound::HollowBallBound,
                                VPTreeSplit>;
 
+/**
+ * A max-split random projection tree. When recursively splitting nodes, the
+ * MaxSplitRPTree class selects a random hyperplane and splits a node by the
+ * hyperplane. The tree holds points in leaf nodes. In contrast to the k-d tree,
+ * children of a MaxSplitRPTree node may overlap.
+ *
+ * @code
+ * @inproceedings{dasgupta2008,
+ *   author = {Dasgupta, Sanjoy and Freund, Yoav},
+ *   title = {Random Projection Trees and Low Dimensional Manifolds},
+ *   booktitle = {Proceedings of the Fortieth Annual ACM Symposium on Theory of
+ *       Computing},
+ *   series = {STOC '08},
+ *   year = {2008},
+ *   pages = {537--546},
+ *   numpages = {10},
+ *   publisher = {ACM},
+ *   address = {New York, NY, USA},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
+ */
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using MaxRPTree = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMaxSplit>;
+
+/**
+ * A mean-split random projection tree. When recursively splitting nodes, the
+ * RPTree class may perform one of two different kinds of split.
+ * Depending on the diameter and the average distance between points, the node
+ * may be split by a random hyperplane or according to the distance from the
+ * mean point. The tree holds points in leaf nodes. In contrast to the k-d tree,
+ * children of a MaxSplitRPTree node may overlap.
+ *
+ * @code
+ * @inproceedings{dasgupta2008,
+ *   author = {Dasgupta, Sanjoy and Freund, Yoav},
+ *   title = {Random Projection Trees and Low Dimensional Manifolds},
+ *   booktitle = {Proceedings of the Fortieth Annual ACM Symposium on Theory of
+ *       Computing},
+ *   series = {STOC '08},
+ *   year = {2008},
+ *   pages = {537--546},
+ *   numpages = {10},
+ *   publisher = {ACM},
+ *   address = {New York, NY, USA},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPTree = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMeanSplit>;
+
 } // namespace tree
 } // namespace mlpack
 

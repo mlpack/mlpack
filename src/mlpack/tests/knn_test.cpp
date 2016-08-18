@@ -977,7 +977,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[20];
+  KNNModel models[24];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -998,6 +998,10 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[17] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, false);
   models[18] = KNNModel(KNNModel::TreeTypes::VP_TREE, true);
   models[19] = KNNModel(KNNModel::TreeTypes::VP_TREE, false);
+  models[20] = KNNModel(KNNModel::TreeTypes::RP_TREE, true);
+  models[21] = KNNModel(KNNModel::TreeTypes::RP_TREE, false);
+  models[22] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1007,7 +1011,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
     arma::mat baselineDistances;
     knn.Search(queryData, 3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 20; ++i)
+    for (size_t i = 0; i < 24; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1051,7 +1055,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[20];
+  KNNModel models[24];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -1072,6 +1076,10 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[17] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, false);
   models[18] = KNNModel(KNNModel::TreeTypes::VP_TREE, true);
   models[19] = KNNModel(KNNModel::TreeTypes::VP_TREE, false);
+  models[20] = KNNModel(KNNModel::TreeTypes::RP_TREE, true);
+  models[21] = KNNModel(KNNModel::TreeTypes::RP_TREE, false);
+  models[22] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1081,7 +1089,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
     arma::mat baselineDistances;
     knn.Search(3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 20; ++i)
+    for (size_t i = 0; i < 24; ++i)
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
