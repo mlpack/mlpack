@@ -451,6 +451,37 @@ class Genome
     }
   }
 
+  void PrintGenome()
+  {
+    printf("---------------------------Genome Start---------------------------\n");
+    const char* enumNeuronTypetring[] = { "NONE", "INPUT", "BIAS", "HIDDEN", "OUTPUT" };
+    const char* enumActivationFuncTypeString[] = { "SIGMOID", "TANH", "LINEAR", "RELU" };
+    const char* boolEnabledString[] = { "False", "True" };
+
+    std::cout << "Neurons: " << aNeuronGenes.size() << std::endl;
+    for(size_t i = 0; i < aNeuronGenes.size(); ++i)
+    {
+      printf("  Gene:(id=%i, type=%s, activation func=%s, response=%f, depth=%.3f)\n",
+             aNeuronGenes[i].Id(),
+             enumNeuronTypetring[aNeuronGenes[i].Type()],
+             enumActivationFuncTypeString[aNeuronGenes[i].ActFuncType()],
+             aNeuronGenes[i].Activation(),
+             aNeuronGenes[i].Depth());
+    }
+
+    std::cout << "Links: " << aLinkGenes.size() << std::endl;
+    for(size_t i = 0; i < aLinkGenes.size(); ++i)
+    {
+      printf("  Link:(from=%i, to=%i, weight=%f, enabled=%s, innovation=%i)\n",
+             aLinkGenes[i].FromNeuronId(),
+             aLinkGenes[i].ToNeuronId(),
+             aLinkGenes[i].Weight(),
+             boolEnabledString[aLinkGenes[i].Enabled()],
+             aLinkGenes[i].InnovationId());
+    }
+    printf("----------------------------Genome End----------------------------\n");
+  }
+
  private:
   //! Genome id.
   int aId;

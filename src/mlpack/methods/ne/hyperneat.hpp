@@ -130,6 +130,17 @@ class HyperNEAT
         return true;
       }
 
+      //Debug
+      Genome bestGenome = aNeat.aPopulation.BestGenome();
+      printf("1");
+      Genome substrateGenome;
+      printf("2");
+      aSubstrate.InitGenome(substrateGenome);
+      aSubstrate.QueryLink(bestGenome, substrateGenome);
+      printf("3");
+      substrateGenome.PrintGenome();
+      printf("4");
+
       // Reproduce next generation.
       aNeat.Reproduce();
       ++generation;

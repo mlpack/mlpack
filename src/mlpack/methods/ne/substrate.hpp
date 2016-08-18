@@ -132,6 +132,8 @@ class Substrate
    */
   void QueryLink(Genome& cppn, Genome& genome)
   {
+    assert(genome.aNeuronGenes.size() = aCoordinates.size());
+
   	// Clear links.
   	genome.aLinkGenes.clear();
     
