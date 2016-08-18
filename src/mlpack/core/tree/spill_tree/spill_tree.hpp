@@ -145,7 +145,7 @@ class SpillTree
    * dataset.  The dataset will not be modified during the building procedure
    * (unlike BinarySpaceTree).
    *
-   * @param data Dataset to create tree from.  This will be copied!
+   * @param data Dataset to create tree from.
    * @param tau Overlapping size.
    * @param maxLeafSize Size of each leaf in the tree.
    * @param rho Balance threshold.
