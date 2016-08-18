@@ -34,6 +34,7 @@ class RPTreeMaxSplit
     //! The value according to which the node is being split.
     ElemType splitVal;
   };
+
   /**
    * Split the node by a random hyperplane.
    *
@@ -58,30 +59,12 @@ class RPTreeMaxSplit
    * @param splitInfo An information about the split.
    */
   template<typename VecType>
-  static bool AssignToLeftNode(
-    const VecType& point,
-    const SplitInfo& splitInfo)
+  static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     return (arma::dot(point, splitInfo.direction) <= splitInfo.splitVal);
   }
 
  private:
-
-  /**
-   * Get random deviation from the median of points multiplied by the direction
-   * obtained in GetRandomDirection().
-   *
-   * @param data The dataset used by the binary space tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
-   * @param count Number of points in this node.
-   * @param direction A random unit vector.
-   */
-  static ElemType GetRandomDeviation(const MatType& data,
-                                     const size_t begin,
-                                     const size_t count,
-                                     const arma::Col<ElemType>& direction);
-
   /**
    * This method finds the position of the hyperplane that will split the node.
    *

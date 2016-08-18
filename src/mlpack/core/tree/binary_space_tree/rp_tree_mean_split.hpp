@@ -39,6 +39,7 @@ class RPTreeMeanSplit
     //! median split.
     bool meanSplit;
   };
+
   /**
    * Split the node according to the mean value in the dimension with maximum
    * width.
@@ -51,7 +52,7 @@ class RPTreeMeanSplit
    * @param splitInfo An information about the split. This information contains
    *    the direction and the value.
    */
-  static bool SplitNode(const BoundType& /*bound*/,
+  static bool SplitNode(const BoundType& /* bound */,
                         MatType& data,
                         const size_t begin,
                         const size_t count,
@@ -64,9 +65,7 @@ class RPTreeMeanSplit
    * @param splitInfo An information about the split.
    */
   template<typename VecType>
-  static bool AssignToLeftNode(
-    const VecType& point,
-    const SplitInfo& splitInfo)
+  static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     if (splitInfo.meanSplit)
       return arma::dot(point - splitInfo.mean, point - splitInfo.mean) <=

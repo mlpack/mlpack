@@ -44,8 +44,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
 
     // Get the median value of the scalar products of the normal and the
     // sampled points. The node will be split according to this value.
-    if (!GetDotMedian(data, samples, splitInfo.direction, splitInfo.splitVal))
-      return false;
+    return GetDotMedian(data, samples, splitInfo.direction, splitInfo.splitVal);
   }
   else
   {
@@ -54,11 +53,8 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
 
     // Get the median of the distances between the mean point and the sampled
     // points. The node will be split according to this value.
-    if (!GetMeanMedian(data, samples, splitInfo.mean, splitInfo.splitVal))
-      return false;
+    return GetMeanMedian(data, samples, splitInfo.mean, splitInfo.splitVal);
   }
-
-  return true;
 }
 
 template<typename BoundType, typename MatType>
@@ -137,8 +133,6 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
 
   return true;
 }
-
-
 
 } // namespace tree
 } // namespace mlpack

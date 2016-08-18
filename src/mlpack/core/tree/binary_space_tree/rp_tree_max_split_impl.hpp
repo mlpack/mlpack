@@ -16,10 +16,10 @@ namespace tree {
 
 template<typename BoundType, typename MatType>
 bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
-                                                  MatType& data,
-                                                  const size_t begin,
-                                                  const size_t count,
-                                                  SplitInfo& splitInfo)
+                                                   MatType& data,
+                                                   const size_t begin,
+                                                   const size_t count,
+                                                   SplitInfo& splitInfo)
 {
   splitInfo.direction.zeros(data.n_rows);
 
@@ -27,44 +27,8 @@ bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
   math::RandVector(splitInfo.direction);
 
   // Get the value according to which we will perform the split.
-  if (!GetSplitVal(data, begin, count, splitInfo.direction, splitInfo.splitVal))
-    return false;
-
-  return true;
-}
-
-template<typename BoundType, typename MatType>
-typename MatType::elem_type RPTreeMaxSplit<BoundType, MatType>::
-GetRandomDeviation(const MatType& data,
-                   const size_t begin,
-                   const size_t count,
-                   const arma::Col<ElemType>& direction)
-{
-  // Choose a random point
-  size_t index = math::RandInt(begin, begin + count);
-
-  ElemType furthestDistance = 0;
-
-  // Find the furthest point from the point that we chose
-  for (size_t i = begin; i < index; i++)
-  {
-    const ElemType dist = metric::SquaredEuclideanDistance::Evaluate(
-        data.col(index), data.col(i));
-    if (dist > furthestDistance)
-      furthestDistance = dist;
-  }
-
-  for (size_t i = index; i < begin + count; i++)
-  {
-    const ElemType dist = metric::SquaredEuclideanDistance::Evaluate(
-        data.col(index), data.col(i));
-    if (dist > furthestDistance)
-      furthestDistance = dist;
-  }
-
-  // Get a random deviation.
-  return math::Random(-6.0 * std::sqrt(furthestDistance / data.n_rows),
-                      6.0 * std::sqrt(furthestDistance / data.n_rows));
+  return GetSplitVal(data, begin, count, splitInfo.direction,
+      splitInfo.splitVal);
 }
 
 template<typename BoundType, typename MatType>
@@ -96,8 +60,13 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   splitVal = arma::median(values);
 
   // Add a random deviation to the median.
-  // This algorithm differs from the method suggested in the
-  // random projection tree paper.
+  // This algorithm differs from the method suggested in the random projection
+  // tree paper, for two reasons:
+  //   1. Evaluating the method proposed in the paper is time-consuming, since
+  //      we must solve the furthest-pair problem.
+  //   2. The proposed method does not appear to guarantee that a valid split
+  //      value will be generated (i.e. it can produce a split value where there
+  //      may be no points on the left or the right).
   splitVal += math::Random((minimum - splitVal) * 0.75,
       (maximum - splitVal) * 0.75);
 
