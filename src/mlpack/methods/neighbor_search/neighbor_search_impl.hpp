@@ -11,6 +11,7 @@
 #include <mlpack/core.hpp>
 
 #include "neighbor_search_rules.hpp"
+#include <mlpack/core/tree/spill_tree/is_spill_tree.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -686,7 +687,19 @@ SingleTreeTraversalType>::Search(const size_t k,
     // Create the traverser.
     TraversalType<RuleType> traverser(rules);
 
-    traverser.Traverse(*referenceTree, *referenceTree);
+    if (tree::IsSpillTree<Tree>::value)
+    {
+      // For Dual Tree Search on SpillTree, the queryTree must be built with non
+      // overlapping (tau = 0).
+      Tree queryTree(*referenceSet);
+      traverser.Traverse(queryTree, *referenceTree);
+    }
+    else
+    {
+      traverser.Traverse(*referenceTree, *referenceTree);
+      // Next time we perform this search, we'll need to reset the tree.
+      treeNeedsReset = true;
+    }
 
     scores += rules.Scores();
     baseCases += rules.BaseCases();
@@ -695,9 +708,6 @@ SingleTreeTraversalType>::Search(const size_t k,
         << std::endl;
     Log::Info << rules.BaseCases() << " base cases were calculated."
         << std::endl;
-
-    // Next time we perform this search, we'll need to reset the tree.
-    treeNeedsReset = true;
   }
 
   rules.GetResults(*neighborPtr, *distancePtr);

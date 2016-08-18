@@ -27,13 +27,6 @@ namespace neighbor /** Neighbor-search routines.  These include
                     * searches. */ {
 
 // Forward declaration.
-template<typename MetricType,
-         typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitBoundT, typename SplitMatT> class SplitType>
-class SpillSearch;
-
-// Forward declaration.
 template<typename SortPolicy>
 class TrainVisitor;
 
@@ -371,12 +364,6 @@ class NeighborSearch
   //! The NSModel class should have access to internal members.
   template<typename SortPol>
   friend class TrainVisitor;
-
-  template<typename MetricT,
-           typename MatT,
-           template<typename HyperplaneMetricType> class HyperplaneType,
-           template<typename SplitBoundT, typename SplitMatT> class SplitType>
-  friend class SpillSearch;
 }; // class NeighborSearch
 
 } // namespace neighbor

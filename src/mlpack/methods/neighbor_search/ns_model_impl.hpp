@@ -77,7 +77,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 
 //! Bichromatic neighbor search specialized for SPTrees.
 template<typename SortPolicy>
-void BiSearchVisitor<SortPolicy>::operator()(NSSpillType* ns) const
+void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
 {
   if (ns)
   {
@@ -85,7 +85,7 @@ void BiSearchVisitor<SortPolicy>::operator()(NSSpillType* ns) const
     {
       // For Dual Tree Search on SpillTrees, the queryTree must be built with
       // non overlapping (tau = 0).
-      typename NSSpillType::Tree queryTree(std::move(querySet), 0 /* tau*/,
+      typename SpillKNN::Tree queryTree(std::move(querySet), 0 /* tau*/,
           leafSize, rho);
       ns->Search(&queryTree, k, neighbors, distances);
     }
@@ -168,7 +168,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 
 //! Train specialized for SPTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSSpillType* ns) const
+void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
 {
   if (ns)
   {
@@ -176,11 +176,11 @@ void TrainVisitor<SortPolicy>::operator ()(NSSpillType* ns) const
       ns->Train(std::move(referenceSet));
     else
     {
-      typename NSSpillType::Tree* tree = new typename NSSpillType::Tree(
+      typename SpillKNN::Tree* tree = new typename SpillKNN::Tree(
           std::move(referenceSet), tau, leafSize, rho);
       ns->Train(tree);
       // Give the model ownership of the tree.
-      ns->neighborSearch.treeOwner = true;
+      ns->treeOwner = true;
     }
   }
   else
@@ -295,17 +295,6 @@ void serialize(
                    TraversalType,
                    SingleTreeTraversalType>& ns,
     const unsigned int version)
-{
-  ns.Serialize(ar, version);
-}
-
-/**
- * Non-intrusive serialization for SpillSearch class. We need this definition
- * because we are going to use the serialize function for boost variant, which
- * will look for a serialize function for its member types.
- */
-template<typename Archive>
-void serialize(Archive& ar, NSSpillType& ns, const unsigned int version)
 {
   ns.Serialize(ar, version);
 }
@@ -475,7 +464,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
           epsilon);
       break;
     case SPILL_TREE:
-      nSearch = new NSSpillType(naive, singleMode, tau, leafSize, rho, epsilon);
+      nSearch = new SpillKNN(naive, singleMode, epsilon);
       break;
   }
 
