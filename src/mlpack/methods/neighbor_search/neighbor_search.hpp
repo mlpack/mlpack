@@ -48,8 +48,10 @@ class TrainVisitor;
  * @tparam MetricType The metric to use for computation.
  * @tparam MatType The type of data matrix.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
- * @tparam TraversalType The type of traversal to use (defaults to the tree's
- *      default traverser).
+ * @tparam DualTreeTraversalType The type of dual tree traversal to use
+ *     (defaults to the tree's default traverser).
+ * @tparam SingleTreeTraversalType The type of single tree traversal to use
+ *     (defaults to the tree's default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::EuclideanDistance,
@@ -57,7 +59,7 @@ template<typename SortPolicy = NearestNeighborSort,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::KDTree,
-         template<typename RuleType> class TraversalType =
+         template<typename RuleType> class DualTreeTraversalType =
              TreeType<MetricType,
                       NeighborSearchStat<SortPolicy>,
                       MatType>::template DualTreeTraverser,
