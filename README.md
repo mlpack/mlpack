@@ -71,8 +71,8 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 4. Building mlpack from source
 ------------------------------
 
-(see also [Building mlpack under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild))
 (see also [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html))
+(see also [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild))
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
