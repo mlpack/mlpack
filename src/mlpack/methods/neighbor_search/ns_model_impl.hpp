@@ -470,6 +470,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case MAX_RP_TREE:
       nSearch = new NSType<SortPolicy, tree::MaxRPTree>(naive, singleMode,
           epsilon);
+      break;
     case SPILL_TREE:
       nSearch = new SpillKNN(naive, singleMode, epsilon);
       break;
