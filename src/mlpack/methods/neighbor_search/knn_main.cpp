@@ -84,10 +84,14 @@ PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "S");
-PARAM_FLAG("greedy", "If true, greedy single-tree search is used.", "G");
+PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
+    "'dual_tree', 'greedy'.", "a", "dual_tree");
+PARAM_FLAG("naive", "(Deprecated) If true, O(n^2) naive mode is used for "
+    "computation. Will be removed in mlpack 3.0.0. Use '--algorithm naive' "
+    "instead.", "N");
+PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
+    "(as opposed to dual-tree search). Will be removed in mlpack 3.0.0. Use "
+    "'--algorithm single_tree' instead.", "S");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
@@ -193,18 +197,48 @@ int main(int argc, char *argv[])
   // We either have to load the reference data, or we have to load the model.
   NSModel<NearestNeighborSort> knn;
 
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
-  const bool greedy = CLI::HasParam("greedy");
+  const string algorithm = CLI::GetParam<string>("algorithm");
+  NeighborSearchMode searchMode = DUAL_TREE_MODE;
 
-  NeighborSearchMode searchMode;
-  if (naive)
+  if (algorithm == "naive")
     searchMode = NAIVE_MODE;
-  else if (singleMode)
+  else if (algorithm == "single_tree")
     searchMode = SINGLE_TREE_MODE;
-  else if (greedy)
+  else if (algorithm == "dual_tree")
+    searchMode = DUAL_TREE_MODE;
+  else if (algorithm == "greedy")
     searchMode = GREEDY_SINGLE_TREE_MODE;
-  else searchMode = DUAL_TREE_MODE;
+  else
+    Log::Fatal << "Unknown neighbor search algorithm '" << algorithm << "'; "
+        << "valid choices are 'naive', 'single_tree', 'dual_tree' and 'greedy'."
+        << endl;
+
+  if (CLI::HasParam("single_mode"))
+  {
+    searchMode = SINGLE_TREE_MODE;
+
+    Log::Warn << "--single_mode is deprecated.  Will be removed in mlpack "
+        "3.0.0. Use '--algorithm single_tree' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "single_tree")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --single_mode." << endl;
+  }
+
+  if (CLI::HasParam("naive"))
+  {
+    searchMode = NAIVE_MODE;
+
+    Log::Warn << "--naive is deprecated.  Will be removed in mlpack 3.0.0. Use "
+        "'--algorithm naive' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "naive")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --naive." << endl;
+
+    if (CLI::HasParam("single_mode"))
+      Log::Warn << "--single_mode ignored because --naive is present." << endl;
+  }
 
   if (CLI::HasParam("reference_file"))
   {
@@ -243,7 +277,7 @@ int main(int argc, char *argv[])
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'cover', 'r', 'r-star', 'x', 'ball', "
-          << "'hilbert-r', 'r-plus' and 'r-plus-plus', and 'spill'." << endl;
+          << "'hilbert-r', 'r-plus', 'r-plus-plus' and 'spill'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -303,12 +337,6 @@ int main(int argc, char *argv[])
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
       Log::Fatal << "than or equal to the number of reference points (";
       Log::Fatal << knn.Dataset().n_cols << ")." << endl;
-    }
-
-    // Naive mode overrides single mode.
-    if (singleMode && naive)
-    {
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
     }
 
     // Now run the search.
