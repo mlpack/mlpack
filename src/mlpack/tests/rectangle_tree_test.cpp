@@ -185,9 +185,9 @@ void CheckExactContainment(const TreeType& tree)
       double max = -1.0 * DBL_MAX;
       for (size_t j = 0; j < tree.NumChildren(); j++)
       {
-        if(tree.Child(j).Bound()[i].Lo() < min)
+        if (tree.Child(j).Bound()[i].Lo() < min)
           min = tree.Child(j).Bound()[i].Lo();
-        if(tree.Child(j).Bound()[i].Hi() > max)
+        if (tree.Child(j).Bound()[i].Hi() > max)
           max = tree.Child(j).Bound()[i].Hi();
       }
 

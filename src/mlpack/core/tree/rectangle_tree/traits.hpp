@@ -54,6 +54,12 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 /**
@@ -102,6 +108,12 @@ class TreeTraits<RectangleTree<MetricType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

@@ -198,10 +198,10 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       arma::mat& W,
                       const arma::mat& H)
   {
-    if(!isStart) (*it)++;
+    if (!isStart) (*it)++;
     else isStart = false;
 
-    if(*it == V.end())
+    if (*it == V.end())
     {
         delete it;
         it = new arma::sp_mat::const_iterator(V.begin());
@@ -215,7 +215,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
 
     deltaW += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
                                       * arma::trans(H.col(currentUserIndex));
-    if(kw != 0) deltaW -= kw * W.row(currentItemIndex);
+    if (kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
     W.row(currentItemIndex) += u*deltaW;
   }
@@ -243,7 +243,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
 
     deltaH += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
                                         * arma::trans(W.row(currentItemIndex));
-    if(kh != 0) deltaH -= kh * H.col(currentUserIndex);
+    if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
     H.col(currentUserIndex) += u * deltaH;
   }
