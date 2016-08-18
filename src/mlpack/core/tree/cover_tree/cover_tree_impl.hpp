@@ -479,7 +479,8 @@ template<
 >
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const CoverTree& other) :
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+    dataset((other.parent == NULL && other.localDataset) ?
+        new MatType(*other.dataset) : other.dataset),
     point(other.point),
     scale(other.scale),
     base(other.base),
@@ -489,7 +490,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     localMetric(false),
-    localDataset(other.parent == NULL),
+    localDataset(other.parent == NULL && other.localDataset),
     metric(other.metric),
     distanceComps(0)
 {

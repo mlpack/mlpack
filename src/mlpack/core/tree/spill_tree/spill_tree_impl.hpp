@@ -140,9 +140,11 @@ SpillTree(const SpillTree& other) :
     stat(other.stat),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    // Copy matrix, but only if we are the root.
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
-    localDataset(other.parent == NULL)
+    // Copy matrix, but only if we are the root and the other tree has its own
+    // copy of the dataset.
+    dataset((other.parent == NULL && other.localDataset) ?
+        new MatType(*other.dataset) : other.dataset),
+    localDataset(other.parent == NULL && other.localDataset)
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -162,7 +164,7 @@ SpillTree(const SpillTree& other) :
     pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
 
   // Propagate matrix, but only if we are the root.
-  if (parent == NULL)
+  if (parent == NULL && localDataset)
   {
     std::queue<SpillTree*> queue;
     if (left)
