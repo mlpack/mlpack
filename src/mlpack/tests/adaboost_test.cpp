@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != predictedLabels(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 

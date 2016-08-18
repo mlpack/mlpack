@@ -101,7 +101,7 @@ void HMMRegression::Filter(const arma::mat& predictors,
   Forward(predictors, responses, scales, forwardProb);
 
   // Propagate state, predictors ahead
-  if(ahead != 0) {
+  if (ahead != 0) {
     forwardProb = pow(transition, ahead)*forwardProb;
     forwardProb = forwardProb.cols(0, forwardProb.n_cols-ahead-1);
   }

@@ -94,7 +94,7 @@ void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
     }
 
 //    // If we went below min fill, delete this node and reinsert all points.
-//    if(tree->Count() < tree->MinLeafSize()) {
+//    if (tree->Count() < tree->MinLeafSize()) {
 //      std::vector<int> pointIndices(tree->Count());
 //      for(size_t i = 0; i < tree->Count(); i++) {
 //        pointIndices[i] = tree->Points()[i];
