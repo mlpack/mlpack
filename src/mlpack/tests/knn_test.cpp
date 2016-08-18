@@ -913,8 +913,8 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
   // If we are sure that tau is a valid strict upper bound of the kth nearest
   // neighbor of the query points, then we can be sure that we will get an exact
   // solution.
-  SpillSearch<> spTreeSearch(dataset, false, true,
-      maxDist * 1.01 /* tau parameter */);
+  SpillKNN::Tree referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
+  SpillKNN spTreeSearch(&referenceTree);
 
   for (size_t mode = 0; mode < 2; mode++)
   {
@@ -947,7 +947,9 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
   {
     double tau = test * 0.1;
 
-    SpillSearch<> spTreeSearch(dataset, false, false, tau);
+    SpillKNN::Tree referenceTree(dataset, tau);
+    SpillKNN spTreeSearch(&referenceTree);
+
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;
 
