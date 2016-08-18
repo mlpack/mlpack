@@ -5,7 +5,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
@@ -1352,6 +1352,237 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
       dataset(row, col) = row + col;
 
   TreeType root(dataset);
+}
+
+BOOST_AUTO_TEST_CASE(MaxRPTreeTest)
+{
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
+template<typename TreeType>
+bool CheckHyperplaneSplit(const TreeType& tree)
+{
+  typedef typename TreeType::ElemType ElemType;
+
+  const typename TreeType::Mat& dataset = tree.Dataset();
+  arma::Mat<typename TreeType::ElemType> mat(dataset.n_rows + 1,
+      tree.Left()->NumDescendants() + tree.Right()->NumDescendants());
+
+  // We will try to find a hyperplane that splits the node.
+  // The hyperplane may be represented as
+  // a_1 * x_1 + ... + a_n * x_n + a_{n + 1} = 0.
+  // We have to solve the system of inequalities (mat^t) * x <= 0,
+  // where x[0], ... , x[dataset.n_rows-1] are the components of the normal
+  // to the hyperplane and x[dataset.n_rows] is the position of the hyperplane
+  // i.e. x = (a_1, ... , a_{n + 1}).
+  // Each column of the matrix consists of a point and 1.
+  // In such a way, the inner product of a column and x is equal to the value
+  // of the hyperplane expression.
+  // The hyperplane splits the node if the expression takes on opposite
+  // values on node's children.
+
+  for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
+  {
+    for (size_t k = 0; k < dataset.n_rows; k++)
+      mat(k, i) = - dataset(k, tree.Left()->Descendant(i));
+
+    mat(dataset.n_rows, i) = -1;
+  }
+
+  for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
+  {
+    for (size_t k = 0; k < dataset.n_rows; k++)
+      mat(k, i + tree.Left()->NumDescendants()) =
+          dataset(k, tree.Right()->Descendant(i));
+
+    mat(dataset.n_rows, i + tree.Left()->NumDescendants()) = 1;
+  }
+
+  arma::Col<ElemType> x(dataset.n_rows + 1);
+  x.zeros();
+  // Define an initial value.
+  x[0] = 1.0;
+  x[1] = -arma::mean(
+      dataset.cols(tree.Begin(), tree.Begin() + tree.Count() - 1).row(0));
+
+  const size_t numIters = 1000000;
+  const ElemType delta = 1e-4;
+
+  // We will solve the system using a simple gradient method.
+  bool success = false;
+  for (size_t it = 0; it < numIters; it++)
+  {
+    success = true;
+    for (size_t k = 0; k < tree.Count(); k++)
+    {
+      ElemType result = arma::dot(mat.col(k), x);
+      if (result > 0)
+      {
+        x -= mat.col(k) * delta;
+        success = false;
+      }
+    }
+
+    // The norm of the direction shouldn't be equal to zero.
+    if (arma::norm(x.rows(0, dataset.n_rows-1)) < 1e-8)
+    {
+      x[math::RandInt(0, dataset.n_rows)] = 1.0;
+      success = false;
+    }
+
+    if (success)
+      break;
+  }
+
+  return success;
+}
+
+template<typename TreeType>
+void CheckMaxRPTreeSplit(const TreeType& tree)
+{
+  if (tree.IsLeaf())
+    return;
+
+  BOOST_REQUIRE_EQUAL(CheckHyperplaneSplit(tree), true);
+
+  CheckMaxRPTreeSplit(*tree.Left());
+  CheckMaxRPTreeSplit(*tree.Right());
+}
+
+BOOST_AUTO_TEST_CASE(MaxRPTreeSplitTest)
+{
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  arma::mat dataset;
+  dataset.randu(8, 1000);
+  TreeType root(dataset);
+
+  CheckMaxRPTreeSplit(root);
+}
+
+BOOST_AUTO_TEST_CASE(RPTreeTest)
+{
+  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
+template<typename TreeType, typename MetricType>
+void CheckRPTreeSplit(const TreeType& tree)
+{
+  typedef typename TreeType::ElemType ElemType;
+  if (tree.IsLeaf())
+    return;
+
+  if (!CheckHyperplaneSplit(tree))
+  {
+    // Check if that was mean split.
+    arma::Col<ElemType> center;
+    tree.Left()->Bound().Center(center);
+    ElemType maxDist = 0;
+    for (size_t k =0; k < tree.Left()->NumDescendants(); k++)
+    {
+      ElemType dist = MetricType::Evaluate(center,
+          tree.Dataset().col(tree.Left()->Descendant(k)));
+
+      if (dist > maxDist)
+        maxDist = dist;
+    }
+
+    for (size_t k =0; k < tree.Right()->NumDescendants(); k++)
+    {
+      ElemType dist = MetricType::Evaluate(center,
+          tree.Dataset().col(tree.Right()->Descendant(k)));
+
+      BOOST_REQUIRE_LE(maxDist, dist *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+    }
+    
+  }
+
+  CheckRPTreeSplit<TreeType, MetricType>(*tree.Left());
+  CheckRPTreeSplit<TreeType, MetricType>(*tree.Right());
+}
+
+BOOST_AUTO_TEST_CASE(RPTreeSplitTest)
+{
+  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  arma::mat dataset;
+  dataset.randu(8, 1000);
+  TreeType root(dataset);
+
+  CheckRPTreeSplit<TreeType, EuclideanDistance>(root);
 }
 
 // Recursively checks that each node contains all points that it claims to have.

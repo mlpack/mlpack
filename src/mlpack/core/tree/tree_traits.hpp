@@ -79,7 +79,7 @@ class TreeTraits
   static const bool HasOverlappingChildren = true;
 
   /**
-   * This is true if Point(0) is the centroid of the node.
+   * This is true if the first point of each node is the centroid of its bound.
    */
   static const bool FirstPointIsCentroid = false;
 

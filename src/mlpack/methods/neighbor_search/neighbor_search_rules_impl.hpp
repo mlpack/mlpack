@@ -140,7 +140,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   double bestDistance = candidates[queryIndex].top().first;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
-  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+  return (SortPolicy::IsBetter(distance, bestDistance)) ?
+      SortPolicy::ConvertToScore(distance) : DBL_MAX;
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -153,11 +154,13 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
   if (oldScore == DBL_MAX)
     return oldScore;
 
+  const double distance = SortPolicy::ConvertToDistance(oldScore);
+
   // Just check the score again against the distances.
   double bestDistance = candidates[queryIndex].top().first;
   bestDistance = SortPolicy::Relax(bestDistance, epsilon);
 
-  return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? oldScore : DBL_MAX;
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -310,7 +313,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     traversalInfo.LastReferenceNode() = &referenceNode;
     traversalInfo.LastScore() = distance;
 
-    return distance;
+    return SortPolicy::ConvertToScore(distance);
   }
   else
   {
@@ -330,10 +333,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
   if (oldScore == DBL_MAX)
     return oldScore;
 
+  const double distance = SortPolicy::ConvertToDistance(oldScore);
+
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);
 
-  return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? oldScore : DBL_MAX;
 }
 
 // Calculate the bound for a given query node in its current state and update

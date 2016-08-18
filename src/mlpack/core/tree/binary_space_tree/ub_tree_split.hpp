@@ -24,6 +24,20 @@ class UBTreeSplit
                                     uint64_t>::type AddressElemType;
 
   /**
+   * This class performs the actual splitting i.e. it reorders the dataset.
+   * This variable should be equal to true if the class does not perform the
+   * actual splitting.
+   */
+  static constexpr bool NeedRearrangeDataset = false;
+
+  //! An information about the partition.
+  struct SplitInfo
+  {
+    //! This vector contains addresses of all points in the dataset.
+    std::vector<std::pair<arma::Col<AddressElemType>, size_t>>* addresses;
+  };
+
+  /**
    * Split the node according to the median address of points contained in the
    * node.
    *
@@ -32,21 +46,44 @@ class UBTreeSplit
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.
-   * @param splitCol The index at which the dataset is divided into two parts
-   *    after the rearrangement.
+   * @param splitInfo An information about the split (not used here).
    */
   bool SplitNode(BoundType& bound,
                  MatType& data,
                  const size_t begin,
                  const size_t count,
-                 size_t& splitCol);
+                 SplitInfo&  splitInfo);
 
-  bool SplitNode(BoundType& bound,
-                 MatType& data,
-                 const size_t begin,
-                 const size_t count,
-                 size_t& splitCol,
-                 std::vector<size_t>& oldFromNew);
+  /**
+   * Rearrange the dataset according to the addresses.
+   *
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   */
+  static size_t PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo);
+
+  /**
+   * Rearrange the dataset according to the addresses.
+   *
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  static size_t PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo,
+                             std::vector<size_t>& oldFromNew);
 
  private:
   //! This vector contains addresses of all points in the dataset.
@@ -58,19 +95,6 @@ class UBTreeSplit
    * @param data The dataset used by the binary space tree.
    */
   void InitializeAddresses(const MatType& data);
-
-  /**
-   * Calculate addresses for all points in the dataset.
-   *
-   * @param data The dataset used by the binary space tree.
-   * @param count Number of points in this node.
-   */
-  void PerformSplit(MatType& data,
-                       const size_t count);
-
-  void PerformSplit(MatType& data,
-                       const size_t count,
-                       std::vector<size_t>& oldFromNew);
 
   //! A comparator for sorting addresses.
   static bool ComparePair(

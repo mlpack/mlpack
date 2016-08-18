@@ -19,7 +19,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
                                                 MatType& data,
                                                 const size_t begin,
                                                 const size_t count,
-                                                size_t& splitCol)
+                                                SplitInfo& splitInfo)
 {
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
   if (begin == 0 && count == data.n_cols)
@@ -31,8 +31,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     // a number of distinct samples and find the median.
     std::sort(addresses.begin(), addresses.end(), ComparePair);
 
-    // Rearrange dataset.
-    PerformSplit(data, count);
+    // Save the vector in order to rearrange the dataset later.
+    splitInfo.addresses = &addresses;
+  }
+  else
+  {
+    // We have already rearranged the dataset.
+    splitInfo.addresses = NULL;
   }
 
   // The bound shouldn't contain too many subrectangles.
@@ -129,113 +134,8 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
   }
   bound.UpdateAddressBounds();
 
-  // Since the dataset is sorted we can easily get the split column.
-  splitCol = begin + count / 2;
-  
   return true;
 }
-
-template<typename BoundType, typename MatType>
-bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
-                                                MatType& data,
-                                                const size_t begin,
-                                                const size_t count,
-                                                size_t& splitCol,
-                                                std::vector<size_t>& oldFromNew)
-{
-  constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
-  if (begin == 0 && count == data.n_cols)
-  {
-    InitializeAddresses(data);
-
-    std::sort(addresses.begin(), addresses.end(),ComparePair);
-
-    PerformSplit(data, count, oldFromNew);
-  }
-
-  if (begin + count < data.n_cols)
-  {
-    size_t row = 0;
-    arma::Col<AddressElemType>& lo = addresses[begin + count - 1].first;
-    const arma::Col<AddressElemType>& hi = addresses[begin + count].first;
-
-    for (; row < data.n_rows; row++)
-      if (lo[row] != hi[row])
-        break;
-
-    size_t bit = 0;
-
-    for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
-        break;
-
-    bit++;
-
-    if (bit == order)
-    {
-      bit = 0;
-      row++;
-    }
-    else
-    {
-      for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
-      row++;
-    }
-
-    for (; row < data.n_rows; row++)
-      for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit)); 
-  }
-  if (begin > 0)
-  {
-    size_t row = 0;
-    const arma::Col<AddressElemType>& lo = addresses[begin - 1].first;
-    arma::Col<AddressElemType>& hi = addresses[begin].first;
-
-    for (; row < data.n_rows; row++)
-      if (lo[row] != hi[row])
-        break;
-
-    size_t bit = 0;
-
-    for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
-        break;
-
-    bit++;
-
-    if (bit == order)
-    {
-      bit = 0;
-      row++;
-    }
-    else
-    {
-      for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
-      row++;
-    }
-
-    for (; row < data.n_rows; row++)
-      for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit)); 
-  }
-
-  for (size_t k = 0; k < bound.Dim(); k++)
-  {
-    bound.LoAddress()[k] = addresses[begin].first[k];
-    bound.HiAddress()[k] = addresses[begin + count - 1].first[k];
-  }
-
-  bound.UpdateAddressBounds();
-  splitCol = begin + count / 2;
-
-  return true;
-}
-
 
 template<typename BoundType, typename MatType>
 void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
@@ -252,72 +152,90 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
 }
 
 template<typename BoundType, typename MatType>
-void UBTreeSplit<BoundType, MatType>::PerformSplit(
+size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
     MatType& data,
-    const size_t count)
+    const size_t begin,
+    const size_t count,
+    const SplitInfo& splitInfo)
 {
-  std::vector<size_t> newFromOld(data.n_cols);
-  std::vector<size_t> oldFromNew(data.n_cols);
-
-  for (size_t i = 0; i < count; i++)
+  // For the first time we have to rearrange the dataset.
+  if (splitInfo.addresses)
   {
-    newFromOld[i] = i;
-    oldFromNew[i] = i;
+    std::vector<size_t> newFromOld(data.n_cols);
+    std::vector<size_t> oldFromNew(data.n_cols);
+
+    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    {
+      newFromOld[i] = i;
+      oldFromNew[i] = i;
+    }
+
+    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    {
+      size_t index = (*splitInfo.addresses)[i].second;
+      size_t oldI = oldFromNew[i];
+      size_t newIndex = newFromOld[index];
+
+      data.swap_cols(i, newFromOld[index]);
+
+      size_t tmp = newFromOld[index];
+      newFromOld[index] = i;
+      newFromOld[oldI] = tmp;
+
+      tmp = oldFromNew[i];
+      oldFromNew[i] = oldFromNew[newIndex];
+      oldFromNew[newIndex] = tmp;
+    }
   }
 
-  for (size_t i = 0; i < count; i++)
-  {
-    size_t index = addresses[i].second;
-    size_t oldI = oldFromNew[i];
-    size_t newIndex = newFromOld[index];
-
-    data.swap_cols(i, newFromOld[index]);
-
-    size_t tmp = newFromOld[index];
-    newFromOld[index] = i;
-    newFromOld[oldI] = tmp;
-
-    tmp = oldFromNew[i];
-    oldFromNew[i] = oldFromNew[newIndex];
-    oldFromNew[newIndex] = tmp;
-  }
+  // Since the dataset is sorted we can easily obtain the split column.
+  return begin + count / 2;
 }
 
 template<typename BoundType, typename MatType>
-void UBTreeSplit<BoundType, MatType>::PerformSplit(
+size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
     MatType& data,
+    const size_t begin,
     const size_t count,
+    const SplitInfo& splitInfo,
     std::vector<size_t>& oldFromNew)
 {
-  std::vector<size_t> newFromOld(data.n_cols);
-  std::vector<size_t> newToOld(data.n_cols);
-
-  for (size_t i = 0; i < count; i++)
+  // For the first time we have to rearrange the dataset.
+  if (splitInfo.addresses)
   {
-    newFromOld[i] = i;
-    newToOld[i] = i;
+    std::vector<size_t> newFromOld(data.n_cols);
+    std::vector<size_t> newToOld(data.n_cols);
+
+    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    {
+      newFromOld[i] = i;
+      newToOld[i] = i;
+    }
+
+    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    {
+      size_t index = (*splitInfo.addresses)[i].second;
+      size_t oldI = newToOld[i];
+      size_t newIndex = newFromOld[index];
+
+      data.swap_cols(i, newFromOld[index]);
+
+      size_t tmp = newFromOld[index];
+      newFromOld[index] = i;
+      newFromOld[oldI] = tmp;
+
+      tmp = newToOld[i];
+      newToOld[i] = newToOld[newIndex];
+      newToOld[newIndex] = tmp;
+
+      tmp = oldFromNew[i];
+      oldFromNew[i] = oldFromNew[newIndex];
+      oldFromNew[newIndex] = tmp;
+    }
   }
 
-  for (size_t i = 0; i < count; i++)
-  {
-    size_t index = addresses[i].second;
-    size_t oldI = newToOld[i];
-    size_t newIndex = newFromOld[index];
-
-    data.swap_cols(i, newFromOld[index]);
-
-    size_t tmp = newFromOld[index];
-    newFromOld[index] = i;
-    newFromOld[oldI] = tmp;
-
-    tmp = newToOld[i];
-    newToOld[i] = newToOld[newIndex];
-    newToOld[newIndex] = tmp;
-
-    tmp = oldFromNew[i];
-    oldFromNew[i] = oldFromNew[newIndex];
-    oldFromNew[newIndex] = tmp;
-  }
+  // Since the dataset is sorted we can easily obtain the split column.
+  return begin + count / 2;
 }
 
 } // namespace tree

@@ -338,9 +338,6 @@ class CoverTree
   math::RangeType<ElemType> RangeDistance(const arma::vec& other,
                                           const ElemType distance) const;
 
-  //! Returns true: this tree does have self-children.
-  static bool HasSelfChildren() { return true; }
-
   //! Get the parent node.
   CoverTree* Parent() const { return parent; }
   //! Modify the parent node.

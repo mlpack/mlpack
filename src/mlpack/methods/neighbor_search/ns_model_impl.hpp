@@ -394,6 +394,18 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
           epsilon);
       break;
+    case VP_TREE:
+      nSearch = new NSType<SortPolicy, tree::VPTree>(naive, singleMode,
+          epsilon);
+      break;
+    case RP_TREE:
+      nSearch = new NSType<SortPolicy, tree::RPTree>(naive, singleMode,
+          epsilon);
+      break;
+    case MAX_RP_TREE:
+      nSearch = new NSType<SortPolicy, tree::MaxRPTree>(naive, singleMode,
+          epsilon);
+      break;
     case UB_TREE:
       nSearch = new NSType<SortPolicy, tree::UBTree>(naive, singleMode,
           epsilon);
@@ -482,6 +494,12 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case VP_TREE:
+      return "vantage point tree";
+    case RP_TREE:
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
     case UB_TREE:
       return "UB tree";
     default:

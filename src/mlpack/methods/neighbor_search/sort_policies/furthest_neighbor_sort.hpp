@@ -144,6 +144,31 @@ class FurthestNeighborSort
       return DBL_MAX;
     return (1 / (1 - epsilon)) * value;
   }
+
+  /**
+   * Convert the given distance to a score.  Lower scores are better, but for
+   * furthest neighbor search, larger distances are better.  Therefore we must
+   * invert the given distance.
+   */
+  static inline double ConvertToScore(const double distance)
+  {
+    if (distance == DBL_MAX)
+      return 0.0;
+    else if (distance == 0.0)
+      return DBL_MAX;
+    else
+      return (1.0 / distance);
+  }
+
+  /**
+   * Convert the given score back to a distance.  This is the inverse of the
+   * operation of converting a distance to a score, and again, for furthest
+   * neighbor search, corresponds to inverting the value.
+   */
+  static inline double ConvertToDistance(const double score)
+  {
+    return ConvertToScore(score); // The two operations are identical.
+  }
 };
 
 } // namespace neighbor

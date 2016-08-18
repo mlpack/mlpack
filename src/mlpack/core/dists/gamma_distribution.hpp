@@ -63,6 +63,14 @@ class GammaDistribution
     GammaDistribution(const arma::mat& data, const double tol = 1e-8);
 
     /**
+     * Construct the Gamma distribution given two vectors alpha and beta.
+     *
+     * @param alpha The vector of alphas, one per dimension.
+     * @param beta The vector of betas, one per dimension.
+     */
+    GammaDistribution(const arma::vec& alpha, const arma::vec& beta);
+
+    /**
      * Destructor.
      */
     ~GammaDistribution() {};
@@ -77,6 +85,91 @@ class GammaDistribution
      *    smaller than tol.
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
+
+    /**
+     * Fits an alpha and beta parameter according to observation probabilities.
+     * This method is not yet implemented.
+     *
+     * @param observations The reference data, one observation per column
+     * @param probabilities The probability of each observation. One value per
+     *     column of the observations matrix.
+     * @param tol Convergence tolerance. This is *not* an absolute measure:
+     *    It will stop the approximation once the *change* in the value is 
+     *    smaller than tol.
+     *
+    void Train(const arma::mat& observations,
+               const arma::vec& probabilities,
+               const double tol = 1e-8);
+     */
+
+    /**
+     * This function trains (fits distribution parameters) to a dataset with
+     * pre-computed statistics logMeanx, meanLogx, meanx for each dimension.
+     *
+     * @param logMeanxVec Is each dimension's logarithm of the mean
+     *     (log(mean(x))).
+     * @param meanLogxVec Is each dimension's mean of logarithms (mean(log(x))).
+     * @param meanxVec Is each dimension's mean (mean(x)).
+     * @param tol Convergence tolerance. This is *not* an absolute measure:
+     *    It will stop the approximation once the *change* in the value is
+     *    smaller than tol.
+     */
+    void Train(const arma::vec& logMeanxVec,
+               const arma::vec& meanLogxVec,
+               const arma::vec& meanxVec,
+               const double tol = 1e-8);
+
+
+    /**
+     * This function returns the probability of a group of observations.
+     *
+     * The probability of the value x is
+     *
+     * \frac{x^(\alpha - 1)}{\Gamma(\alpha) * \beta^\alpha} * e ^
+     * {-\frac{x}{\beta}}
+     *
+     * for one dimension. This implementation assumes each dimension is
+     * independent, so the product rule is used.
+     *
+     * @param observations Matrix of observations, one per column.
+     * @param probabilities column vector of probabilities, one per observation.
+     */
+    void Probability(const arma::mat& observations,
+                     arma::vec& Probabilities) const;
+
+    /*
+     * This is a shortcut to the Probability(arma::mat&, arma::vec&) function
+     * for when we want to evaluate only the probability of one dimension of the
+     * gamma.
+     *
+     * @param x The 1-dimensional observation.
+     * @param dim The dimension for which to calculate the probability
+     */
+    double Probability(double x, size_t dim) const;
+
+    /**
+     * This function returns the logarithm of the probability of a group of
+     * observations.
+     *
+     * The logarithm of the probability of a value x is
+     *
+     * log(\frac{x^(\alpha - 1)}{\Gamma(\alpha) * \beta^\alpha} * e ^
+     * {-\frac{x}{\beta}})
+     *
+     * for one dimension. This implementation assumes each dimension is
+     * independent, so the product rule is used.
+     *
+     * @param observations Matrix of observations, one per column.
+     * @param logProbabilities column vector of log probabilities, one per
+     *     observation.
+     */
+    void LogProbability(const arma::mat& observations,
+                        arma::vec& LogProbabilities) const;
+
+    /**
+     * This function returns an observation of this distribution
+     */
+    arma::vec Random() const;
 
     // Access to Gamma distribution parameters.
 
@@ -100,13 +193,15 @@ class GammaDistribution
     arma::vec beta;
 
     /**
-     * This is a small function that returns true if the update of alpha is smaller
-     * than the tolerance ratio.
+     * This is a small function that returns true if the update of alpha is
+     * smaller than the tolerance ratio.
      *
-     * @param aOld old value of parameter we want to estimate (alpha in our case).
-     * @param aNew new value of parameter (the value after 1 iteration from aOld).
+     * @param aOld old value of parameter we want to estimate (alpha in our
+     *      case).
+     * @param aNew new value of parameter (the value after 1 iteration from
+     *      aOld).
      * @param tol Convergence tolerance. Relative measure (see documentation of
-     * GammaDistribution::Train)
+     *      GammaDistribution::Train).
      */
     inline bool Converged(const double aOld,
                           const double aNew,

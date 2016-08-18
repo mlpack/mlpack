@@ -517,4 +517,122 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainConstructorTest)
   }
 }
 
+/**
+ * Test that Train() with a dataset and Train() with dataset statistics return
+ * the same results.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainStatisticsTest)
+{
+  const arma::mat data = arma::randu<arma::mat>(1, 500);
+
+  // Train object d1 with the data.
+  GammaDistribution d1(data);
+
+  // Train object d2 with the data's statistics.
+  GammaDistribution d2;
+  const arma::vec meanLogx = arma::mean(arma::log(data), 1);
+  const arma::vec meanx = arma::mean(data, 1);
+  const arma::vec logMeanx = arma::log(meanx);
+  d2.Train(logMeanx, meanLogx, meanx);
+
+  BOOST_REQUIRE_CLOSE(d1.Alpha(0), d2.Alpha(0), 1e-5);
+  BOOST_REQUIRE_CLOSE(d1.Beta(0), d2.Beta(0), 1e-5);
+}
+
+/**
+ * Tests that Random() generates points that can be reasonably well fit by the
+ * distribution that generated them.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionRandomTest)
+{
+  const arma::vec a("2.0 2.5 3.0"), b("0.4 0.6 1.3");
+  const size_t numPoints = 2000;
+
+  // Distribution to generate points.
+  GammaDistribution d1(a, b);
+  arma::mat data(3, numPoints); // 3-d points.
+
+  for (size_t i = 0; i < numPoints; ++i)
+    //std::cout << d1.Random() << "====" << std::endl;
+    data.col(i) = d1.Random();
+  
+  // Distribution to fit points.
+  GammaDistribution d2(data);
+  for (size_t i = 0; i < 3; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(d2.Alpha(i), a(i), 10); // Within 10%
+    BOOST_REQUIRE_CLOSE(d2.Beta(i), b(i), 10);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(GammaDistributionProbabilityTest)
+{
+  // Train two 1-dimensional distributions.
+  const arma::vec a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
+  arma::mat x1("2.0"), x2("2.94");
+  arma::vec prob1, prob2;
+
+  // Evaluated at wolfram|alpha
+  GammaDistribution d1(a1, b1);
+  d1.Probability(x1, prob1);
+  BOOST_REQUIRE_CLOSE(prob1(0), 0.267575, 1e-3);
+
+  // Evaluated at wolfram|alpha
+  GammaDistribution d2(a2, b2);
+  d2.Probability(x2, prob2);
+  BOOST_REQUIRE_CLOSE(prob2(0), 0.189043, 1e-3);
+
+  // Check that the overload that returns the probability for 1 dimension
+  // agrees.
+  BOOST_REQUIRE_CLOSE(prob2(0), d2.Probability(2.94, 0), 1e-5);
+
+  // Combine into one 2-dimensional distribution.
+  const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
+  arma::mat x3(2, 2);
+  x3
+    << 2.0 << 2.94 << arma::endr
+    << 2.0 << 2.94;
+  arma::vec prob3;
+
+  // Expect that the 2-dimensional distribution returns the product of the
+  // 1-dimensional distributions (evaluated at wolfram|alpha).
+  GammaDistribution d3(a3, b3);
+  d3.Probability(x3, prob3);
+  BOOST_REQUIRE_CLOSE(prob3(0), 0.04408, 1e-2);
+  BOOST_REQUIRE_CLOSE(prob3(1), 0.026165, 1e-2);
+}
+
+BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
+{
+  // Train two 1-dimensional distributions.
+  const arma::vec a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
+  arma::mat x1("2.0"), x2("2.94");
+  arma::vec prob1, prob2;
+
+  // Evaluated at wolfram|alpha
+  GammaDistribution d1(a1, b1);
+  d1.LogProbability(x1, prob1);
+  BOOST_REQUIRE_CLOSE(prob1(0), std::log(0.267575), 1e-3);
+
+  // Evaluated at wolfram|alpha
+  GammaDistribution d2(a2, b2);
+  d2.LogProbability(x2, prob2);
+  BOOST_REQUIRE_CLOSE(prob2(0), std::log(0.189043), 1e-3);
+
+  // Combine into one 2-dimensional distribution.
+  const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
+  arma::mat x3(2, 2);
+  x3
+    << 2.0 << 2.94 << arma::endr
+    << 2.0 << 2.94;
+  arma::vec prob3;
+
+  // Expect that the 2-dimensional distribution returns the product of the
+  // 1-dimensional distributions (evaluated at wolfram|alpha).
+  GammaDistribution d3(a3, b3);
+  d3.LogProbability(x3, prob3);
+  BOOST_REQUIRE_CLOSE(prob3(0), std::log(0.04408), 1e-3);
+  BOOST_REQUIRE_CLOSE(prob3(1), std::log(0.026165), 1e-3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

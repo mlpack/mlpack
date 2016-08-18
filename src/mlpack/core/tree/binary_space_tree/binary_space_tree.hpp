@@ -54,6 +54,8 @@ class BinarySpaceTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
+  typedef SplitType<BoundType<MetricType>, MatType> Split;
+
  private:
   //! The left child node.
   BinarySpaceTree* left;
@@ -450,9 +452,6 @@ class BinarySpaceTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
 
@@ -477,6 +476,101 @@ class BinarySpaceTree
   void SplitNode(std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
+
+  /**
+   * Perform the split process according to the information about the
+   * split.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   */
+  template<typename SplitInfo>
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const SplitInfo& splitInfo);
+
+  /**
+   * Perform the split process according to the information about the split and
+   * return a list of changed indices.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  template<typename SplitInfo>
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const SplitInfo& splitInfo,
+                      std::vector<size_t>& oldFromNew);
+
+  /**
+   * An overload for the universal B tree. For the first time the function
+   * rearranges the whole dataset. Next time the function only returns the split
+   * column.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  size_t PerformSplit(MatType& data,
+    const size_t begin,
+    const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>,
+                               MatType>::SplitInfo& splitInfo);
+
+  /**
+   * An overload for the universal B tree. For the first time the function
+   * rearranges the whole dataset. Next time the function only returns the split
+   * column.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  size_t PerformSplit(MatType& data,
+    const size_t begin,
+    const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>,
+                               MatType>::SplitInfo& splitInfo,
+    std::vector<size_t>& oldFromNew);
+
+  /**
+   * Update the bound of the current node. This method does not take into
+   * account bound-specific properties.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  template<typename BoundType2>
+  void UpdateBound(BoundType2& boundToUpdate);
+
+  /**
+   * Update the bound of the current node. This method is designed for
+   * HollowBallBound only.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
 
  protected:
   /**

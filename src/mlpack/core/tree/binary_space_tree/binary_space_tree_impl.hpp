@@ -639,8 +639,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
               SplitType<BoundType<MetricType>, MatType>& splitter)
 {
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -654,15 +653,24 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   // child.
   size_t splitCol;
 
-  // Split the node. The elements of 'data' are reordered by the splitting
-  // algorithm. This function call updates splitCol.
+  // Find the partition of the node. This method does not perform the split.
+  typename Split::SplitInfo splitInfo;
+
   const bool split = splitter.SplitNode(bound, *dataset, begin, count,
-      splitCol);
+      splitInfo);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
     return;
+
+  // Perform the actual splitting.  This will order the dataset such that
+  // points that belong to the left subtree are on the left of splitCol, and
+  // points from the right subtree are on the right side of splitCol.
+  splitCol = PerformSplit(*dataset, begin, count, splitInfo);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -696,10 +704,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
           const size_t maxLeafSize,
           SplitType<BoundType<MetricType>, MatType>& splitter)
 {
-  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -713,15 +719,24 @@ SplitNode(std::vector<size_t>& oldFromNew,
   // child.
   size_t splitCol;
 
-  // Split the node. The elements of 'data' are reordered by the splitting
-  // algorithm. This function call updates splitCol and oldFromNew.
-  const bool split = splitter.SplitNode(bound, *dataset, begin, count, splitCol,
-      oldFromNew);
+  // Find the partition of the node. This method does not perform the split.
+  typename Split::SplitInfo splitInfo;
+
+  const bool split = splitter.SplitNode(bound, *dataset, begin, count,
+      splitInfo);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
     return;
+
+  // Perform the actual splitting.  This will order the dataset such that
+  // points that belong to the left subtree are on the left of splitCol, and
+  // points from the right subtree are on the right side of splitCol.
+  splitCol = PerformSplit(*dataset, begin, count, splitInfo, oldFromNew);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -742,6 +757,192 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename SplitInfo>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo)
+{
+  // This method modifies the input dataset.  We loop both from the left and
+  // right sides of the points contained in this node.  The points less than
+  // splitVal should be on the left side of the matrix, and the points greater
+  // than splitVal should be on the right side of the matrix.
+  size_t left = begin;
+  size_t right = begin + count - 1;
+
+  // First half-iteration of the loop is out here because the termination
+  // condition is in the middle.
+  while (Split::AssignToLeftNode(data.col(left), splitInfo) && (left <= right))
+    left++;
+  while ((!Split::AssignToLeftNode(data.col(right), splitInfo)) &&
+      (left <= right) && (right > 0))
+    right--;
+
+  while (left <= right)
+  {
+    // Swap columns.
+    data.swap_cols(left, right);
+
+    // See how many points on the left are correct.  When they are correct,
+    // increase the left counter accordingly.  When we encounter one that isn't
+    // correct, stop.  We will switch it later.
+    while (Split::AssignToLeftNode(data.col(left), splitInfo) &&
+        (left <= right))
+      left++;
+
+    // Now see how many points on the right are correct.  When they are correct,
+    // decrease the right counter accordingly.  When we encounter one that isn't
+    // correct, stop.  We will switch it with the wrong point we found in the
+    // previous loop.
+    while ((!Split::AssignToLeftNode(data.col(right), splitInfo)) &&
+        (left <= right))
+      right--;
+  }
+
+  Log::Assert(left == right + 1);
+
+  return left;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename SplitInfo>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo,
+                             std::vector<size_t>& oldFromNew)
+{
+  // This method modifies the input dataset.  We loop both from the left and
+  // right sides of the points contained in this node.  The points less than
+  // splitVal should be on the left side of the matrix, and the points greater
+  // than splitVal should be on the right side of the matrix.
+  size_t left = begin;
+  size_t right = begin + count - 1;
+
+  // First half-iteration of the loop is out here because the termination
+  // condition is in the middle.
+  while (Split::AssignToLeftNode(data.col(left), splitInfo) && (left <= right))
+    left++;
+  while ((!Split::AssignToLeftNode(data.col(right), splitInfo)) &&
+      (left <= right) && (right > 0))
+    right--;
+
+  while (left <= right)
+  {
+    // Swap columns.
+    data.swap_cols(left, right);
+
+    // Update the indices for what we changed.
+    size_t t = oldFromNew[left];
+    oldFromNew[left] = oldFromNew[right];
+    oldFromNew[right] = t;
+
+    // See how many points on the left are correct.  When they are correct,
+    // increase the left counter accordingly.  When we encounter one that isn't
+    // correct, stop.  We will switch it later.
+    while (Split::AssignToLeftNode(data.col(left), splitInfo) &&
+        (left <= right))
+      left++;
+
+    // Now see how many points on the right are correct.  When they are correct,
+    // decrease the right counter accordingly.  When we encounter one that isn't
+    // correct, stop.  We will switch it with the wrong point we found in the
+    // previous loop.
+    while ((!Split::AssignToLeftNode(data.col(right), splitInfo)) &&
+        (left <= right))
+      right--;
+  }
+
+  Log::Assert(left == right + 1);
+
+  return left;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::PerformSplit(MatType& data,
+    const size_t begin, const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>, MatType>::SplitInfo& splitInfo)
+{
+  return SplitType<BoundType<MetricType>, MatType>::PerformSplit(data, begin,
+      count, splitInfo);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::PerformSplit(MatType& data,
+    const size_t begin, const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>, MatType>::SplitInfo& splitInfo,
+    std::vector<size_t>& oldFromNew)
+{
+  return SplitType<BoundType<MetricType>, MatType>::PerformSplit(data, begin,
+      count, splitInfo, oldFromNew);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+
+template<typename BoundType2>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(BoundType2& boundToUpdate)
+{
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
+{
+  if (!parent)
+  {
+    if (count > 0)
+      boundToUpdate |= dataset->cols(begin, begin + count - 1);
+    return;
+  }
+
+  if (parent->left != NULL && parent->left != this)
+  {
+    boundToUpdate.HollowCenter() = parent->left->bound.Center();
+    boundToUpdate.InnerRadius() = std::numeric_limits<ElemType>::max();
+  }
+
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
 // Default constructor (private), for boost::serialization.
