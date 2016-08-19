@@ -328,10 +328,20 @@ SingleTreeTraversalType>::NeighborSearch(Tree& referenceTree,
                                          const bool singleMode,
                                          const double epsilon,
                                          const MetricType metric) :
-    NeighborSearch(new Tree(referenceTree), singleMode, epsilon,
-        metric)
+    referenceTree(new Tree(referenceTree)),
+    referenceSet(&this->referenceTree->Dataset()),
+    treeOwner(true),
+    setOwner(false),
+    naive(false),
+    singleMode(singleMode),
+    epsilon(epsilon),
+    metric(metric),
+    baseCases(0),
+    scores(0),
+    treeNeedsReset(false)
 {
-  treeOwner = true;
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
 }
 
 // Construct the object.
@@ -348,10 +358,20 @@ SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
                                          const bool singleMode,
                                          const double epsilon,
                                          const MetricType metric) :
-    NeighborSearch(new Tree(std::move(referenceTree)), singleMode, epsilon,
-        metric)
+    referenceTree(new Tree(std::move(referenceTree))),
+    referenceSet(&this->referenceTree->Dataset()),
+    treeOwner(true),
+    setOwner(false),
+    naive(false),
+    singleMode(singleMode),
+    epsilon(epsilon),
+    metric(metric),
+    baseCases(0),
+    scores(0),
+    treeNeedsReset(false)
 {
-  treeOwner = true;
+  if (epsilon < 0)
+    throw std::invalid_argument("epsilon must be non-negative");
 }
 
 // Construct the object without a reference dataset.
@@ -542,8 +562,19 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree& referenceTree)
 {
-  Train(new Tree(referenceTree));
+  if (naive)
+    throw std::invalid_argument("cannot train on given reference tree when "
+        "naive search (without trees) is desired");
+
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
+  if (setOwner && referenceSet)
+    delete this->referenceSet;
+
+  this->referenceTree = new Tree(referenceTree);
+  this->referenceSet = &this->referenceTree->Dataset();
   treeOwner = true;
+  setOwner = false;
 }
 
 template<typename SortPolicy,
@@ -557,8 +588,19 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree&& referenceTree)
 {
-  Train(new Tree(std::move(referenceTree)));
+  if (naive)
+    throw std::invalid_argument("cannot train on given reference tree when "
+        "naive search (without trees) is desired");
+
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
+  if (setOwner && referenceSet)
+    delete this->referenceSet;
+
+  this->referenceTree = new Tree(std::move(referenceTree));
+  this->referenceSet = &this->referenceTree->Dataset();
   treeOwner = true;
+  setOwner = false;
 }
 
 /**
