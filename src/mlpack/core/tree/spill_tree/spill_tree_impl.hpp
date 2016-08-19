@@ -325,18 +325,20 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 {
   if (IsLeaf())
     return *this;
+  if (!left)
+    return *right;
+  if (!right)
+    return *left;
 
   if (overlappingNode)
   {
-    if (left && (!right || hyperplane.Left(point)))
+    if (hyperplane.Left(point))
       return *left;
-    else
-      return *right;
+    return *right;
   }
   else
   {
-    if (left && (!right ||
-        left->MinDistance(point) <= right->MinDistance(point)))
+    if (left->MinDistance(point) <= right->MinDistance(point))
       return *left;
     return *right;
   }
@@ -361,10 +363,86 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 {
   if (IsLeaf())
     return *this;
+  if (!left)
+    return *right;
+  if (!right)
+    return *left;
 
-  if (left && (!right || left->MaxDistance(point) > right->MaxDistance(point)))
+  if (left->MaxDistance(point) > right->MaxDistance(point))
     return *left;
   return *right;
+}
+
+/**
+ * Return the nearest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>*
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+    GetNearestChild(const SpillTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+  if (!left)
+    return right;
+  if (!right)
+    return left;
+
+  if (overlappingNode)
+  {
+      if (hyperplane.Left(queryNode.Bound()))
+        return left;
+      if (hyperplane.Right(queryNode.Bound()))
+        return right;
+      // Can't decide.
+      return NULL;
+  }
+  else
+  {
+    ElemType leftDist = left->MinDistance(&queryNode);
+    ElemType rightDist = right->MinDistance(&queryNode);
+    if (leftDist < rightDist)
+      return left;
+    if (rightDist < leftDist)
+      return right;
+    return NULL;
+  }
+}
+
+/**
+ * Return the furthest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>*
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+    GetFurthestChild(const SpillTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+  if (!left)
+    return right;
+  if (!right)
+    return left;
+
+  ElemType leftDist = left->MaxDistance(&queryNode);
+  ElemType rightDist = right->MaxDistance(&queryNode);
+  if (leftDist > rightDist)
+    return left;
+  if (rightDist > leftDist)
+    return right;
+  return NULL;
 }
 
 /**

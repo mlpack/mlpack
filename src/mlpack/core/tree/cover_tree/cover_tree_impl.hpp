@@ -623,11 +623,11 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
   if (IsLeaf())
     return *this;
 
-  double bestDistance = DBL_MAX;
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    double distance = children[i]->MinDistance(point);
+    ElemType distance = children[i]->MinDistance(point);
     if (distance <= bestDistance)
     {
       bestDistance = distance;
@@ -655,11 +655,11 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   if (IsLeaf())
     return *this;
 
-  double bestDistance = 0;
+  ElemType bestDistance = 0;
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    double distance = children[i]->MaxDistance(point);
+    ElemType distance = children[i]->MaxDistance(point);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -667,6 +667,64 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     }
   }
   return *children[bestIndex];
+}
+
+/**
+ * Return the nearest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetNearestChild(const CoverTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MinDistance(&queryNode);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return children[bestIndex];
+}
+
+/**
+ * Return the furthest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetFurthestChild(const CoverTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MaxDistance(&queryNode);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return children[bestIndex];
 }
 
 template<

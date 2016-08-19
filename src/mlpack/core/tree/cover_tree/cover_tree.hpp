@@ -312,6 +312,18 @@ class CoverTree
       const VecType& point,
       typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
+  /**
+   * Return the nearest child node to the given query node.  If it can't decide
+   * it will return a null pointer.
+   */
+  CoverTree* GetNearestChild(const CoverTree& queryNode);
+
+  /**
+   * Return the furthest child node to the given query node.  If it can't decide
+   * it will return a null pointer.
+   */
+  CoverTree* GetFurthestChild(const CoverTree& queryNode);
+
   //! Return the minimum distance to another node.
   ElemType MinDistance(const CoverTree* other) const;
 

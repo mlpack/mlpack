@@ -282,6 +282,17 @@ class SpillTree
       const VecType& point,
       typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
+  /**
+   * Return the nearest child node to the given query node.  If it can't decide
+   * it will return a null pointer.
+   */
+  SpillTree* GetNearestChild(const SpillTree& queryNode);
+
+  /**
+   * Return the furthest child node to the given query node.  If it can't decide
+   * it will return a null pointer.
+   */
+  SpillTree* GetFurthestChild(const SpillTree& queryNode);
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not

@@ -584,11 +584,11 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (IsLeaf())
     return *this;
 
-  double bestDistance = DBL_MAX;
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    double distance = Child(i).MinDistance(point);
+    ElemType distance = Child(i).MinDistance(point);
     if (distance <= bestDistance)
     {
       bestDistance = distance;
@@ -619,11 +619,11 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (IsLeaf())
     return *this;
 
-  double bestDistance = 0;
+  ElemType bestDistance = 0;
   size_t bestIndex = 0;
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    double distance = Child(i).MaxDistance(point);
+    ElemType distance = Child(i).MaxDistance(point);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -631,6 +631,70 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     }
   }
   return Child(bestIndex);
+}
+
+/**
+ * Return the nearest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>*
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetNearestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MinDistance(&queryNode);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return &Child(bestIndex);
+}
+
+/**
+ * Return the furthest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>*
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetFurthestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MaxDistance(&queryNode);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return &Child(bestIndex);
 }
 
 /**

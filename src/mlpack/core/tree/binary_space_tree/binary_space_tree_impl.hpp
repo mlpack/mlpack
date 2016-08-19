@@ -503,8 +503,13 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 {
   if (IsLeaf())
     return *this;
-  if (left && (!right || left->MinDistance(point) <= right->MinDistance(point)))
-        return *left;
+  if (!left)
+    return *right;
+  if (!right)
+    return *left;
+
+  if (left->MinDistance(point) <= right->MinDistance(point))
+    return *left;
   return *right;
 }
 
@@ -527,9 +532,74 @@ BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 {
   if (IsLeaf())
     return *this;
-  if (left && (!right || left->MaxDistance(point) > right->MaxDistance(point)))
-        return *left;
+  if (!left)
+    return *right;
+  if (!right)
+    return *left;
+
+  if (left->MaxDistance(point) > right->MaxDistance(point))
+    return *left;
   return *right;
+}
+
+/**
+ * Return the nearest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>*
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+    GetNearestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+  if (!left)
+    return right;
+  if (!right)
+    return left;
+
+  ElemType leftDist = left->MinDistance(&queryNode);
+  ElemType rightDist = right->MinDistance(&queryNode);
+  if (leftDist < rightDist)
+    return left;
+  if (rightDist < leftDist)
+    return right;
+  return NULL;
+}
+
+/**
+ * Return the furthest child node to the given query node.  If it can't decide
+ * will return a null pointer.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>*
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+    GetFurthestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf())
+    return NULL;
+  if (!left)
+    return right;
+  if (!right)
+    return left;
+
+  ElemType leftDist = left->MaxDistance(&queryNode);
+  ElemType rightDist = right->MaxDistance(&queryNode);
+  if (leftDist > rightDist)
+    return left;
+  if (rightDist > leftDist)
+    return right;
+  return NULL;
 }
 
 /**
