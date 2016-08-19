@@ -388,10 +388,8 @@ class Genome
                      aLinkGenes[i].Enabled();
       aNeuronGenes[toNeuronIdx].Input(input);
         
-      if (i == NumLink() - 1)
-      {
-        aNeuronGenes[toNeuronIdx].CalcActivation();
-      } else if (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx)
+      if ( (i == NumLink() - 1) ||
+           (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
       {
         aNeuronGenes[toNeuronIdx].CalcActivation();
       }
