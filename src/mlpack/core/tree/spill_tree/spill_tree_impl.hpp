@@ -325,9 +325,21 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 {
   if (IsLeaf())
     return *this;
-  if (left && (!right || left->MinDistance(point) <= right->MinDistance(point)))
-        return *left;
-  return *right;
+
+  if (overlappingNode)
+  {
+    if (left && (!right || hyperplane.Left(point)))
+      return *left;
+    else
+      return *right;
+  }
+  else
+  {
+    if (left && (!right ||
+        left->MinDistance(point) <= right->MinDistance(point)))
+      return *left;
+    return *right;
+  }
 }
 
 /**
@@ -349,8 +361,9 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 {
   if (IsLeaf())
     return *this;
+
   if (left && (!right || left->MaxDistance(point) > right->MaxDistance(point)))
-        return *left;
+    return *left;
   return *right;
 }
 
