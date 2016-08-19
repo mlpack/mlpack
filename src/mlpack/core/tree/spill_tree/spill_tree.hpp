@@ -265,8 +265,10 @@ class SpillTree
   size_t NumChildren() const;
 
   /**
-   * Return the nearest child node to the given query point.  If this is a leaf
-   * node, it will return a reference to itself.
+   * Return the nearest child node to the given query point (this is an
+   * efficient estimation based on the splitting hyperplane, the node returned
+   * is not necessarily the nearest).  If this is a leaf node, it will return a
+   * reference to itself.
    */
   template<typename VecType>
   SpillTree& GetNearestChild(
@@ -274,8 +276,10 @@ class SpillTree
       typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   /**
-   * Return the furthest child node to the given query point.  If this is a leaf
-   * node, it will return a reference to itself.
+   * Return the furthest child node to the given query point (this is an
+   * efficient estimation based on the splitting hyperplane, the node returned
+   * is not necessarily the furthest).  If this is a leaf node, it will return a
+   * reference to itself.
    */
   template<typename VecType>
   SpillTree& GetFurthestChild(
@@ -283,14 +287,18 @@ class SpillTree
       typename boost::enable_if<IsVector<VecType> >::type* = 0);
 
   /**
-   * Return the nearest child node to the given query node.  If it can't decide
-   * it will return a null pointer.
+   * Return the nearest child node to the given query node (this is an
+   * efficient estimation based on the splitting hyperplane, the node returned
+   * is not necessarily the nearest).  If it can't decide it will return a null
+   * pointer.
    */
   SpillTree* GetNearestChild(const SpillTree& queryNode);
 
   /**
-   * Return the furthest child node to the given query node.  If it can't decide
-   * it will return a null pointer.
+   * Return the furthest child node to the given query node (this is an
+   * efficient estimation based on the splitting hyperplane, the node returned
+   * is not necessarily the furthest).  If it can't decide it will return a null
+   * pointer.
    */
   SpillTree* GetFurthestChild(const SpillTree& queryNode);
 
