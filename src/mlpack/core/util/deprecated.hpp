@@ -2,18 +2,19 @@
  * @file deprecated.hpp
  * @author Marcos Pividori.
  *
- * Definition of the DEPRECATED macro.
+ * Definition of the mlpack_deprecated macro.
  */
 #ifndef MLPACK_CORE_UTIL_DEPRECATED_HPP
 #define MLPACK_CORE_UTIL_DEPRECATED_HPP
 
 #ifdef __GNUG__
-#define DEPRECATED __attribute__((deprecated))
+#define mlpack_deprecated __attribute__((deprecated))
 #elif defined(_MSC_VER)
-#define DEPRECATED __declspec(deprecated)
+#define mlpack_deprecated __declspec(deprecated)
 #else
-#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-#define DEPRECATED
+#pragma message("WARNING: You need to implement mlpack_deprecated for this "
+    "compiler")
+#define mlpack_deprecated
 #endif
 
 #endif

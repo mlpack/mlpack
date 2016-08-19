@@ -153,10 +153,11 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  DEPRECATED NeighborSearch(Tree* referenceTree,
-                            const NeighborSearchMode mode = DUAL_TREE_MODE,
-                            const double epsilon = 0,
-                            const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(
+      Tree* referenceTree,
+      const NeighborSearchMode mode = DUAL_TREE_MODE,
+      const double epsilon = 0,
+      const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -284,10 +285,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  DEPRECATED NeighborSearch(Tree* referenceTree,
-                            const bool singleMode,
-                            const double epsilon = 0,
-                            const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(Tree* referenceTree,
+                                   const bool singleMode,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object with the given pre-constructed
@@ -372,7 +373,7 @@ class NeighborSearch
    *
    * @param referenceTree Pre-built tree for reference points.
    */
-  DEPRECATED void Train(Tree* referenceTree);
+  mlpack_deprecated void Train(Tree* referenceTree);
 
   /**
    * Set the reference tree as a copy of the given reference tree.
