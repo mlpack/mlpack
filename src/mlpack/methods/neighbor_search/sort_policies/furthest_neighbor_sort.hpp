@@ -152,7 +152,12 @@ class FurthestNeighborSort
    */
   static inline double ConvertToScore(const double distance)
   {
-    return DBL_MAX - distance;
+    if (distance == DBL_MAX)
+      return 0.0;
+    else if (distance == 0.0)
+      return DBL_MAX;
+    else
+      return (1.0 / distance);
   }
 
   /**
@@ -162,7 +167,7 @@ class FurthestNeighborSort
    */
   static inline double ConvertToDistance(const double score)
   {
-    return DBL_MAX - score;
+    return ConvertToScore(score);
   }
 };
 
