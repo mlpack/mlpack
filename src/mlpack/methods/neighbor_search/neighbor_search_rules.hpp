@@ -85,6 +85,14 @@ class NeighborSearchRules
   TreeType& GetBestChild(const size_t queryIndex, TreeType& referenceNode);
 
   /**
+   * Get the child node with the best score.
+   *
+   * @param queryNode Node to be considered.
+   * @param referenceNode Candidate node to be recursed into.
+   */
+  TreeType* GetBestChild(const TreeType& queryNode, TreeType& referenceNode);
+
+  /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
    * for recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).  This is used when the score has already
@@ -141,9 +149,6 @@ class NeighborSearchRules
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
-
-  //! Access the query set.
-  const typename TreeType::Mat& QuerySet() { return querySet; }
 
  protected:
   //! The reference set.

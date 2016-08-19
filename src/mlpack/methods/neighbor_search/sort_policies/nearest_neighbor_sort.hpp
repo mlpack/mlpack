@@ -110,6 +110,17 @@ class NearestNeighborSort
   };
 
   /**
+   * Return the best child according to this sort policy. In this case it will
+   * return the one with the minimum distance.
+   */
+  template<typename TreeType>
+  static TreeType* GetBestChild(const TreeType& queryNode,
+                                TreeType& referenceNode)
+  {
+    return referenceNode.GetNearestChild(queryNode);
+  };
+
+  /**
    * Return what should represent the worst possible distance with this
    * particular sort policy.  In our case, this should be the maximum possible
    * distance, DBL_MAX.

@@ -359,15 +359,6 @@ class SpillTree
    */
   size_t Point(const size_t index) const;
 
-  //! Determines if the node's half space intersects the given node.
-  bool HalfSpaceIntersects(const SpillTree& other) const;
-
-  //! Determines if the node's half space contains the given point.
-  template<typename VecType>
-  bool HalfSpaceContains(
-      const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
-
   //! Return the minimum distance to another node.
   ElemType MinDistance(const SpillTree* other) const
   {

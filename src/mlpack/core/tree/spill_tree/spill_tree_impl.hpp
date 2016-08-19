@@ -601,47 +601,6 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
-    SplitType>::HalfSpaceIntersects(const SpillTree& other) const
-{
-  if (!Parent())
-    return true;
-
-  const bool left = this == Parent()->Left();
-
-  if (left)
-    return !Parent()->Hyperplane().Right(other.Bound());
-  else
-    return !Parent()->Hyperplane().Left(other.Bound());
-}
-
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
-template<typename VecType>
-inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
-    SplitType>::HalfSpaceContains(
-    const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
-{
-  if (!Parent())
-    return true;
-
-  const bool left = this == Parent()->Left();
-  const bool toTheLeft = Parent()->Hyperplane().Left(point);
-
-  return left == toTheLeft;
-}
-
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     SplitNode(arma::Col<size_t>& points,
               const size_t maxLeafSize,

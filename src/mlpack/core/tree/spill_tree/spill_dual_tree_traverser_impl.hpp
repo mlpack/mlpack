@@ -105,13 +105,12 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node let's do defeatist search.
-      bool traverseLeft = referenceNode.Left()->HalfSpaceIntersects(queryNode);
-      bool traverseRight = referenceNode.Right()->HalfSpaceIntersects(
-          queryNode);
-      if (traverseLeft && !traverseRight)
-        Traverse(queryNode, *referenceNode.Left());
-      else if (!traverseLeft && traverseRight)
-        Traverse(queryNode, *referenceNode.Right());
+      SpillTree* bestChild = rule.GetBestChild(queryNode, referenceNode);
+      if (bestChild)
+      {
+        Traverse(queryNode, *bestChild);
+        ++numPrunes;
+      }
       else
       {
         // If we can't decide which child node to traverse, this means that
@@ -147,14 +146,15 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
 
       if (leftScore < rightScore)
       {
-        // Recurse to the left.  Restore the left traversal info.  Store the right
-        // traversal info.
+        // Recurse to the left.  Restore the left traversal info.  Store the
+        // right traversal info.
         traversalInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
         Traverse(queryNode, *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
+        rightScore = rule.Rescore(queryNode, *referenceNode.Right(),
+            rightScore);
 
         if (rightScore != DBL_MAX)
         {
@@ -216,14 +216,13 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node let's do defeatist search.
-      bool traverseLeft = referenceNode.Left()->HalfSpaceIntersects(
-          *queryNode.Left());
-      bool traverseRight = referenceNode.Right()->HalfSpaceIntersects(
-          *queryNode.Left());
-      if (traverseLeft && !traverseRight)
-        Traverse(*queryNode.Left(), *referenceNode.Left());
-      else if (!traverseLeft && traverseRight)
-        Traverse(*queryNode.Left(), *referenceNode.Right());
+      SpillTree* bestChild = rule.GetBestChild(*queryNode.Left(),
+          referenceNode);
+      if (bestChild)
+      {
+        Traverse(*queryNode.Left(), *bestChild);
+        ++numPrunes;
+      }
       else
       {
         // If we can't decide which child node to traverse, this means that
@@ -232,14 +231,12 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(*queryNode.Left(), referenceNode);
       }
 
-      traverseLeft = referenceNode.Left()->HalfSpaceIntersects(
-          *queryNode.Right());
-      traverseRight = referenceNode.Right()->HalfSpaceIntersects(
-          *queryNode.Right());
-      if (traverseLeft && !traverseRight)
-        Traverse(*queryNode.Right(), *referenceNode.Left());
-      else if (!traverseLeft && traverseRight)
-        Traverse(*queryNode.Right(), *referenceNode.Right());
+      bestChild = rule.GetBestChild(*queryNode.Right(), referenceNode);
+      if (bestChild)
+      {
+        Traverse(*queryNode.Right(), *bestChild);
+        ++numPrunes;
+      }
       else
       {
         // If we can't decide which child node to traverse, this means that
@@ -263,8 +260,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
 
       if (leftScore < rightScore)
       {
-        // Recurse to the left.  Restore the left traversal info.  Store the right
-        // traversal info.
+        // Recurse to the left.  Restore the left traversal info.  Store the
+        // right traversal info.
         rightInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
         Traverse(*queryNode.Left(), *referenceNode.Left());
@@ -341,8 +338,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
 
       if (leftScore < rightScore)
       {
-        // Recurse to the left.  Restore the left traversal info.  Store the right
-        // traversal info.
+        // Recurse to the left.  Restore the left traversal info.  Store the
+        // right traversal info.
         rightInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
         Traverse(*queryNode.Right(), *referenceNode.Left());
