@@ -330,18 +330,9 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (!right)
     return *left;
 
-  if (overlappingNode)
-  {
-    if (hyperplane.Left(point))
-      return *left;
-    return *right;
-  }
-  else
-  {
-    if (left->MinDistance(point) <= right->MinDistance(point))
-      return *left;
-    return *right;
-  }
+  if (hyperplane.Left(point))
+    return *left;
+  return *right;
 }
 
 /**
@@ -368,9 +359,9 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (!right)
     return *left;
 
-  if (left->MaxDistance(point) > right->MaxDistance(point))
-    return *left;
-  return *right;
+  if (hyperplane.Left(point))
+    return *right;
+  return *left;
 }
 
 /**
@@ -394,25 +385,12 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (!right)
     return left;
 
-  if (overlappingNode)
-  {
-      if (hyperplane.Left(queryNode.Bound()))
-        return left;
-      if (hyperplane.Right(queryNode.Bound()))
-        return right;
-      // Can't decide.
-      return NULL;
-  }
-  else
-  {
-    ElemType leftDist = left->MinDistance(&queryNode);
-    ElemType rightDist = right->MinDistance(&queryNode);
-    if (leftDist < rightDist)
-      return left;
-    if (rightDist < leftDist)
-      return right;
-    return NULL;
-  }
+  if (hyperplane.Left(queryNode.Bound()))
+    return left;
+  if (hyperplane.Right(queryNode.Bound()))
+    return right;
+  // Can't decide.
+  return NULL;
 }
 
 /**
@@ -436,12 +414,11 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (!right)
     return left;
 
-  ElemType leftDist = left->MaxDistance(&queryNode);
-  ElemType rightDist = right->MaxDistance(&queryNode);
-  if (leftDist > rightDist)
-    return left;
-  if (rightDist > leftDist)
+  if (hyperplane.Left(queryNode.Bound()))
     return right;
+  if (hyperplane.Right(queryNode.Bound()))
+    return left;
+  // Can't decide.
   return NULL;
 }
 
