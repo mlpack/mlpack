@@ -27,13 +27,11 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
-  // If we have reached a leaf node, run the base case as necessary.
-  if (referenceNode.IsLeaf())
-  {
-    for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
-      rule.BaseCase(queryIndex, referenceNode.Point(i));
-  }
-  else
+  // Run the base case as necessary for all the points in the reference node.
+  for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
+    rule.BaseCase(queryIndex, referenceNode.Point(i));
+
+  if (!referenceNode.IsLeaf())
   {
     // We are prunning all but one child.
     numPrunes += referenceNode.NumChildren() - 1;
