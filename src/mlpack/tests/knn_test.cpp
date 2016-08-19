@@ -913,7 +913,7 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
   // neighbor of the query points, then we can be sure that we will get an exact
   // solution.
   SpillKNN::Tree referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
-  SpillKNN spTreeSearch(&referenceTree);
+  SpillKNN spTreeSearch(std::move(referenceTree));
 
   for (size_t mode = 0; mode < 2; mode++)
   {
@@ -947,7 +947,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
     double tau = test * 0.1;
 
     SpillKNN::Tree referenceTree(dataset, tau);
-    SpillKNN spTreeSearch(&referenceTree);
+    SpillKNN spTreeSearch(std::move(referenceTree));
 
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;

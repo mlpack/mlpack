@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
       referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
-      spTreeSearch(&referenceTree, SINGLE_TREE_MODE, 0.05);
+      spTreeSearch(std::move(referenceTree), SINGLE_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsSPTree;
   arma::mat distancesSPTree;
