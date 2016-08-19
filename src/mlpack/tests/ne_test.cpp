@@ -732,10 +732,10 @@ BOOST_AUTO_TEST_CASE(NEHyperNeatXorTest)
                                                             {0, 0, 0, 1, 1},
                                                             {0, 0, 0, 0, 0},
                                                             {0, 0, 0, 1, 0} };
-  double weightThreshold = 0.00;
+  double weightThreshold = 0.0;
 
   Substrate substrate(coordinates, depths, numInput, numOutput, 
-            allowedConnectionMask, weightThreshold);
+                      allowedConnectionMask, weightThreshold);
 
   // Construct seed genome for xor task.
   int id = 0;
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE(NEHyperNeatXorTest)
   linkGenes.push_back(link4);
   linkGenes.push_back(link5);
   linkGenes.push_back(link6);
-  
+
   Genome seedGenome = Genome(0, 
                              neuronGenes,
                              linkGenes,

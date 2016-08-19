@@ -167,6 +167,55 @@ class Substrate
   	}
   }
 
+ void QueryLinkDebug(Genome& cppn, Genome& genome)
+  {
+    assert(genome.aNeuronGenes.size() = aCoordinates.size());
+
+    // Clear links.
+    genome.aLinkGenes.clear();
+    
+    // Query allowed node pairs.
+    int innovId = 0;
+    for (int i = 0; i < aCoordinates.size(); ++i)
+    {
+      for (int j = 0; j < aCoordinates.size(); ++j)
+      {
+        if (aAllowedConnectionMask[i][j] != 0)
+        {
+          // Run cppn to query link weight.
+          std::vector<double> input = genome.aNeuronGenes[i].Coordinate();
+          std::vector<double> input2 = genome.aNeuronGenes[j].Coordinate();
+          input.insert(input.end(), input2.begin(), input2.end());
+          input.push_back(1);  // Bias.
+          
+          printf("INPUT is:=====\n");
+          for (auto x = input.begin(); x != input.end(); ++x)
+            std::cout << *x << ' ';
+          std::cout << std::endl;
+
+          printf("CPPN is:=====\n");
+          cppn.PrintGenome();
+
+          cppn.ActivateDebug(input);
+          std::vector<double> output;
+          cppn.Output(output);
+
+          printf("OUTPUT is:=====\n");
+          for (auto x = output.begin(); x != output.end(); ++x)
+            std::cout << *x << ' ';
+          std::cout << std::endl;
+
+          // Create new link if weight bigger than threshold.
+          double weight = output[0];
+          if (std::fabs(weight) > aWeightThreshold)
+          {
+            LinkGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
+            genome.aLinkGenes.push_back(link);
+          }
+        }
+      }
+    }
+  }
  private:
 
 };

@@ -124,6 +124,7 @@ class HyperNEAT
 
       // Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aNeat.aPopulation.BestFitness());
+      Log::Info << "Generation: " << generation << " best fitness: " <<  aNeat.aPopulation.BestFitness() << std::endl;
       if (aNeat.aTask.Success())
       {
         printf("Task succeed in %zu iterations.\n", generation);
@@ -132,14 +133,11 @@ class HyperNEAT
 
       //Debug
       Genome bestGenome = aNeat.aPopulation.BestGenome();
-      printf("1");
       Genome substrateGenome;
-      printf("2");
       aSubstrate.InitGenome(substrateGenome);
       aSubstrate.QueryLink(bestGenome, substrateGenome);
-      printf("3");
       substrateGenome.PrintGenome();
-      printf("4");
+      bestGenome.PrintGenome();
 
       // Reproduce next generation.
       aNeat.Reproduce();

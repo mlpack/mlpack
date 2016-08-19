@@ -380,21 +380,72 @@ class Genome
     // Activate hidden and output neurons.
     for (int i = 0; i < NumLink(); ++i)
     {
-      if (aLinkGenes[i].Enabled())
-      {
-        int toNeuronIdx = GetNeuronIndex(aLinkGenes[i].ToNeuronId());
-        int fromNeuronIdx = GetNeuronIndex(aLinkGenes[i].FromNeuronId());
-        double input = aNeuronGenes[toNeuronIdx].Input() + 
-                       aNeuronGenes[fromNeuronIdx].Activation() * aLinkGenes[i].Weight();
-        aNeuronGenes[toNeuronIdx].Input(input);
+      int toNeuronIdx = GetNeuronIndex(aLinkGenes[i].ToNeuronId());
+      int fromNeuronIdx = GetNeuronIndex(aLinkGenes[i].FromNeuronId());
+      double input = aNeuronGenes[toNeuronIdx].Input() + 
+                     aNeuronGenes[fromNeuronIdx].Activation() * 
+                     aLinkGenes[i].Weight() *
+                     aLinkGenes[i].Enabled();
+      aNeuronGenes[toNeuronIdx].Input(input);
         
-        if (i == NumLink() - 1)
-        {
-          aNeuronGenes[toNeuronIdx].CalcActivation();
-        } else if (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx)
-        {
-          aNeuronGenes[toNeuronIdx].CalcActivation();
-        }
+      if (i == NumLink() - 1)
+      {
+        aNeuronGenes[toNeuronIdx].CalcActivation();
+      } else if (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx)
+      {
+        aNeuronGenes[toNeuronIdx].CalcActivation();
+      }
+    }
+  }
+
+    void ActivateDebug(std::vector<double>& input)
+  {
+    assert(input.size() == aNumInput);
+
+    SortLinkGenes();
+    
+    // Set all neurons' input to be 0.
+    for (int i=0; i<NumNeuron(); ++i)
+    {
+      aNeuronGenes[i].Input(0);
+    }
+    
+    // Set input neurons.
+    for (int i=0; i<aNumInput; ++i)
+    {
+      aNeuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+      aNeuronGenes[i].Activation(input[i]);
+    }
+
+    std::cout << "The sorted links are: "<< std::endl;
+    for (int i = 0; i < NumLink(); ++i) {
+      std::cout << "(" << aLinkGenes[i].FromNeuronId() << " -> " << aLinkGenes[i].ToNeuronId()
+                << ")" << " Enabled: " << aLinkGenes[i].Enabled() << std::endl;
+    }
+
+    // Activate hidden and output neurons.
+    for (int i = 0; i < NumLink(); ++i)
+    {
+      std::cout<< "activate link ("<< aLinkGenes[i].FromNeuronId() << " -> " << aLinkGenes[i].ToNeuronId() << ")\n" << std::endl;
+
+      int toNeuronIdx = GetNeuronIndex(aLinkGenes[i].ToNeuronId());
+      int fromNeuronIdx = GetNeuronIndex(aLinkGenes[i].FromNeuronId());
+      double input = aNeuronGenes[toNeuronIdx].Input() + 
+                     aNeuronGenes[fromNeuronIdx].Activation() * 
+                     aLinkGenes[i].Weight() *
+                     aLinkGenes[i].Enabled();
+      aNeuronGenes[toNeuronIdx].Input(input);
+        
+      if (i == NumLink() - 1)
+      {
+        aNeuronGenes[toNeuronIdx].CalcActivation();
+        std::cout << "input is " << input << std::endl;
+        std::cout << "output is " << aNeuronGenes[toNeuronIdx].Activation() << std::endl;
+      } else if (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx)
+      {
+        aNeuronGenes[toNeuronIdx].CalcActivation();
+        std::cout << "input is " << input << std::endl;
+        std::cout << "output is " << aNeuronGenes[toNeuronIdx].Activation() << std::endl;
       }
     }
   }
@@ -451,11 +502,14 @@ class Genome
     }
   }
 
+  /**
+   * Print genome structure information.
+   */
   void PrintGenome()
   {
     printf("---------------------------Genome Start---------------------------\n");
     const char* enumNeuronTypetring[] = { "NONE", "INPUT", "BIAS", "HIDDEN", "OUTPUT" };
-    const char* enumActivationFuncTypeString[] = { "SIGMOID", "TANH", "LINEAR", "RELU" };
+    const char* enumActivationFuncTypeString[] = { "SIGMOID", "TANH", "LINEAR", "RELU" };  //NOTICE: keep the same with the enum type.
     const char* boolEnabledString[] = { "False", "True" };
 
     std::cout << "Neurons: " << aNeuronGenes.size() << std::endl;

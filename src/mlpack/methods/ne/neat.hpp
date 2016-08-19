@@ -26,6 +26,10 @@ namespace ne {
 
 /**
  * Structure to save link innovation.
+ *
+ * This structure saves the new type of links created during evolution.
+ * So that same innovation will get same link innovation id, and it helps 
+ * to align links for crossover even when network structures are different.
  */
 struct LinkInnovation
 {
@@ -36,6 +40,10 @@ struct LinkInnovation
 
 /**
  * Structure to save neuron innovation.
+ *
+ * This structure saves the new type of neurons created during evolution.
+ * So that same innovation will get same neuron id, and it helps 
+ * to align links for crossover even when network structures are different.
  */
 struct NeuronInnovation
 {
@@ -1378,6 +1386,7 @@ class NEAT
 
       // Output some information.
       printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
+      //Log::Info << "Generation: " << generation << " best fitness: " <<  aPopulation.BestFitness() << std::endl;
       if (aTask.Success())
       {
         printf("Task succeed in %zu iterations.\n", generation);
