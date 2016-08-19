@@ -143,12 +143,13 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     const RectangleTree& other,
-    const bool deepCopy) :
+    const bool deepCopy,
+    RectangleTree* newParent) :
     maxNumChildren(other.MaxNumChildren()),
     minNumChildren(other.MinNumChildren()),
     numChildren(other.NumChildren()),
-    children(maxNumChildren + 1),
-    parent(other.Parent()),
+    children(maxNumChildren + 1, NULL),
+    parent(deepCopy ? newParent : other.Parent()),
     begin(other.Begin()),
     count(other.Count()),
     numDescendants(other.numDescendants),
@@ -156,21 +157,76 @@ RectangleTree(
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
     parentDistance(other.ParentDistance()),
-    dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
-    ownsDataset(deepCopy),
+    dataset(deepCopy ?
+        (parent ? parent->dataset : new MatType(*other.dataset)) :
+        &other.Dataset()),
+    ownsDataset(deepCopy && (!parent)),
     points(other.points),
-    auxiliaryInfo(other.auxiliaryInfo)
+    auxiliaryInfo(other.auxiliaryInfo, this, deepCopy)
 {
   if (deepCopy)
   {
     if (numChildren > 0)
     {
       for (size_t i = 0; i < numChildren; i++)
-        children[i] = new RectangleTree(other.Child(i));
+        children[i] = new RectangleTree(other.Child(i), true, this);
     }
   }
   else
     children = other.children;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+RectangleTree(RectangleTree&& other) :
+    maxNumChildren(other.MaxNumChildren()),
+    minNumChildren(other.MinNumChildren()),
+    numChildren(other.NumChildren()),
+    children(std::move(other.children)),
+    parent(other.Parent()),
+    begin(other.Begin()),
+    count(other.Count()),
+    numDescendants(other.numDescendants),
+    maxLeafSize(other.MaxLeafSize()),
+    minLeafSize(other.MinLeafSize()),
+    bound(std::move(other.bound)),
+    parentDistance(other.ParentDistance()),
+    dataset(other.dataset),
+    ownsDataset(other.ownsDataset),
+    points(std::move(other.points)),
+    auxiliaryInfo(std::move(other.auxiliaryInfo))
+{
+  if (parent)
+  {
+    size_t iChild = 0;
+    while (parent->children[iChild] != (&other))
+      iChild++;
+    assert(iChild < numChildren);
+    parent->children[iChild] = this;
+  }
+  if (!IsLeaf())
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      children[i]->parent = this;
+  }
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
 }
 
 /**

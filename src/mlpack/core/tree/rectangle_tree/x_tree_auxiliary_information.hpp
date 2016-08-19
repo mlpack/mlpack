@@ -38,15 +38,45 @@ class XTreeAuxiliaryInformation
   { };
 
   /**
-   * Create an auxiliary information object by copying from the other node.
+   * Create an auxiliary information object by copying from another object.
+   *
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
+   */
+  XTreeAuxiliaryInformation(const XTreeAuxiliaryInformation& other,
+                            TreeType* /* tree */ = NULL,
+                            bool /* deepCopy */ = true) :
+      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+      splitHistory(other.SplitHistory())
+  { };
+
+  /**
+   * Copy the auxiliary information object.
    *
    * @param other The node from which the information will be copied.
    */
-  XTreeAuxiliaryInformation(const TreeType& other) :
-      normalNodeMaxNumChildren(
-          other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
-      splitHistory(other.AuxiliaryInfo().SplitHistory())
-  { };
+  XTreeAuxiliaryInformation& operator=(const XTreeAuxiliaryInformation& other)
+  {
+    normalNodeMaxNumChildren = other.NormalNodeMaxNumChildren();
+    splitHistory = other.SplitHistory();
+
+    return *this;
+  }
+
+  /**
+   * Create an auxiliary information object by moving from the other node.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  XTreeAuxiliaryInformation(XTreeAuxiliaryInformation&& other) :
+      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+      splitHistory(std::move(other.splitHistory))
+  {
+    other.normalNodeMaxNumChildren = 0;
+  };
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -140,6 +170,25 @@ class XTreeAuxiliaryInformation
     {
       for (int i = 0; i < dim; i++)
         history[i] = false;
+    }
+
+    SplitHistoryStruct(const SplitHistoryStruct& other) :
+        lastDimension(other.lastDimension),
+        history(other.history)
+    { }
+
+    SplitHistoryStruct& operator=(const SplitHistoryStruct& other)
+    {
+      lastDimension = other.lastDimension;
+      history = other.history;
+      return *this;
+    }
+
+    SplitHistoryStruct(SplitHistoryStruct&& other) :
+        lastDimension(other.lastDimension),
+        history(std::move(other.history))
+    {
+      other.lastDimension = 0;
     }
 
     template<typename Archive>

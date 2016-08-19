@@ -865,6 +865,83 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertValueTest)
 }
 
 template<typename TreeType>
+void CheckHilbertValue(const TreeType& tree)
+{
+  typedef DiscreteHilbertValue<typename TreeType::ElemType>
+      HilbertValue;
+
+  const HilbertValue& value = tree.AuxiliaryInfo().HilbertValue();
+
+  if (tree.IsLeaf())
+  {
+    BOOST_REQUIRE_EQUAL(value.OwnsLocalHilbertValues(), true);
+    return;
+  }
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+  {
+    const HilbertValue& childValue =
+        tree.Child(i).AuxiliaryInfo().HilbertValue();
+    BOOST_REQUIRE_EQUAL(value.ValueToInsert(), childValue.ValueToInsert());
+  }
+
+  const HilbertValue& childValue =
+      tree.Child(tree.NumChildren() - 1).AuxiliaryInfo().HilbertValue();
+  BOOST_REQUIRE_EQUAL(value.LocalHilbertValues(),
+      childValue.LocalHilbertValues());
+
+  if (!tree.Parent())
+    BOOST_REQUIRE_EQUAL(value.OwnsValueToInsert(), true);
+  else
+    BOOST_REQUIRE_EQUAL(value.OwnsValueToInsert(), false);
+
+  BOOST_REQUIRE_EQUAL(value.OwnsLocalHilbertValues(), false);
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+    CheckHilbertValue(tree.Child(i));
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTeeCopyConstructorTest)
+{
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType copy(tree);
+
+  CheckHilbertValue(copy);
+  CheckDiscreteHilbertValueSync(copy);
+  CheckHilbertOrdering(copy);
+  CheckContainment(copy);
+  CheckExactContainment(copy);
+  CheckHierarchy(copy);
+  CheckNumDescendants(copy);
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTeeMoveConstructorTest)
+{
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType copy(std::move(tree));
+
+  CheckHilbertValue(copy);
+  CheckDiscreteHilbertValueSync(copy);
+  CheckHilbertOrdering(copy);
+  CheckContainment(copy);
+  CheckExactContainment(copy);
+  CheckHierarchy(copy);
+  CheckNumDescendants(copy);
+}
+
+template<typename TreeType>
 void CheckOverlap(const TreeType& tree)
 {
   bool success = true;
@@ -892,6 +969,7 @@ void CheckOverlap(const TreeType& tree)
   for (size_t i = 0; i < tree.NumChildren(); i++)
     CheckOverlap(tree.Child(i));
 }
+
 
 BOOST_AUTO_TEST_CASE(RPlusTreeOverlapTest)
 {

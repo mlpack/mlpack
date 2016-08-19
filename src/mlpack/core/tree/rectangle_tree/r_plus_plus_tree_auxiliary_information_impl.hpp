@@ -41,8 +41,18 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(
-    const RPlusPlusTreeAuxiliaryInformation& other) :
+    const RPlusPlusTreeAuxiliaryInformation& other,
+    TreeType* /* tree */,
+    bool /* deepCopy */) :
     outerBound(other.OuterBound())
+{
+
+}
+
+template<typename TreeType>
+RPlusPlusTreeAuxiliaryInformation<TreeType>::
+RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other) :
+    outerBound(std::move(other.outerBound))
 {
 
 }
