@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
  */
 BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 {
-  KNN empty(true);
+  KNN empty(NAIVE_MODE);
 
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   KNN::Tree tree(dataset);
@@ -381,13 +381,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        knn = new KNN(tree, false);
+        knn = new KNN(tree, DUAL_TREE_MODE);
         break;
       case 1: // Use the single-tree method.
-        knn = new KNN(tree, true);
+        knn = new KNN(tree, SINGLE_TREE_MODE);
         break;
       case 2: // Use the naive method.
-        knn = new KNN(tree->Dataset(), true);
+        knn = new KNN(tree->Dataset(), NAIVE_MODE);
         break;
     }
 
@@ -667,7 +667,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
 
   KNN knn(dataset);
 
-  KNN naive(dataset, true);
+  KNN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -702,7 +702,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   KNN knn(dataset);
 
   // Set naive mode.
-  KNN naive(dataset, true);
+  KNN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -734,10 +734,10 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   if (!data::Load("test_data_3_1000.csv", dataset))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KNN knn(dataset, false, true);
+  KNN knn(dataset, SINGLE_TREE_MODE);
 
   // Set up computation for naive mode.
-  KNN naive(dataset, true);
+  KNN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -769,9 +769,9 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
       arma::mat> tree(data);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&tree, true);
+      coverTreeSearch(&tree, SINGLE_TREE_MODE);
 
-  KNN naive(data, true);
+  KNN naive(data, NAIVE_MODE);
 
   arma::Mat<size_t> coverTreeNeighbors;
   arma::mat coverTreeDistances;
@@ -840,9 +840,9 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   // query points in both methods should be same.
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(&tree, true);
+      ballTreeSearch(&tree, SINGLE_TREE_MODE);
 
-  KNN naive(tree.Dataset(), true);
+  KNN naive(tree.Dataset(), NAIVE_MODE);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;
@@ -998,7 +998,7 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
       KDTree> SparseKNN;
 
   SparseKNN a(referenceDataset);
-  KNN naive(denseReference, true);
+  KNN naive(denseReference, NAIVE_MODE);
 
   arma::mat sparseDistances;
   arma::Mat<size_t> sparseNeighbors;
