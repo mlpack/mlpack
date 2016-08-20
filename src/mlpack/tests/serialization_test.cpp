@@ -1131,11 +1131,11 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
   // results we get (at least) should fall into the top 10 of the true nearest
   // neighbors.
-  AllkRANN allkrann(dataset, DUAL_TREE_MODE, 5, 0.95);
+  AllkRANN allkrann(dataset, false, false, 5, 0.95);
 
-  AllkRANN krannXml(otherDataset, DUAL_TREE_MODE);
-  AllkRANN krannText(otherDataset, NAIVE_MODE);
-  AllkRANN krannBinary(otherDataset, NAIVE_MODE);
+  AllkRANN krannXml(otherDataset, false, false);
+  AllkRANN krannText(otherDataset, true, false);
+  AllkRANN krannBinary(otherDataset, true, true);
 
   SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
 

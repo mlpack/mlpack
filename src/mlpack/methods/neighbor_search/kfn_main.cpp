@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
     data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
 
     // Adjust search mode.
-    kfn.SetSearchMode(searchMode);
+    kfn.SearchMode() = searchMode;
     kfn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
