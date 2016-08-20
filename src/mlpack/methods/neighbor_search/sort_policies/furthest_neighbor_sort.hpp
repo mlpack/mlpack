@@ -99,8 +99,7 @@ class FurthestNeighborSort
    * return the one with the maximum distance.
    */
   template<typename VecType, typename TreeType>
-  static TreeType& GetBestChild(const VecType& queryPoint,
-                                TreeType& referenceNode)
+  static size_t GetBestChild(const VecType& queryPoint, TreeType& referenceNode)
   {
     return referenceNode.GetFurthestChild(queryPoint);
   };
@@ -110,8 +109,7 @@ class FurthestNeighborSort
    * return the one with the maximum distance.
    */
   template<typename TreeType>
-  static TreeType* GetBestChild(const TreeType& queryNode,
-                                TreeType& referenceNode)
+  static size_t GetBestChild(const TreeType& queryNode, TreeType& referenceNode)
   {
     return referenceNode.GetFurthestChild(queryNode);
   };

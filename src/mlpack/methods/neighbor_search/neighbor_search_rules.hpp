@@ -82,7 +82,7 @@ class NeighborSearchRules
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    */
-  TreeType& GetBestChild(const size_t queryIndex, TreeType& referenceNode);
+  size_t GetBestChild(const size_t queryIndex, TreeType& referenceNode);
 
   /**
    * Get the child node with the best score.
@@ -90,7 +90,7 @@ class NeighborSearchRules
    * @param queryNode Node to be considered.
    * @param referenceNode Candidate node to be recursed into.
    */
-  TreeType* GetBestChild(const TreeType& queryNode, TreeType& referenceNode);
+  size_t GetBestChild(const TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority

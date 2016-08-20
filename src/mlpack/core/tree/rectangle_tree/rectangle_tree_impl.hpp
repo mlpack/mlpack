@@ -564,8 +564,8 @@ inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
 }
 
 /**
- * Return the nearest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -574,15 +574,13 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename VecType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>&
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetNearestChild(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
-    return *this;
+    return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -595,12 +593,12 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       bestIndex = i;
     }
   }
-  return Child(bestIndex);
+  return bestIndex;
 }
 
 /**
- * Return the furthest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -609,15 +607,13 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename VecType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>&
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetFurthestChild(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
-    return *this;
+    return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -630,12 +626,12 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       bestIndex = i;
     }
   }
-  return Child(bestIndex);
+  return bestIndex;
 }
 
 /**
- * Return the nearest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -643,13 +639,11 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>*
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetNearestChild(const RectangleTree& queryNode)
 {
   if (IsLeaf())
-    return NULL;
+    return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -662,12 +656,12 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       bestIndex = i;
     }
   }
-  return &Child(bestIndex);
+  return bestIndex;
 }
 
 /**
- * Return the furthest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -675,13 +669,11 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-    AuxiliaryInformationType>*
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetFurthestChild(const RectangleTree& queryNode)
 {
   if (IsLeaf())
-    return NULL;
+    return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -694,7 +686,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       bestIndex = i;
     }
   }
-  return &Child(bestIndex);
+  return bestIndex;
 }
 
 /**

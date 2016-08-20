@@ -146,7 +146,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline TreeType& NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+inline size_t NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 GetBestChild(const size_t queryIndex, TreeType& referenceNode)
 {
   ++scores;
@@ -154,7 +154,7 @@ GetBestChild(const size_t queryIndex, TreeType& referenceNode)
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline TreeType* NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+inline size_t NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 GetBestChild(const TreeType& queryNode, TreeType& referenceNode)
 {
   ++scores;

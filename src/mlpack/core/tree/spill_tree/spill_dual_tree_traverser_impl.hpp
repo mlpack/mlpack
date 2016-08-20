@@ -105,10 +105,10 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node let's do defeatist search.
-      SpillTree* bestChild = rule.GetBestChild(queryNode, referenceNode);
-      if (bestChild)
+      size_t bestChild = rule.GetBestChild(queryNode, referenceNode);
+      if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(queryNode, *bestChild);
+        Traverse(queryNode, referenceNode.Child(bestChild));
         ++numPrunes;
       }
       else
@@ -216,11 +216,10 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node let's do defeatist search.
-      SpillTree* bestChild = rule.GetBestChild(*queryNode.Left(),
-          referenceNode);
-      if (bestChild)
+      size_t bestChild = rule.GetBestChild(*queryNode.Left(), referenceNode);
+      if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(*queryNode.Left(), *bestChild);
+        Traverse(*queryNode.Left(), referenceNode.Child(bestChild));
         ++numPrunes;
       }
       else
@@ -232,9 +231,9 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
       }
 
       bestChild = rule.GetBestChild(*queryNode.Right(), referenceNode);
-      if (bestChild)
+      if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(*queryNode.Right(), *bestChild);
+        Traverse(*queryNode.Right(), referenceNode.Child(bestChild));
         ++numPrunes;
       }
       else

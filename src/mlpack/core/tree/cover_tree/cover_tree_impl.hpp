@@ -607,21 +607,20 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Descendant(
 }
 
 /**
- * Return the nearest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
 template<typename VecType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
-    const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetNearestChild(const VecType& point,
+                    typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
-    return *this;
+    return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -634,26 +633,24 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
       bestIndex = i;
     }
   }
-  return *children[bestIndex];
+  return bestIndex;
 }
 
 /**
- * Return the furthest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
 template<typename VecType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    GetFurthestChild(
-    const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetFurthestChild(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >::type*)
 {
   if (IsLeaf())
-    return *this;
+    return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -666,23 +663,22 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       bestIndex = i;
     }
   }
-  return *children[bestIndex];
+  return bestIndex;
 }
 
 /**
- * Return the nearest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetNearestChild(const CoverTree& queryNode)
 {
   if (IsLeaf())
-    return NULL;
+    return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -695,23 +691,22 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       bestIndex = i;
     }
   }
-  return children[bestIndex];
+  return bestIndex;
 }
 
 /**
- * Return the furthest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetFurthestChild(const CoverTree& queryNode)
 {
   if (IsLeaf())
-    return NULL;
+    return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -724,7 +719,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       bestIndex = i;
     }
   }
-  return children[bestIndex];
+  return bestIndex;
 }
 
 template<

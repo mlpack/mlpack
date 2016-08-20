@@ -54,8 +54,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
     if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node we do defeatist search.
-      SpillTree& bestChild = rule.GetBestChild(queryIndex, referenceNode);
-      Traverse(queryIndex, bestChild);
+      size_t bestChild = rule.GetBestChild(queryIndex, referenceNode);
+      Traverse(queryIndex, referenceNode.Child(bestChild));
       ++numPrunes;
     }
     else

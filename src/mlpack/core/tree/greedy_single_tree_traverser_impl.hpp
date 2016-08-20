@@ -36,8 +36,8 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     // We are prunning all but one child.
     numPrunes += referenceNode.NumChildren() - 1;
     // Recurse the best child.
-    TreeType& bestChild = rule.GetBestChild(queryIndex, referenceNode);
-    Traverse(queryIndex, bestChild);
+    size_t bestChild = rule.GetBestChild(queryIndex, referenceNode);
+    Traverse(queryIndex, referenceNode.Child(bestChild));
   }
 }
 

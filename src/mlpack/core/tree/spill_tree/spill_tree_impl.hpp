@@ -307,8 +307,10 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 }
 
 /**
- * Return the nearest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the nearest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the nearest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -317,27 +319,24 @@ template<typename MetricType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename VecType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    GetNearestChild(
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetNearestChild(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >::type*)
 {
-  if (IsLeaf())
-    return *this;
-  if (!left)
-    return *right;
-  if (!right)
-    return *left;
+  if (IsLeaf() || !left || !right)
+    return 0;
 
   if (hyperplane.Left(point))
-    return *left;
-  return *right;
+    return 0;
+  return 1;
 }
 
 /**
- * Return the furthest child node to the given query point.  If this is a leaf
- * node, it will return a reference to itself.
+ * Return the index of the furthest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the furthest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -346,27 +345,24 @@ template<typename MetricType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
 template<typename VecType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    GetFurthestChild(
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetFurthestChild(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >::type*)
 {
-  if (IsLeaf())
-    return *this;
-  if (!left)
-    return *right;
-  if (!right)
-    return *left;
+  if (IsLeaf() || !left || !right)
+    return 0;
 
   if (hyperplane.Left(point))
-    return *right;
-  return *left;
+    return 1;
+  return 0;
 }
 
 /**
- * Return the nearest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the nearest child node to the given query node (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the nearest).  If it can't decide it will
+ * return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -374,28 +370,25 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>*
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    GetNearestChild(const SpillTree& queryNode)
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetNearestChild(const SpillTree& queryNode)
 {
-  if (IsLeaf())
-    return NULL;
-  if (!left)
-    return right;
-  if (!right)
-    return left;
+  if (IsLeaf() || !left || !right)
+    return 0;
 
   if (hyperplane.Left(queryNode.Bound()))
-    return left;
+    return 0;
   if (hyperplane.Right(queryNode.Bound()))
-    return right;
+    return 1;
   // Can't decide.
-  return NULL;
+  return 2;
 }
 
 /**
- * Return the furthest child node to the given query node.  If it can't decide
- * will return a null pointer.
+ * Return the index of the furthest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the furthest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
  */
 template<typename MetricType,
          typename StatisticType,
@@ -403,23 +396,18 @@ template<typename MetricType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
              class SplitType>
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>*
-SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    GetFurthestChild(const SpillTree& queryNode)
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetFurthestChild(const SpillTree& queryNode)
 {
-  if (IsLeaf())
-    return NULL;
-  if (!left)
-    return right;
-  if (!right)
-    return left;
+  if (IsLeaf() || !left || !right)
+    return 0;
 
   if (hyperplane.Left(queryNode.Bound()))
-    return right;
+    return 1;
   if (hyperplane.Right(queryNode.Bound()))
-    return left;
+    return 0;
   // Can't decide.
-  return NULL;
+  return 2;
 }
 
 /**
