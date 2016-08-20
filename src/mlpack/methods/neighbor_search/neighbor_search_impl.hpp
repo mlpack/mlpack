@@ -84,13 +84,16 @@ SingleTreeTraversalType>::NeighborSearch(const MatType& referenceSetIn,
         &referenceTree->Dataset()),
     treeOwner(mode != NAIVE_MODE),
     setOwner(false),
+    searchMode(mode),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  SetSearchMode(mode);
+  // Update naive, singleMode and greedy flags according to searchMode.
+  UpdateSearchModeFlags();
+
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
 }
@@ -116,13 +119,16 @@ SingleTreeTraversalType>::NeighborSearch(MatType&& referenceSetIn,
         &referenceTree->Dataset()),
     treeOwner(mode != NAIVE_MODE),
     setOwner(mode == NAIVE_MODE),
+    searchMode(mode),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  SetSearchMode(mode);
+  // Update naive, singleMode and greedy flags according to searchMode.
+  UpdateSearchModeFlags();
+
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
 }
@@ -145,13 +151,16 @@ SingleTreeTraversalType>::NeighborSearch(Tree* referenceTree,
     referenceSet(&referenceTree->Dataset()),
     treeOwner(false),
     setOwner(false),
+    searchMode(mode),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  SetSearchMode(mode);
+  // Update naive, singleMode and greedy flags according to searchMode.
+  UpdateSearchModeFlags();
+
   if (mode == NAIVE_MODE)
     throw std::invalid_argument("invalid constructor for naive mode");
   if (epsilon < 0)
@@ -175,15 +184,19 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
     referenceSet(new MatType()), // Empty matrix.
     treeOwner(false),
     setOwner(true),
+    searchMode(mode),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  SetSearchMode(mode);
+  // Update naive, singleMode and greedy flags according to searchMode.
+  UpdateSearchModeFlags();
+
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
+
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
@@ -215,14 +228,14 @@ SingleTreeTraversalType>::NeighborSearch(const MatType& referenceSetIn,
     setOwner(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
+    greedy(false),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Update Search Mode according to naive and singleMode flags.
-  searchMode = NAIVE_MODE;
+  // Update searchMode according to naive, singleMode and greedy flags.
   UpdateSearchMode();
 
   if (epsilon < 0)
@@ -253,14 +266,14 @@ SingleTreeTraversalType>::NeighborSearch(MatType&& referenceSetIn,
     setOwner(naive),
     naive(naive),
     singleMode(!naive && singleMode),
+    greedy(false),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Update Search Mode according to naive and singleMode flags.
-  searchMode = NAIVE_MODE;
+  // Update searchMode according to naive, singleMode and greedy flags.
   UpdateSearchMode();
 
   if (epsilon < 0)
@@ -287,14 +300,14 @@ SingleTreeTraversalType>::NeighborSearch(Tree* referenceTree,
     setOwner(false),
     naive(false),
     singleMode(singleMode),
+    greedy(false),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Update Search Mode according to naive and singleMode flags.
-  searchMode = NAIVE_MODE;
+  // Update searchMode according to naive, singleMode and greedy flags.
   UpdateSearchMode();
 
   if (epsilon < 0)
@@ -321,18 +334,19 @@ SingleTreeTraversalType>::NeighborSearch(const bool naive,
     setOwner(true),
     naive(naive),
     singleMode(singleMode),
+    greedy(false),
     epsilon(epsilon),
     metric(metric),
     baseCases(0),
     scores(0),
     treeNeedsReset(false)
 {
-  // Update Search Mode according to naive and singleMode flags.
-  searchMode = NAIVE_MODE;
+  // Update searchMode according to naive, singleMode and greedy flags.
   UpdateSearchMode();
 
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
+
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
@@ -372,7 +386,7 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(
     const MatType& referenceSet)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   // Clean up the old tree, if we built one.
@@ -413,7 +427,7 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   // Clean up the old tree, if we built one.
@@ -459,7 +473,7 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree* referenceTree)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   if (searchMode == NAIVE_MODE)
@@ -496,7 +510,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   if (k > referenceSet->n_cols)
@@ -713,7 +727,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::mat& distances,
     bool sameSet)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   if (k > referenceSet->n_cols)
@@ -797,7 +811,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   if (k > referenceSet->n_cols)
@@ -1046,7 +1060,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Serialize(
 {
   using data::CreateNVP;
 
-  // Update Search Mode.
+  // Update searchMode.
   UpdateSearchMode();
 
   // Serialize preferences for search.
@@ -1118,7 +1132,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Serialize(
   }
 }
 
-//! Set the Search Mode.
+//! Updates naive, singleMode and greedy flags according to searchMode.  This is
+//! only necessary until the modifiers Naive(), SingleMode() and Greedy() are
+//! removed in mlpack 3.0.0.
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
@@ -1128,33 +1144,36 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::SetSearchMode(
-    const NeighborSearchMode mode)
+DualTreeTraversalType, SingleTreeTraversalType>::UpdateSearchModeFlags()
 {
-  searchMode = mode;
-  switch (mode)
+  switch (searchMode)
   {
     case NAIVE_MODE:
       naive = true;
+      singleMode = false;
+      greedy = false;
       break;
     case SINGLE_TREE_MODE:
       naive = false;
       singleMode = true;
+      greedy = false;
       break;
     case DUAL_TREE_MODE:
       naive = false;
       singleMode = false;
+      greedy = false;
       break;
     case GREEDY_SINGLE_TREE_MODE:
       naive = false;
       singleMode = true;
+      greedy = true;
       break;
   }
 }
 
-//! Updates searchMode to be according to naive and singleMode booleans.
-//! This is only necessary until the modifiers Naive() and SingleMode() are
-//! removed in mlpack 3.0.0.
+//! Updates searchMode to be according to naive, singleMode and greedy booleans.
+//! This is only necessary until the modifiers Naive(), SingleMode() and
+//! Greedy() are removed in mlpack 3.0.0.
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
@@ -1168,9 +1187,11 @@ DualTreeTraversalType, SingleTreeTraversalType>::UpdateSearchMode()
 {
   if (naive)
     searchMode = NAIVE_MODE;
-  else if (singleMode && (searchMode != GREEDY_SINGLE_TREE_MODE))
+  else if (singleMode && greedy)
+    searchMode = GREEDY_SINGLE_TREE_MODE;
+  else if (singleMode)
     searchMode = SINGLE_TREE_MODE;
-  else if (!singleMode)
+  else
     searchMode = DUAL_TREE_MODE;
 }
 

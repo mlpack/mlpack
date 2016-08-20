@@ -412,11 +412,6 @@ class NeighborSearch
   //! Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
 
-  //! Access the search mode.
-  NeighborSearchMode SearchMode() const { return searchMode; }
-  //! Modify the search mode.
-  void SetSearchMode(const NeighborSearchMode mode);
-
   //! Access whether or not search is done in naive linear scan mode.
   bool Naive() const { return naive; }
   //! Modify whether or not search is done in naive linear scan mode.
@@ -428,6 +423,12 @@ class NeighborSearch
   //! Modify whether or not search is done in single-tree mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
   bool& SingleMode() { return singleMode; }
+
+  //! Access whether or not search is done in greedy mode.
+  bool Greedy() const { return greedy; }
+  //! Modify whether or not search is done in greedy mode.
+  //! Deprecated. Will be removed in mlpack 3.0.0.
+  bool& Greedy() { return greedy; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
@@ -460,6 +461,8 @@ class NeighborSearch
   bool naive;
   //! Indicates if single-tree search is being used (as opposed to dual-tree).
   bool singleMode;
+  //! Indicates if greedy search is being used.
+  bool greedy;
   //! Indicates the relative error to be considered in approximate search.
   double epsilon;
 
@@ -475,10 +478,15 @@ class NeighborSearch
   //! Search() without a query set.
   bool treeNeedsReset;
 
-  //! Updates searchMode to be according to naive and singleMode booleans.
-  //! This is only necessary until the modifiers Naive() and SingleMode() are
-  //! removed in mlpack 3.0.0.
+  //! Updates searchMode to be according to naive, singleMode and greedy
+  //! booleans.  This is only necessary until the modifiers Naive(),
+  //! SingleMode() and Greedy() are removed in mlpack 3.0.0.
   void UpdateSearchMode();
+
+  //! Updates naive, singleMode and greedy flags according to searchMode.  This
+  //! is only necessary until the modifiers Naive(), SingleMode() and Greedy()
+  //! are removed in mlpack 3.0.0.
+  void UpdateSearchModeFlags();
 
   //! The NSModel class should have access to internal members.
   template<typename SortPol>

@@ -213,8 +213,33 @@ template<typename NSType>
 void SetSearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->SetSearchMode(searchMode);
-  throw std::runtime_error("no neighbor search model initialized");
+  {
+    switch (searchMode)
+    {
+      case NAIVE_MODE:
+        ns->Naive() = true;
+        ns->SingleMode() = false;
+        ns->Greedy() = false;
+        break;
+      case SINGLE_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = true;
+        ns->Greedy() = false;
+        break;
+      case DUAL_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = false;
+        ns->Greedy() = false;
+        break;
+      case GREEDY_SINGLE_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = true;
+        ns->Greedy() = true;
+        break;
+    }
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Return the search mode.
@@ -222,8 +247,18 @@ template<typename NSType>
 NeighborSearchMode SearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->SearchMode();
-  throw std::runtime_error("no neighbor search model initialized");
+  {
+    if (ns->Naive())
+      return NAIVE_MODE;
+    else if (ns->SingleMode() && ns->Greedy())
+      return GREEDY_SINGLE_TREE_MODE;
+    else if (ns->SingleMode())
+      return SINGLE_TREE_MODE;
+    else
+      return DUAL_TREE_MODE;
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Expose the Epsilon method of the given NSType.
