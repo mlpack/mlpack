@@ -91,7 +91,7 @@ void Backtrace::GetAddress(int maxDepth)
     Dl_info addressHandler;
 
     //No backtrace will be printed if no compile flags: -g -rdynamic
-    if(TRACE_CONDITION_1)
+    if (TRACE_CONDITION_1)
     {
       return ;
     }
@@ -173,7 +173,7 @@ std::string Backtrace::ToString()
   std::ostringstream lineOss;
   std::ostringstream it;
 
-  if(stack.size() <= 0)
+  if (stack.size() <= 0)
   {
     stackStr = "Cannot give backtrace because program was compiled";
     stackStr += " without: -g -rdynamic\nFor a backtrace,";

@@ -48,8 +48,10 @@ class TrainVisitor;
  * @tparam MetricType The metric to use for computation.
  * @tparam MatType The type of data matrix.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
- * @tparam TraversalType The type of traversal to use (defaults to the tree's
- *      default traverser).
+ * @tparam DualTreeTraversalType The type of dual tree traversal to use
+ *     (defaults to the tree's default traverser).
+ * @tparam SingleTreeTraversalType The type of single tree traversal to use
+ *     (defaults to the tree's default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::EuclideanDistance,
@@ -57,10 +59,14 @@ template<typename SortPolicy = NearestNeighborSort,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::KDTree,
-         template<typename RuleType> class TraversalType =
+         template<typename RuleType> class DualTreeTraversalType =
              TreeType<MetricType,
                       NeighborSearchStat<SortPolicy>,
-                      MatType>::template DualTreeTraverser>
+                      MatType>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<MetricType,
+                      NeighborSearchStat<SortPolicy>,
+                      MatType>::template SingleTreeTraverser>
 class NeighborSearch
 {
  public:
@@ -237,11 +243,14 @@ class NeighborSearch
    * @param neighbors Matrix storing lists of neighbors for each query point.
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
+   * @param sameSet Denotes whether or not the reference and query sets are the
+   *      same.
    */
   void Search(Tree* queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+              arma::mat& distances,
+              bool sameSet = false);
 
   /**
    * Search for the nearest neighbors of every point in the reference set.  This
@@ -260,6 +269,38 @@ class NeighborSearch
   void Search(const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
+
+  /**
+   * Calculate the average relative error (effective error) between the
+   * distances calculated and the true distances provided.  The input matrices
+   * must have the same size.
+   *
+   * Cases where the true distance is zero (the same point) or the calculated
+   * distance is SortPolicy::WorstDistance() (didn't find enough points) will be
+   * ignored.
+   *
+   * @param foundDistances Matrix storing lists of calculated distances for each
+   *     query point.
+   * @param realDistances Matrix storing lists of true best distances for each
+   *     query point.
+   * @return Average relative error.
+   */
+  static double EffectiveError(arma::mat& foundDistances,
+                               arma::mat& realDistances);
+
+  /**
+   * Calculate the recall (% of neighbors found) given the list of found
+   * neighbors and the true set of neighbors.  The recall returned will be in
+   * the range [0, 1].
+   *
+   * @param foundNeighbors Matrix storing lists of calculated neighbors for each
+   *     query point.
+   * @param realNeighbors Matrix storing lists of true best neighbors for each
+   *     query point.
+   * @return Recall.
+   */
+  static double Recall(arma::Mat<size_t>& foundNeighbors,
+                       arma::Mat<size_t>& realNeighbors);
 
   //! Return the total number of base case evaluations performed during the last
   //! search.
@@ -323,7 +364,8 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  friend class TrainVisitor<SortPolicy>;
+  template<typename SortPol>
+  friend class TrainVisitor;
 }; // class NeighborSearch
 
 } // namespace neighbor

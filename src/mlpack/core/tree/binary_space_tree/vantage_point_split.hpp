@@ -23,43 +23,64 @@ class VantagePointSplit
   typedef typename MatType::elem_type ElemType;
   //! The bounding shape type.
   typedef typename BoundType::MetricType MetricType;
+  //! A struct that contains an information about the split.
+  struct SplitInfo
+  {
+    //! The vantage point.
+    arma::Col<ElemType> vantagePoint;
+    //! The median distance according to which the node will be split.
+    ElemType mu;
+    //! An instance of the MetricType class.
+    const MetricType* metric;
+
+    SplitInfo() :
+        mu(0),
+        metric(NULL)
+    { }
+
+    template<typename VecType>
+    SplitInfo(const MetricType& metric, const VecType& vantagePoint,
+        ElemType mu) :
+        vantagePoint(vantagePoint),
+        mu(mu),
+        metric(&metric)
+    { }
+  };
 
   /**
    * Split the node according to the distance to a vantage point.
    *
-   * @param bound The bound used by the tree.
-   * @param data The dataset used by the tree.
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
    * @param count Number of points in this node.
-   * @param splitCol The index at which the dataset is divided into two parts
-   *    after the rearrangement.
+   * @param splitInfo An information about the split. This information contains
+   *    the vantage point and the median distance to the vantage point.
    */
   static bool SplitNode(const BoundType& bound,
                         MatType& data,
                         const size_t begin,
                         const size_t count,
-                        size_t& splitCol);
+                        SplitInfo& splitInfo);
 
   /**
-   * Split the node according to the distance to a vantage point.
+   * Indicates that a point should be assigned to the left subtree.
+   * This method returns true if a point should be assigned to the left subtree,
+   * i.e., if the distance from the point to the vantage point is less then the
+   * median value. Otherwise it returns false.
    *
-   * @param bound The bound used by the tree.
-   * @param data The dataset used by the tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
-   * @param count Number of points in this node.
-   * @param splitCol The index at which the dataset is divided into two parts
-   *    after the rearrangement.
-   * @param oldFromNew Vector which will be filled with the old positions for
-   *    each new point.
+   * @param point The point that is being assigned.
+   * @param splitInfo An information about the split.
    */
-  static bool SplitNode(const BoundType& bound,
-                        MatType& data,
-                        const size_t begin,
-                        const size_t count,
-                        size_t& splitCol,
-                        std::vector<size_t>& oldFromNew);
+  template<typename VecType>
+  static bool AssignToLeftNode(const VecType& point,
+                               const SplitInfo& splitInfo)
+  {
+    return (splitInfo.metric->Evaluate(splitInfo.vantagePoint, point) <
+        splitInfo.mu);
+  }
+
  private:
   /**
    * Select the best vantage point, i.e., the point with the largest second
@@ -84,68 +105,6 @@ class VantagePointSplit
                                  const size_t count,
                                  size_t& vantagePoint,
                                  ElemType& mu);
-
-  /**
-   * This method returns true if a point should be assigned to the left subtree,
-   * i.e., if the distance from the point to the vantage point is less then the
-   * median value. Otherwise it returns false.
-   *
-   * @param metric The metric used by the tree.
-   * @param data The dataset used by the tree.
-   * @param vantagePoint The vantage point.
-   * @param point The point that is being assigned.
-   * @param mu The median value.
-   */
-  template<typename VecType>
-  static bool AssignToLeftSubtree(const MetricType& metric,
-                                  const MatType& mat,
-                                  const VecType& vantagePoint,
-                                  const size_t point,
-                                  const ElemType mu)
-  {
-    return (metric.Evaluate(vantagePoint, mat.col(point)) < mu);
-  }
-
-  /**
-   * Perform split according to the median value and the vantage point.
-   *
-   * @param metric The metric used by the tree.
-   * @param data The dataset used by the tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *      this node.
-   * @param count Number of points in this node.
-   * @param vantagePoint The vantage point.
-   * @param mu The median value.
-   */
-  template<typename VecType>
-  static size_t PerformSplit(const MetricType& metric,
-                             MatType& data,
-                             const size_t begin,
-                             const size_t count,
-                             const VecType& vantagePoint,
-                             const ElemType mu);
-
-  /**
-   * Perform split according to the median value and the vantage point.
-   *
-   * @param metric The metric used by the tree.
-   * @param data The dataset used by the tree.
-   * @param begin Index of the starting point in the dataset that belongs to
-   *    this node.
-   * @param count Number of points in this node.
-   * @param vantagePoint The vantage point.
-   * @param mu The median value.
-   * @param oldFromNew Vector which will be filled with the old positions for
-   *    each new point.
-   */
-  template<typename VecType>
-  static size_t PerformSplit(const MetricType& metric,
-                             MatType& data,
-                             const size_t begin,
-                             const size_t count,
-                             const VecType& vantagePoint,
-                             const ElemType mu,
-                             std::vector<size_t>& oldFromNew);
 };
 
 } // namespace tree

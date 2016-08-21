@@ -55,7 +55,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          arma::mat& H) const
 {
   // check if the given rank is valid
-  if(r > V.n_rows || r > V.n_cols)
+  if (r > V.n_rows || r > V.n_cols)
   {
     Log::Info << "Rank " << r << ", given for decomposition is invalid." << std::endl;
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;
@@ -94,7 +94,7 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& H) const
 {
   // check if the given rank is valid
-  if(r > V.n_rows || r > V.n_cols)
+  if (r > V.n_rows || r > V.n_cols)
   {
     Log::Info << "Rank " << r << ", given for decomposition is invalid." << std::endl;
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;

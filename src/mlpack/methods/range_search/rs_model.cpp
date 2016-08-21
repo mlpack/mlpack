@@ -26,7 +26,9 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     hilbertRTreeRS(NULL),
     rPlusTreeRS(NULL),
     rPlusPlusTreeRS(NULL),
-    vpTreeRS(NULL)
+    vpTreeRS(NULL),
+    rpTreeRS(NULL),
+    maxPRTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -138,13 +140,23 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       break;
 
     case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
-          singleMode);
+      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet),
+          naive, singleMode);
       break;
 
     case VP_TREE:
       vpTreeRS = new RSType<tree::VPTree>(move(referenceSet), naive,
           singleMode);
+      break;
+
+    case RP_TREE:
+      rpTreeRS = new RSType<tree::RPTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case MAX_RP_TREE:
+      maxPRTreeRS = new RSType<tree::MaxRPTree>(move(referenceSet),
+          naive, singleMode);
       break;
   }
 
@@ -271,6 +283,14 @@ void RSModel::Search(arma::mat&& querySet,
     case VP_TREE:
       vpTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case RP_TREE:
+      rpTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case MAX_RP_TREE:
+      maxPRTreeRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -329,6 +349,14 @@ void RSModel::Search(const math::Range& range,
     case VP_TREE:
       vpTreeRS->Search(range, neighbors, distances);
       break;
+
+    case RP_TREE:
+      rpTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case MAX_RP_TREE:
+      maxPRTreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -356,7 +384,11 @@ std::string RSModel::TreeName() const
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
     case VP_TREE:
-      return "Vantage point tree";
+      return "vantage point tree";
+    case RP_TREE:
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
     default:
       return "unknown tree";
   }
@@ -385,6 +417,10 @@ void RSModel::CleanMemory()
     delete rPlusPlusTreeRS;
   if (vpTreeRS)
     delete vpTreeRS;
+  if (rpTreeRS)
+    delete rpTreeRS;
+  if (maxPRTreeRS)
+    delete maxPRTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -396,4 +432,6 @@ void RSModel::CleanMemory()
   rPlusTreeRS = NULL;
   rPlusPlusTreeRS = NULL;
   vpTreeRS = NULL;
+  rpTreeRS = NULL;
+  maxPRTreeRS = NULL;
 }

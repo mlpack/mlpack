@@ -317,6 +317,9 @@ class RASearchRules
                TreeType& referenceNode,
                const double distance,
                const double bestDistance);
+
+  static_assert(tree::TreeTraits<TreeType>::UniqueNumDescendants, "TreeType "
+      "must provide a unique number of descendants points.");
 }; // class RASearchRules
 
 } // namespace neighbor

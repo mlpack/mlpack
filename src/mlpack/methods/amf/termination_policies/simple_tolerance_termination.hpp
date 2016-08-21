@@ -78,7 +78,7 @@ class SimpleToleranceTermination
         for(size_t j = 0;j < m;j++)
         {
             double temp = 0;
-            if((temp = (*V)(i,j)) != 0)
+            if ((temp = (*V)(i,j)) != 0)
             {
                 temp = (temp - WH(i, j));
                 temp = temp * temp;
@@ -118,18 +118,18 @@ class SimpleToleranceTermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if(residue <= c_indexOld && isCopy == true)
+      if (residue <= c_indexOld && isCopy == true)
       {
         isCopy = false;
       }
     }
 
     // check if termination criterion is met
-    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    if (reverseStepCount == reverseStepTolerance || iteration > maxIterations)
     {
       // if stored values are present replace them with current value as they
       // represent the minimum residue point
-      if(isCopy)
+      if (isCopy)
       {
         W = this->W;
         H = this->H;

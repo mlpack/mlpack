@@ -420,7 +420,7 @@ bool Load(const std::string& filename,
     stream.close();
     stream.open(filename, std::fstream::in);
 
-    if(transpose)
+    if (transpose)
     {
       std::vector<std::vector<std::string>> tokensArray;
       std::vector<std::string> tokens;
@@ -430,7 +430,7 @@ bool Load(const std::string& filename,
         std::getline(stream, buffer, '\n');
         Tokenizer lineTok(buffer, sep);
         tokens = details::ToTokens(lineTok);
-        if(tokens.size() == cols)
+        if (tokens.size() == cols)
         {
           tokensArray.emplace_back(std::move(tokens));
         }

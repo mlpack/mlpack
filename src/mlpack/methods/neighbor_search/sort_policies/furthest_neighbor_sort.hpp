@@ -167,7 +167,7 @@ class FurthestNeighborSort
    */
   static inline double ConvertToDistance(const double score)
   {
-    return ConvertToScore(score); // The two operations are identical.
+    return ConvertToScore(score);
   }
 };
 
