@@ -20,10 +20,13 @@ int main(int argc, char* argv[])
   size_t d = 10;
   size_t k = 5;
   double sampleSize = 0.25;
-  double minRecall = 0.4;
+  double recall, selectivity;
   arma::mat rdata(d, N, arma::fill::randu);
   LSHModel<> model(rdata, sampleSize, k);
-  model.Predict(N, k, minRecall);
+  model.Predict(N, k, 16, 4, 4, 1.0, recall, selectivity);
+
+  Log::Info << "Model predicts " << recall*100 << "\% recall and "
+    << selectivity*100 << "\% selectivity." << std::endl;
 
   arma::mat qdata(d, 1, arma::fill::randu);
   arma::Mat<size_t> neighbors;

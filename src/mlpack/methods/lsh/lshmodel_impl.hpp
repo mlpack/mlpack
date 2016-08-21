@@ -8,6 +8,7 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_MODEL_IMPL_HPP
 
 #include "lshmodel.hpp"
+#include <boost/math/distributions/normal.hpp> // pdf and cdf needed
 
 
 //TODO: remove
@@ -151,22 +152,23 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
 }
 
 
-// Predict parameters for LSH that will have acceptable recall.
+// Predict recall / selectivity for the given parameters.
 template <typename SortPolicy, typename ObjectiveFunction>
 void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
                                                       const size_t k,
-                                                      const double minRecall)
+                                                      const size_t numTables,
+                                                      const size_t numProj,
+                                                      const size_t numProbes,
+                                                      const double hashWidth,
+                                                      double& predictedRecall,
+                                                      double& predictedSelect)
 {
-  // Sanity check. Recall can't be greater/equal to 1, or negative.
-  if (minRecall < 0 || minRecall >=1)
-    Log::Fatal << "Parameter minRecall must be in [0, 1)" << std::endl;
-
   // If the object wasn't trained, die here.
   if (referenceSet == NULL)
     Log::Fatal << "Attempt to use Predict() on untrained Object. Exiting."
         << std::endl;
 
-  // Before proceeding, if requested K is larger than the k we trained with,
+  // Before proceeding, if requested k is larger than the k we trained with,
   // re-train the object.
   if (k > maxKValue)
   {
@@ -203,12 +205,139 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   distancesDistribution.Train(logMeanVec, meanLogVec, meanVec);
   Timer::Stop("fitting_distributions");
 
-  // See if works
-  //GenerateTemplateSequence(3, 0.5, 8);
+  // Step 7. Generate the Template Probing Sequence using the maximum number of
+  // projections and the maximum number of probes.
+  GenerateTemplateSequence(numProj, numProbes);
 
-  // Step 7. Run Binary search on parameter space to minimize selectivity while
-  // keeping recall above minimum.
+  // Step 8. Use formulas (19) and (20) from the paper to predict recall and
+  // selectivity, using LSHModel::Rho() and the distribution functions of the
+  // gammas we fit back in Step 6.
+  predictedRecall = 0.5;
+  predictedSelect = 0.5;
+}
 
+
+/* NOTE: My interpretation of the paper would result in this code, but LSHKIT's
+ * implementation is different. I'm commenting this out to try their way, and I
+ * might go back to this if I see both work the same.
+
+// Probability of two points being neighbors if they are at distance chi.
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::Rho(double chi,
+                                                    double hashWidth,
+                                                    size_t numTables,
+                                                    size_t numProj,
+                                                    size_t numProbes)
+{
+  // Calculate the formula:
+  // 1 - {Prod{1 - Prod{same_bin_probability}}}^numTables, where:
+  // * same_bin_probability is calculated with the Value() function.
+  // * Prod{same_bin_probability} is stored in product.
+  // * Prod{1 - Prod{same_bin_probability}} is stored in rho.
+
+  double rho = 1;
+
+  // Row-major loop :(. TODO: Refactor to make column-major.
+  for (size_t proj = 0; proj < numProj; ++proj)
+  {
+    double product = 1;
+    for (size_t probe = 0; probe < numProbes; ++probe)
+    {
+      // Use perturbation value (proj, probe), i.e. \delta_{\mu, \tau}
+      product *= Value(chi, hashWidth, templateSequence(proj, probe), numProj);
+    }
+
+    rho *= (1 - product);
+  }
+
+  return 1 - std::pow(rho, numTables);
+}
+
+// Probability of two points being neighbors if they are at distance chi.
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::SameBucketProbability(double chi,
+                      double hashWidth,
+                      short delta,
+                      size_t proj,
+                      size_t numProj)
+{
+  if (delta == 0)
+  {
+    // No perturbation - probability of two queries sharing the same bin.
+    // Use the "default" normal distribution with mean = 0, sd = 1.
+    boost::math::normal_distribution phi;
+    return 2 * phi.pdf(hashWidth / chi) - 1
+      + std::sqrt(2 / M_PI) 
+      * (std::exp(-pow((hashWidth / chi), 2) / 2.0 - 1.0)) / (hashWidth / chi);
+  }
+  else
+  {
+    // +1/-1 perturbation - probability of two queries being in adjacent bins.
+    double deltaI = (proj + 1.0) / (2.0 * (numProj + 2.0));
+    
+    // Negative perturbation - flip deltaI.
+    if (delta == -1)
+      deltaI = 1 - deltaI;
+
+    boost::math::normal_distribution phi(-delta, chi);
+    return phi.cdf(hashWidth) - phi.cdf(0);
+  }
+}
+*/
+
+/*
+ * Based on the LSHKIT implementation, not my understanding of the paper.
+ */
+// Probability of two points being neighbors if they are at distance chi.
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::Rho(double chi,
+                                                    double hashWidth,
+                                                    size_t numTables,
+                                                    size_t numProj,
+                                                    size_t numProbes)
+{
+  double rho = 0;
+
+  for (size_t probe = 0; probe < numProbes; ++probe)
+  {
+    double rTemp = 1;
+    for (size_t proj = 0; proj < numProj; ++proj)
+    {
+      rTemp *= SameBucketProbability(chi, hashWidth, 
+          templateSequence(proj, probe), proj, numProj);
+    }
+    rho += rTemp;
+  }
+
+  return 1 - std::exp(std::log(1.0 - rho) * numTables);
+}
+
+// Probability of two points being neighbors if they are at distance chi.
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::
+SameBucketProbability(double chi, double hashWidth, short delta, size_t proj,
+                      size_t numProj)
+{
+  boost::math::normal_distribution<> phi;
+  if (delta == 0)
+  {
+    // No perturbation - probability of two queries sharing the same bin.
+    return 2 * pdf(phi, hashWidth / chi) - 1
+      + std::sqrt(2 / M_PI) 
+      * (std::exp(-pow((hashWidth / chi), 2) / 2.0 - 1.0)) / (hashWidth / chi);
+  }
+  else
+  {
+    // +1/-1 perturbation - probability of two queries being in adjacent bins.
+    double deltaI = (proj + 1.0) / (2.0 * (numProj + 2.0));
+    
+    // Negative perturbation - flip deltaI.
+    if (delta == -1)
+      deltaI = 1 - deltaI;
+
+    return cdf(phi, hashWidth / chi * (1 + deltaI)) 
+        - cdf(phi, hashWidth / chi * deltaI);
+  }
 }
 
 // Fit two predictors, one for arithmetic mean E and one for geometric mean G.
@@ -254,9 +383,9 @@ LSHObject(const size_t numProjIn,
   LSHSearch<> lsh(*referenceSet, numProjOut, numTablesOut, hashWidthOut,
       secondHashSize, bucketSize);
 
-  lshObjectVector.push_back(lsh);
+  trainedLSHObject = lsh;
 
-  return lshObjectVector[lshObjectVector.size() - 1];
+  return trainedLSHObject;
 }
 
 // Helper function to generate perturbations.
@@ -348,30 +477,35 @@ bool LSHModel<SortPolicy, ObjectiveFunction>::PerturbationValid(
 template <typename SortPolicy, typename ObjectiveFunction>
 void LSHModel<SortPolicy, ObjectiveFunction>::GenerateTemplateSequence(
     size_t numProj,
-    double hashWidth,
     size_t numProbes)
 {
-  // If no additional probes requested, stop here.
+  // If no probes requested, stop here.
   if (numProbes == 0)
+  {
+    Log::Warn << "GenerateTemplateSequence called with numProbes = 0"
+      << std::endl;
     return;
+  }
 
   // If number of additional probes exceeds possible, set to max possible.
-  if (numProbes > ((1 << numProj) - 1))
-    numProbes = (1 << numProj) - 1;
+  if (numProbes > pow(3, numProj))
+    numProbes = pow(3, numProj); // {-1, 0, 1} for each probe.
 
   // Calculate the expected scores based on Multi-probe LSH paper.
   arma::vec scores(2 * numProj);
-  double M = (double) numProj; // To avoid integer division headache.
-  // "Positive" scores.
-  for (size_t j = 0; j < numProj; ++j)
-    scores(j) = pow(hashWidth, 2) * (j + 1 * (j + 2))/(4 * (M + 1) * (M + 2));
-  // "Negative" scores.
-  for (size_t j = numProj; j < 2 * numProj; ++j)
-    scores(j) = pow(hashWidth, 2) *
-      (1 -
-       (2 * M + 1 - (j + 1))/(M + 1) +
-       ((2 * M + 1 - (j + 1)) * (2 * M + 2 - (j + 1)))/(4 * (M + 1) * (M + 2)));
-  cout << scores << endl;
+  double M = (double) numProj;
+
+  // Generate expected scores in sorted order.
+  for (size_t i = 0; i < numProj; ++i)
+  {
+    // Everything is double to avoid integer division headache.
+    double left = double(i);
+    double right = 2 * M - left - 1;
+
+    // Expected score - left boundary.
+    scores[left] = (left + 1) * (left + 2) / (2 * (M + 1) * (M + 2));
+    scores[right] = 1 - (left + 1)/(M + 1) + scores[left];
+  }
 
   // A "+1" signifies a positive perturbation, a "-1" a negative one.
   arma::Col<short int> actions(2 * numProj); // will be [1 ... -1 ...]
@@ -387,14 +521,6 @@ void LSHModel<SortPolicy, ObjectiveFunction>::GenerateTemplateSequence(
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
   positions.rows(numProj, 2 * numProj - 1) =
     arma::linspace< arma::Col<size_t> >(0, numProj - 1, numProj);
-
-  // Sort all three vectors so smaller scoring perturbations are first.
-  arma::uvec sortidx = arma::sort_index(scores);
-  scores = scores(sortidx);
-  actions = actions(sortidx);
-  positions = positions(sortidx);
-
-  // From LSHSearch::GetAdditionalProbingBins. TODO: Modularize?
 
   // Perturbation sets (A) mark with 1 the (score, action, dimension) positions
   // included in a given perturbation vector. Other spaces are 0.
@@ -415,13 +541,11 @@ void LSHModel<SortPolicy, ObjectiveFunction>::GenerateTemplateSequence(
   // Start by adding the lowest scoring set to the minheap.
   minHeap.push( std::make_pair(PerturbationScore(Ao, scores), 0) );
 
-  // Loop invariable: after pvec iterations, additionalProbingBins contains pvec
-  // valid codes of the lowest-scoring bins (bins most likely to contain
-  // neighbors of the query).
-
   // Allocate 1 column per perturbed "code".
-  this->templateSequence.zeros(numProj, numProbes);
-  for (size_t pvec = 0; pvec < numProbes; ++pvec)
+  templateSequence.zeros(numProj, numProbes);
+
+  // Column 0 is all 0s. Fill columns 1:numProbes using Lv's algorithm.
+  for (size_t pvec = 1; pvec < numProbes; ++pvec)
   {
     std::vector<bool> Ai;
     do
@@ -464,31 +588,6 @@ void LSHModel<SortPolicy, ObjectiveFunction>::GenerateTemplateSequence(
   }
 }
 
-// Fit a curve to the data provided.
-template<typename SortPolicy, typename ObjectiveFunction>
-double LSHModel<SortPolicy, ObjectiveFunction>::DistanceStatisticPredictor::Train(
-    const arma::Col<size_t>& inputSize,
-    const arma::Col<size_t>& kValues,
-    const arma::mat& statistic)
-{
-  // Objective function for fitting the E(x, k) curve to the statistic.
-  ObjectiveFunction f(inputSize, kValues, statistic);
-
-  // Optimizer. Use L_BFGS (TODO: Make this a template parameter?)
-  mlpack::optimization::L_BFGS<ObjectiveFunction> opt(f);
-
-  // Get an initial point from the optimizer.
-  arma::mat currentPoint = f.GetInitialPoint();
-  // Silence debug output of L_BFGS (TODO: remove)
-  double result = opt.Optimize(currentPoint);
-
-  // Optimizer is done - set alpha, beta, gamma.
-  this->alpha = currentPoint(0, 0);
-  this->beta = currentPoint(1, 0);
-  this->gamma = currentPoint(2, 0);
-
-  return result;
-}
 
 // Serialize the object and save to a file.
 template <typename SortPolicy, typename ObjectiveFunction>

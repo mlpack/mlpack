@@ -45,12 +45,10 @@
 // For template parameters and kNN search (if nescessary).
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
-// For curve fitting.
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-// Default objective function.
-#include "objectivefunction.hpp"
 // Gamma distribution for modeling squared distances.
 #include <mlpack/core/dists/gamma_distribution.hpp>
+// For fitting distance statistic regressors.
+#include "distance_statistic_predictor.hpp"
 
 namespace mlpack {
 namespace neighbor {
@@ -111,8 +109,9 @@ class LSHModel
               const size_t maxKValue = 32);
 
    /**
-    * Predict() finds LSH parameters that should work well for the dataset the 
-    * LSHModel was trained for. 
+    * This function uses the trained model to predict recall / selectivity
+    * values for a given parameter set.
+    *
     * Warning: If the k specified is larger than the maxKValue passed to
     * Train(), Train() will be called again. This might have adverse effects to
     * performance.
@@ -123,7 +122,12 @@ class LSHModel
     */
    void Predict(const size_t datasetSize, 
                 const size_t k, 
-                const double minRecall);
+                const size_t numTables,
+                const size_t numProj,
+                const size_t numProbes,
+                const double hashWidth,
+                double& predictedRecall,
+                double& predictedSelect);
 
    /**
     * This function returns an LSHSearch object trained with the parameters
@@ -200,29 +204,59 @@ class LSHModel
    * @param numProj The number of projections for the sequence under validation.
   */
   bool PerturbationValid(const std::vector<bool>& A, size_t numProj) const;
+
    /**
     * Function that creates a template perturbation sequence given a value for
     * an M and a W. The template perturbation sequence is based on the
     * statistical properties of multi-probe LSH and uses those, instead of
-    * specific points, to generate scores.
+    * specific points, to generate scores. The template sequence is also
+    * independent of the hashWidth, and depends only on numProj and numProbes.
+    *
     * See mlpack/methods/lsh/lsh_search_impl.hpp for more details about how
     * perturbation sequences are generated from specific points.
     *
     * @param numProj The number of projections for the LSH scheme for which we
     *     want to compute the template perturbation sequence.
-    * @param hashWidth The hash width for the LSH scheme.
     * @param numProbes The number of probes to generate.
     */
    void GenerateTemplateSequence(size_t numProj, 
-                                 double hashWidth, 
                                  size_t numProbes);
 
-   /** Matrix that stores, in each column, the "direction" of the perturbation:
-    * 0 means no perturbation on that dimension, -1 means reduce dimension value
-    * by 1, and +1 means increase dimension value by 1.
+   /**
+    * This function evaluates the probability that two points that are at
+    * distance chi from each other will be neighbors when we use LSH with a
+    * specific number of projections, probing bins, and tables for a given hash
+    * width.
+    *
+    * @param chi The distance of two points.
+    * @param hashWidth The first-level hash width.
+    * @param numTables The number of random projection tables used by LSH.
+    * @param numProj The number of projections per hash table (dimensionality of
+    *     new space).
+    * @param numProbes The number of additional probing bins of Multiprobe LSH.
     */
-   
-   arma::Mat<short int> templateSequence;
+   //TODO: inline?
+   double Rho(double chi,
+              double hashWidth,
+              size_t numTables,
+              size_t numProj, 
+              size_t numProbes);
+   /**
+    * This is a helper function that is called by Rho() and returns the inner
+    * value of the product used in the calculation of the probability that Rho
+    * calculates.
+    *
+    * @param chi The distance of two points.
+    * @param hashWidth The first-level hash width.
+    * @param delta The perturbation to evaluate for.
+    * @param proj The projection we evaluate for ( 0 <= proj < numProj).
+    * @param numProj The total number of projections.
+    */
+   inline double SameBucketProbability(double chi, 
+                                       double hashWidth, 
+                                       short delta,
+                                       size_t proj,
+                                       size_t numProj);
 
    /**
     * Function that fits two DistanceStatisticPredictors - one
@@ -242,88 +276,19 @@ class LSHModel
                                  const arma::mat& Ek, 
                                  const arma::mat& Gk);
 
-   /**
-    * This is a helper class that uses the function a * k^b * N^c for some
-    * parameters a, b, c that have been fit to either predict the arithmetic or
-    * geometric mean of the squared distance of a point to its k-nearest
-    * neighbor, given some dataset size N and its k-nearest neighbor.
+
+   /** 
+    * Matrix that stores, in each column, the "direction" of the perturbation:
+    * 0 means no perturbation on that dimension, -1 means reduce dimension value
+    * by 1, and +1 means increase dimension value by 1.
     */
-   class DistanceStatisticPredictor
-   {
-    public:
-      //! Empty constructor.
-      DistanceStatisticPredictor() { };
-
-      /** 
-       * Function to construct with training set.
-       *
-       * @param inputSize A vector of input sizes. The first input variable of 
-       *     the regression.
-       * @param kValues A vector of k values. The second input variable of the
-       *     regression.
-       * @param statistic A vector of responses - the value of the statistic for
-       *     each given inputSize.
-       */
-      DistanceStatisticPredictor(const arma::Col<size_t>& inputSize, 
-                                 const arma::Col<size_t>& kValues,
-                                 const arma::mat& statistic) 
-      { Train(inputSize, kValues, statistic); };
-      
-      //! Default destructor.
-      ~DistanceStatisticPredictor() { };
-
-      /**
-       * Function that fits the alpha, beta and gamma parameters.
-       *
-       * @param inputSize A vector of input sizes. The first input variable of 
-       *     the regression.
-       * @param kValues A vector of k values. The second input variable of the
-       *     regression.
-       * @param statistic A vector of responses - the value of the statistic for
-       *     each given inputSize.
-       */
-      double Train(const arma::Col<size_t>& inputSize, 
-                 const arma::Col<size_t>& kValues,
-                 const arma::mat& statistic);
-
-      /** 
-       * Evaluate the statistic for a given dataset size.
-       *
-       * @param N - a new input size for which to evaluate the expected
-       *     statistic.
-       */
-      double Predict(size_t N, size_t k) 
-      { return alpha * std::pow(k, beta) * std::pow(N, gamma); };
-
-      //! Set the alpha parameter.
-      void Alpha(double a) { alpha = a; };
-
-      //! Get the alpha parameter.
-      double Alpha(void) { return alpha; };
-      
-      //! Set the beta parameter.
-      void Beta(double b) { beta = b; };
-
-      //! Get the beta parameter.
-      double Beta(void) { return beta; };
-
-      //! Set the gamma parameter.
-      void Gamma(double c) { gamma = c; };
-
-      //! Get the gamma parameter.
-      double Gamma(void) { return gamma; };
-
-    private:
-      double alpha;
-      double beta;
-      double gamma;
-   };
+   arma::Mat<short int> templateSequence;
 
    //! DistanceStatisticPredictor for arithmetic mean.
-   DistanceStatisticPredictor aMeanPredictor;
+   DistanceStatisticPredictor<ObjectiveFunction> aMeanPredictor;
 
    //! DistanceStatisticPredictor for geometric mean.
-   DistanceStatisticPredictor gMeanPredictor;
+   DistanceStatisticPredictor<ObjectiveFunction> gMeanPredictor;
 
    //! (k+1)-dimensional gamma distribution for predicting squared distances.
    mlpack::distribution::GammaDistribution distancesDistribution;
@@ -349,8 +314,8 @@ class LSHModel
    //! Reference dataset.
    const arma::mat* referenceSet;
 
-   //! LSHSearch Object Vector.
-   std::vector<LSHSearch<SortPolicy>> lshObjectVector;
+   //! LSHSearch Object
+   LSHSearch<SortPolicy> trainedLSHObject;
 
    //! Statistic: average squared distance of points.
    double meanDist;
