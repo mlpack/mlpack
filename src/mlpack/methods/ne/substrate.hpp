@@ -188,22 +188,24 @@ class Substrate
           input.insert(input.end(), input2.begin(), input2.end());
           input.push_back(1);  // Bias.
           
-          printf("INPUT is:=====\n");
-          for (auto x = input.begin(); x != input.end(); ++x)
-            std::cout << *x << ' ';
-          std::cout << std::endl;
+          // //DEBUG
+          // printf("INPUT is:=====\n");
+          // for (auto x = input.begin(); x != input.end(); ++x)
+          //   std::cout << *x << ' ';
+          // std::cout << std::endl;
 
-          printf("CPPN is:=====\n");
-          cppn.PrintGenome();
+          // printf("CPPN is:=====\n");
+          // cppn.PrintGenome();
 
-          cppn.ActivateDebug(input);
+          cppn.Activate(input);
           std::vector<double> output;
           cppn.Output(output);
 
-          printf("OUTPUT is:=====\n");
-          for (auto x = output.begin(); x != output.end(); ++x)
-            std::cout << *x << ' ';
-          std::cout << std::endl;
+          // printf("OUTPUT is:=====\n");
+          // for (auto x = output.begin(); x != output.end(); ++x)
+          //   std::cout << *x << ' ';
+          // std::cout << std::endl;
+          // //DEBUG
 
           // Create new link if weight bigger than threshold.
           double weight = output[0];

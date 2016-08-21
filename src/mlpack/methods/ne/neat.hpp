@@ -537,26 +537,38 @@ class NEAT
     // If existing innovation.
     if (innovIdx != -1)
     {
-      NeuronGene neuronGene(aNeuronInnovations[innovIdx].newNeuronId,
-                            HIDDEN,
-                            actFuncType,
-                            (fromNeuron.Depth() + toNeuron.Depth()) / 2,
-                            std::vector<double>(),
-                            0,
-                            0);
-      LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),
-                         aNeuronInnovations[innovIdx].newNeuronId,
-                         aNeuronInnovations[innovIdx].newInputLinkInnovId,
-                         1,
-                         true);
-      LinkGene outputLink(aNeuronInnovations[innovIdx].newNeuronId,
-                          genome.aLinkGenes[linkIdx].ToNeuronId(),
-                          aNeuronInnovations[innovIdx].newOutputLinkInnovId,
-                          genome.aLinkGenes[linkIdx].Weight(),
-                          true);
-      genome.AddHiddenNeuron(neuronGene);
-      genome.AddLink(inputLink);
-      genome.AddLink(outputLink);
+      // Check whether this genome already contains the neuron.
+      int neuronIdx = genome.GetNeuronIndex(aNeuronInnovations[innovIdx].newNeuronId);
+      if (neuronIdx != -1)  // The neuron already exist.
+      {
+        // Enable the input and output link.
+        int inputLinkIdx = genome.GetLinkIndex(aNeuronInnovations[innovIdx].newInputLinkInnovId);
+        int outputLinkIdx = genome.GetLinkIndex(aNeuronInnovations[innovIdx].newOutputLinkInnovId);
+        genome.aLinkGenes[inputLinkIdx].Enabled(true);
+        genome.aLinkGenes[outputLinkIdx].Enabled(true);
+      } else
+      {
+        NeuronGene neuronGene(aNeuronInnovations[innovIdx].newNeuronId,
+                              HIDDEN,
+                              actFuncType,
+                              (fromNeuron.Depth() + toNeuron.Depth()) / 2,
+                              std::vector<double>(),
+                              0,
+                              0);
+        LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),
+                           aNeuronInnovations[innovIdx].newNeuronId,
+                           aNeuronInnovations[innovIdx].newInputLinkInnovId,
+                           1,
+                           true);
+        LinkGene outputLink(aNeuronInnovations[innovIdx].newNeuronId,
+                            genome.aLinkGenes[linkIdx].ToNeuronId(),
+                            aNeuronInnovations[innovIdx].newOutputLinkInnovId,
+                            genome.aLinkGenes[linkIdx].Weight(),
+                            true);
+        genome.AddHiddenNeuron(neuronGene);
+        genome.AddLink(inputLink);
+        genome.AddLink(outputLink);
+      }
       return;
     }
 

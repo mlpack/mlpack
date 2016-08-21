@@ -135,7 +135,7 @@ class HyperNEAT
       Genome bestGenome = aNeat.aPopulation.BestGenome();
       Genome substrateGenome;
       aSubstrate.InitGenome(substrateGenome);
-      aSubstrate.QueryLink(bestGenome, substrateGenome);
+      aSubstrate.QueryLinkDebug(bestGenome, substrateGenome);
       substrateGenome.PrintGenome();
       bestGenome.PrintGenome();
 

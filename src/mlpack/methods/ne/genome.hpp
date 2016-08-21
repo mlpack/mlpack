@@ -344,10 +344,19 @@ class Genome
 
     std::sort(depthAndLinks.begin(), depthAndLinks.end());
 
+    // //Debug
+    // printf("before sort link, num of link is: %d \n", aLinkGenes.size());
+    // PrintGenome();
+
+
     for (int i=0; i<linkGenesSize; ++i)
     {
       aLinkGenes[i] = depthAndLinks[i].link;
     }
+
+    // //Debug
+    // printf("after sort link, num of link is: %d \n", aLinkGenes.size());
+    // PrintGenome();
   }
 
   /**
@@ -532,6 +541,24 @@ class Genome
              aLinkGenes[i].InnovationId());
     }
     printf("----------------------------Genome End----------------------------\n");
+  }
+
+  // Debug
+  bool DebugDuplicateLink() {
+    std::vector<int> linksId;
+    for (int i=0; i<aLinkGenes.size(); ++i) {
+      linksId.push_back(aLinkGenes[i].InnovationId());
+    }
+
+    std::set<int> linksIdSet(linksId.begin(), linksId.end());
+    int size1 = aLinkGenes.size();
+    int size2 = linksIdSet.size();
+
+    if (size1 != size2) {
+      return true;
+    }
+
+    return false;
   }
 
  private:
