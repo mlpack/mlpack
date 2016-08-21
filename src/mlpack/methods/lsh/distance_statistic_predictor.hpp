@@ -104,7 +104,7 @@ double DistanceStatisticPredictor<ObjectiveFunction>::Train(
   // Objective function for fitting the E(x, k) curve to the statistic.
   ObjectiveFunction f(inputSize, kValues, statistic);
 
-  // Optimizer. Use L_BFGS (TODO: Make this a template parameter?)
+  // Optimizer. Use L_BFGS
   mlpack::optimization::L_BFGS<ObjectiveFunction> opt(f);
 
   // Get an initial point from the optimizer.

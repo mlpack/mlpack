@@ -88,7 +88,7 @@ class LSHModel
     * estimate parameters of the dataset. The estimated parameters are:
     *   * Arithmetic mean of pairwise distances of random points in the sample.
     *   * Geometric mean for the pairwise distnaces
-    *   * Arithmetic mean of distance random point to its k-th nearest neighbor 
+    *   * Arithmetic mean of distance random point to its k-th nearest neighbor
     *       as a function of |N|, the number of points.
     *   * Geometric mean of the same distance.
     *
@@ -104,7 +104,7 @@ class LSHModel
     * @param maxKValue The maximum number of nearest neighbors for each query to
     *     train for.
     */
-   void Train(const arma::mat& referenceSet, 
+   void Train(const arma::mat& referenceSet,
               const double sampleRate = 0.1,
               const size_t maxKValue = 32);
 
@@ -120,8 +120,8 @@ class LSHModel
     * @param k The number of k-nearest neighbors LSH must find.
     * @param minRecall The minimum acceptable recall we want to tune for.
     */
-   void Predict(const size_t datasetSize, 
-                const size_t k, 
+   void Predict(const size_t datasetSize,
+                const size_t k,
                 const size_t numTables,
                 const size_t numProj,
                 const size_t numProbes,
@@ -219,7 +219,7 @@ class LSHModel
     *     want to compute the template perturbation sequence.
     * @param numProbes The number of probes to generate.
     */
-   void GenerateTemplateSequence(size_t numProj, 
+   void GenerateTemplateSequence(size_t numProj,
                                  size_t numProbes);
 
    /**
@@ -239,8 +239,8 @@ class LSHModel
    double Rho(double chi,
               double hashWidth,
               size_t numTables,
-              size_t numProj, 
-              size_t numProbes);
+              size_t numProj,
+              size_t numProbes) const;
    /**
     * This is a helper function that is called by Rho() and returns the inner
     * value of the product used in the calculation of the probability that Rho
@@ -252,11 +252,80 @@ class LSHModel
     * @param proj The projection we evaluate for ( 0 <= proj < numProj).
     * @param numProj The total number of projections.
     */
-   inline double SameBucketProbability(double chi, 
-                                       double hashWidth, 
+   inline double SameBucketProbability(double chi,
+                                       double hashWidth,
                                        short delta,
                                        size_t proj,
-                                       size_t numProj);
+                                       size_t numProj) const;
+
+   /**
+    * This function calculates the recall of LSH for a given set of parameters.
+    * It uses the function
+    *
+    * r = \frac{1}{K} \sum_{1}^{K} \int_{0}^{\infty}(Rho(\sqrt{x}) * f_k(x)) dx
+    *
+    * as proposed in the paper.
+    *
+    */
+   double Recall(size_t maxK,
+                 size_t numTables,
+                 size_t numProj,
+                 size_t numProbes,
+                 double hashWidth);
+
+   /**
+    * This function calculates the selectivity of LSH for a given set of parameters.
+    * It uses the function
+    *
+    * s = \int_{0}^{\infty}(Rho(\sqrt{x}) * f(x)) dx
+    *
+    * as proposed in the paper.
+    *
+    */
+   double Selectivity(size_t numTables,
+                      size_t numProj,
+                      size_t numProbes,
+                      double hashWidth);
+
+   /**
+    * Helper class for boost::integration.
+    */
+   class IntegralObjective
+   {
+    public:
+     // Initialize everything.
+     IntegralObjective(const size_t k, 
+                       const size_t numTables,
+                       const size_t numProj,
+                       const size_t numProbes,
+                       const double hashWidth,
+                       const mlpack::distribution::GammaDistribution* gamma,
+                       const LSHModel* model)
+     : k(k), numTables(numTables), numProj(numProj), 
+     numProbes(numProbes), hashWidth(hashWidth), gamma(gamma), model(model)
+     { /* do nothing */};
+
+     ~IntegralObjective() { };
+
+     // Use as function with the operator () and one argument.
+     double operator()(const double& chi) const
+     {
+       return 
+         (model->Rho(std::sqrt(chi), hashWidth, numTables, numProj, numProbes)) 
+         * (gamma->Probability(chi, k));
+     }
+
+    private:  
+     const size_t k;
+     const size_t numTables;
+     const size_t numProj;
+     const size_t numProbes;
+     const double hashWidth;
+
+     const mlpack::distribution::GammaDistribution* gamma;
+     const LSHModel* model;
+
+   };
 
    /**
     * Function that fits two DistanceStatisticPredictors - one
@@ -271,13 +340,13 @@ class LSHModel
     * @param Gk The geometric mean of the squared distances of a point and its
     *      k-nearest neighbor. One column per k.
     */
-   void ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes, 
+   void ApproximateKNNStatistics(const arma::Col<size_t>& referenceSizes,
                                  const arma::Col<size_t>& kValues,
-                                 const arma::mat& Ek, 
+                                 const arma::mat& Ek,
                                  const arma::mat& Gk);
 
 
-   /** 
+   /**
     * Matrix that stores, in each column, the "direction" of the perturbation:
     * 0 means no perturbation on that dimension, -1 means reduce dimension value
     * by 1, and +1 means increase dimension value by 1.

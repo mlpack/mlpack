@@ -212,10 +212,75 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   // Step 8. Use formulas (19) and (20) from the paper to predict recall and
   // selectivity, using LSHModel::Rho() and the distribution functions of the
   // gammas we fit back in Step 6.
-  predictedRecall = 0.5;
-  predictedSelect = 0.5;
+  predictedRecall = Recall(k, numTables, numProj, numProbes, hashWidth);
+  predictedSelect = Selectivity(numTables, numProj, numProbes, hashWidth);
 }
 
+// Uses paper's formula (19) to predict recall.
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::Recall(size_t maxK,
+                                                       size_t numTables,
+                                                       size_t numProj,
+                                                       size_t numProbes,
+                                                       double hashWidth)
+{
+  double recall = 0;
+
+  // Loop over k values, accumulating the probabilities. Then take average.
+  // k starts from one because distancesDistribution(0) is the "simple" pairwise
+  // distances distribution.
+  for (size_t k = 1; k < maxK + 1; k++)
+  {
+    // Create a helper object for this value of k.
+    IntegralObjective f(k, numTables, numProj, numProbes, hashWidth,
+       &distancesDistribution, this);
+
+    // TODO: change with boost integration.
+    double from = 0;
+    double to = 1000;
+    double step = 0.01;
+    double integralSum = 0;
+    for (double i = from+step; i < to; i+=step)
+    {
+      double temp = f(i);
+      if (temp > 0)
+        integralSum += temp; // Use as function thanks to operator().
+      else
+        break; // Gamma distribution == 0 means we're past the tail.
+    }
+    recall += integralSum * step ;
+  }
+  return recall / double(maxK);
+}
+
+// Uses paper's formula (20) to compute selectivity
+template <typename SortPolicy, typename ObjectiveFunction>
+double LSHModel<SortPolicy, ObjectiveFunction>::Selectivity(size_t numTables,
+                                                            size_t numProj,
+                                                            size_t numProbes,
+                                                            double hashWidth)
+{
+
+  // Create a helper object for k = 0 (pairwise distances).
+  IntegralObjective f(0, numTables, numProj, numProbes, hashWidth,
+      &distancesDistribution, this);
+
+  // TODO: change with boost integration.
+  double from = 0;
+  double to = 1000;
+  double step = 0.01;
+  double integralSum = 0;
+  for (double i = from+step; i < to; i+=step)
+  {
+    double temp = f(i);
+    if (temp > 0)
+      integralSum += temp; // Use as function thanks to operator().
+    else
+      break; // Gamma distribution == 0 means we're past the tail.
+  }
+
+  return integralSum * step ;
+}
 
 /* NOTE: My interpretation of the paper would result in this code, but LSHKIT's
  * implementation is different. I'm commenting this out to try their way, and I
@@ -294,7 +359,7 @@ double LSHModel<SortPolicy, ObjectiveFunction>::Rho(double chi,
                                                     double hashWidth,
                                                     size_t numTables,
                                                     size_t numProj,
-                                                    size_t numProbes)
+                                                    size_t numProbes) const
 {
   double rho = 0;
 
@@ -316,7 +381,7 @@ double LSHModel<SortPolicy, ObjectiveFunction>::Rho(double chi,
 template <typename SortPolicy, typename ObjectiveFunction>
 double LSHModel<SortPolicy, ObjectiveFunction>::
 SameBucketProbability(double chi, double hashWidth, short delta, size_t proj,
-                      size_t numProj)
+                      size_t numProj) const
 {
   boost::math::normal_distribution<> phi;
   if (delta == 0)
