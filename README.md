@@ -225,3 +225,6 @@ and the git commit list is available at
   [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-git)
 
 Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
+
+TEST_LINE
+@Kirizaki
