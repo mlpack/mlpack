@@ -1267,7 +1267,6 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest)
       0.9, 1e-15);
 }
 
-
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
 BOOST_AUTO_TEST_CASE(RStarTreeSplitTest)

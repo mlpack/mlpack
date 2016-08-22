@@ -74,7 +74,7 @@ DiscreteHilbertValue(const DiscreteHilbertValue& other,
   if (deepCopy)
   {
     // Only leaf nodes own the localHilbertValues dataset.
-    // Intarmediate nodes store the pointer to the corresponding dataset.
+    // Intermediate nodes store the pointer to the corresponding dataset.
     if (ownsLocalHilbertValues)
       localHilbertValues = new arma::Mat<HilbertElemType>(
           *other.LocalHilbertValues());
