@@ -60,16 +60,86 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
 }
 
 template<typename TreeElemType>
+template<typename TreeType>
 DiscreteHilbertValue<TreeElemType>::
-DiscreteHilbertValue(const DiscreteHilbertValue& other) :
-    localHilbertValues(
-        const_cast<arma::Mat<HilbertElemType>*>(other.LocalHilbertValues())),
+DiscreteHilbertValue(const DiscreteHilbertValue& other,
+                     TreeType* tree,
+                     bool deepCopy) :
+    localHilbertValues(NULL),
     ownsLocalHilbertValues(other.ownsLocalHilbertValues),
     numValues(other.NumValues()),
-    valueToInsert(
-        const_cast<arma::Col<HilbertElemType>*>(other.ValueToInsert())),
-    ownsValueToInsert(false)
-{ }
+    valueToInsert(NULL),
+    ownsValueToInsert(other.ownsValueToInsert)
+{
+  if (deepCopy)
+  {
+    // Only leaf nodes own the localHilbertValues dataset.
+    // Intarmediate nodes store the pointer to the corresponding dataset.
+    if (ownsLocalHilbertValues)
+      localHilbertValues = new arma::Mat<HilbertElemType>(
+          *other.LocalHilbertValues());
+    else
+      localHilbertValues = NULL;
+
+    // Only the root owns ownsValueToInsert. Other nodes the pointer.
+    if (ownsValueToInsert)
+      valueToInsert = new arma::Col<HilbertElemType>(
+          *other.ValueToInsert());
+    else
+    {
+      assert(tree->Parent() != NULL);
+      // Copy the pointer from the parent node.
+      valueToInsert = const_cast<arma::Col<HilbertElemType>*>
+        (tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert());
+    }
+
+    if (tree->NumChildren() == 0)
+    {
+      // We have to update pointers to the localHilbertValues dataset in
+      // intermediate nodes.
+      TreeType* node = tree;
+
+      while (node->Parent() != NULL)
+      {
+        if (node->Parent()->NumChildren() > 1)
+        {
+          const std::vector<TreeType*> parentChildren =
+              node->AuxiliaryInfo().Children(node->Parent());
+          // If node is not the last child of its parent, we shouldn't copy
+          // the localHilbertValues pointer.
+          if (parentChildren[node->Parent()->NumChildren() - 2] == NULL)
+            break;
+        }
+        node->Parent()->AuxiliaryInfo().HilbertValue().LocalHilbertValues() =
+          localHilbertValues;
+        node = node->Parent();
+      }
+    }
+  }
+  else
+  {
+    localHilbertValues = const_cast<arma::Mat<HilbertElemType>*>
+        (other.LocalHilbertValues());
+    valueToInsert = const_cast<arma::Col<HilbertElemType>*>
+        (other.ValueToInsert());
+  }
+}
+
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>::
+DiscreteHilbertValue(DiscreteHilbertValue&& other) :
+    localHilbertValues(other.localHilbertValues),
+    ownsLocalHilbertValues(other.ownsLocalHilbertValues),
+    numValues(other.numValues),
+    valueToInsert(other.valueToInsert),
+    ownsValueToInsert(other.ownsValueToInsert)
+{
+  other.localHilbertValues = NULL;
+  other.ownsLocalHilbertValues = false;
+  other.numValues = 0;
+  other.valueToInsert = NULL;
+  other.ownsValueToInsert = false;
+}
 
 template<typename TreeElemType>
 template<typename VecType>

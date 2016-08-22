@@ -168,7 +168,16 @@ class RectangleTree
    * @param other The tree to be copied.
    * @param deepCopy If false, the children are not recursively copied.
    */
-  RectangleTree(const RectangleTree& other, const bool deepCopy = true);
+  RectangleTree(const RectangleTree& other,
+                const bool deepCopy = true,
+                RectangleTree* newParent = NULL);
+
+  /**
+   * Create a rectangle tree by moving the other tree.
+   *
+   * @param other The tree to be copied.
+   */
+  RectangleTree(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.
