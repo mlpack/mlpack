@@ -194,11 +194,11 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const MatType& referenceSet,
-                 const bool naive,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(const MatType& referenceSet,
+                                   const bool naive,
+                                   const bool singleMode = false,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object, taking ownership of the reference
@@ -222,11 +222,11 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(MatType&& referenceSet,
-                 const bool naive,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(MatType&& referenceSet,
+                                   const bool naive,
+                                   const bool singleMode = false,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object with a copy of the given
@@ -235,6 +235,8 @@ class NeighborSearch
    * is not available as an option for this constructor.  Additionally, an
    * instantiated distance metric can be given, for cases where the distance
    * metric holds data.
+   *
+   * Deprecated. Will be removed in mlpack 3.0.0.
    *
    * This method will copy the given tree.  You can avoid this copy by using the
    * construct that takes a rvalue reference to the tree.
@@ -252,10 +254,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(Tree& referenceTree,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(Tree& referenceTree,
+                                   const bool singleMode = false,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object with the given pre-constructed
@@ -298,6 +300,8 @@ class NeighborSearch
    * distance metric can be given, for cases where the distance metric holds
    * data.
    *
+   * Deprecated. Will be removed in mlpack 3.0.0.
+   *
    * This method will take ownership of the given tree. There is no copying of
    * the data matrices (because tree-building is not necessary), so this is the
    * constructor to use when copies absolutely must be avoided.
@@ -315,10 +319,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(Tree&& referenceTree,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(Tree&& referenceTree,
+                                   const bool singleMode = false,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -333,10 +337,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
-  NeighborSearch(const bool naive,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  mlpack_deprecated NeighborSearch(const bool naive,
+                                   const bool singleMode = false,
+                                   const double epsilon = 0,
+                                   const MetricType metric = MetricType());
 
 
   /**
@@ -500,22 +504,25 @@ class NeighborSearch
   size_t Scores() const { return scores; }
 
   //! Access whether or not search is done in naive linear scan mode.
-  bool Naive() const { return naive; }
+  //! Deprecated. Will be removed in mlpack 3.0.0.
+  mlpack_deprecated bool Naive() const { return naive; }
   //! Modify whether or not search is done in naive linear scan mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  bool& Naive() { return naive; }
+  mlpack_deprecated bool& Naive() { return naive; }
 
   //! Access whether or not search is done in single-tree mode.
-  bool SingleMode() const { return singleMode; }
+  //! Deprecated. Will be removed in mlpack 3.0.0.
+  mlpack_deprecated bool SingleMode() const { return singleMode; }
   //! Modify whether or not search is done in single-tree mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  bool& SingleMode() { return singleMode; }
+  mlpack_deprecated bool& SingleMode() { return singleMode; }
 
   //! Access whether or not search is done in greedy mode.
-  bool Greedy() const { return greedy; }
+  //! Deprecated. Will be removed in mlpack 3.0.0.
+  mlpack_deprecated bool Greedy() const { return greedy; }
   //! Modify whether or not search is done in greedy mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  bool& Greedy() { return greedy; }
+  mlpack_deprecated bool& Greedy() { return greedy; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
