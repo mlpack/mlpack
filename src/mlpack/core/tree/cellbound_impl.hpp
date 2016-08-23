@@ -169,34 +169,55 @@ inline void CellBound<MetricType, ElemType>::Center(
 }
 
 template<typename MetricType, typename ElemType>
+template<typename MatType>
 void CellBound<MetricType, ElemType>::AddBound(
     const arma::Col<ElemType>& loCorner,
-    const arma::Col<ElemType>& hiCorner)
+    const arma::Col<ElemType>& hiCorner,
+    const MatType& data)
 {
   assert(numBounds < loBound.n_cols);
   assert(loBound.n_rows == dim);
   assert(loCorner.n_elem == dim);
   assert(hiCorner.n_elem == dim);
 
-  // If the subrectangle is not contained entirely in the outer rectangle,
-  // we shrink it.
   for (size_t k = 0; k < dim; k++)
   {
-    loBound(k, numBounds) = std::max(loCorner[k], bounds[k].Lo());
-
-    hiBound(k, numBounds) = std::min(bounds[k].Hi(), hiCorner[k]);
-
-    // This should never happen.
-    if (loBound(k, numBounds) > hiBound(k, numBounds))
-      return;
+    loBound(k, numBounds) = std::numeric_limits<ElemType>::max();
+    hiBound(k, numBounds) = std::numeric_limits<ElemType>::lowest();
   }
+
+  for (size_t i = 0; i < data.n_cols; i++)
+  {
+    size_t k = 0;
+    // Check if the point is contained in the hyperrectangle.
+    for (k = 0; k < dim; k++)
+      if (data(k, i) < loCorner[k] || data(k, i) > hiCorner[k])
+        break;
+
+    if (k < dim)
+      continue; // The point is not contained in the hyperrectangle.
+
+    // Srink the bound.
+    for (k = 0; k < dim; k++)
+    {
+      loBound(k, numBounds) = std::min(loBound(k, numBounds), data(k, i));
+
+      hiBound(k, numBounds) = std::max(hiBound(k, numBounds), data(k, i));
+    }
+  }
+
+  for (size_t k = 0; k < dim; k++)
+    if (loBound(k, numBounds) > hiBound(k, numBounds))
+      return; // The hyperrectangle does not contain points.
 
   numBounds++;
 }
 
 
 template<typename MetricType, typename ElemType>
-void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
+template<typename MatType>
+void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
+                                                    const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(hiAddress);
   arma::Col<AddressElemType> tmpLoAddress(hiAddress);
@@ -241,7 +262,7 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-      AddBound(loCorner, hiCorner);
+      AddBound(loCorner, hiCorner, data);
       break;
     }
     // Nullify the bit that corresponds to this step.
@@ -254,7 +275,7 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
     addr::AddressToPoint(loCorner, tmpLoAddress);
     addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-    AddBound(loCorner, hiCorner);
+    AddBound(loCorner, hiCorner, data);
   }
 
   for ( ; pos > numEqualBits; pos--)
@@ -275,7 +296,7 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-      AddBound(loCorner, hiCorner);
+      AddBound(loCorner, hiCorner, data);
     }
     // The high bound should correspond to this step.
     tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
@@ -283,7 +304,9 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits)
 }
 
 template<typename MetricType, typename ElemType>
-void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
+template<typename MatType>
+void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
+                                                     const MatType& data)
 {
   arma::Col<AddressElemType> tmpHiAddress(loAddress);
   arma::Col<AddressElemType> tmpLoAddress(loAddress);
@@ -326,7 +349,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-      AddBound(loCorner, hiCorner);
+      AddBound(loCorner, hiCorner, data);
       break;
     }
     // Enlarge the hyperrectangle at this step since it is contained
@@ -340,7 +363,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
     addr::AddressToPoint(loCorner, tmpLoAddress);
     addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-    AddBound(loCorner, hiCorner);
+    AddBound(loCorner, hiCorner, data);
   }
 
   for ( ; pos > numEqualBits; pos--)
@@ -362,7 +385,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
-      AddBound(loCorner, hiCorner);
+      AddBound(loCorner, hiCorner, data);
     }
 
     // The lower bound should correspond to this step.
@@ -371,7 +394,8 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits)
 }
 
 template<typename MetricType, typename ElemType>
-void CellBound<MetricType, ElemType>::UpdateAddressBounds()
+template<typename MatType>
+void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
 {
   numBounds = 0;
 
@@ -416,8 +440,8 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds()
   }
 
   size_t numEqualBits = row * order + bit;
-  InitHighBound(numEqualBits);
-  InitLowerBound(numEqualBits);
+  InitHighBound(numEqualBits, data);
+  InitLowerBound(numEqualBits, data);
 
   assert(numBounds <= maxNumBounds);
 
@@ -892,7 +916,7 @@ inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operato
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
     }
-    numBounds = 0;
+    numBounds = 1;
   }
   return *this;
 }

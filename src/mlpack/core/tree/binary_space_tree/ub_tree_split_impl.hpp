@@ -132,7 +132,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     bound.LoAddress()[k] = addresses[begin].first[k];
     bound.HiAddress()[k] = addresses[begin + count - 1].first[k];
   }
-  bound.UpdateAddressBounds();
+  bound.UpdateAddressBounds(data.cols(begin, begin + count - 1));
 
   return true;
 }

@@ -180,13 +180,17 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
           minDist = dist;
       }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(point), minDist);
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(point));
+      BOOST_REQUIRE_LE(tree.Bound().MinDistance(point), minDist *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(point) *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(point);
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist);
-      BOOST_REQUIRE_LE(maxDist, r.Hi());
+      BOOST_REQUIRE_LE(r.Lo(), minDist *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(maxDist, r.Hi() *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
       
     if (!tree.IsLeaf())
@@ -214,13 +218,17 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
             minDist = dist;
         }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(node->Bound()), minDist);
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(node->Bound()));
+      BOOST_REQUIRE_LE(tree.Bound().MinDistance(node->Bound()), minDist *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(node->Bound()) *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist);
-      BOOST_REQUIRE_LE(maxDist, r.Hi());
+      BOOST_REQUIRE_LE(r.Lo(), minDist *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(maxDist, r.Hi() *
+          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
     if (!node->IsLeaf())
     {

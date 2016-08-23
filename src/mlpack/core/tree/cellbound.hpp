@@ -219,8 +219,11 @@ class CellBound
   /**
    * Calculate the bounds of all subrectangles. You should set the lower and the
    * high addresses.
+   *
+   * @param data Points that are contained in the node.
    */
-  void UpdateAddressBounds();
+  template<typename MatType>
+  void UpdateAddressBounds(const MatType& data);
 
   /**
    * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
@@ -260,23 +263,30 @@ class CellBound
    *
    * @param loCorner The lower corner of the subrectangle that is being added.
    * @param hiCorner The high corner of the subrectangle that is being added.
+   * @param data Points that are contained in the node.
    */
+  template<typename MatType>
   void AddBound(const arma::Col<ElemType>& loCorner,
-                const arma::Col<ElemType>& hiCorner);
+                const arma::Col<ElemType>& hiCorner,
+                const MatType& data);
   /**
    * Initialize all subrectangles that touches the lower address.
    *
    * @param numEqualBits The number of equal leading bits of the lower address
    * and the high address.
+   * @param data Points that are contained in the node.
    */
-  void InitHighBound(size_t numEqualBits);
+  template<typename MatType>
+  void InitHighBound(size_t numEqualBits, const MatType& data);
   /**
    * Initialize all subrectangles that touches the high address.
    *
    * @param numEqualBits The number of equal leading bits of the lower address
    * and the high address.
+   * @param data Points that are contained in the node.
    */
-  void InitLowerBound(size_t numEqualBits);
+  template<typename MatType>
+  void InitLowerBound(size_t numEqualBits, const MatType& data);
 };
 
 // A specialization of BoundTraits for this class.
