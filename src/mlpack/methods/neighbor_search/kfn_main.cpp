@@ -77,9 +77,14 @@ PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "s");
+PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
+    "'dual_tree', 'greedy'.", "a", "dual_tree");
+PARAM_FLAG("naive", "(Deprecated) If true, O(n^2) naive mode is used for "
+    "computation. Will be removed in mlpack 3.0.0. Use '--algorithm naive' "
+    "instead.", "N");
+PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
+    "(as opposed to dual-tree search). Will be removed in mlpack 3.0.0. Use "
+    "'--algorithm single_tree' instead.", "S");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate furthest neighbor"
     " search with given relative error. Must be in the range [0,1).", "e", 0);
 PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
@@ -179,8 +184,50 @@ int main(int argc, char *argv[])
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<FurthestNeighborSort> kfn;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
+
+  const string algorithm = CLI::GetParam<string>("algorithm");
+  NeighborSearchMode searchMode = DUAL_TREE_MODE;
+
+  if (algorithm == "naive")
+    searchMode = NAIVE_MODE;
+  else if (algorithm == "single_tree")
+    searchMode = SINGLE_TREE_MODE;
+  else if (algorithm == "dual_tree")
+    searchMode = DUAL_TREE_MODE;
+  else if (algorithm == "greedy")
+    searchMode = GREEDY_SINGLE_TREE_MODE;
+  else
+    Log::Fatal << "Unknown neighbor search algorithm '" << algorithm << "'; "
+        << "valid choices are 'naive', 'single_tree', 'dual_tree' and 'greedy'."
+        << endl;
+
+  if (CLI::HasParam("single_mode"))
+  {
+    searchMode = SINGLE_TREE_MODE;
+
+    Log::Warn << "--single_mode is deprecated.  Will be removed in mlpack "
+        "3.0.0. Use '--algorithm single_tree' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "single_tree")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --single_mode." << endl;
+  }
+
+  if (CLI::HasParam("naive"))
+  {
+    searchMode = NAIVE_MODE;
+
+    Log::Warn << "--naive is deprecated.  Will be removed in mlpack 3.0.0. Use "
+        "'--algorithm naive' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "naive")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --naive." << endl;
+
+    if (CLI::HasParam("single_mode"))
+      Log::Warn << "--single_mode ignored because --naive is present." << endl;
+  }
+
   if (CLI::HasParam("reference_file"))
   {
     // Get all the parameters.
@@ -227,8 +274,7 @@ int main(int argc, char *argv[])
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode,
-        epsilon);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
@@ -236,8 +282,8 @@ int main(int argc, char *argv[])
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
 
-    kfn.SingleMode() = CLI::HasParam("single_mode");
-    kfn.Naive() = CLI::HasParam("naive");
+    // Adjust search mode.
+    kfn.SetSearchMode(searchMode);
     kfn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
@@ -274,10 +320,6 @@ int main(int argc, char *argv[])
           << "than or equal to the number of reference points ("
           << kfn.Dataset().n_cols << ")." << endl;
     }
-
-    // Naive mode overrides single mode.
-    if (singleMode && naive)
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
 
     // Now run the search.
     arma::Mat<size_t> neighbors;

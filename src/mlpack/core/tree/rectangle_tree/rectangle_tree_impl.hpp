@@ -620,6 +620,132 @@ inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
 }
 
 /**
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+template<typename VecType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MinDistance(point);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+template<typename VecType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MaxDistance(point);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetNearestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MinDistance(&queryNode);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetFurthestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MaxDistance(&queryNode);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
  * Return a bound on the furthest point in the node form the centroid.
  * This returns 0 unless the node is a leaf.
  */
