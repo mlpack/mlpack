@@ -104,36 +104,43 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
   // through exponentiating the mean of the logarithms of x:
   // exp(mean(log(x))) = geometricmean(x).
 
-  // Number of samples to create for modeling the Gamma Distributions
-  size_t regressionExamples = 50; // TODO: parameter?
-
-  // Number of points to use as queries.
-  size_t numAnchors = (size_t) std::round(0.1 * numSamples);
-  arma::mat queryMat = sampleSet.cols(0, numAnchors - 1);
-  // Evenly spaced sample sizes.
-  arma::Col<size_t> referenceSizes = arma::conv_to< arma::Col<size_t> >::from(
-    arma::linspace(numAnchors, numSamples - numAnchors - 1,
-      regressionExamples));
+  // Number of points to use as queries. Use 10% of sample.
+  double anchorsSample = 0.1;
+  size_t numAnchors = (size_t) std::round(anchorsSample * numSamples);
 
   // Statistics - Arithmetic and geometric means for growing reference set.
   // Compute one of each for each k.
+  size_t regressionExamples = size_t(
+      std::round((1.0 - anchorsSample) / anchorsSample));
   arma::mat Ek(regressionExamples, k);
   arma::mat Gk(regressionExamples, k);
 
-  // For each referenceSize, calculate the kNN of the anchors
+  // For each reference size, calculate the kNN of the anchors. Divide reference
+  // set into equal blocks (block 1 is anchors). In repetition 1, use block 2 as
+  // reference set, in repetition 2, blocks 2 and 3, and so on.
+  size_t refSetStart = numAnchors;
+  size_t refSetEnd = numAnchors;
+  arma::mat queryMat = sampleSet.cols(0, numAnchors - 1);
+  arma::Col<size_t> referenceSizes(regressionExamples);
+
   Log::Info.ignoreInput = true; // Ignore kNN output.
+  // TODO: Since we've already computed this, avoid calling kNN?
   for (size_t i = 0; i < regressionExamples; ++i)
   {
-    // TODO: Since we've already computed this, avoid calling kNN?
+    refSetEnd += refSetStart - 1;
+
+    cout << "Neighbors "<< refSetStart <<":"<<refSetEnd<<endl;
 
     // Reference set for kNN
-    arma::mat refMat = sampleSet.cols(numAnchors,
-        numAnchors + referenceSizes(i));
+    arma::mat refMat = sampleSet.cols(refSetStart, refSetEnd);
+    referenceSizes(i) = refMat.n_cols;
 
     arma::Mat<size_t> neighbors; // Not going to be used but required.
     arma::mat kNNDistances; // What we need.
     KNN naive(refMat, true); // true: train and use naive kNN.
     naive.Search(queryMat, k, neighbors, kNNDistances);
+
+    // Store the squared distances (what we need).
     kNNDistances = arma::pow(kNNDistances, 2);
 
     // Compute Arithmetic and Geometric mean of the distances.
@@ -206,14 +213,15 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   Timer::Stop("fitting_distributions");
 
   // Step 7. Generate the Template Probing Sequence using the maximum number of
-  // projections and the maximum number of probes.
-  GenerateTemplateSequence(numProj, numProbes);
+  // projections and the maximum number of probes. +1 because 0 additional
+  // probes means 1 probe total.
+  GenerateTemplateSequence(numProj, numProbes + 1);
 
   // Step 8. Use formulas (19) and (20) from the paper to predict recall and
   // selectivity, using LSHModel::Rho() and the distribution functions of the
   // gammas we fit back in Step 6.
-  predictedRecall = Recall(k, numTables, numProj, numProbes, hashWidth);
-  predictedSelect = Selectivity(numTables, numProj, numProbes, hashWidth);
+  predictedRecall = Recall(k, numTables, numProj, numProbes + 1, hashWidth);
+  predictedSelect = Selectivity(numTables, numProj, numProbes + 1, hashWidth);
 }
 
 // Uses paper's formula (19) to predict recall.
