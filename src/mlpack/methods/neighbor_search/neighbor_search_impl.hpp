@@ -178,7 +178,6 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(Tree& referenceTree,
-                                         std::vector<size_t>& oldFromNew,
                                          const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
@@ -198,13 +197,6 @@ SingleTreeTraversalType>::NeighborSearch(Tree& referenceTree,
 
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
-  {
-    if (oldFromNew.size() != referenceSet->n_cols)
-      throw std::invalid_argument("the size of oldFromNew vector must match the"
-          " number of points in the given dataset");
-    oldFromNewReferences = oldFromNew;
-  }
 }
 
 // Construct the object.
@@ -218,7 +210,6 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
-                                         std::vector<size_t>&& oldFromNew,
                                          const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
@@ -238,13 +229,6 @@ SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
 
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
-  {
-    if (oldFromNew.size() != referenceSet->n_cols)
-      throw std::invalid_argument("the size of oldFromNew vector must match the"
-          " number of points in the given dataset");
-    oldFromNewReferences = std::move(oldFromNew);
-  }
 }
 
 // Construct the object without a reference dataset.
@@ -471,7 +455,10 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(
 
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
+  {
+    oldFromNewReferences.clear();
     delete referenceTree;
+  }
 
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
@@ -512,7 +499,10 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
 
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
+  {
+    oldFromNewReferences.clear();
     delete referenceTree;
+  }
 
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
@@ -561,7 +551,11 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree* referenceTree)
         "naive search (without trees) is desired");
 
   if (treeOwner && this->referenceTree)
+  {
+    oldFromNewReferences.clear();
     delete this->referenceTree;
+  }
+
   if (setOwner && referenceSet)
     delete this->referenceSet;
 
@@ -590,7 +584,11 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree& referenceTree)
         "naive search (without trees) is desired");
 
   if (treeOwner && this->referenceTree)
+  {
+    oldFromNewReferences.clear();
     delete this->referenceTree;
+  }
+
   if (setOwner && referenceSet)
     delete this->referenceSet;
 
@@ -619,7 +617,11 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree&& referenceTree)
         "naive search (without trees) is desired");
 
   if (treeOwner && this->referenceTree)
+  {
+    oldFromNewReferences.clear();
     delete this->referenceTree;
+  }
+
   if (setOwner && referenceSet)
     delete this->referenceSet;
 
@@ -682,7 +684,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       distancePtr = new arma::mat; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<size_t>;
     }
-    else if (treeOwner)
+    else if (!oldFromNewReferences.empty())
       neighborPtr = new arma::Mat<size_t>; // Reference indices need mapping.
   }
 
@@ -792,7 +794,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
-    if (searchMode == DUAL_TREE_MODE && treeOwner)
+    if (searchMode == DUAL_TREE_MODE && !oldFromNewReferences.empty())
     {
       // We must map both query and reference indices.
       neighbors.set_size(k, querySet.n_cols);
@@ -833,7 +835,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       delete neighborPtr;
       delete distancePtr;
     }
-    else if (treeOwner)
+    else if (!oldFromNewReferences.empty())
     {
       // We must map reference indices only.
       neighbors.set_size(k, querySet.n_cols);
@@ -892,7 +894,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
 
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() &&
+      tree::TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
@@ -920,7 +923,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() &&
+      tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.set_size(k, querySet.n_cols);
@@ -968,7 +972,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
-  if (tree::TreeTraits<Tree>::RearrangesDataset && treeOwner)
+  if (!oldFromNewReferences.empty() &&
+      tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We will always need to rearrange in this case.
     distancePtr = new arma::mat;
@@ -1090,7 +1095,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() &&
+      tree::TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.set_size(k, referenceSet->n_cols);
     distances.set_size(k, referenceSet->n_cols);
