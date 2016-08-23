@@ -238,7 +238,7 @@ double LSHModel<SortPolicy, ObjectiveFunction>::Recall(size_t maxK,
     // TODO: change with boost integration.
     double from = 0;
     double to = 1000;
-    double step = 0.01;
+    double step = 0.001;
     double integralSum = 0;
     for (double i = from+step; i < to; i+=step)
     {
@@ -268,7 +268,7 @@ double LSHModel<SortPolicy, ObjectiveFunction>::Selectivity(size_t numTables,
   // TODO: change with boost integration.
   double from = 0;
   double to = 1000;
-  double step = 0.01;
+  double step = 0.001;
   double integralSum = 0;
   for (double i = from+step; i < to; i+=step)
   {
@@ -281,74 +281,6 @@ double LSHModel<SortPolicy, ObjectiveFunction>::Selectivity(size_t numTables,
 
   return integralSum * step ;
 }
-
-/* NOTE: My interpretation of the paper would result in this code, but LSHKIT's
- * implementation is different. I'm commenting this out to try their way, and I
- * might go back to this if I see both work the same.
-
-// Probability of two points being neighbors if they are at distance chi.
-template <typename SortPolicy, typename ObjectiveFunction>
-double LSHModel<SortPolicy, ObjectiveFunction>::Rho(double chi,
-                                                    double hashWidth,
-                                                    size_t numTables,
-                                                    size_t numProj,
-                                                    size_t numProbes)
-{
-  // Calculate the formula:
-  // 1 - {Prod{1 - Prod{same_bin_probability}}}^numTables, where:
-  // * same_bin_probability is calculated with the Value() function.
-  // * Prod{same_bin_probability} is stored in product.
-  // * Prod{1 - Prod{same_bin_probability}} is stored in rho.
-
-  double rho = 1;
-
-  // Row-major loop :(. TODO: Refactor to make column-major.
-  for (size_t proj = 0; proj < numProj; ++proj)
-  {
-    double product = 1;
-    for (size_t probe = 0; probe < numProbes; ++probe)
-    {
-      // Use perturbation value (proj, probe), i.e. \delta_{\mu, \tau}
-      product *= Value(chi, hashWidth, templateSequence(proj, probe), numProj);
-    }
-
-    rho *= (1 - product);
-  }
-
-  return 1 - std::pow(rho, numTables);
-}
-
-// Probability of two points being neighbors if they are at distance chi.
-template <typename SortPolicy, typename ObjectiveFunction>
-double LSHModel<SortPolicy, ObjectiveFunction>::SameBucketProbability(double chi,
-                      double hashWidth,
-                      short delta,
-                      size_t proj,
-                      size_t numProj)
-{
-  if (delta == 0)
-  {
-    // No perturbation - probability of two queries sharing the same bin.
-    // Use the "default" normal distribution with mean = 0, sd = 1.
-    boost::math::normal_distribution phi;
-    return 2 * phi.pdf(hashWidth / chi) - 1
-      + std::sqrt(2 / M_PI) 
-      * (std::exp(-pow((hashWidth / chi), 2) / 2.0 - 1.0)) / (hashWidth / chi);
-  }
-  else
-  {
-    // +1/-1 perturbation - probability of two queries being in adjacent bins.
-    double deltaI = (proj + 1.0) / (2.0 * (numProj + 2.0));
-    
-    // Negative perturbation - flip deltaI.
-    if (delta == -1)
-      deltaI = 1 - deltaI;
-
-    boost::math::normal_distribution phi(-delta, chi);
-    return phi.cdf(hashWidth) - phi.cdf(0);
-  }
-}
-*/
 
 /*
  * Based on the LSHKIT implementation, not my understanding of the paper.
