@@ -38,6 +38,33 @@
 namespace mlpack {
 namespace bound {
 
+/**
+ * The CellBound class describes a bound that consists of a number of
+ * hyperrectangles. These hyperrectangles do not overlap each other. The bound
+ * is limited by an outer hyperrectangle and two addresses, the lower address
+ * and the high address. Thus, the bound contains all points included between
+ * the lower and the high addresses. The class caches the minimum bounding
+ * rectangle, the lower and the high addresses and the hyperrectangles
+ * that are described by the addresses.
+ *
+ * The notion of addresses is described in the following paper.
+ * @code
+ * @inproceedings{bayer1997,
+ *   author = {Bayer, Rudolf},
+ *   title = {The Universal B-Tree for Multidimensional Indexing: General
+ *       Concepts},
+ *   booktitle = {Proceedings of the International Conference on Worldwide
+ *       Computing and Its Applications},
+ *   series = {WWCA '97},
+ *   year = {1997},
+ *   isbn = {3-540-63343-X},
+ *   pages = {198--209},
+ *   numpages = {12},
+ *   publisher = {Springer-Verlag},
+ *   address = {London, UK, UK},
+ * }
+ * @endcode
+ */
 template<typename MetricType = metric::LMetric<2, true>,
          typename ElemType = double>
 class CellBound

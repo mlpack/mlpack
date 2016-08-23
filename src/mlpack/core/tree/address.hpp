@@ -1,4 +1,28 @@
-
+/**
+ * @file address.hpp
+ * @author Mikhail Lozhnikov
+ *
+ * This file contains a series of functions for translating points to addresses
+ * and back and functions for comparing addresses.
+ *
+ * The notion of addresses is described in the following paper.
+ * @code
+ * @inproceedings{bayer1997,
+ *   author = {Bayer, Rudolf},
+ *   title = {The Universal B-Tree for Multidimensional Indexing: General
+ *       Concepts},
+ *   booktitle = {Proceedings of the International Conference on Worldwide
+ *       Computing and Its Applications},
+ *   series = {WWCA '97},
+ *   year = {1997},
+ *   isbn = {3-540-63343-X},
+ *   pages = {198--209},
+ *   numpages = {12},
+ *   publisher = {Springer-Verlag},
+ *   address = {London, UK, UK},
+ * }
+ * @endcode
+*/
 #ifndef MLPACK_CORE_TREE_ADDRESS_HPP
 #define MLPACK_CORE_TREE_ADDRESS_HPP
 
@@ -8,6 +32,14 @@ namespace bound {
 
 namespace addr {
 
+/**
+ * Calculate the address of a point. Be careful, the point and the address
+ * variables should be equal-sized and the type of the address should correspond
+ * to the type of the vector.
+ *
+ * @param address The resulting address.
+ * @param point The point that is being translated to the address.
+ */
 template<typename AddressType, typename VecType>
 void PointToAddress(AddressType& address, const VecType& point)
 {
@@ -85,6 +117,14 @@ void PointToAddress(AddressType& address, const VecType& point)
     }
 }
 
+/**
+ * Translate the address to the point. Be careful, the point and the address
+ * variables should be equal-sized and the type of the address should correspond
+ * to the type of the vector.
+ *
+ * @param address An address to translate.
+ * @param point The point that corresponds to the address.
+ */
 template<typename AddressType, typename VecType>
 void AddressToPoint(VecType& point, const AddressType& address)
 {
@@ -153,6 +193,11 @@ void AddressToPoint(VecType& point, const AddressType& address)
   }
 }
 
+/**
+ * Compare two addresses. The function returns 1 if the first address is greater
+ * than the second one, -1 if the first address is less than the second one,
+ * otherwise the function returns 0.
+ */
 template<typename AddressType1, typename AddressType2>
 int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 {
@@ -173,6 +218,9 @@ int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
   return 0;
 }
 
+/**
+ * Returns true if an address is contained between two other addresses.
+ */
 template<typename AddressType1, typename AddressType2, typename AddressType3>
 bool Contains(const AddressType1& address, const AddressType2& loBound,
                      const AddressType3& hiBound)

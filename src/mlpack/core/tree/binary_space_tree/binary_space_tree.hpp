@@ -528,11 +528,12 @@ class BinarySpaceTree
    * @param oldFromNew Vector which will be filled with the old positions for
    *    each new point.
    */
-  size_t PerformSplit(MatType& data,
-    const size_t begin,
-    const size_t count,
-    const typename UBTreeSplit<BoundType<MetricType>,
-                               MatType>::SplitInfo& splitInfo);
+  size_t PerformSplit(
+      MatType& data,
+      const size_t begin,
+      const size_t count,
+      const typename UBTreeSplit<BoundType<MetricType>,
+                                 MatType>::SplitInfo& splitInfo);
 
   /**
    * An overload for the universal B tree. For the first time the function
@@ -548,12 +549,13 @@ class BinarySpaceTree
    * @param oldFromNew Vector which will be filled with the old positions for
    *    each new point.
    */
-  size_t PerformSplit(MatType& data,
-    const size_t begin,
-    const size_t count,
-    const typename UBTreeSplit<BoundType<MetricType>,
-                               MatType>::SplitInfo& splitInfo,
-    std::vector<size_t>& oldFromNew);
+  size_t PerformSplit(
+      MatType& data,
+      const size_t begin,
+      const size_t count,
+      const typename UBTreeSplit<BoundType<MetricType>,
+                                 MatType>::SplitInfo& splitInfo,
+      std::vector<size_t>& oldFromNew);
 
   /**
    * Update the bound of the current node. This method does not take into

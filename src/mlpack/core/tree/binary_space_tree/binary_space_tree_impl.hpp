@@ -880,9 +880,12 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::PerformSplit(MatType& data,
-    const size_t begin, const size_t count,
-    const typename UBTreeSplit<BoundType<MetricType>, MatType>::SplitInfo& splitInfo)
+    SplitType>::PerformSplit(
+    MatType& data,
+    const size_t begin,
+    const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>,
+                               MatType>::SplitInfo& splitInfo)
 {
   return SplitType<BoundType<MetricType>, MatType>::PerformSplit(data, begin,
       count, splitInfo);
@@ -895,9 +898,12 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-    SplitType>::PerformSplit(MatType& data,
-    const size_t begin, const size_t count,
-    const typename UBTreeSplit<BoundType<MetricType>, MatType>::SplitInfo& splitInfo,
+    SplitType>::PerformSplit(
+    MatType& data,
+    const size_t begin,
+    const size_t count,
+    const typename UBTreeSplit<BoundType<MetricType>,
+                               MatType>::SplitInfo& splitInfo,
     std::vector<size_t>& oldFromNew)
 {
   return SplitType<BoundType<MetricType>, MatType>::PerformSplit(data, begin,
@@ -910,7 +916,6 @@ template<typename MetricType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-
 template<typename BoundType2>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 UpdateBound(BoundType2& boundToUpdate)
