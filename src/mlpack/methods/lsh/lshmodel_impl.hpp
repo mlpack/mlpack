@@ -129,8 +129,6 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
   {
     refSetEnd += refSetStart - 1;
 
-    cout << "Neighbors "<< refSetStart <<":"<<refSetEnd<<endl;
-
     // Reference set for kNN
     arma::mat refMat = sampleSet.cols(refSetStart, refSetEnd);
     referenceSizes(i) = refMat.n_cols;
@@ -140,6 +138,9 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
     KNN naive(refMat, true); // true: train and use naive kNN.
     naive.Search(queryMat, k, neighbors, kNNDistances);
 
+    // If identical points are found, disregard their distance to avoid log(0).
+    kNNDistances = kNNDistances.cols(arma::find(kNNDistances > 0));
+
     // Store the squared distances (what we need).
     kNNDistances = arma::pow(kNNDistances, 2);
 
@@ -147,6 +148,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
     Ek.row(i) = arma::mean(kNNDistances.t());
     Gk.row(i) = arma::exp(arma::mean(arma::log(kNNDistances.t()), 0));
   }
+  cout << Ek << endl;
+  cout << Gk << endl;
   Log::Info.ignoreInput = false; // Keep giving normal output.
 
   // Step 5. Model the arithmetic and geometric mean according to the paper.
