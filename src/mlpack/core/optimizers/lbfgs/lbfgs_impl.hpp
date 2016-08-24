@@ -221,15 +221,7 @@ bool L_BFGS<FunctionType>::LineSearch(double& functionValue,
     const bool cond2 = (stepSize > maxStep);
     const bool cond3 = (numIterations >= maxLineSearchTrials);
     if (cond1 || cond2 || cond3)
-    {
-      if (cond1)
-        Log::Debug << "stepSize < minStep" << std::endl;
-      if (cond2)
-        Log::Debug << "stepSize > maxStep" << std::endl;
-      if (cond3)
-        Log::Debug << "numIterations >= maxLineSearchTrials (stepSize=" << stepSize << ")" << std::endl;
       break;
-    }
 
     // Scale the step size.
     stepSize *= width;
@@ -403,6 +395,15 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
       break;
     }
 
+    // Break if the objective is not a number.
+    if (std::isnan(functionValue))
+    {
+      Log::Warn << "L-BFGS terminated with objective " << functionValue << "; "
+          << "are the objective and gradient functions implemented correctly?"
+          << std::endl;
+      break;
+    }
+
     // Choose the scaling factor.
     double scalingFactor = ChooseScalingFactor(itNum, gradient);
 
@@ -431,7 +432,7 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
     }
 
     // If we can't make progress on the gradient, then we'll also accept
-    // a stable function value
+    // a stable function value.
     const double denom =
       std::max(
         std::max(fabs(prevFunctionValue), fabs(functionValue)),
