@@ -71,8 +71,17 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 4. Building mlpack from source
 ------------------------------
 
-(see also [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html))
-(see also [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild))
+This section discusses how to build mlpack from source.  However, mlpack is in
+the repositories of many Linux distributions and so it may be easier to use the
+package manager for your system.  For example, on Ubuntu, you can install mlpack
+with the following command:
+
+    $ sudo apt-get install libmlpack-dev
+
+There are some other useful pages to consult in addition to this section:
+
+  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html)
+  - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
