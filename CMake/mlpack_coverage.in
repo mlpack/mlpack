@@ -8,6 +8,9 @@ current_log_file=`date +'%Y.%h.%d:%H:%M:%S-coverage.log'`
 current_coverage_file=`date +'%Y.%h.%d:%H:%M:%S-coverage.info'`
 max_cov_count=50000
 
+# default directories
+root_dir="../"
+
 # Extract arguments.
 for i in "$@"
 do
@@ -23,6 +26,7 @@ case $i in
     echo "    -g|--gcov_tool_location    Gcov location if not default"
     echo "    -t|--token                 Upload to coveralls with given token"
     echo "       --max_cov_count         Max line coverage count (default 50000)"
+    echo "       --root_dir              Set the root directory from which gcov will be called. (default ../)"
     exit 0
     shift
     ;;
@@ -48,6 +52,10 @@ case $i in
     ;;
     --max_cov_count)
     max_cov_count="${i#*=}"
+    shift
+    ;;
+    --root_dir=*)
+    root_dir="${i#*=}"
     shift
     ;;
     *)
@@ -120,6 +128,6 @@ cp .coverage.total ./coveragehistory/$current_coverage_file
 
 # Upload the result to coveralls if token is provided.
 if ! [ "$token" = "" ]; then
-  cpp-coveralls -n -r ../ -b ../ -l ./coveragehistory/$current_coverage_file -t "$token" --max-cov-count $max_cov_count
+  cpp-coveralls -n -r $root_dir -b $root_dir -l ./coveragehistory/$current_coverage_file -t "$token" --max-cov-count $max_cov_count
 fi
 
