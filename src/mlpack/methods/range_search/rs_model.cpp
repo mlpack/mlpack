@@ -28,7 +28,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rPlusPlusTreeRS(NULL),
     vpTreeRS(NULL),
     rpTreeRS(NULL),
-    maxPRTreeRS(NULL)
+    maxRPTreeRS(NULL),
+    ubTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -155,7 +156,12 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       break;
 
     case MAX_RP_TREE:
-      maxPRTreeRS = new RSType<tree::MaxRPTree>(move(referenceSet),
+      maxRPTreeRS = new RSType<tree::MaxRPTree>(move(referenceSet),
+          naive, singleMode);
+      break;
+
+    case UB_TREE:
+      ubTreeRS = new RSType<tree::UBTree>(move(referenceSet),
           naive, singleMode);
       break;
   }
@@ -289,7 +295,11 @@ void RSModel::Search(arma::mat&& querySet,
       break;
 
     case MAX_RP_TREE:
-      maxPRTreeRS->Search(querySet, range, neighbors, distances);
+      maxRPTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case UB_TREE:
+      ubTreeRS->Search(querySet, range, neighbors, distances);
       break;
   }
 }
@@ -355,7 +365,11 @@ void RSModel::Search(const math::Range& range,
       break;
 
     case MAX_RP_TREE:
-      maxPRTreeRS->Search(range, neighbors, distances);
+      maxRPTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case UB_TREE:
+      ubTreeRS->Search(range, neighbors, distances);
       break;
   }
 }
@@ -389,6 +403,8 @@ std::string RSModel::TreeName() const
       return "random projection tree (mean split)";
     case MAX_RP_TREE:
       return "random projection tree (max split)";
+    case UB_TREE:
+      return "UB tree";
     default:
       return "unknown tree";
   }
@@ -419,8 +435,10 @@ void RSModel::CleanMemory()
     delete vpTreeRS;
   if (rpTreeRS)
     delete rpTreeRS;
-  if (maxPRTreeRS)
-    delete maxPRTreeRS;
+  if (maxRPTreeRS)
+    delete maxRPTreeRS;
+  if (ubTreeRS)
+    delete ubTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -433,5 +451,6 @@ void RSModel::CleanMemory()
   rPlusPlusTreeRS = NULL;
   vpTreeRS = NULL;
   rpTreeRS = NULL;
-  maxPRTreeRS = NULL;
+  maxRPTreeRS = NULL;
+  ubTreeRS = NULL;
 }
