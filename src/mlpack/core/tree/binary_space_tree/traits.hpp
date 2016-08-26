@@ -237,6 +237,7 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool HasSelfChildren = false;
   static const bool RearrangesDataset = true;
   static const bool BinaryTree = true;
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree
