@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact1)
     }
 
     // Now perform the actual calculation.
-    akfn = new KFN(dataset, false, false, epsilon);
+    akfn = new KFN(dataset, DUAL_TREE_MODE, epsilon);
     arma::Mat<size_t> neighborsApprox;
     arma::mat distancesApprox;
     akfn->Search(dataset, 15, neighborsApprox, distancesApprox);
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact2)
   arma::mat distancesExact;
   exact.Search(15, neighborsExact, distancesExact);
 
-  KFN akfn(dataset, false, false, 0.05);
+  KFN akfn(dataset, DUAL_TREE_MODE, 0.05);
   arma::Mat<size_t> neighborsApprox;
   arma::mat distancesApprox;
   akfn.Search(15, neighborsApprox, distancesApprox);
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsExact)
   arma::mat distancesExact;
   exact.Search(15, neighborsExact, distancesExact);
 
-  KFN akfn(dataset, false, true, 0.05);
+  KFN akfn(dataset, SINGLE_TREE_MODE, 0.05);
   arma::Mat<size_t> neighborsApprox;
   arma::mat distancesApprox;
   akfn.Search(15, neighborsApprox, distancesApprox);
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
       arma::mat> tree(dataset);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&tree, true, 0.05);
+      coverTreeSearch(&tree, SINGLE_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
       arma::mat> referenceTree(dataset);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&referenceTree, false, 0.05);
+      coverTreeSearch(&referenceTree, DUAL_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
   NeighborSearch<FurthestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(dataset, false, true, 0.05);
+      ballTreeSearch(dataset, SINGLE_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsBallTree;
   arma::mat distancesBallTree;
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   exact.Search(15, neighborsExact, distancesExact);
 
   NeighborSearch<FurthestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(dataset, false, false, 0.05);
+      ballTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
   arma::Mat<size_t> neighborsBallTree;
   arma::mat distancesBallTree;
   ballTreeSearch.Search(15, neighborsBallTree, distancesBallTree);

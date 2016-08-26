@@ -30,9 +30,28 @@ template<typename TreeType,
          template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HilbertRTreeAuxiliaryInformation(
-    const HilbertRTreeAuxiliaryInformation& other) :
-    hilbertValue(other.HilbertValue())
+    const HilbertRTreeAuxiliaryInformation& other,
+    TreeType* tree,
+    bool deepCopy) :
+    hilbertValue(other.HilbertValue(), tree, deepCopy)
 { }
+
+template<typename TreeType,
+         template<typename> class HilbertValueType>
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
+HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other) :
+    hilbertValue(std::move(other.hilbertValue))
+{ }
+
+template<typename TreeType,
+         template<typename> class HilbertValueType>
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>&
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::operator=(
+    const HilbertRTreeAuxiliaryInformation& other)
+{
+  hilbertValue = other.hilbertValue;
+  return *this;
+}
 
 template<typename TreeType,
          template<typename> class HilbertValueType>

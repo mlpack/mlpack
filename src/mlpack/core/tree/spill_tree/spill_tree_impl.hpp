@@ -307,6 +307,110 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 }
 
 /**
+ * Return the index of the nearest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the nearest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (hyperplane.Left(point))
+    return 0;
+  return 1;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the furthest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (hyperplane.Left(point))
+    return 1;
+  return 0;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the nearest).  If it can't decide it will
+ * return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetNearestChild(const SpillTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (hyperplane.Left(queryNode.Bound()))
+    return 0;
+  if (hyperplane.Right(queryNode.Bound()))
+    return 1;
+  // Can't decide.
+  return 2;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point (this
+ * is an efficient estimation based on the splitting hyperplane, the node
+ * returned is not necessarily the furthest).  If this is a leaf node, it will
+ * return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>::GetFurthestChild(const SpillTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (hyperplane.Left(queryNode.Bound()))
+    return 1;
+  if (hyperplane.Right(queryNode.Bound()))
+    return 0;
+  // Can't decide.
+  return 2;
+}
+
+/**
  * Return a bound on the furthest point in the node from the center.  This
  * returns 0 unless the node is a leaf.
  */
@@ -454,47 +558,6 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     return (*pointsIndex)[index];
   // This should never happen.
   return (size_t() - 1);
-}
-
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
-inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
-    SplitType>::HalfSpaceIntersects(const SpillTree& other) const
-{
-  if (!Parent())
-    return true;
-
-  const bool left = this == Parent()->Left();
-
-  if (left)
-    return !Parent()->Hyperplane().Right(other.Bound());
-  else
-    return !Parent()->Hyperplane().Left(other.Bound());
-}
-
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType,
-         template<typename HyperplaneMetricType> class HyperplaneType,
-         template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
-template<typename VecType>
-inline bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
-    SplitType>::HalfSpaceContains(
-    const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*) const
-{
-  if (!Parent())
-    return true;
-
-  const bool left = this == Parent()->Left();
-  const bool toTheLeft = Parent()->Hyperplane().Left(point);
-
-  return left == toTheLeft;
 }
 
 template<typename MetricType,

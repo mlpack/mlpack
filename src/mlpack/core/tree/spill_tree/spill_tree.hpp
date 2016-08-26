@@ -265,6 +265,44 @@ class SpillTree
   size_t NumChildren() const;
 
   /**
+   * Return the index of the nearest child node to the given query point (this
+   * is an efficient estimation based on the splitting hyperplane, the node
+   * returned is not necessarily the nearest).  If this is a leaf node, it will
+   * return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point (this
+   * is an efficient estimation based on the splitting hyperplane, the node
+   * returned is not necessarily the furthest).  If this is a leaf node, it will
+   * return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node (this
+   * is an efficient estimation based on the splitting hyperplane, the node
+   * returned is not necessarily the nearest).  If it can't decide it will
+   * return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const SpillTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node (this
+   * is an efficient estimation based on the splitting hyperplane, the node
+   * returned is not necessarily the furthest).  If it can't decide it will
+   * return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const SpillTree& queryNode);
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
@@ -328,15 +366,6 @@ class SpillTree
    * @param index Index of point for which a dataset index is wanted.
    */
   size_t Point(const size_t index) const;
-
-  //! Determines if the node's half space intersects the given node.
-  bool HalfSpaceIntersects(const SpillTree& other) const;
-
-  //! Determines if the node's half space contains the given point.
-  template<typename VecType>
-  bool HalfSpaceContains(
-      const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
 
   //! Return the minimum distance to another node.
   ElemType MinDistance(const SpillTree* other) const

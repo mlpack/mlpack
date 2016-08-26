@@ -485,6 +485,104 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 }
 
 /**
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (left->MinDistance(point) <= right->MinDistance(point))
+    return 0;
+  return 1;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (left->MaxDistance(point) > right->MaxDistance(point))
+    return 0;
+  return 1;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetNearestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  ElemType leftDist = left->MinDistance(&queryNode);
+  ElemType rightDist = right->MinDistance(&queryNode);
+  if (leftDist < rightDist)
+    return 0;
+  if (rightDist < leftDist)
+    return 1;
+  return NumChildren();
+}
+
+/**
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetFurthestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  ElemType leftDist = left->MaxDistance(&queryNode);
+  ElemType rightDist = right->MaxDistance(&queryNode);
+  if (leftDist > rightDist)
+    return 0;
+  if (rightDist > leftDist)
+    return 1;
+  return NumChildren();
+}
+
+/**
  * Return a bound on the furthest point in the node from the center.  This
  * returns 0 unless the node is a leaf.
  */

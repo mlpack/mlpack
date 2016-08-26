@@ -159,7 +159,7 @@ double CF::Predict(const size_t user, const size_t item) const
 
   // Calculate the neighborhood of the queried users.
   // This should be a templatized option.
-  neighbor::KNN a(stretchedH, false, true /* single-tree mode */);
+  neighbor::KNN a(stretchedH, neighbor::SINGLE_TREE_MODE);
   arma::mat resultingDistances; // Temporary storage.
 
   a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);

@@ -197,25 +197,31 @@ class TrainVisitor : public boost::static_visitor<void>
 };
 
 /**
- * SingleModeVisitor exposes the SingleMode method of the given NSType.
+ * SearchModeVisitor exposes the SearchMode() method of the given NSType.
  */
-class SingleModeVisitor : public boost::static_visitor<bool&>
+class SearchModeVisitor : public boost::static_visitor<NeighborSearchMode>
 {
  public:
-  //! Return whether or not single-tree search is enabled.
+  //! Return the search mode.
   template<typename NSType>
-  bool& operator()(NSType* ns) const;
+  NeighborSearchMode operator()(NSType* ns) const;
 };
 
 /**
- * NaiveVisitor exposes the Naive method of the given NSType.
+ * SetSearchModeVisitor modifies the SearchMode method of the given NSType.
  */
-class NaiveVisitor : public boost::static_visitor<bool&>
+class SetSearchModeVisitor : public boost::static_visitor<void>
 {
+  NeighborSearchMode searchMode;
  public:
-  //! Return whether or not naive search is enabled.
+  //! Construct the SetSearchModeVisitor object with the given mode.
+  SetSearchModeVisitor(const NeighborSearchMode searchMode) :
+      searchMode(searchMode)
+  {};
+
+  //! Set the search mode.
   template<typename NSType>
-  bool& operator()(NSType *ns) const;
+  void operator()(NSType* ns) const;
 };
 
 /**
@@ -338,13 +344,10 @@ class NSModel
   //! Expose the dataset.
   const arma::mat& Dataset() const;
 
-  //! Expose singleMode.
-  bool SingleMode() const;
-  bool& SingleMode();
-
-  //! Expose naiveMode.
-  bool Naive() const;
-  bool& Naive();
+  //! Access the search mode.
+  NeighborSearchMode SearchMode() const;
+  //! Modify the search mode.
+  void SetSearchMode(const NeighborSearchMode mode);
 
   //! Expose Epsilon.
   double Epsilon() const;
@@ -373,8 +376,7 @@ class NSModel
   //! Build the reference tree.
   void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,
-                  const bool naive,
-                  const bool singleMode,
+                  const NeighborSearchMode searchMode,
                   const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.

@@ -56,13 +56,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        kfn = new KFN(tree, false);
+        kfn = new KFN(tree, DUAL_TREE_MODE);
         break;
       case 1: // Use the single-tree method.
-        kfn = new KFN(tree, true);
+        kfn = new KFN(tree, SINGLE_TREE_MODE);
         break;
       case 2: // Use the naive method.
-        kfn = new KFN(tree->Dataset(), true);
+        kfn = new KFN(tree->Dataset(), NAIVE_MODE);
         break;
     }
 
@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
 
   KFN kfn(dataset);
 
-  KFN naive(dataset, true);
+  KFN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
 
   KFN kfn(dataset);
 
-  KFN naive(dataset, true);
+  KFN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -408,9 +408,9 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   if (!data::Load("test_data_3_1000.csv", dataset))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KFN kfn(dataset, false, true);
+  KFN kfn(dataset, SINGLE_TREE_MODE);
 
-  KFN naive(dataset, true);
+  KFN naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -443,9 +443,9 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
       FirstPointIsRoot> tree(data);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&tree, true);
+      coverTreeSearch(&tree, SINGLE_TREE_MODE);
 
-  KFN naive(data, true);
+  KFN naive(data, NAIVE_MODE);
 
   arma::Mat<size_t> coverTreeNeighbors;
   arma::mat coverTreeDistances;
@@ -515,9 +515,9 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   // correspondence between points in the dataset for both methods. The order of
   // query points in both methods should be same.
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, BallTree>
-      ballTreeSearch(&tree, true);
+      ballTreeSearch(&tree, SINGLE_TREE_MODE);
 
-  KFN naive(tree.Dataset(), true);
+  KFN naive(tree.Dataset(), NAIVE_MODE);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;

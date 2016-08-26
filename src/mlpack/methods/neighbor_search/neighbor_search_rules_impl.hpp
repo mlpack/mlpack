@@ -146,6 +146,22 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
+inline size_t NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+GetBestChild(const size_t queryIndex, TreeType& referenceNode)
+{
+  ++scores;
+  return SortPolicy::GetBestChild(querySet.col(queryIndex), referenceNode);
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline size_t NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+GetBestChild(const TreeType& queryNode, TreeType& referenceNode)
+{
+  ++scores;
+  return SortPolicy::GetBestChild(queryNode, referenceNode);
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     const size_t queryIndex,
     TreeType& /* referenceNode */,

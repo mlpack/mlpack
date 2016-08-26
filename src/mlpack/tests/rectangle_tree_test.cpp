@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(&tree, true);
+      RTree> knn1(&tree, SINGLE_TREE_MODE);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   arma::mat distances2;
 
   // Nearest neighbor search the naive way.
-  KNN knn2(newDataset, true, true);
+  KNN knn2(newDataset, NAIVE_MODE);
 
   knn2.Search(querySet, 5, neighbors2, distances2);
 
@@ -504,12 +504,12 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(&tree, true);
+      RTree> knn1(&tree, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -537,7 +537,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RStarTree> knn1(&rTree, true);
+      RStarTree> knn1(&rTree, SINGLE_TREE_MODE);
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 
   // Nearest neighbor search with the X tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      XTree> knn1(&xTree, true);
+      XTree> knn1(&xTree, SINGLE_TREE_MODE);
 
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
@@ -592,7 +592,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -621,7 +621,7 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
 
   // Nearest neighbor search with the Hilbert R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      HilbertRTree> knn1(&hilbertRTree, true);
+      HilbertRTree> knn1(&hilbertRTree, SINGLE_TREE_MODE);
 
   BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
 
@@ -633,7 +633,7 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -865,6 +865,83 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertValueTest)
 }
 
 template<typename TreeType>
+void CheckHilbertValue(const TreeType& tree)
+{
+  typedef DiscreteHilbertValue<typename TreeType::ElemType>
+      HilbertValue;
+
+  const HilbertValue& value = tree.AuxiliaryInfo().HilbertValue();
+
+  if (tree.IsLeaf())
+  {
+    BOOST_REQUIRE_EQUAL(value.OwnsLocalHilbertValues(), true);
+    return;
+  }
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+  {
+    const HilbertValue& childValue =
+        tree.Child(i).AuxiliaryInfo().HilbertValue();
+    BOOST_REQUIRE_EQUAL(value.ValueToInsert(), childValue.ValueToInsert());
+  }
+
+  const HilbertValue& childValue =
+      tree.Child(tree.NumChildren() - 1).AuxiliaryInfo().HilbertValue();
+  BOOST_REQUIRE_EQUAL(value.LocalHilbertValues(),
+      childValue.LocalHilbertValues());
+
+  if (!tree.Parent())
+    BOOST_REQUIRE_EQUAL(value.OwnsValueToInsert(), true);
+  else
+    BOOST_REQUIRE_EQUAL(value.OwnsValueToInsert(), false);
+
+  BOOST_REQUIRE_EQUAL(value.OwnsLocalHilbertValues(), false);
+
+  for (size_t i = 0; i < tree.NumChildren(); i++)
+    CheckHilbertValue(tree.Child(i));
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTeeCopyConstructorTest)
+{
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType copy(tree);
+
+  CheckHilbertValue(copy);
+  CheckDiscreteHilbertValueSync(copy);
+  CheckHilbertOrdering(copy);
+  CheckContainment(copy);
+  CheckExactContainment(copy);
+  CheckHierarchy(copy);
+  CheckNumDescendants(copy);
+}
+
+BOOST_AUTO_TEST_CASE(HilbertRTeeMoveConstructorTest)
+{
+  typedef HilbertRTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
+
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  TreeType tree(dataset, 20, 6, 5, 2, 0);
+  TreeType copy(std::move(tree));
+
+  CheckHilbertValue(copy);
+  CheckDiscreteHilbertValueSync(copy);
+  CheckHilbertOrdering(copy);
+  CheckContainment(copy);
+  CheckExactContainment(copy);
+  CheckHierarchy(copy);
+  CheckNumDescendants(copy);
+}
+
+template<typename TreeType>
 void CheckOverlap(const TreeType& tree)
 {
   bool success = true;
@@ -892,6 +969,7 @@ void CheckOverlap(const TreeType& tree)
   for (size_t i = 0; i < tree.NumChildren(); i++)
     CheckOverlap(tree.Child(i));
 }
+
 
 BOOST_AUTO_TEST_CASE(RPlusTreeOverlapTest)
 {
@@ -933,7 +1011,7 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
   // Nearest neighbor search with the R+ tree.
 
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RPlusTree > knn1(&rPlusTree, true);
+      RPlusTree > knn1(&rPlusTree, SINGLE_TREE_MODE);
 
   BOOST_REQUIRE_EQUAL(rPlusTree.NumDescendants(), numP);
 
@@ -946,7 +1024,7 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -1064,7 +1142,7 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
   // Nearest neighbor search with the R++ tree.
 
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      arma::mat, RPlusPlusTree > knn1(&rPlusPlusTree, true);
+      arma::mat, RPlusPlusTree > knn1(&rPlusPlusTree, SINGLE_TREE_MODE);
 
   BOOST_REQUIRE_EQUAL(rPlusPlusTree.NumDescendants(), numP);
 
@@ -1077,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -1188,7 +1266,6 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest)
       rTree.Child(secondChild).Child(secondPrime).Bound()[1].Hi(),
       0.9, 1e-15);
 }
-
 
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.

@@ -2,6 +2,18 @@
 
 @section buildintro Introduction
 
+This document discusses how to build mlpack from source.  However, mlpack is in
+the repositories of many Linux distributions and so it may be easier to use the
+package manager for your system.  For example, on Ubuntu, you can install mlpack
+with the following command:
+
+@code
+$ sudo apt-get install libmlpack-dev
+@endcode
+
+If mlpack is not available in your system's package manager, then you can follow
+this document for how to compile and install mlpack from source.
+
 mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
