@@ -51,10 +51,10 @@ struct Base : std::exception
   const char* what()const throw()
   {
     FormatErrorMessage();
-    return errorMessageBuffer;
+    return errorMessageBuffer.c_str();
   }
 
-  mutable char errorMessageBuffer[256];
+  mutable std::string errorMessageBuffer;
 };
 
 struct WithFileName
@@ -62,7 +62,7 @@ struct WithFileName
   WithFileName(){
   }
 
-  void FileName(const char*file_name)
+  void FileName(const char* file_name)
   {
     fileName = file_name;
   }
@@ -87,11 +87,11 @@ struct WithFileLine
 
 struct WithErrno
 {
-  WithErrno(){
-    errnoValue = 0;
+  WithErrno() : errnoValue(0)
+  {
   }
 
-  void Errno(int errno_value)
+  void Errno(int errnoValue)
   {
     this->errnoValue = errnoValue;
   }
@@ -106,14 +106,9 @@ struct CanNotOpenFile :
 {
   void FormatErrorMessage()const
   {
+    errorMessageBuffer = "Can not open file [" + fileName + "]";
     if(errnoValue != 0){
-      std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                    "Can not open file \"%s\" because \"%s\"."
-                    ,&fileName[0], std::strerror(errnoValue));
-    }else{
-      std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                    "Can not open file \"%s\"."
-                    ,&fileName[0]);
+      errorMessageBuffer += " because [" + std::string(std::strerror(errnoValue)) + "].";
     }
   }
 };
@@ -125,42 +120,28 @@ struct LineLengthLimitExceeded :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Line length %d in file \"%s\" exceeds the maximum length of 2^24-1."
-                  , fileLine, &fileName[0]);
+    errorMessageBuffer = "Line length " + std::to_string(fileLine) +
+        " in file [" + fileName + "] exceeds the maximum length of 2^24-1.";
   }
 };
 
 struct WithColumnName
-{
-  WithColumnName()
-  {
-    std::fill(std::begin(columnName), std::end(columnName), 0);
-  }
-
+{  
   void ColumnName(const char* columnName)
   {
-    std::strncpy(this->columnName, columnName, maxColumnNameLength);
-    this->columnName[maxColumnNameLength] = '\0';
+    this->columnName = columnName;
   }
 
-  static constexpr int maxColumnNameLength = 63;
-  char columnName[maxColumnNameLength+1];
+  std::string columnName;
 };
 
 struct WithColumnContent
-{
-  WithColumnContent(){
-    std::memset(columnContent, 0, maxColumnContentLength+1);
-  }
-
+{  
   void ColumnContent(const char *columnContent){
-    std::strncpy(this->columnContent, columnContent, maxColumnContentLength);
-    this->columnContent[maxColumnContentLength] = '\0';
+    this->columnContent = columnContent;
   }
 
-  static constexpr int maxColumnContentLength = 63;
-  char columnContent[maxColumnContentLength+1];
+  std::string columnContent;
 };
 
 
@@ -171,9 +152,8 @@ struct ExtraColumnInHeader :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Extra column \"%s\" in header of file \"%s\"."
-                  , columnName, &fileName[0]);
+    errorMessageBuffer = "Extra column [" +  columnName +
+        "] in header of file [" + fileName + "].";
   }
 };
 
@@ -183,9 +163,8 @@ struct MissingColumnInHeader :
     WithColumnName{
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Missing column \"%s\" in header of file \"%s\"."
-                  , columnName, &fileName[0]);
+    errorMessageBuffer = "Missing column [" +  columnName +
+        "] in header of file [" + fileName + "].";
   }
 };
 
@@ -196,9 +175,8 @@ struct DuplicatedColumnInHeader :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Duplicated column \"%s\" in header of file \"%s\"."
-                  , columnName, &fileName[0]);
+    errorMessageBuffer = "Duplicated column [" +  columnName +
+        "] in header of file [" + fileName + "].";
   }
 };
 
@@ -208,9 +186,7 @@ struct HeaderMissing :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Header missing in file \"%s\"."
-                  , &fileName[0]);
+    errorMessageBuffer = "Header missing in file [" + fileName + "].";
   }
 };
 
@@ -221,9 +197,8 @@ struct TooFewColumns :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Too few columns in line %d in file \"%s\"."
-                  , fileLine, &fileName[0]);
+    errorMessageBuffer = "Too few columns in line " +
+        std::to_string(fileLine) + "] in file [" + fileName + "].";
   }
 };
 
@@ -234,9 +209,8 @@ struct TooManyColumns :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Too many columns in line %d in file \"%s\"."
-                  , fileLine, &fileName[0]);
+    errorMessageBuffer = "Too many columns in line " +
+        std::to_string(fileLine) + "] in file [" + fileName + "].";
   }
 };
 
@@ -247,9 +221,8 @@ struct EscapedStringNotClosed :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "Escaped string was not closed in line %d in file \"%s\"."
-                  , fileLine, &fileName[0]);
+    errorMessageBuffer = "Escaped string was not closed in line " +
+        std::to_string(fileLine) + "] in file [" + fileName + "].";
   }
 };
 
@@ -262,9 +235,10 @@ struct IntegerMustBePositive :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "The integer \"%s\" must be positive or 0 in column \"%s\" in file \"%s\" in line \"%d\"."
-                  , columnContent, columnName, &fileName[0], fileLine);
+    errorMessageBuffer = "The integer [" + columnContent + "] must be positive "
+                         "or 0 in column [" + columnName + "] " +
+                         "in file [" + fileName + "] in line [" +
+                         std::to_string(fileLine) + "].";
   }
 };
 
@@ -277,9 +251,10 @@ struct NoDigit :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "The integer \"%s\" contains an invalid digit in column \"%s\" in file \"%s\" in line \"%d\"."
-                  , columnContent, columnName, &fileName[0], fileLine);
+    errorMessageBuffer = "The integer [" + columnContent + "] contains an invalid "
+                         "digit in column [" + columnName + "] " +
+                         "in file [" + fileName + "] in line [" +
+                         std::to_string(fileLine) + "].";
   }
 };
 
@@ -292,9 +267,9 @@ struct IntegerOverflow :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "The integer \"%s\" overflows in column \"%s\" in file \"%s\" in line \"%d\"."
-                  , columnContent, columnName, &fileName[0], fileLine);
+    errorMessageBuffer = "The integer [" + columnContent + "] overflows in column "
+                         "[" + columnName + "] " + "in file [" + fileName + "] "
+                         "in line [" + std::to_string(fileLine) + "].";
   }
 };
 
@@ -307,9 +282,9 @@ struct IntegerUnderflow :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "The integer \"%s\" underflows in column \"%s\" in file \"%s\" in line \"%d\"."
-                  , columnContent, columnName, &fileName[0], fileLine);
+    errorMessageBuffer = "The integer [" + columnContent + "] underflows in column "
+                         "[" + columnName + "] " + "in file [" + fileName + "] "
+                         "in line [" + std::to_string(fileLine) + "].";
   }
 };
 
@@ -322,9 +297,9 @@ struct InvalidSingleCharacter :
 {
   void FormatErrorMessage()const
   {
-    std::snprintf(errorMessageBuffer, sizeof(errorMessageBuffer),
-                  "The content \"%s\" of column \"%s\" in file \"%s\" in line \"%d\" is not a single character."
-                  , columnContent, columnName, &fileName[0], fileLine);
+    errorMessageBuffer = "The content [" + columnContent + "] of column  "
+                         "[" + columnName + "] " + "in file [" + fileName + "] "
+                         "in line [" + std::to_string(fileLine) + "].";
   }
 };
 
