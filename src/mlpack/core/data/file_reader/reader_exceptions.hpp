@@ -35,6 +35,7 @@
 #include <exception>
 #include <cassert>
 #include <cerrno>
+#include <cstring>
 #include <istream>
 #include <string>
 
