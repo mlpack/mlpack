@@ -69,7 +69,7 @@ void ParseLine(
     if(line == nullptr){
       throw error::TooFewColumns();
     }
-    char*col_begin, *col_end;
+    char *col_begin, *col_end;
     ChopNextColumn<QuotePolicy>(line, col_begin, col_end);
 
     if(colOrder[i] != -1){
@@ -84,7 +84,7 @@ void ParseLine(
 }
 
 template<class OverFlowPolicy>
-void Parse(char *col, char &x){
+void Parse(const char *col, char &x){
   if(!*col)
     throw error::InvalidSingleCharacter();
   x = *col;
@@ -94,12 +94,12 @@ void Parse(char *col, char &x){
 }
 
 template<class OverFlowPolicy>
-void Parse(char *col, std::string &x){
+void Parse(const char *col, std::string &x){
   x = col;
 }
 
 template<class OverFlowPolicy>
-void Parse(char* col, const char*& x){
+void Parse(const char* col, const char*& x){
   x = col;
 }
 
@@ -126,15 +126,15 @@ void ParseUnsignedInteger(const char *col, T &x){
   }
 }
 
-template<class OverFlowPolicy>void Parse(char *col, unsigned char &x)
+template<class OverFlowPolicy>void Parse(const char *col, unsigned char &x)
 {ParseUnsignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, unsigned short &x)
+template<class OverFlowPolicy>void Parse(const char *col, unsigned short &x)
 {ParseUnsignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, unsigned int &x)
+template<class OverFlowPolicy>void Parse(const char *col, unsigned int &x)
 {ParseUnsignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, unsigned long &x)
+template<class OverFlowPolicy>void Parse(const char *col, unsigned long &x)
 {ParseUnsignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, unsigned long long &x)
+template<class OverFlowPolicy>void Parse(const char *col, unsigned long long &x)
 {ParseUnsignedInteger<OverFlowPolicy>(col, x);}
 
 template<class OverFlowPolicy, class T>
@@ -162,15 +162,15 @@ void ParseSignedInteger(const char *col, T &x){
   ParseUnsignedInteger<OverFlowPolicy>(col, x);
 }
 
-template<class OverFlowPolicy>void Parse(char *col, signed char &x)
+template<class OverFlowPolicy>void Parse(const char *col, signed char &x)
 {ParseSignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, signed short &x)
+template<class OverFlowPolicy>void Parse(const char *col, signed short &x)
 {ParseSignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, signed int &x)
+template<class OverFlowPolicy>void Parse(const char *col, signed int &x)
 {ParseSignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, signed long &x)
+template<class OverFlowPolicy>void Parse(const char *col, signed long &x)
 {ParseSignedInteger<OverFlowPolicy>(col, x);}
-template<class OverFlowPolicy>void Parse(char *col, signed long long &x)
+template<class OverFlowPolicy>void Parse(const char *col, signed long long &x)
 {ParseSignedInteger<OverFlowPolicy>(col, x);}
 
 template<class T>
@@ -238,12 +238,12 @@ void ParseFloat(const char *col, T &x){
     x = -x;
 }
 
-template<class OverFlowPolicy> void Parse(char *col, float &x) { ParseFloat(col, x); }
-template<class OverFlowPolicy> void Parse(char *col, double &x) { ParseFloat(col, x); }
-template<class OverFlowPolicy> void Parse(char *col, long double &x) { ParseFloat(col, x); }
+template<class OverFlowPolicy> void Parse(const char *col, float &x) { ParseFloat(col, x); }
+template<class OverFlowPolicy> void Parse(const char *col, double &x) { ParseFloat(col, x); }
+template<class OverFlowPolicy> void Parse(const char *col, long double &x) { ParseFloat(col, x); }
 
 template<class OverFlowPolicy, class T>
-void Parse(char*, T&){
+void Parse(const char*, T&){
   // GCC evalutes "false" when reading the template and
   // "sizeof(T)!=sizeof(T)" only when instantiating it. This is why
   // this strange construct is used.
