@@ -23,13 +23,6 @@ class UBTreeSplit
                                     uint32_t,
                                     uint64_t>::type AddressElemType;
 
-  /**
-   * This class performs the actual splitting i.e. it reorders the dataset.
-   * This variable should be equal to true if the class does not perform the
-   * actual splitting.
-   */
-  static constexpr bool NeedRearrangeDataset = false;
-
   //! An information about the partition.
   struct SplitInfo
   {
@@ -69,7 +62,8 @@ class UBTreeSplit
                              const SplitInfo& splitInfo);
 
   /**
-   * Rearrange the dataset according to the addresses.
+   * Rearrange the dataset according to the addresses and return the list
+   * of changed indices.
    *
    * @param data The dataset used by the binary space tree.
    * @param begin Index of the starting point in the dataset that belongs to

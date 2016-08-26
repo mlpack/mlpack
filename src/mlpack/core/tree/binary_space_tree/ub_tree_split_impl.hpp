@@ -204,18 +204,14 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
   if (splitInfo.addresses)
   {
     std::vector<size_t> newFromOld(data.n_cols);
-    std::vector<size_t> newToOld(data.n_cols);
 
     for (size_t i = 0; i < splitInfo.addresses->size(); i++)
-    {
       newFromOld[i] = i;
-      newToOld[i] = i;
-    }
 
     for (size_t i = 0; i < splitInfo.addresses->size(); i++)
     {
       size_t index = (*splitInfo.addresses)[i].second;
-      size_t oldI = newToOld[i];
+      size_t oldI = oldFromNew[i];
       size_t newIndex = newFromOld[index];
 
       data.swap_cols(i, newFromOld[index]);
@@ -223,10 +219,6 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
       size_t tmp = newFromOld[index];
       newFromOld[index] = i;
       newFromOld[oldI] = tmp;
-
-      tmp = newToOld[i];
-      newToOld[i] = newToOld[newIndex];
-      newToOld[newIndex] = tmp;
 
       tmp = oldFromNew[i];
       oldFromNew[i] = oldFromNew[newIndex];

@@ -9,6 +9,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MAX_SPLIT_HPP
 
 #include <mlpack/core.hpp>
+#include "perform_split.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -28,12 +29,6 @@ class RPTreeMaxSplit
  public:
   //! The element type held by the matrix type.
   typedef typename MatType::elem_type ElemType;
-  /**
-   * Indicates that this class does not perform the actual splitting i.e.
-   * it does not reorder the dataset. If this variable is false, the class
-   * finds the partition and reorders the dataset.
-   */
-  static constexpr bool NeedRearrangeDataset = true;
   //! An information about the partition.
   struct SplitInfo
   {
@@ -59,6 +54,49 @@ class RPTreeMaxSplit
                         const size_t begin,
                         const size_t count,
                         SplitInfo& splitInfo);
+
+  /**
+   * Perform the split process according to the information about the
+   * split.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   */
+  static size_t PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo)
+  {
+    return split::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+        splitInfo);
+  }
+
+  /**
+   * Perform the split process according to the information about the split and
+   * return the list of changed indices.
+   *
+   * @param bound The bound used for this node.
+   * @param data The dataset used by the binary space tree.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *    this node.
+   * @param count Number of points in this node.
+   * @param splitInfo The information about the split.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *    each new point.
+   */
+  static size_t PerformSplit(MatType& data,
+                             const size_t begin,
+                             const size_t count,
+                             const SplitInfo& splitInfo,
+                             std::vector<size_t>& oldFromNew)
+  {
+    return split::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+        splitInfo, oldFromNew);
+  }
 
   /**
    * Indicates that a point should be assigned to the left subtree.

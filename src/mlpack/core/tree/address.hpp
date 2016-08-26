@@ -37,6 +37,16 @@ namespace addr {
  * variables should be equal-sized and the type of the address should correspond
  * to the type of the vector.
  *
+ * The function maps each floating point coordinate to an equal-sized unsigned
+ * integer datatype in such a way that the transform preserves the ordering
+ * (i.e. lower coordinates correspond to lower integers). Thus, the mapping
+ * saves the exponent and the mantissa of each floating point value
+ * consequently, furthermore the exponent is stored before the mantissa. In the
+ * case of negative numbers the resulting integer value should be inverted.
+ * In the multi-dimensional case, after we transform the representation, we
+ * have to interleave the bits of the new representation across all the elements
+ * in the address vector.
+ *
  * @param address The resulting address.
  * @param point The point that is being translated to the address.
  */
@@ -122,6 +132,8 @@ void PointToAddress(AddressType& address, const VecType& point)
  * variables should be equal-sized and the type of the address should correspond
  * to the type of the vector.
  *
+ * The function makes the backward transform to the function above.
+ *
  * @param address An address to translate.
  * @param point The point that corresponds to the address.
  */
@@ -201,9 +213,9 @@ void AddressToPoint(VecType& point, const AddressType& address)
 template<typename AddressType1, typename AddressType2>
 int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 {
-  static_assert(sizeof(typename AddressType1::elem_type) ==
-      sizeof(typename AddressType2::elem_type), "We aren't able to compare "
-      "adresses of distinct sizes");
+  static_assert(std::is_same<typename AddressType1::elem_type,
+      typename AddressType2::elem_type>::value == true, "We aren't able to "
+      "compare adresses of distinct types");
 
   assert(addr1.n_elem == addr2.n_elem);
 
@@ -225,13 +237,13 @@ template<typename AddressType1, typename AddressType2, typename AddressType3>
 bool Contains(const AddressType1& address, const AddressType2& loBound,
                      const AddressType3& hiBound)
 {
-  static_assert(sizeof(typename AddressType1::elem_type) ==
-      sizeof(typename AddressType2::elem_type), "We aren't able to compare "
-      "adresses of distinct sizes");
+  static_assert(std::is_same<typename AddressType1::elem_type,
+      typename AddressType2::elem_type>::value == true, "We aren't able to "
+      "compare adresses of distinct types");
 
-  static_assert(sizeof(typename AddressType1::elem_type) ==
-      sizeof(typename AddressType3::elem_type), "We aren't able to compare "
-      "adresses of distinct sizes");
+  static_assert(std::is_same<typename AddressType1::elem_type,
+      typename AddressType3::elem_type>::value == true, "We aren't able to "
+      "compare adresses of distinct types");
 
   assert(address.n_elem == loBound.n_elem);
   assert(address.n_elem == hiBound.n_elem);

@@ -15,6 +15,7 @@ set(SOURCES
   binary_space_tree/mean_split_impl.hpp
   binary_space_tree/midpoint_split.hpp
   binary_space_tree/midpoint_split_impl.hpp
+  binary_space_tree/perform_split.hpp
   binary_space_tree/rp_tree_max_split.hpp
   binary_space_tree/rp_tree_max_split_impl.hpp
   binary_space_tree/rp_tree_mean_split.hpp

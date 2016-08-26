@@ -328,7 +328,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
 
     // We ran out of the limit of hyperrectangles. In that case we enlare
     // the last hyperrectangle.
-    if (numCorners >= maxNumBounds / 2)
+    if (numCorners >= maxNumBounds - numBounds)
       tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
   }
 

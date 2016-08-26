@@ -270,7 +270,8 @@ class CellBound
                 const arma::Col<ElemType>& hiCorner,
                 const MatType& data);
   /**
-   * Initialize all subrectangles that touches the lower address.
+   * Initialize all subrectangles that touches the lower address. This function
+   * should be called before InitLowerBound().
    *
    * @param numEqualBits The number of equal leading bits of the lower address
    * and the high address.
@@ -278,8 +279,10 @@ class CellBound
    */
   template<typename MatType>
   void InitHighBound(size_t numEqualBits, const MatType& data);
+
   /**
-   * Initialize all subrectangles that touches the high address.
+   * Initialize all subrectangles that touches the high address. This function
+   * should be called after InitHighBound().
    *
    * @param numEqualBits The number of equal leading bits of the lower address
    * and the high address.
