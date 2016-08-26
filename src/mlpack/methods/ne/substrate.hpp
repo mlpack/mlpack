@@ -156,10 +156,10 @@ class Substrate
           cppn.Output(output);
 
           // Create new link if weight bigger than threshold.
-          double weight = output[0];
+          double weight = output[0];  // NOTICE: we haven't scale weight.
           if (std::fabs(weight) > aWeightThreshold)
           {
-            LinkGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
+            LinkGene link(i, j, innovId++, weight, true);  
             genome.aLinkGenes.push_back(link);
           }
         }

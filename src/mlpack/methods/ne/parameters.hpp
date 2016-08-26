@@ -87,6 +87,9 @@ class Parameters
   //! When number of species exceed this value, start to remove stale and weak species in population. 
   int aNumSpeciesThreshold;
 
+  //! Whether the activation function of new neuron is random or not.
+  bool aRandomTypeNewNeuron;
+
 };
 
 }  // namespace ne

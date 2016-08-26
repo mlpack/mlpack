@@ -150,6 +150,9 @@ class NEAT
   //! Species number threshold.
   int aNumSpeciesThreshold;
 
+  //! Whether the activation function of new neuron is random or not.
+  bool aRandomTypeNewNeuron;
+
   /**
    * Default constructor.
    */
@@ -157,27 +160,27 @@ class NEAT
   {
     mlpack::math::RandomSeed(1);
 
-    // Set NEAT algorithm parameters.
-    Parameters params;
-    params.aPopulationSize = 500;
-    params.aMaxGeneration = 500;
-    params.aCoeffDisjoint = 2.0;
-    params.aCoeffWeightDiff = 0.4;
-    params.aCompatThreshold = 1.0;
-    params.aStaleAgeThreshold = 15;
-    params.aCrossoverRate = 0.75;
-    params.aCullSpeciesPercentage = 0.5;
-    params.aMutateWeightProb = 0.2;
-    params.aPerturbWeightProb = 0.9;
-    params.aMutateWeightSize = 0.1;
-    params.aMutateAddForwardLinkProb = 0.9;
-    params.aMutateAddBackwardLinkProb = 0;
-    params.aMutateAddRecurrentLinkProb = 0;
-    params.aMutateAddBiasLinkProb = 0;
-    params.aMutateAddNeuronProb = 0.6;
-    params.aMutateEnabledProb = 0.2;
-    params.aMutateDisabledProb = 0.2;
-    params.aNumSpeciesThreshold = 10;
+    // Set NEAT algorithm parameters (except task).
+    aPopulationSize = 500;
+    aMaxGeneration = 500;
+    aCoeffDisjoint = 2.0;
+    aCoeffWeightDiff = 0.4;
+    aCompatThreshold = 1.0;
+    aStaleAgeThreshold = 15;
+    aCrossoverRate = 0.75;
+    aCullSpeciesPercentage = 0.5;
+    aMutateWeightProb = 0.2;
+    aPerturbWeightProb = 0.9;
+    aMutateWeightSize = 0.1;
+    aMutateAddForwardLinkProb = 0.9;
+    aMutateAddBackwardLinkProb = 0;
+    aMutateAddRecurrentLinkProb = 0;
+    aMutateAddBiasLinkProb = 0;
+    aMutateAddNeuronProb = 0.6;
+    aMutateEnabledProb = 0.2;
+    aMutateDisabledProb = 0.2;
+    aNumSpeciesThreshold = 10;
+    aRandomTypeNewNeuron = false;
 
     // Construct seed genome for xor task.
     int id = 0;
@@ -226,25 +229,6 @@ class NEAT
     aSeedGenome = seedGenome;
     aNextNeuronId = seedGenome.NumNeuron();
     aNextLinkInnovId = seedGenome.NumLink();
-    aPopulationSize = params.aPopulationSize;
-    aMaxGeneration = params.aMaxGeneration;
-    aCoeffDisjoint = params.aCoeffDisjoint;
-    aCoeffWeightDiff = params.aCoeffWeightDiff;
-    aCompatThreshold = params.aCompatThreshold;
-    aStaleAgeThreshold = params.aStaleAgeThreshold;
-    aCrossoverRate = params.aCrossoverRate;
-    aCullSpeciesPercentage = params.aCullSpeciesPercentage;
-    aMutateWeightProb = params.aMutateWeightProb;
-    aPerturbWeightProb = params.aPerturbWeightProb;
-    aMutateWeightSize = params.aMutateWeightSize;
-    aMutateAddForwardLinkProb = params.aMutateAddForwardLinkProb;
-    aMutateAddBackwardLinkProb = params.aMutateAddBackwardLinkProb;
-    aMutateAddRecurrentLinkProb = params.aMutateAddRecurrentLinkProb;
-    aMutateAddBiasLinkProb = params.aMutateAddBiasLinkProb;
-    aMutateAddNeuronProb = params.aMutateAddNeuronProb;
-    aMutateEnabledProb = params.aMutateEnabledProb;
-    aMutateDisabledProb = params.aMutateDisabledProb;
-    aNumSpeciesThreshold = params.aNumSpeciesThreshold;
   }
 
   /**
@@ -279,6 +263,7 @@ class NEAT
     aMutateEnabledProb = params.aMutateEnabledProb;
     aMutateDisabledProb = params.aMutateDisabledProb;
     aNumSpeciesThreshold = params.aNumSpeciesThreshold;
+    aRandomTypeNewNeuron = params.aRandomTypeNewNeuron;
   }
 
   /**
@@ -530,7 +515,7 @@ class NEAT
     ActivationFuncType actFuncType = SIGMOID;
     if (randomActFuncType) 
     {
-      actFuncType = static_cast<ActivationFuncType>(rand() % ActivationFuncType::COUNT);
+      actFuncType = static_cast<ActivationFuncType>(std::rand() % ActivationFuncType::COUNT);  // TODO: use discrete distribution.
     }
     int innovIdx = CheckNeuronInnovation(splitLinkInnovId, actFuncType);
 
@@ -1181,7 +1166,7 @@ class NEAT
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddNeuron(genome, aMutateAddNeuronProb, false);
+        MutateAddNeuron(genome, aMutateAddNeuronProb, aRandomTypeNewNeuron);
       }
       --p;
     }

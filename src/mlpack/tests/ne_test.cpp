@@ -266,6 +266,7 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
   params.aNumSpeciesThreshold = 10;
+  params.aRandomTypeNewNeuron = false;
 
   // Construct seed genome for xor task.
   int id = 0;
@@ -364,6 +365,7 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
   params.aNumSpeciesThreshold = 10;
+  params.aRandomTypeNewNeuron = false;
 
   // Set seed genome for cart pole task.
   int id = 0;
@@ -451,6 +453,7 @@ BOOST_AUTO_TEST_CASE(NENeatMarkovDoublePoleTest)
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
   params.aNumSpeciesThreshold = 10;
+  params.aRandomTypeNewNeuron = false;
 
   // Set seed genome for Markov double pole task.
   int id = 0;
@@ -546,6 +549,7 @@ BOOST_AUTO_TEST_CASE(NENeatNonMarkovDoublePoleTest)
   params.aMutateEnabledProb = 0.3;
   params.aMutateDisabledProb = 0.3;
   params.aNumSpeciesThreshold = 20;
+  params.aRandomTypeNewNeuron = false;
 
   // Set seed genome for Markov double pole task.
   int id = 0;
@@ -636,6 +640,7 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
   params.aNumSpeciesThreshold = 10;
+  params.aRandomTypeNewNeuron = false;
 
   // Set seed genome for cart pole task.
   int id = 0;
@@ -717,6 +722,7 @@ BOOST_AUTO_TEST_CASE(NEHyperNeatXorTest)
   params.aMutateEnabledProb = 0.2;
   params.aMutateDisabledProb = 0.2;
   params.aNumSpeciesThreshold = 10;
+  params.aRandomTypeNewNeuron = true;
 
   // Set hyperNEAT substrate.
   std::vector< std::vector<double> > coordinates = { {-1, -1},

@@ -55,8 +55,8 @@ class TaskXor {
   	std::vector<double> outputs;
   	outputs.push_back(1);
   	outputs.push_back(0);
-  	outputs.push_back(1);
   	outputs.push_back(0);
+  	outputs.push_back(1);
 
   	double fitness = 0;
   	for (int i=0; i<4; ++i) {
