@@ -14,11 +14,17 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+/**
+ * Split a node into two parts according to the median address of points
+ * contained in the node. The class reorders the dataset such that points
+ * with lower addresses belong to the left subtree and points with high
+ * addresses belong to the right subtree.
+ */
 template<typename BoundType, typename MatType = arma::mat>
 class UBTreeSplit
 {
  public:
-  //! The type of a one-dimensional address.
+  //! The type of an address element.
   typedef typename std::conditional<sizeof(typename MatType::elem_type) * CHAR_BIT <= 32,
                                     uint32_t,
                                     uint64_t>::type AddressElemType;

@@ -14,6 +14,12 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+/**
+ * The class splits a binary space partitioning tree node according to the
+ * median distance to the vantage point. Thus points that are closer to the
+ * vantage point belong to the left subtree and points that are farther from
+ * the vantage point belong to the right subtree.
+ */
 template<typename BoundType,
          typename MatType = arma::mat,
          size_t MaxNumSamples = 100>
@@ -67,7 +73,9 @@ class VantagePointSplit
 
   /**
    * Perform the split process according to the information about the
-   * split.
+   * split. This will order the dataset such that points that belong to the left
+   * subtree are on the left of the split column, and points from the right
+   * subtree are on the right side of the split column.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
@@ -87,7 +95,10 @@ class VantagePointSplit
 
   /**
    * Perform the split process according to the information about the split and
-   * return the list of changed indices.
+   * return the list of changed indices. This will order the dataset such that
+   * points that belong to the left subtree are on the left of the split column,
+   * and points from the right subtree are on the right side of the split
+   * column.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.

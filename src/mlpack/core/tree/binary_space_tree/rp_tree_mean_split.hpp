@@ -63,7 +63,9 @@ class RPTreeMeanSplit
 
   /**
    * Perform the split process according to the information about the
-   * split.
+   * split. This will order the dataset such that points that belong to the left
+   * subtree are on the left of the split column, and points from the right
+   * subtree are on the right side of the split column.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
@@ -83,7 +85,10 @@ class RPTreeMeanSplit
 
   /**
    * Perform the split process according to the information about the split and
-   * return the list of changed indices.
+   * return the list of changed indices. This will order the dataset such that
+   * points that belong to the left subtree are on the left of the split column,
+   * and points from the right subtree are on the right side of the split
+   * column.
    *
    * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.

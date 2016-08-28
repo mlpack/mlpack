@@ -35,9 +35,7 @@ size_t PerformSplit(MatType& data,
                     const typename SplitType::SplitInfo& splitInfo)
 {
   // This method modifies the input dataset.  We loop both from the left and
-  // right sides of the points contained in this node.  The points less than
-  // splitVal should be on the left side of the matrix, and the points greater
-  // than splitVal should be on the right side of the matrix.
+  // right sides of the points contained in this node.
   size_t left = begin;
   size_t right = begin + count - 1;
 
@@ -98,9 +96,7 @@ size_t PerformSplit(MatType& data,
                     std::vector<size_t>& oldFromNew)
 {
   // This method modifies the input dataset.  We loop both from the left and
-  // right sides of the points contained in this node.  The points less than
-  // splitVal should be on the left side of the matrix, and the points greater
-  // than splitVal should be on the right side of the matrix.
+  // right sides of the points contained in this node.
   size_t left = begin;
   size_t right = begin + count - 1;
 

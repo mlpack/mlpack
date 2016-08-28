@@ -263,7 +263,7 @@ using RPTree = BinarySpaceTree<MetricType,
 /**
  * The Universal B-tree. When recursively splitting nodes, the class
  * calculates addresses of all points and splits each node according to the
- * median address. Children nodes may overlap since the implementation
+ * median address. Children may overlap since the implementation
  * of a tighter bound requires a lot of arithmetic operations. In order to get
  * a tighter bound increase the CellBound::maxNumBounds constant.
  *

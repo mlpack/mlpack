@@ -865,8 +865,8 @@ inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operato
 {
   Log::Assert(data.n_rows == dim);
 
-  arma::Col<ElemType> mins(min(data, 1));
-  arma::Col<ElemType> maxs(max(data, 1));
+  arma::Col<ElemType> mins(arma::min(data, 1));
+  arma::Col<ElemType> maxs(arma::max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; i++)

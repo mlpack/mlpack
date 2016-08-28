@@ -39,8 +39,8 @@ namespace addr {
  *
  * The function maps each floating point coordinate to an equal-sized unsigned
  * integer datatype in such a way that the transform preserves the ordering
- * (i.e. lower coordinates correspond to lower integers). Thus, the mapping
- * saves the exponent and the mantissa of each floating point value
+ * (i.e. lower floating point values correspond to lower integers). Thus,
+ * the mapping saves the exponent and the mantissa of each floating point value
  * consequently, furthermore the exponent is stored before the mantissa. In the
  * case of negative numbers the resulting integer value should be inverted.
  * In the multi-dimensional case, after we transform the representation, we
@@ -54,7 +54,14 @@ template<typename AddressType, typename VecType>
 void PointToAddress(AddressType& address, const VecType& point)
 {
   typedef typename VecType::elem_type VecElemType;
-  typedef typename AddressType::elem_type AddressElemType;
+  // Check that the arguments are compatible.
+  typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
+                                    uint32_t,
+                                    uint64_t>::type AddressElemType;
+
+  static_assert(std::is_same<typename AddressType::elem_type,
+      AddressElemType>::value == true, "The vector element type does not "
+      "correspond to the address element type.");
   arma::Col<AddressElemType> result(point.n_elem);
 
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
@@ -116,6 +123,8 @@ void PointToAddress(AddressType& address, const VecType& point)
 
   address.zeros(point.n_elem);
 
+  // Interleave the bits of the new representation across all the elements
+  // in the address vector.
   for (size_t i = 0; i < order; i++)
     for (size_t j = 0; j < point.n_elem; j++)
     {
@@ -141,7 +150,14 @@ template<typename AddressType, typename VecType>
 void AddressToPoint(VecType& point, const AddressType& address)
 {
   typedef typename VecType::elem_type VecElemType;
-  typedef typename AddressType::elem_type AddressElemType;
+  // Check that the arguments are compatible.
+  typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
+                                    uint32_t,
+                                    uint64_t>::type AddressElemType;
+
+  static_assert(std::is_same<typename AddressType::elem_type,
+      AddressElemType>::value == true, "The vector element type does not "
+      "correspond to the address element type.");
 
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
   // Calculate the number of bits for the exponent.
@@ -237,17 +253,6 @@ template<typename AddressType1, typename AddressType2, typename AddressType3>
 bool Contains(const AddressType1& address, const AddressType2& loBound,
                      const AddressType3& hiBound)
 {
-  static_assert(std::is_same<typename AddressType1::elem_type,
-      typename AddressType2::elem_type>::value == true, "We aren't able to "
-      "compare adresses of distinct types");
-
-  static_assert(std::is_same<typename AddressType1::elem_type,
-      typename AddressType3::elem_type>::value == true, "We aren't able to "
-      "compare adresses of distinct types");
-
-  assert(address.n_elem == loBound.n_elem);
-  assert(address.n_elem == hiBound.n_elem);
-
   return ((CompareAddresses(loBound, address) <= 0) &&
           (CompareAddresses(hiBound, address) >= 0));
 }
