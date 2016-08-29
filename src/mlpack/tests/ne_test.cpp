@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
   outputs.push_back(1);
   outputs.push_back(0);
 
-  for (int i=0; i<4; ++i) {
+  for (int i = 0; i < 4; ++i) {
     seedGenome.Activate(inputs[i]);
     std::vector<double> output;
     seedGenome.Output(output);
@@ -178,11 +178,11 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
 
   // Set CNE algorithm parameters.
   Parameters params;
-  params.aSpeciesSize = 500;
-  params.aMutateRate = 0.1;
-  params.aMutateSize = 0.02;
-  params.aElitePercentage = 0.2;
-  params.aMaxGeneration = 1000;
+  params.speciesSize = 500;
+  params.mutateRate = 0.1;
+  params.mutateSize = 0.02;
+  params.elitePercentage = 0.2;
+  params.maxGeneration = 5000;
 
   // Construct seed genome for xor task.
   int id = 0;
@@ -247,26 +247,26 @@ BOOST_AUTO_TEST_CASE(NENeatXorTest)
 
   // Set NEAT algorithm parameters.
   Parameters params;
-  params.aPopulationSize = 500;
-  params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.9;
-  params.aMutateAddBackwardLinkProb = 0;
-  params.aMutateAddRecurrentLinkProb = 0;
-  params.aMutateAddBiasLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.6;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
-  params.aRandomTypeNewNeuron = false;
+  params.populationSize = 500;
+  params.maxGeneration = 5000;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.5;
+  params.mutateWeightProb = 0.2;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.9;
+  params.mutateAddBackwardLinkProb = 0;
+  params.mutateAddRecurrentLinkProb = 0;
+  params.mutateAddBiasLinkProb = 0;
+  params.mutateAddNeuronProb = 0.6;
+  params.mutateEnabledProb = 0.2;
+  params.mutateDisabledProb = 0.2;
+  params.numSpeciesThreshold = 10;
+  params.randomTypeNewNeuron = false;
 
   // Construct seed genome for xor task.
   int id = 0;
@@ -346,26 +346,26 @@ BOOST_AUTO_TEST_CASE(NENeatCartPoleTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 500;
-  params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.8;
-  params.aMutateAddBackwardLinkProb = 0;
-  params.aMutateAddRecurrentLinkProb = 0;
-  params.aMutateAddBiasLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.1;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
-  params.aRandomTypeNewNeuron = false;
+  params.populationSize = 500;
+  params.maxGeneration = 500;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.5;
+  params.mutateWeightProb = 0.2;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.8;
+  params.mutateAddBackwardLinkProb = 0;
+  params.mutateAddRecurrentLinkProb = 0;
+  params.mutateAddBiasLinkProb = 0;
+  params.mutateAddNeuronProb = 0.1;
+  params.mutateEnabledProb = 0.2;
+  params.mutateDisabledProb = 0.2;
+  params.numSpeciesThreshold = 10;
+  params.randomTypeNewNeuron = false;
 
   // Set seed genome for cart pole task.
   int id = 0;
@@ -434,26 +434,26 @@ BOOST_AUTO_TEST_CASE(NENeatMarkovDoublePoleTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 500;
-  params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.8;
-  params.aMutateAddBackwardLinkProb = 0;
-  params.aMutateAddRecurrentLinkProb = 0;
-  params.aMutateAddBiasLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.1;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
-  params.aRandomTypeNewNeuron = false;
+  params.populationSize = 500;
+  params.maxGeneration = 500;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.5;
+  params.mutateWeightProb = 0.2;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.8;
+  params.mutateAddBackwardLinkProb = 0;
+  params.mutateAddRecurrentLinkProb = 0;
+  params.mutateAddBiasLinkProb = 0;
+  params.mutateAddNeuronProb = 0.1;
+  params.mutateEnabledProb = 0.2;
+  params.mutateDisabledProb = 0.2;
+  params.numSpeciesThreshold = 10;
+  params.randomTypeNewNeuron = false;
 
   // Set seed genome for Markov double pole task.
   int id = 0;
@@ -530,26 +530,26 @@ BOOST_AUTO_TEST_CASE(NENeatNonMarkovDoublePoleTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 500;
-  params.aMaxGeneration = 20000;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.8;
-  params.aMutateWeightProb = 0.8;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.9;
-  params.aMutateAddBackwardLinkProb = 0.6;
-  params.aMutateAddRecurrentLinkProb = 0.6;
-  params.aMutateAddBiasLinkProb = 0.4;
-  params.aMutateAddNeuronProb = 0.4;
-  params.aMutateEnabledProb = 0.3;
-  params.aMutateDisabledProb = 0.3;
-  params.aNumSpeciesThreshold = 20;
-  params.aRandomTypeNewNeuron = false;
+  params.populationSize = 500;
+  params.maxGeneration = 20000;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.8;
+  params.mutateWeightProb = 0.8;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.9;
+  params.mutateAddBackwardLinkProb = 0.6;
+  params.mutateAddRecurrentLinkProb = 0.6;
+  params.mutateAddBiasLinkProb = 0.4;
+  params.mutateAddNeuronProb = 0.4;
+  params.mutateEnabledProb = 0.3;
+  params.mutateDisabledProb = 0.3;
+  params.numSpeciesThreshold = 20;
+  params.randomTypeNewNeuron = false;
 
   // Set seed genome for Markov double pole task.
   int id = 0;
@@ -621,26 +621,26 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
 
   // Set parameters of NEAT algorithm.
   Parameters params;
-  params.aPopulationSize = 50;
-  params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.8;
-  params.aMutateAddBackwardLinkProb = 0;
-  params.aMutateAddRecurrentLinkProb = 0;
-  params.aMutateAddBiasLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.1;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
-  params.aRandomTypeNewNeuron = false;
+  params.populationSize = 50;
+  params.maxGeneration = 500;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.5;
+  params.mutateWeightProb = 0.2;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.8;
+  params.mutateAddBackwardLinkProb = 0;
+  params.mutateAddRecurrentLinkProb = 0;
+  params.mutateAddBiasLinkProb = 0;
+  params.mutateAddNeuronProb = 0.1;
+  params.mutateEnabledProb = 0.2;
+  params.mutateDisabledProb = 0.2;
+  params.numSpeciesThreshold = 10;
+  params.randomTypeNewNeuron = false;
 
   // Set seed genome for cart pole task.
   int id = 0;
@@ -703,26 +703,26 @@ BOOST_AUTO_TEST_CASE(NEHyperNeatXorTest)
 
   // Set NEAT algorithm parameters.
   Parameters params;
-  params.aPopulationSize = 500;
-  params.aMaxGeneration = 500;
-  params.aCoeffDisjoint = 2.0;
-  params.aCoeffWeightDiff = 0.4;
-  params.aCompatThreshold = 1.0;
-  params.aStaleAgeThreshold = 15;
-  params.aCrossoverRate = 0.75;
-  params.aCullSpeciesPercentage = 0.5;
-  params.aMutateWeightProb = 0.2;
-  params.aPerturbWeightProb = 0.9;
-  params.aMutateWeightSize = 0.1;
-  params.aMutateAddForwardLinkProb = 0.9;
-  params.aMutateAddBackwardLinkProb = 0;
-  params.aMutateAddRecurrentLinkProb = 0;
-  params.aMutateAddBiasLinkProb = 0;
-  params.aMutateAddNeuronProb = 0.6;
-  params.aMutateEnabledProb = 0.2;
-  params.aMutateDisabledProb = 0.2;
-  params.aNumSpeciesThreshold = 10;
-  params.aRandomTypeNewNeuron = true;
+  params.populationSize = 500;
+  params.maxGeneration = 500;
+  params.coeffDisjoint = 2.0;
+  params.coeffWeightDiff = 0.4;
+  params.compatThreshold = 1.0;
+  params.staleAgeThreshold = 15;
+  params.crossoverRate = 0.75;
+  params.cullSpeciesPercentage = 0.5;
+  params.mutateWeightProb = 0.2;
+  params.perturbWeightProb = 0.9;
+  params.mutateWeightSize = 0.1;
+  params.mutateAddForwardLinkProb = 0.9;
+  params.mutateAddBackwardLinkProb = 0;
+  params.mutateAddRecurrentLinkProb = 0;
+  params.mutateAddBiasLinkProb = 0;
+  params.mutateAddNeuronProb = 0.6;
+  params.mutateEnabledProb = 0.2;
+  params.mutateDisabledProb = 0.2;
+  params.numSpeciesThreshold = 10;
+  params.randomTypeNewNeuron = true;
 
   // Set hyperNEAT substrate.
   std::vector< std::vector<double> > coordinates = { {-1, -1},

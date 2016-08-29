@@ -24,15 +24,15 @@ class Population
 {
  public:
   //! Species contained by this population.
-  std::vector<Species> aSpecies;
+  std::vector<Species> species;
 
   /** 
    * Default constructor.
    */
   Population():
-    aBestFitness(DBL_MAX),
-    aNextSpeciesId(0),
-    aNextGenomeId(0)
+    bestFitness(DBL_MAX),
+    nextSpeciesId(0),
+    nextGenomeId(0)
   {}
 
   /**
@@ -43,11 +43,11 @@ class Population
    */
   Population(Genome& seedGenome, int populationSize)
   {
-    aBestFitness = DBL_MAX;
+    bestFitness = DBL_MAX;
     Species species(seedGenome, populationSize);
-    aSpecies.push_back(species);  // NOTICE: we don't speciate.
-    aNextSpeciesId = 1;
-    aNextGenomeId = populationSize;
+    this->species.push_back(species);  // NOTICE: we don't speciate.
+    nextSpeciesId = 1;
+    nextGenomeId = populationSize;
   }
 
   /**
@@ -64,11 +64,11 @@ class Population
   {
     if (this != &population)
     {
-      aBestFitness = population.aBestFitness;
-      aBestGenome = population.aBestGenome;
-      aNextSpeciesId = population.aNextSpeciesId;
-      aNextGenomeId = population.aNextGenomeId;
-      aSpecies = population.aSpecies;
+      bestFitness = population.bestFitness;
+      bestGenome = population.bestGenome;
+      nextSpeciesId = population.nextSpeciesId;
+      nextGenomeId = population.nextGenomeId;
+      species = population.species;
     }
 
     return *this;
@@ -77,47 +77,47 @@ class Population
   /**
    * Set best fitness.
    */
-  void BestFitness(double bestFitness) { aBestFitness = bestFitness; }
+  void BestFitness(double bestFitness) { this->bestFitness = bestFitness; }
 
   /**
    * Get best fitness.
    */
-  double BestFitness() const { return aBestFitness; }
+  double BestFitness() const { return bestFitness; }
 
   /**
    * Set best genome.
    */
-  void BestGenome(Genome& bestGenome) { aBestGenome = bestGenome; }
+  void BestGenome(Genome& bestGenome) { this->bestGenome = bestGenome; }
 
   /**
    * Get best genome.
    */
-  Genome BestGenome() const { return aBestGenome; }
+  Genome BestGenome() const { return bestGenome; }
 
   /**
    * Set next species id.
    */
-  void NextSpeciesId(int nextSpeciesId) { aNextSpeciesId = nextSpeciesId; }
+  void NextSpeciesId(int nextSpeciesId) { this->nextSpeciesId = nextSpeciesId; }
 
   /**
    * Get next species id.
    */
-  int NextSpeciesId() const { return aNextSpeciesId; }
+  int NextSpeciesId() const { return nextSpeciesId; }
 
   /**
    * Set next genome id.
    */
-  void NextGenomeId(int nextGenomeId) { aNextGenomeId = nextGenomeId; }
+  void NextGenomeId(int nextGenomeId) { this->nextGenomeId = nextGenomeId; }
 
   /**
    * Get next genome id.
    */
-  int NextGenomeId() const { return aNextGenomeId; }
+  int NextGenomeId() const { return nextGenomeId; }
 
   /**
    * Get species number.
    */
-  int NumSpecies() const { return aSpecies.size(); }
+  int NumSpecies() const { return species.size(); }
 
   /**
    * Get population size.
@@ -125,9 +125,9 @@ class Population
   int PopulationSize() const
   {
     int populationSize = 0;
-    for (int i=0; i<aSpecies.size(); ++i)
+    for (int i = 0; i < species.size(); ++i)
     {
-      populationSize += aSpecies[i].aGenomes.size();
+      populationSize += species[i].genomes.size();
     }
 
     return populationSize;
@@ -138,15 +138,15 @@ class Population
    */
   void SetBestFitnessAndGenome()
   {
-    aBestFitness = DBL_MAX;
-    for (int i=0; i<aSpecies.size(); ++i)
+    bestFitness = DBL_MAX;
+    for (int i = 0; i < species.size(); ++i)
     {
-      for (int j=0; j<aSpecies[i].aGenomes.size(); ++j)
+      for (int j = 0; j < species[i].genomes.size(); ++j)
       {
-        if (aSpecies[i].aGenomes[j].Fitness() < aBestFitness)
+        if (species[i].genomes[j].Fitness() < bestFitness)
         {
-          aBestFitness = aSpecies[i].aGenomes[j].Fitness();
-          aBestGenome = aSpecies[i].aGenomes[j];
+          bestFitness = species[i].genomes[j].Fitness();
+          bestGenome = species[i].genomes[j];
         }
       }
     }
@@ -159,9 +159,9 @@ class Population
    */
   void AddSpecies(Species& species)
   {
-    species.Id(aNextSpeciesId);  // NOTICE: thus we changed species id when add to population.
-    aSpecies.push_back(species);
-    ++aNextSpeciesId;
+    species.Id(nextSpeciesId);  // NOTICE: thus we changed species id when add to population.
+    this->species.push_back(species);
+    ++nextSpeciesId;
   }
 
   /**
@@ -171,7 +171,7 @@ class Population
    */
   void RemoveSpecies(int idx)
   {
-    aSpecies.erase(aSpecies.begin() + idx);
+    species.erase(species.begin() + idx);
   }
 
   /**
@@ -180,29 +180,29 @@ class Population
   void ReassignGenomeId()
   {
     int id = -1;
-    for (int i=0; i<aSpecies.size(); ++i)
+    for (int i = 0; i < species.size(); ++i)
     {
-      for (int j=0; j<aSpecies[i].aGenomes.size(); ++j)
+      for (int j=0; j<species[i].genomes.size(); ++j)
       {
         ++id;
-        aSpecies[i].aGenomes[j].Id(id);
+        species[i].genomes[j].Id(id);
       }
     }
-    aNextGenomeId = id + 1;
+    nextGenomeId = id + 1;
   }
 
  private:
   //! Best fitness.
-  double aBestFitness;
+  double bestFitness;
 
   //! Best genome.
-  Genome aBestGenome;
+  Genome bestGenome;
 
   //! Next species id.
-  int aNextSpeciesId;
+  int nextSpeciesId;
 
   //! Next genome id.
-  int aNextGenomeId;
+  int nextGenomeId;
 
 };
 

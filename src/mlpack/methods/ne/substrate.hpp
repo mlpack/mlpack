@@ -23,24 +23,24 @@ class Substrate
 {
  public:
   //! Coordinates of nodes. Sequence is INPUT, BIAS, OUTPUT, HIDDEN
-  std::vector< std::vector<double> > aCoordinates;
+  std::vector< std::vector<double> > coordinates;
 
   //! Depths of nodes.
-  std::vector<double> aDepths;
+  std::vector<double> depths;
 
   //! Number of input nodes. Including one bias node.
-  int aNumInput;
+  int numInput;
 
   //! Number of output nodes.
-  int aNumOutput;
+  int numOutput;
 
   //! Connection allowed or not.
-  //! if aAllowedConnectionMask[i][j] == 0, then link between node i to j is allowed.
+  //! if allowedConnectionMask[i][j] == 0, then link between node i to j is allowed.
   //! Otherwise, link not allowed. i, j is neuron id.
-  std::vector< std::vector<int> > aAllowedConnectionMask;
+  std::vector< std::vector<int> > allowedConnectionMask;
 
   //! The threshold of weight to create new connection.
-  double aWeightThreshold;
+  double weightThreshold;
 
   /**
    * Default constructor.
@@ -65,12 +65,12 @@ class Substrate
   	        int numOutput,
   	        std::vector< std::vector<int> > allowedConnectionMask,
   	        double weightThreshold):
-    aCoordinates(coordinates),
-    aDepths(depths),
-    aNumInput(numInput),
-    aNumOutput(numOutput),
-    aAllowedConnectionMask(allowedConnectionMask),
-    aWeightThreshold(weightThreshold)
+    coordinates(coordinates),
+    depths(depths),
+    numInput(numInput),
+    numOutput(numOutput),
+    allowedConnectionMask(allowedConnectionMask),
+    weightThreshold(weightThreshold)
   {}
 
   /**
@@ -88,40 +88,40 @@ class Substrate
     std::vector<NeuronGene> neuronGenes;
     std::vector<LinkGene> linkGenes;
 
-    int numNodes = aCoordinates.size();
+    int numNodes = coordinates.size();
 
     // Set neurons.
     for (int i = 0; i < numNodes; ++i)
     {
-      if (i < aNumInput - 1)  // Input nodes.
+      if (i < numInput - 1)  // Input nodes.
       {
-        NeuronGene inputGene(i, INPUT, LINEAR, 0, aCoordinates[i], 0, 0);
+        NeuronGene inputGene(i, INPUT, LINEAR, 0, coordinates[i], 0, 0);
         neuronGenes.push_back(inputGene);
       }
-      else if (i == aNumInput - 1)  // Bias node.
+      else if (i == numInput - 1)  // Bias node.
       {
-        NeuronGene biasGene(i, BIAS, LINEAR, 0, aCoordinates[i], 0, 0);
+        NeuronGene biasGene(i, BIAS, LINEAR, 0, coordinates[i], 0, 0);
         neuronGenes.push_back(biasGene);  	
       }
-      else if (i >= aNumInput && i < aNumInput + aNumOutput)  // Output nodes.
+      else if (i >= numInput && i < numInput + numOutput)  // Output nodes.
       {
-        NeuronGene outputGene(i, OUTPUT, SIGMOID, 1, aCoordinates[i], 0, 0);
+        NeuronGene outputGene(i, OUTPUT, SIGMOID, 1, coordinates[i], 0, 0);
         neuronGenes.push_back(outputGene);
       }
       else  // Hidden nodes.
       {
-        NeuronGene hiddenGene(i, HIDDEN, SIGMOID, aDepths[i], aCoordinates[i], 0, 0);
+        NeuronGene hiddenGene(i, HIDDEN, SIGMOID, depths[i], coordinates[i], 0, 0);
         neuronGenes.push_back(hiddenGene);
       }      
     }
 
     // Construct genome.
     genome.Id(-1);
-    genome.NumInput(aNumInput);
-    genome.NumOutput(aNumOutput);
+    genome.NumInput(numInput);
+    genome.NumOutput(numOutput);
     genome.Fitness(DBL_MAX);
-    genome.aNeuronGenes = neuronGenes;
-    genome.aLinkGenes = linkGenes;
+    genome.neuronGenes = neuronGenes;
+    genome.linkGenes = linkGenes;
   }
 
   /**
@@ -132,22 +132,22 @@ class Substrate
    */
   void QueryLink(Genome& cppn, Genome& genome)
   {
-    assert(genome.aNeuronGenes.size() = aCoordinates.size());
+    assert(genome.neuronGenes.size() = coordinates.size());
 
   	// Clear links.
-  	genome.aLinkGenes.clear();
+  	genome.linkGenes.clear();
     
     // Query allowed node pairs.
     int innovId = 0;
-  	for (int i = 0; i < aCoordinates.size(); ++i)
+  	for (int i = 0; i < coordinates.size(); ++i)
   	{
-  	  for (int j = 0; j < aCoordinates.size(); ++j)
+  	  for (int j = 0; j < coordinates.size(); ++j)
   	  {
-        if (aAllowedConnectionMask[i][j] != 0)
+        if (allowedConnectionMask[i][j] != 0)
         {
           // Run cppn to query link weight.
-          std::vector<double> input = genome.aNeuronGenes[i].Coordinate();
-          std::vector<double> input2 = genome.aNeuronGenes[j].Coordinate();
+          std::vector<double> input = genome.neuronGenes[i].Coordinate();
+          std::vector<double> input2 = genome.neuronGenes[j].Coordinate();
           input.insert(input.end(), input2.begin(), input2.end());
           input.push_back(1);  // Bias.
 
@@ -157,67 +157,16 @@ class Substrate
 
           // Create new link if weight bigger than threshold.
           double weight = output[0];  // NOTICE: we haven't scale weight.
-          if (std::fabs(weight) > aWeightThreshold)
+          if (std::fabs(weight) > weightThreshold)
           {
             LinkGene link(i, j, innovId++, weight, true);  
-            genome.aLinkGenes.push_back(link);
+            genome.linkGenes.push_back(link);
           }
         }
       }
   	}
   }
 
- void QueryLinkDebug(Genome& cppn, Genome& genome)
-  {
-    assert(genome.aNeuronGenes.size() = aCoordinates.size());
-
-    // Clear links.
-    genome.aLinkGenes.clear();
-    
-    // Query allowed node pairs.
-    int innovId = 0;
-    for (int i = 0; i < aCoordinates.size(); ++i)
-    {
-      for (int j = 0; j < aCoordinates.size(); ++j)
-      {
-        if (aAllowedConnectionMask[i][j] != 0)
-        {
-          // Run cppn to query link weight.
-          std::vector<double> input = genome.aNeuronGenes[i].Coordinate();
-          std::vector<double> input2 = genome.aNeuronGenes[j].Coordinate();
-          input.insert(input.end(), input2.begin(), input2.end());
-          input.push_back(1);  // Bias.
-          
-          // //DEBUG
-          // printf("INPUT is:=====\n");
-          // for (auto x = input.begin(); x != input.end(); ++x)
-          //   std::cout << *x << ' ';
-          // std::cout << std::endl;
-
-          // printf("CPPN is:=====\n");
-          // cppn.PrintGenome();
-
-          cppn.Activate(input);
-          std::vector<double> output;
-          cppn.Output(output);
-
-          // printf("OUTPUT is:=====\n");
-          // for (auto x = output.begin(); x != output.end(); ++x)
-          //   std::cout << *x << ' ';
-          // std::cout << std::endl;
-          // //DEBUG
-
-          // Create new link if weight bigger than threshold.
-          double weight = output[0];
-          if (std::fabs(weight) > aWeightThreshold)
-          {
-            LinkGene link(i, j, innovId++, weight, true);  // NOTICE: we haven't scale weight.
-            genome.aLinkGenes.push_back(link);
-          }
-        }
-      }
-    }
-  }
  private:
 
 };

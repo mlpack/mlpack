@@ -27,19 +27,19 @@ class Genome
 {
  public:
   //! Neurons.
-  std::vector<NeuronGene> aNeuronGenes;
+  std::vector<NeuronGene> neuronGenes;
 
   //! Links.
-  std::vector<LinkGene> aLinkGenes;
+  std::vector<LinkGene> linkGenes;
 
   /**
    * Default constructor.
    */
   Genome(): 
-    aId(-1),
-    aNumInput(0),
-    aNumOutput(0),
-    aFitness(DBL_MAX)
+    id(-1),
+    numInput(0),
+    numOutput(0),
+    fitness(DBL_MAX)
   {}
   
   /**
@@ -58,12 +58,12 @@ class Genome
          int numInput,
          int numOutput,
          double fitness):
-    aId(id),
-    aNeuronGenes(neuronGenes),
-    aLinkGenes(linkGenes),
-    aNumInput(numInput),
-    aNumOutput(numOutput),
-    aFitness(fitness)
+    id(id),
+    neuronGenes(neuronGenes),
+    linkGenes(linkGenes),
+    numInput(numInput),
+    numOutput(numOutput),
+    fitness(fitness)
   {}
 
   /**
@@ -73,12 +73,12 @@ class Genome
    */
   Genome(const Genome& genome)
   {
-    aId = genome.aId;
-    aNeuronGenes = genome.aNeuronGenes;
-    aLinkGenes = genome.aLinkGenes;
-    aNumInput = genome.aNumInput;
-    aNumOutput = genome.aNumOutput;
-    aFitness = genome.aFitness;
+    id = genome.id;
+    neuronGenes = genome.neuronGenes;
+    linkGenes = genome.linkGenes;
+    numInput = genome.numInput;
+    numOutput = genome.numOutput;
+    fitness = genome.fitness;
   }
 
   /**
@@ -95,12 +95,12 @@ class Genome
   {
     if (this != &genome)
     {
-      aId = genome.aId;
-      aNeuronGenes = genome.aNeuronGenes;
-      aLinkGenes = genome.aLinkGenes;
-      aNumInput = genome.aNumInput;
-      aNumOutput = genome.aNumOutput;
-      aFitness = genome.aFitness;
+      id = genome.id;
+      neuronGenes = genome.neuronGenes;
+      linkGenes = genome.linkGenes;
+      numInput = genome.numInput;
+      numOutput = genome.numOutput;
+      fitness = genome.fitness;
     }
 
     return *this;
@@ -109,52 +109,52 @@ class Genome
   /**
    * Get genome id.
    */
-  int Id() const { return aId; }
+  int Id() const { return id; }
 
   /**
    * Set genome id.
    */
-  void Id(int id) { aId = id; }
+  void Id(int id) { this->id = id; }
 
   /**
    * Get input length.
    */
-  int NumInput() { return aNumInput; }
+  int NumInput() { return numInput; }
 
   /**
    * Set input length.
    */
-  void NumInput(int numInput) { aNumInput = numInput; }
+  void NumInput(int numInput) { this->numInput = numInput; }
 
   /**
    * Get output length.
    */
-  int NumOutput() { return aNumOutput; }
+  int NumOutput() { return numOutput; }
 
   /**
    * Set output length.
    */
-  void NumOutput(int numOutput) { aNumOutput = numOutput; }
-
-  /**
-   * Set fitness.
-   */
-  void Fitness(double fitness) { aFitness = fitness; }
+  void NumOutput(int numOutput) { this->numOutput = numOutput; }
 
   /**
    * Get fitness.
    */
-  double Fitness() const { return aFitness; }
+  double Fitness() const { return fitness; }
+
+  /**
+   * Set fitness.
+   */
+  void Fitness(double fitness) { this->fitness = fitness; }
 
   /**
    * Get neuron number.
    */
-  int NumNeuron() const { return aNeuronGenes.size(); }
+  int NumNeuron() const { return neuronGenes.size(); }
   
   /**
    * Get link number.
    */
-  int NumLink() const { return aLinkGenes.size(); }
+  int NumLink() const { return linkGenes.size(); }
 
   /**
    * Get input length.
@@ -162,11 +162,12 @@ class Genome
   int GetNumInput()
   {
     int numInput = 0;
-    for (int i=0; i<aNeuronGenes.size(); ++i)
+    for (int i = 0; i < neuronGenes.size(); ++i)
     {
-      if (aNeuronGenes[i].Type() == INPUT || aNeuronGenes[i].Type() == BIAS)
+      if (neuronGenes[i].Type() == INPUT || neuronGenes[i].Type() == BIAS)
         ++numInput;
     }
+
     return numInput;
   }
 
@@ -176,11 +177,12 @@ class Genome
   int GetNumOutput()
   {
     int numOutput = 0;
-    for (int i=0; i<aNeuronGenes.size(); ++i)
+    for (int i = 0; i < neuronGenes.size(); ++i)
     {  
-      if (aNeuronGenes[i].Type() == OUTPUT)
+      if (neuronGenes[i].Type() == OUTPUT)
         ++numOutput;
     }
+
     return numOutput;
   }
 
@@ -191,9 +193,9 @@ class Genome
    */
   bool HasNeuronId(int id) const
   {
-    for (int i=0; i<NumNeuron(); ++i)
+    for (int i = 0; i < NumNeuron(); ++i)
     {
-      if (aNeuronGenes[i].Id() == id)
+      if (neuronGenes[i].Id() == id)
       {
         return true;
       }
@@ -212,50 +214,46 @@ class Genome
   {
     assert(HasNeuronId(id));
 
-    for (int i=0; i<NumNeuron(); ++i)
+    for (int i = 0; i < NumNeuron(); ++i)
     {
-      if (aNeuronGenes[i].Id() == id)
+      if (neuronGenes[i].Id() == id)
       {
-        neuronGene = aNeuronGenes[i];
+        neuronGene = neuronGenes[i];
         return;
       }
     }
   }
 
   /**
-   * Get neuron index by id.
+   * Get neuron's index in the neuron array of this genome by id.
    *
    * @param id Neuron's id.
    */
   int GetNeuronIndex(int id) const
   {
-    for(int i=0; i < NumNeuron(); ++i)
+    for(int i = 0; i < NumNeuron(); ++i)
     {
-        if (aNeuronGenes[i].Id() == id)
-        {
-            return i;
-        }
+      if (neuronGenes[i].Id() == id)
+        return i;
     }
 
-    return -1;  // Id start from 0.
+    return -1;  // Id start from 0. -1 means not found.
   }
 
   /**
-   * Get link index by innovation id.
+   * Get link index in the link array of this genome by innovation id.
    *
    * @param innovId Link's innovation id.
    */
   int GetLinkIndex(int innovId) const
   {
-    for(int i=0; i < NumLink(); ++i)
+    for(int i = 0; i < NumLink(); ++i)
     {
-        if (aLinkGenes[i].InnovationId() == innovId)
-        {
-            return i;
-        }
+      if (linkGenes[i].InnovationId() == innovId)
+        return i;
     }
 
-    return -1;  // Id start from 0.
+    return -1;  // Id start from 0. -1 means not found.
   }
 
   /**
@@ -265,14 +263,13 @@ class Genome
    */
   bool ContainEnabledLink(int innovId) const
   {
-    for(int i=0; i < NumLink(); ++i)
+    for(int i = 0; i < NumLink(); ++i)
     {
-        if (aLinkGenes[i].InnovationId() == innovId &&
-            aLinkGenes[i].Enabled())
-        {
-            return true;
-        }
+      if (linkGenes[i].InnovationId() == innovId &&
+          linkGenes[i].Enabled())
+        return true;
     }
+
     return false;
   }
 
@@ -283,13 +280,12 @@ class Genome
    */
   bool ContainLink(int innovId) const
   {
-    for(int i=0; i < NumLink(); ++i)
+    for(int i = 0; i < NumLink(); ++i)
     {
-        if (aLinkGenes[i].InnovationId() == innovId)
-        {
-            return true;
-        }
+      if (linkGenes[i].InnovationId() == innovId)
+        return true;
     }
+
     return false;
   }
 
@@ -298,10 +294,10 @@ class Genome
    */
   void Flush()
   {
-    for (int i=0; i<aNeuronGenes.size(); ++i)
+    for (int i = 0; i < neuronGenes.size(); ++i)
     {
-      aNeuronGenes[i].Activation(0);
-      aNeuronGenes[i].Input(0);
+      neuronGenes[i].Activation(0);
+      neuronGenes[i].Input(0);
     }
   }
 
@@ -328,25 +324,25 @@ class Genome
     };
 
     std::vector<double> toNeuronDepths;
-    for (int i=0; i<aLinkGenes.size(); ++i)
+    for (int i = 0; i < linkGenes.size(); ++i)
     {
       NeuronGene toNeuron;
-      GetNeuronById(aLinkGenes[i].ToNeuronId(), toNeuron);
+      GetNeuronById(linkGenes[i].ToNeuronId(), toNeuron);
       toNeuronDepths.push_back(toNeuron.Depth());
     }
 
     std::vector<DepthAndLink> depthAndLinks;
-    int linkGenesSize = aLinkGenes.size();
-    for (int i=0; i<linkGenesSize; ++i)
+    int linkGenesSize = linkGenes.size();
+    for (int i = 0; i < linkGenesSize; ++i)
     {
-      depthAndLinks.push_back(DepthAndLink(toNeuronDepths[i], aLinkGenes[i]));
+      depthAndLinks.push_back(DepthAndLink(toNeuronDepths[i], linkGenes[i]));
     }
 
     std::sort(depthAndLinks.begin(), depthAndLinks.end());
 
-    for (int i=0; i<linkGenesSize; ++i)
+    for (int i = 0; i < linkGenesSize; ++i)
     {
-      aLinkGenes[i] = depthAndLinks[i].link;
+      linkGenes[i] = depthAndLinks[i].link;
     }
   }
 
@@ -360,38 +356,38 @@ class Genome
    */
   void Activate(std::vector<double>& input)
   {
-    assert(input.size() == aNumInput);
+    assert(input.size() == numInput);
 
     SortLinkGenes();
     
     // Set all neurons' input to be 0.
-    for (int i=0; i<NumNeuron(); ++i)
+    for (int i = 0; i < NumNeuron(); ++i)
     {
-      aNeuronGenes[i].Input(0);
+      neuronGenes[i].Input(0);
     }
     
     // Set input neurons.
-    for (int i=0; i<aNumInput; ++i)
+    for (int i = 0; i < numInput; ++i)
     {
-      aNeuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
-      aNeuronGenes[i].Activation(input[i]);
+      neuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+      neuronGenes[i].Activation(input[i]);
     }
 
     // Activate hidden and output neurons.
     for (int i = 0; i < NumLink(); ++i)
     {
-      int toNeuronIdx = GetNeuronIndex(aLinkGenes[i].ToNeuronId());
-      int fromNeuronIdx = GetNeuronIndex(aLinkGenes[i].FromNeuronId());
-      double input = aNeuronGenes[toNeuronIdx].Input() + 
-                     aNeuronGenes[fromNeuronIdx].Activation() * 
-                     aLinkGenes[i].Weight() *
-                     aLinkGenes[i].Enabled();
-      aNeuronGenes[toNeuronIdx].Input(input);
+      int toNeuronIdx = GetNeuronIndex(linkGenes[i].ToNeuronId());
+      int fromNeuronIdx = GetNeuronIndex(linkGenes[i].FromNeuronId());
+      double input = neuronGenes[toNeuronIdx].Input() + 
+                     neuronGenes[fromNeuronIdx].Activation() * 
+                     linkGenes[i].Weight() *
+                     linkGenes[i].Enabled();
+      neuronGenes[toNeuronIdx].Input(input);
         
       if ( (i == NumLink() - 1) ||
-           (GetNeuronIndex(aLinkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
+           (GetNeuronIndex(linkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
       {
-        aNeuronGenes[toNeuronIdx].CalcActivation();
+        neuronGenes[toNeuronIdx].CalcActivation();
       }
     }
   }
@@ -404,9 +400,9 @@ class Genome
   void Output(std::vector<double>& output)
   {
     output.clear();
-    for (int i=0; i<aNumOutput; ++i)
+    for (int i = 0; i < numOutput; ++i)
     {
-      output.push_back(aNeuronGenes[aNumInput + i].Activation());
+      output.push_back(neuronGenes[numInput + i].Activation());
     }
   }
 
@@ -418,10 +414,10 @@ class Genome
    */
   void RandomizeWeights(const double lo, const double hi)
   {
-    for (int i=0; i<aLinkGenes.size(); ++i)
+    for (int i = 0; i < linkGenes.size(); ++i)
     {
       double weight = mlpack::math::Random(lo, hi);
-      aLinkGenes[i].Weight(weight); 
+      linkGenes[i].Weight(weight); 
     }
   }
 
@@ -432,7 +428,7 @@ class Genome
    */
   void AddLink(LinkGene& linkGene)
   {
-    aLinkGenes.push_back(linkGene);
+    linkGenes.push_back(linkGene);
   }
 
   /**
@@ -444,7 +440,7 @@ class Genome
   {
     if (neuronGene.Type() == HIDDEN)
     {
-      aNeuronGenes.push_back(neuronGene);
+      neuronGenes.push_back(neuronGene);
     }
   }
 
@@ -458,61 +454,43 @@ class Genome
     const char* enumActivationFuncTypeString[] = { "SIGMOID", "TANH", "LINEAR", "RELU" };  //NOTICE: keep the same with the enum type.
     const char* boolEnabledString[] = { "False", "True" };
 
-    std::cout << "Neurons: " << aNeuronGenes.size() << std::endl;
-    for(size_t i = 0; i < aNeuronGenes.size(); ++i)
+    std::cout << "Neurons: " << neuronGenes.size() << std::endl;
+    for(size_t i = 0; i < neuronGenes.size(); ++i)
     {
       printf("  Gene:(id=%i, type=%s, activation func=%s, input=%f, response=%f, depth=%.3f)\n",
-             aNeuronGenes[i].Id(),
-             enumNeuronTypetring[aNeuronGenes[i].Type()],
-             enumActivationFuncTypeString[aNeuronGenes[i].ActFuncType()],
-             aNeuronGenes[i].Input(),
-             aNeuronGenes[i].Activation(),
-             aNeuronGenes[i].Depth());
+             neuronGenes[i].Id(),
+             enumNeuronTypetring[neuronGenes[i].Type()],
+             enumActivationFuncTypeString[neuronGenes[i].ActFuncType()],
+             neuronGenes[i].Input(),
+             neuronGenes[i].Activation(),
+             neuronGenes[i].Depth());
     }
 
-    std::cout << "Links: " << aLinkGenes.size() << std::endl;
-    for(size_t i = 0; i < aLinkGenes.size(); ++i)
+    std::cout << "Links: " << linkGenes.size() << std::endl;
+    for(size_t i = 0; i < linkGenes.size(); ++i)
     {
       printf("  Link:(from=%i, to=%i, weight=%f, enabled=%s, innovation=%i)\n",
-             aLinkGenes[i].FromNeuronId(),
-             aLinkGenes[i].ToNeuronId(),
-             aLinkGenes[i].Weight(),
-             boolEnabledString[aLinkGenes[i].Enabled()],
-             aLinkGenes[i].InnovationId());
+             linkGenes[i].FromNeuronId(),
+             linkGenes[i].ToNeuronId(),
+             linkGenes[i].Weight(),
+             boolEnabledString[linkGenes[i].Enabled()],
+             linkGenes[i].InnovationId());
     }
     printf("----------------------------Genome End----------------------------\n");
   }
 
-  // Debug
-  bool DebugDuplicateLink() {
-    std::vector<int> linksId;
-    for (int i=0; i<aLinkGenes.size(); ++i) {
-      linksId.push_back(aLinkGenes[i].InnovationId());
-    }
-
-    std::set<int> linksIdSet(linksId.begin(), linksId.end());
-    int size1 = aLinkGenes.size();
-    int size2 = linksIdSet.size();
-
-    if (size1 != size2) {
-      return true;
-    }
-
-    return false;
-  }
-
  private:
   //! Genome id.
-  int aId;
+  int id;
 
   //! Input length (include bias). 
-  int aNumInput;
+  int numInput;
 
   //! Output length.
-  int aNumOutput;
+  int numOutput;
 
   //! Genome fitness.
-  double aFitness;
+  double fitness;
 
 };
 

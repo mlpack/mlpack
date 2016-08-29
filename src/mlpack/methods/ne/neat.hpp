@@ -73,85 +73,85 @@ class NEAT
 {
  public:
   //! Task to solve.
-  TaskType aTask;
+  TaskType task;
 
-  //! Seed genome. It is used for init population.
-  Genome aSeedGenome;
+  //! Seed genome. It is used for initialize population.
+  Genome seedGenome;
 
   //! Population to evolve.
-  Population aPopulation;
+  Population population;
 
   //! Population size.
-  int aPopulationSize;
+  int populationSize;
 
   //! List of link innovations.
-  std::vector<LinkInnovation> aLinkInnovations;
+  std::vector<LinkInnovation> linkInnovations;
 
   //! List of neuron innovations.
-  std::vector<NeuronInnovation> aNeuronInnovations;
+  std::vector<NeuronInnovation> neuronInnovations;
 
   //! Next neuron id.
-  int aNextNeuronId;
+  int nextNeuronId;
 
   //! Next link id.
-  int aNextLinkInnovId;
+  int nextLinkInnovId;
 
   //! Max number of generation to evolve.
-  int aMaxGeneration;
+  int maxGeneration;
 
   //! Efficient for disjoint.
-  double aCoeffDisjoint;
+  double coeffDisjoint;
 
   //! Efficient for weight difference.
-  double aCoeffWeightDiff;
+  double coeffWeightDiff;
 
   //! Threshold for judge whether belong to same species.
-  double aCompatThreshold;
+  double compatThreshold;
 
   //! Threshold for species stale age.
-  int aStaleAgeThreshold;
+  int staleAgeThreshold;
 
   //! Crossover rate.
-  double aCrossoverRate;
+  double crossoverRate;
 
   //! Percentage to remove in each species.
-  double aCullSpeciesPercentage;
+  double cullSpeciesPercentage;
 
   //! Probability to mutate a genome's weight.
-  double aMutateWeightProb;
+  double mutateWeightProb;
 
   //! Probability to mutate a genome's weight in biased way (add Gaussian perturb noise).
-  double aPerturbWeightProb;
+  double perturbWeightProb;
 
   //! The Gaussian noise variance when mutating genome weights.
-  double aMutateWeightSize;
+  double mutateWeightSize;
 
   //! Probability to add a forward link.
-  double aMutateAddForwardLinkProb;
+  double mutateAddForwardLinkProb;
 
   //! Probability to add a backward link.
-  double aMutateAddBackwardLinkProb;
+  double mutateAddBackwardLinkProb;
 
   //! Probability to add a recurrent link.
-  double aMutateAddRecurrentLinkProb;
+  double mutateAddRecurrentLinkProb;
 
   //! Probability to add a bias link.
-  double aMutateAddBiasLinkProb;
+  double mutateAddBiasLinkProb;
 
   //! Probability to add neuron to genome.
-  double aMutateAddNeuronProb;
+  double mutateAddNeuronProb;
 
   //! Probability to turn enabled link to disabled.
-  double aMutateEnabledProb;
+  double mutateEnabledProb;
 
   //! Probability to turn disabled link to enabled.
-  double aMutateDisabledProb;
+  double mutateDisabledProb;
 
   //! Species number threshold.
-  int aNumSpeciesThreshold;
+  int numSpeciesThreshold;
 
   //! Whether the activation function of new neuron is random or not.
-  bool aRandomTypeNewNeuron;
+  bool randomTypeNewNeuron;
 
   /**
    * Default constructor.
@@ -161,26 +161,26 @@ class NEAT
     mlpack::math::RandomSeed(1);
 
     // Set NEAT algorithm parameters (except task).
-    aPopulationSize = 500;
-    aMaxGeneration = 500;
-    aCoeffDisjoint = 2.0;
-    aCoeffWeightDiff = 0.4;
-    aCompatThreshold = 1.0;
-    aStaleAgeThreshold = 15;
-    aCrossoverRate = 0.75;
-    aCullSpeciesPercentage = 0.5;
-    aMutateWeightProb = 0.2;
-    aPerturbWeightProb = 0.9;
-    aMutateWeightSize = 0.1;
-    aMutateAddForwardLinkProb = 0.9;
-    aMutateAddBackwardLinkProb = 0;
-    aMutateAddRecurrentLinkProb = 0;
-    aMutateAddBiasLinkProb = 0;
-    aMutateAddNeuronProb = 0.6;
-    aMutateEnabledProb = 0.2;
-    aMutateDisabledProb = 0.2;
-    aNumSpeciesThreshold = 10;
-    aRandomTypeNewNeuron = false;
+    populationSize = 500;
+    maxGeneration = 500;
+    coeffDisjoint = 2.0;
+    coeffWeightDiff = 0.4;
+    compatThreshold = 1.0;
+    staleAgeThreshold = 15;
+    crossoverRate = 0.75;
+    cullSpeciesPercentage = 0.5;
+    mutateWeightProb = 0.2;
+    perturbWeightProb = 0.9;
+    mutateWeightSize = 0.1;
+    mutateAddForwardLinkProb = 0.9;
+    mutateAddBackwardLinkProb = 0;
+    mutateAddRecurrentLinkProb = 0;
+    mutateAddBiasLinkProb = 0;
+    mutateAddNeuronProb = 0.6;
+    mutateEnabledProb = 0.2;
+    mutateDisabledProb = 0.2;
+    numSpeciesThreshold = 10;
+    randomTypeNewNeuron = false;
 
     // Construct seed genome for xor task.
     int id = 0;
@@ -226,9 +226,9 @@ class NEAT
                                fitness);
 
     // Set neat members. (Except task.)
-    aSeedGenome = seedGenome;
-    aNextNeuronId = seedGenome.NumNeuron();
-    aNextLinkInnovId = seedGenome.NumLink();
+    this->seedGenome = seedGenome;
+    nextNeuronId = seedGenome.NumNeuron();
+    nextLinkInnovId = seedGenome.NumLink();
   }
 
   /**
@@ -240,30 +240,30 @@ class NEAT
    */
   NEAT(TaskType task, Genome& seedGenome, Parameters& params)
   {
-    aTask = task;
-    aSeedGenome = seedGenome;
-    aNextNeuronId = seedGenome.NumNeuron();
-    aNextLinkInnovId = seedGenome.NumLink();
-    aPopulationSize = params.aPopulationSize;
-    aMaxGeneration = params.aMaxGeneration;
-    aCoeffDisjoint = params.aCoeffDisjoint;
-    aCoeffWeightDiff = params.aCoeffWeightDiff;
-    aCompatThreshold = params.aCompatThreshold;
-    aStaleAgeThreshold = params.aStaleAgeThreshold;
-    aCrossoverRate = params.aCrossoverRate;
-    aCullSpeciesPercentage = params.aCullSpeciesPercentage;
-    aMutateWeightProb = params.aMutateWeightProb;
-    aPerturbWeightProb = params.aPerturbWeightProb;
-    aMutateWeightSize = params.aMutateWeightSize;
-    aMutateAddForwardLinkProb = params.aMutateAddForwardLinkProb;
-    aMutateAddBackwardLinkProb = params.aMutateAddBackwardLinkProb;
-    aMutateAddRecurrentLinkProb = params.aMutateAddRecurrentLinkProb;
-    aMutateAddBiasLinkProb = params.aMutateAddBiasLinkProb;
-    aMutateAddNeuronProb = params.aMutateAddNeuronProb;
-    aMutateEnabledProb = params.aMutateEnabledProb;
-    aMutateDisabledProb = params.aMutateDisabledProb;
-    aNumSpeciesThreshold = params.aNumSpeciesThreshold;
-    aRandomTypeNewNeuron = params.aRandomTypeNewNeuron;
+    this->task = task;
+    this->seedGenome = seedGenome;
+    nextNeuronId = seedGenome.NumNeuron();
+    nextLinkInnovId = seedGenome.NumLink();
+    populationSize = params.populationSize;
+    maxGeneration = params.maxGeneration;
+    coeffDisjoint = params.coeffDisjoint;
+    coeffWeightDiff = params.coeffWeightDiff;
+    compatThreshold = params.compatThreshold;
+    staleAgeThreshold = params.staleAgeThreshold;
+    crossoverRate = params.crossoverRate;
+    cullSpeciesPercentage = params.cullSpeciesPercentage;
+    mutateWeightProb = params.mutateWeightProb;
+    perturbWeightProb = params.perturbWeightProb;
+    mutateWeightSize = params.mutateWeightSize;
+    mutateAddForwardLinkProb = params.mutateAddForwardLinkProb;
+    mutateAddBackwardLinkProb = params.mutateAddBackwardLinkProb;
+    mutateAddRecurrentLinkProb = params.mutateAddRecurrentLinkProb;
+    mutateAddBiasLinkProb = params.mutateAddBiasLinkProb;
+    mutateAddNeuronProb = params.mutateAddNeuronProb;
+    mutateEnabledProb = params.mutateEnabledProb;
+    mutateDisabledProb = params.mutateDisabledProb;
+    numSpeciesThreshold = params.numSpeciesThreshold;
+    randomTypeNewNeuron = params.randomTypeNewNeuron;
   }
 
   /**
@@ -279,10 +279,10 @@ class NEAT
    */
   int CheckLinkInnovation(int fromNeuronId, int toNeuronId)
   {
-    for (int i=0; i<aLinkInnovations.size(); ++i)
+    for (int i = 0; i < linkInnovations.size(); ++i)
     {
-      if (aLinkInnovations[i].fromNeuronId == fromNeuronId && 
-          aLinkInnovations[i].toNeuronId == toNeuronId)
+      if (linkInnovations[i].fromNeuronId == fromNeuronId && 
+          linkInnovations[i].toNeuronId == toNeuronId)
       {
         return i;
       }
@@ -298,10 +298,10 @@ class NEAT
    */
   int CheckNeuronInnovation(int splitLinkInnovId, ActivationFuncType actFuncType)
   {
-    for (int i=0; i<aNeuronInnovations.size(); ++i)
+    for (int i = 0; i < neuronInnovations.size(); ++i)
     {
-      if (aNeuronInnovations[i].splitLinkInnovId == splitLinkInnovId &&
-          aNeuronInnovations[i].actFuncType == actFuncType)
+      if (neuronInnovations[i].splitLinkInnovId == splitLinkInnovId &&
+          neuronInnovations[i].actFuncType == actFuncType)
       {
         return i;
       }
@@ -321,8 +321,8 @@ class NEAT
   {
     linkInnov.fromNeuronId = fromNeuronId;
     linkInnov.toNeuronId = toNeuronId;
-    linkInnov.newLinkInnovId = aNextLinkInnovId++;
-    aLinkInnovations.push_back(linkInnov);
+    linkInnov.newLinkInnovId = nextLinkInnovId++;
+    linkInnovations.push_back(linkInnov);
   }
 
   /**
@@ -334,10 +334,10 @@ class NEAT
   void AddNeuronInnovation(int splitLinkInnovId, NeuronInnovation& neuronInnov)
   {
     neuronInnov.splitLinkInnovId = splitLinkInnovId;
-    neuronInnov.newNeuronId = aNextNeuronId++;
-    neuronInnov.newInputLinkInnovId = aNextLinkInnovId++;
-    neuronInnov.newOutputLinkInnovId = aNextLinkInnovId++;
-    aNeuronInnovations.push_back(neuronInnov);
+    neuronInnov.newNeuronId = nextNeuronId++;
+    neuronInnov.newInputLinkInnovId = nextLinkInnovId++;
+    neuronInnov.newOutputLinkInnovId = nextLinkInnovId++;
+    neuronInnovations.push_back(neuronInnov);
   }
 
   /**
@@ -349,10 +349,10 @@ class NEAT
    */
   int IsLinkExist(Genome& genome, int fromNeuronId, int toNeuronId)
   {
-    for (int i=0; i<genome.NumLink(); ++i)
+    for (int i = 0; i < genome.NumLink(); ++i)
     {
-      if (genome.aLinkGenes[i].FromNeuronId() == fromNeuronId &&
-          genome.aLinkGenes[i].ToNeuronId() == toNeuronId)
+      if (genome.linkGenes[i].FromNeuronId() == fromNeuronId &&
+          genome.linkGenes[i].ToNeuronId() == toNeuronId)
       {
         return i;
       }
@@ -376,7 +376,7 @@ class NEAT
     double p = mlpack::math::Random();
     if (p > mutateAddLinkProb) return;
 
-    if (genome.aNeuronGenes.size() == 0) return;
+    if (genome.neuronGenes.size() == 0) return;
 
     // Select from neuron and to neuron.
     int fromNeuronIdx = -1;
@@ -388,21 +388,21 @@ class NEAT
     {
       case FORWARD_LINK:
         // Select from neuron.
-        fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
-        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+        fromNeuronIdx = mlpack::math::RandInt(0, genome.neuronGenes.size());
+        fromNeuronId = genome.neuronGenes[fromNeuronIdx].Id();
 
         // Select to neuron which cannot be input.
-        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
-        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.neuronGenes.size()); 
+        toNeuronId = genome.neuronGenes[toNeuronIdx].Id();
 
         // Don't allow same depth connection.
-        if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth())
+        if (genome.neuronGenes[fromNeuronIdx].Depth() == genome.neuronGenes[toNeuronIdx].Depth())
         {
           return;
         }
 
         // Swap if backward.
-        if (genome.aNeuronGenes[fromNeuronIdx].Depth() > genome.aNeuronGenes[toNeuronIdx].Depth())
+        if (genome.neuronGenes[fromNeuronIdx].Depth() > genome.neuronGenes[toNeuronIdx].Depth())
         {
           std::swap(fromNeuronIdx, toNeuronIdx);
           std::swap(fromNeuronId, toNeuronId);
@@ -411,21 +411,21 @@ class NEAT
         break;
       case BACKWARD_LINK:
         // Select from neuron.
-        fromNeuronIdx = mlpack::math::RandInt(0, genome.aNeuronGenes.size());
-        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+        fromNeuronIdx = mlpack::math::RandInt(0, genome.neuronGenes.size());
+        fromNeuronId = genome.neuronGenes[fromNeuronIdx].Id();
 
         // Select to neuron which cannot be input.
-        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
-        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.neuronGenes.size()); 
+        toNeuronId = genome.neuronGenes[toNeuronIdx].Id();
 
         // Don't allow same depth connection.
-        if (genome.aNeuronGenes[fromNeuronIdx].Depth() == genome.aNeuronGenes[toNeuronIdx].Depth())
+        if (genome.neuronGenes[fromNeuronIdx].Depth() == genome.neuronGenes[toNeuronIdx].Depth())
         {
           return;
         }
 
         // Swap if forward.
-        if (genome.aNeuronGenes[fromNeuronIdx].Depth() < genome.aNeuronGenes[toNeuronIdx].Depth()) 
+        if (genome.neuronGenes[fromNeuronIdx].Depth() < genome.neuronGenes[toNeuronIdx].Depth()) 
         {
           std::swap(fromNeuronIdx, toNeuronIdx);
           std::swap(fromNeuronId, toNeuronId);
@@ -434,19 +434,19 @@ class NEAT
         break;
       case RECURRENT_LINK:
         // Select recurrent neuron.
-        fromNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size());
-        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+        fromNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.neuronGenes.size());
+        fromNeuronId = genome.neuronGenes[fromNeuronIdx].Id();
         toNeuronIdx = fromNeuronIdx;
         toNeuronId = fromNeuronId;
         break;
       case BIAS_LINK:
         // Set from neuron as the BIAS neuron.
         fromNeuronIdx = genome.NumInput() - 1;
-        fromNeuronId = genome.aNeuronGenes[fromNeuronIdx].Id();
+        fromNeuronId = genome.neuronGenes[fromNeuronIdx].Id();
 
         // Select to neuron which cannot be input.
-        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.aNeuronGenes.size()); 
-        toNeuronId = genome.aNeuronGenes[toNeuronIdx].Id();
+        toNeuronIdx = mlpack::math::RandInt(genome.NumInput(), genome.neuronGenes.size()); 
+        toNeuronId = genome.neuronGenes[toNeuronIdx].Id();
         break;
       default:
         return;
@@ -456,7 +456,7 @@ class NEAT
     int linkIdx = IsLinkExist(genome, fromNeuronId, toNeuronId);
     if (linkIdx != -1)
     {
-      genome.aLinkGenes[linkIdx].Enabled(true);
+      genome.linkGenes[linkIdx].Enabled(true);
       return;
     }
 
@@ -466,7 +466,7 @@ class NEAT
     {
       LinkGene linkGene(fromNeuronId,
                         toNeuronId,
-                        aLinkInnovations[innovIdx].newLinkInnovId,
+                        linkInnovations[innovIdx].newLinkInnovId,
                         mlpack::math::RandNormal(0, 1),
                         true);
       genome.AddLink(linkGene);
@@ -502,16 +502,16 @@ class NEAT
 
     // Select link to split.
     int linkIdx = mlpack::math::RandInt(0, genome.NumLink());
-    if (!genome.aLinkGenes[linkIdx].Enabled()) return;
+    if (!genome.linkGenes[linkIdx].Enabled()) return;
 
-    genome.aLinkGenes[linkIdx].Enabled(false);
+    genome.linkGenes[linkIdx].Enabled(false);
     NeuronGene fromNeuron;
-    genome.GetNeuronById(genome.aLinkGenes[linkIdx].FromNeuronId(), fromNeuron);
+    genome.GetNeuronById(genome.linkGenes[linkIdx].FromNeuronId(), fromNeuron);
     NeuronGene toNeuron;
-    genome.GetNeuronById(genome.aLinkGenes[linkIdx].ToNeuronId(), toNeuron);
+    genome.GetNeuronById(genome.linkGenes[linkIdx].ToNeuronId(), toNeuron);
 
     // Check innovation already exist or not.
-    int splitLinkInnovId = genome.aLinkGenes[linkIdx].InnovationId();
+    int splitLinkInnovId = genome.linkGenes[linkIdx].InnovationId();
     ActivationFuncType actFuncType = SIGMOID;
     if (randomActFuncType) 
     {
@@ -523,32 +523,32 @@ class NEAT
     if (innovIdx != -1)
     {
       // Check whether this genome already contains the neuron.
-      int neuronIdx = genome.GetNeuronIndex(aNeuronInnovations[innovIdx].newNeuronId);
+      int neuronIdx = genome.GetNeuronIndex(neuronInnovations[innovIdx].newNeuronId);
       if (neuronIdx != -1)  // The neuron already exist.
       {
         // Enable the input and output link.
-        int inputLinkIdx = genome.GetLinkIndex(aNeuronInnovations[innovIdx].newInputLinkInnovId);
-        int outputLinkIdx = genome.GetLinkIndex(aNeuronInnovations[innovIdx].newOutputLinkInnovId);
-        genome.aLinkGenes[inputLinkIdx].Enabled(true);
-        genome.aLinkGenes[outputLinkIdx].Enabled(true);
+        int inputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].newInputLinkInnovId);
+        int outputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].newOutputLinkInnovId);
+        genome.linkGenes[inputLinkIdx].Enabled(true);
+        genome.linkGenes[outputLinkIdx].Enabled(true);
       } else
       {
-        NeuronGene neuronGene(aNeuronInnovations[innovIdx].newNeuronId,
+        NeuronGene neuronGene(neuronInnovations[innovIdx].newNeuronId,
                               HIDDEN,
                               actFuncType,
                               (fromNeuron.Depth() + toNeuron.Depth()) / 2,
                               std::vector<double>(),
                               0,
                               0);
-        LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),
-                           aNeuronInnovations[innovIdx].newNeuronId,
-                           aNeuronInnovations[innovIdx].newInputLinkInnovId,
+        LinkGene inputLink(genome.linkGenes[linkIdx].FromNeuronId(),
+                           neuronInnovations[innovIdx].newNeuronId,
+                           neuronInnovations[innovIdx].newInputLinkInnovId,
                            1,
                            true);
-        LinkGene outputLink(aNeuronInnovations[innovIdx].newNeuronId,
-                            genome.aLinkGenes[linkIdx].ToNeuronId(),
-                            aNeuronInnovations[innovIdx].newOutputLinkInnovId,
-                            genome.aLinkGenes[linkIdx].Weight(),
+        LinkGene outputLink(neuronInnovations[innovIdx].newNeuronId,
+                            genome.linkGenes[linkIdx].ToNeuronId(),
+                            neuronInnovations[innovIdx].newOutputLinkInnovId,
+                            genome.linkGenes[linkIdx].Weight(),
                             true);
         genome.AddHiddenNeuron(neuronGene);
         genome.AddLink(inputLink);
@@ -563,16 +563,16 @@ class NEAT
     AddNeuronInnovation(splitLinkInnovId, neuronInnov);
 
     LinkInnovation inputLinkInnov;
-    inputLinkInnov.fromNeuronId = genome.aLinkGenes[linkIdx].FromNeuronId();
+    inputLinkInnov.fromNeuronId = genome.linkGenes[linkIdx].FromNeuronId();
     inputLinkInnov.toNeuronId = neuronInnov.newNeuronId;
     inputLinkInnov.newLinkInnovId = neuronInnov.newInputLinkInnovId;
-    aLinkInnovations.push_back(inputLinkInnov);
+    linkInnovations.push_back(inputLinkInnov);
 
     LinkInnovation outputLinkInnov;
     outputLinkInnov.fromNeuronId = neuronInnov.newNeuronId;
-    outputLinkInnov.toNeuronId = genome.aLinkGenes[linkIdx].ToNeuronId();
+    outputLinkInnov.toNeuronId = genome.linkGenes[linkIdx].ToNeuronId();
     outputLinkInnov.newLinkInnovId = neuronInnov.newOutputLinkInnovId;
-    aLinkInnovations.push_back(outputLinkInnov);
+    linkInnovations.push_back(outputLinkInnov);
     
     // Add neuron, input link, output link.
     NeuronGene neuronGene(neuronInnov.newNeuronId,
@@ -582,15 +582,15 @@ class NEAT
                           std::vector<double>(),
                           0,
                           0);
-    LinkGene inputLink(genome.aLinkGenes[linkIdx].FromNeuronId(),
+    LinkGene inputLink(genome.linkGenes[linkIdx].FromNeuronId(),
                        neuronInnov.newNeuronId,
                        neuronInnov.newInputLinkInnovId,
                        1,
                        true);
     LinkGene outputLink(neuronInnov.newNeuronId,
-                        genome.aLinkGenes[linkIdx].ToNeuronId(),
+                        genome.linkGenes[linkIdx].ToNeuronId(),
                         neuronInnov.newOutputLinkInnovId,
-                        genome.aLinkGenes[linkIdx].Weight(),
+                        genome.linkGenes[linkIdx].Weight(),
                         true);
     genome.AddHiddenNeuron(neuronGene);
     genome.AddLink(inputLink);
@@ -611,9 +611,9 @@ class NEAT
     if (p > mutateProb) return;
 
     std::vector<int> linkIndexs;
-    for (int i=0; i<genome.NumLink(); ++i)
+    for (int i = 0; i < genome.NumLink(); ++i)
     {
-      if (genome.aLinkGenes[i].Enabled() == enabled)
+      if (genome.linkGenes[i].Enabled() == enabled)
       {
         linkIndexs.push_back(i);
       }
@@ -622,7 +622,7 @@ class NEAT
     if (linkIndexs.size()>0)
     {
       int idx = linkIndexs[mlpack::math::RandInt(0, linkIndexs.size())];
-      genome.aLinkGenes[idx].Enabled(!enabled);
+      genome.linkGenes[idx].Enabled(!enabled);
     }
   }
 
@@ -639,18 +639,18 @@ class NEAT
     double p = mlpack::math::Random();  // rand 0~1
     if (p > mutateProb) return;
     
-    for (int i=0; i<genome.aLinkGenes.size(); ++i)
+    for (int i = 0; i < genome.linkGenes.size(); ++i)
     {  
       double p2 = mlpack::math::Random();
       if (p2 < perturbProb)
       {  // Biased weight mutation.
         double deltaW = mlpack::math::RandNormal(0, mutateSize);
-        double oldW = genome.aLinkGenes[i].Weight();
-        genome.aLinkGenes[i].Weight(oldW + deltaW);
+        double oldW = genome.linkGenes[i].Weight();
+        genome.linkGenes[i].Weight(oldW + deltaW);
       } else
       {  // Unbiased weight mutation.
         double weight = mlpack::math::RandNormal(0, mutateSize);
-        genome.aLinkGenes[i].Weight(weight);
+        genome.linkGenes[i].Weight(weight);
       }
     }
   }
@@ -704,15 +704,15 @@ class NEAT
     childGenome.NumOutput(momGenome.NumOutput());
 
     // Add input and output neuron genes to child genome.
-    for (int i=0; i<(momGenome.NumInput() + momGenome.NumOutput()); ++i)
+    for (int i = 0; i < (momGenome.NumInput() + momGenome.NumOutput()); ++i)
     {
-      childGenome.aNeuronGenes.push_back(momGenome.aNeuronGenes[i]);
+      childGenome.neuronGenes.push_back(momGenome.neuronGenes[i]);
     }
 
     // Iterate to add link genes and neuron genes to child genome.
-    for (int i=0; i<momGenome.NumLink(); ++i)
+    for (int i = 0; i < momGenome.NumLink(); ++i)
     {
-      int innovId = momGenome.aLinkGenes[i].InnovationId();      
+      int innovId = momGenome.linkGenes[i].InnovationId();      
       int idx = dadGenome.GetLinkIndex(innovId);
       bool linkContainedInDad = (idx != -1);
       double randNum = mlpack::math::Random();
@@ -720,22 +720,22 @@ class NEAT
       // Exceed or disjoint link, add to child.
       if (!linkContainedInDad)
       {  
-        childGenome.AddLink(momGenome.aLinkGenes[i]);
+        childGenome.AddLink(momGenome.linkGenes[i]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
-        int idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
+        int idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
-        idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
+        idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
         continue;
       }
@@ -743,22 +743,22 @@ class NEAT
       // Common link in both parents, add mom's to child with probability 0.5.
       if (linkContainedInDad && randNum < 0.5)
       {
-        childGenome.AddLink(momGenome.aLinkGenes[i]);
+        childGenome.AddLink(momGenome.linkGenes[i]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
-        int idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
+        int idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
-        idxInParent = momGenome.GetNeuronIndex(momGenome.aLinkGenes[i].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
+        idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(momGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
         continue;
       }
@@ -766,22 +766,22 @@ class NEAT
       // Common link in both parents, add dad's to child with probability 0.5.
       if (linkContainedInDad && randNum >= 0.5)
       {
-        childGenome.AddLink(dadGenome.aLinkGenes[idx]);
+        childGenome.AddLink(dadGenome.linkGenes[idx]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].FromNeuronId());
-        int idxInParent = dadGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(dadGenome.linkGenes[idx].FromNeuronId());
+        int idxInParent = dadGenome.GetNeuronIndex(dadGenome.linkGenes[idx].FromNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(dadGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(dadGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].ToNeuronId());
-        idxInParent = dadGenome.GetNeuronIndex(dadGenome.aLinkGenes[idx].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(dadGenome.linkGenes[idx].ToNeuronId());
+        idxInParent = dadGenome.GetNeuronIndex(dadGenome.linkGenes[idx].ToNeuronId());
         if (idxInChild == -1)
         {
-          childGenome.AddHiddenNeuron(dadGenome.aNeuronGenes[idxInParent]);
+          childGenome.AddHiddenNeuron(dadGenome.neuronGenes[idxInParent]);
         }
         continue;
       }  
@@ -821,9 +821,9 @@ class NEAT
   {
     double numDisjoint = 0;
 
-    for (int i=0; i<genome1.NumLink(); ++i)
+    for (int i = 0; i < genome1.NumLink(); ++i)
     {
-      int innovId = genome1.aLinkGenes[i].InnovationId();
+      int innovId = genome1.linkGenes[i].InnovationId();
       bool linkContainedInGenome2 = genome2.ContainLink(innovId);
       if (!linkContainedInGenome2)
       {
@@ -831,9 +831,9 @@ class NEAT
       } 
     }
 
-    for (int i=0; i<genome2.NumLink(); ++i)
+    for (int i = 0; i < genome2.NumLink(); ++i)
     {
-      int innovId = genome2.aLinkGenes[i].InnovationId();
+      int innovId = genome2.linkGenes[i].InnovationId();
       bool linkContainedInGenome1 = genome1.ContainLink(innovId);
       if (!linkContainedInGenome1)
       {
@@ -857,18 +857,18 @@ class NEAT
     double deltaW = 0;
     int coincident = 0;
 
-    for (int i=0; i<genome1.NumLink(); ++i)
+    for (int i = 0; i < genome1.NumLink(); ++i)
     {
-      int linkEnabledInGenome1 = (int) genome1.aLinkGenes[i].Enabled();
-      int innovId = genome1.aLinkGenes[i].InnovationId();
+      int linkEnabledInGenome1 = (int) genome1.linkGenes[i].Enabled();
+      int innovId = genome1.linkGenes[i].InnovationId();
       int idx = genome2.GetLinkIndex(innovId);
       bool linkContainedInGenome2 = (idx != -1);
 
       if (linkContainedInGenome2)
       {
-        int linkEnabledInGenome2 = (int) genome2.aLinkGenes[idx].Enabled();
-        deltaW += std::abs(genome1.aLinkGenes[i].Weight() * linkEnabledInGenome1 - 
-                           genome2.aLinkGenes[idx].Weight() * linkEnabledInGenome2);
+        int linkEnabledInGenome2 = (int) genome2.linkGenes[idx].Enabled();
+        deltaW += std::abs(genome1.linkGenes[i].Weight() * linkEnabledInGenome1 - 
+                           genome2.linkGenes[idx].Weight() * linkEnabledInGenome2);
         ++coincident;
       }
     }
@@ -887,9 +887,9 @@ class NEAT
   {
     double deltaD = Disjoint(genome1, genome2);
     double deltaW = WeightDiff(genome1, genome2);
-    double delta = aCoeffDisjoint * deltaD + aCoeffWeightDiff * deltaW;
+    double delta = coeffDisjoint * deltaD + coeffWeightDiff * deltaW;
 
-    if (delta < aCompatThreshold)
+    if (delta < compatThreshold)
     {
       return true;
     } 
@@ -905,13 +905,13 @@ class NEAT
    */
   void AddGenomeToSpecies(Population& population, Genome& genome)
   {
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      if (population.aSpecies[i].aGenomes.size() > 0)
+      if (population.species[i].genomes.size() > 0)
       {
-        if (IsSameSpecies(population.aSpecies[i].aGenomes[0], genome))
+        if (IsSameSpecies(population.species[i].genomes[0], genome))
         {  // each first genome in species is the representative genome.
-          population.aSpecies[i].AddGenome(genome);
+          population.species[i].AddGenome(genome);
           return;
         }
       }
@@ -926,18 +926,18 @@ class NEAT
   /**
    * Remove stale species.
    *
-   * If a species has been evolved for over than aStaleAgeThreshold generations,
+   * If a species has been evolved for over than staleAgeThreshold generations,
    * and its best genome's fitness doesn't change, then it is a stale species.
    * It will be removed from population.
    */
   void RemoveStaleSpecies(Population& population)
   {
-    for (std::vector<Species>::iterator it = population.aSpecies.begin();
-         it != population.aSpecies.end();  /*it++*/)
+    for (std::vector<Species>::iterator it = population.species.begin();
+         it != population.species.end();  /*it++*/)
     {
-      if(it->StaleAge() > aStaleAgeThreshold)
+      if(it->StaleAge() > staleAgeThreshold)
       {
-        it = population.aSpecies.erase(it);
+        it = population.species.erase(it);
       }else
       {
         ++it;
@@ -956,11 +956,11 @@ class NEAT
   void AggregateGenomes(Population& population, std::vector<Genome>& genomes)
   {
     genomes.clear();
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      for (int j=0; j<population.aSpecies[i].aGenomes.size(); ++j)
+      for (int j = 0; j < population.species[i].genomes.size(); ++j)
       {
-        genomes.push_back(population.aSpecies[i].aGenomes[j]);
+        genomes.push_back(population.species[i].genomes[j]);
       }
     }
   }
@@ -982,7 +982,7 @@ class NEAT
    */
   int GetGenomeIndex(std::vector<Genome>& genomes, int id)
   {
-    for (int i=0; i<genomes.size(); ++i)
+    for (int i = 0; i < genomes.size(); ++i)
     {
       if (genomes[i].Id() == id)
         return i;
@@ -1007,13 +1007,13 @@ class NEAT
     SortGenomes(genomes);
     speciesAverageRank.clear();
 
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
       double averageRank = 0;
-      int speciesSize = population.aSpecies[i].aGenomes.size();
-      for (int j=0; j<speciesSize; ++j)
+      int speciesSize = population.species[i].genomes.size();
+      for (int j = 0; j < speciesSize; ++j)
       {
-        averageRank += genomes.size() - GetGenomeIndex(genomes, population.aSpecies[i].aGenomes[j].Id());
+        averageRank += genomes.size() - GetGenomeIndex(genomes, population.species[i].genomes[j].Id());
       }
       averageRank = averageRank / speciesSize;
       speciesAverageRank.push_back(averageRank);
@@ -1034,7 +1034,7 @@ class NEAT
     CalcSpeciesAverageRank(population, speciesAverageRank);
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
 
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
       double weak = (std::floor(speciesAverageRank[i] * population.NumSpecies() / totalAverageRank)
                      < 1);
@@ -1052,11 +1052,11 @@ class NEAT
    */
   void RemoveEmptySpecies(Population& population)
   {
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      if (population.aSpecies[i].aGenomes.size() == 0)
+      if (population.species[i].genomes.size() == 0)
       {
-        population.aSpecies.erase(population.aSpecies.begin() + i);
+        population.species.erase(population.species.begin() + i);
       }
     }
   }
@@ -1070,13 +1070,13 @@ class NEAT
    */
   void CullSpecies(Population& population, double percentageToRemove)
   {
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      population.aSpecies[i].SortGenomes();
-      int numRemove = std::floor(population.aSpecies[i].aGenomes.size() * percentageToRemove);
+      population.species[i].SortGenomes();
+      int numRemove = std::floor(population.species[i].genomes.size() * percentageToRemove);
       while (numRemove > 0)
       {
-        population.aSpecies[i].aGenomes.pop_back();
+        population.species[i].genomes.pop_back();
         --numRemove;
       }
     }
@@ -1090,15 +1090,15 @@ class NEAT
    */
   void CullSpeciesToOne(Population& population)
   {
-    for (int i=0; i<population.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      population.aSpecies[i].SortGenomes();
-      int speciesSize = population.aSpecies[i].aGenomes.size();
+      population.species[i].SortGenomes();
+      int speciesSize = population.species[i].genomes.size();
       if (speciesSize > 0)
       {
-        Genome bestGenome = population.aSpecies[i].aGenomes[0];
-        population.aSpecies[i].aGenomes.clear();
-        population.aSpecies[i].aGenomes.push_back(bestGenome);
+        Genome bestGenome = population.species[i].genomes[0];
+        population.species[i].genomes.clear();
+        population.species[i].genomes.push_back(bestGenome);
       }
     }
     RemoveEmptySpecies(population);
@@ -1114,81 +1114,81 @@ class NEAT
   void Mutate(Genome& genome)
   {
     // Mutate weights.
-    MutateWeight(genome, aMutateWeightProb, aPerturbWeightProb, aMutateWeightSize);
+    MutateWeight(genome, mutateWeightProb, perturbWeightProb, mutateWeightSize);
 
     // Mutate add forward link.
-    double p = aMutateAddForwardLinkProb;
+    double p = mutateAddForwardLinkProb;
     while (p > 0)
     {  // so p can be bigger than 1 and mutate can happen multiple times.
       if (mlpack::math::Random() < p)
       {
-        MutateAddLink(genome, FORWARD_LINK, aMutateAddForwardLinkProb);
+        MutateAddLink(genome, FORWARD_LINK, mutateAddForwardLinkProb);
       }
       --p;
     }
 
     // Mutate add backward link.
-    p = aMutateAddBackwardLinkProb;
+    p = mutateAddBackwardLinkProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddLink(genome, BACKWARD_LINK, aMutateAddBackwardLinkProb);
+        MutateAddLink(genome, BACKWARD_LINK, mutateAddBackwardLinkProb);
       }
       --p;
     }
 
     // Mutate add recurrent link.
-    p = aMutateAddRecurrentLinkProb;
+    p = mutateAddRecurrentLinkProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddLink(genome, RECURRENT_LINK, aMutateAddRecurrentLinkProb);
+        MutateAddLink(genome, RECURRENT_LINK, mutateAddRecurrentLinkProb);
       }
       --p;
     }
 
     // Mutate add bias link.
-    p = aMutateAddBiasLinkProb;
+    p = mutateAddBiasLinkProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddLink(genome, BIAS_LINK, aMutateAddBiasLinkProb);
+        MutateAddLink(genome, BIAS_LINK, mutateAddBiasLinkProb);
       }
       --p;
     }
 
     // Mutate add neuron.
-    p = aMutateAddNeuronProb;
+    p = mutateAddNeuronProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateAddNeuron(genome, aMutateAddNeuronProb, aRandomTypeNewNeuron);
+        MutateAddNeuron(genome, mutateAddNeuronProb, randomTypeNewNeuron);
       }
       --p;
     }
 
     // Mutate enabled node to disabled.
-    p = aMutateEnabledProb;
+    p = mutateEnabledProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateEnableDisable(genome, true, aMutateEnabledProb);
+        MutateEnableDisable(genome, true, mutateEnabledProb);
       }
       --p;
     }
 
     // Mutate disabled node to enabled.
-    p = aMutateDisabledProb;
+    p = mutateDisabledProb;
     while (p > 0)
     {
       if (mlpack::math::Random() < p)
       {
-        MutateEnableDisable(genome, false, aMutateDisabledProb);
+        MutateEnableDisable(genome, false, mutateDisabledProb);
       }
       --p;
     }
@@ -1208,7 +1208,7 @@ class NEAT
   bool BreedChild(Species& species, Genome& childGenome, double crossoverProb)
   {
     double p = mlpack::math::Random();
-    int speciesSize = species.aGenomes.size();
+    int speciesSize = species.genomes.size();
 
     if (speciesSize == 0)
       return false;
@@ -1219,7 +1219,7 @@ class NEAT
       int idx2 = mlpack::math::RandInt(0, speciesSize);
       if (idx1 != idx2)
       {
-        Crossover(species.aGenomes[idx1], species.aGenomes[idx2], childGenome);
+        Crossover(species.genomes[idx1], species.genomes[idx2], childGenome);
       } else
       {
         return false;
@@ -1227,7 +1227,7 @@ class NEAT
     } else
     {
       int idx = mlpack::math::RandInt(0, speciesSize);
-      childGenome = species.aGenomes[idx];
+      childGenome = species.genomes[idx];
     }
 
     Mutate(childGenome);
@@ -1242,7 +1242,7 @@ class NEAT
    */
   void InitPopulation()
   {
-    aPopulation = Population(aSeedGenome, aPopulationSize);
+    population = Population(seedGenome, populationSize);
   }
 
   /**
@@ -1254,33 +1254,33 @@ class NEAT
   {
     // keep previous best genome.
     std::vector<Genome> childGenomes;
-    Genome lastBestGenome = aPopulation.BestGenome();
+    Genome lastBestGenome = population.BestGenome();
     childGenomes.push_back(lastBestGenome);
 
     // Remove weak genomes in each species.
-    CullSpecies(aPopulation, aCullSpeciesPercentage);
+    CullSpecies(population, cullSpeciesPercentage);
 
     // Remove stale species, weak species.
-    if (aPopulation.aSpecies.size() > aNumSpeciesThreshold)
+    if (population.species.size() > numSpeciesThreshold)
     {
-      RemoveStaleSpecies(aPopulation);
-      RemoveWeakSpecies(aPopulation);
+      RemoveStaleSpecies(population);
+      RemoveWeakSpecies(population);
     }
 
     // Breed children in each species. 
     std::vector<double> speciesAverageRank;
-    CalcSpeciesAverageRank(aPopulation, speciesAverageRank);
+    CalcSpeciesAverageRank(population, speciesAverageRank);
     double totalAverageRank = std::accumulate(speciesAverageRank.begin(), speciesAverageRank.end(), 0);
 
-    for (int i=0; i<aPopulation.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      int numBreed = std::floor(speciesAverageRank[i] * aPopulationSize / totalAverageRank) - 1;
+      int numBreed = std::floor(speciesAverageRank[i] * populationSize / totalAverageRank) - 1;
       int numBreedSuccess = 0;
 
       while (numBreedSuccess < numBreed)
       {
         Genome genome;
-        bool hasBaby = BreedChild(aPopulation.aSpecies[i], genome, aCrossoverRate);
+        bool hasBaby = BreedChild(population.species[i], genome, crossoverRate);
         if (hasBaby)
         {
           childGenomes.push_back(genome);
@@ -1290,15 +1290,15 @@ class NEAT
     }
 
     // Keep the best in each species.
-    CullSpeciesToOne(aPopulation);
+    CullSpeciesToOne(population);
 
     // Random choose species and breed child until reach population size.
-    int currentNumGenome = childGenomes.size() + aPopulation.PopulationSize();
-    while (currentNumGenome < aPopulationSize)
+    int currentNumGenome = childGenomes.size() + population.PopulationSize();
+    while (currentNumGenome < populationSize)
     {
-      int speciesIndex = mlpack::math::RandInt(0, aPopulation.aSpecies.size());
+      int speciesIndex = mlpack::math::RandInt(0, population.species.size());
       Genome genome;
-      bool hasBaby = BreedChild(aPopulation.aSpecies[speciesIndex], genome, aCrossoverRate);
+      bool hasBaby = BreedChild(population.species[speciesIndex], genome, crossoverRate);
       if (hasBaby)
       {
         childGenomes.push_back(genome);
@@ -1307,22 +1307,22 @@ class NEAT
     }
 
     // Speciate genomes into new species.
-    for (int i=0; i<childGenomes.size(); ++i)
+    for (int i = 0; i < childGenomes.size(); ++i)
     {
-      AddGenomeToSpecies(aPopulation, childGenomes[i]);
+      AddGenomeToSpecies(population, childGenomes[i]);
     }
 
     //DEBUGGING!!!!!!!!!
     printf("Species sizes are: ");
-    for (int s=0; s<aPopulation.aSpecies.size(); ++s)
+    for (int s=0; s<population.species.size(); ++s)
     {
-      std::cout<< aPopulation.aSpecies[s].aGenomes.size() << "  ";
+      std::cout<< population.species[s].genomes.size() << "  ";
     }
     printf("\n");
     //DEBUGGING!!!!!!!!!
 
     // Reassign genome IDs.
-    aPopulation.ReassignGenomeId();
+    population.ReassignGenomeId();
   }
 
   /**
@@ -1331,28 +1331,28 @@ class NEAT
    */
   void Evaluate()
   {
-    for (int i=0; i<aPopulation.aSpecies.size(); ++i)
+    for (int i = 0; i < population.species.size(); ++i)
     {
-      for (int j=0; j<aPopulation.aSpecies[i].aGenomes.size(); ++j)
+      for (int j = 0; j < population.species[i].genomes.size(); ++j)
       {
-        aPopulation.aSpecies[i].aGenomes[j].Flush();
-        double fitness = aTask.EvalFitness(aPopulation.aSpecies[i].aGenomes[j]);
-        aPopulation.aSpecies[i].aGenomes[j].Fitness(fitness);
+        population.species[i].genomes[j].Flush();
+        double fitness = task.EvalFitness(population.species[i].genomes[j]);
+        population.species[i].genomes[j].Fitness(fitness);
       }
 
-      double oldSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
-      aPopulation.aSpecies[i].SetBestFitnessAndGenome();
-      double newSpeciesBestFitness = aPopulation.aSpecies[i].BestFitness();
+      double oldSpeciesBestFitness = population.species[i].BestFitness();
+      population.species[i].SetBestFitnessAndGenome();
+      double newSpeciesBestFitness = population.species[i].BestFitness();
       if (newSpeciesBestFitness < oldSpeciesBestFitness)
       {
-        aPopulation.aSpecies[i].StaleAge(0);
+        population.species[i].StaleAge(0);
       } else
       {
-        int staleAge = aPopulation.aSpecies[i].StaleAge();
-        aPopulation.aSpecies[i].StaleAge(staleAge + 1);
+        int staleAge = population.species[i].StaleAge();
+        population.species[i].StaleAge(staleAge + 1);
       }
     }
-    aPopulation.SetBestFitnessAndGenome();
+    population.SetBestFitnessAndGenome();
   }
 
   /**
@@ -1368,23 +1368,23 @@ class NEAT
 
     // Speciate genomes into species.
     std::vector<Genome> genomes;
-    AggregateGenomes(aPopulation, genomes);
-    aPopulation.aSpecies.clear();
-    for (int i=0; i<genomes.size(); ++i)
+    AggregateGenomes(population, genomes);
+    population.species.clear();
+    for (int i = 0; i < genomes.size(); ++i)
     {
-      AddGenomeToSpecies(aPopulation, genomes[i]);
+      AddGenomeToSpecies(population, genomes[i]);
     }
     
     // Repeat
-    while (generation < aMaxGeneration)
+    while (generation < maxGeneration)
     {
       // Evaluate all genomes in population.
       Evaluate();
 
       // Output some information.
-      printf("Generation: %zu\tBest fitness: %f\n", generation, aPopulation.BestFitness());
-      //Log::Info << "Generation: " << generation << " best fitness: " <<  aPopulation.BestFitness() << std::endl;
-      if (aTask.Success())
+      printf("Generation: %zu\tBest fitness: %f\n", generation, population.BestFitness());
+      //Log::Info << "Generation: " << generation << " best fitness: " <<  population.BestFitness() << std::endl;
+      if (task.Success())
       {
         printf("Task succeed in %zu iterations.\n", generation);
         return true;
