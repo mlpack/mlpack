@@ -183,7 +183,7 @@ class NeighborSearch
    * @param metric Instantiated distance metric.
    */
   NeighborSearch(
-      Tree& referenceTree,
+      const Tree& referenceTree,
       const NeighborSearchMode mode = DUAL_TREE_MODE,
       const double epsilon = 0,
       const MetricType metric = MetricType());
@@ -383,7 +383,7 @@ class NeighborSearch
    *
    * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(Tree& referenceTree);
+  void Train(const Tree& referenceTree);
 
   /**
    * Set the reference tree to a new reference tree.

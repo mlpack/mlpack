@@ -177,7 +177,7 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(Tree& referenceTree,
+SingleTreeTraversalType>::NeighborSearch(const Tree& referenceTree,
                                          const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
@@ -574,7 +574,8 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree& referenceTree)
+DualTreeTraversalType, SingleTreeTraversalType>::Train(
+    const Tree& referenceTree)
 {
   // Update searchMode according to naive, singleMode and greedy flags.
   UpdateSearchMode();
