@@ -127,39 +127,6 @@ class NeighborSearch
                  const MetricType metric = MetricType());
 
   /**
-   * Initialize the NeighborSearch object with the given pre-constructed
-   * reference tree (this is the tree built on the points that will be
-   * searched).  Optionally, perform the computation in a different mode.
-   * Naive mode is not available as an option for this constructor.
-   * Additionally, an instantiated distance metric can be given, for cases where
-   * the distance metric holds data.
-   *
-   * This method is deprecated and will be removed in mlpack 3.0.0! Constructors
-   * taking a reference to the reference tree are prefered.
-   *
-   * This method won't take ownership of the given tree. There is no copying of
-   * the data matrices in this constructor (because  tree-building is not
-   * necessary).
-   *
-   * @note
-   * Mapping the points of the matrix back to their original indices is not done
-   * when this constructor is used, so if the tree type you are using maps
-   * points (like BinarySpaceTree), then you will have to perform the re-mapping
-   * manually.
-   * @endnote
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   * @param mode Neighbor search mode.
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated distance metric.
-   */
-  mlpack_deprecated NeighborSearch(
-      Tree* referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
-
-  /**
    * Initialize the NeighborSearch object with a copy of the given
    * pre-constructed reference tree (this is the tree built on the points that
    * will be searched).  Optionally, choose to use single-tree mode.  Naive mode

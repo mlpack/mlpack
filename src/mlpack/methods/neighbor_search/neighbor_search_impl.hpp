@@ -143,40 +143,6 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(Tree* referenceTree,
-                                         const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(referenceTree),
-    referenceSet(&referenceTree->Dataset()),
-    treeOwner(false),
-    setOwner(false),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
-    treeNeedsReset(false)
-{
-  // Update naive, singleMode and greedy flags according to searchMode.
-  UpdateSearchModeFlags();
-
-  if (mode == NAIVE_MODE)
-    throw std::invalid_argument("invalid constructor for naive mode");
-  if (epsilon < 0)
-    throw std::invalid_argument("epsilon must be non-negative");
-}
-
-// Construct the object.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class DualTreeTraversalType,
-         template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::NeighborSearch(const Tree& referenceTree,
                                          const NeighborSearchMode mode,
                                          const double epsilon,
