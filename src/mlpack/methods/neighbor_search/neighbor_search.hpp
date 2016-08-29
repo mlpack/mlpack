@@ -528,6 +528,11 @@ class NeighborSearch
   //! Access the reference dataset.
   const MatType& ReferenceSet() const { return *referenceSet; }
 
+  //! Access the reference tree.
+  const Tree& ReferenceTree() const { return *referenceTree; }
+  //! Modify the reference tree.
+  Tree& ReferenceTree() { return *referenceTree; }
+
   //! Serialize the NeighborSearch model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
