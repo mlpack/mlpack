@@ -27,7 +27,7 @@ INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = ./
 STRIP_FROM_INC_PATH    =
-SHORT_NAMES            = YES
+SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
 DETAILS_AT_TOP         = YES
@@ -96,6 +96,7 @@ EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = */build/* \
                          */test/* \
                          */arma_extend/* \
+                         */boost_backport/* \
                          */.svn/* \
                          *_impl.cc \
                          *_impl.h \
