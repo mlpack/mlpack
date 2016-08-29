@@ -216,6 +216,30 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool UniqueNumDescendants = true;
 };
 
+/**
+ * This is a specialization of the TreeType class to the UBTree tree type.
+ * The only difference with general BinarySpaceTree is that UBTree can have
+ * overlapping children.
+ * See mlpack/core/tree/tree_traits.hpp for more information.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
+    bound::CellBound, SplitType>>
+{
+ public:
+  static const bool HasOverlappingChildren = true;
+  static const bool HasDuplicatedPoints = false;
+  static const bool FirstPointIsCentroid = false;
+  static const bool HasSelfChildren = false;
+  static const bool RearrangesDataset = true;
+  static const bool BinaryTree = true;
+  static const bool UniqueNumDescendants = true;
+};
+
 } // namespace tree
 } // namespace mlpack
 

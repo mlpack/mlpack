@@ -14,6 +14,7 @@
 #include "binary_space_tree/vantage_point_split.hpp"
 #include "binary_space_tree/rp_tree_max_split.hpp"
 #include "binary_space_tree/rp_tree_mean_split.hpp"
+#include "binary_space_tree/ub_tree_split.hpp"
 #include "binary_space_tree/binary_space_tree.hpp"
 #include "binary_space_tree/single_tree_traverser.hpp"
 #include "binary_space_tree/single_tree_traverser_impl.hpp"

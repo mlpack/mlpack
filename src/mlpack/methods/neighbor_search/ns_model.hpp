@@ -286,7 +286,8 @@ class NSModel
     VP_TREE,
     RP_TREE,
     MAX_RP_TREE,
-    SPILL_TREE
+    SPILL_TREE,
+    UB_TREE
   };
 
  private:
@@ -323,7 +324,8 @@ class NSModel
                  NSType<SortPolicy, tree::VPTree>*,
                  NSType<SortPolicy, tree::RPTree>*,
                  NSType<SortPolicy, tree::MaxRPTree>*,
-                 SpillKNN*> nSearch;
+                 SpillKNN*,
+                 NSType<SortPolicy, tree::UBTree>*> nSearch;
 
  public:
   /**

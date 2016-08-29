@@ -85,6 +85,11 @@ add_executable(mlpack_test
   tree_test.cpp
   tree_traits_test.cpp
   union_find_test.cpp
+  svd_batch_test.cpp
+  svd_incremental_test.cpp
+  nystroem_method_test.cpp
+  armadillo_svd_test.cpp
+  ub_tree_test.cpp
   vantage_point_tree_test.cpp
 )
 # Link dependencies of test executable.

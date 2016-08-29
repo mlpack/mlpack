@@ -488,6 +488,9 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case SPILL_TREE:
       nSearch = new SpillKNN(searchMode, epsilon);
       break;
+    case UB_TREE:
+      nSearch = new NSType<SortPolicy, tree::UBTree>(searchMode, epsilon);
+      break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau, rho);
@@ -600,6 +603,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "random projection tree (mean split)";
     case MAX_RP_TREE:
       return "random projection tree (max split)";
+    case UB_TREE:
+      return "UB tree";
     default:
       return "unknown tree";
   }
