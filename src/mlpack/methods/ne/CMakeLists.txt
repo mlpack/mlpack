@@ -10,7 +10,6 @@ set(SOURCES
   parameters.hpp
   utils.hpp
   cne.hpp
-  neat.hpp
 )
 
 # Add directory name to sources.

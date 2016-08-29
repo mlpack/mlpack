@@ -38,13 +38,13 @@ class CNE
    */
   CNE(TaskType task, Genome& seedGenome, Parameters& params)
   {
-    aTask = task;
-    aSeedGenome = seedGenome;
-    aSpeciesSize = params.aSpeciesSize;
-    aMaxGeneration = params.aMaxGeneration;
-    aMutateRate = params.aMutateRate;
-    aMutateSize = params.aMutateSize;
-    aElitePercentage = params.aElitePercentage;
+    this->task = task;
+    this->seedGenome = seedGenome;
+    speciesSize = params.speciesSize;
+    maxGeneration = params.maxGeneration;
+    mutateRate = params.mutateRate;
+    mutateSize = params.mutateSize;
+    elitePercentage = params.elitePercentage;
   }
 
   /**
@@ -55,13 +55,13 @@ class CNE
    */
   CNE(TaskType task, Genome& seedGenome)
   {
-    aTask = task;
-    aSeedGenome = seedGenome;
-    aSpeciesSize = 500;
-    aMaxGeneration = 5000;
-    aMutateRate = 0.1;
-    aMutateSize = 0.02;
-    aElitePercentage = 0.2;
+    this->task = task;
+    this->seedGenome = seedGenome;
+    speciesSize = 500;
+    maxGeneration = 5000;
+    mutateRate = 0.1;
+    mutateSize = 0.02;
+    elitePercentage = 0.2;
   }
 
   /**
@@ -78,14 +78,14 @@ class CNE
    */
   static void MutateWeightsBiased(Genome& genome, double mutateProb, double mutateSize)
   {
-    for (int i=0; i<genome.aLinkGenes.size(); ++i)
+    for (int i = 0; i < genome.linkGenes.size(); ++i)
     {
       double p = mlpack::math::Random();  // rand 0~1
       if (p < mutateProb)
       {
         double deltaW = mlpack::math::RandNormal(0, mutateSize);
-        double oldW = genome.aLinkGenes[i].Weight();
-        genome.aLinkGenes[i].Weight(oldW + deltaW);
+        double oldW = genome.linkGenes[i].Weight();
+        genome.linkGenes[i].Weight(oldW + deltaW);
       }
     }
   }
@@ -99,13 +99,13 @@ class CNE
    */
   static void MutateWeightsUnbiased(Genome& genome, double mutateProb, double mutateSize)
   {
-    for (int i=0; i<genome.aLinkGenes.size(); ++i)
+    for (int i = 0; i < genome.linkGenes.size(); ++i)
     {
       double p = mlpack::math::Random();
       if (p < mutateProb)
       {
         double weight = mlpack::math::RandNormal(0, mutateSize);
-        genome.aLinkGenes[i].Weight(weight);
+        genome.linkGenes[i].Weight(weight);
       }
     }
   }
@@ -127,17 +127,17 @@ class CNE
   {
     child1Genome = momGenome;
     child2Genome = dadGenome;
-    for (int i=0; i<momGenome.aLinkGenes.size(); ++i)
+    for (int i = 0; i < momGenome.linkGenes.size(); ++i)
     { // assume genome are the same structure.
       double t = mlpack::math::RandNormal();
-      if (t>0)
+      if (t > 0)
       {  // prob = 0.5
-        child1Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
-        child2Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
+        child1Genome.linkGenes[i].Weight(momGenome.linkGenes[i].Weight());
+        child2Genome.linkGenes[i].Weight(dadGenome.linkGenes[i].Weight());
       } else
       {
-        child1Genome.aLinkGenes[i].Weight(dadGenome.aLinkGenes[i].Weight());
-        child2Genome.aLinkGenes[i].Weight(momGenome.aLinkGenes[i].Weight());
+        child1Genome.linkGenes[i].Weight(dadGenome.linkGenes[i].Weight());
+        child2Genome.linkGenes[i].Weight(momGenome.linkGenes[i].Weight());
       }
     }
   }
@@ -147,7 +147,7 @@ class CNE
    */
   void InitSpecies()
   {
-    aSpecies = Species(aSeedGenome, aSpeciesSize);
+    species = Species(seedGenome, speciesSize);
   }
 
   /**
@@ -160,27 +160,27 @@ class CNE
   void Reproduce()
   {
     // Sort species by fitness
-    aSpecies.SortGenomes();
+    species.SortGenomes();
 
     // Select parents from elite genomes and crossover.
-    int numElite = floor(aElitePercentage * aSpeciesSize);
-    int numDrop = floor((aSpeciesSize - numElite) / 2) * 2;  // Make sure even number.
-    numElite = aSpeciesSize - numDrop;
-    for (int i=numElite; i<aSpeciesSize-1; ++i)
+    int numElite = floor(elitePercentage * speciesSize);
+    int numDrop = floor((speciesSize - numElite) / 2) * 2;  // Make sure even number.
+    numElite = speciesSize - numDrop;
+    for (int i = numElite; i < speciesSize - 1; ++i)
     {
       // Randomly select two parents from elite genomes.
       int idx1 = RandInt(0, numElite);
       int idx2 = RandInt(0, numElite);
 
       // Crossover to get two children genomes.
-      CrossoverWeights(aSpecies.aGenomes[idx1], aSpecies.aGenomes[idx2],
-                       aSpecies.aGenomes[i], aSpecies.aGenomes[i+1]);
+      CrossoverWeights(species.genomes[idx1], species.genomes[idx2],
+                       species.genomes[i], species.genomes[i + 1]);
     }
 
     // Keep the best genome and mutate the rests.
-    for (int i=1; i<aSpeciesSize; ++i)
+    for (int i = 1; i < speciesSize; ++i)
     {
-      MutateWeightsBiased(aSpecies.aGenomes[i], aMutateRate, aMutateSize);
+      MutateWeightsBiased(species.genomes[i], mutateRate, mutateSize);
     }
   }
 
@@ -198,19 +198,19 @@ class CNE
     InitSpecies();
     
     // Repeat
-    while (generation < aMaxGeneration)
+    while (generation < maxGeneration)
     {
     	// Evaluate all genomes in the species.
-      for (int i=0; i<aSpecies.SpeciesSize(); ++i)
+      for (int i = 0; i < species.SpeciesSize(); ++i)
       {
-        double fitness = aTask.EvalFitness(aSpecies.aGenomes[i]);
-        aSpecies.aGenomes[i].Fitness(fitness);
+        double fitness = task.EvalFitness(species.genomes[i]);
+        species.genomes[i].Fitness(fitness);
       }
-      aSpecies.SetBestFitnessAndGenome();
+      species.SetBestFitnessAndGenome();
 
     	// Output some information.
-      printf("Generation: %zu\tBest fitness: %f\n", generation, aSpecies.BestFitness());
-      if (aTask.Success())
+      printf("Generation: %zu\tBest fitness: %f\n", generation, species.BestFitness());
+      if (task.Success())
       {
         printf("Task succeed in %zu iterations.\n", generation);
         return true;
@@ -226,28 +226,28 @@ class CNE
 
  private:
   //! Task.
-  TaskType aTask;
+  TaskType task;
 
   //! Seed genome. It is used for init species.
-  Genome aSeedGenome;
+  Genome seedGenome;
 
   //! Species to evolve.
-  Species aSpecies;
+  Species species;
 
   //! Species size.
-  int aSpeciesSize;
+  int speciesSize;
 
   //! Max number of generation to evolve.
-  int aMaxGeneration;
+  int maxGeneration;
 
   //! Mutation rate.
-  double aMutateRate;
+  double mutateRate;
 
   //! Mutate size. For normal distribution, it is mutate variance.
-  double aMutateSize;
+  double mutateSize;
 
   //! Elite percentage.
-  double aElitePercentage;
+  double elitePercentage;
 
 };
 

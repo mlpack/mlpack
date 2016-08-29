@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(NELinkGeneTest)
 BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
 {
   // Create a neuron gene.
-  NeuronGene neuronGene(1, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene neuronGene(1, INPUT, SIGMOID, 0, std::vector<double>(), 0, 0);
 
   // Test parametric constructor and access functions.
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 1);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(NENeuronGeneTest)
   BOOST_REQUIRE_EQUAL(neuronGene2.Id(), 1);
 
   // Test operator =.
-  NeuronGene neuronGene3(11, INPUT, SIGMOID, 0, 0, 0);
+  NeuronGene neuronGene3(11, INPUT, SIGMOID, 0, std::vector<double>(), 0, 0);
   neuronGene = neuronGene3;
   BOOST_REQUIRE_EQUAL(neuronGene.Id(), 11);
 
@@ -98,11 +98,11 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
-  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
-  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
-  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
-  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, std::vector<double>(), 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, std::vector<double>(), 0, 0);
 
   neuronGenes.push_back(inputGene1);
   neuronGenes.push_back(inputGene2);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(NEGenomeTest)
   outputs.push_back(1);
   outputs.push_back(0);
 
-  for (int i=0; i<4; ++i) {
+  for (int i = 0; i < 4; ++i) {
     seedGenome.Activate(inputs[i]);
     std::vector<double> output;
     seedGenome.Output(output);
@@ -175,11 +175,11 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
 
   // Set CNE algorithm parameters.
   Parameters params;
-  params.aSpeciesSize = 500;
-  params.aMutateRate = 0.1;
-  params.aMutateSize = 0.02;
-  params.aElitePercentage = 0.2;
-  params.aMaxGeneration = 1000;
+  params.speciesSize = 500;
+  params.mutateRate = 0.1;
+  params.mutateSize = 0.02;
+  params.elitePercentage = 0.2;
+  params.maxGeneration = 5000;
 
   // Construct seed genome for xor task.
   int id = 0;
@@ -189,11 +189,11 @@ BOOST_AUTO_TEST_CASE(NECneXorTest)
   std::vector<NeuronGene> neuronGenes;
   std::vector<LinkGene> linkGenes;
 
-  NeuronGene inputGene1(0, INPUT, LINEAR, 0, 0, 0);
-  NeuronGene inputGene2(1, INPUT, LINEAR, 0, 0, 0);
-  NeuronGene biasGene(2, BIAS, LINEAR, 0, 0, 0);
-  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, 0, 0);
-  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, 0, 0);
+  NeuronGene inputGene1(0, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene inputGene2(1, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene biasGene(2, BIAS, LINEAR, 0, std::vector<double>(), 0, 0);
+  NeuronGene outputGene(3, OUTPUT, SIGMOID, 1, std::vector<double>(), 0, 0);
+  NeuronGene hiddenGene(4, HIDDEN, SIGMOID, 0.5, std::vector<double>(), 0, 0);
 
   neuronGenes.push_back(inputGene1);
   neuronGenes.push_back(inputGene2);

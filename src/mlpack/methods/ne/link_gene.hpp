@@ -37,11 +37,11 @@ class LinkGene
   	       int innovationId,
   	       double weight,
            bool enabled):
-    aFromNeuronId(fromNeuronId),
-    aToNeuronId(toNeuronId),
-    aInnovationId(innovationId),
-    aWeight(weight),
-    aEnabled(enabled)
+    fromNeuronId(fromNeuronId),
+    toNeuronId(toNeuronId),
+    innovationId(innovationId),
+    weight(weight),
+    enabled(enabled)
   {}
 
   /**
@@ -51,11 +51,11 @@ class LinkGene
    */
   LinkGene(const LinkGene& linkGene)
   {
-  	aFromNeuronId = linkGene.aFromNeuronId;
-  	aToNeuronId = linkGene.aToNeuronId;
-  	aInnovationId = linkGene.aInnovationId;
-  	aWeight = linkGene.aWeight;
-    aEnabled = linkGene.aEnabled;
+  	fromNeuronId = linkGene.fromNeuronId;
+  	toNeuronId = linkGene.toNeuronId;
+  	innovationId = linkGene.innovationId;
+  	weight = linkGene.weight;
+    enabled = linkGene.enabled;
   }
 
   /**
@@ -72,91 +72,81 @@ class LinkGene
   {
     if (this != &linkGene)
     {
-      aFromNeuronId = linkGene.aFromNeuronId;
-      aToNeuronId = linkGene.aToNeuronId;
-      aInnovationId = linkGene.aInnovationId;
-      aWeight = linkGene.aWeight;
-      aEnabled = linkGene.aEnabled;
+      fromNeuronId = linkGene.fromNeuronId;
+      toNeuronId = linkGene.toNeuronId;
+      innovationId = linkGene.innovationId;
+      weight = linkGene.weight;
+      enabled = linkGene.enabled;
     }
     
     return *this;
   }
 
   /**
-   * Set aFromNeuronId.
-   *
-   * @param fromNeuronId The value to set.
+   * Set fromNeuronId.
    */
-  void FromNeuronId(int fromNeuronId) { aFromNeuronId = fromNeuronId; } 
+  void FromNeuronId(int fromNeuronId) { this->fromNeuronId = fromNeuronId; } 
 
   /**
-   * Get aFromNeuronId.
+   * Get fromNeuronId.
    */
-  int FromNeuronId() const { return aFromNeuronId; }
+  int FromNeuronId() const { return fromNeuronId; }
 
   /**
-   * Set aToNeuronId.
-   *
-   * @param toNeuronId The value to set.
+   * Set toNeuronId.
    */
-  void ToNeuronId(int toNeuronId) { aToNeuronId = toNeuronId; }
+  void ToNeuronId(int toNeuronId) { this->toNeuronId = toNeuronId; }
 
   /**
-   * Get aToNeuronId.
+   * Get toNeuronId.
    */
-  int ToNeuronId() const { return aToNeuronId; }
+  int ToNeuronId() const { return toNeuronId; }
 
   /**
-   * Set aInnovationId.
-   *
-   * @param innovationId The value to set.
+   * Set innovationId.
    */
-  void InnovationId(int innovationId) { aInnovationId = innovationId; }
+  void InnovationId(int innovationId) { this->innovationId = innovationId; }
 
   /**
-   * Get aInnovationId.
+   * Get innovationId.
    */
-  int InnovationId() const { return aInnovationId; }
+  int InnovationId() const { return innovationId; }
 
   /**
-   * Set aWeight.
-   *
-   * @param weight The value to set.
+   * Set weight.
    */
-  void Weight(double weight) { aWeight = weight; }
+  void Weight(double weight) { this->weight = weight; }
 
   /**
-   * Get aWeight.
+   * Get weight.
    */
-  double Weight() const { return aWeight; }
+  double Weight() const { return weight; }
 
   /**
-   * Set aEnabled.
-   *
-   * @param enabled The value to set.
+   * Set enabled.
    */
-  void Enabled(bool enabled) { aEnabled = enabled; }
+  void Enabled(bool enabled) { this->enabled = enabled; }
 
   /**
-   * Get aEnabled.
+   * Get enabled.
    */
-  bool Enabled() const { return aEnabled; }
+  bool Enabled() const { return enabled; }
 
  private:
-  //! The if of neuron that this link starts from.
-  int aFromNeuronId;
+  //! The id of neuron that this link starts from.
+  int fromNeuronId;
 
   //! The id of neuron that this link ends to.
-  int aToNeuronId;
+  int toNeuronId;
 
   //! Link weight.
-  double aWeight;
+  double weight;
 
   //! Link innovation ID.
-  int aInnovationId;
+  int innovationId;
 
   //! Enabled or not.
-  bool aEnabled;
+  bool enabled;
  
 };
 

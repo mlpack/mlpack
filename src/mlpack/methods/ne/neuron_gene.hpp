@@ -36,6 +36,8 @@ enum ActivationFuncType
     TANH,
     LINEAR,
     RELU,
+
+    COUNT  //  Used to count how many activation types.
 };
 
 /**
@@ -56,6 +58,7 @@ class NeuronGene
    * @param type Neuron's type: INPUT, BIAS, HIDDEN, OUTPUT.
    * @param actFuncType The type of activation function.
    * @param depth The depth of the neuron.
+   * @param coordinate The coordinate of the neuron.
    * @param input Neuron's input value.
    * @param activation Neuron's activation value.
    */
@@ -63,14 +66,16 @@ class NeuronGene
   	         NeuronType type,
   	         ActivationFuncType actFuncType,
              double depth,
+             std::vector<double> coordinate,
   	         double input,
              double activation):
-    aId(id),
-    aType(type),
-    aActFuncType(actFuncType),
-    aDepth(depth),
-    aInput(input),
-    aActivation(activation)
+    id(id),
+    type(type),
+    actFuncType(actFuncType),
+    depth(depth),
+    coordinate(coordinate),
+    input(input),
+    activation(activation)
   {}
 
   /**
@@ -80,12 +85,13 @@ class NeuronGene
    */
   NeuronGene(const NeuronGene& neuronGene)
   {
-  	aId = neuronGene.aId;
-  	aType = neuronGene.aType;
-  	aActFuncType = neuronGene.aActFuncType;
-    aDepth = neuronGene.aDepth;
-  	aInput = neuronGene.aInput;
-    aActivation = neuronGene.aActivation;
+  	id = neuronGene.id;
+  	type = neuronGene.type;
+  	actFuncType = neuronGene.actFuncType;
+    depth = neuronGene.depth;
+    coordinate = neuronGene.coordinate;
+  	input = neuronGene.input;
+    activation = neuronGene.activation;
   }
 
   /**
@@ -102,12 +108,13 @@ class NeuronGene
   {
     if (this != &neuronGene)
     {
-      aId = neuronGene.aId;
-      aType = neuronGene.aType;
-      aActFuncType = neuronGene.aActFuncType;
-      aDepth = neuronGene.aDepth;
-      aInput = neuronGene.aInput;
-      aActivation = neuronGene.aActivation;
+      id = neuronGene.id;
+      type = neuronGene.type;
+      actFuncType = neuronGene.actFuncType;
+      depth = neuronGene.depth;
+      coordinate = neuronGene.coordinate;
+      input = neuronGene.input;
+      activation = neuronGene.activation;
     }
     
     return *this;
@@ -116,107 +123,120 @@ class NeuronGene
   /**
    * Get neuron id.
    */
-  int Id() const { return aId; }
+  int Id() const { return id; }
 
   /**
    * Set neuron id.
    */
-  void Id(int id) { aId = id; }
+  void Id(int id) { this->id = id; }
 
   /**
    * Get neuron type.
    */
-  NeuronType Type() const { return aType; }
+  NeuronType Type() const { return type; }
 
   /**
    * Set neuron type.
    */
-  void Type(NeuronType type) { aType = type; }
+  void Type(NeuronType type) { this->type = type; }
 
   /**
    * Get activation function type.
    */
-  ActivationFuncType ActFuncType() const { return aActFuncType; }
+  ActivationFuncType ActFuncType() const { return actFuncType; }
 
   /**
    * Set activation function type.
    */
-  void ActFuncType(ActivationFuncType actFuncType) { aActFuncType = actFuncType; }
+  void ActFuncType(ActivationFuncType actFuncType) { this->actFuncType = actFuncType; }
 
   /**
    * Get input.
    */
-  double Input() const { return aInput; }
+  double Input() const { return input; }
 
   /**
    * Set input.
    */
-  void Input(double input) { aInput = input; }
+  void Input(double input) { this->input = input; }
 
   /**
    * Get activation.
    */
-  double Activation() const { return aActivation; }
+  double Activation() const { return activation; }
 
   /**
    * Set activation.
    */
-  void Activation(double activation) { aActivation = activation; }
+  void Activation(double activation) { this->activation = activation; }
 
   /**
    * Get neuron depth.
    */
-  double Depth() const { return aDepth; }
+  double Depth() const { return depth; }
 
   /**
    * Set neuron depth.
    */
-  void Depth(double depth) { aDepth = depth; }
+  void Depth(double depth) { this->depth = depth; }
+
+  /**
+   * Get neuron coordinates.
+   */
+  std::vector<double> Coordinate() const { return coordinate; }
+
+  /**
+   * Set neuron coordinates.
+   */
+  void Coordinate(const std::vector<double>& coordinate) { this->coordinate = coordinate; }
 
   /**
    * Calculate activation based on current input.
    */
   void CalcActivation()
   {
-    switch (aActFuncType)
+    switch (actFuncType)
     { // TODO: more cases.
       case SIGMOID:                   
-        aActivation = ann::LogisticFunction::fn(aInput);
+        activation = ann::LogisticFunction::fn(input);
         break;
       case TANH:
-        aActivation = ann::TanhFunction::fn(aInput);
+        activation = ann::TanhFunction::fn(input);
         break;
       case RELU:
-        aActivation = ann::RectifierFunction::fn(aInput);
+        activation = ann::RectifierFunction::fn(input);
         break;
       case LINEAR:
-        aActivation = aInput;
+        activation = input;
         break;
       default:
-        aActivation = ann::LogisticFunction::fn(aInput);
+        activation = ann::LogisticFunction::fn(input);
         break;
     }
   }
 
  private:
   //! Neuron id.
-  int aId;
+  int id;
 
   //! Neuron type.
-  NeuronType aType;
+  NeuronType type;
 
   //! Activation function type.
-  ActivationFuncType aActFuncType;
+  ActivationFuncType actFuncType;
 
   //! Input sum.
-  double aInput;
+  double input;
 
   //! Activation.
-  double aActivation;
+  double activation;
 
   //! Depth. INPUT and BIAS is 0, OUTPUT is 1. HIDDEN is between 0 and 1. 
   //! Calculate activate by sequence.
-  double aDepth;
+  double depth;
+
+  //! Coordinate of neuron.
+  std::vector<double> coordinate;
 
 };
 
