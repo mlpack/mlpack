@@ -467,24 +467,30 @@ class NeighborSearch
   size_t Scores() const { return scores; }
 
   //! Access whether or not search is done in naive linear scan mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode SearchMode().
   bool Naive() const { return naive; }
   //! Modify whether or not search is done in naive linear scan mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode& SearchMode().
   bool& Naive() { return naive; }
 
   //! Access whether or not search is done in single-tree mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode SearchMode().
   bool SingleMode() const { return singleMode; }
   //! Modify whether or not search is done in single-tree mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode& SearchMode().
   bool& SingleMode() { return singleMode; }
 
   //! Access whether or not search is done in greedy mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode SearchMode().
   bool Greedy() const { return greedy; }
   //! Modify whether or not search is done in greedy mode.
-  //! Deprecated. Will be removed in mlpack 3.0.0.
+  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
+  //! NeighborSearchMode& SearchMode().
   bool& Greedy() { return greedy; }
 
   //! Access the relative error to be considered in approximate search.
