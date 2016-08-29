@@ -16,8 +16,6 @@
 #include <mlpack/methods/ne/species.hpp>
 #include <mlpack/methods/ne/cne.hpp>
 #include <mlpack/methods/ne/neat.hpp>
-#include <mlpack/methods/ne/substrate.hpp>
-#include <mlpack/methods/ne/hyperneat.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -692,111 +690,6 @@ BOOST_AUTO_TEST_CASE(NENeatMountainCarTest)
 
   // Evolve. 
   neat.Evolve();
-}
-
-/**
- * Test HyperNEAT by XOR task.
- */
-BOOST_AUTO_TEST_CASE(NEHyperNeatXorTest)
-{
-  mlpack::math::RandomSeed(1);
-
-  // Set NEAT algorithm parameters.
-  Parameters params;
-  params.populationSize = 500;
-  params.maxGeneration = 500;
-  params.coeffDisjoint = 2.0;
-  params.coeffWeightDiff = 0.4;
-  params.compatThreshold = 1.0;
-  params.staleAgeThreshold = 15;
-  params.crossoverRate = 0.75;
-  params.cullSpeciesPercentage = 0.5;
-  params.mutateWeightProb = 0.2;
-  params.perturbWeightProb = 0.9;
-  params.mutateWeightSize = 0.1;
-  params.mutateAddForwardLinkProb = 0.9;
-  params.mutateAddBackwardLinkProb = 0;
-  params.mutateAddRecurrentLinkProb = 0;
-  params.mutateAddBiasLinkProb = 0;
-  params.mutateAddNeuronProb = 0.6;
-  params.mutateEnabledProb = 0.2;
-  params.mutateDisabledProb = 0.2;
-  params.numSpeciesThreshold = 10;
-  params.randomTypeNewNeuron = true;
-
-  // Set hyperNEAT substrate.
-  std::vector< std::vector<double> > coordinates = { {-1, -1},
-                                                     {0, -1},
-                                                     {1, -1},
-                                                     {0, 1},
-                                                     {0, 0} };
-  std::vector<double> depths = {0, 0, 0, 1, 0.5};
-  int numInput = 3;
-  int numOutput = 1;
-  std::vector< std::vector<int> > allowedConnectionMask = { {0, 0, 0, 1, 1},
-                                                            {0, 0, 0, 1, 1},
-                                                            {0, 0, 0, 1, 1},
-                                                            {0, 0, 0, 0, 0},
-                                                            {0, 0, 0, 1, 0} };
-  double weightThreshold = 0.0;
-
-  Substrate substrate(coordinates, depths, numInput, numOutput, 
-                      allowedConnectionMask, weightThreshold);
-
-  // Construct seed genome for xor task.
-  int id = 0;
-  numInput = 5;
-  numOutput = 1;
-  double fitness = -1;
-  std::vector<NeuronGene> neuronGenes;
-  std::vector<LinkGene> linkGenes;
-
-  NeuronGene inputGene1(0, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
-  NeuronGene inputGene2(1, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
-  NeuronGene inputGene3(2, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
-  NeuronGene inputGene4(3, INPUT, LINEAR, 0, std::vector<double>(), 0, 0);
-  NeuronGene biasGene(4, BIAS, LINEAR, 0, std::vector<double>(), 0, 0);
-  NeuronGene outputGene(5, OUTPUT, SIGMOID, 1, std::vector<double>(), 0, 0);
-  NeuronGene hiddenGene(6, HIDDEN, SIGMOID, 0.5, std::vector<double>(), 0, 0);
-
-  neuronGenes.push_back(inputGene1);
-  neuronGenes.push_back(inputGene2);
-  neuronGenes.push_back(inputGene3);
-  neuronGenes.push_back(inputGene4);
-  neuronGenes.push_back(biasGene);
-  neuronGenes.push_back(outputGene);
-  neuronGenes.push_back(hiddenGene);
-
-  LinkGene link1(0, 6, 0, 0, true);
-  LinkGene link2(1, 6, 1, 0, true);
-  LinkGene link3(2, 6, 2, 0, true);
-  LinkGene link4(3, 6, 3, 0, true);
-  LinkGene link5(4, 6, 4, 0, true);
-  LinkGene link6(6, 5, 5, 0, true);
-
-  linkGenes.push_back(link1);
-  linkGenes.push_back(link2);
-  linkGenes.push_back(link3);
-  linkGenes.push_back(link4);
-  linkGenes.push_back(link5);
-  linkGenes.push_back(link6);
-
-  Genome seedGenome = Genome(0, 
-                             neuronGenes,
-                             linkGenes,
-                             numInput,
-                             numOutput,
-                             fitness);
-
-  // Specify task type.
-  TaskXor<ann::MeanSquaredErrorFunction> task;
-
-  // Construct HyperNEAT instance.
-  HyperNEAT<TaskXor<ann::MeanSquaredErrorFunction>> hyperneat(task, substrate, seedGenome, params);
-
-  // Evolve.
-  hyperneat.Evolve();  // Judge whether XOR test passed or not by printing 
-                  // the best fitness during each generation.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -11,8 +11,6 @@ set(SOURCES
   utils.hpp
   cne.hpp
   neat.hpp
-  substrate.hpp
-  hyperneat.hpp
 )
 
 # Add directory name to sources.
