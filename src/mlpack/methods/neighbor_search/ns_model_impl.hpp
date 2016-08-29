@@ -87,7 +87,7 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
       // non overlapping (tau = 0).
       typename SpillKNN::Tree queryTree(std::move(querySet), 0 /* tau*/,
           leafSize, rho);
-      ns->Search(&queryTree, k, neighbors, distances);
+      ns->Search(queryTree, k, neighbors, distances);
     }
     else
       ns->Search(querySet, k, neighbors, distances);
@@ -109,7 +109,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
-    ns->Search(&queryTree, k, neighborsOut, distancesOut);
+    ns->Search(queryTree, k, neighborsOut, distancesOut);
 
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);

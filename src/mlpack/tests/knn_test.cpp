@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
       std::invalid_argument);
   BOOST_REQUIRE_THROW(empty.Search(5, neighbors, distances),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(empty.Search(&queryTree, 5, neighbors, distances),
+  BOOST_REQUIRE_THROW(empty.Search(queryTree, 5, neighbors, distances),
       std::invalid_argument);
 }
 

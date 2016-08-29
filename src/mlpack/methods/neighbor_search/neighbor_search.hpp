@@ -390,6 +390,9 @@ class NeighborSearch
    * number of points in the query dataset and k is the number of neighbors
    * being searched for.
    *
+   * This method is deprecated and will be removed in mlpack 3.0.0! The Search()
+   * method taking a reference to the query tree is prefered.
+   *
    * Note that if you are calling Search() multiple times with a single query
    * tree, you need to reset the bounds in the statistic of each query node,
    * otherwise the result may be wrong!  You can do this by calling
@@ -403,7 +406,33 @@ class NeighborSearch
    * @param sameSet Denotes whether or not the reference and query sets are the
    *      same.
    */
-  void Search(Tree* queryTree,
+  mlpack_deprecated void Search(Tree* queryTree,
+                                const size_t k,
+                                arma::Mat<size_t>& neighbors,
+                                arma::mat& distances,
+                                bool sameSet = false);
+
+  /**
+   * Given a pre-built query tree, search for the nearest neighbors of each
+   * point in the query tree, storing the output in the given matrices.  The
+   * matrices will be set to the size of n columns by k rows, where n is the
+   * number of points in the query dataset and k is the number of neighbors
+   * being searched for.
+   *
+   * Note that if you are calling Search() multiple times with a single query
+   * tree, you need to reset the bounds in the statistic of each query node,
+   * otherwise the result may be wrong!  You can do this by calling
+   * TreeType::Stat()::Reset() on each node in the query tree.
+   *
+   * @param queryTree Tree built on query points.
+   * @param k Number of neighbors to search for.
+   * @param neighbors Matrix storing lists of neighbors for each query point.
+   * @param distances Matrix storing distances of neighbors for each query
+   *      point.
+   * @param sameSet Denotes whether or not the reference and query sets are the
+   *      same.
+   */
+  void Search(Tree& queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances,

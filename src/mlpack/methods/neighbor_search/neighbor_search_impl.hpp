@@ -834,6 +834,25 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     arma::mat& distances,
     bool sameSet)
 {
+  Search(*queryTree, k, neighbors, distances, sameSet);
+}
+
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+DualTreeTraversalType, SingleTreeTraversalType>::Search(
+    Tree& queryTree,
+    const size_t k,
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances,
+    bool sameSet)
+{
   // Update searchMode.
   UpdateSearchMode();
 
@@ -856,7 +875,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   scores = 0;
 
   // Get a reference to the query set.
-  const MatType& querySet = queryTree->Dataset();
+  const MatType& querySet = queryTree.Dataset();
 
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
@@ -874,7 +893,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   // Create the traverser.
   DualTreeTraversalType<RuleType> traverser(rules);
-  traverser.Traverse(*queryTree, *referenceTree);
+  traverser.Traverse(queryTree, *referenceTree);
 
   scores += rules.Scores();
   baseCases += rules.BaseCases();
