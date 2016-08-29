@@ -501,24 +501,24 @@ class NeighborSearch
 
   //! Access whether or not search is done in naive linear scan mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool Naive() const { return naive; }
+  bool Naive() const { return naive; }
   //! Modify whether or not search is done in naive linear scan mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool& Naive() { return naive; }
+  bool& Naive() { return naive; }
 
   //! Access whether or not search is done in single-tree mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool SingleMode() const { return singleMode; }
+  bool SingleMode() const { return singleMode; }
   //! Modify whether or not search is done in single-tree mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool& SingleMode() { return singleMode; }
+  bool& SingleMode() { return singleMode; }
 
   //! Access whether or not search is done in greedy mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool Greedy() const { return greedy; }
+  bool Greedy() const { return greedy; }
   //! Modify whether or not search is done in greedy mode.
   //! Deprecated. Will be removed in mlpack 3.0.0.
-  mlpack_deprecated bool& Greedy() { return greedy; }
+  bool& Greedy() { return greedy; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
