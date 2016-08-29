@@ -28,6 +28,18 @@ string(REPLACE
 string(REPLACE
     "./doc/policies"
     "${CMAKE_CURRENT_SOURCE_DIR}/doc/policies"
+    DOXYFILE_CONTENTS "${DOXYFILE_AUXVAR}"
+)
+
+string(REPLACE
+    "./doc/doxygen/footer.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/footer.html"
+    DOXYFILE_AUXVAR "${DOXYFILE_CONTENTS}"
+)
+
+string(REPLACE
+    "./doc/doxygen/extra-stylesheet.css"
+    "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/extra-stylesheet.css"
     DOXYFILE_CONTENTS "${DOXYFILE_AUXVAR}")
 
 # Change the STRIP_FROM_PATH so that it works right even in the build directory;

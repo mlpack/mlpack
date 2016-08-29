@@ -135,8 +135,9 @@ GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
-HTML_FOOTER            =
+HTML_FOOTER            = ./doc/doxygen/footer.html
 HTML_STYLESHEET        =
+HTML_EXTRA_STYLESHEET  = ./doc/doxygen/extra-stylesheet.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               =
@@ -163,7 +164,7 @@ PDF_HYPERLINKS         = NO
 USE_PDFLATEX           = NO
 LATEX_BATCHMODE        = NO
 LATEX_HIDE_INDICES     = NO
-FORMULA_FONTSIZE       = 12
+FORMULA_FONTSIZE       = 50
 #---------------------------------------------------------------------------
 # configuration options related to the RTF output
 #---------------------------------------------------------------------------
