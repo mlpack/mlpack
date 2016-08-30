@@ -28,20 +28,6 @@ class DefaultObjectiveFunction
     //! Default constructor - do nothing.
     DefaultObjectiveFunction() { };
 
-    /**
-     * Parameterized constructor.
-     *
-     * @param xData Vector of x - the sizes of the reference set when performing
-     *    kNN.
-     * @param kData Vector of k - the kth nearest neighbor for which we
-     *    calculated the statistic.
-     * @param yData Matrix of y, one for each (x, k) value.
-     */
-    DefaultObjectiveFunction(const arma::Col<size_t>& xData, 
-                             const arma::Col<size_t>& kData, 
-                             const arma::mat& yData)
-      : xData(&xData), kData(&kData), yData(&yData)  { };
-
     //! Return the number of functions
     size_t NumFunctions(void) const { return yData->n_elem; }
 
@@ -86,10 +72,10 @@ class DefaultObjectiveFunction
 double DefaultObjectiveFunction::Evaluate(const arma::mat& coordinates) const
 {
   // Use extra variables to make code readable.
-  double alpha = coordinates(0, 0);
-  double beta = coordinates(1, 0);
-  double gamma = coordinates(2, 0);
-  double M = (double) NumFunctions();
+  const double alpha = coordinates(0, 0);
+  const double beta = coordinates(1, 0);
+  const double gamma = coordinates(2, 0);
+  const double M = (double) NumFunctions();
 
   // Sum the squared error for each element in yData.
   double sum = 0;
