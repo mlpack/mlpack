@@ -96,7 +96,7 @@ void BuildVanillaNetwork()
   BaseLayer2D<> baseLayer1;
   PoolingLayer<> poolingLayer1(2);
 
-  LinearMappingLayer<> linearLayer0(192, 10);
+  LinearMappingLayer<> linearLayer0(4608, 10);
   BiasLayer<> biasLayer2(10);
   SoftmaxLayer<> softmaxLayer0;
 
