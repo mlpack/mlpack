@@ -19,8 +19,6 @@
 
 #include <mlpack/core.hpp>
 
-#define DEFAULT_INT 42
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -33,7 +31,29 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-BOOST_AUTO_TEST_SUITE(CLITest);
+// When we run these tests, we have to nuke the existing CLI object that's
+// created by default.
+struct CLITestDestroyer
+{
+  CLITestDestroyer() { CLI::Destroy(); }
+};
+
+BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
+
+/**
+ * Before running a test that uses the CLI options, we have to add the default
+ * options that are required for CLI to function, since it will be destroyed at
+ * the end of every test that uses CLI in this test suite.
+ */
+void AddRequiredCLIOptions()
+{
+  CLI::Add<bool>("help", "Default help info.", "h");
+  CLI::Add<std::string>("info", "Get help on a specific module or option.", "",
+      false, true, false);
+  CLI::Add<bool>("verbose", "Display informational messages and the full list "
+      "of parameters and timers at the end of execution.", "v");
+  CLI::Add<bool>("version", "Display the version of mlpack.", "V");
+}
 
 /**
  * Tests that CLI works as intended, namely that CLI::Add propagates
@@ -41,6 +61,8 @@ BOOST_AUTO_TEST_SUITE(CLITest);
  */
 BOOST_AUTO_TEST_CASE(TestCLIAdd)
 {
+  AddRequiredCLIOptions();
+
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
   CLI::Add<bool>("global/bool", "True or False", "alias/bool");
@@ -59,6 +81,8 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
       CLI::GetDescription("alias/bool")), 0);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"),
       CLI::GetParam<bool>("alias/bool"));
+
+  CLI::Destroy();
 }
 
 /**
@@ -96,12 +120,16 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
  */
 BOOST_AUTO_TEST_CASE(TestOption)
 {
+  AddRequiredCLIOptions();
+
   // This test will involve creating an option, and making sure CLI reflects
   // this.
-  PARAM_IN(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
+  PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
 
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), DEFAULT_INT);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), 42);
+
+  CLI::Destroy();
 }
 
 /**
@@ -109,6 +137,8 @@ BOOST_AUTO_TEST_CASE(TestOption)
  */
 BOOST_AUTO_TEST_CASE(TestBooleanOption)
 {
+  AddRequiredCLIOptions();
+
   PARAM_FLAG("flag_test", "flag test description", "");
 
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), false);
@@ -132,6 +162,8 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   delete[] argv[0];
   delete[] argv[1];
+
+  CLI::Destroy();
 }
 
 /**
@@ -228,6 +260,8 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
  */
 BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 {
+  AddRequiredCLIOptions();
+
   Timer::Start("test_timer");
 
   // On Windows (or, at least, in Windows not using VS2010) we cannot use
@@ -268,20 +302,211 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
+
+  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
 {
+  AddRequiredCLIOptions();
+
   Timer::Start("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
+
+  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
 {
+  AddRequiredCLIOptions();
+
+  Timer::Start("test_timer");
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
+
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, true, false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-m";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = CLI::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = CLI::GetParam<arma::mat>("matrix");
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 1000);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Clean it up.
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is a non-transposed input parameter.
+  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, true, true);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--matrix_file";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = CLI::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = CLI::GetParam<arma::mat>("matrix");
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 1000);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
+  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 1000);
+  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 3);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Clean it up.
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an output parameter.
+  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, false, false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-m";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+  CLI::GetParam<arma::mat>("matrix") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the matrix back and make sure it was saved correctly.
+  arma::mat dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an output parameter.
+  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, false, true);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-m";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+  CLI::GetParam<arma::mat>("matrix") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the matrix back and make sure it was saved correctly.
+  arma::mat dataset2;
+  data::Load("test.csv", dataset2, true, false);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
