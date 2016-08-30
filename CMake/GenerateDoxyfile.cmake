@@ -49,5 +49,26 @@ string(REGEX REPLACE
     "\\1 ${CMAKE_CURRENT_SOURCE_DIR}/"
     DOXYFILE_AUXVAR ${DOXYFILE_CONTENTS})
 
+# Apply the MathJax option. If the option is specified, we change the NO to
+# YES. Otherwise, it's off by default, so we needn't modify anything.
+if (MATHJAX)
+  string(REGEX REPLACE
+      "(USE_MATHJAX[ ]*=) NO"
+      "\\1 YES"
+      DOXYFILE_CONTENTS ${DOXYFILE_AUXVAR})
+  # Include the path to MathJax. If we couldn't find the MathJax package,
+  # we will use MathJax at the MathJax Content Delivery Network.
+  if (MATHJAX_FOUND)
+    string(CONCAT
+        DOXYFILE_AUXVAR
+        ${DOXYFILE_CONTENTS}
+        "\nMATHJAX_RELPATH        = ${MATHJAX_PATH}")
+
+    set(DOXYFILE_CONTENTS ${DOXYFILE_AUXVAR})
+  endif()
+else ()
+  set(DOXYFILE_CONTENTS ${DOXYFILE_AUXVAR})
+endif ()
+
 # Save the Doxyfile to its new location.
-file(WRITE "${DESTDIR}/Doxyfile" "${DOXYFILE_AUXVAR}")
+file(WRITE "${DESTDIR}/Doxyfile" "${DOXYFILE_CONTENTS}")
