@@ -102,9 +102,7 @@ void BuildVanillaNetwork()
 
   OneHotLayer outputLayer;
 
-  auto modules = std::tie(convLayer0, biasLayer0, baseLayer0, poolingLayer0,
-                          convLayer1, biasLayer1, baseLayer1, poolingLayer1,
-                          linearLayer0, biasLayer2, softmaxLayer0);
+  auto modules = std::tie(convLayer0, baseLayer0, linearLayer0, softmaxLayer0);
 
   CNN<decltype(modules), decltype(outputLayer),
       RandomInitialization, MeanSquaredErrorFunction> net(modules, outputLayer);
