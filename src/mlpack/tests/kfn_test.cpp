@@ -48,28 +48,30 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   // calculation.  We'll always use 10 neighbors, so set that parameter.
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
-  TreeType* tree = new TreeType(data, oldFromNew, newFromOld, 1);
+  TreeType tree(data, oldFromNew, newFromOld, 1);
+  KFN kfn(std::move(tree));
+
   for (int i = 0; i < 3; i++)
   {
-    KFN* kfn;
-
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        kfn = new KFN(tree, DUAL_TREE_MODE);
+        kfn.Naive() = false;
+        kfn.SingleMode() = false;
         break;
       case 1: // Use the single-tree method.
-        kfn = new KFN(tree, SINGLE_TREE_MODE);
+        kfn.Naive() = false;
+        kfn.SingleMode() = true;
         break;
       case 2: // Use the naive method.
-        kfn = new KFN(tree->Dataset(), NAIVE_MODE);
+        kfn.Naive() = true;
         break;
     }
 
     // Now perform the actual calculation.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
-    kfn->Search(10, neighbors, distances);
+    kfn.Search(10, neighbors, distances);
 
     // Now the exhaustive check for correctness.  This will be long.  We must
     // also remember that the distances returned are squared distances.  As a
@@ -317,13 +319,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     BOOST_REQUIRE_CLOSE(distances(1, newFromOld[10]), 3.00, 1e-5);
     BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[10]), newFromOld[4]);
     BOOST_REQUIRE_CLOSE(distances(0, newFromOld[10]), 4.05, 1e-5);
-
-    // Clean the memory.
-    delete kfn;
   }
-
-  // We are responsible for the tree, too.
-  delete tree;
 }
 
 /**
@@ -443,7 +439,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
       FirstPointIsRoot> tree(data);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&tree, SINGLE_TREE_MODE);
+      coverTreeSearch(std::move(tree), SINGLE_TREE_MODE);
 
   KFN naive(data, NAIVE_MODE);
 
@@ -480,14 +476,14 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   typedef CoverTree<LMetric<2, true>, NeighborSearchStat<FurthestNeighborSort>,
       arma::mat, FirstPointIsRoot> TreeType;
 
-  TreeType referenceTree = TreeType(dataset);
+  TreeType referenceTree(dataset);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2, true>, arma::mat,
-      StandardCoverTree> coverTreeSearch(&referenceTree);
+      StandardCoverTree> coverTreeSearch(std::move(referenceTree));
 
   arma::Mat<size_t> coverNeighbors;
   arma::mat coverDistances;
-  coverTreeSearch.Search(&referenceTree, 5, coverNeighbors, coverDistances);
+  coverTreeSearch.Search(dataset, 5, coverNeighbors, coverDistances);
 
   for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
   {
@@ -511,13 +507,13 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
       arma::mat> TreeType;
   TreeType tree(data);
 
+  KFN naive(tree.Dataset(), NAIVE_MODE);
+
   // BinarySpaceTree modifies data. Use modified data to maintain the
   // correspondence between points in the dataset for both methods. The order of
   // query points in both methods should be same.
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, BallTree>
-      ballTreeSearch(&tree, SINGLE_TREE_MODE);
-
-  KFN naive(tree.Dataset(), NAIVE_MODE);
+      ballTreeSearch(std::move(tree), SINGLE_TREE_MODE);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;

@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(&tree, SINGLE_TREE_MODE);
+      RTree> knn1(std::move(tree), SINGLE_TREE_MODE);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(&tree, SINGLE_TREE_MODE);
+      RTree> knn1(std::move(tree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -535,16 +535,16 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
       arma::mat> TreeType;
   TreeType rTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RStarTree> knn1(&rTree, SINGLE_TREE_MODE);
-
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
   CheckContainment(rTree);
   CheckExactContainment(rTree);
   CheckHierarchy(rTree);
   CheckNumDescendants(rTree);
+
+  // Nearest neighbor search with the R tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RStarTree> knn1(std::move(rTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -578,16 +578,16 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
       arma::mat> TreeType;
   TreeType xTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the X tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      XTree> knn1(&xTree, SINGLE_TREE_MODE);
-
   BOOST_REQUIRE_EQUAL(xTree.NumDescendants(), numP);
 
   CheckContainment(xTree);
   CheckExactContainment(xTree);
   CheckHierarchy(xTree);
   CheckNumDescendants(xTree);
+
+  // Nearest neighbor search with the X tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      XTree> knn1(std::move(xTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -619,16 +619,16 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
       NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
   TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the Hilbert R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      HilbertRTree> knn1(&hilbertRTree, SINGLE_TREE_MODE);
-
   BOOST_REQUIRE_EQUAL(hilbertRTree.NumDescendants(), numP);
 
   CheckContainment(hilbertRTree);
   CheckExactContainment(hilbertRTree);
   CheckHierarchy(hilbertRTree);
   CheckNumDescendants(hilbertRTree);
+
+  // Nearest neighbor search with the Hilbert R tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      HilbertRTree> knn1(std::move(hilbertRTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -1008,11 +1008,6 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
       arma::mat > TreeType;
   TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the R+ tree.
-
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RPlusTree > knn1(&rPlusTree, SINGLE_TREE_MODE);
-
   BOOST_REQUIRE_EQUAL(rPlusTree.NumDescendants(), numP);
 
   CheckContainment(rPlusTree);
@@ -1020,6 +1015,10 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
   CheckHierarchy(rPlusTree);
   CheckOverlap(rPlusTree);
   CheckNumDescendants(rPlusTree);
+
+  // Nearest neighbor search with the R+ tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RPlusTree > knn1(std::move(rPlusTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -1139,11 +1138,6 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
       NeighborSearchStat<NearestNeighborSort>, arma::mat > TreeType;
   TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
 
-  // Nearest neighbor search with the R++ tree.
-
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      arma::mat, RPlusPlusTree > knn1(&rPlusPlusTree, SINGLE_TREE_MODE);
-
   BOOST_REQUIRE_EQUAL(rPlusPlusTree.NumDescendants(), numP);
 
   CheckContainment(rPlusPlusTree);
@@ -1151,6 +1145,11 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
   CheckHierarchy(rPlusPlusTree);
   CheckRPlusPlusTreeBound(rPlusPlusTree);
   CheckNumDescendants(rPlusPlusTree);
+
+  // Nearest neighbor search with the R++ tree.
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+      arma::mat, RPlusPlusTree > knn1(std::move(rPlusPlusTree),
+      SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

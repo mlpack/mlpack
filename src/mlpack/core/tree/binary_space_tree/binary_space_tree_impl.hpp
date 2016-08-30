@@ -407,6 +407,12 @@ BinarySpaceTree(BinarySpaceTree&& other) :
   other.furthestDescendantDistance = 0.0;
   other.minimumBoundDistance = 0.0;
   other.dataset = NULL;
+
+  //Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
 }
 
 /**

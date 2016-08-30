@@ -79,6 +79,11 @@ class TreeTraits
   static const bool HasOverlappingChildren = true;
 
   /**
+   * This is true if a point can be included in more than one node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * This is true if the first point of each node is the centroid of its bound.
    */
   static const bool FirstPointIsCentroid = false;

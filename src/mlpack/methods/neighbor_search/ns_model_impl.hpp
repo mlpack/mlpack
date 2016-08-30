@@ -87,7 +87,7 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
       // non overlapping (tau = 0).
       typename SpillKNN::Tree queryTree(std::move(querySet), 0 /* tau*/,
           leafSize, rho);
-      ns->Search(&queryTree, k, neighbors, distances);
+      ns->Search(queryTree, k, neighbors, distances);
     }
     else
       ns->Search(querySet, k, neighbors, distances);
@@ -109,7 +109,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
-    ns->Search(&queryTree, k, neighborsOut, distancesOut);
+    ns->Search(queryTree, k, neighborsOut, distancesOut);
 
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
@@ -176,11 +176,8 @@ void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
       ns->Train(std::move(referenceSet));
     else
     {
-      typename SpillKNN::Tree* tree = new typename SpillKNN::Tree(
-          std::move(referenceSet), tau, leafSize, rho);
-      ns->Train(tree);
-      // Give the model ownership of the tree.
-      ns->treeOwner = true;
+      typename SpillKNN::Tree tree(std::move(referenceSet), tau, leafSize, rho);
+      ns->Train(std::move(tree));
     }
   }
   else
@@ -197,13 +194,10 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   else
   {
     std::vector<size_t> oldFromNewReferences;
-    typename NSType::Tree* tree =
-        new typename NSType::Tree(std::move(referenceSet),
+    typename NSType::Tree referenceTree(std::move(referenceSet),
         oldFromNewReferences, leafSize);
-    ns->Train(tree);
-
-    // Give the model ownership of the tree and the mappings.
-    ns->treeOwner = true;
+    ns->Train(std::move(referenceTree));
+    // Set the mappings.
     ns->oldFromNewReferences = std::move(oldFromNewReferences);
   }
 }

@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
       arma::mat> tree(dataset);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(&tree, SINGLE_TREE_MODE, 0.05);
+      coverTreeSearch(std::move(tree), SINGLE_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -173,16 +173,12 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat distancesExact;
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
-  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> referenceTree(dataset);
-
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> coverTreeSearch(&referenceTree, DUAL_TREE_MODE, 0.05);
+      StandardCoverTree> coverTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
-  coverTreeSearch.Search(&referenceTree, 15, neighborsCoverTree,
-      distancesCoverTree);
+  coverTreeSearch.Search(dataset, 15, neighborsCoverTree, distancesCoverTree);
 
   for (size_t i = 0; i < neighborsCoverTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
@@ -272,7 +268,7 @@ BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
       referenceTree(dataset, maxDist * 1.01 /* tau parameter */);
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, SPTree>
-      spTreeSearch(&referenceTree, SINGLE_TREE_MODE, 0.05);
+      spTreeSearch(std::move(referenceTree), SINGLE_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsSPTree;
   arma::mat distancesSPTree;
