@@ -78,9 +78,9 @@ void PrefixedOutStream::BaseLogic(const T& val)
       {
         destination << line.substr(pos, nl - pos);
         destination << std::endl;
-        newlined = true;
       }
 
+      newlined = true; // Ensure this is set for the fatal exception if needed.
       carriageReturned = true; // Regardless of whether or not we display it.
 
       pos = nl + 1;
@@ -97,7 +97,8 @@ void PrefixedOutStream::BaseLogic(const T& val)
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
   {
-    std::cout << std::endl;
+    if (!ignoreInput)
+      std::cout << std::endl;
 
     // Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
@@ -112,8 +113,11 @@ void PrefixedOutStream::BaseLogic(const T& val)
       {
         PrefixIfNeeded();
 
-        destination << btLine.substr(pos, nl - pos);
-        destination << std::endl;
+        if (!ignoreInput)
+        {
+          destination << btLine.substr(pos, nl - pos);
+          destination << std::endl;
+        }
 
         carriageReturned = true; // Regardless of whether or not we display it.
 

@@ -112,7 +112,7 @@ class PrefixedOutStream
   template<typename T>
   PrefixedOutStream& operator<<(const T& s);
 
-  //! The output stream that all data is to be sent too; example: std::cout.
+  //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& destination;
 
   //! Discards input, prints nothing if true.
