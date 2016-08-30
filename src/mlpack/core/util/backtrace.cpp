@@ -173,7 +173,7 @@ std::string Backtrace::ToString()
   std::ostringstream lineOss;
   std::ostringstream it;
 
-  if(stack.size() <= 0)
+  if (stack.size() <= 0)
   {
     stackStr = "Cannot give backtrace because program was compiled";
     stackStr += " without: -g -rdynamic\nFor a backtrace,";
