@@ -84,6 +84,21 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
     for (size_t j = i + 1; j < numSamples; ++j)
       distances(d++) = metric::EuclideanDistance::Evaluate(
           sampleSet.unsafe_col(i), sampleSet.unsafe_col(j));
+  
+  // We need to take the logarithm of these distances, so replace the 0s with
+  // very small values.
+  // Find smallest value
+  double smallest = DBL_MAX;
+  for (size_t i = 0; i < d; ++i)
+    if (distances(i) < smallest && distances(i) > 0)
+      smallest = distances(i);
+
+  // Replace 0s with fraction of smallest value.
+  for (size_t i = 0; i < d; ++i)
+    if (distances(i) == 0)
+      distances(i) = 1e-5 * smallest;
+
+
   Log::Info << "Computed " << d << " pointwise distances." << std::endl;
   Timer::Stop("pairwise_distances");
 
@@ -112,6 +127,8 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
   // Compute one of each for each k.
   size_t regressionExamples = size_t(
       std::round((1.0 - anchorsSample) / anchorsSample));
+
+  // store statistics for the distances.
   arma::mat Ek(regressionExamples, k);
   arma::mat Gk(regressionExamples, k);
 
@@ -138,18 +155,19 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
     KNN naive(refMat, true); // true: train and use naive kNN.
     naive.Search(queryMat, k, neighbors, kNNDistances);
 
-    // If identical points are found, disregard their distance to avoid log(0).
-    kNNDistances = kNNDistances.cols(arma::find(kNNDistances > 0));
+    // Replace 0s again.
+    for (size_t c = 0; c < kNNDistances.n_cols; ++c)
+      for (size_t r = 0; r < kNNDistances.n_rows; ++r)
+        if (kNNDistances(r, c) == 0)
+          kNNDistances(r, c) = 1e-5 * smallest;
 
     // Store the squared distances (what we need).
     kNNDistances = arma::pow(kNNDistances, 2);
 
     // Compute Arithmetic and Geometric mean of the distances.
-    Ek.row(i) = arma::mean(kNNDistances.t());
-    Gk.row(i) = arma::exp(arma::mean(arma::log(kNNDistances.t()), 0));
+    Ek.row(i) = arma::mean(kNNDistances, 1).t();
+    Gk.row(i) = arma::exp(arma::mean(arma::log(kNNDistances), 1)).t();
   }
-  cout << Ek << endl;
-  cout << Gk << endl;
   Log::Info.ignoreInput = false; // Keep giving normal output.
 
   // Step 5. Model the arithmetic and geometric mean according to the paper.
@@ -199,8 +217,9 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
   meanVec(0) = this->meanDist;
   logMeanVec(0) = this->logMeanDist;
   meanLogVec(0) = this->meanLogDist;
-  // Train gamma and put in gammaDists[0].
 
+  // Use the trained predictors (Step 5) to predict arithmetic and geometric
+  // means for each k value.
   Timer::Start("fitting_distributions");
   for (size_t i = 1; i <= k; ++i)
   {
@@ -211,13 +230,13 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Predict(const size_t datasetSize,
     // log(geometricMean) = \frac{1}{n} \sum(lnx_i) = mean(lnx) = meanLog
     meanLogVec(i) = std::log(gMeanPredictor.Predict(datasetSize, k));
   }
-  // Fit the distribution.
+  // Fit the distribution using the estimated and computed statistics.
   distancesDistribution.Train(logMeanVec, meanLogVec, meanVec);
   Timer::Stop("fitting_distributions");
 
   // Step 7. Generate the Template Probing Sequence using the maximum number of
-  // projections and the maximum number of probes. +1 because 0 additional
-  // probes means 1 probe total.
+  // projections and the maximum number of probes.
+  // +1 because 0 additional probes means 1 probe total.
   GenerateTemplateSequence(numProj, numProbes + 1);
 
   // Step 8. Use formulas (19) and (20) from the paper to predict recall and
