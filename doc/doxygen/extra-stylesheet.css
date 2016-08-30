@@ -1,0 +1,7 @@
+/* Additional CSS styles for the html output */
+
+/* Fix the size of inline formulas */
+img.formulaInl {
+  vertical-align: middle;
+  height: 15pt;
+}
