@@ -149,8 +149,6 @@ void CLI::Add(const std::string& identifier,
     GetSingleton().inputOptions.push_front(identifier);
   else
     GetSingleton().outputOptions.push_front(identifier);
-
-  return;
 }
 
 /**
@@ -188,12 +186,13 @@ void CLI::Add<arma::mat>(const std::string& identifier,
   amap_t& amap = GetSingleton().aliasValues;
 
   // If found in current map, print fatal error and terminate the program.
-  if (gmap.count(identifier))
-    outstr << "Parameter --" << cliName << "(-" << alias << ") "
-           << "is defined multiple times with same identifiers." << std::endl;
+  if (gmap.count(cliName))
+    outstr << "Parameter --" << cliName << " (-" << alias << ") "
+           << "is defined multiple times with the same identifiers."
+           << std::endl;
   if (amap.count(alias))
-    outstr << "Parameter --" << cliName << "(-" << alias << ") "
-           << "is defined multiple times with same alias." << std::endl;
+    outstr << "Parameter --" << cliName << " (-" << alias << ") "
+           << "is defined multiple times the with same alias." << std::endl;
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
@@ -216,7 +215,7 @@ void CLI::Add<arma::mat>(const std::string& identifier,
   data.wasPassed = false;
   data.noTranspose = noTranspose;
 
-  gmap[identifier] = data;
+  gmap[cliName] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
@@ -375,6 +374,33 @@ bool& CLI::GetParam<bool>(const std::string& key)
   if (amap.count(key))
     usedKey = amap[key];
 
+  // Is this a matrix parameter?  If so, we need to map the name.
+  const std::map<std::string, arma::mat>& mat = GetSingleton().matrices;
+  std::map<std::string, arma::mat>::const_iterator it = mat.begin();
+  while (it != mat.end())
+  {
+    // Check if the parameter name with _file appended exists.  If so, we'll use
+    // that key, since the user will specify the _file option on the command
+    // line.
+    if ((*it).first == key)
+    {
+      usedKey = key + "_file";
+      break;
+    }
+
+    // Otherwise, we should check if the user passed in a "_file" parameter
+    // name, and if so, we should ensure that the check fails.
+    if (key.size() > 5 &&
+        key.substr(key.size() - 5, 5) == "_file" &&
+        key.substr(0, key.size() - 5) == (*it).first)
+    {
+      Log::Fatal << "Parameter '--" << key << "' does not exist in this "
+          << "program." << std::endl;
+    }
+
+    ++it;
+  }
+
   // Does the parameter exist at all?
   int isInGmap = gmap.count(usedKey);
 
@@ -421,7 +447,7 @@ arma::mat& CLI::GetParam<arma::mat>(const std::string& key)
   {
     // We may need to load the matrix first.
     if (GetSingleton().matrices[matrixName].n_elem == 0 &&
-        CLI::HasParam(fullName))
+        CLI::HasParam(matrixName))
     {
       const std::string filename = CLI::GetParam<std::string>(fullName);
       data::Load(filename, GetSingleton().matrices[matrixName], true,
@@ -614,7 +640,7 @@ void CLI::SaveMatrices()
     if (output)
     {
       // Save the matrix, if it is not empty and if the user wants it saved.
-      if (it->second.n_elem > 0 && CLI::HasParam(fullName))
+      if (it->second.n_elem > 0 && CLI::HasParam(matName))
       {
         const std::string filename = CLI::GetParam<std::string>(fullName);
         // Failures to save are nonfatal.

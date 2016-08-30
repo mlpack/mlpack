@@ -237,7 +237,7 @@ class CLI
   /**
    * Adds a flag parameter to the hierarchy; use PARAM_FLAG() instead of this.
    *
-   * @param identifier The name of the paramater.
+   * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    */
