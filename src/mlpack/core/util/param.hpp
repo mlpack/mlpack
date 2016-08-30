@@ -219,14 +219,8 @@
 /**
  * Define a matrix input parameter.
  */
-//#define PARAM_MATRIX_IN(ID, DESC, ALIAS, TRANSPOSE) \
-//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, false, TRANPOSE, true)
-
 #define PARAM_MATRIX_IN(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, true, true)
-
-//#define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS, TRANSPOSE) \
-//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, true, TRANSPOSE, true)
 
 #define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, true, true, true)
@@ -234,9 +228,6 @@
 /**
  * Define a matrix output parameter.
  */
-//#define PARAM_MATRIX_OUT(ID, DESC, ALIAS, TRANSPOSE) \
-//    PARAM_MATRIX(arma::mat, ID, DESC, ALIAS, false, TRANSPOSE, false)
-
 #define PARAM_MATRIX_OUT(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
 
@@ -421,7 +412,7 @@
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(cli_option_dummy_matrix_, __COUNTER__) \
-      (ID, DESC, ALIAS, REQ, IN, TRANS);
+      (ID, DESC, ALIAS, REQ, IN, !TRANS);
 
   /** @cond Don't document internal macros. */
   #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
@@ -447,7 +438,7 @@
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
-      (ID, DESC, ALIAS, REQ, IN, TRANS);
+      (ID, DESC, ALIAS, REQ, IN, !TRANS);
 
   /** @cond Don't document internal macros. */
   #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
