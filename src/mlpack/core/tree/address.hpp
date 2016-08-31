@@ -27,9 +27,7 @@
 #define MLPACK_CORE_TREE_ADDRESS_HPP
 
 namespace mlpack {
-
 namespace bound {
-
 namespace addr {
 
 /**
@@ -230,8 +228,8 @@ template<typename AddressType1, typename AddressType2>
 int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 {
   static_assert(std::is_same<typename AddressType1::elem_type,
-      typename AddressType2::elem_type>::value == true, "We aren't able to "
-      "compare adresses of distinct types");
+      typename AddressType2::elem_type>::value == true, "Can't compare "
+      "addresses of distinct types");
 
   assert(addr1.n_elem == addr2.n_elem);
 
@@ -258,9 +256,7 @@ bool Contains(const AddressType1& address, const AddressType2& loBound,
 }
 
 } // namespace addr
-
 } // namespace bound
-
 } // namespave mlpack
 
 #endif // MLPACK_CORE_TREE_ADDRESS_HPP

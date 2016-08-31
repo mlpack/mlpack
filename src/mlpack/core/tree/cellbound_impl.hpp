@@ -197,11 +197,10 @@ void CellBound<MetricType, ElemType>::AddBound(
     if (k < dim)
       continue; // The point is not contained in the hyperrectangle.
 
-    // Srink the bound.
+    // Shrink the bound.
     for (k = 0; k < dim; k++)
     {
       loBound(k, numBounds) = std::min(loBound(k, numBounds), data(k, i));
-
       hiBound(k, numBounds) = std::max(hiBound(k, numBounds), data(k, i));
     }
   }
