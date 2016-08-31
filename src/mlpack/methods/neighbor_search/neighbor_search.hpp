@@ -265,7 +265,7 @@ class NeighborSearch
    * Deprecated. Will be removed in mlpack 3.0.0.
    *
    * This method won't take ownership of the given tree. There is no copying of
-   * the data matrices in this constructor (because  tree-building is not
+   * the data matrices in this constructor (because tree-building is not
    * necessary), so this is the constructor to use when copies absolutely must
    * be avoided.
    *
@@ -336,7 +336,7 @@ class NeighborSearch
    * Set the reference tree to a new reference tree.
    *
    * This method is deprecated and will be removed in mlpack 3.0.0! Train()
-   * methods taking a reference to the reference tree are prefered.
+   * methods taking a reference to the reference tree are preferred.
    *
    * @param referenceTree Pre-built tree for reference points.
    */
@@ -391,7 +391,7 @@ class NeighborSearch
    * being searched for.
    *
    * This method is deprecated and will be removed in mlpack 3.0.0! The Search()
-   * method taking a reference to the query tree is prefered.
+   * method taking a reference to the query tree is preferred.
    *
    * Note that if you are calling Search() multiple times with a single query
    * tree, you need to reset the bounds in the statistic of each query node,
