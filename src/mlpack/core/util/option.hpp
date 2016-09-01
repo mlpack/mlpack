@@ -50,9 +50,8 @@ class Option
          const bool input = true,
          const bool noTranspose = false)
   {
-    CLI::Add<N>(identifier, description, alias[0], required, input,
-        noTranspose);
-    CLI::GetParam<N>(identifier) = defaultValue;
+    CLI::Add<N>(defaultValue, identifier, description, alias[0], required,
+        input, noTranspose);
   }
 };
 

@@ -35,7 +35,8 @@ namespace mlpack {
  *     matrix will not be transposed when it is loaded.
  */
 template<typename T>
-void CLI::Add(const std::string& identifier,
+void CLI::Add(const T& defaultValue,
+              const std::string& identifier,
               const std::string& description,
               const char alias,
               const bool required,
@@ -88,9 +89,19 @@ void CLI::Add(const std::string& identifier,
   data.required = required;
   data.input = input;
   data.loaded = false;
-  data.value = boost::any(tmp);
   data.boostName = util::MapParameterName<T>(identifier);
-  data.mappedValue = boost::any(mappedTmp);
+
+  // Apply default value.
+  if (std::is_same<T, typename util::ParameterType<T>::type>::value)
+  {
+    data.value = boost::any(defaultValue);
+    data.mappedValue = boost::any(mappedTmp);
+  }
+  else
+  {
+    data.value = boost::any(tmp);
+    data.mappedValue = boost::any(defaultValue);
+  }
 
   // Sanity check: ensure that the boost name is not already in use.
   std::map<std::string, util::ParamData>::const_iterator it =
@@ -223,7 +234,6 @@ T& util::HandleParameter(
 
   return matrix;
 }
-
 
 } // namespace mlpack
 

@@ -278,7 +278,8 @@ class CLI
    *      matrix will not be transposed on loading.
    */
   template<class T>
-  static void Add(const std::string& identifier,
+  static void Add(const T& defaultValue,
+                  const std::string& identifier,
                   const std::string& description,
                   const char alias = '\0',
                   const bool required = false,
