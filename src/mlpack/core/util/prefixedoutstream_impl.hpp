@@ -102,7 +102,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
 
     // Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
-    if (fatal)
+    if (fatal && !ignoreInput)
     {
       size_t nl;
       size_t pos = 0;
