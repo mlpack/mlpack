@@ -42,73 +42,89 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI()
 {
-  // Save any output matrices.
-  std::list<std::string>::const_iterator it = outputOptions.begin();
-  while (it != outputOptions.end())
+  // We only need to print output parameters if we're not printing any help or
+  // anything like that.
+  if (!HasParam("help") && !HasParam("info"))
   {
-    ParamData& d = parameters[*it];
-
-    // It seems there is not a better way to do this, unfortunately.
-    if (d.tname == TYPENAME(arma::mat))
+    // Save any output matrices.
+    std::list<std::string>::const_iterator it = outputOptions.begin();
+    while (it != outputOptions.end())
     {
-      arma::mat& output = *boost::any_cast<arma::mat>(&d.mappedValue);
-      const std::string& filename = *boost::any_cast<std::string>(&d.value);
+      ParamData& d = parameters[*it];
 
-      if (output.n_elem > 0 && filename != "")
-        data::Save(filename, output, false, !d.noTranspose);
-    }
-    else if (d.tname == TYPENAME(arma::Mat<size_t>))
-    {
-      arma::Mat<size_t>& output =
-          *boost::any_cast<arma::Mat<size_t>>(&d.mappedValue);
-      const std::string& filename = *boost::any_cast<std::string>(&d.value);
-
-      if (output.n_elem > 0 && filename != "")
-        data::Save(filename, output, false, !d.noTranspose);
-    }
-
-    ++it;
-  }
-
-  // Now print any output options.
-  it = outputOptions.begin();
-  while (it != outputOptions.end())
-  {
-    ParamData& d = parameters[*it];
-
-    if (d.tname != TYPENAME(arma::mat) &&
-        d.tname != TYPENAME(arma::Mat<size_t>))
-    {
-      // Reverse compatibility; should be removed for mlpack 3.0.0.  Don't
-      // print some options that have only been kept for reverse compatibility.
-      if (d.name == "output_predictions" ||
-          d.name == "output_ic" ||
-          d.name == "output_unmixing")
-        continue;
-
-      // Now, we must print it, so figure out what the type is.
-      if (d.tname == TYPENAME(std::string))
+      // It seems there is not a better way to do this, unfortunately.
+      if (d.tname == TYPENAME(arma::mat))
       {
-        std::string value = GetParam<std::string>(d.name);
-        std::cout << d.name << ": " << value << std::endl;
+        arma::mat& output = *boost::any_cast<arma::mat>(&d.mappedValue);
+        const std::string& filename = *boost::any_cast<std::string>(&d.value);
+
+        if (output.n_elem > 0 && filename != "")
+          data::Save(filename, output, false, !d.noTranspose);
       }
-      else if (d.tname == TYPENAME(int))
+      else if (d.tname == TYPENAME(arma::Mat<size_t>))
       {
-        int value = GetParam<int>(d.name);
-        std::cout << d.name << ": " << value << std::endl;
+        arma::Mat<size_t>& output =
+            *boost::any_cast<arma::Mat<size_t>>(&d.mappedValue);
+        const std::string& filename = *boost::any_cast<std::string>(&d.value);
+
+        if (output.n_elem > 0 && filename != "")
+          data::Save(filename, output, false, !d.noTranspose);
       }
-      else if (d.tname == TYPENAME(double))
-      {
-        double value = GetParam<double>(d.name);
-        std::cout << d.name << ": " << value << std::endl;
-      }
-      else
-      {
-        std::cout << d.name << ": unknown data type" << std::endl;
-      }
+
+      ++it;
     }
 
-    ++it;
+    // Now print any output options.
+    it = outputOptions.begin();
+    while (it != outputOptions.end())
+    {
+      ParamData& d = parameters[*it];
+
+      if (d.tname != TYPENAME(arma::mat) &&
+          d.tname != TYPENAME(arma::Mat<size_t>))
+      {
+        // Reverse compatibility; should be removed for mlpack 3.0.0.  Don't
+        // print some options that have only been kept for reverse
+        // compatibility.
+        if (d.name == "output_predictions" ||
+            d.name == "output_ic" ||
+            d.name == "output_unmixing")
+        {
+          ++it;
+          continue;
+        }
+
+        // Don't print any output options with "_file" in the name.
+        if (d.name.substr(d.name.length() - 5, 5) == "_file")
+        {
+          ++it;
+          continue;
+        }
+
+        // Now, we must print it, so figure out what the type is.
+        if (d.tname == TYPENAME(std::string))
+        {
+          std::string value = GetParam<std::string>(d.name);
+          std::cout << d.name << ": " << value << std::endl;
+        }
+        else if (d.tname == TYPENAME(int))
+        {
+          int value = GetParam<int>(d.name);
+          std::cout << d.name << ": " << value << std::endl;
+        }
+        else if (d.tname == TYPENAME(double))
+        {
+          double value = GetParam<double>(d.name);
+          std::cout << d.name << ": " << value << std::endl;
+        }
+        else
+        {
+          std::cout << d.name << ": unknown data type" << std::endl;
+        }
+      }
+
+      ++it;
+    }
   }
 
   // Terminate the program timers.
@@ -166,6 +182,13 @@ CLI::~CLI()
         double value = GetParam<double>(key);
         Log::Info << value;
       }
+      else if (data.tname == TYPENAME(arma::mat) ||
+               data.tname == TYPENAME(arma::Mat<size_t>))
+      {
+        // For matrix parameters, print the name of the file.
+        std::string value = *boost::any_cast<std::string>(&data.value);
+        Log::Info << value;
+      }
       else
       {
         // We don't know how to print this.
@@ -173,6 +196,7 @@ CLI::~CLI()
       }
 
       Log::Info << std::endl;
+      ++iter;
     }
     Log::Info << std::endl;
 
@@ -192,8 +216,6 @@ CLI::~CLI()
   // may not have wanted it there (i.e. in Boost unit tests).
   if (didParse)
     Log::Debug << "Compiled with debugging symbols." << std::endl;
-
-  return;
 }
 
 /**
