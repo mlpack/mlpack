@@ -48,7 +48,7 @@
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
-    PARAM_FLAG_INTERNAL(ID, DESC, ALIAS);
+    PARAM_IN(bool, ID, DESC, ALIAS, false, false);
 
 /**
  * Define an integer input parameter.
@@ -402,49 +402,37 @@
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_in_, __COUNTER__) \
-      (false, DEF, ID, DESC, ALIAS, REQ, true);
+      (DEF, ID, DESC, ALIAS, REQ, true, false);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_out_, __COUNTER__) \
-      (false, DEF, ID, DESC, ALIAS, REQ, false);
+      (DEF, ID, DESC, ALIAS, REQ, false, false);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(cli_option_dummy_matrix_, __COUNTER__) \
-      (ID, DESC, ALIAS, REQ, IN, !TRANS);
-
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(cli_option_flag_object_, __COUNTER__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
 #else
-  // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
+  // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
-      (false, DEF, ID, DESC, ALIAS, REQ, true);
+      (DEF, ID, DESC, ALIAS, REQ, true, false);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
-      (false, DEF, ID, DESC, ALIAS, REQ, false);
+      (DEF, ID, DESC, ALIAS, REQ, false, false);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
-      (ID, DESC, ALIAS, REQ, IN, !TRANS);
-
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(cli_option_flag_object_, __LINE__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
 #endif
 
