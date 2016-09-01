@@ -47,12 +47,11 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
  */
 void AddRequiredCLIOptions()
 {
-  CLI::Add<bool>("help", "Default help info.", "h");
-  CLI::Add<std::string>("info", "Get help on a specific module or option.", "",
-      false, true, false);
+  CLI::Add<bool>("help", "Default help info.", 'h');
+  CLI::Add<std::string>("info", "Get help on a specific module or option.");
   CLI::Add<bool>("verbose", "Display informational messages and the full list "
-      "of parameters and timers at the end of execution.", "v");
-  CLI::Add<bool>("version", "Display the version of mlpack.", "V");
+      "of parameters and timers at the end of execution.", 'v');
+  CLI::Add<bool>("version", "Display the version of mlpack.", 'V');
 }
 
 /**
@@ -65,22 +64,16 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
 
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLI::Add<bool>("global/bool", "True or False", "alias/bool");
+  CLI::Add<bool>("global/bool", "True or False", 'a');
 
   // CLI::HasParam should return false here.
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
 
-  // Check the description of our variable.
-  BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
-      std::string("True or False")) , 0);
-
   // Check that our aliasing works.
   BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"),
-      CLI::HasParam("alias/bool"));
-  BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
-      CLI::GetDescription("alias/bool")), 0);
+      CLI::HasParam("a"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"),
-      CLI::GetParam<bool>("alias/bool"));
+      CLI::GetParam<bool>("a"));
 
   CLI::Destroy();
 }
@@ -126,7 +119,6 @@ BOOST_AUTO_TEST_CASE(TestOption)
   // this.
   PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
 
-  BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), 42);
 
   CLI::Destroy();
@@ -142,9 +134,6 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
   PARAM_FLAG("flag_test", "flag test description", "");
 
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), false);
-
-  BOOST_REQUIRE_EQUAL(CLI::GetDescription("flag_test"),
-      "flag test description");
 
   // Now check that CLI reflects that it is false by default.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), false);
@@ -334,7 +323,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an input parameter; it won't be transposed.
-  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, true, false);
+  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, true, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -377,7 +366,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is a non-transposed input parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, true, true);
+  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, true, true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -418,7 +407,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, false, false);
+  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -466,7 +455,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", "m", false, false, true);
+  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, false, true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -507,6 +496,102 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   // Remove the file.
   remove("test.csv");
   CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(IntParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<int>("int", "Test int", 'i', false, true, false);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-i";
+  argv[2] = "3";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  BOOST_REQUIRE(CLI::HasParam("int"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("int"), 3);
+
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(StringParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<std::string>("string", "Test string", 's', false, true, false);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--string";
+  argv[2] = "3";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  BOOST_REQUIRE(CLI::HasParam("string"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<std::string>("string"), std::string("3"));
+
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(DoubleParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<double>("double", "Test double", 'd', false, true, false);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--double";
+  argv[2] = "3.12";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  BOOST_REQUIRE(CLI::HasParam("double"));
+  BOOST_REQUIRE_CLOSE(CLI::GetParam<double>("double"), 3.12, 1e-10);
+
+  CLI::Destroy();
+}
+
+BOOST_AUTO_TEST_CASE(RequiredOptionTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<double>("double", "Required test double", 'd', true, true, false);
+
+  const char* argv[1];
+  argv[0] = "./test";
+
+  int argc = 1;
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+BOOST_AUTO_TEST_CASE(UnknownOptionTest)
+{
+  AddRequiredCLIOptions();
+
+  const char* argv[2];
+  argv[0] = "./test";
+  argv[1] = "--unknown";
+
+  int argc = 2;
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
