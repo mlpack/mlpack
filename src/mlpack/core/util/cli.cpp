@@ -187,6 +187,8 @@ CLI::~CLI()
       {
         // For matrix parameters, print the name of the file.
         std::string value = *boost::any_cast<std::string>(&data.value);
+        if (value == "")
+          Log::Info << "\"\"";
         Log::Info << value;
       }
       else
