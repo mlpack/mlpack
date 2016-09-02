@@ -303,6 +303,19 @@ class CLI
   static T& GetParam(const std::string& identifier);
 
   /**
+   * Get the unmapped (i.e. what the user specifies on the command-line) value
+   * of type ParameterType<T>::value found while parsing.  You cans et the value
+   * using this reference safely.  You should not need to use this function
+   * unless you are doing something tricky (like getting the filename a user
+   * specified for a matrix parameter or something).
+   *
+   * @param identifier The name of the parameter in question.
+   */
+  template<typename T>
+  static typename util::ParameterType<T>::type& GetUnmappedParam(
+      const std::string& identifier);
+
+  /**
    * Retrieve the singleton.
    *
    * Not exposed to the outside, so as to spare users some ungainly

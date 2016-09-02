@@ -148,7 +148,7 @@ CLI::~CLI()
     // Print out all the values.
     while (iter != parameters.end())
     {
-      std::string key = iter->first;
+      std::string key = iter->second.boostName;
 
       Log::Info << "  " << key << ": ";
 

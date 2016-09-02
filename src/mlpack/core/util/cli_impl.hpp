@@ -184,6 +184,39 @@ T& CLI::GetParam(const std::string& identifier)
   return util::HandleParameter<T>(v, d);
 }
 
+/**
+ * Get the unmapped (i.e. what the user specifies on the command-line) value
+ * of type ParameterType<T>::value found while parsing.  You cans et the value
+ * using this reference safely.  You should not need to use this function
+ * unless you are doing something tricky (like getting the filename a user
+ * specified for a matrix parameter or something).
+ *
+ * @param identifier The name of the parameter in question.
+ */
+template<typename T>
+typename util::ParameterType<T>::type& CLI::GetUnmappedParam(
+    const std::string& identifier)
+{
+  std::string key =
+      (identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
+      ? GetSingleton().aliases[identifier[0]] : identifier;
+
+  if (GetSingleton().parameters.count(key) == 0)
+    Log::Fatal << "Parameter --" << key << " does not exist in this program!"
+        << std::endl;
+
+  util::ParamData& d = GetSingleton().parameters[key];
+
+  // Make sure the types are correct.
+  if (TYPENAME(T) != d.tname)
+    Log::Fatal << "Attempted to access parameter --" << key << " as type "
+        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+        << std::endl;
+
+  return *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
+}
+
+
 //! This overload is called when nothing special needs to happen to the name of
 //! the parameter.
 template<typename T>
