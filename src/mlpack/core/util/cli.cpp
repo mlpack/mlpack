@@ -83,17 +83,6 @@ CLI::~CLI()
       if (d.tname != TYPENAME(arma::mat) &&
           d.tname != TYPENAME(arma::Mat<size_t>))
       {
-        // Reverse compatibility; should be removed for mlpack 3.0.0.  Don't
-        // print some options that have only been kept for reverse
-        // compatibility.
-        if (d.name == "output_predictions" ||
-            d.name == "output_ic" ||
-            d.name == "output_unmixing")
-        {
-          ++it;
-          continue;
-        }
-
         // Don't print any output options with "_file" in the name.
         if (d.name.substr(d.name.length() - 5, 5) == "_file")
         {

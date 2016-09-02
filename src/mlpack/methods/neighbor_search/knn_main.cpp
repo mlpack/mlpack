@@ -49,9 +49,9 @@ PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
 PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 PARAM_MATRIX_IN("true_distances", "Matrix of true distances to compute "
     "the effective error (average relative error) (it is printed when -v is "
-    "specified).", "D", "");
+    "specified).", "D");
 PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute the "
-    "recall (it is printed when -v is specified).", "T", "");
+    "recall (it is printed when -v is specified).", "T");
 
 // The option exists to load or save models.
 PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",

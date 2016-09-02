@@ -44,9 +44,9 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
     "--min_residue.");
 
 // Parameters for program.
-PARAM_STRING_IN_REQ("input_file", "Input dataset to perform NMF on.", "i");
-PARAM_STRING_OUT("w_file", "File to save the calculated W matrix to.", "W");
-PARAM_STRING_OUT("h_file", "File to save the calculated H matrix to.", "H");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");
+PARAM_MATRIX_OUT("w", "Matrix to save the calculated W to.", "W");
+PARAM_MATRIX_OUT("h", "Matrix to save the calculated H to.", "H");
 PARAM_INT_IN_REQ("rank", "Rank of the factorization.", "r");
 
 PARAM_INT_IN("max_iterations", "Number of iterations before NMF terminates (0 "
@@ -70,9 +70,6 @@ int main(int argc, char** argv)
     math::RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string hOutputFile = CLI::GetParam<string>("h_file");
-  const string wOutputFile = CLI::GetParam<string>("w_file");
   const size_t r = CLI::GetParam<int>("rank");
   const size_t maxIterations = CLI::GetParam<int>("max_iterations");
   const double minResidue = CLI::GetParam<double>("min_residue");
@@ -93,15 +90,14 @@ int main(int argc, char** argv)
         << "multdist', 'multdiv', or 'als'." << std::endl;
   }
 
-  if (hOutputFile == "" && wOutputFile == "")
+  if (!CLI::HasParam("h") && !CLI::HasParam("w"))
   {
     Log::Warn << "Neither --h_file nor --w_file are specified, so no output "
         << "will be saved!" << endl;
   }
 
   // Load input dataset.
-  arma::mat V;
-  data::Load(inputFile, V, true);
+  arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
 
   arma::mat W;
   arma::mat H;
@@ -138,8 +134,8 @@ int main(int argc, char** argv)
   }
 
   // Save results.
-  if (wOutputFile != "")
-    data::Save(wOutputFile, W, false);
-  if (hOutputFile != "")
-    data::Save(hOutputFile, H, false);
+  if (CLI::HasParam("w"))
+    CLI::GetParam<arma::mat>("w") = std::move(W);
+  if (CLI::HasParam("h"))
+    CLI::GetParam<arma::mat>("h") = std::move(H);
 }

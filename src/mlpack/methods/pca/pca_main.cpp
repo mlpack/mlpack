@@ -25,7 +25,7 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
-PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
+PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
 PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
     "If 0, no dimensionality reduction is performed.", "d", 0);
 PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be "
         << "saved." << endl;
 
@@ -122,7 +122,6 @@ int main(int argc, char** argv)
   }
 
   // Now save the results.
-  string outputFile = CLI::GetParam<string>("output_file");
-  if (outputFile != "")
-    data::Save(outputFile, dataset);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
 }
