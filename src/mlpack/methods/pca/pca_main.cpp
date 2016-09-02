@@ -106,11 +106,11 @@ int main(int argc, char** argv)
   {
     RunPCA<ExactSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
-  else if(decompositionMethod == "randomized")
+  else if (decompositionMethod == "randomized")
   {
     RunPCA<RandomizedSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
-  else if(decompositionMethod == "quic")
+  else if (decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }

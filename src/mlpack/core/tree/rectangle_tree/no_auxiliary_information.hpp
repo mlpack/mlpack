@@ -20,7 +20,17 @@ class NoAuxiliaryInformation
   //! Construct the auxiliary information object.
   NoAuxiliaryInformation(const TreeType* /* node */) { };
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(const TreeType& /* node */) { };
+  NoAuxiliaryInformation(const NoAuxiliaryInformation& /* other */,
+                         TreeType* /* tree */,
+                         bool /* deepCopy */ = true) { };
+  //! Construct the auxiliary information object.
+  NoAuxiliaryInformation(NoAuxiliaryInformation&& /* other */) { };
+
+  //! Copy the auxiliary information object.
+  NoAuxiliaryInformation& operator=(const NoAuxiliaryInformation& /* other */)
+  {
+    return *this;
+  }
 
   /**
    * Some tree types require to save some properties at the insertion process.

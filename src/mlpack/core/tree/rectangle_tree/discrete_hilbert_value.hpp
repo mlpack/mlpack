@@ -45,9 +45,21 @@ class DiscreteHilbertValue
   /**
    * Create a Hilbert value object by copying from another one.
    *
-   * @param other The Hilbert value object from which the value will be copied.
+   * @param other The object from which the value will be copied.
+   * @param tree The node that holds the Hilbert value.
+   * @param deepCopy If false, the dataset will not be copied.
    */
-  DiscreteHilbertValue(const DiscreteHilbertValue& other);
+  template<typename TreeType>
+  DiscreteHilbertValue(const DiscreteHilbertValue& other,
+                       TreeType* tree,
+                       bool deepCopy);
+
+  /**
+   * Create a Hilbert value object by moving another one.
+   *
+   * @param other The Hilbert value object from which the value will be moved.
+   */
+  DiscreteHilbertValue(DiscreteHilbertValue&& other);
 
   //! Free memory
   ~DiscreteHilbertValue();
@@ -224,12 +236,21 @@ class DiscreteHilbertValue
   arma::Mat<HilbertElemType>*& LocalHilbertValues()
   { return localHilbertValues; }
 
+  //! Return the ownsLocalHilbertValues variable.
+  bool OwnsLocalHilbertValues() const { return ownsLocalHilbertValues; }
+  //! Modify the ownsLocalHilbertValues variable.
+  bool& OwnsLocalHilbertValues() { return ownsLocalHilbertValues; }
+
   //! Return the cached point (valueToInsert).
   const arma::Col<HilbertElemType>* ValueToInsert() const
   { return valueToInsert; }
   //! Modify the cached point (valueToInsert).
   arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
 
+  //! Return the ownsValueToInsert variable.
+  bool OwnsValueToInsert() const { return ownsValueToInsert; }
+  //! Modify the ownsValueToInsert variable.
+  bool& OwnsValueToInsert() { return ownsValueToInsert; }
  private:
   //! The number of bits that we can store.
   static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;

@@ -34,6 +34,11 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
   static const bool HasOverlappingChildren = true;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
@@ -54,6 +59,71 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
+};
+
+/**
+ * Since the R+/R++ tree can not have overlapping children, we should define
+ * traits for the R+/R++ tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitPolicyType,
+         template<typename> class SweepType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+class TreeTraits<RectangleTree<MetricType,
+    StatisticType,
+    MatType,
+    RPlusTreeSplit<SplitPolicyType,
+                   SweepType>,
+    DescentType,
+    AuxiliaryInformationType>>
+{
+ public:
+  /**
+   * The R+/R++ tree can't have overlapping children.
+   */
+  static const bool HasOverlappingChildren = false;
+
+  /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
+   * There is no guarantee that the first point in a node is its centroid.
+   */
+  static const bool FirstPointIsCentroid = false;
+
+  /**
+   * Points are not contained at multiple levels of the R-tree.
+   */
+  static const bool HasSelfChildren = false;
+
+  /**
+   * Points are rearranged during building of the tree.
+   * THIS MAY NOT BE TRUE.  IT'S HARD TO DYNAMICALLY INSERT POINTS
+   * AND REARRANGE THE MATRIX
+   */
+  static const bool RearrangesDataset = false;
+
+  /**
+   * This tree is not necessarily a binary tree.
+   */
+  static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

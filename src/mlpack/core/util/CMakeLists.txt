@@ -10,6 +10,7 @@ set(SOURCES
   cli_deleter.hpp
   cli_deleter.cpp
   cli_impl.hpp
+  deprecated.hpp
   log.hpp
   log.cpp
   nulloutstream.hpp

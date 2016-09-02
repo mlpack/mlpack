@@ -43,7 +43,8 @@ class RAModel
     X_TREE,
     HILBERT_R_TREE,
     R_PLUS_TREE,
-    R_PLUS_PLUS_TREE
+    R_PLUS_PLUS_TREE,
+    UB_TREE
   };
 
  private:
@@ -82,6 +83,8 @@ class RAModel
   RAType<tree::RPlusTree>* rPlusTreeRA;
   //! Non-NULL if the R++ tree is used.
   RAType<tree::RPlusPlusTree>* rPlusPlusTreeRA;
+  //! Non-NULL if the UB tree is used.
+  RAType<tree::UBTree>* ubTreeRA;
 
  public:
   /**

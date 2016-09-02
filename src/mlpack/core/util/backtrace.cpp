@@ -91,7 +91,7 @@ void Backtrace::GetAddress(int maxDepth)
     Dl_info addressHandler;
 
     //No backtrace will be printed if no compile flags: -g -rdynamic
-    if(TRACE_CONDITION_1)
+    if (TRACE_CONDITION_1)
     {
       return ;
     }

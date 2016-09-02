@@ -33,12 +33,16 @@ BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
                                              const size_t k,
                                              arma::Mat<size_t>& neighbors,
                                              arma::mat& distances,
-                                             const size_t leafSize) :
+                                             const size_t leafSize,
+                                             const double tau,
+                                             const double rho) :
     querySet(querySet),
     k(k),
     neighbors(neighbors),
     distances(distances),
-    leafSize(leafSize)
+    leafSize(leafSize),
+    tau(tau),
+    rho(rho)
 {}
 
 //! Default Bichromatic neighbor search on the given NSType instance.
@@ -71,6 +75,27 @@ void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search specialized for SPTrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
+{
+  if (ns)
+  {
+    if (!ns->Naive() && !ns->SingleMode())
+    {
+      // For Dual Tree Search on SpillTrees, the queryTree must be built with
+      // non overlapping (tau = 0).
+      typename SpillKNN::Tree queryTree(std::move(querySet), 0 /* tau*/,
+          leafSize, rho);
+      ns->Search(queryTree, k, neighbors, distances);
+    }
+    else
+      ns->Search(querySet, k, neighbors, distances);
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Bichromatic neighbor search on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
@@ -84,7 +109,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
-    ns->Search(&queryTree, k, neighborsOut, distancesOut);
+    ns->Search(queryTree, k, neighborsOut, distancesOut);
 
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
@@ -102,9 +127,13 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 //! Save parameters for Train.
 template<typename SortPolicy>
 TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
-                                       const size_t leafSize) :
+                                       const size_t leafSize,
+                                       const double tau,
+                                       const double rho) :
     referenceSet(std::move(referenceSet)),
-    leafSize(leafSize)
+    leafSize(leafSize),
+    tau(tau),
+    rho(rho)
 {}
 
 //! Default Train on the given NSType instance.
@@ -137,6 +166,24 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
   throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Train specialized for SPTrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
+{
+  if (ns)
+  {
+    if (ns->Naive())
+      ns->Train(std::move(referenceSet));
+    else
+    {
+      typename SpillKNN::Tree tree(std::move(referenceSet), tau, leafSize, rho);
+      ns->Train(std::move(tree));
+    }
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Train on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
@@ -147,33 +194,65 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   else
   {
     std::vector<size_t> oldFromNewReferences;
-    typename NSType::Tree* tree =
-        new typename NSType::Tree(std::move(referenceSet),
+    typename NSType::Tree referenceTree(std::move(referenceSet),
         oldFromNewReferences, leafSize);
-    ns->Train(tree);
-
-    // Give the model ownership of the tree and the mappings.
-    ns->treeOwner = true;
+    ns->Train(std::move(referenceTree));
+    // Set the mappings.
     ns->oldFromNewReferences = std::move(oldFromNewReferences);
   }
 }
 
-//! Expose the SingleMode method of the given NSType.
+//! Set the search mode.
 template<typename NSType>
-bool& SingleModeVisitor::operator()(NSType* ns) const
+void SetSearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->SingleMode();
-  throw std::runtime_error("no neighbor search model initialized");
+  {
+    switch (searchMode)
+    {
+      case NAIVE_MODE:
+        ns->Naive() = true;
+        ns->SingleMode() = false;
+        ns->Greedy() = false;
+        break;
+      case SINGLE_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = true;
+        ns->Greedy() = false;
+        break;
+      case DUAL_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = false;
+        ns->Greedy() = false;
+        break;
+      case GREEDY_SINGLE_TREE_MODE:
+        ns->Naive() = false;
+        ns->SingleMode() = true;
+        ns->Greedy() = true;
+        break;
+    }
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
 }
 
-//! Expose the Naive method of the given NSType.
+//! Return the search mode.
 template<typename NSType>
-bool& NaiveVisitor::operator()(NSType* ns) const
+NeighborSearchMode SearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-    return ns->Naive();
-  throw std::runtime_error("no neighbor search model initialized");
+  {
+    if (ns->Naive())
+      return NAIVE_MODE;
+    else if (ns->SingleMode() && ns->Greedy())
+      return GREEDY_SINGLE_TREE_MODE;
+    else if (ns->SingleMode())
+      return SINGLE_TREE_MODE;
+    else
+      return DUAL_TREE_MODE;
+  }
+  else
+    throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Expose the Epsilon method of the given NSType.
@@ -209,6 +288,9 @@ void DeleteVisitor::operator()(NSType* ns) const
 template<typename SortPolicy>
 NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
+    leafSize(20),
+    tau(0),
+    rho(0.7),
     randomBasis(randomBasis)
 {
   // Nothing to do.
@@ -222,21 +304,25 @@ NSModel<SortPolicy>::~NSModel()
 }
 
 /**
- * Non-intrusive serialization for Neighbor Search class. We need this
- * definition because we are going to use the serialize function for boost
- * variant, which will look for a serialize function for its member types.
+ * Non-intrusive serialization for NeighborSearch class. We need this definition
+ * because we are going to use the serialize function for boost variant, which
+ * will look for a serialize function for its member types.
  */
 template<typename Archive,
          typename SortPolicy,
-         typename MetrType,
-         typename MatType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
-         template<typename RuleType> class TraversalType>
+         template<typename RuleType> class TraversalType,
+         template<typename RuleType> class SingleTreeTraversalType>
 void serialize(
     Archive& ar,
-    NeighborSearch<SortPolicy, MetrType, MatType, TreeType, TraversalType>& ns,
+    NeighborSearch<SortPolicy,
+                   metric::EuclideanDistance,
+                   arma::mat,
+                   TreeType,
+                   TraversalType,
+                   SingleTreeTraversalType>& ns,
     const unsigned int version)
 {
   ns.Serialize(ar, version);
@@ -245,10 +331,17 @@ void serialize(
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::Serialize(Archive& ar,
-                                    const unsigned int /* version */)
+void NSModel<SortPolicy>::Serialize(Archive& ar, const unsigned int version)
 {
   ar & data::CreateNVP(treeType, "treeType");
+  // Backward compatibility: older versions of NSModel didn't include these
+  // parameters.
+  if (version > 0)
+  {
+    ar & data::CreateNVP(leafSize, "leafSize");
+    ar & data::CreateNVP(tau, "tau");
+    ar & data::CreateNVP(rho, "rho");
+  }
   ar & data::CreateNVP(randomBasis, "randomBasis");
   ar & data::CreateNVP(q, "q");
 
@@ -267,30 +360,18 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
   return boost::apply_visitor(ReferenceSetVisitor(), nSearch);
 }
 
-//! Expose singleMode.
+//! Access the search mode.
 template<typename SortPolicy>
-bool NSModel<SortPolicy>::SingleMode() const
+NeighborSearchMode NSModel<SortPolicy>::SearchMode() const
 {
-  return boost::apply_visitor(SingleModeVisitor(), nSearch);
+  return boost::apply_visitor(SearchModeVisitor(), nSearch);
 }
 
+//! Modify the search mode.
 template<typename SortPolicy>
-bool& NSModel<SortPolicy>::SingleMode()
+void NSModel<SortPolicy>::SetSearchMode(const NeighborSearchMode mode)
 {
-  return boost::apply_visitor(SingleModeVisitor(), nSearch);
-}
-
-//! Expose Naive.
-template<typename SortPolicy>
-bool NSModel<SortPolicy>::Naive() const
-{
-  return boost::apply_visitor(NaiveVisitor(), nSearch);
-}
-
-template<typename SortPolicy>
-bool& NSModel<SortPolicy>::Naive()
-{
-  return boost::apply_visitor(NaiveVisitor(), nSearch);
+  return boost::apply_visitor(SetSearchModeVisitor(mode), nSearch);
 }
 
 template<typename SortPolicy>
@@ -309,10 +390,10 @@ double& NSModel<SortPolicy>::Epsilon()
 template<typename SortPolicy>
 void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
                                      const size_t leafSize,
-                                     const bool naive,
-                                     const bool singleMode,
+                                     const NeighborSearchMode searchMode,
                                      const double epsilon)
 {
+  this->leafSize = leafSize;
   // Initialize random basis if necessary.
   if (randomBasis)
   {
@@ -352,7 +433,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   if (randomBasis)
     referenceSet = q * referenceSet;
 
-  if (!naive)
+  if (searchMode != NAIVE_MODE)
   {
     Timer::Start("tree_building");
     Log::Info << "Building reference tree..." << std::endl;
@@ -361,45 +442,55 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      nSearch = new NSType<SortPolicy, tree::KDTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::KDTree>(searchMode, epsilon);
       break;
     case COVER_TREE:
-      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(naive,
-          singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(searchMode,
+          epsilon);
       break;
     case R_TREE:
-      nSearch = new NSType<SortPolicy, tree::RTree>(naive, singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::RTree>(searchMode, epsilon);
       break;
     case R_STAR_TREE:
-      nSearch = new NSType<SortPolicy, tree::RStarTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::RStarTree>(searchMode, epsilon);
       break;
     case BALL_TREE:
-      nSearch = new NSType<SortPolicy, tree::BallTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::BallTree>(searchMode, epsilon);
       break;
     case X_TREE:
-      nSearch = new NSType<SortPolicy, tree::XTree>(naive, singleMode, epsilon);
+      nSearch = new NSType<SortPolicy, tree::XTree>(searchMode, epsilon);
       break;
     case HILBERT_R_TREE:
-      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::HilbertRTree>(searchMode, epsilon);
       break;
     case R_PLUS_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPlusTree>(naive, singleMode,
-          epsilon);
+      nSearch = new NSType<SortPolicy, tree::RPlusTree>(searchMode, epsilon);
       break;
     case R_PLUS_PLUS_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode,
+      nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(searchMode,
           epsilon);
+      break;
+    case VP_TREE:
+      nSearch = new NSType<SortPolicy, tree::VPTree>(searchMode, epsilon);
+      break;
+    case RP_TREE:
+      nSearch = new NSType<SortPolicy, tree::RPTree>(searchMode, epsilon);
+      break;
+    case MAX_RP_TREE:
+      nSearch = new NSType<SortPolicy, tree::MaxRPTree>(searchMode, epsilon);
+      break;
+    case SPILL_TREE:
+      nSearch = new SpillKNN(searchMode, epsilon);
+      break;
+    case UB_TREE:
+      nSearch = new NSType<SortPolicy, tree::UBTree>(searchMode, epsilon);
       break;
   }
 
-  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau, rho);
   boost::apply_visitor(tn, nSearch);
 
-  if (!naive)
+  if (searchMode != NAIVE_MODE)
   {
     Timer::Stop("tree_building");
     Log::Info << "Tree built." << std::endl;
@@ -418,18 +509,26 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
     querySet = q * querySet;
 
   Log::Info << "Searching for " << k << " neighbors with ";
-  if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
-    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
-  else
-    Log::Info << "brute-force (naive) search..." << std::endl;
-  if (Epsilon() != 0 && !Naive())
-    Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
-        << std::endl;
+
+  switch (SearchMode())
+  {
+    case NAIVE_MODE:
+      Log::Info << "brute-force (naive) search..." << std::endl;
+      break;
+    case SINGLE_TREE_MODE:
+      Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case DUAL_TREE_MODE:
+      Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case GREEDY_SINGLE_TREE_MODE:
+      Log::Info << "greedy single-tree " << TreeName() << " search..."
+          << std::endl;
+      break;
+  }
 
   BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
-      leafSize);
+      leafSize, tau, rho);
   boost::apply_visitor(search, nSearch);
 }
 
@@ -440,13 +539,25 @@ void NSModel<SortPolicy>::Search(const size_t k,
                                  arma::mat& distances)
 {
   Log::Info << "Searching for " << k << " neighbors with ";
-  if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
-    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
-  else
-    Log::Info << "brute-force (naive) search..." << std::endl;
-  if (Epsilon() != 0 && !Naive())
+
+  switch (SearchMode())
+  {
+    case NAIVE_MODE:
+      Log::Info << "brute-force (naive) search..." << std::endl;
+      break;
+    case SINGLE_TREE_MODE:
+      Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case DUAL_TREE_MODE:
+      Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
+      break;
+    case GREEDY_SINGLE_TREE_MODE:
+      Log::Info << "greedy single-tree " << TreeName() << " search..."
+          << std::endl;
+      break;
+  }
+
+  if (Epsilon() != 0 && SearchMode() != NAIVE_MODE)
     Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
         << std::endl;
 
@@ -478,6 +589,16 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case SPILL_TREE:
+      return "Spill tree";
+    case VP_TREE:
+      return "vantage point tree";
+    case RP_TREE:
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
+    case UB_TREE:
+      return "UB tree";
     default:
       return "unknown tree";
   }

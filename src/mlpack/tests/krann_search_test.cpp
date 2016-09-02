@@ -625,7 +625,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Build all the possible models.
-  KNNModel models[16];
+  KNNModel models[18];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
@@ -642,13 +642,15 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   models[13] = KNNModel(KNNModel::TreeTypes::R_PLUS_TREE, true);
   models[14] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, false);
   models[15] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, true);
+  models[16] = KNNModel(KNNModel::TreeTypes::UB_TREE, false);
+  models[17] = KNNModel(KNNModel::TreeTypes::UB_TREE, true);
 
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
   for (size_t j = 0; j < 3; ++j)
   {
-    for (size_t i = 0; i < 16; ++i)
+    for (size_t i = 0; i < 18; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -699,7 +701,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
       // assert that at most 5% of the queries fall out of this threshold
       // 5% of 100 queries is 5.
-      size_t maxNumQueriesFail = 12; // Looser bound due to multiple trials.
+      size_t maxNumQueriesFail = 25; // See #734 for why this is so high.
 
       BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
     }

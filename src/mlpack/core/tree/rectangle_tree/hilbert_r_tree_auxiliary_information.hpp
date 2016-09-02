@@ -30,11 +30,32 @@ class HilbertRTreeAuxiliaryInformation
   HilbertRTreeAuxiliaryInformation(const TreeType* node);
 
   /**
-   * Create an auxiliary information object by copying from the other node.
+   * Create an auxiliary information object by copying from another object.
    *
-   * @param other The node from which the information will be copied.
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
    */
   HilbertRTreeAuxiliaryInformation(
+      const HilbertRTreeAuxiliaryInformation& other,
+      TreeType* tree = NULL,
+      bool deepCopy = true);
+
+  /**
+   * Create an auxiliary information object by moving from the other node.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other);
+
+  /**
+   * Copy the auxiliary information.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  HilbertRTreeAuxiliaryInformation& operator=(
       const HilbertRTreeAuxiliaryInformation& other);
 
   /**
@@ -93,6 +114,10 @@ class HilbertRTreeAuxiliaryInformation
 
   //! Clear memory.
   void NullifyData();
+
+  //! Return the children vector of the tree.
+  static const std::vector<TreeType*> Children(const TreeType* tree)
+  { return tree->children; }
 
  private:
   //! The largest Hilbert value of a point enclosed by the node.

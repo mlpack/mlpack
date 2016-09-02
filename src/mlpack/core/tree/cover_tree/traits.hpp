@@ -33,6 +33,12 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
   static const bool HasOverlappingChildren = true;
 
   /**
+   * Cover trees do have self-children, so points can be included in more than
+   * one node.
+   */
+  static const bool HasDuplicatedPoints = true;
+
+  /**
    * Each cover tree node contains only one point, and that point is its
    * centroid.
    */
@@ -52,6 +58,11 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
    * The cover tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * NumDescendants() represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

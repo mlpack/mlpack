@@ -8,6 +8,7 @@ if (BUILD_CLI_EXECUTABLES)
   )
   target_link_libraries(mlpack_${name}
     mlpack
+    ${COMPILER_SUPPORT_LIBRARIES}
   )
   install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
 endif ()
