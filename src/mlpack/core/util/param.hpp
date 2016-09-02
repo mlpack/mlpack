@@ -292,6 +292,94 @@
     PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
 
 /**
+ * Define a transposed matrix input parameter.  This is useful when data is
+ * desired in row-major form instead of the usual column-major form.  From the
+ * command line, the user can specify the file that holds the matrix, using the
+ * name of the matrix parameter with "_file" appended (and the same alias).  So
+ * for instance, if the name of the matrix parameter was "mat", the user could
+ * specify that the "mat" matrix was held in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_IN(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, true)
+
+/**
+ * Define a required transposed matrix input parameter.  This is useful when
+ * data is desired in row-major form instead of the usual column-major form.
+ * From the command line, the user can specify the file that holds the matrix,
+ * using the name of the matrix parameter with "_file" appended (and the same
+ * alias).  So for instance, if the name of the matrix parameter was "mat", the
+ * user could specify that the "mat" matrix was held in matrix.csv by giving the
+ * parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, true, false, true)
+
+/**
+ * Define a transposed matrix output parameter.  This is useful when data is
+ * stored in a row-major form instead of the usual column-major form.  When the
+ * program terminates, the matrix will be saved to whatever it was set to by
+ * CLI::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * user may specify the file in which to save the output matrix using a string
+ * option that is the name of the matrix parameter with "_file" appended.  So,
+ * for instance, if the name of the output matrix parameter was "mat", the user
+ * could speicfy that the "mat" matrix should be saved in matrix.csv by giving
+ * the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * The output matrix will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_OUT(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, false)
+
+/**
  * Define an unsigned matrix input parameter (arma::Mat<size_t>).  From the
  * command line, the user can specify the file that holds the matrix, using the
  * name of the matrix parameter with "_file" appended (and the same alias).  So
