@@ -47,11 +47,11 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
  */
 void AddRequiredCLIOptions()
 {
-  CLI::Add<bool>("help", "Default help info.", 'h');
-  CLI::Add<std::string>("info", "Get help on a specific module or option.");
-  CLI::Add<bool>("verbose", "Display informational messages and the full list "
-      "of parameters and timers at the end of execution.", 'v');
-  CLI::Add<bool>("version", "Display the version of mlpack.", 'V');
+  CLI::Add<bool>(false, "help", "Default help info.", 'h');
+  CLI::Add<std::string>("", "info", "Get help on a specific module or option.");
+  CLI::Add<bool>(false, "verbose", "Display informational messages and the full"
+      " list of parameters and timers at the end of execution.", 'v');
+  CLI::Add<bool>(false, "version", "Display the version of mlpack.", 'V');
 }
 
 /**
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
 
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLI::Add<bool>("global/bool", "True or False", 'a');
+  CLI::Add<bool>(false, "global/bool", "True or False", 'a');
 
   // CLI::HasParam should return false here.
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
@@ -323,7 +323,8 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an input parameter; it won't be transposed.
-  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, true, false);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
+      false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -366,7 +367,8 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is a non-transposed input parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, true, true);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
+      true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -407,7 +409,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, false, false);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
+      false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -455,7 +458,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>("matrix", "Test matrix", 'm', false, false, true);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
+      true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -502,7 +506,7 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<int>("int", "Test int", 'i', false, true, false);
+  CLI::Add<int>(0, "int", "Test int", 'i', false, true, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -523,7 +527,7 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<std::string>("string", "Test string", 's', false, true, false);
+  CLI::Add<std::string>("", "string", "Test string", 's', false, true, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -544,7 +548,7 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>("double", "Test double", 'd', false, true, false);
+  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -565,7 +569,8 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>("double", "Required test double", 'd', true, true, false);
+  CLI::Add<double>(0.0, "double", "Required test double", 'd', true, true,
+      false);
 
   const char* argv[1];
   argv[0] = "./test";
@@ -592,6 +597,46 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
   BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
       std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Test that GetUnmappedParam() works.
+ */
+BOOST_AUTO_TEST_CASE(UnmappedParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
+      true);
+  CLI::Add<arma::mat>(arma::mat(), "matrix2", "Test matrix", 'M', false, false,
+      true);
+  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
+  CLI::Add<double>(0.0, "double2", "Test double", 'D', false, true, false);
+
+  const char* argv[7];
+  argv[0] = "./test";
+  argv[1] = "--matrix_file";
+  argv[2] = "file1.csv";
+  argv[3] = "-M";
+  argv[4] = "file2.csv";
+  argv[5] = "-d";
+  argv[6] = "1.334";
+
+  int argc = 7;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Now check that we can get unmapped parameters.
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix"), "file1.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file2.csv");
+  BOOST_REQUIRE_CLOSE(CLI::GetUnmappedParam<double>("double"), 1.334, 1e-10);
+  BOOST_REQUIRE_SMALL(CLI::GetUnmappedParam<double>("double2"), 1e-10);
+
+  // Can we assign an unmapped parameter?
+  CLI::GetUnmappedParam<arma::mat>("matrix2") =
+      CLI::GetUnmappedParam<arma::mat>("matrix");
+
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
