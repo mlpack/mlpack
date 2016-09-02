@@ -160,8 +160,10 @@ void CLI::Add(const T& defaultValue,
 template<typename T>
 T& CLI::GetParam(const std::string& identifier)
 {
+  // Only use the alias if the parameter does not exist as given.
   std::string key =
-      (identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
+      (GetSingleton().parameters.count(identifier) == 0 &&
+       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
       ? GetSingleton().aliases[identifier[0]] : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)

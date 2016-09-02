@@ -245,13 +245,17 @@ bool CLI::HasParam(const std::string& key)
   po::variables_map vmap = GetSingleton().vmap;
   std::map<std::string, util::ParamData> parameters = GetSingleton().parameters;
 
-  // Take any possible alias into account.
-  if (key.length() == 1 && GetSingleton().aliases.count(key[0]))
-    usedKey = GetSingleton().aliases[key[0]];
+  if (!parameters.count(key))
+  {
+    // Check any aliases, but only after we are sure the actual option as given
+    // does not exist.
+    if (key.length() == 1 && GetSingleton().aliases.count(key[0]))
+      usedKey = GetSingleton().aliases[key[0]];
 
-  if (!parameters.count(usedKey))
-    Log::Fatal << "Parameter '--" << key << "' does not exist in this program."
-        << std::endl;
+    if (!parameters.count(usedKey))
+      Log::Fatal << "Parameter '--" << key << "' does not exist in this "
+          << "program." << std::endl;
+  }
 
   return (vmap.count(parameters[usedKey].boostName) > 0);
 }
