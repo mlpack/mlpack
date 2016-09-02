@@ -15,10 +15,10 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
     "such that the distances to the nearest neighbors of each point are held "
     "constant.");
 
-PARAM_STRING_IN_REQ("input_file", "Filename of input dataset.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
 PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
 
-PARAM_STRING_OUT("output_file", "Filename to save unfolded dataset to.", "o");
+PARAM_MATRIX_OUT("output", "Matrix to save unfolded dataset to.", "o");
 PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
     "unfolding.", "k", 5);
 
@@ -37,15 +37,14 @@ int main(int argc, char **argv)
   const int newDim = CLI::GetParam<int>("new_dim");
   const int numNeighbors = CLI::GetParam<int>("num_neighbors");
 
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  mat data;
-  data::Load(inputFile, data, true);
+  mat data = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
   if (newDim <= 0 || newDim > (int) data.n_rows)
@@ -70,6 +69,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  if (CLI::HasParam("output_file"))
-    data::Save(outputFile, output, true);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(output);
 }

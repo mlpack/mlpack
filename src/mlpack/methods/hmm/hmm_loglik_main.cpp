@@ -16,7 +16,7 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
     "log-likelihood of a given sequence of observations (--input_file).  The "
     "computed log-likelihood is given directly to stdout.");
 
-PARAM_STRING_IN_REQ("input_file", "File containing observations,", "i");
+PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
 PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
 
 PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
@@ -37,9 +37,7 @@ struct Loglik
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
-    const string inputFile = CLI::GetParam<string>("input_file");
-    mat dataSeq;
-    data::Load(inputFile, dataSeq, true);
+    mat dataSeq = std::move(CLI::GetParam<mat>("input"));
 
     // Detect if we need to transpose the data, in the case where the input data
     // has one dimension.

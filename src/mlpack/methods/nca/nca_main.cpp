@@ -70,10 +70,9 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "\n\n"
     "By default, the SGD optimizer is used.");
 
-PARAM_STRING_IN_REQ("input_file", "Input dataset to run NCA on.", "i");
-PARAM_STRING_OUT("output_file", "Output file for learned distance matrix.",
-    "o");
-PARAM_STRING_IN("labels_file", "File of labels for input dataset.", "l", "");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
+PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
+PARAM_UMATRIX_IN("labels", "Labels for input dataset.", "l");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
     "'lbfgs'.", "O", "sgd");
 
@@ -121,11 +120,7 @@ int main(int argc, char* argv[])
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
-
-  if (outputFile == "")
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) not specified; no output will be saved!"
         << endl;
 
@@ -197,14 +192,13 @@ int main(int argc, char* argv[])
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
 
   // Load data.
-  arma::mat data;
-  data::Load(inputFile, data, true);
+  arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Do we want to load labels separately?
-  arma::umat rawLabels(1, data.n_cols);
-  if (labelsFile != "")
+  arma::Mat<size_t> rawLabels(1, data.n_cols);
+  if (CLI::HasParam("labels"))
   {
-    data::Load(labelsFile, rawLabels, true);
+    rawLabels = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
 
     if (rawLabels.n_cols == 1)
       rawLabels = trans(rawLabels);
@@ -216,13 +210,13 @@ int main(int argc, char* argv[])
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
     for (size_t i = 0; i < data.n_cols; i++)
-      rawLabels[i] = (int) data(data.n_rows - 1, i);
+      rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
   }
 
   // Now, normalize the labels.
-  arma::uvec mappings;
+  arma::Col<size_t> mappings;
   arma::Row<size_t> labels;
   data::NormalizeLabels(rawLabels.row(0), labels, mappings);
 
@@ -284,6 +278,6 @@ int main(int argc, char* argv[])
   }
 
   // Save the output.
-  if (outputFile != "")
-    data::Save(outputFile, distance, true);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(distance);
 }

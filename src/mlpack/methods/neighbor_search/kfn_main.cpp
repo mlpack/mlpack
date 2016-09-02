@@ -73,7 +73,7 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "s");
+    "dual-tree search).", "S");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate furthest neighbor"
     " search with given relative error. Must be in the range [0,1).", "e", 0);
 PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "

@@ -80,12 +80,12 @@ PARAM_DOUBLE_IN("alpha", "The desired success probability.", "a", 0.95);
 PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
            "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-           "dual-tree search.", "s");
+           "dual-tree search.", "S");
 PARAM_FLAG("sample_at_leaves", "The flag to trigger sampling at leaves.", "L");
 PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
            "exactly exploring the first leaf.", "X");
 PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
-    "samples (and hence the largest node you can approximate).", "S", 20);
+    "samples (and hence the largest node you can approximate).", "z", 20);
 
 // Convenience typedef.
 typedef RAModel<NearestNeighborSort> RANNModel;

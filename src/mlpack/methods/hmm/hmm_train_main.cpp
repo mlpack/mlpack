@@ -45,7 +45,7 @@ PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
 PARAM_STRING_IN("model_file", "Pre-existing HMM model file.", "m", "");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "o");
+PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "M");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
     1e-5);

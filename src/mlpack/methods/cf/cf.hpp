@@ -212,7 +212,7 @@ class CF
    */
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
-                          arma::Col<size_t>& users);
+                          const arma::Col<size_t>& users);
 
   //! Converts the User, Item, Value Matrix to User-Item Table
   static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);

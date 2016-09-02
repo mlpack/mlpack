@@ -23,7 +23,7 @@ PARAM_STRING_IN_REQ("input_model_file", "File containing input GMM model.",
     "m");
 PARAM_INT_IN_REQ("samples", "Number of samples to generate.", "n");
 
-PARAM_STRING_OUT("output_file", "File to save output samples in.", "o");
+PARAM_MATRIX_OUT("output", "Matrix to save output samples in.", "o");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
@@ -31,9 +31,10 @@ int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("output_file"))
-    Log::Warn << "--output_file (-o) is not specified;"
-        << "no results will be saved!" << endl;
+  // Parameter sanity checks.
+  if (!CLI::HasParam("output"))
+    Log::Warn << "--output_file (-o) is not specified; no results will be "
+        << "saved!" << endl;
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
@@ -52,9 +53,7 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm.Random();
 
-  if (CLI::HasParam("output_file"))
-    data::Save(CLI::GetParam<string>("output_file"), samples);
-  else
-    Log::Warn << "--output_file is not specified, so no output will be saved!"
-        << endl;
+  // Save, if the user asked for it.
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(samples);
 }

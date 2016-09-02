@@ -44,10 +44,9 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
-    "");
-PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
-PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
+PARAM_MATRIX_IN("reference", "File containing the reference dataset.", "r");
+PARAM_MATRIX_OUT("distances", "File to output distances into.", "d");
+PARAM_UMATRIX_OUT("neighbors", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
 PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
@@ -57,8 +56,7 @@ PARAM_STRING_OUT("output_model_file", "If specified, the kNN model will be "
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
-PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
-    "");
+PARAM_MATRIX_IN("query", "Matrix containing query points (optional).", "q");
 PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
@@ -93,12 +91,12 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
@@ -126,12 +124,12 @@ int main(int argc, char *argv[])
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k") &&
-      !(CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")))
+      !(CLI::HasParam("neighbors") || CLI::HasParam("distances")))
     Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
         << "so the nearest neighbor search results will not be saved!" << endl;
 
   // If the user specifies output files but no k, they should be warned.
-  if ((CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")) &&
+  if ((CLI::HasParam("neighbors") || CLI::HasParam("distances")) &&
       !CLI::HasParam("k"))
     Log::Warn << "An output file for nearest neighbor search is given ("
         << "--neighbors_file or --distances_file), but nearest neighbor search "
@@ -154,10 +152,9 @@ int main(int argc, char *argv[])
   NSModel<NearestNeighborSort> knn;
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
     // Get all the parameters.
-    const string referenceFile = CLI::GetParam<string>("reference_file");
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
@@ -188,10 +185,10 @@ int main(int argc, char *argv[])
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
 
-    arma::mat referenceSet;
-    data::Load(referenceFile, referenceSet, true);
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+    Log::Info << "Loaded reference data from '"
+        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
@@ -218,14 +215,14 @@ int main(int argc, char *argv[])
   // Perform search, if desired.
   if (CLI::HasParam("k"))
   {
-    const string queryFile = CLI::GetParam<string>("query_file");
     const size_t k = (size_t) CLI::GetParam<int>("k");
 
     arma::mat queryData;
-    if (queryFile != "")
+    if (CLI::HasParam("query"))
     {
-      data::Load(queryFile, queryData, true);
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Loaded query data from '"
+          << CLI::GetUnmappedParam<std::string>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -249,17 +246,17 @@ int main(int argc, char *argv[])
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
       knn.Search(std::move(queryData), k, neighbors, distances);
     else
       knn.Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output, if desired.
-    if (CLI::HasParam("neighbors_file"))
-      data::Save(CLI::GetParam<string>("neighbors_file"), neighbors);
-    if (CLI::HasParam("distances_file"))
-      data::Save(CLI::GetParam<string>("distances_file"), distances);
+    if (CLI::HasParam("neighbors"))
+      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    if (CLI::HasParam("distances"))
+      CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   if (CLI::HasParam("output_model_file"))
