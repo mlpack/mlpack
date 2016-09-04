@@ -19,6 +19,159 @@
 namespace mlpack {
 namespace range {
 
+//! The mostly specified type of range search model.
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
+
+
+/* MonoSearchVisitor executes a monochromatic range search on the given
+ * RSType.(That is it does take the query set and the reference set the 
+ * same
+ */
+
+class MonoSearchVisitor : public boost::static_visitor<void>
+{
+    private:
+        //! range Range to search for.
+        const math::Range& range;
+        //! neighbors Output: neighbors falling within the desired range.
+        std::vector<std::vector<size_t>>& neighbors;
+        //! distances Output: distances of neighbors.
+        std::vector<std::vector<double>>& distances;
+    public:
+        //! Perform monochromatic range search.
+        template<typename RSType>
+        void operator()(RSType* rs) const;
+
+        //! Construct the MonoSearchVisitor object with the given parameters.
+        MonoSearchVisitor(const math::Range& range,
+                          std::vector<std::vector<size_t>>& neighbors,
+                          std::vector<std::vector<double>>& distances) :
+            range(range),
+            neighbors(neighbors),
+            distances(distances)
+    {};
+};
+
+
+/**
+   * BiSearchVisitor executes a bichromatic range search on the given RSType. 
+   * This takes possession of the query set, so the query set will not be usable
+   * after the search.
+   */
+
+class BiSearchVisitor : public boost::static_visitor<void>
+{
+ private:
+   //! querySet Set of query points.
+    arma::mat&& querySet;
+   //! param range Range to search for.
+    const math::Range& range;
+   //! neighbors Output: neighbors falling within the desired range.
+    std::vector<std::vector<size_t>>& neighbors;
+   //! distances Output: distances of neighbors.
+    std::vector<std::vector<double>>& distances;
+    //! The no of points in a leaf (For binarySpacetrees)
+    const size_t leafSize;
+    //! Bichromatic range search on the given RSType considering the leafSize
+    template<typename RSType>
+    void SearchLeaf(RSType* rs) const;
+
+ public:
+    template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+    using RSTypeT = RSType<TreeType>;
+
+    //! Default Bichromatic range search on the given RSType instance.    
+    template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+    void operator()(RSTypeT<Treetype>* rs) const;
+    
+    //! Bichrmomatic range search specialized for KDTrees
+    void operator()(RSTypeT<tree::KDTree>* rs) const;
+    
+    //! Bichromatic range search specialized for Ball Trees
+    void operator()(RSTypeT<tree::BallTree>* rs) const;
+    
+    //! Construct the BiSearchVisitor.
+    BiSearchVisitor(arma::mat& querySet,
+                    const math::Range& range,
+                    std::vector<std::vector<size_t>>& neighbors,
+                    std::vector<std::vector<double>>& distances,
+                    const size_t leafSize);
+};
+
+/**
+ * ReferenceSetVisitor exposes the referenceSet of the given RSType.
+ */
+class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
+{
+ public:
+    //! Return the reference set.
+    template<typename RSType>
+    const arma::mat& operator()(RSType *rs) const;
+};
+
+
+/**
+ * SingleModeVisitor exposes whether the model is in single-tree search mode.
+ */
+class SingleModeVisitor : public boost::static_visitor<bool>
+{
+ public:
+    //! Return whether in single-tree search mode
+    template<typename RSType>
+    bool operator()(RSType *rs) const;
+};
+
+
+/**
+ * SetSingleModeVisitor lets modify whether the model is in single-tree
+ * search mode
+ */
+class SetSingleModeVisitor : public boost::static_visitor<bool&>
+{
+    template<typename RSType>
+    bool& operator()(RSType *rs);
+};
+
+
+/**
+ * NaiveVisitor gets whether the model is in naive search mode.
+ */
+class NaiveVisitor : public boost::static_visitor<bool>
+{
+    template<typename RSType>
+    bool operator()(RSType *rs) const;
+};
+
+
+
+/**
+ * SetNaiveVisitor modifies whether the model is in naive search mode.
+ */
+class SetNaiveVisitor : public boost::static_visitor<bool&>
+{
+    template<typename RSType>
+    bool operator()(RSType *rs);
+};
+
+
+/**
+ * DeleteVisitor deletes the given RSType instance.
+ */
+class DeleteVisitor : public boost::static_visitor<void>
+{
+ public:
+    //! Delete the RSType object.
+    template<typename RSType>
+    void operator()(RSType *rs) const;
+};
+
 class RSModel
 {
  public:
@@ -35,8 +188,7 @@ class RSModel
     R_PLUS_PLUS_TREE,
     VP_TREE,
     RP_TREE,
-    MAX_RP_TREE,
-    UB_TREE
+    MAX_RP_TREE
   };
 
  private:
@@ -47,43 +199,23 @@ class RSModel
   bool randomBasis;
   //! Random projection matrix.
   arma::mat q;
-
-  //! The mostly-specified type of the range search model.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
-
-  // Only one of these pointers will be non-NULL.
-  //! kd-tree based range search object (NULL if not in use).
-  RSType<tree::KDTree>* kdTreeRS;
-  //! Cover tree based range search object (NULL if not in use).
-  RSType<tree::StandardCoverTree>* coverTreeRS;
-  //! R tree based range search object (NULL if not in use).
-  RSType<tree::RTree>* rTreeRS;
-  //! R* tree based range search object (NULL if not in use).
-  RSType<tree::RStarTree>* rStarTreeRS;
-  //! Ball tree based range search object (NULL if not in use).
-  RSType<tree::BallTree>* ballTreeRS;
-  //! X tree based range search object (NULL if not in use).
-  RSType<tree::XTree>* xTreeRS;
-  //! Hilbert R tree based range search object (NULL if not in use).
-  RSType<tree::HilbertRTree>* hilbertRTreeRS;
-  //! R+ tree based range search object (NULL if not in use).
-  RSType<tree::RPlusTree>* rPlusTreeRS;
-  //! R++ tree based range search object (NULL if not in use).
-  RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
-  //! VP tree based range search object (NULL if not in use).
-  RSType<tree::VPTree>* vpTreeRS;
-  //! Random projection tree (mean) based range search object
-  //! (NULL if not in use).
-  RSType<tree::RPTree>* rpTreeRS;
-  //! Random projection tree (max) based range search object
-  //! (NULL if not in use).
-  RSType<tree::MaxRPTree>* maxRPTreeRS;
-  //! Universal B tree based range search object
-  //! (NULL if not in use).
-  RSType<tree::UBTree>* ubTreeRS;
+    
+  /**
+   * rSearch holds an instance of the RangeSearch class for the current 
+   * treeType. 
+   */
+  boost::variant<RSType<tree::KDTree>*,
+                 RSType<tree::StandardCoverTree>*,
+                 RSType<tree::RTree>*,
+                 RSType<tree::RStarTree>*,
+                 RSType<tree::BallTree>*,
+                 RSType<tree::XTree>*,
+                 RSType<tree::HilbertRTree>*,
+                 RSType<tree::RPlusTree>*,
+                 RSType<tree::RPlusPlusTree>*,
+                 RSType<tree::VPTree>*,
+                 RSType<tree::RPTree>*,
+                 RSType<tree::MaxRPTree>* rSearch;
 
  public:
   /**
