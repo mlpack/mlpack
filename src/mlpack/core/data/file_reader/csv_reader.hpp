@@ -58,15 +58,14 @@ class CSVReader{
   CSVReader&operator=(const CSVReader&);
 
   template<class ...Args>
-  explicit CSVReader(size_t column_count, Args&&...args) :
-    in(std::forward<Args>(args)...),
-    columncount(column_count),
-    columnNames(column_count),
-    colOrder(column_count),
-    row(column_count, nullptr)
+  explicit CSVReader(size_t columnCount, Args&&...args) :
+    in(std::forward<Args>(args)...),    
+    columnNames(columnCount),
+    colOrder(columnCount),
+    row(columnCount, nullptr)
   {
     std::iota(std::begin(colOrder), std::end(colOrder), 0);
-    for(size_t i=1; i<=column_count; ++i){
+    for(size_t i=1; i <= columnCount; ++i){
       columnNames[i-1] = "col" + std::to_string(i);
     }
   }
@@ -238,7 +237,6 @@ class CSVReader{
 
   LineReader in;
 
-  size_t columncount;
   std::vector<std::string> columnNames;
   std::vector<int> colOrder;
   std::vector<char*> row;
