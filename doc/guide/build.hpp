@@ -120,11 +120,26 @@ want to build everything in the library:
 $ make mlpack_pca mlpack_knn mlpack_kfn
 @endcode
 
-If the build fails and you cannot figure out why, register an account on Trac
-and submit a ticket and the mlpack developers will quickly help you figure it
+One particular component of interest is mlpack_test, which runs the mlpack test
+suite.  You can build this component with
+
+@code
+$ make mlpack_test
+@endcode
+
+and then run all of the tests, or an individual test suite:
+
+@code
+$ bin/mlpack_test
+$ bin/mlpack_test -t KNNTest
+@endcode
+
+If the build fails and you cannot figure out why, register an account on Github
+and submit an issue and the mlpack developers will quickly help you figure it
 out:
 
 http://mlpack.org/
+http://github.com/mlpack/mlpack
 
 Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
 
