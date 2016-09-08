@@ -33,8 +33,8 @@ PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
 PARAM_STRING_OUT("output_file", "File to save output", "o");
 PARAM_STRING_IN("missing_value", "User defined missing value", "m", "");
 PARAM_STRING_IN("strategy", "imputation strategy to be applied. Strategies "
-    "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.", "s"
-    , "");
+    "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
+    "s", "");
 PARAM_DOUBLE_IN("custom_value", "user_defined custom value", "c", 0.0);
 PARAM_INT_IN("dimension", "the dimension to apply imputation", "d", 0);
 
