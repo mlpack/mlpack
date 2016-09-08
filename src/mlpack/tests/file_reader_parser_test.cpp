@@ -126,4 +126,25 @@ BOOST_AUTO_TEST_CASE(ParseStringTest)
   BOOST_REQUIRE_EQUAL("hh 600 mm gg", str);
 }
 
+BOOST_AUTO_TEST_CASE(ParseLineTest)
+{
+  std::vector<char*> chars(3, nullptr);
+  std::vector<int> colOrder(chars.size());
+  std::iota(std::begin(colOrder), std::end(colOrder), 0);
+
+  char strs[] = "600  ,800  ,300  ";
+  io::ParseLine<io::TrimChars<' ', '\t'>, io::NoQuoteEscape<','>>(strs,
+                                                                  &chars[0], colOrder);
+  BOOST_REQUIRE_EQUAL("600", chars[0]);
+  BOOST_REQUIRE_EQUAL("800", chars[1]);
+  BOOST_REQUIRE_EQUAL("300", chars[2]);
+
+  char strs2[] = "600\t800\t 300 ";
+  io::ParseLine<io::TrimChars<' '>, io::NoQuoteEscape<'\t'>>(strs2,
+                                                             &chars[0], colOrder);
+  BOOST_REQUIRE_EQUAL("600", chars[0]);
+  BOOST_REQUIRE_EQUAL("800", chars[1]);
+  BOOST_REQUIRE_EQUAL("300", chars[2]);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
