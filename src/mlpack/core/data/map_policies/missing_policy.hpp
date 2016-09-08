@@ -88,7 +88,6 @@ class MissingPolicy
     {
       // This string already exists in the mapping or not included in
       // the missingSet.
-      size_t& numMappings = maps[dimension].second;
       return NaN;
     }
   }

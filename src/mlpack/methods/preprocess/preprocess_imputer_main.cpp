@@ -121,6 +121,14 @@ int main(int argc, char** argv)
     Log::Warn << "The file does not contain any user-defined missing "
         << "variables. The program did not perform any imputation." << endl;
   }
+  else if (CLI::HasParam("dimension") &&
+      !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
+      != dirtyDimensions.end()))
+  {
+    Log::Warn << "The given dimension of the file does not contain any "
+      << "user-defined missing variables. The program did not perform any "
+      << "imputation." << endl;
+  }
   else
   {
     // Initialize imputer class
