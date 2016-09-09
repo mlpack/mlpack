@@ -1403,6 +1403,34 @@ BOOST_AUTO_TEST_CASE(HarderKeonTest)
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
 }
 
+BOOST_AUTO_TEST_CASE(NoMappingARFFTest)
+{
+  std::fstream f;
+  f.open("test.arff", std::fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one NUMERIC" << endl;
+  f << "@attribute two NUMERIC" << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "1, 2" << endl;
+  f << "3, 4" << endl;
+  f << "5, 6" << endl;
+  f << "7, 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  data::LoadARFF("test.arff", dataset);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], double(i + 1), 1e-5);
+
+  remove("test.arff");
+}
+
 /**
  * A simple ARFF load test.  Two attributes, both numeric.
  */
