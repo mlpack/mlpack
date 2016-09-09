@@ -33,6 +33,7 @@ struct ArffInfo
   std::vector<size_t> classCols;//record the column belongs to class type
 };
 
+inline
 ArffInfo LoadARFFInfo(const std::string &filename)
 {
   using namespace boost::algorithm;
