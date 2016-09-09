@@ -9,11 +9,93 @@
 
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
+#include "file_reader/csv_reader.hpp"
 
 #include <boost/algorithm/string.hpp>
 
 namespace mlpack {
 namespace data {
+
+namespace details{
+
+/**
+ * Store the information of arff file
+ */
+struct ArffInfo
+{
+  ArffInfo() :
+    totalRows(0),
+    totalCols(0)
+  {}
+
+  size_t totalRows;
+  size_t totalCols;
+  std::vector<size_t> classCols;//record the column belongs to class type
+};
+
+ArffInfo LoadARFFInfo(const std::string &filename)
+{
+  using namespace boost::algorithm;
+
+  io::LineReader reader(filename);
+  ArffInfo info;
+  std::vector<char*> chars(3, nullptr);
+  std::vector<int> colOrder(chars.size());
+  std::iota(std::begin(colOrder), std::end(colOrder), 0);
+  while(char *line = reader.NextLine()){
+    if(line[0] == '@'){
+      if(istarts_with(line, "@attribute")){
+        io::ParseLine<io::TrimChars<>, io::NoQuoteEscapes<' ','\t'>>(line,
+                                                                     &chars[0], colOrder);
+        if(istarts_with(chars[2], "numeric")){
+          info.classCols.emplace_back(info.totalRows);
+        }
+        ++info.totalRows;
+      }else if(ifind_first(line, "@data")){
+        break;
+      }
+    }
+  }
+
+  while(reader.NextLine()){
+    ++info.totalCols;
+  }
+
+  return info;
+}
+
+} //namespace details
+
+template<typename eT>
+void LoadARFF(const std::string& filename, arma::Mat<eT>& matrix)
+{
+  using namespace boost::algorithm;
+
+  io::LineReader reader(filename);
+  while(char *line = reader.NextLine()){
+    if(istarts_with(line, "@data")){
+      break;
+    }
+  }
+
+  const auto info = details::LoadARFFInfo(filename);
+  std::vector<char*> chars(info.totalRows, nullptr);
+  std::vector<int> colOrder(chars.size());
+  std::iota(std::begin(colOrder), std::end(colOrder), 0);
+  matrix.set_size(info.totalRows, info.totalCols);
+  size_t row = 0, col = 0;
+
+  while(char *line = reader.NextLine()){
+    io::ParseLine<io::TrimChars<' ', '\t'>, io::NoQuoteEscape<','>>(line,
+                                                                    &chars[0], colOrder);
+    for(const auto val : chars){
+      if(val){
+        io::Parse<io::ThrowOnOverFlow>(val, matrix(row++, col));
+      }
+    }
+    ++col; row = 0;
+  }
+}
 
 template<typename eT>
 void LoadARFF(const std::string& filename,
