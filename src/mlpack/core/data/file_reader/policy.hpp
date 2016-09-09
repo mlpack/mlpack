@@ -135,7 +135,7 @@ struct SingleAndEmptyLineComment
 template<char sep>
 struct NoQuoteEscape
 {
-  static const char* FindNextColumnEnd(const char*col_begin)
+  static const char* FindNextColumnEnd(const char *col_begin)
   {
     while(*col_begin != sep && *col_begin != '\0')
     {
@@ -147,7 +147,37 @@ struct NoQuoteEscape
   static void unescape(char*&, char*&)
   {
 
+  } 
+};
+
+template<char ...sep>
+struct NoQuoteEscapes
+{
+  static const char* FindNextColumnEnd(const char *col_begin)
+  {
+    while(!IsEscapeChar(*col_begin, sep...) && *col_begin != '\0')
+    {
+      ++col_begin;
+    }
+    return col_begin;
   }
+
+  static void unescape(char*&, char*&)
+  {
+
+  }
+
+private:
+ constexpr static bool IsEscapeChar(char)
+ {
+   return false;
+ }
+
+ template<class ...OtherEscapeChars>
+ constexpr static bool IsEscapeChar(char c, char escapeChar, OtherEscapeChars...otherEscapeChars)
+ {
+   return c == escapeChar || IsEscapeChar(c, otherEscapeChars...);
+ }
 };
 
 template<char sep, char quote>

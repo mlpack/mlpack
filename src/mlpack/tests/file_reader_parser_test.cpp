@@ -145,6 +145,13 @@ BOOST_AUTO_TEST_CASE(ParseLineTest)
   BOOST_REQUIRE_EQUAL("600", chars[0]);
   BOOST_REQUIRE_EQUAL("800", chars[1]);
   BOOST_REQUIRE_EQUAL("300", chars[2]);
+
+  char strs3[] = "600\t800,300";
+  io::ParseLine<io::TrimChars<' '>, io::NoQuoteEscapes<'\t',','>>(strs3,
+                                                                  &chars[0], colOrder);
+  BOOST_REQUIRE_EQUAL("600", chars[0]);
+  BOOST_REQUIRE_EQUAL("800", chars[1]);
+  BOOST_REQUIRE_EQUAL("300", chars[2]);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
