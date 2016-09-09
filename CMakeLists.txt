@@ -26,9 +26,11 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
-    "Build with support for code coverage tools (gcc only)" OFF)
+    "Build with support for code coverage tools (gcc only)." OFF)
+option(MATHJAX
+    "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 enable_testing()
 
 # Include modules in the CMake directory.
@@ -96,9 +98,7 @@ if(BUILD_WITH_COVERAGE)
 
     set(COMPILER_MLPACK_SUPPORT_LIBRARIES
         ${COMPILER_SUPPORT_MLPACK_LIBRARIES} "supc++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline \
-        -fno-inline-small-functions -fno-default-inline -fprofile-arcs \
-        -fkeep-inline-functions")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
     set(DEBUG ON)
@@ -121,7 +121,9 @@ if(DEBUG)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
-  endif ()
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
@@ -170,6 +172,7 @@ endif()
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
+#   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 4.100.0 REQUIRED)
 
@@ -376,11 +379,22 @@ add_dependencies(mlpack mlpack_arma_config)
 # I guess this option will just be unavailable.
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
+  if (MATHJAX)
+    find_package(MathJax)
+    if (NOT MATHJAX_FOUND)
+      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+          "Be careful, formulas will not be shown without the internet.")
+    endif ()
+  endif ()
   # Preprocess the Doxyfile.  This is done before 'make doc'.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -D DESTDIR="${CMAKE_BINARY_DIR}" -P
-          "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+      COMMAND ${CMAKE_COMMAND}
+          -D DESTDIR="${CMAKE_BINARY_DIR}"
+          -D MATHJAX="${MATHJAX}"
+          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+          -D MATHJAX_PATH="${MATHJAX_PATH}"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
       COMMENT "Creating Doxyfile to generate Doxygen documentation"

@@ -65,6 +65,22 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
     case R_PLUS_PLUS_TREE:
       ar & CreateNVP(rPlusPlusTreeRS, "range_search_model");
       break;
+
+    case VP_TREE:
+      ar & CreateNVP(vpTreeRS, "range_search_model");
+      break;
+
+    case RP_TREE:
+      ar & CreateNVP(rpTreeRS, "range_search_model");
+      break;
+
+    case MAX_RP_TREE:
+      ar & CreateNVP(maxRPTreeRS, "range_search_model");
+      break;
+
+    case UB_TREE:
+      ar & CreateNVP(ubTreeRS, "range_search_model");
+      break;
   }
 }
 
@@ -88,6 +104,14 @@ inline const arma::mat& RSModel::Dataset() const
     return rPlusTreeRS->ReferenceSet();
   else if (rPlusPlusTreeRS)
     return rPlusPlusTreeRS->ReferenceSet();
+  else if (vpTreeRS)
+    return vpTreeRS->ReferenceSet();
+  else if (rpTreeRS)
+    return rpTreeRS->ReferenceSet();
+  else if (maxRPTreeRS)
+    return maxRPTreeRS->ReferenceSet();
+  else if (ubTreeRS)
+    return ubTreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -112,6 +136,14 @@ inline bool RSModel::SingleMode() const
     return rPlusTreeRS->SingleMode();
   else if (rPlusPlusTreeRS)
     return rPlusPlusTreeRS->SingleMode();
+  else if (vpTreeRS)
+    return vpTreeRS->SingleMode();
+  else if (rpTreeRS)
+    return rpTreeRS->SingleMode();
+  else if (maxRPTreeRS)
+    return maxRPTreeRS->SingleMode();
+  else if (ubTreeRS)
+    return ubTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -136,6 +168,14 @@ inline bool& RSModel::SingleMode()
     return rPlusTreeRS->SingleMode();
   else if (rPlusPlusTreeRS)
     return rPlusPlusTreeRS->SingleMode();
+  else if (vpTreeRS)
+    return vpTreeRS->SingleMode();
+  else if (rpTreeRS)
+    return rpTreeRS->SingleMode();
+  else if (maxRPTreeRS)
+    return maxRPTreeRS->SingleMode();
+  else if (ubTreeRS)
+    return ubTreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -160,6 +200,14 @@ inline bool RSModel::Naive() const
     return rPlusTreeRS->Naive();
   else if (rPlusPlusTreeRS)
     return rPlusPlusTreeRS->Naive();
+  else if (vpTreeRS)
+    return vpTreeRS->Naive();
+  else if (rpTreeRS)
+    return rpTreeRS->Naive();
+  else if (maxRPTreeRS)
+    return maxRPTreeRS->Naive();
+  else if (ubTreeRS)
+    return ubTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -184,6 +232,14 @@ inline bool& RSModel::Naive()
     return rPlusTreeRS->Naive();
   else if (rPlusPlusTreeRS)
     return rPlusPlusTreeRS->Naive();
+  else if (vpTreeRS)
+    return vpTreeRS->Naive();
+  else if (rpTreeRS)
+    return rpTreeRS->Naive();
+  else if (maxRPTreeRS)
+    return maxRPTreeRS->Naive();
+  else if (ubTreeRS)
+    return ubTreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }

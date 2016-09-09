@@ -28,6 +28,10 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
   {
     // We actually want to copy this way.  Pointers and everything.
     TreeType* copy = new TreeType(*tree, false);
+    // Only the root node owns this variable.
+    copy->AuxiliaryInfo().HilbertValue().OwnsValueToInsert() = false;
+    // Only leaf nodes own this variable.
+    tree->AuxiliaryInfo().HilbertValue().OwnsLocalHilbertValues() = false;
     copy->Parent() = tree;
     tree->Count() = 0;
     tree->NullifyData();
@@ -89,7 +93,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   {
     // We actually want to copy this way.  Pointers and everything.
     TreeType* copy = new TreeType(*tree, false);
-
+    // Only the root node owns this variable.
+    copy->AuxiliaryInfo().HilbertValue().OwnsValueToInsert() = false;
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();

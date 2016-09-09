@@ -223,6 +223,14 @@ class CoverTree
   CoverTree(const CoverTree& other);
 
   /**
+   * Move constructor for a Cover Tree, possess all the members of the given
+   * tree.
+   *
+   * @param other Cover Tree to move.
+   */
+  CoverTree(CoverTree&& other);
+
+  /**
    * Create a cover tree from a boost::serialization archive.
    */
   template<typename Archive>
@@ -294,6 +302,36 @@ class CoverTree
   //! Modify the statistic for this node.
   StatisticType& Stat() { return stat; }
 
+  /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const CoverTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const CoverTree& queryNode);
+
   //! Return the minimum distance to another node.
   ElemType MinDistance(const CoverTree* other) const;
 
@@ -337,9 +375,6 @@ class CoverTree
   //! point-to-point distance has already been calculated.
   math::RangeType<ElemType> RangeDistance(const arma::vec& other,
                                           const ElemType distance) const;
-
-  //! Returns true: this tree does have self-children.
-  static bool HasSelfChildren() { return true; }
 
   //! Get the parent node.
   CoverTree* Parent() const { return parent; }

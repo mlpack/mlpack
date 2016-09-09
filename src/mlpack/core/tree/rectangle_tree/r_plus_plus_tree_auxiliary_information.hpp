@@ -35,13 +35,26 @@ class RPlusPlusTreeAuxiliaryInformation
   RPlusPlusTreeAuxiliaryInformation(const TreeType* /* node */);
 
   /**
-   * Create an auxiliary information object by copying from another node.
+   * Create an auxiliary information object by copying from another object.
    *
-   * @param other The auxiliary information object from which the information
-   * will be copied.
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
    */
   RPlusPlusTreeAuxiliaryInformation(
-      const RPlusPlusTreeAuxiliaryInformation& other);
+      const RPlusPlusTreeAuxiliaryInformation& other,
+      TreeType* tree,
+      bool /* deepCopy */ = true);
+
+  /**
+   * Create an auxiliary information object by moving from another node.
+   *
+   * @param other The auxiliary information object from which the information
+   * will be moved.
+   */
+  RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other);
 
   /**
    * Some tree types require to save some properties at the insertion process.

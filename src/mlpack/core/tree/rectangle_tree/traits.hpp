@@ -34,6 +34,11 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
   static const bool HasOverlappingChildren = true;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
@@ -54,6 +59,12 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 /**
@@ -82,6 +93,11 @@ class TreeTraits<RectangleTree<MetricType,
   static const bool HasOverlappingChildren = false;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
@@ -102,6 +118,12 @@ class TreeTraits<RectangleTree<MetricType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

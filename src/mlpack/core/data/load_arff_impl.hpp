@@ -97,10 +97,10 @@ void LoadARFF(const std::string& filename, arma::Mat<eT>& matrix)
   }
 }
 
-template<typename eT>
+template<typename eT, typename PolicyType>
 void LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetInfo& info)
+              DatasetMapper<PolicyType>& info)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -180,7 +180,7 @@ void LoadARFF(const std::string& filename,
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
   {
-    info = DatasetInfo(dimensionality);
+    info = DatasetMapper<PolicyType>(dimensionality);
   }
   else if (info.Dimensionality() != dimensionality)
   {

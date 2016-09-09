@@ -10,22 +10,45 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <boost/heap/priority_queue.hpp>
 
 namespace mlpack {
 namespace fastmks {
 
 /**
- * The base case and pruning rules for FastMKS (fast max-kernel search).
+ * The FastMKSRules class is a template helper class used by FastMKS class when
+ * performing exact max-kernel search. For each point in the query dataset, it
+ * keeps track of the k best candidates in the reference dataset.
+ *
+ * @tparam KernelType Type of kernel to run FastMKS with.
+ * @tparam TreeType Type of tree to run FastMKS with; it must satisfy the
+ *     TreeType policy API.
  */
 template<typename KernelType, typename TreeType>
 class FastMKSRules
 {
  public:
+  /**
+   * Construct the FastMKSRules object.  This is usually done from within the
+   * FastMKS class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param k Number of candidates to search for.
+   * @param kernel Kernel to run FastMKS with.
+   */
   FastMKSRules(const typename TreeType::Mat& referenceSet,
                const typename TreeType::Mat& querySet,
-               arma::Mat<size_t>& indices,
-               arma::mat& products,
+               const size_t k,
                KernelType& kernel);
+
+  /**
+   * Store the list of candidates for each query point in the given matrices.
+   *
+   * @param indices Matrix storing lists of candidate for each query point.
+   * @param products Matrix storing kernel value for each candidate.
+   */
+  void GetResults(arma::Mat<size_t>& indices, arma::mat& products);
 
   //! Compute the base case (kernel value) between two points.
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
@@ -101,10 +124,29 @@ class FastMKSRules
   //! The query dataset.
   const typename TreeType::Mat& querySet;
 
-  //! The indices of the maximum kernel results.
-  arma::Mat<size_t>& indices;
-  //! The maximum kernels.
-  arma::mat& products;
+  //! Candidate represents a possible candidate point (value, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the value.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2) const
+    {
+      return c1.first > c2.first;
+    };
+  };
+
+  //! Use a min heap to represent the list of candidate points.
+  //! We will use a boost::heap::priority_queue instead of a std::priority_queue
+  //! because we need to iterate over all the candidates and std::priority_queue
+  //! doesn't provide that interface.
+  typedef boost::heap::priority_queue<Candidate,
+      boost::heap::compare<CandidateCmp>> CandidateList;
+
+  //! Set of candidates for each point.
+  std::vector<CandidateList> candidates;
+
+  //! Number of points to search for.
+  const size_t k;
 
   //! Cached query set self-kernels (|| q || for each q).
   arma::vec queryKernels;
@@ -124,11 +166,16 @@ class FastMKSRules
   //! Calculate the bound for a given query node.
   double CalculateBound(TreeType& queryNode) const;
 
-  //! Utility function to insert neighbor into list of results.
+  /**
+   * Helper function to insert a point into the list of candidate points.
+   *
+   * @param queryIndex Index of point whose neighbors we are inserting into.
+   * @param index Index of reference point which is being inserted.
+   * @param product Kernel value for given candidate.
+   */
   void InsertNeighbor(const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
+                      const size_t index,
+                      const double product);
 
   //! For benchmarking.
   size_t baseCases;

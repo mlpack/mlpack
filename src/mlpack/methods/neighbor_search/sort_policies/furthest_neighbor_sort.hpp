@@ -23,24 +23,6 @@ class FurthestNeighborSort
 {
  public:
   /**
-   * Return the index in the vector where the new distance should be inserted,
-   * or size_t() - 1 if it should not be inserted (i.e. if it is not any better
-   * than any of the existing points in the list).  The list should be sorted
-   * such that the best point is the first in the list.  The actual insertion is
-   * not performed.
-   *
-   * @param list Vector of existing distance points, sorted such that the best
-   *     point is the first in the list.
-   * @param new_distance Distance to try to insert.
-   *
-   * @return size_t containing the position to insert into, or (size_t() - 1)
-   *     if the new distance should not be inserted.
-   */
-  static size_t SortDistance(const arma::vec& list,
-                             const arma::Col<size_t>& indices,
-                             double newDistance);
-
-  /**
    * Return whether or not value is "better" than ref.  In this case, that means
    * that the value is greater than or equal to the reference.
    *
@@ -113,6 +95,26 @@ class FurthestNeighborSort
                                         const double pointToCenterDistance);
 
   /**
+   * Return the best child according to this sort policy. In this case it will
+   * return the one with the maximum distance.
+   */
+  template<typename VecType, typename TreeType>
+  static size_t GetBestChild(const VecType& queryPoint, TreeType& referenceNode)
+  {
+    return referenceNode.GetFurthestChild(queryPoint);
+  };
+
+  /**
+   * Return the best child according to this sort policy. In this case it will
+   * return the one with the maximum distance.
+   */
+  template<typename TreeType>
+  static size_t GetBestChild(const TreeType& queryNode, TreeType& referenceNode)
+  {
+    return referenceNode.GetFurthestChild(queryNode);
+  };
+
+  /**
    * Return what should represent the worst possible distance with this
    * particular sort policy.  In our case, this should be the minimum possible
    * distance, 0.
@@ -161,6 +163,31 @@ class FurthestNeighborSort
     if (value == DBL_MAX || epsilon >= 1)
       return DBL_MAX;
     return (1 / (1 - epsilon)) * value;
+  }
+
+  /**
+   * Convert the given distance to a score.  Lower scores are better, but for
+   * furthest neighbor search, larger distances are better.  Therefore we must
+   * invert the given distance.
+   */
+  static inline double ConvertToScore(const double distance)
+  {
+    if (distance == DBL_MAX)
+      return 0.0;
+    else if (distance == 0.0)
+      return DBL_MAX;
+    else
+      return (1.0 / distance);
+  }
+
+  /**
+   * Convert the given score back to a distance.  This is the inverse of the
+   * operation of converting a distance to a score, and again, for furthest
+   * neighbor search, corresponds to inverting the value.
+   */
+  static inline double ConvertToDistance(const double score)
+  {
+    return ConvertToScore(score);
   }
 };
 

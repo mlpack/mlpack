@@ -1401,6 +1401,8 @@ BOOST_AUTO_TEST_CASE(HarderKeonTest)
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(1), 5);
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(2), 5);
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
+
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(NoMappingARFFTest)

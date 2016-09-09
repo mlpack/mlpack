@@ -54,6 +54,8 @@ class BinarySpaceTree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
+  typedef SplitType<BoundType<MetricType>, MatType> Split;
+
  private:
   //! The left child node.
   BinarySpaceTree* left;
@@ -331,6 +333,36 @@ class BinarySpaceTree
   size_t NumChildren() const;
 
   /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const BinarySpaceTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const BinarySpaceTree& queryNode);
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
@@ -450,9 +482,6 @@ class BinarySpaceTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
 
@@ -477,6 +506,23 @@ class BinarySpaceTree
   void SplitNode(std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
+
+  /**
+   * Update the bound of the current node. This method does not take into
+   * account bound-specific properties.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  template<typename BoundType2>
+  void UpdateBound(BoundType2& boundToUpdate);
+
+  /**
+   * Update the bound of the current node. This method is designed for
+   * HollowBallBound only.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
 
  protected:
   /**

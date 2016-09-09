@@ -164,19 +164,3 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
     return sum;
   } // For k > 1.
 }
-
-void mlpack::neighbor::RAUtil::ObtainDistinctSamples(
-    const size_t numSamples,
-    const size_t rangeUpperBound,
-    arma::uvec& distinctSamples)
-{
-  // Keep track of the points that are sampled.
-  arma::Col<size_t> sampledPoints;
-  sampledPoints.zeros(rangeUpperBound);
-
-  for (size_t i = 0; i < numSamples; i++)
-    sampledPoints[(size_t) math::RandInt(rangeUpperBound)]++;
-
-  distinctSamples = arma::find(sampledPoints > 0);
-  return;
-}

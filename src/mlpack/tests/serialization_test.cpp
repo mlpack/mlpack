@@ -806,7 +806,7 @@ BOOST_AUTO_TEST_CASE(KNNTest)
   using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  KNN knn(dataset, false, false);
+  KNN knn(dataset, DUAL_TREE_MODE);
 
   KNN knnXml, knnText, knnBinary;
 
