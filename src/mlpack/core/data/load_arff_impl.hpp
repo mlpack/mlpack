@@ -13,6 +13,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <regex>
+
 namespace mlpack {
 namespace data {
 
@@ -45,8 +47,9 @@ ArffInfo LoadARFFInfo(const std::string &filename)
   std::iota(std::begin(colOrder), std::end(colOrder), 0);
   while(char *line = reader.NextLine()){
     if(line[0] == '@'){
-      if(istarts_with(line, "@attribute")){
-        io::ParseLine<io::TrimChars<>, io::NoQuoteEscapes<' ','\t'>>(line,
+      if(istarts_with(line, "@attribute")){        
+        auto newStr = std::regex_replace(line, std::regex("[' ']{2,}"), " ");
+        io::ParseLine<io::TrimChars<>, io::NoQuoteEscapes<' ','\t'>>(&newStr[0],
                                                                      &chars[0], colOrder);
         if(istarts_with(chars[2], "numeric")){
           info.classCols.emplace_back(info.totalRows);
