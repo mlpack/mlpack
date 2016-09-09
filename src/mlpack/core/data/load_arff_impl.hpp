@@ -49,7 +49,7 @@ ArffInfo LoadARFFInfo(const std::string &filename)
   while(char *line = reader.NextLine()){
     if(line[0] == '@'){
       if(istarts_with(line, "@attribute")){        
-        auto newStr = std::regex_replace(std::string(line), regex, " ");
+        auto newStr = std::regex_replace(std::string(line), regex, std::string(" "));
         io::ParseLine<io::TrimChars<>, io::NoQuoteEscapes<' ','\t'>>(&newStr[0],
                                                                      &chars[0], colOrder);
         if(istarts_with(chars[2], "numeric")){
