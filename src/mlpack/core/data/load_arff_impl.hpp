@@ -45,10 +45,11 @@ ArffInfo LoadARFFInfo(const std::string &filename)
   std::vector<char*> chars(3, nullptr);
   std::vector<int> colOrder(chars.size());
   std::iota(std::begin(colOrder), std::end(colOrder), 0);
+  const auto regex = std::regex("[' ']{2,}");
   while(char *line = reader.NextLine()){
     if(line[0] == '@'){
       if(istarts_with(line, "@attribute")){        
-        auto newStr = std::regex_replace(line, std::regex("[' ']{2,}"), " ");
+        auto newStr = std::regex_replace(line, regex, " ");
         io::ParseLine<io::TrimChars<>, io::NoQuoteEscapes<' ','\t'>>(&newStr[0],
                                                                      &chars[0], colOrder);
         if(istarts_with(chars[2], "numeric")){
