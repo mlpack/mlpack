@@ -410,3 +410,57 @@ if (UNIX)
         DESTINATION share/man/man1/)
   endif ()
 endif ()
+
+# Create the pkg-config file, if we have pkg-config.
+find_package(PkgConfig)
+if (PKG_CONFIG_FOUND)
+  # mlpack.pc must be generated as a separate target, otherwise it is possible
+  # that the given version could be out of date.  We don't need to worry about
+  # the library or include directories changing, because CMake will re-run this
+  # portion of the code whenever any of those changes.  But the version must be
+  # re-extracted every time the library is built.
+
+  # So, we have to parse our list of library directories, libraries, and include
+  # directories in order to get the correct line to give to pkg-config.
+  # Next, adapt the list of include directories.
+  foreach (incldir ${MLPACK_INCLUDE_DIRS})
+    # Filter out some obviously unnecessary directories.
+    if ("${incldir}" STREQUAL "/usr/include")
+      continue()
+    endif ()
+
+    set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
+  endforeach ()
+
+  # Create the list of link directories.
+  foreach (linkdir ${MLPACK_LIBRARY_DIRS})
+    set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${linkdir}")
+  endforeach ()
+
+  foreach(lib ${MLPACK_LIBRARIES})
+    message("lib is ${lib}")
+
+    string(SUBSTRING "${lib}" 0 1 first)
+    if ("${first}" STREQUAL "/")
+      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${lib}")
+    else ()
+      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -l${lib}")
+    endif ()
+  endforeach ()
+
+  # Do first stage of configuration.
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
+    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+
+  add_custom_target(pkgconfig ALL
+      ${CMAKE_COMMAND}
+          -D MLPACK_SOURCE_DIR="${CMAKE_BINARY_DIR}/include/"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
+      DEPENDS mlpack_headers
+      COMMENT "Generating mlpack.pc (pkg-config) file.")
+
+  # Do we need a different directory?
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
+      DESTINATION ${libdir}/pkgconfig/)
+endif ()
