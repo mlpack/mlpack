@@ -47,6 +47,10 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 endif()
 
+# These support libraries are used if we need to link against something
+# specific.  This list is a subset of MLPACK_LIBRARIES.
+set(COMPILER_SUPPORT_LIBRARIES "")
+
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
@@ -75,6 +79,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif()
 
   # Link everything with -lm.
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
 endif()
 
