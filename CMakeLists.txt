@@ -542,5 +542,5 @@ if (PKG_CONFIG_FOUND)
 
   # Do we need a different directory?
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION ${libdir}/pkgconfig/)
+      DESTINATION lib/pkgconfig/)
 endif ()
