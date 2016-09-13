@@ -15,7 +15,7 @@
 #include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::gmm;
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Now train the model.
-  GMM g(4, 3); // 3 dimensions, 4 components.
+  GMM g(3, 3); // 3 dimensions, 3 components (the fourth component is fake).
 
   g.Train(points, probabilities, 8);
 
@@ -316,53 +316,43 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 
   // The tolerances in our checks are quite large, but it is good to remember
   // that we introduced a fair amount of random noise into this whole process.
+  // We don't need to look for the fourth Gaussian since that is not supposed to
+  // be a part of this mixture.
 
-  // First Gaussian (d4).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.1);
+  // First Gaussian (d1).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
-        - d4.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; row++)
-    for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Covariance()(row, col)
-          - d4.Covariance()(row, col)), 0.7); // Big tolerance!  Lots of noise.
-
-  // Second Gaussian (d1).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.1);
-
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
         - d1.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Covariance()(row, col)
+      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Covariance()(row, col)
           - d1.Covariance()(row, col)), 0.7); // Big tolerance!  Lots of noise.
 
-  // Third Gaussian (d2).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.3, 0.1);
+  // Second Gaussian (d2).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
+    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
         - d2.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Covariance()(row, col)
+      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Covariance()(row, col)
           - d2.Covariance()(row, col)), 0.7); // Big tolerance!  Lots of noise.
 
-  // Fourth gaussian (d3).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[3]] - 0.4, 0.1);
+  // Third Gaussian (d3).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.4, 0.1);
 
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[3]).Mean()[i]
+    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
         - d3.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; ++row)
     for (size_t col = 0; col < 3; ++col)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[3]).Covariance()(row, col)
+      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Covariance()(row, col)
           - d3.Covariance()(row, col)), 0.7);
 }
 

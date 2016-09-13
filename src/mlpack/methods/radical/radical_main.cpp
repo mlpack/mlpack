@@ -14,22 +14,29 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "dimensions of Y are independent components.  If the algorithm is running"
     "particularly slowly, try reducing the number of replicates.");
 
-PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
+PARAM_STRING_IN_REQ("input_file", "Input dataset filename for ICA.", "i");
 
-PARAM_STRING("output_ic", "File to save independent components to.", "o",
-    "output_ic.csv");
-PARAM_STRING("output_unmixing", "File to save unmixing matrix to.", "u",
-    "output_unmixing.csv");
+// Kept for reverse compatibility until mlpack 3.0.0.
+PARAM_STRING_OUT("output_ic", "File to save independent components to "
+    "(deprecated: use --output_ic_file).", "");
+PARAM_STRING_OUT("output_unmixing", "File to save unmixing matrix to "
+    "(deprecated: use --output_unmixing_file).", "");
 
-PARAM_DOUBLE("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
+// These are the new parameter names.
+PARAM_STRING_OUT("output_ic_file", "File to save independent components to.",
+    "o");
+PARAM_STRING_OUT("output_unmixing_file", "File to save unmixing matrix to.",
+    "u");
+
+PARAM_DOUBLE_IN("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);
-PARAM_INT("replicates", "Number of Gaussian-perturbed replicates to use "
+PARAM_INT_IN("replicates", "Number of Gaussian-perturbed replicates to use "
     "(per point) in Radical2D.", "r", 30);
-PARAM_INT("angles", "Number of angles to consider in brute-force search "
+PARAM_INT_IN("angles", "Number of angles to consider in brute-force search "
     "during Radical2D.", "a", 150);
-PARAM_INT("sweeps", "Number of sweeps; each sweep calls Radical2D once for "
+PARAM_INT_IN("sweeps", "Number of sweeps; each sweep calls Radical2D once for "
     "each pair of dimensions.", "S", 0);
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("objective", "If set, an estimate of the final objective function "
     "is printed.", "O");
 
@@ -44,11 +51,41 @@ int main(int argc, char* argv[])
   // Handle parameters.
   CLI::ParseCommandLine(argc, argv);
 
+  // Reverse compatibility.  We can remove these for mlpack 3.0.0.
+  if (CLI::HasParam("output_ic") && CLI::HasParam("output_ic_file"))
+    Log::Fatal << "Cannot specify both --output_ic and --output_ic_file!"
+        << endl;
+
+  if (CLI::HasParam("output_unmixing") && CLI::HasParam("output_unmixing_file"))
+    Log::Fatal << "Cannot specify both --output_unmixing and "
+        << "--output_unmixing_file!" << endl;
+
+  if (CLI::HasParam("output_ic"))
+  {
+    Log::Warn << "--output_ic is deprecated and will be removed in mlpack "
+        << "3.0.0; use --output_ic_file instead." << endl;
+    CLI::GetParam<string>("output_ic_file") =
+        CLI::GetParam<string>("output_ic");
+  }
+
+  if (CLI::HasParam("output_unmixing"))
+  {
+    Log::Warn << "--output_unmixing is deprecated and will be removed in mlpack"
+        << " 3.0.0; use --output_unmixing_file instead." << endl;
+    CLI::GetParam<string>("output_unmixing_file") =
+        CLI::GetParam<string>("output_unmixing");
+  }
+
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
+
+  if ((CLI::GetParam<string>("output_ic_file") == "") &&
+      (CLI::GetParam<string>("output_unmixing_file") == ""))
+    Log::Warn << "Neither --output_ic_file nor --output_unmixing_file were "
+        << "specified; no output will be saved!" << endl;
 
   // Load the data.
   const string matXFilename = CLI::GetParam<string>("input_file");
@@ -73,11 +110,13 @@ int main(int argc, char* argv[])
   rad.DoRadical(matX, matY, matW);
 
   // Save results.
-  const string matYFilename = CLI::GetParam<string>("output_ic");
-  data::Save(matYFilename, matY);
+  const string matYFilename = CLI::GetParam<string>("output_ic_file");
+  if (matYFilename != "")
+    data::Save(matYFilename, matY);
 
-  const string matWFilename = CLI::GetParam<string>("output_unmixing");
-  data::Save(matWFilename, matW);
+  const string matWFilename = CLI::GetParam<string>("output_unmixing_file");
+  if (matWFilename != "")
+    data::Save(matWFilename, matW);
 
   if (CLI::HasParam("objective"))
   {

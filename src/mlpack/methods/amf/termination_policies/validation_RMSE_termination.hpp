@@ -134,10 +134,10 @@ class ValidationRMSETermination
     iteration++;
 
     // if RMSE tolerance is not satisfied
-    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
+    if ((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
     {
       // check if this is a first of successive drops
-      if(reverseStepCount == 0 && isCopy == false)
+      if (reverseStepCount == 0 && isCopy == false)
       {
         // store a copy of W and H matrix
         isCopy = true;
@@ -156,18 +156,18 @@ class ValidationRMSETermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if(rmse <= c_indexOld && isCopy == true)
+      if (rmse <= c_indexOld && isCopy == true)
       {
         isCopy = false;
       }
     }
 
     // check if termination criterion is met
-    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    if (reverseStepCount == reverseStepTolerance || iteration > maxIterations)
     {
       // if stored values are present replace them with current value as they
       // represent the minimum residue point
-      if(isCopy)
+      if (isCopy)
       {
         W = this->W;
         H = this->H;

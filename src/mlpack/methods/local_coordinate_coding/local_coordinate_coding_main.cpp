@@ -40,29 +40,31 @@ PROGRAM_INFO("Local Coordinate Coding",
     "the -N option.");
 
 // Training parameters.
-PARAM_STRING("training_file", "Filename of the training data (X).", "t", "");
-PARAM_INT("atoms", "Number of atoms in the dictionary.", "k", 0);
-PARAM_DOUBLE("lambda", "Weighted l1-norm regularization parameter.", "l", 0.0);
-PARAM_INT("max_iterations", "Maximum number of iterations for LCC (0 indicates "
-    "no limit).", "n", 0);
-PARAM_STRING("initial_dictionary", "Filename for optional initial dictionary.",
-    "i", "");
+PARAM_STRING_IN("training_file", "Filename of the training data (X).", "t", "");
+PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 0);
+PARAM_DOUBLE_IN("lambda", "Weighted l1-norm regularization parameter.", "l",
+    0.0);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for LCC (0 "
+    "indicates no limit).", "n", 0);
+PARAM_STRING_IN("initial_dictionary", "Filename for optional initial "
+    "dictionary.", "i", "");
 PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
     "before coding.", "N");
-PARAM_DOUBLE("tolerance", "Tolerance for objective function.", "o", 0.01);
+PARAM_DOUBLE_IN("tolerance", "Tolerance for objective function.", "o", 0.01);
 
 // Load/save a model.
-PARAM_STRING("input_model_file", "File containing input LCC model.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained LCC model to.", "M",
+PARAM_STRING_IN("input_model_file", "File containing input LCC model.", "m",
     "");
+PARAM_STRING_OUT("output_model_file", "File to save trained LCC model to.",
+    "M");
 
 // Test on another dataset.
-PARAM_STRING("test_file", "File of test points to encode.", "T", "");
-PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
-    "d", "");
-PARAM_STRING("codes_file", "Filename to save the output codes to.", "c", "");
+PARAM_STRING_IN("test_file", "File of test points to encode.", "T", "");
+PARAM_STRING_OUT("dictionary_file", "Filename to save the output dictionary "
+    "to.", "d");
+PARAM_STRING_OUT("codes_file", "Filename to save the output codes to.", "c");
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace arma;
 using namespace std;

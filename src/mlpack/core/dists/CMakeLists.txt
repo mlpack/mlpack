@@ -9,6 +9,8 @@ set(SOURCES
   laplace_distribution.cpp
   regression_distribution.hpp
   regression_distribution.cpp
+  gamma_distribution.hpp
+  gamma_distribution.cpp
 )
 
 # add directory name to sources

@@ -1,10 +1,9 @@
 /**
- * @file dt_main.cpp
- * @ Parikshit Ram (pram@cc.gatech.edu)
+ * @file det_main.cpp
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  *
- * This file provides an example use of the DET
+ * This file runs density estimation trees.
  */
-
 #include <mlpack/core.hpp>
 #include "dt_utils.hpp"
 
@@ -33,32 +32,32 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "into the file specified with the --test_set_estimates_file (-E) option.");
 
 // Input data files.
-PARAM_STRING("training_file", "The data set on which to build a density "
+PARAM_STRING_IN("training_file", "The data set on which to build a density "
     "estimation tree.", "t", "");
 
 // Input or output model.
-PARAM_STRING("input_model_file", "File containing already trained density "
+PARAM_STRING_IN("input_model_file", "File containing already trained density "
     "estimation tree.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained density estimation tree"
-    " to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained density estimation "
+    "tree to.", "M");
 
 // Output data files.
-PARAM_STRING("test_file", "A set of test points to estimate the density of.",
+PARAM_STRING_IN("test_file", "A set of test points to estimate the density of.",
     "T", "");
-PARAM_STRING("training_set_estimates_file", "The file in which to output the "
-    "density estimates on the training set from the final optimally pruned "
-    "tree.", "e", "");
-PARAM_STRING("test_set_estimates_file", "The file in which to output the "
-    "estimates on the test set from the final optimally pruned tree.", "E", "");
-PARAM_STRING("vi_file", "The file to output the variable importance values "
-    "for each feature.", "i", "");
+PARAM_STRING_OUT("training_set_estimates_file", "The file in which to output "
+    "the density estimates on the training set from the final optimally pruned "
+    "tree.", "e");
+PARAM_STRING_OUT("test_set_estimates_file", "The file in which to output the "
+    "estimates on the test set from the final optimally pruned tree.", "E");
+PARAM_STRING_OUT("vi_file", "The file to output the variable importance values "
+    "for each feature.", "i");
 
 // Parameters for the training algorithm.
-PARAM_INT("folds", "The number of folds of cross-validation to perform for the "
+PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for the "
     "estimation (0 is LOOCV)", "f", 10);
-PARAM_INT("min_leaf_size", "The minimum size of a leaf in the unpruned, fully "
+PARAM_INT_IN("min_leaf_size", "The minimum size of a leaf in the unpruned, fully "
     "grown DET.", "l", 5);
-PARAM_INT("max_leaf_size", "The maximum size of a leaf in the unpruned, fully "
+PARAM_INT_IN("max_leaf_size", "The maximum size of a leaf in the unpruned, fully "
     "grown DET.", "L", 10);
 /*
 PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
@@ -133,7 +132,7 @@ int main(int argc, char *argv[])
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
-    if (CLI::GetParam<string>("training_set_estimates_file") != "")
+    if (CLI::HasParam("training_set_estimates_file"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);

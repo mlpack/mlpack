@@ -18,64 +18,41 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template <typename TreeType>
 class RStarTreeSplit
 {
  public:
-  //! Default constructor
-  RStarTreeSplit();
-
-  //! Construct this with the specified node.
-  RStarTreeSplit(const TreeType *node);
-
-  //! Create a copy of the other.split.
-  RStarTreeSplit(const TreeType &other);
-
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  template <typename TreeType>
+  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  template <typename TreeType>
+  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
  private:
   /**
-   * Class to allow for faster sorting.
-   */
-  template<typename ElemType>
-  struct SortStruct
-  {
-    ElemType d;
-    int n;
-  };
-
-  /**
-   * Comparator for sorting with SortStruct.
-   */
-  template<typename ElemType>
-  static bool StructComp(const SortStruct<ElemType>& s1,
-                         const SortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
-
-  /**
    * Insert a node into another node.
    */
+  template <typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 
- public:
   /**
-   * Serialize the split.
+   * Comparator for sorting with std::pair. This comparator works a little bit
+   * faster then the default comparator.
    */
-  template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */) { };
+  template<typename ElemType>
+  static bool PairComp(const std::pair<ElemType, size_t>& p1,
+                       const std::pair<ElemType, size_t>& p2)
+  {
+    return p1.first < p2.first;
+  }
 };
 
 } // namespace tree

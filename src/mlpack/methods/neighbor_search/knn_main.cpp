@@ -44,36 +44,56 @@ PROGRAM_INFO("k-Nearest-Neighbors",
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
+PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
-PARAM_STRING("distances_file", "File to output distances into.", "d", "");
-PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
+PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
+PARAM_STRING_IN("true_distances_file", "File of true distances to compute "
+    "the effective error (average relative error) (it is printed when -v is "
+    "specified).", "D", "");
+PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute the "
+    "recall (it is printed when -v is specified).", "T", "");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained kNN model.", "m",
-    "");
-PARAM_STRING("output_model_file", "If specified, the kNN model will be saved "
-    "to the given file.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
+    "m", "");
+PARAM_STRING_OUT("output_model_file", "If specified, the kNN model will be "
+    "saved to the given file.", "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
+PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
+    "");
+PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
-    "trees, and R* trees).", "l", 20);
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
+    "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
+    "'r-plus-plus', 'spill'.", "t", "kd");
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
+    "trees, random projection trees, UB trees, R trees, R* trees, X trees, "
+    "Hilbert R trees, R+ trees, R++ trees and spill trees).", "l", 20);
+PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
+    0);
+PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
+    0.7);
+
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
-PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
+PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "S");
+PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
+    "'dual_tree', 'greedy'.", "a", "dual_tree");
+PARAM_FLAG("naive", "(Deprecated) If true, O(n^2) naive mode is used for "
+    "computation. Will be removed in mlpack 3.0.0. Use '--algorithm naive' "
+    "instead.", "N");
+PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
+    "(as opposed to dual-tree search). Will be removed in mlpack 3.0.0. Use "
+    "'--algorithm single_tree' instead.", "S");
+PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
+    "search with given relative error.", "e", 0);
 
 // Convenience typedef.
 typedef NSModel<NearestNeighborSort> KNNModel;
@@ -104,15 +124,20 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("tree_type"))
       Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
           << " is specified." << endl;
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
-          << " is specified." << endl;
     if (CLI::HasParam("random_basis"))
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
-          << "specified." << endl;
+    if (CLI::HasParam("tau"))
+      Log::Warn << "--tau (-u) will be ignored because --input_model_file is "
+          "specified." << endl;
+    if (CLI::HasParam("rho"))
+      Log::Warn << "--rho (-b) will be ignored because --input_model_file is "
+          "specified." << endl;
+    // Notify the user of parameters that will be only be considered for query
+    // tree.
+    if (CLI::HasParam("leaf_size"))
+      Log::Warn << "--leaf_size (-l) will only be considered for the query "
+          "tree, because --input_model_file is specified." << endl;
   }
 
   // The user should give something to do...
@@ -134,18 +159,87 @@ int main(int argc, char *argv[])
         << "is not being performed because k (--k) is not specified!  No "
         << "results will be saved." << endl;
 
+  if (!CLI::HasParam("k") && CLI::HasParam("true_neighbors_file"))
+    Log::Warn << "--true_neighbors_file (-T) ignored because no search is being"
+        << " performed (--k is not specified)." << endl;
+
+  if (!CLI::HasParam("k") && CLI::HasParam("true_distances_file"))
+    Log::Warn << "--true_distances_file (-D) ignored because no search is being"
+        << " performed (--k is not specified)." << endl;
+
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
   if (lsInt < 1)
-  {
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than 0." << endl;
-  }
+
+  // Sanity check on tau.
+  const double tau = CLI::GetParam<double>("tau");
+  if (tau < 0)
+    Log::Fatal << "Invalid tau: " << tau << ".  Must be non-negative. " << endl;
+  if (CLI::HasParam("tau") && "spill" != CLI::GetParam<string>("tree_type"))
+    Log::Fatal << "Tau parameter is only valid for spill trees." << endl;
+
+  // Sanity check on rho.
+  const double rho = CLI::GetParam<double>("rho");
+  if (rho < 0 || rho > 1)
+    Log::Fatal << "Invalid rho: " << rho << ".  Must be in the range [0,1]. "
+        << endl;
+  if (CLI::HasParam("rho") && "spill" != CLI::GetParam<string>("tree_type"))
+    Log::Fatal << "Rho parameter is only valid for spill trees." << endl;
+
+  // Sanity check on epsilon.
+  const double epsilon = CLI::GetParam<double>("epsilon");
+  if (epsilon < 0)
+    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be non-negative. "
+        << endl;
 
   // We either have to load the reference data, or we have to load the model.
   NSModel<NearestNeighborSort> knn;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
+
+  const string algorithm = CLI::GetParam<string>("algorithm");
+  NeighborSearchMode searchMode = DUAL_TREE_MODE;
+
+  if (algorithm == "naive")
+    searchMode = NAIVE_MODE;
+  else if (algorithm == "single_tree")
+    searchMode = SINGLE_TREE_MODE;
+  else if (algorithm == "dual_tree")
+    searchMode = DUAL_TREE_MODE;
+  else if (algorithm == "greedy")
+    searchMode = GREEDY_SINGLE_TREE_MODE;
+  else
+    Log::Fatal << "Unknown neighbor search algorithm '" << algorithm << "'; "
+        << "valid choices are 'naive', 'single_tree', 'dual_tree' and 'greedy'."
+        << endl;
+
+  if (CLI::HasParam("single_mode"))
+  {
+    searchMode = SINGLE_TREE_MODE;
+
+    Log::Warn << "--single_mode is deprecated.  Will be removed in mlpack "
+        "3.0.0. Use '--algorithm single_tree' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "single_tree")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --single_mode." << endl;
+  }
+
+  if (CLI::HasParam("naive"))
+  {
+    searchMode = NAIVE_MODE;
+
+    Log::Warn << "--naive is deprecated.  Will be removed in mlpack 3.0.0. Use "
+        "'--algorithm naive' instead." << endl;
+
+    if (CLI::HasParam("algorithm") && algorithm != "naive")
+      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
+          " and --naive." << endl;
+
+    if (CLI::HasParam("single_mode"))
+      Log::Warn << "--single_mode ignored because --naive is present." << endl;
+  }
+
   if (CLI::HasParam("reference_file"))
   {
     // Get all the parameters.
@@ -166,12 +260,33 @@ int main(int argc, char *argv[])
       tree = KNNModel::BALL_TREE;
     else if (treeType == "x")
       tree = KNNModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = KNNModel::HILBERT_R_TREE;
+    else if (treeType == "r-plus")
+      tree = KNNModel::R_PLUS_TREE;
+    else if (treeType == "r-plus-plus")
+      tree = KNNModel::R_PLUS_PLUS_TREE;
+    else if (treeType == "spill")
+      tree = KNNModel::SPILL_TREE;
+    else if (treeType == "vp")
+      tree = KNNModel::VP_TREE;
+    else if (treeType == "rp")
+      tree = KNNModel::RP_TREE;
+    else if (treeType == "max-rp")
+      tree = KNNModel::MAX_RP_TREE;
+    else if (treeType == "ub")
+      tree = KNNModel::UB_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x' and 'ball'." << endl;
+          << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus' and 'spill'."
+          << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
+    knn.LeafSize() = size_t(lsInt);
+    knn.Tau() = tau;
+    knn.Rho() = rho;
 
     arma::mat referenceSet;
     data::Load(referenceFile, referenceSet, true);
@@ -180,7 +295,7 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
@@ -188,14 +303,19 @@ int main(int argc, char *argv[])
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
     data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
 
+    // Adjust search mode.
+    knn.SetSearchMode(searchMode);
+    knn.Epsilon() = epsilon;
+
+    // If leaf_size wasn't provided, let's consider the current value in the
+    // loaded model.  Else, update it (only considered when building the query
+    // tree).
+    if (CLI::HasParam("leaf_size"))
+      knn.LeafSize() = size_t(lsInt);
+
     Log::Info << "Loaded kNN model from '" << inputModelFile << "' (trained on "
         << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
         << endl;
-
-    // Adjust singleMode and naive if necessary.
-    knn.SingleMode() = CLI::HasParam("single_mode");
-    knn.Naive() = CLI::HasParam("naive");
-    knn.LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -222,12 +342,6 @@ int main(int argc, char *argv[])
       Log::Fatal << knn.Dataset().n_cols << ")." << endl;
     }
 
-    // Naive mode overrides single mode.
-    if (singleMode && naive)
-    {
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
-    }
-
     // Now run the search.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
@@ -243,6 +357,47 @@ int main(int argc, char *argv[])
       data::Save(CLI::GetParam<string>("neighbors_file"), neighbors);
     if (CLI::HasParam("distances_file"))
       data::Save(CLI::GetParam<string>("distances_file"), distances);
+
+    // Calculate the effective error, if desired.
+    if (CLI::HasParam("true_distances_file"))
+    {
+      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+        Log::Warn << "--true_distances_file (-D) specified, but the search is "
+            << "exact, so there is no need to calculate the error!" << endl;
+
+      const string trueDistancesFile = CLI::GetParam<string>(
+          "true_distances_file");
+      arma::mat trueDistances;
+      data::Load(trueDistancesFile, trueDistances, true);
+
+      if (trueDistances.n_rows != distances.n_rows ||
+          trueDistances.n_cols != distances.n_cols)
+        Log::Fatal << "The true distances file must have the same number of "
+            << "values than the set of distances being queried!" << endl;
+
+      Log::Info << "Effective error: " << KNN::EffectiveError(distances,
+          trueDistances) << endl;
+    }
+
+    // Calculate the recall, if desired.
+    if (CLI::HasParam("true_neighbors_file"))
+    {
+      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+        Log::Warn << "--true_neighbors_file (-T) specified, but the search is "
+            << "exact, so there is no need to calculate the recall!" << endl;
+
+      const string trueNeighborsFile = CLI::GetParam<string>(
+          "true_neighbors_file");
+      arma::Mat<size_t> trueNeighbors;
+      data::Load(trueNeighborsFile, trueNeighbors, true);
+
+      if (trueNeighbors.n_rows != neighbors.n_rows ||
+          trueNeighbors.n_cols != neighbors.n_cols)
+        Log::Fatal << "The true neighbors file must have the same number of "
+            << "values than the set of neighbors being queried!" << endl;
+
+      Log::Info << "Recall: " << KNN::Recall(neighbors, trueNeighbors) << endl;
+    }
   }
 
   if (CLI::HasParam("output_model_file"))

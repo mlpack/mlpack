@@ -22,7 +22,14 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rTreeRS(NULL),
     rStarTreeRS(NULL),
     ballTreeRS(NULL),
-    xTreeRS(NULL)
+    xTreeRS(NULL),
+    hilbertRTreeRS(NULL),
+    rPlusTreeRS(NULL),
+    rPlusPlusTreeRS(NULL),
+    vpTreeRS(NULL),
+    rpTreeRS(NULL),
+    maxRPTreeRS(NULL),
+    ubTreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -121,6 +128,41 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     case X_TREE:
       xTreeRS = new RSType<tree::XTree>(move(referenceSet), naive,
           singleMode);
+      break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS = new RSType<tree::HilbertRTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS = new RSType<tree::RPlusTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet),
+          naive, singleMode);
+      break;
+
+    case VP_TREE:
+      vpTreeRS = new RSType<tree::VPTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case RP_TREE:
+      rpTreeRS = new RSType<tree::RPTree>(move(referenceSet), naive,
+          singleMode);
+      break;
+
+    case MAX_RP_TREE:
+      maxRPTreeRS = new RSType<tree::MaxRPTree>(move(referenceSet),
+          naive, singleMode);
+      break;
+
+    case UB_TREE:
+      ubTreeRS = new RSType<tree::UBTree>(move(referenceSet),
+          naive, singleMode);
       break;
   }
 
@@ -231,6 +273,34 @@ void RSModel::Search(arma::mat&& querySet,
     case X_TREE:
       xTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case VP_TREE:
+      vpTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case RP_TREE:
+      rpTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case MAX_RP_TREE:
+      maxRPTreeRS->Search(querySet, range, neighbors, distances);
+      break;
+
+    case UB_TREE:
+      ubTreeRS->Search(querySet, range, neighbors, distances);
+      break;
   }
 }
 
@@ -273,6 +343,34 @@ void RSModel::Search(const math::Range& range,
     case X_TREE:
       xTreeRS->Search(range, neighbors, distances);
       break;
+
+    case HILBERT_R_TREE:
+      hilbertRTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case R_PLUS_TREE:
+      rPlusTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case R_PLUS_PLUS_TREE:
+      rPlusPlusTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case VP_TREE:
+      vpTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case RP_TREE:
+      rpTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case MAX_RP_TREE:
+      maxRPTreeRS->Search(range, neighbors, distances);
+      break;
+
+    case UB_TREE:
+      ubTreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -293,6 +391,20 @@ std::string RSModel::TreeName() const
       return "ball tree";
     case X_TREE:
       return "X tree";
+    case HILBERT_R_TREE:
+      return "Hilbert R tree";
+    case R_PLUS_TREE:
+      return "R+ tree";
+    case R_PLUS_PLUS_TREE:
+      return "R++ tree";
+    case VP_TREE:
+      return "vantage point tree";
+    case RP_TREE:
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
+    case UB_TREE:
+      return "UB tree";
     default:
       return "unknown tree";
   }
@@ -313,6 +425,20 @@ void RSModel::CleanMemory()
     delete ballTreeRS;
   if (xTreeRS)
     delete xTreeRS;
+  if (hilbertRTreeRS)
+    delete hilbertRTreeRS;
+  if (rPlusTreeRS)
+    delete rPlusTreeRS;
+  if (rPlusPlusTreeRS)
+    delete rPlusPlusTreeRS;
+  if (vpTreeRS)
+    delete vpTreeRS;
+  if (rpTreeRS)
+    delete rpTreeRS;
+  if (maxRPTreeRS)
+    delete maxRPTreeRS;
+  if (ubTreeRS)
+    delete ubTreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -320,4 +446,11 @@ void RSModel::CleanMemory()
   rStarTreeRS = NULL;
   ballTreeRS = NULL;
   xTreeRS = NULL;
+  hilbertRTreeRS = NULL;
+  rPlusTreeRS = NULL;
+  rPlusPlusTreeRS = NULL;
+  vpTreeRS = NULL;
+  rpTreeRS = NULL;
+  maxRPTreeRS = NULL;
+  ubTreeRS = NULL;
 }

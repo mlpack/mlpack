@@ -250,13 +250,20 @@ class FastMKS
   //! The instantiated inner-product metric induced by the given kernel.
   metric::IPMetric<KernelType> metric;
 
-  //! Utility function.  Copied too many times from too many places.
-  void InsertNeighbor(arma::Mat<size_t>& indices,
-                      arma::mat& products,
-                      const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
+  //! Candidate represents a possible candidate point (value, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the value.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
+    {
+      return c1.first > c2.first;
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate points.
+  typedef std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp> CandidateList;
 };
 
 } // namespace fastmks

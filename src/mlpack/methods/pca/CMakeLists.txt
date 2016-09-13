@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   pca.hpp
-  pca.cpp
+  pca_impl.hpp
 )
 
 # Add directory name to sources.
@@ -13,5 +13,7 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_subdirectory(decomposition_policies)
 
 add_cli_executable(pca)

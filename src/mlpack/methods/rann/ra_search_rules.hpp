@@ -14,14 +14,42 @@
 namespace mlpack {
 namespace neighbor {
 
+/**
+ * The RASearchRules class is a template helper class used by RASearch class
+ * when performing rank-approximate search via random-sampling.
+ *
+ * @tparam SortPolicy The sort policy for distances.
+ * @tparam MetricType The metric to use for computation.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ */
 template<typename SortPolicy, typename MetricType, typename TreeType>
 class RASearchRules
 {
  public:
+  /**
+   * Construct the RASearchRules object.  This is usually done from within
+   * the RASearch class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param k Number of neighbors to search for.
+   * @param metric Instantiated metric.
+   * @param tau The rank-approximation in percentile of the data.
+   * @param alpha The desired success probability.
+   * @param naive If true, the rank-approximate search will be performed by
+   *      directly sampling the whole set instead of using the stratified
+   *      sampling on the tree.
+   * @param sampleAtLeaves Sample at leaves for faster but less accurate
+   *      computation.
+   * @param firstLeafExact Traverse to the first leaf without approximation.
+   * @param singleSampleLimit The limit on the largest node that can be
+   *     approximated by sampling.
+   * @param sameSet If true, the query and reference set are taken to be the
+   *      same, and a query point will not return itself in the results.
+   */
   RASearchRules(const arma::mat& referenceSet,
                 const arma::mat& querySet,
-                arma::Mat<size_t>& neighbors,
-                arma::mat& distances,
+                const size_t k,
                 MetricType& metric,
                 const double tau = 5,
                 const double alpha = 0.95,
@@ -31,6 +59,22 @@ class RASearchRules
                 const size_t singleSampleLimit = 20,
                 const bool sameSet = false);
 
+  /**
+   * Store the list of candidates for each query point in the given matrices.
+   *
+   * @param neighbors Matrix storing lists of neighbors for each query point.
+   * @param distances Matrix storing distances of neighbors for each query
+   *     point.
+   */
+  void GetResults(arma::Mat<size_t>& neighbors, arma::mat& distances);
+
+  /**
+   * Get the distance from the query point to the reference point.
+   * This will update the list of candidates with the new point if appropriate.
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceIndex Index of reference point.
+   */
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
@@ -197,11 +241,26 @@ class RASearchRules
   //! The query set.
   const arma::mat& querySet;
 
-  //! The matrix the resultant neighbor indices should be stored in.
-  arma::Mat<size_t>& neighbors;
+  //! Candidate represents a possible candidate neighbor (distance, index).
+  typedef std::pair<double, size_t> Candidate;
 
-  //! The matrix the resultant neighbor distances should be stored in.
-  arma::mat& distances;
+  //! Compare two candidates based on the distance.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
+    {
+      return !SortPolicy::IsBetter(c2.first, c1.first);
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate neighbors.
+  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+      CandidateList;
+
+  //! Set of candidate neighbors for each point.
+  std::vector<CandidateList> candidates;
+
+  //! Number of neighbors to search for.
+  const size_t k;
 
   //! The instantiated metric.
   MetricType& metric;
@@ -233,16 +292,13 @@ class RASearchRules
   TraversalInfoType traversalInfo;
 
   /**
-   * Insert a point into the neighbors and distances matrices; this is a helper
-   * function.
+   * Helper function to insert a point into the list of candidate points.
    *
    * @param queryIndex Index of point whose neighbors we are inserting into.
-   * @param pos Position in list to insert into.
    * @param neighbor Index of reference point which is being inserted.
    * @param distance Distance from query point to reference point.
    */
   void InsertNeighbor(const size_t queryIndex,
-                      const size_t pos,
                       const size_t neighbor,
                       const double distance);
 
@@ -261,6 +317,9 @@ class RASearchRules
                TreeType& referenceNode,
                const double distance,
                const double bestDistance);
+
+  static_assert(tree::TreeTraits<TreeType>::UniqueNumDescendants, "TreeType "
+      "must provide a unique number of descendants points.");
 }; // class RASearchRules
 
 } // namespace neighbor

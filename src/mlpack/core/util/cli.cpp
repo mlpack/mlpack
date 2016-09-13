@@ -6,15 +6,11 @@
  */
 #include <list>
 #include <boost/program_options.hpp>
-#include <boost/any.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <iostream>
-#include <string>
 
 #include "cli.hpp"
 #include "log.hpp"
-
-#include "option.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -54,6 +50,9 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI()
 {
+  // We need to print any output options.
+  PrintOutput();
+
   // Terminate the program timers.
   std::map<std::string, std::chrono::microseconds>::iterator it;
   for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
@@ -99,19 +98,23 @@ CLI::~CLI()
  * @param description Short string description of the parameter.
  * @param alias An alias for the parameter.
  * @param required Indicates if parameter must be set on command line.
+ * @param input If true, the parameter is an input parameter (not an output
+ *      parameter).
  */
-void CLI::Add(const std::string& path,
-             const std::string& description,
-             const std::string& alias,
-             bool required)
+void CLI::Add(const std::string& identifier,
+              const std::string& description,
+              const std::string& alias,
+              const bool required,
+              const bool input)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
   // Must make use of boost option name syntax.
-  std::string progOptId = alias.length() ? path + "," + alias : path;
+  std::string progOptId =
+      alias.length() ? identifier + "," + alias : identifier;
 
   // Deal with a required alias.
-  AddAlias(alias, path);
+  AddAlias(alias, identifier);
 
   // Add the option to boost::program_options.
   desc.add_options()(progOptId.c_str(), description.c_str());
@@ -122,15 +125,22 @@ void CLI::Add(const std::string& path,
   ParamData data;
   data.desc = description;
   data.tname = "";
-  data.name = path;
+  data.name = identifier;
   data.isFlag = false;
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[identifier] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
-    GetSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(identifier);
+
+  // Depending on whether the option is input or output, add it to the list of
+  // input or output options.
+  if (input)
+    GetSingleton().inputOptions.push_front(identifier);
+  else
+    GetSingleton().outputOptions.push_front(identifier);
 
   return;
 }
@@ -155,8 +165,8 @@ void CLI::AddAlias(const std::string& alias, const std::string& original)
  * @brief Adds a flag parameter to CLI.
  */
 void CLI::AddFlag(const std::string& identifier,
-                 const std::string& description,
-                 const std::string& alias)
+                  const std::string& description,
+                  const std::string& alias)
 {
   // Reuse functionality from Add().
   Add(identifier, description, alias, false);
@@ -453,34 +463,58 @@ void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
   }
 }
 
-/**
- * Parses a stream for arguments
- *
- * @param stream The stream to be parsed.
- */
-void CLI::ParseStream(std::istream& stream)
+// Prints any output options.
+void CLI::PrintOutput()
 {
-  po::variables_map& vmap = GetSingleton().vmap;
-  po::options_description& desc = GetSingleton().desc;
+  gmap_t& gmap = GetSingleton().globalValues;
+  gmap_t::iterator iter;
 
-  // Parse the stream; place options & values into vmap.
-  try
+  for (iter = gmap.begin(); iter != gmap.end(); ++iter)
   {
-    po::store(po::parse_config_file(stream, desc), vmap);
+    std::string key = iter->first;
+    ParamData data = iter->second;
+
+    const std::list<std::string>& inputOptions = GetSingleton().inputOptions;
+    const bool input = (std::find(std::begin(inputOptions),
+        std::end(inputOptions), key) != std::end(inputOptions));
+
+    // Ignore input options.
+    if (input)
+      continue;
+
+    // Ignore string output options that end in _file.
+    if ((data.tname == TYPENAME(std::string)) &&
+        (data.name.substr(data.name.size() - 5, 5) == "_file"))
+      continue;
+
+    // Reverse compatibility; should be removed for mlpack 3.0.0.  Don't print
+    // some options that have only been kept for reverse compatibility.
+    if (data.name == "output_predictions" ||
+        data.name == "output_ic" ||
+        data.name == "output_unmixing")
+      continue;
+
+    // Now, we must print it, so figure out what the type is.
+    if (data.tname == TYPENAME(std::string))
+    {
+      std::string value = GetParam<std::string>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else if (data.tname == TYPENAME(int))
+    {
+      int value = GetParam<int>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else if (data.tname == TYPENAME(double))
+    {
+      double value = GetParam<double>(key);
+      std::cout << key << ": " << value << std::endl;
+    }
+    else
+    {
+      std::cout << key << ": unknown data type" << std::endl;
+    }
   }
-  catch (std::exception& ex)
-  {
-    Log::Fatal << ex.what() << std::endl;
-  }
-
-  // Flush the buffer; make sure changes are propagated to vmap.
-  po::notify(vmap);
-
-  UpdateGmap();
-  DefaultMessages();
-  RequiredOptions();
-
-  Timer::Start("total_time");
 }
 
 /* Prints out the current hierarchy. */
@@ -600,7 +634,7 @@ void CLI::PrintHelp(const std::string& param)
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
 
-  for (size_t pass = 0; pass < 2; ++pass)
+  for (size_t pass = 0; pass < 3; ++pass)
   {
     bool printedHeader = false;
 
@@ -613,29 +647,46 @@ void CLI::PrintHelp(const std::string& param)
       std::string alias = AliasReverseLookup(key);
       alias = alias.length() ? " (-" + alias + ")" : alias;
 
-      // Is the option required or not?
-      bool required = false;
-      std::list<std::string>::iterator iter;
-      std::list<std::string>& rOpt = GetSingleton().requiredOptions;
-      for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
-        if ((*iter) == key)
-          required = true;
+      // Is the option required or not?  And is it an input option or not?
+      const std::list<std::string>& requiredOptions =
+          GetSingleton().requiredOptions;
+      const std::list<std::string>& inputOptions = GetSingleton().inputOptions;
 
-      if ((pass == 0) && !required)
-        continue; // Don't print this one.
-      if ((pass == 1) && required)
-        continue; // Don't print this one.
+      const bool required = (std::find(std::begin(requiredOptions),
+          std::end(requiredOptions), key) != std::end(requiredOptions));
+      const bool input = (std::find(std::begin(inputOptions),
+          std::end(inputOptions), key) != std::end(inputOptions));
+
+      // Filter un-printed options.
+      if ((pass == 0) && !(required && input)) // Required input options only.
+        continue;
+      if ((pass == 1) && !(!required && input)) // Optional input options only.
+        continue;
+      if ((pass == 2) && input) // Output options only (always optional).
+        continue;
+
+      // Only print string output options that end in "_file".
+      if ((pass == 2) && ((data.tname != TYPENAME(std::string)) ||
+          (data.name.substr(data.name.size() - 5, 5) != "_file")))
+        continue;
+
+      // For reverse compatibility: this can be removed when these options are
+      // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
+      if (data.name == "inputFile")
+        continue;
 
       if (!printedHeader)
       {
         printedHeader = true;
         if (pass == 0)
-          std::cout << "Required options:" << std::endl << std::endl;
-        else
-          std::cout << "Options: " << std::endl << std::endl;
+          std::cout << "Required input options:" << std::endl << std::endl;
+        else if (pass == 1)
+          std::cout << "Optional input options: " << std::endl << std::endl;
+        else if (pass == 2)
+          std::cout << "Optional output options: " << std::endl << std::endl;
       }
 
-      if (pass == 1) // Append default value to description.
+      if (pass >= 1) // Append default value to description.
       {
         desc += "  Default value ";
         std::stringstream tmp;
@@ -678,8 +729,8 @@ void CLI::PrintHelp(const std::string& param)
       std::cout << HyphenateString(desc, 32) << std::endl;
     }
 
-    std::cout << std::endl;
-
+    if (printedHeader)
+      std::cout << std::endl;
   }
 
   // Helpful information at the bottom of the help output, to point the user to
@@ -751,7 +802,7 @@ void CLI::UpdateGmap()
 
 // Add help parameter.
 PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING("info", "Get help on a specific module or option.", "", "");
+PARAM_STRING_IN("info", "Get help on a specific module or option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 PARAM_FLAG("version", "Display the version of mlpack.", "V");

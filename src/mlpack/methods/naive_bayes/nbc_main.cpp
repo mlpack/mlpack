@@ -32,22 +32,23 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "should be given.");
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing input Naive Bayes model.",
+PARAM_STRING_IN("input_model_file", "File containing input Naive Bayes model.",
     "m", "");
-PARAM_STRING("output_model_file", "File to save trained Naive Bayes model to.",
-    "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained Naive Bayes model "
+    "to.", "M");
 
 // Training parameters.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set.",
+PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
+    "");
+PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
     "l", "");
 PARAM_FLAG("incremental_variance", "The variance of each class will be "
     "calculated incrementally.", "I");
 
 // Test parameters.
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING("output_file", "The file in which the predicted labels for the "
-    "test set will be written.", "o", "");
+PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
+PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+    " test set will be written.", "o");
 
 using namespace mlpack;
 using namespace mlpack::naive_bayes;

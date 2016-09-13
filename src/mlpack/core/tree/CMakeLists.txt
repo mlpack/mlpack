@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  address.hpp
   ballbound.hpp
   ballbound_impl.hpp
   binary_space_tree.hpp
@@ -14,12 +15,23 @@ set(SOURCES
   binary_space_tree/mean_split_impl.hpp
   binary_space_tree/midpoint_split.hpp
   binary_space_tree/midpoint_split_impl.hpp
+  binary_space_tree/perform_split.hpp
+  binary_space_tree/rp_tree_max_split.hpp
+  binary_space_tree/rp_tree_max_split_impl.hpp
+  binary_space_tree/rp_tree_mean_split.hpp
+  binary_space_tree/rp_tree_mean_split_impl.hpp
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
+  binary_space_tree/vantage_point_split.hpp
+  binary_space_tree/vantage_point_split_impl.hpp
   binary_space_tree/traits.hpp
   binary_space_tree/typedef.hpp
+  binary_space_tree/ub_tree_split.hpp
+  binary_space_tree/ub_tree_split_impl.hpp
   bounds.hpp
   bound_traits.hpp
+  cellbound.hpp
+  cellbound_impl.hpp
   cosine_tree/cosine_tree.hpp
   cosine_tree/cosine_tree.cpp
   cover_tree/cover_tree.hpp
@@ -32,6 +44,10 @@ set(SOURCES
   cover_tree/traits.hpp
   cover_tree/typedef.hpp
   example_tree.hpp
+  greedy_single_tree_traverser.hpp
+  greedy_single_tree_traverser_impl.hpp
+  hollow_ball_bound.hpp
+  hollow_ball_bound_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   rectangle_tree.hpp
@@ -43,6 +59,7 @@ set(SOURCES
   rectangle_tree/dual_tree_traverser_impl.hpp
   rectangle_tree/r_tree_split.hpp
   rectangle_tree/r_tree_split_impl.hpp
+  rectangle_tree/no_auxiliary_information.hpp
   rectangle_tree/r_tree_descent_heuristic.hpp
   rectangle_tree/r_tree_descent_heuristic_impl.hpp
   rectangle_tree/r_star_tree_descent_heuristic.hpp
@@ -51,6 +68,47 @@ set(SOURCES
   rectangle_tree/r_star_tree_split_impl.hpp
   rectangle_tree/x_tree_split.hpp
   rectangle_tree/x_tree_split_impl.hpp
+  rectangle_tree/x_tree_auxiliary_information.hpp
+  rectangle_tree/hilbert_r_tree_descent_heuristic.hpp
+  rectangle_tree/hilbert_r_tree_descent_heuristic_impl.hpp
+  rectangle_tree/hilbert_r_tree_split.hpp
+  rectangle_tree/hilbert_r_tree_split_impl.hpp
+  rectangle_tree/hilbert_r_tree_auxiliary_information.hpp
+  rectangle_tree/hilbert_r_tree_auxiliary_information_impl.hpp
+  rectangle_tree/discrete_hilbert_value.hpp
+  rectangle_tree/discrete_hilbert_value_impl.hpp
+  rectangle_tree/r_plus_tree_descent_heuristic.hpp
+  rectangle_tree/r_plus_tree_descent_heuristic_impl.hpp
+  rectangle_tree/minimal_coverage_sweep.hpp
+  rectangle_tree/minimal_coverage_sweep_impl.hpp
+  rectangle_tree/minimal_splits_number_sweep.hpp
+  rectangle_tree/minimal_splits_number_sweep_impl.hpp
+  rectangle_tree/r_plus_tree_split.hpp
+  rectangle_tree/r_plus_tree_split_impl.hpp
+  rectangle_tree/r_plus_tree_split_policy.hpp
+  rectangle_tree/r_plus_plus_tree_descent_heuristic.hpp
+  rectangle_tree/r_plus_plus_tree_descent_heuristic_impl.hpp
+  rectangle_tree/r_plus_plus_tree_split_policy.hpp
+  rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
+  rectangle_tree/r_plus_plus_tree_auxiliary_information_impl.hpp
+  space_split/hyperplane.hpp
+  space_split/mean_space_split.hpp
+  space_split/mean_space_split_impl.hpp
+  space_split/midpoint_space_split.hpp
+  space_split/midpoint_space_split_impl.hpp
+  space_split/projection_vector.hpp
+  space_split/space_split.hpp
+  space_split/space_split_impl.hpp
+  spill_tree.hpp
+  spill_tree/is_spill_tree.hpp
+  spill_tree/spill_tree.hpp
+  spill_tree/spill_tree_impl.hpp
+  spill_tree/spill_dual_tree_traverser.hpp
+  spill_tree/spill_dual_tree_traverser_impl.hpp
+  spill_tree/spill_single_tree_traverser.hpp
+  spill_tree/spill_single_tree_traverser_impl.hpp
+  spill_tree/traits.hpp
+  spill_tree/typedef.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp

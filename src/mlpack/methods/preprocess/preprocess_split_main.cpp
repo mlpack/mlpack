@@ -1,6 +1,6 @@
 /**
  * @file preprocess_split_main.cpp
- * @author Keon Woo Kim
+ * @author Keon Kim
  *
  * split data CLI executable
  */
@@ -14,26 +14,20 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "(-r) option; the default is 0.2 (20%)."
     "\n\n"
     "The program does not modify the original file, but instead makes separate "
-    "files to save the training and test files; you can specify the file names "
-    "with --training_file (-t) and --test_file (-T). If these options are not "
-    "specified, the program automatically names the training and test file by "
-    "prepending 'train_' and 'test_' to the dataset filename (which was "
-    "specified by --input_file)."
+    "files to save the training and test files; The program requires you to "
+    "specify the file names with --training_file (-t) and --test_file (-T)."
     "\n\n"
     "Optionally, labels can be also be split along with the data by specifying "
     "the --input_labels_file (-I) option. Splitting labels works the same way "
     "as splitting the data. The output training and test labels will be saved "
     "to the files specified by --training_labels_file (-l) and "
-    "--test_labels_file (-L), respectively. If these options are not specified,"
-    " then the program will automatically name the training labels and test "
-    "labels file by prepending 'train_' and 'test_' to the labels filename "
-    "(which was specified by --input_labels_file)."
+    "--test_labels_file (-L), respectively."
     "\n\n"
     "So, a simple example where we want to split dataset.csv into "
-    "train_dataset.csv and test_dataset.csv with 60% of the data in the "
-    "training set and 40% of the dataset in the test set, we could run"
+    "train.csv and test.csv with 60% of the data in the training set and 40% "
+    "of the dataset in the test set, we could run"
     "\n\n"
-    "$ mlpack_preprocess_split -i dataset.csv -r 0.4"
+    "$ mlpack_preprocess_split -i dataset.csv -t train.csv -T test.csv -r 0.4"
     "\n\n"
     "If we had a dataset in dataset.csv and associated labels in labels.csv, "
     "and we wanted to split these into training_set.csv, training_labels.csv, "
@@ -45,16 +39,17 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "> -L test_labels.csv");
 
 // Define parameters for data.
-PARAM_STRING_REQ("input_file", "File containing data,", "i");
-// Define optional parameters.
-PARAM_STRING("input_labels_file", "File containing labels", "I", "");
-PARAM_STRING("training_file", "File name to save train data", "t", "");
-PARAM_STRING("test_file", "File name to save test data", "T", "");
-PARAM_STRING("training_labels_file", "File name to save train label", "l", "");
-PARAM_STRING("test_labels_file", "File name to save test label", "L", "");
+PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
+PARAM_STRING_OUT("training_file", "File name to save train data", "t");
+PARAM_STRING_OUT("test_file", "File name to save test data", "T");
 
-// Define optional test ratio, default is 0.2 (Test 20% Train 80%)
-PARAM_DOUBLE("test_ratio", "Ratio of test set, if not set,"
+// Define optional parameters.
+PARAM_STRING_IN("input_labels_file", "File containing labels", "I", "");
+PARAM_STRING_OUT("training_labels_file", "File name to save train label", "l");
+PARAM_STRING_OUT("test_labels_file", "File name to save test label", "L");
+
+// Define optional test ratio, default is 0.2 (Test 20% Train 80%).
+PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 using namespace mlpack;
@@ -67,54 +62,42 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
   const string inputFile = CLI::GetParam<string>("input_file");
   const string inputLabels = CLI::GetParam<string>("input_labels_file");
-  string trainingFile = CLI::GetParam<string>("training_file");
-  string testFile = CLI::GetParam<string>("test_file");
-  string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
-  string testLabelsFile = CLI::GetParam<string>("test_labels_file");
+  const string trainingFile = CLI::GetParam<string>("training_file");
+  const string testFile = CLI::GetParam<string>("test_file");
+  const string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
+  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
-  // Check on data parameters.
-  if (trainingFile.empty())
-  {
-    trainingFile = "train_" + inputFile;
-    Log::Warn << "You did not specify --training_file, so the training set file"
-        << " name will be automatically set to '" << trainingFile << "'." 
+  // Make sure the user specified output filenames.
+  if (trainingFile == "")
+    Log::Warn << "--training_file (-t) is not specified; no training set will "
+        << "be saved!" << endl;
+  if (testFile == "")
+    Log::Warn << "--test_file (-T) is not specified; no test set will be saved!"
         << endl;
-  }
-  if (testFile.empty())
-  {
-    testFile = "test_" + inputFile;
-    Log::Warn << "You did not specify --test_file, so the test set file name "
-        << "will be automatically set to '" << testFile << "'." << endl;
-  }
 
   // Check on label parameters.
-  if (!inputLabels.empty())
+  if (CLI::HasParam("input_labels_file"))
   {
     if (!CLI::HasParam("training_labels_file"))
     {
-      trainingLabelsFile = "train_" + inputLabels;
-      Log::Warn << "You did not specify --training_labels_file, so the training"
-          << "set labels file name will be automatically set to '"
-          << trainingLabelsFile << "'." << endl;
+      Log::Warn << "--training_labels_file (-l) is not specified; no training "
+          << "set labels will be saved!" << endl;
     }
     if (!CLI::HasParam("test_labels_file"))
     {
-      testLabelsFile = "test_" + inputLabels;
-      Log::Warn << "You did not specify --test_labels_file, so the test set "
-        << "labels file name will be automatically set to '"
-        << testLabelsFile << "'." << endl;
+      Log::Warn << "--test_labels_file (-L) is not specified; no test set "
+          << "labels will be saved!" << endl;
     }
   }
   else
   {
-    if (CLI::HasParam("training_labels_file")
-        || CLI::HasParam("test_labels_file"))
-    {
-      Log::Fatal << "When specifying --training_labels_file or "
-          << "--test_labels_file, you must also specify --input_labels. "
-          << endl;
-    }
+    if (CLI::HasParam("training_labels_file"))
+      Log::Warn << "--training_labels_file ignored because --input_labels is "
+          << "not specified." << endl;
+    if (CLI::HasParam("test_labels_file"))
+      Log::Warn << "--test_labels_file ignored because --input_labels is not "
+          << "specified." << endl;
   }
 
   // Check test_ratio.
@@ -149,10 +132,14 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    data::Save(trainingFile, get<0>(value), false);
-    data::Save(testFile, get<1>(value), false);
-    data::Save(trainingLabelsFile, get<2>(value), false);
-    data::Save(testLabelsFile, get<3>(value), false);
+    if (trainingFile != "")
+      data::Save(trainingFile, get<0>(value), false);
+    if (testFile != "")
+      data::Save(testFile, get<1>(value), false);
+    if (trainingLabelsFile != "")
+      data::Save(trainingLabelsFile, get<2>(value), false);
+    if (testLabelsFile != "")
+      data::Save(testLabelsFile, get<3>(value), false);
   }
   else // We have no labels, so just split the dataset.
   {
@@ -162,7 +149,9 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    data::Save(trainingFile, get<0>(value), false);
-    data::Save(testFile, get<1>(value), false);
+    if (trainingFile != "")
+      data::Save(trainingFile, get<0>(value), false);
+    if (testFile != "")
+      data::Save(testFile, get<1>(value), false);
   }
 }

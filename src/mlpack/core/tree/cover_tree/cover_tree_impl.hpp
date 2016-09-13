@@ -10,7 +10,6 @@
 // In case it hasn't already been included.
 #include "cover_tree.hpp"
 
-#include <mlpack/core/util/string_util.hpp>
 #include <string>
 
 namespace mlpack {
@@ -47,7 +46,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset.n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -97,7 +99,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -132,7 +137,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset.n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -183,7 +191,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -219,7 +230,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset->n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -269,7 +283,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -304,7 +321,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
   if (dataset->n_cols <= 1)
+  {
+    scale = INT_MIN;
     return;
+  }
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -354,7 +374,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
-  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+  if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN;
+  else
+    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
@@ -456,7 +479,8 @@ template<
 >
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const CoverTree& other) :
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+    dataset((other.parent == NULL && other.localDataset) ?
+        new MatType(*other.dataset) : other.dataset),
     point(other.point),
     scale(other.scale),
     base(other.base),
@@ -466,7 +490,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     localMetric(false),
-    localDataset(other.parent == NULL),
+    localDataset(other.parent == NULL && other.localDataset),
     metric(other.metric),
     distanceComps(0)
 {
@@ -475,8 +499,66 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   {
     children.push_back(new CoverTree(other.Child(i)));
     children[i]->Parent() = this;
-    children[i]->dataset = this->dataset;
   }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<CoverTree*> queue;
+
+    for (size_t i = 0; i < NumChildren(); ++i)
+      queue.push(children[i]);
+
+    while (!queue.empty())
+    {
+      CoverTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->NumChildren(); ++i)
+        queue.push(node->children[i]);
+    }
+  }
+}
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
+    CoverTree&& other) :
+    dataset(other.dataset),
+    point(other.point),
+    children(std::move(other.children)),
+    scale(other.scale),
+    base(other.base),
+    stat(std::move(other.stat)),
+    numDescendants(other.numDescendants),
+    parent(other.parent),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    localMetric(other.localMetric),
+    localDataset(other.localDataset),
+    metric(other.metric),
+    distanceComps(other.distanceComps)
+{
+  // Set proper parent pointer.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->Parent() = this;
+
+  other.dataset = NULL;
+  other.point = 0;
+  other.scale = INT_MIN;
+  other.base = 0;
+  other.numDescendants = 0;
+  other.parent = NULL;
+  other.parentDistance = 0;
+  other.furthestDescendantDistance = 0;
+  other.localMetric = false;
+  other.localDataset = false;
+  other.metric = NULL;
 }
 
 // Construct from a boost::serialization archive.
@@ -562,6 +644,122 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Descendant(
 
   // This should never happen.
   return (size_t() - 1);
+}
+
+/**
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+template<typename VecType>
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetNearestChild(const VecType& point,
+                    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MinDistance(point);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+template<typename VecType>
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetFurthestChild(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MaxDistance(point);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetNearestChild(const CoverTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MinDistance(&queryNode);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    GetFurthestChild(const CoverTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ElemType distance = children[i]->MaxDistance(&queryNode);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
 }
 
 template<

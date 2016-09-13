@@ -1,8 +1,3 @@
 build*
-
-*~
-.*.swp
-.*.swo
-*.bak
 src/mlpack/core/util/gitversion.hpp
 src/mlpack/core/util/arma_config.hpp

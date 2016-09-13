@@ -79,7 +79,12 @@ class TreeTraits
   static const bool HasOverlappingChildren = true;
 
   /**
-   * This is true if Point(0) is the centroid of the node.
+   * This is true if a point can be included in more than one node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
+   * This is true if the first point of each node is the centroid of its bound.
    */
   static const bool FirstPointIsCentroid = false;
 
@@ -98,6 +103,12 @@ class TreeTraits
    * This is true if the tree always has only two children.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * This is true if the NumDescendants() method doesn't include duplicated
+   * points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

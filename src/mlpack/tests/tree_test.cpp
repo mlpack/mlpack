@@ -5,7 +5,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
@@ -14,7 +14,7 @@
 #include <stack>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -1272,10 +1272,6 @@ void GenerateVectorOfTree(TreeType* node,
                           size_t depth,
                           std::vector<TreeType*>& v);
 
-template<typename MetricType>
-bool DoBoundsIntersect(HRectBound<MetricType>& a,
-                       HRectBound<MetricType>& b);
-
 /**
  * Exhaustive kd-tree test based on #125.
  *
@@ -1344,7 +1340,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
       for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound()));
+            BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));
 
       depth *= 2;
     }
@@ -1356,6 +1352,237 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
       dataset(row, col) = row + col;
 
   TreeType root(dataset);
+}
+
+BOOST_AUTO_TEST_CASE(MaxRPTreeTest)
+{
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
+template<typename TreeType>
+bool CheckHyperplaneSplit(const TreeType& tree)
+{
+  typedef typename TreeType::ElemType ElemType;
+
+  const typename TreeType::Mat& dataset = tree.Dataset();
+  arma::Mat<typename TreeType::ElemType> mat(dataset.n_rows + 1,
+      tree.Left()->NumDescendants() + tree.Right()->NumDescendants());
+
+  // We will try to find a hyperplane that splits the node.
+  // The hyperplane may be represented as
+  // a_1 * x_1 + ... + a_n * x_n + a_{n + 1} = 0.
+  // We have to solve the system of inequalities (mat^t) * x <= 0,
+  // where x[0], ... , x[dataset.n_rows-1] are the components of the normal
+  // to the hyperplane and x[dataset.n_rows] is the position of the hyperplane
+  // i.e. x = (a_1, ... , a_{n + 1}).
+  // Each column of the matrix consists of a point and 1.
+  // In such a way, the inner product of a column and x is equal to the value
+  // of the hyperplane expression.
+  // The hyperplane splits the node if the expression takes on opposite
+  // values on node's children.
+
+  for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
+  {
+    for (size_t k = 0; k < dataset.n_rows; k++)
+      mat(k, i) = - dataset(k, tree.Left()->Descendant(i));
+
+    mat(dataset.n_rows, i) = -1;
+  }
+
+  for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
+  {
+    for (size_t k = 0; k < dataset.n_rows; k++)
+      mat(k, i + tree.Left()->NumDescendants()) =
+          dataset(k, tree.Right()->Descendant(i));
+
+    mat(dataset.n_rows, i + tree.Left()->NumDescendants()) = 1;
+  }
+
+  arma::Col<ElemType> x(dataset.n_rows + 1);
+  x.zeros();
+  // Define an initial value.
+  x[0] = 1.0;
+  x[1] = -arma::mean(
+      dataset.cols(tree.Begin(), tree.Begin() + tree.Count() - 1).row(0));
+
+  const size_t numIters = 1000000;
+  const ElemType delta = 1e-4;
+
+  // We will solve the system using a simple gradient method.
+  bool success = false;
+  for (size_t it = 0; it < numIters; it++)
+  {
+    success = true;
+    for (size_t k = 0; k < tree.Count(); k++)
+    {
+      ElemType result = arma::dot(mat.col(k), x);
+      if (result > 0)
+      {
+        x -= mat.col(k) * delta;
+        success = false;
+      }
+    }
+
+    // The norm of the direction shouldn't be equal to zero.
+    if (arma::norm(x.rows(0, dataset.n_rows-1)) < 1e-8)
+    {
+      x[math::RandInt(0, dataset.n_rows)] = 1.0;
+      success = false;
+    }
+
+    if (success)
+      break;
+  }
+
+  return success;
+}
+
+template<typename TreeType>
+void CheckMaxRPTreeSplit(const TreeType& tree)
+{
+  if (tree.IsLeaf())
+    return;
+
+  BOOST_REQUIRE_EQUAL(CheckHyperplaneSplit(tree), true);
+
+  CheckMaxRPTreeSplit(*tree.Left());
+  CheckMaxRPTreeSplit(*tree.Right());
+}
+
+BOOST_AUTO_TEST_CASE(MaxRPTreeSplitTest)
+{
+  typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  arma::mat dataset;
+  dataset.randu(8, 1000);
+  TreeType root(dataset);
+
+  CheckMaxRPTreeSplit(root);
+}
+
+BOOST_AUTO_TEST_CASE(RPTreeTest)
+{
+  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for (size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+    const arma::mat& treeset = root.Dataset();
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+      }
+    }
+  }
+}
+
+template<typename TreeType, typename MetricType>
+void CheckRPTreeSplit(const TreeType& tree)
+{
+  typedef typename TreeType::ElemType ElemType;
+  if (tree.IsLeaf())
+    return;
+
+  if (!CheckHyperplaneSplit(tree))
+  {
+    // Check if that was mean split.
+    arma::Col<ElemType> center;
+    tree.Left()->Bound().Center(center);
+    ElemType maxDist = 0;
+    for (size_t k =0; k < tree.Left()->NumDescendants(); k++)
+    {
+      ElemType dist = MetricType::Evaluate(center,
+          tree.Dataset().col(tree.Left()->Descendant(k)));
+
+      if (dist > maxDist)
+        maxDist = dist;
+    }
+
+    for (size_t k =0; k < tree.Right()->NumDescendants(); k++)
+    {
+      ElemType dist = MetricType::Evaluate(center,
+          tree.Dataset().col(tree.Right()->Descendant(k)));
+
+      BOOST_REQUIRE_LE(maxDist, dist *
+          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+    }
+    
+  }
+
+  CheckRPTreeSplit<TreeType, MetricType>(*tree.Left());
+  CheckRPTreeSplit<TreeType, MetricType>(*tree.Right());
+}
+
+BOOST_AUTO_TEST_CASE(RPTreeSplitTest)
+{
+  typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  arma::mat dataset;
+  dataset.randu(8, 1000);
+  TreeType root(dataset);
+
+  CheckRPTreeSplit<TreeType, EuclideanDistance>(root);
 }
 
 // Recursively checks that each node contains all points that it claims to have.
@@ -1428,26 +1655,6 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(root);
   }
-}
-
-template<typename MetricType>
-bool DoBoundsIntersect(HRectBound<MetricType>& a,
-                       HRectBound<MetricType>& b)
-{
-  size_t dimensionality = a.Dim();
-
-  Range r_a;
-  Range r_b;
-
-  for (size_t i = 0; i < dimensionality; i++)
-  {
-    r_a = a[i];
-    r_b = b[i];
-    if (r_a < r_b || r_a > r_b) // If a does not overlap b at all.
-      return false;
-  }
-
-  return true;
 }
 
 template<typename TreeType>
@@ -1541,7 +1748,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
       for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound()));
+            BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));
 
       depth *= 2;
     }
@@ -1871,9 +2078,10 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
 
   TreeType d = c;
 
-  // Check that everything is the same, except the dataset, which should have
-  // been copied.
-  BOOST_REQUIRE_NE(c.Dataset().memptr(), d.Dataset().memptr());
+  // Check that everything is the same.
+  // As the tree being copied doesn't own the dataset, they must share the same
+  // pointer.
+  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
   BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
@@ -1891,8 +2099,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
 
   // Check that the children are okay.
-  BOOST_REQUIRE_NE(c.Child(0).Dataset().memptr(),
-                   d.Child(0).Dataset().memptr());
   BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
@@ -1902,8 +2108,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
                       d.Child(0).FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
 
-  BOOST_REQUIRE_NE(c.Child(1).Dataset().memptr(),
-                   d.Child(1).Dataset().memptr());
   BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
@@ -1912,6 +2116,13 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
                       d.Child(1).FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
+
+  // Check copy constructor when the tree being copied owns the dataset.
+  TreeType e(std::move(dataset), 1.3);
+  TreeType f = e;
+  // As the tree being copied owns the dataset, they must have different
+  // instances.
+  BOOST_REQUIRE_NE(e.Dataset().memptr(), f.Dataset().memptr());
 }
 
 BOOST_AUTO_TEST_CASE(CoverTreeMoveDatasetTest)

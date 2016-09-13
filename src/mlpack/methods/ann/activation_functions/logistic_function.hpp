@@ -33,7 +33,7 @@ class LogisticFunction
   template<typename eT>
   static double fn(const eT x)
   {
-    if(x < arma::Datum<eT>::log_max)
+    if (x < arma::Datum<eT>::log_max)
     {
       if (x > -arma::Datum<eT>::log_max)
         return 1.0 /  (1.0 + std::exp(-x));

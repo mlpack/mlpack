@@ -1,26 +1,36 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
-# Ensure that we have a C++11 compiler.
-include(CMake/CXX11.cmake)
-check_for_cxx11_compiler(HAS_CXX11)
-if(NOT HAS_CXX11)
-  message(FATAL_ERROR "No C++11 compiler available!")
+# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
+# done with target_compile_features() when the mlpack library target is added in
+# src/mlpack/CMakeLists.txt.
+if (${CMAKE_MAJOR_VERSION} LESS 3 OR
+    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
+  # Older versions of CMake do not support target_compile_features(), so we have
+  # to use something kind of hacky.
+  include(CMake/CXX11.cmake)
+  check_for_cxx11_compiler(HAS_CXX11)
+  if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+  endif()
+  enable_cxx11()
 endif()
-enable_cxx11()
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" ON)
-option(PROFILE "Compile with profiling information" ON)
+option(DEBUG "Compile with debugging information." OFF)
+option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
-option(BUILD_CLI_EXECUTABLES "Build command-line executables" ON)
+option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
-
+    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+option(BUILD_WITH_COVERAGE
+    "Build with support for code coverage tools (gcc only)." OFF)
+option(MATHJAX
+    "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 enable_testing()
 
 # Include modules in the CMake directory.
@@ -56,16 +66,47 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
      # select the right stdlib.
     if(${MACOSX_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_SHARED_LINKER_FLAGS
+          "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_MODULE_LINKER_FLAGS
+          "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
      endif()
   endif()
 
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
-  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
+  # Link everything with -lm.
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
+endif()
+
+# Setup build for test coverage
+if(BUILD_WITH_COVERAGE)
+  # Currently coverage only works with GNU g++
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Find gcov and lcov
+    find_program(GCOV gcov)
+    find_program(LCOV lcov)
+
+    if(NOT GCOV)
+      message(FATAL_ERROR
+          "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
+    endif()
+
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
+    message(STATUS "Adding debug compile options for code coverage.")
+    # Remove optimizations for better line coverage
+    set(DEBUG ON)
+
+    if(LCOV)
+      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
+      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
+    else()
+      message(WARNING "'lcov' not found; local coverage report is disabled. "
+          "Install 'lcov' and rerun cmake to generate local coverage report.")
+    endif()
+  else()
+    message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
+  endif()
 endif()
 
 # For clock_gettime().
@@ -75,9 +116,14 @@ endif ()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
-  add_definitions(-DDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  if (NOT MSVC)
+    add_definitions(-DDEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  endif()
+
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -127,6 +173,7 @@ endif()
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
+#   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 4.100.0 REQUIRED)
 
@@ -236,12 +283,24 @@ set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
-# Detect OpenMP support in a compiler. If the compiler supports OpenMP, the
-# flags to compile with OpenMP are returned and added.
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
+# to compile with OpenMP are returned and added and the HAS_OPENMP definition is
+# added for compilation.
+#
+# This way we can skip calls to functions defined in omp.h with code like:
+# #ifdef HAS_OPENMP
+# {
+#   ... openMP code here ...
+# }
+# #endif
 find_package(OpenMP)
 if (OPENMP_FOUND)
+  add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+else ()
+  # Disable warnings for all the unknown OpenMP pragmas.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
@@ -326,11 +385,22 @@ add_dependencies(mlpack mlpack_arma_config)
 # I guess this option will just be unavailable.
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
+  if (MATHJAX)
+    find_package(MathJax)
+    if (NOT MATHJAX_FOUND)
+      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+          "Be careful, formulas will not be shown without the internet.")
+    endif ()
+  endif ()
   # Preprocess the Doxyfile.  This is done before 'make doc'.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -D DESTDIR="${CMAKE_BINARY_DIR}" -P
-          "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+      COMMAND ${CMAKE_COMMAND}
+          -D DESTDIR="${CMAKE_BINARY_DIR}"
+          -D MATHJAX="${MATHJAX}"
+          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+          -D MATHJAX_PATH="${MATHJAX_PATH}"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
       COMMENT "Creating Doxyfile to generate Doxygen documentation"
@@ -371,7 +441,7 @@ if (UNIX)
           mlpack_adaboost
           mlpack_kfn
           mlpack_knn
-          mlpack_allkrann
+          mlpack_krann
           mlpack_cf
           mlpack_decision_stump
           mlpack_det
@@ -438,8 +508,6 @@ if (PKG_CONFIG_FOUND)
   endforeach ()
 
   foreach(lib ${MLPACK_LIBRARIES})
-    message("lib is ${lib}")
-
     string(SUBSTRING "${lib}" 0 1 first)
     if ("${first}" STREQUAL "/")
       set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${lib}")

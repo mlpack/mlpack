@@ -8,7 +8,7 @@
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;

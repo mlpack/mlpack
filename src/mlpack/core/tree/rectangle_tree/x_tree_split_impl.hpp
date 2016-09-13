@@ -14,33 +14,6 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit() :
-    normalNodeMaxNumChildren(0),
-    splitHistory(0)
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType *node) :
-    normalNodeMaxNumChildren(node->Parent() ? 
-                             node->Parent()->Split().NormalNodeMaxNumChildren() :
-                             node->MaxNumChildren()),
-    splitHistory(node->Bound().Dim())
-{
-
-}
-
-template<typename TreeType>
-XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
-    normalNodeMaxNumChildren(other.Split().NormalNodeMaxNumChildren()),
-    splitHistory(other.Split().SplitHistory())
-{
-
-}
-
-
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
  * in the new nodes We then call AssignPointDestNode to assign the remaining
@@ -48,10 +21,14 @@ XTreeSplit<TreeType>::XTreeSplit(const TreeType &other) :
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+
+  if (tree->Count() <= tree->MaxLeafSize())
+    return;
 
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -64,9 +41,9 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
-    copy->Split().SplitLeafNode(copy, relevels);
+    XTreeSplit::SplitLeafNode(copy,relevels);
     return;
   }
 
@@ -84,27 +61,29 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     size_t p = tree->MaxLeafSize() * 0.3;
     if (p == 0)
     {
-      tree->Split().SplitLeafNode(tree, relevels);
+      XTreeSplit::SplitLeafNode(tree,relevels);
       return;
     }
 
-    std::vector<sortStruct<ElemType>> sorted(tree->Count());
+    std::vector<std::pair<ElemType, size_t>> sorted(tree->Count());
     arma::Col<ElemType> center;
     tree->Bound().Center(center); // Modifies centroid.
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Metric().Evaluate(center,
-          tree->LocalDataset().col(i));
-       sorted[i].n = i;
+      sorted[i].first = tree->Metric().Evaluate(center,
+          tree->Dataset().col(tree->Point(i)));
+       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
-    std::vector<int> pointIndices(p);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+    std::vector<size_t> pointIndices(p);
+
     for (size_t i = 0; i < p; i++)
     {
       // We start from the end of sorted.
-      pointIndices[i] = tree->Points()[sorted[sorted.size() - 1 - i].n];
-      root->DeletePoint(tree->Points()[sorted[sorted.size() - 1 - i].n],
+      pointIndices[i] = tree->Point(sorted[sorted.size() - 1 - i].second);
+
+      root->DeletePoint(tree->Point(sorted[sorted.size() - 1 - i].second),
           relevels);
     }
 
@@ -115,7 +94,7 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     }
 
 //    // If we went below min fill, delete this node and reinsert all points.
-//    if(tree->Count() < tree->MinLeafSize()) {
+//    if (tree->Count() < tree->MinLeafSize()) {
 //      std::vector<int> pointIndices(tree->Count());
 //      for(size_t i = 0; i < tree->Count(); i++) {
 //        pointIndices[i] = tree->Points()[i];
@@ -138,13 +117,14 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
   {
     ElemType axisScore = 0.0;
     // Since we only have points in the leaf nodes, we only need to sort once.
-    std::vector<sortStruct<ElemType>> sorted(tree->Count());
-    for (size_t i = 0; i < sorted.size(); i++) {
-      sorted[i].d = tree->LocalDataset().col(i)[j];
-      sorted[i].n = i;
+    std::vector<std::pair<ElemType, size_t>> sorted(tree->Count());
+    for (size_t i = 0; i < sorted.size(); i++)
+    {
+      sorted[i].first = tree->Dataset().col(tree->Point(i))[j];
+      sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxLeafSize() -
@@ -166,46 +146,23 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
       // another.  Then we calculate the three scores for that distribution.
 
       size_t cutOff = tree->MinLeafSize() + i;
-      // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<ElemType> maxG1(tree->Bound().Dim());
-      std::vector<ElemType> minG1(maxG1.size());
-      std::vector<ElemType> maxG2(maxG1.size());
-      std::vector<ElemType> minG2(maxG1.size());
-      for (size_t k = 0; k < tree->Bound().Dim(); k++)
-      {
-        minG1[k] = maxG1[k] = tree->LocalDataset().col(sorted[0].n)[k];
-        minG2[k] = maxG2[k] = tree->LocalDataset().col(
-            sorted[sorted.size() - 1].n)[k];
 
-        for (size_t l = 1; l < tree->Count() - 1; l++)
-        {
-          if (l < cutOff)
-          {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG1[k])
-              minG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG1[k])
-              maxG1[k] = tree->LocalDataset().col(sorted[l].n)[k];
-          }
-          else
-          {
-            if (tree->LocalDataset().col(sorted[l].n)[k] < minG2[k])
-              minG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
-            else if (tree->LocalDataset().col(sorted[l].n)[k] > maxG2[k])
-              maxG2[k] = tree->LocalDataset().col(sorted[l].n)[k];
-          }
-        }
-      }
+      BoundType bound1(tree->Bound().Dim());
+      BoundType bound2(tree->Bound().Dim());
 
-      ElemType area1 = 1.0, area2 = 1.0;
-      ElemType oArea = 1.0;
-      for (size_t k = 0; k < maxG1.size(); k++)
-      {
-        margins[i] += maxG1[k] - minG1[k] + maxG2[k] - minG2[k];
-        area1 *= maxG1[k] - minG1[k];
-        area2 *= maxG2[k] - minG2[k];
-        oArea *= ((maxG1[k] < minG2[k]) || (maxG2[k] < minG1[k])) ? 0.0 :
-            std::min(maxG1[k], maxG2[k]) - std::max(minG1[k], minG2[k]);
-      }
+      for (size_t l = 0; l < cutOff; l++)
+        bound1 |= tree->Dataset().col(tree->Point(sorted[l].second));
+
+      for (size_t l = cutOff; l < tree->Count(); l++)
+        bound2 |= tree->Dataset().col(tree->Point(sorted[l].second));
+
+      ElemType area1 = bound1.Volume();
+      ElemType area2 = bound2.Volume();
+      ElemType oArea = bound1.Overlap(bound2);
+
+      for (size_t k = 0; k < bound1.Dim(); k++)
+        margins[i] += bound1[k].Width() + bound2[k].Width();
+
       areas[i] += area1 + area2;
       overlapedAreas[i] += oArea;
       axisScore += margins[i];
@@ -236,17 +193,19 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     }
   }
 
-  std::vector<sortStruct<ElemType>> sorted(tree->Count());
+  std::vector<std::pair<ElemType, size_t>> sorted(tree->Count());
   for (size_t i = 0; i < sorted.size(); i++)
   {
-    sorted[i].d = tree->LocalDataset().col(i)[bestAxis];
-    sorted[i].n = i;
+    sorted[i].first = tree->Dataset().col(tree->Point(i))[bestAxis];
+    sorted[i].second = i;
   }
 
-  std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),NormalNodeMaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(),
+                            tree->AuxiliaryInfo().NormalNodeMaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(),
+                            tree->AuxiliaryInfo().NormalNodeMaxNumChildren());
 
   // The leaf nodes should never have any overlap introduced by the above method
   // since a split axis is chosen and then points are assigned based on their
@@ -256,9 +215,9 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].second));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].second));
     }
   }
   else
@@ -266,9 +225,9 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
     for (size_t i = 0; i < tree->Count(); i++)
     {
       if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Points()[sorted[i].n]);
+        treeOne->InsertPoint(tree->Point(sorted[i].second));
       else
-        treeTwo->InsertPoint(tree->Points()[sorted[i].n]);
+        treeTwo->InsertPoint(tree->Point(sorted[i].second));
     }
   }
 
@@ -277,27 +236,27 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
   size_t index = par->NumChildren();
   for (size_t i = 0; i < par->NumChildren(); i++)
   {
-    if (par->Children()[i] == tree)
+    if (par->children[i] == tree)
     {
       index = i;
       break;
     }
   }
   assert(index != par->NumChildren());
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   // We now update the split history of each new node.
-  treeOne->Split().SplitHistory().history[bestAxis] = true;
-  treeOne->Split().SplitHistory().lastDimension = bestAxis;
-  treeTwo->Split().SplitHistory().history[bestAxis] = true;
-  treeTwo->Split().SplitHistory().lastDimension = bestAxis;
+  treeOne->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeOne->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
+  treeTwo->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeTwo->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
 
   // We only add one at a time, so we should only need to test for equality just
   // in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-    par->Split().SplitNonLeafNode(par, relevels);
+    XTreeSplit::SplitNonLeafNode(par,relevels);
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -319,10 +278,11 @@ void XTreeSplit<TreeType>::SplitLeafNode(TreeType *tree,std::vector<bool>& relev
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
 
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -335,8 +295,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
-    copy->Split().SplitNonLeafNode(copy, relevels);
+    tree->children[(tree->NumChildren())++] = copy;
+    XTreeSplit::SplitNonLeafNode(copy,relevels);
     return true;
   }
 
@@ -351,7 +311,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   std::vector<bool> axes(tree->Bound().Dim());
   std::vector<int> dimensionsLastUsed(tree->NumChildren());
   for (size_t i = 0; i < tree->NumChildren(); i++)
-    dimensionsLastUsed[i] = tree->Child(i).Split().SplitHistory().lastDimension;
+    dimensionsLastUsed[i] = 
+                    tree->Child(i).AuxiliaryInfo().SplitHistory().lastDimension;
   std::sort(dimensionsLastUsed.begin(), dimensionsLastUsed.end());
 
   size_t lastDim = dimensionsLastUsed[dimensionsLastUsed.size()/2];
@@ -362,7 +323,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   {
     axes[i] = true;
     for (size_t j = 0; j < tree->NumChildren(); j++)
-      axes[i] = axes[i] & tree->Child(j).Split().SplitHistory().history[i];
+      axes[i] = axes[i] & 
+                tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
     {
       minOverlapSplitDimension = i;
@@ -375,7 +337,8 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     {
       axes[i] = true;
       for (size_t j = 0; j < tree->NumChildren(); j++)
-        axes[i] = axes[i] & tree->Child(j).Split().SplitHistory().history[i];
+        axes[i] = axes[i] & 
+                  tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
       if (axes[i] == true)
       {
         minOverlapSplitDimension = i;
@@ -405,14 +368,14 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     ElemType axisScore = 0.0;
 
     // We'll do Bound().Lo() now and use Bound().Hi() later.
-    std::vector<sortStruct<ElemType>> sorted(tree->NumChildren());
+    std::vector<std::pair<ElemType, size_t>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[j].Lo();
-      sorted[i].n = i;
+      sorted[i].first = tree->Child(i).Bound()[j].Lo();
+      sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -435,48 +398,23 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       // another.  Then we calculate the three scores for that distribution.
 
       size_t cutOff = tree->MinNumChildren() + i;
-      // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<ElemType> maxG1(tree->Bound().Dim());
-      std::vector<ElemType> minG1(maxG1.size());
-      std::vector<ElemType> maxG2(maxG1.size());
-      std::vector<ElemType> minG2(maxG1.size());
-      for (size_t k = 0; k < tree->Bound().Dim(); k++)
-      {
-        minG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Lo();
-        maxG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Hi();
-        minG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Lo();
-        maxG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Hi();
-        for (size_t l = 1; l < tree->NumChildren() - 1; l++)
-        {
-          if (l < cutOff)
-          {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG1[k])
-              minG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG1[k])
-              maxG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
-          }
-          else
-          {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG2[k])
-              minG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG2[k])
-              maxG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
-          }
-        }
-      }
 
-      ElemType area1 = 1.0, area2 = 1.0;
-      ElemType oArea = 1.0;
-      for (size_t k = 0; k < maxG1.size(); k++)
-      {
-        margins[i] += maxG1[k] - minG1[k] + maxG2[k] - minG2[k];
-        area1 *= maxG1[k] - minG1[k];
-        area2 *= maxG2[k] - minG2[k];
-        oArea *= ((maxG1[k] < minG2[k]) || (maxG2[k] < minG1[k])) ? 0.0 :
-            std::min(maxG1[k], maxG2[k]) - std::max(minG1[k], minG2[k]);
-      }
+      BoundType bound1(tree->Bound().Dim());
+      BoundType bound2(tree->Bound().Dim());
+
+      for (size_t l = 0; l < cutOff; l++)
+        bound1 |= tree->Child(sorted[l].second).Bound();
+
+      for (size_t l = cutOff; l < tree->NumChildren(); l++)
+        bound2 |= tree->Child(sorted[l].second).Bound();
+
+      ElemType area1 = bound1.Volume();
+      ElemType area2 = bound2.Volume();
+      ElemType oArea = bound1.Overlap(bound2);
+
+      for (size_t k = 0; k < bound1.Dim(); k++)
+        margins[i] += bound1[k].Width() + bound2[k].Width();
+
       areas[i] += area1 + area2;
       overlapedAreas[i] += oArea;
       axisScore += margins[i];
@@ -535,15 +473,14 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   {
     ElemType axisScore = 0.0;
 
-    // We'll do Bound().Lo() now and use Bound().Hi() later.
-    std::vector<sortStruct<ElemType>> sorted(tree->NumChildren());
+    std::vector<std::pair<ElemType, size_t>> sorted(tree->NumChildren());
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[j].Hi();
-      sorted[i].n = i;
+      sorted[i].first = tree->Child(i).Bound()[j].Hi();
+      sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -566,48 +503,23 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       // another.  Then we calculate the three scores for that distribution.
 
       size_t cutOff = tree->MinNumChildren() + i;
-      // We'll calculate the max and min in each dimension by hand to save time.
-      std::vector<ElemType> maxG1(tree->Bound().Dim());
-      std::vector<ElemType> minG1(maxG1.size());
-      std::vector<ElemType> maxG2(maxG1.size());
-      std::vector<ElemType> minG2(maxG1.size());
-      for (size_t k = 0; k < tree->Bound().Dim(); k++)
-      {
-        minG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Lo();
-        maxG1[k] = tree->Children()[sorted[0].n]->Bound()[k].Hi();
-        minG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Lo();
-        maxG2[k] =
-            tree->Children()[sorted[sorted.size() - 1].n]->Bound()[k].Hi();
-        for (size_t l = 1; l < tree->NumChildren() - 1; l++)
-        {
-          if (l < cutOff)
-          {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG1[k])
-              minG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG1[k])
-              maxG1[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
-          }
-          else
-          {
-            if (tree->Children()[sorted[l].n]->Bound()[k].Lo() < minG2[k])
-              minG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Lo();
-            else if (tree->Children()[sorted[l].n]->Bound()[k].Hi() > maxG2[k])
-              maxG2[k] = tree->Children()[sorted[l].n]->Bound()[k].Hi();
-          }
-        }
-      }
 
-      ElemType area1 = 1.0, area2 = 1.0;
-      ElemType oArea = 1.0;
-      for (size_t k = 0; k < maxG1.size(); k++)
-      {
-        margins[i] += maxG1[k] - minG1[k] + maxG2[k] - minG2[k];
-        area1 *= maxG1[k] - minG1[k];
-        area2 *= maxG2[k] - minG2[k];
-        oArea *= ((maxG1[k] < minG2[k]) || (maxG2[k] < minG1[k])) ? 0.0 :
-            std::min(maxG1[k], maxG2[k]) - std::max(minG1[k], minG2[k]);
-      }
+      BoundType bound1(tree->Bound().Dim());
+      BoundType bound2(tree->Bound().Dim());
+
+      for (size_t l = 0; l < cutOff; l++)
+        bound1 |= tree->Child(sorted[l].second).Bound();
+
+      for (size_t l = cutOff; l < tree->NumChildren(); l++)
+        bound2 |= tree->Child(sorted[l].second).Bound();
+
+      ElemType area1 = bound1.Volume();
+      ElemType area2 = bound2.Volume();
+      ElemType oArea = bound1.Overlap(bound2);
+
+      for (size_t k = 0; k < bound1.Dim(); k++)
+        margins[i] += bound1[k].Width() + bound2[k].Width();
+
 
       areas[i] += area1 + area2;
       overlapedAreas[i] += oArea;
@@ -664,28 +576,28 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     }
   }
 
-  std::vector<sortStruct<ElemType>> sorted(tree->NumChildren());
+  std::vector<std::pair<ElemType, size_t>> sorted(tree->NumChildren());
   if (lowIsBest)
   {
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[bestAxis].Lo();
-      sorted[i].n = i;
+      sorted[i].first = tree->Child(i).Bound()[bestAxis].Lo();
+      sorted[i].second = i;
     }
   }
   else
   {
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Children()[i]->Bound()[bestAxis].Hi();
-      sorted[i].n = i;
+      sorted[i].first = tree->Child(i).Bound()[bestAxis].Hi();
+      sorted[i].second = i;
     }
   }
 
-  std::sort(sorted.begin(), sorted.end(), structComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
 
-  TreeType* treeOne = new TreeType(tree->Parent(),tree->MaxNumChildren());
-  TreeType* treeTwo = new TreeType(tree->Parent(),tree->MaxNumChildren());
+  TreeType* treeOne = new TreeType(tree->Parent(), tree->MaxNumChildren());
+  TreeType* treeTwo = new TreeType(tree->Parent(), tree->MaxNumChildren());
 
   // Now as per the X-tree paper, we ensure that this split was good enough.
   bool useMinOverlapSplit = false;
@@ -696,9 +608,9 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted[i].second]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted[i].second]);
       }
     }
     else
@@ -711,9 +623,9 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestOverlapIndexOnBestAxis + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted[i].second]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted[i].second]);
       }
     }
     else
@@ -729,30 +641,31 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
     if ((minOverlapSplitDimension != tree->Bound().Dim()) &&
         (bestScoreMinOverlapSplit / areaOfBestMinOverlapSplit < MAX_OVERLAP))
     {
-      std::vector<sortStruct<ElemType>> sorted2(tree->NumChildren());
+      std::vector<std::pair<ElemType, size_t>> sorted2(tree->NumChildren());
       if (minOverlapSplitUsesHi)
       {
         for (size_t i = 0; i < sorted2.size(); i++)
         {
-          sorted2[i].d = tree->Children()[i]->Bound()[bestAxis].Hi();
-          sorted2[i].n = i;
+          sorted2[i].first = tree->Child(i).Bound()[bestAxis].Hi();
+          sorted2[i].second = i;
         }
       }
       else
       {
         for (size_t i = 0; i < sorted2.size(); i++)
         {
-          sorted2[i].d = tree->Children()[i]->Bound()[bestAxis].Lo();
-          sorted2[i].n = i;
+          sorted2[i].first = tree->Child(i).Bound()[bestAxis].Lo();
+          sorted2[i].second = i;
         }
       }
-      std::sort(sorted2.begin(), sorted2.end(), structComp<ElemType>);
+      std::sort(sorted2.begin(), sorted2.end(), PairComp<ElemType>);
+
       for (size_t i = 0; i < tree->NumChildren(); i++)
       {
         if (i < bestIndexMinOverlapSplit + tree->MinNumChildren())
-          InsertNodeIntoTree(treeOne, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeOne, tree->children[sorted2[i].second]);
         else
-          InsertNodeIntoTree(treeTwo, tree->Children()[sorted[i].n]);
+          InsertNodeIntoTree(treeTwo, tree->children[sorted2[i].second]);
       }
     }
     else
@@ -770,12 +683,13 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + NormalNodeMaxNumChildren();
-        tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren() + 1);
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + 
+                              tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
+        tree->Parent()->children.resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
         for (size_t i = 0; i < tree->NumChildren(); i++)
         {
-          tree->Parent()->Children()[i] = tree->Children()[i];
+          tree->Parent()->children[i] = tree->children[i];
           tree->Child(i).Parent() = tree->Parent();
         }
 
@@ -787,8 +701,9 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
       }
 
       // If we don't have to worry about the root, we just enlarge this node.
-      tree->MaxNumChildren() += NormalNodeMaxNumChildren();
-      tree->Children().resize(tree->MaxNumChildren() + 1);
+      tree->MaxNumChildren() += 
+                              tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
+      tree->children.resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)
         tree->Child(i).Parent() = tree;
 
@@ -800,25 +715,25 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   }
 
   // Update the split history of each child.
-  treeOne->Split().SplitHistory().history[bestAxis] = true;
-  treeOne->Split().SplitHistory().lastDimension = bestAxis;
-  treeTwo->Split().SplitHistory().history[bestAxis] = true;
-  treeTwo->Split().SplitHistory().lastDimension = bestAxis;
+  treeOne->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeOne->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
+  treeTwo->AuxiliaryInfo().SplitHistory().history[bestAxis] = true;
+  treeTwo->AuxiliaryInfo().SplitHistory().lastDimension = bestAxis;
 
   // Remove this node and insert treeOne and treeTwo
   TreeType* par = tree->Parent();
   size_t index = 0;
   for (size_t i = 0; i < par->NumChildren(); i++)
   {
-    if (par->Children()[i] == tree)
+    if (par->children[i] == tree)
     {
       index = i;
       break;
     }
   }
 
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->children[index] = treeOne;
+  par->children[par->NumChildren()++] = treeTwo;
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
@@ -829,16 +744,14 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
   assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
   if (par->NumChildren() == par->MaxNumChildren() + 1)
-  {
-    par->Split().SplitNonLeafNode(par, relevels);
-  }
+    XTreeSplit::SplitNonLeafNode(par,relevels);
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
   for (size_t i = 0; i < treeOne->NumChildren(); i++)
-    treeOne->Children()[i]->Parent() = treeOne;
+    treeOne->Child(i).Parent() = treeOne;
   for (size_t i = 0; i < treeTwo->NumChildren(); i++)
-    treeTwo->Children()[i]->Parent() = treeTwo;
+    treeTwo->Child(i).Parent() = treeTwo;
 
   assert(treeOne->Parent()->NumChildren() <=
       treeOne->Parent()->MaxNumChildren());
@@ -859,25 +772,12 @@ bool XTreeSplit<TreeType>::SplitNonLeafNode(TreeType *tree,std::vector<bool>& re
  * numberOfChildren.
  */
 template<typename TreeType>
-void XTreeSplit<TreeType>::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()] = srcNode;
+  destTree->numDescendants += srcNode->numDescendants;
+  destTree->children[destTree->NumChildren()] = srcNode;
   destTree->NumChildren()++;
-}
-
-/**
- * Serialize the split.
- */
-template<typename TreeType>
-template<typename Archive>
-void XTreeSplit<TreeType>::Serialize(Archive& ar,const unsigned int /* version */)
-{
-  using data::CreateNVP;
-
-  ar & CreateNVP(normalNodeMaxNumChildren, "normalNodeMaxNumChildren");
-  ar & CreateNVP(splitHistory, "splitHistory");
-
 }
 
 } // namespace tree
