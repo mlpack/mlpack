@@ -65,7 +65,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
 endif()
+
+# For clock_gettime().
+if (UNIX AND NOT APPLE)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
+endif ()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
@@ -79,8 +85,10 @@ if(DEBUG)
     find_package(LibDL)
     if(LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
-      include_directories(${LIBBFD_INCLUDE_DIRS})
-      include_directories(${LIBDL_INCLUDE_DIRS})
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
+          ${LIBDL_INCLUDE_DIRS})
+      set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
+          ${LIBDL_LIBRARIES})
       add_definitions(-DHAS_BFD_DL)
     else()
       message(WARNING "No libBFD and/or libDL has been found!")
@@ -194,7 +202,8 @@ if (WIN32)
 endif ()
 
 # Include directories for the previous dependencies.
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
@@ -207,7 +216,6 @@ find_package(Boost 1.49
       serialization
     REQUIRED
 )
-include_directories(${Boost_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -218,6 +226,10 @@ if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
   set(Boost_LIBRARIES "")
 endif ()
+
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
@@ -237,6 +249,7 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${MLPACK_INCLUDE_DIRS})
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
