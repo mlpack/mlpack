@@ -506,6 +506,9 @@ if (PKG_CONFIG_FOUND)
 
     set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
   endforeach ()
+  # Add the install directory too.
+  set(MLPACK_INCLUDE_DIRS_STRING
+      "${MLPACK_INCLUDE_DIRS_STRING} -I${CMAKE_INSTALL_PREFIX}/include/")
 
   # Create the list of link directories.
   foreach (linkdir ${MLPACK_LIBRARY_DIRS})
@@ -520,6 +523,9 @@ if (PKG_CONFIG_FOUND)
       set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -l${lib}")
     endif ()
   endforeach ()
+  # Don't forget to add mlpack as a dependency too.
+  set(MLPACK_LIBRARIES_STRING
+      "${MLPACK_LIBRARIES_STRING} -L${CMAKE_INSTALL_PREFIX}/lib/ -lmlpack")
 
   # Do first stage of configuration.
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
