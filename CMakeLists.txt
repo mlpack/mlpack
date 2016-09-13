@@ -517,6 +517,7 @@ if (PKG_CONFIG_FOUND)
   endforeach ()
 
   # Do first stage of configuration.
+  set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
     ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
