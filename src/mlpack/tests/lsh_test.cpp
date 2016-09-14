@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   arma::mat qdata;
   data::Load(trainSet, rdata, true);
   data::Load(testSet, qdata, true);
-  
+
   // Run classic knn on reference set.
   KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
@@ -594,21 +594,23 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   BOOST_REQUIRE(arma::all(neighbors.col(0) == N));
 
   // Test that q1 search with 1 additional probe returns some C2 points.
+  // We use the schur product (%) instead of logical and (&&) to handle an early
+  // Armadillo bug.
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
   BOOST_REQUIRE(arma::all(
-        neighbors.col(0) == N ||
-        (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+        (neighbors.col(0) == N) ||
+        ((neighbors.col(0) >= N / 4) % (neighbors.col(0) < N / 2))));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
       neighbors.col(0) == N ||
-      (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+      ((neighbors.col(0) >= N / 4) % (neighbors.col(0) < N / 2))));
 
   // Test that q2 with 3 additional probes returns all C2 points.
   lshTest.Search(q2, k, neighbors, distances, 0, 3);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2));
+      (neighbors.col(0) >= N / 4) % (neighbors.col(0) < N / 2)));
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
