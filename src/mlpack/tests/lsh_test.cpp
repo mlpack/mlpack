@@ -595,16 +595,17 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 
   // Test that q1 search with 1 additional probe returns some C2 points.
   // We use the schur product (%) instead of logical and (&&) to handle an early
-  // Armadillo bug.
+  // Armadillo bug, and we also use boolean addition (+) instead of logical or
+  // (||).
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
   BOOST_REQUIRE(arma::all(
-        (neighbors.col(0) == N) ||
+        (neighbors.col(0) == N) +
         ((neighbors.col(0) >= N / 4) % (neighbors.col(0) < N / 2))));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) == N ||
+      (neighbors.col(0) == N) +
       ((neighbors.col(0) >= N / 4) % (neighbors.col(0) < N / 2))));
 
   // Test that q2 with 3 additional probes returns all C2 points.
