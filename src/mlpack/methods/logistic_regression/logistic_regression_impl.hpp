@@ -41,7 +41,7 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(dimensionality + 1 /* include intercept term */),
+    parameters(arma::zeros<arma::vec>(dimensionality + 1)),
     lambda(lambda)
 {
   // No training to do here.
