@@ -200,6 +200,7 @@ class BinarySpaceTree
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -216,14 +217,15 @@ class BinarySpaceTree
    *
    * A mapping of the old point indices to the new point indices is filled, but
    * it is expected that the vector is already allocated with size greater than
-   * or equal to (begin_in + count_in), and if that is not true, invalid memory
-   * reads (and writes) will occur.
+   * or equal to (begin + count), and if that is not true, invalid memory reads
+   * (and writes) will occur.
    *
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -483,7 +485,7 @@ class BinarySpaceTree
   size_t& Count() { return count; }
 
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) { bound.Center(center); }
+  void Center(arma::vec& center) const { bound.Center(center); }
 
  private:
   /**
