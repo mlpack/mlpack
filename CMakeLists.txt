@@ -500,11 +500,10 @@ if (PKG_CONFIG_FOUND)
   # Next, adapt the list of include directories.
   foreach (incldir ${MLPACK_INCLUDE_DIRS})
     # Filter out some obviously unnecessary directories.
-    if ("${incldir}" STREQUAL "/usr/include")
-      continue()
+    if (NOT "${incldir}" STREQUAL "/usr/include")
+      set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING}
+          -I${incldir}")
     endif ()
-
-    set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
   endforeach ()
   # Add the install directory too.
   set(MLPACK_INCLUDE_DIRS_STRING
