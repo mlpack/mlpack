@@ -536,8 +536,7 @@ if (PKG_CONFIG_FOUND)
       ${CMAKE_COMMAND}
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
       DEPENDS mlpack_headers
-      COMMENT "Generating mlpack.pc (pkg-config) file."
-      VERBATIM)
+      COMMENT "Generating mlpack.pc (pkg-config) file.")
 
   # Do we need a different directory?
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
