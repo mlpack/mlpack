@@ -534,10 +534,10 @@ if (PKG_CONFIG_FOUND)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
-          -D MLPACK_SOURCE_DIR="${CMAKE_BINARY_DIR}/include/"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
       DEPENDS mlpack_headers
-      COMMENT "Generating mlpack.pc (pkg-config) file.")
+      COMMENT "Generating mlpack.pc (pkg-config) file."
+      VERBATIM)
 
   # Do we need a different directory?
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
