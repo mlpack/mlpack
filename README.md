@@ -8,7 +8,7 @@ learning researchers.
 
 **Download [current stable version (2.0.3)](http://www.mlpack.org/files/mlpack-2.0.3.tar.gz).**
 
-[![Build Status](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a>
+[![Build Status](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a> [![Coverage Status](https://coveralls.io/repos/github/mlpack/mlpack/badge.svg?branch=master)](https://coveralls.io/github/mlpack/mlpack?branch=master)
 
 0. Contents
 -----------
