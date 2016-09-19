@@ -705,7 +705,7 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   size_t bestIndex = 0;
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    ElemType distance = Child(i).MinDistance(&queryNode);
+    ElemType distance = Child(i).MinDistance(queryNode);
     if (distance <= bestDistance)
     {
       bestDistance = distance;
@@ -735,7 +735,7 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   size_t bestIndex = 0;
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    ElemType distance = Child(i).MaxDistance(&queryNode);
+    ElemType distance = Child(i).MaxDistance(queryNode);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
