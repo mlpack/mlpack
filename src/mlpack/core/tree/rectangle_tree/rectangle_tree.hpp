@@ -463,21 +463,21 @@ class RectangleTree
   size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const RectangleTree* other) const
+  ElemType MinDistance(const RectangleTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const RectangleTree* other) const
+  ElemType MaxDistance(const RectangleTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const RectangleTree* other) const
+  math::RangeType<ElemType> RangeDistance(const RectangleTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.
