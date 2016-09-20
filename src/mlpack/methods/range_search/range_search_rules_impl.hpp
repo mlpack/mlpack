@@ -179,7 +179,7 @@ double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
   else
   {
     // Just perform the calculation.
-    distances = referenceNode.RangeDistance(&queryNode);
+    distances = referenceNode.RangeDistance(queryNode);
     ++scores;
   }
 

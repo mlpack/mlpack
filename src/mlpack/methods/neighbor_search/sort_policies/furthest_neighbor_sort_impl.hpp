@@ -18,7 +18,7 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return queryNode->MaxDistance(referenceNode);
+  return queryNode->MaxDistance(*referenceNode);
 }
 
 template<typename TreeType>
@@ -27,7 +27,7 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
     const TreeType* referenceNode,
     const double centerToCenterDistance)
 {
-  return queryNode->MaxDistance(referenceNode, centerToCenterDistance);
+  return queryNode->MaxDistance(*referenceNode, centerToCenterDistance);
 }
 
 template<typename TreeType>
@@ -37,7 +37,7 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
     const TreeType* referenceChildNode,
     const double centerToCenterDistance)
 {
-  return queryNode->MaxDistance(referenceNode, centerToCenterDistance) +
+  return queryNode->MaxDistance(*referenceNode, centerToCenterDistance) +
       referenceChildNode->ParentDistance();
 }
 
