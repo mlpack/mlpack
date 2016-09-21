@@ -7,7 +7,7 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
@@ -354,12 +354,12 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
 
 BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
 {
-  BallBound<arma::vec, MahalanobisDistance<>> b(100);
+  BallBound<MahalanobisDistance<>, arma::vec> b(100);
   b.Center().randu();
   b.Radius() = 14.0;
   b.Metric().Covariance().randu(100, 100);
 
-  BallBound<arma::vec, MahalanobisDistance<>> xmlB, textB, binaryB;
+  BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
 
   SerializeObjectAll(b, xmlB, textB, binaryB);
 
@@ -801,16 +801,16 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(AllkNNTest)
+BOOST_AUTO_TEST_CASE(KNNTest)
 {
-  using neighbor::AllkNN;
+  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  AllkNN allknn(dataset, false, false);
+  KNN knn(dataset, DUAL_TREE_MODE);
 
-  AllkNN knnXml, knnText, knnBinary;
+  KNN knnXml, knnText, knnBinary;
 
-  SerializeObjectAll(allknn, knnXml, knnText, knnBinary);
+  SerializeObjectAll(knn, knnXml, knnText, knnBinary);
 
   // Now run nearest neighbor and make sure the results are the same.
   arma::mat querySet = arma::randu<arma::mat>(5, 1000);
@@ -818,7 +818,7 @@ BOOST_AUTO_TEST_CASE(AllkNNTest)
   arma::mat distances, xmlDistances, textDistances, binaryDistances;
   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-  allknn.Search(querySet, 5, neighbors, distances);
+  knn.Search(querySet, 5, neighbors, distances);
   knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
   knnText.Search(querySet, 5, textNeighbors, textDistances);
   knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
@@ -1124,7 +1124,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
 BOOST_AUTO_TEST_CASE(RASearchTest)
 {
   using neighbor::AllkRANN;
-  using neighbor::AllkNN;
+  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
 
@@ -1145,8 +1145,8 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   arma::mat distances, xmlDistances, textDistances, binaryDistances;
   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-  AllkNN allknn(dataset); // Exact search.
-  allknn.Search(querySet, 10, neighbors, distances);
+  KNN knn(dataset); // Exact search.
+  knn.Search(querySet, 10, neighbors, distances);
   krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
   krannText.Search(querySet, 5, textNeighbors, textDistances);
   krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
@@ -1210,8 +1210,8 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
   for (size_t i = 0; i < lsh.NumProjections(); ++i)
   {
-    CheckMatrices(lsh.Projection(i), xmlLsh.Projection(i),
-        textLsh.Projection(i), binaryLsh.Projection(i));
+    CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
+        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
   }
 
   CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
@@ -1225,8 +1225,16 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
-  CheckMatrices(lsh.SecondHashTable(), xmlLsh.SecondHashTable(),
-      textLsh.SecondHashTable(), binaryLsh.SecondHashTable());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      xmlLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      textLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      binaryLsh.SecondHashTable().size());
+
+  for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
+  CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
+      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
 }
 
 // Make sure serialization works for the decision stump.

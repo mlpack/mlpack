@@ -72,7 +72,7 @@ class LaplacianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(-t / bandwidth);
   }
-  
+
   /**
    * Evaluation of the gradient of the Laplacian kernel
    * given the distance between two points.

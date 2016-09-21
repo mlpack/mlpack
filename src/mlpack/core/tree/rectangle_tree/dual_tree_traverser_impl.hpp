@@ -21,9 +21,11 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
-         typename DescentType>
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -36,9 +38,11 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
-         typename DescentType>
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
 DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
                                       RectangleTree& referenceNode)
 {
@@ -63,14 +67,14 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       // Restore the traversal information.
       rule.TraversalInfo() = traversalInfo;
-      const double childScore = rule.Score(queryNode.Points()[query],
+      const double childScore = rule.Score(queryNode.Point(query),
           referenceNode);
 
       if (childScore == DBL_MAX)
         continue;  // We don't require a search in this reference node.
 
       for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
-        rule.BaseCase(queryNode.Points()[query], referenceNode.Points()[ref]);
+        rule.BaseCase(queryNode.Point(query), referenceNode.Point(ref));
 
       numBaseCases += referenceNode.Count();
     }
@@ -99,7 +103,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     for (size_t i = 0; i < referenceNode.NumChildren(); i++)
     {
       rule.TraversalInfo() = traversalInfo;
-      nodesAndScores[i].node = referenceNode.Children()[i];
+      nodesAndScores[i].node = &(referenceNode.Child(i));
       nodesAndScores[i].score = rule.Score(queryNode,
           *(nodesAndScores[i].node));
       nodesAndScores[i].travInfo = rule.TraversalInfo();
@@ -134,7 +138,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       for (size_t i = 0; i < referenceNode.NumChildren(); i++)
       {
         rule.TraversalInfo() = traversalInfo;
-        nodesAndScores[i].node = referenceNode.Children()[i];
+        nodesAndScores[i].node = &(referenceNode.Child(i));
         nodesAndScores[i].score = rule.Score(queryNode.Child(j),
             *nodesAndScores[i].node);
         nodesAndScores[i].travInfo = rule.TraversalInfo();

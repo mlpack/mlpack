@@ -77,9 +77,7 @@ class QUIC_SVD
    * @param v Second unitary matrix.
    * @param sigma Diagonal matrix of singular values.
    */
-  void ExtractSVD(arma::mat& u,
-                  arma::mat& v,
-                  arma::mat& sigma);
+  void ExtractSVD(arma::mat& u, arma::mat& v, arma::mat& sigma);
 
  private:
   //! Matrix for which cosine tree is constructed.
@@ -90,8 +88,5 @@ class QUIC_SVD
 
 } // namespace svd
 } // namespace mlpack
-
-// Include implementation.
-#include "quic_svd_impl.hpp"
 
 #endif

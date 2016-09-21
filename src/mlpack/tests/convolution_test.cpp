@@ -13,16 +13,12 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ConvolutionTest);
-
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
 
 /*
  * Implementation of the convolution function test.

@@ -1,4 +1,5 @@
 include_directories(..) # <mlpack/[whatever]>
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
 set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
@@ -18,31 +19,33 @@ if (BUILD_TESTS)
   add_subdirectory(tests)
 endif ()
 
-# MLPACK_SRCS is set in the subdirectories.
-# We don't use a DLL (shared) on Windows because it's a nightmare.  We can't
-# easily generate the .def file and we won't put __declspec(dllexport) next to
-# every function signature.
-if (WIN32)
-  add_library(mlpack ${MLPACK_SRCS})
-else ()
-  add_library(mlpack SHARED ${MLPACK_SRCS})
+# MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
+# are set in the root CMakeLists.txt.
+add_library(mlpack ${MLPACK_SRCS})
+
+if (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
+        (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1)))
+  include(../../CMake/NewCXX11.cmake)
 endif ()
+
+# Generate export symbols for Windows, instead of adding __declspec(dllimport)
+# and __declspec(dllexport) everywhere.  However, those modifiers are still
+# necessary for global variables (of which there are a few in mlpack).
+set_target_properties(mlpack PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+include(GenerateExportHeader)
+generate_export_header(mlpack EXPORT_FILE_NAME mlpack_export.hpp)
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions(-DMLPACK_STATIC_DEFINE)
+endif ()
+
 target_link_libraries(mlpack
-  ${ARMADILLO_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${LIBXML2_LIBRARIES}
-)
+  ${MLPACK_LIBRARIES})
+
 set_target_properties(mlpack
   PROPERTIES
   VERSION 2.0
   SOVERSION 2
 )
-
-# Make sure the linker can find the needed library.
-# rt: clock_gettime()
-if(UNIX AND NOT APPLE)
-    target_link_libraries(mlpack rt)
-endif()
 
 # Backtrace for Linux need those libs.
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -63,7 +66,10 @@ add_custom_target(mlpack_headers)
 add_custom_command(TARGET mlpack_headers POST_BUILD
   COMMENT "Moving header files to include/mlpack/"
   COMMAND ${CMAKE_COMMAND} ARGS -E
-    make_directory ${CMAKE_BINARY_DIR}/include/mlpack/)
+    make_directory ${CMAKE_BINARY_DIR}/include/mlpack/
+  COMMAND ${CMAKE_COMMAND} ARGS -E
+    copy ${CMAKE_CURRENT_BINARY_DIR}/mlpack_export.hpp
+         ${CMAKE_BINARY_DIR}/include/mlpack)
 
 # Then copy each of the header files over to that directory.
 foreach(incl_file ${INCLUDE_FILES})

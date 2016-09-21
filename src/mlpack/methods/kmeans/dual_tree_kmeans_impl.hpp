@@ -101,16 +101,16 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   Tree* centroidTree = BuildTree<Tree>(centroids, oldFromNewCentroids);
 
+  // Find the nearest neighbors of each of the clusters.  We have to make our
+  // own TreeType, which is a little bit abuse, but we know for sure the
+  // TreeStatType we have will work.
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
+      NNSTreeType> nns(std::move(*centroidTree));
+
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
     Timer::Start("knn");
-
-    // Find the nearest neighbors of each of the clusters.  We have to make our
-    // own TreeType, which is a little bit abuse, but we know for sure the
-    // TreeStatType we have will work.
-    neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
-        NNSTreeType> nns(centroidTree);
 
     // If the tree maps points, we need an intermediate result matrix.
     arma::mat* interclusterDistancesTemp =
@@ -145,11 +145,12 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     interclusterDistances.set_size(1, centroids.n_cols);
   }
 
-  // We won't use the AllkNN class here because we have our own set of rules.
+  // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
-  RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,
-      lowerBounds, metric, prunedPoints, oldFromNewCentroids, visited);
+  RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
+      upperBounds, lowerBounds, metric, prunedPoints, oldFromNewCentroids,
+      visited);
 
   typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
@@ -160,7 +161,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
-  traverser.Traverse(*tree, *centroidTree);
+  traverser.Traverse(*tree, nns.ReferenceTree());
   distanceCalculations += rules.BaseCases() + rules.Scores();
 
   Timer::Start("tree_mod");
@@ -179,7 +180,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     if (counts[c] == 0)
     {
-      newCentroids.col(c).fill(DBL_MAX);
       clusterDistances[c] = 0;
     }
     else

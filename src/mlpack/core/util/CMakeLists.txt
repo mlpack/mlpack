@@ -10,6 +10,7 @@ set(SOURCES
   cli_deleter.hpp
   cli_deleter.cpp
   cli_impl.hpp
+  deprecated.hpp
   log.hpp
   log.cpp
   nulloutstream.hpp
@@ -20,8 +21,6 @@ set(SOURCES
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   sfinae_utility.hpp
-  string_util.hpp
-  string_util.cpp
   timers.hpp
   timers.cpp
   version.hpp

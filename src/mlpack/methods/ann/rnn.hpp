@@ -9,7 +9,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp> 
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <mlpack/methods/ann/network_util.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -24,7 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of a standard recurrent neural network.
  *
  * @tparam LayerTypes Contains all layer modules used to construct the network.
- * @tparam OutputLayerType The outputlayer type used to evaluate the network.
+ * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  * @tparam PerformanceFunction Performance strategy used to calculate the error.
  */
@@ -50,14 +50,14 @@ class RNN
    * be used.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType,
            typename OutputType,
@@ -76,13 +76,13 @@ class RNN
    * initialize rule and performance function should be used.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType, typename OutputType>
   RNN(LayerType &&network,
@@ -98,11 +98,11 @@ class RNN
    * training.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType, typename OutputType>
   RNN(LayerType &&network,
@@ -332,7 +332,7 @@ class RNN
   InitLayer(const InputDataType& /* unused */,
             const TargetDataType& target,
             std::tuple<Tp...>& /* unused */)
-  { 
+  {
     seqOutput = outputSize < target.n_elem ? true : false;
   }
 
@@ -345,7 +345,7 @@ class RNN
   {
     Init(std::get<I>(network), std::get<I>(network).OutputParameter(),
        std::get<I + 1>(network).Delta());
-    
+
     InitLayer<I + 1, InputDataType, TargetDataType, Tp...>(input, target,
         network);
   }
@@ -636,7 +636,7 @@ class RNN
     BackwardRecurrent(std::get<sizeof...(Tp) - I - 1>(network),
         std::get<sizeof...(Tp) - I - 1>(network).InputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta());
-    
+
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta(),

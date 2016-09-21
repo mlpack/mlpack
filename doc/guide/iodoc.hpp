@@ -19,7 +19,7 @@ mlpack has four logging levels:
  - Log::Warn
  - Log::Fatal
 
-Output to Log::Debug does not show (and has no performance penalty) when mlpack 
+Output to Log::Debug does not show (and has no performance penalty) when mlpack
 is compiled without debugging symbols.  Output to Log::Info is only shown when
 the program is run with the --verbose (or -v) flag.  Log::Warn is always shown,
 and Log::Fatal will throw a std::runtime_error exception, when a newline is sent
@@ -132,7 +132,7 @@ Documentation is automatically generated using those macros, and when the
 program is run with --help the following is displayed:
 
 @code
-$ pca --help
+$ mlpack_pca --help
 Principal Components Analysis
 
   This program performs principal components analysis on the given dataset.  It

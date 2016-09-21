@@ -117,7 +117,7 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
-    const arma::Row<size_t>& labels)
+    const arma::Row<size_t>& labels) const
 {
   arma::Row<size_t> predictions;
 

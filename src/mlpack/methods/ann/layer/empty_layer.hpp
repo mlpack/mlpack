@@ -4,8 +4,8 @@
  *
  * Definition of the EmptyLayer class, which is basically empty.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_EMPTY_LAYER_HPP
 
 namespace mlpack{
 namespace ann /** Artificial Neural Network. */ {
@@ -78,13 +78,13 @@ class EmptyLayer
 
   //! Get the weights.
   OutputDataType const& Weights() const { return weights; }
-  
+
   //! Modify the weights.
   OutputDataType& Weights() { return weights; }
-  
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
-  
+
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
@@ -96,7 +96,7 @@ class EmptyLayer
 
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
-  
+
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
@@ -105,7 +105,7 @@ class EmptyLayer
 
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   //! Locally-stored weight object.
   OutputDataType weights;
 

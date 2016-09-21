@@ -47,7 +47,7 @@ class SparseInputLayer
     lambda(lambda)
   {
     weights.set_size(outSize, inSize);
-  }  
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -119,7 +119,7 @@ class SparseInputLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */

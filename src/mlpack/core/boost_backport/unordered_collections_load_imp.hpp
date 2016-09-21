@@ -1,3 +1,6 @@
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_SERIALIZATION_UNORDERED_COLLECTIONS_LOAD_IMP_HPP
 #define BOOST_SERIALIZATION_UNORDERED_COLLECTIONS_LOAD_IMP_HPP
 
@@ -10,7 +13,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // unordered_collections_load_imp.hpp: serialization for loading stl collections
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // (C) Copyright 2014 Jim Bell
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -24,8 +27,8 @@
 #include <cstddef> // size_t
 #include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 #include <boost/detail/workaround.hpp>
@@ -67,7 +70,7 @@ inline void load_unordered_collection(Archive & ar, Container &s)
     }
 }
 
-} // namespace stl 
+} // namespace stl
 } // namespace serialization
 } // namespace boost
 

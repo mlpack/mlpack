@@ -50,31 +50,35 @@ PROGRAM_INFO("Range Search",
     "regardless of the given extension.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
+PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
     "");
-PARAM_STRING("distances_file", "File to output distances into.", "d", "");
-PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
+PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained range search "
+PARAM_STRING_IN("input_model_file", "File containing pre-trained range search "
     "model.", "m", "");
-PARAM_STRING("output_model_file", "If specified, the range search model will be"
-    " saved to the given file.", "M", "");
+PARAM_STRING_OUT("output_model_file", "If specified, the range search model "
+    "will be saved to the given file.", "M");
 
 // The user may specify a query file of query points and a range to search for.
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_DOUBLE("max", "Upper bound in range (if not specified, +inf will be "
+PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
+    "");
+PARAM_DOUBLE_IN("max", "Upper bound in range (if not specified, +inf will be "
     "used.", "U", 0.0);
-PARAM_DOUBLE("min", "Lower bound in range.", "L", 0.0);
+PARAM_DOUBLE_IN("min", "Lower bound in range.", "L", 0.0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'ball'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
+    "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
+    "'r-plus-plus'.", "t", "kd");
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
+    "vp trees, random projection trees, UB trees, R trees, R* trees, X trees, "
+    "Hilbert R trees, R+ trees and R++ trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
-PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
+PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
@@ -160,7 +164,7 @@ int main(int argc, char *argv[])
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
-    int tree = 0;
+    RSModel::TreeTypes tree = RSModel::KD_TREE;
     if (treeType == "kd")
       tree = RSModel::KD_TREE;
     else if (treeType == "cover")
@@ -171,9 +175,26 @@ int main(int argc, char *argv[])
       tree = RSModel::R_STAR_TREE;
     else if (treeType == "ball")
       tree = RSModel::BALL_TREE;
+    else if (treeType == "x")
+      tree = RSModel::X_TREE;
+    else if (treeType == "hilbert-r")
+      tree = RSModel::HILBERT_R_TREE;
+    else if (treeType == "r-plus")
+      tree = RSModel::R_PLUS_TREE;
+    else if (treeType == "r-plus-plus")
+      tree = RSModel::R_PLUS_PLUS_TREE;
+    else if (treeType == "vp")
+      tree = RSModel::VP_TREE;
+    else if (treeType == "rp")
+      tree = RSModel::RP_TREE;
+    else if (treeType == "max-rp")
+      tree = RSModel::MAX_RP_TREE;
+    else if (treeType == "ub")
+      tree = RSModel::UB_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', and 'ball'." << endl;
+          << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
+          << "'ball', 'hilbert-r', 'r-plus' and 'r-plus-plus'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;

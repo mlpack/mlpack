@@ -26,29 +26,27 @@ class RTreeSplit
    * will propagate upwards through the tree.
    */
   template<typename TreeType>
-  static void SplitLeafNode(TreeType* tree,
-                            std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
   template<typename TreeType>
-  static bool SplitNonLeafNode(TreeType* tree,
-                               std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
  private:
   /**
    * Get the seeds for splitting a leaf node.
    */
   template<typename TreeType>
-  static void GetPointSeeds(const TreeType& tree, int& i, int& j);
+  static void GetPointSeeds(const TreeType *tree,int& i, int& j);
 
   /**
    * Get the seeds for splitting a non-leaf node.
    */
   template<typename TreeType>
-  static void GetBoundSeeds(const TreeType& tree, int& i, int& j);
+  static void GetBoundSeeds(const TreeType *tree,int& i, int& j);
 
   /**
    * Assign points to the two new nodes.

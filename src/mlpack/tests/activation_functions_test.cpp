@@ -25,16 +25,12 @@
 #include <mlpack/methods/ann/layer/hard_tanh_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ActivationFunctionsTest);
-
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
 
 // Generate dataset for activation function tests.
 const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0");
@@ -168,9 +164,9 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the LeakyReLU activation function test. The function is  
+ * Implementation of the LeakyReLU activation function test. The function is
  * implemented as LeakyReLU layer in the file leaky_relu_layer.hpp
- * 
+ *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
@@ -189,15 +185,15 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the LeakyReLU activation function derivative test. 
- * The derivative function is implemented as LeakyReLU layer in the file 
+ * Implementation of the LeakyReLU activation function derivative test.
+ * The derivative function is implemented as LeakyReLU layer in the file
  * leaky_relu_layer.hpp
  *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
 
-void CheckLeakyReLUDerivativeCorrect(const arma::colvec input, 
+void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
   LeakyReLULayer<> lrf;

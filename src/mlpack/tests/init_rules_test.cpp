@@ -2,7 +2,7 @@
  * @file init_rules_test.cpp
  * @author Marcus Edel
  *
- *  Tests for the various weight initialize methods.
+ * Tests for the various weight initialize methods.
  */
 #include <mlpack/core.hpp>
 
@@ -14,16 +14,12 @@
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(InitRulesTest);
-
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
 
 // Test the RandomInitialization class with a constant value.
 BOOST_AUTO_TEST_CASE(ConstantInitTest)

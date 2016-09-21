@@ -67,7 +67,7 @@ option is used so that output is given.  Further documentation on each
 individual option can be found by typing
 
 @code
-$ range_search --help
+$ mlpack_range_search --help
 @endcode
 
 @subsection cli_ex1_rstut One dataset, points with distance <= 0.01
@@ -82,7 +82,7 @@ $ mlpack_range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv \
 [INFO ] Search for points in the range [0, 0.076] with dual-tree kd-tree
 search...
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -102,7 +102,7 @@ search...
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.005201s
 [INFO ]   range_search/computing_neighbors: 0.017110s
@@ -147,7 +147,7 @@ empty.
 @subsection cli_ex2_rstut Query and reference dataset, range [1.0, 1.5]
 
 @code
-$ range_search -q query_dataset.csv -r reference_dataset.csv -n \
+$ mlpack_range_search -q query_dataset.csv -r reference_dataset.csv -n \
 > neighbors_out.csv -d distances_out.csv -L 1.0 -U 1.5 -v
 [INFO ] Loading 'reference_dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'reference_dataset.csv' (3x1000).
@@ -159,7 +159,7 @@ $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
 [INFO ] Building query tree...
 [INFO ] Tree built.
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -179,7 +179,7 @@ $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.006199s
 [INFO ]   range_search/computing_neighbors: 0.024427s
@@ -196,8 +196,8 @@ faster computation.  The leaf size is modifiable through the command-line
 interface, as shown below.
 
 @code
-$ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -L 0.7 \
-> -U 0.8 -l 15 -v
+$ mlpack_range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv \
+> -L 0.7 -U 0.8 -l 15 -v
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Loaded reference data from 'dataset.csv' (3x1000).
 [INFO ] Building reference tree...
@@ -205,7 +205,7 @@ $ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -L 0.7 \
 [INFO ] Search for points in the range [0.7, 0.8] with dual-tree kd-tree
 search...
 [INFO ] Search complete.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   distances_file: distances_out.csv
 [INFO ]   help: false
@@ -225,7 +225,7 @@ search...
 [INFO ]   tree_type: kd
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.006298s
 [INFO ]   range_search/computing_neighbors: 0.411041s
@@ -252,15 +252,6 @@ in the specified distance range.  The structure of those two objects is very
 similar to the output files --neighbors_file and --distances_file for the CLI
 interface (see above).  A handful of examples of simple usage of the RangeSearch
 class are given below.
-
-
-Using the AllkNN class is particularly simple; first, the object must be
-constructed and given a dataset.  Then, the method is run, and two matrices are
-returned: one which holds the indices of the nearest neighbors, and one which
-holds the distances of the nearest neighbors.  These are of the same structure
-as the output --neighbors_file and --reference_file for the CLI interface (see
-above).  A handful of examples of simple usage of the AllkNN class are given
-below.
 
 @subsection rs_ex1_rstut Distance less than 2.0 on a single dataset
 

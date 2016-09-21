@@ -173,14 +173,20 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
     // Now we normalize the transition matrix.
     for (size_t i = 0; i < transition.n_cols; i++)
-      transition.col(i) /= accu(transition.col(i));
+    {
+      const double sum = accu(transition.col(i));
+      if (sum > 0.0)
+        transition.col(i) /= sum;
+      else
+        transition.col(i).fill(1.0 / (double) transition.n_rows);
+    }
 
     // Now estimate emission probabilities.
     for (size_t state = 0; state < transition.n_cols; state++)
       emission[state].Train(emissionList, emissionProb[state]);
 
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
-        << std::endl;
+        << "." << std::endl;
 
     if (std::abs(oldLoglik - loglik) < tolerance)
     {
@@ -513,7 +519,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
   // Then normalize the column.
   scales[0] = accu(forwardProb.col(0));
-  forwardProb.col(0) /= scales[0];
+  if (scales[0] > 0.0)
+    forwardProb.col(0) /= scales[0];
 
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -530,7 +537,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
     // Normalize probability.
     scales[t] = accu(forwardProb.col(t));
-    forwardProb.col(t) /= scales[t];
+    if (scales[t] > 0.0)
+      forwardProb.col(t) /= scales[t];
   }
 }
 
@@ -560,7 +568,8 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
             * emission[state].Probability(dataSeq.unsafe_col(t + 1));
 
       // Normalize by the weights from the forward algorithm.
-      backwardProb(j, t) /= scales[t + 1];
+      if (scales[t + 1] > 0.0)
+        backwardProb(j, t) /= scales[t + 1];
     }
   }
 }

@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the HardTanHLayer layer.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -183,7 +183,7 @@ class HardTanHLayer
    * @param x Input data.
    * @param y The resulting output activation.
    */
-   
+
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {

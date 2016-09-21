@@ -28,11 +28,19 @@ class RSModel
     COVER_TREE,
     R_TREE,
     R_STAR_TREE,
-    BALL_TREE
+    BALL_TREE,
+    X_TREE,
+    HILBERT_R_TREE,
+    R_PLUS_TREE,
+    R_PLUS_PLUS_TREE,
+    VP_TREE,
+    RP_TREE,
+    MAX_RP_TREE,
+    UB_TREE
   };
 
  private:
-  int treeType;
+  TreeTypes treeType;
   size_t leafSize;
 
   //! If true, we randomly project the data into a new basis before search.
@@ -57,6 +65,25 @@ class RSModel
   RSType<tree::RStarTree>* rStarTreeRS;
   //! Ball tree based range search object (NULL if not in use).
   RSType<tree::BallTree>* ballTreeRS;
+  //! X tree based range search object (NULL if not in use).
+  RSType<tree::XTree>* xTreeRS;
+  //! Hilbert R tree based range search object (NULL if not in use).
+  RSType<tree::HilbertRTree>* hilbertRTreeRS;
+  //! R+ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusTree>* rPlusTreeRS;
+  //! R++ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
+  //! VP tree based range search object (NULL if not in use).
+  RSType<tree::VPTree>* vpTreeRS;
+  //! Random projection tree (mean) based range search object
+  //! (NULL if not in use).
+  RSType<tree::RPTree>* rpTreeRS;
+  //! Random projection tree (max) based range search object
+  //! (NULL if not in use).
+  RSType<tree::MaxRPTree>* maxRPTreeRS;
+  //! Universal B tree based range search object
+  //! (NULL if not in use).
+  RSType<tree::UBTree>* ubTreeRS;
 
  public:
   /**
@@ -66,7 +93,7 @@ class RSModel
    * @param treeType Type of tree to use.
    * @param randomBasis Whether or not to use a random basis.
    */
-  RSModel(const int treeType = TreeTypes::KD_TREE,
+  RSModel(const TreeTypes treeType = TreeTypes::KD_TREE,
           const bool randomBasis = false);
 
   /**
@@ -97,9 +124,9 @@ class RSModel
   size_t& LeafSize() { return leafSize; }
 
   //! Get the type of tree.
-  int TreeType() const { return treeType; }
+  TreeTypes TreeType() const { return treeType; }
   //! Modify the type of tree (don't do this after the model has been built).
-  int& TreeType() { return treeType; }
+  TreeTypes& TreeType() { return treeType; }
 
   //! Get whether a random basis is used.
   bool RandomBasis() const { return randomBasis; }

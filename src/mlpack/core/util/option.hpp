@@ -38,16 +38,17 @@ class Option
    * @param identifier The name of the option (no dashes in front; for --help,
    *      we would pass "help").
    * @param description A short string describing the option.
-   * @param parent Full pathname of the parent module that "owns" this option.
-   *      The default is the root node (an empty string).
+   * @param alias Short name of the parameter.
    * @param required Whether or not the option is required at runtime.
+   * @param input Whether or not the option is an input option.
    */
-  Option(bool ignoreTemplate,
-         N defaultValue,
+  Option(const bool ignoreTemplate,
+         const N defaultValue,
          const std::string& identifier,
          const std::string& description,
-         const std::string& parent = std::string(""),
-         bool required = false);
+         const std::string& alias,
+         const bool required = false,
+         const bool input = true);
 
   /**
    * Constructs an Option object.  When constructed, it will register a flag
@@ -56,12 +57,11 @@ class Option
    * @param identifier The name of the option (no dashes in front); for --help
    *     we would pass "help".
    * @param description A short string describing the option.
-   * @param parent Full pathname of the parent module that "owns" this option.
-   *     The default is the root node (an empty string).
+   * @param alias Short name of the parameter.
    */
   Option(const std::string& identifier,
          const std::string& description,
-         const std::string& parent = std::string(""));
+         const std::string& alias);
 };
 
 /**
@@ -70,7 +70,7 @@ class Option
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/io/cli.hpp, mlpack::CLI
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 class ProgramDoc
 {

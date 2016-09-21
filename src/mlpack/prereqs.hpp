@@ -23,6 +23,8 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <tuple>
+#include <queue>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
@@ -53,17 +55,16 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
-#if BOOST_VERSION < 105500 // Old versions don't have unordered_map support.
-  #include "core/boost_backport/unordered_map.hpp"
-#else
-  #include <boost/serialization/unordered_map.hpp>
-#endif
+// boost_backport.hpp handles the version and backporting of serialization (and
+// other) features.
+#include "mlpack/core/boost_backport/boost_backport.hpp"
 // Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
 // any issue by setting BOOST_PFTO to nothing.
 #ifndef BOOST_PFTO
   #define BOOST_PFTO
 #endif
 #include <mlpack/core/data/serialization_shim.hpp>
+#include <mlpack/core/data/serialization_template_version.hpp>
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
@@ -77,6 +78,7 @@
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
+  #define ARMA_USE_CXX11
 #endif
 
 #endif

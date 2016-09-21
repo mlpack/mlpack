@@ -68,7 +68,7 @@ class BinaryClassificationLayer
   double const& Confidence() const { return confidence; }
   //! Modify the confidence parameter.
   double& Confidence() { return confidence; }
-  
+
   /**
    * Serialize the layer.
    */

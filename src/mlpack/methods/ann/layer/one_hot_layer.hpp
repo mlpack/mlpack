@@ -58,11 +58,11 @@ class OneHotLayer
     output = inputActivations;
     output.zeros();
 
-    arma::uword maxIndex;
+    arma::uword maxIndex = 0;
     inputActivations.max(maxIndex);
     output(maxIndex) = 1;
   }
-  
+
   /**
    * Serialize the layer.
    */

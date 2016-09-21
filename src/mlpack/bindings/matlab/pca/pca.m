@@ -9,7 +9,7 @@ function result = pca(dataPoints, varargin)
 %Parameters:
 % dataPoints        - (required) Matrix to perform PCA on.
 % newDimensionality - (optional) Desired dimensionality of output dataset.  If 0,
-%                                no dimensionality reduction is performed. 
+%                                no dimensionality reduction is performed.
 %                                Default value 0.
 % scale             - (optional) If set, the data will be scaled before running
 %                                PCA, such that the variance of each feature is

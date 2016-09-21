@@ -17,7 +17,7 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 namespace mlpack {
 
@@ -66,7 +66,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   BOOST_REQUIRE_EQUAL(x.n_elem_slice, orig.n_elem_slice);
   BOOST_REQUIRE_EQUAL(x.n_slices, orig.n_slices);
   BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
-   
+
   for(size_t slice = 0; slice != x.n_slices; ++slice){
 	auto const &orig_slice = orig.slice(slice);
 	auto const &x_slice = x.slice(slice);

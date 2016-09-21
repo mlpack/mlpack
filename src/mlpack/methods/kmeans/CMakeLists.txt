@@ -11,6 +11,7 @@ set(SOURCES
   elkan_kmeans_impl.hpp
   hamerly_kmeans.hpp
   hamerly_kmeans_impl.hpp
+  kill_empty_clusters.hpp
   kmeans.hpp
   kmeans_impl.hpp
   max_variance_new_cluster.hpp
@@ -37,11 +38,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# The main K-Means executable.
-add_executable(mlpack_kmeans
-  kmeans_main.cpp
-)
-target_link_libraries(mlpack_kmeans
-  mlpack
-)
-install(TARGETS mlpack_kmeans RUNTIME DESTINATION bin)
+add_cli_executable(kmeans)

@@ -20,10 +20,11 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename SplitType,
-         typename DescentType>
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
 class RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                    DescentType>::SingleTreeTraverser
+                    DescentType, AuxiliaryInformationType>::SingleTreeTraverser
 {
  public:
   /**

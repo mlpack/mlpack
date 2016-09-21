@@ -61,7 +61,7 @@ class SparseOutputLayer
   {
     output = weights * input;
     // Average activations of the hidden layer.
-    rhoCap = arma::sum(input, 1) / static_cast<double>(input.n_cols);    
+    rhoCap = arma::sum(input, 1) / static_cast<double>(input.n_cols);
   }
 
   /**
@@ -97,11 +97,11 @@ class SparseOutputLayer
    */
   template<typename InputType, typename eT>
   void Gradient(const InputType input, const arma::Mat<eT>& d, arma::Mat<eT>& g)
-  {        
+  {
     g = d * input.t() / static_cast<typename InputType::value_type>(
         input.n_cols) + lambda * weights;
   }
-  
+
   //! Sets the KL divergence parameter.
   void Beta(const double b)
   {
@@ -155,7 +155,7 @@ class SparseOutputLayer
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
-  
+
   /**
    * Serialize the layer.
    */
@@ -174,13 +174,13 @@ class SparseOutputLayer
 
   //! Locally-stored number of output units.
   size_t outSize;
-  
+
   //! L2-regularization parameter.
   double lambda;
 
   //! KL divergence parameter.
   double beta;
-  
+
   //! Sparsity parameter.
   double rho;
 

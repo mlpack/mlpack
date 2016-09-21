@@ -7,7 +7,7 @@
  */
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 // This trick does not work on Windows.  We will have to comment out the tests
 // that depend on it.

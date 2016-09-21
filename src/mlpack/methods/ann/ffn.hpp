@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of a standard feed forward network.
  *
  * @tparam LayerTypes Contains all layer modules used to construct the network.
- * @tparam OutputLayerType The outputlayer type used to evaluate the network.
+ * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  * @tparam PerformanceFunction Performance strategy used to calculate the error.
  */
@@ -48,14 +48,14 @@ class FFN
    * be used.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType,
            typename OutputType,
@@ -74,13 +74,13 @@ class FFN
    * initialize rule and performance function should be used.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType, typename OutputType>
   FFN(LayerType &&network,
@@ -96,11 +96,11 @@ class FFN
    * training.
    *
    * @param network Network modules used to construct the network.
-   * @param outputLayer Outputlayer used to evaluate the network.
+   * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network paramter.
+   *        for initializing the network parameter.
    * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to claculate the error.
+   *        object used to calculate the error.
    */
   template<typename LayerType, typename OutputType>
   FFN(LayerType &&network,
@@ -260,7 +260,7 @@ private:
 
     std::get<I>(network).Forward(std::get<I>(network).InputParameter(),
         std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -277,7 +277,7 @@ private:
   {
     std::get<I>(network).Forward(std::get<I - 1>(network).OutputParameter(),
                            std::get<I>(network).OutputParameter());
-    
+
     ForwardTail<I + 1, Tp...>(network);
   }
 
@@ -343,7 +343,7 @@ private:
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I < (sizeof...(Tp)), void>::type
   BackwardTail(const DataType& error, std::tuple<Tp...>& network)
-  {    
+  {
     std::get<sizeof...(Tp) - I>(network).Backward(
         std::get<sizeof...(Tp) - I>(network).OutputParameter(),
         std::get<sizeof...(Tp) - I + 1>(network).Delta(),
@@ -371,7 +371,7 @@ private:
   >
   typename std::enable_if<I < Max, void>::type
   UpdateGradients(std::tuple<Tp...>& network)
-  {   
+  {
     Update(std::get<I>(network), std::get<I>(network).OutputParameter(),
            std::get<I + 1>(network).Delta());
 
@@ -408,10 +408,10 @@ private:
   //! Instantiated feedforward network.
   LayerTypes network;
 
-  //! The outputlayer used to evaluate the network
+  //! The output layer used to evaluate the network
   OutputLayerType outputLayer;
 
-  //! Performance strategy used to claculate the error.
+  //! Performance strategy used to calculate the error.
   PerformanceFunction performanceFunc;
 
   //! The current evaluation mode (training or testing).

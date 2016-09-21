@@ -121,7 +121,8 @@ class SoftmaxRegression
    * @param testData Matrix of data points using which predictions are made.
    * @param labels Vector of labels associated with the data.
    */
-  double ComputeAccuracy(const arma::mat& testData, const arma::Row<size_t>& labels);
+  double ComputeAccuracy(const arma::mat& testData,
+                         const arma::Row<size_t>& labels) const;
 
   /**
    * Train the softmax regression model with the given optimizer.

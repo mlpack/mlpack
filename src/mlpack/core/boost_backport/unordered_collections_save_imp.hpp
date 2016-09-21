@@ -1,3 +1,6 @@
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_SERIALIZATION_UNORDERED_COLLECTIONS_SAVE_IMP_HPP
 #define BOOST_SERIALIZATION_UNORDERED_COLLECTIONS_SAVE_IMP_HPP
 
@@ -9,7 +12,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // hash_collections_save_imp.hpp: serialization for stl collections
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // (C) Copyright 2014 Jim Bell
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -69,8 +72,8 @@ inline void save_unordered_collection(Archive & ar, const Container &s)
     while(count-- > 0){
         // note borland emits a no-op without the explicit namespace
         boost::serialization::save_construct_data_adl(
-            ar, 
-            &(*it), 
+            ar,
+            &(*it),
             boost::serialization::version<
                 typename Container::value_type
             >::value
@@ -79,7 +82,7 @@ inline void save_unordered_collection(Archive & ar, const Container &s)
     }
 }
 
-} // namespace stl 
+} // namespace stl
 } // namespace serialization
 } // namespace boost
 

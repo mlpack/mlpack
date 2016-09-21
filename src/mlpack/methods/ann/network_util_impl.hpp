@@ -54,7 +54,7 @@ NetworkWeights(arma::mat& weights,
   NetworkWeights<I + 1, Tp...>(weights, network,
       offset + LayerWeights(std::get<I>(network), weights,
       offset, std::get<I>(network).OutputParameter()));
-  
+
 }
 
 template<size_t I, typename... Tp>

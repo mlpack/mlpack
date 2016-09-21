@@ -15,7 +15,7 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::tree;
@@ -23,9 +23,9 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(TreeTraitsTest);
 
-// Be careful!  When writing new tests, always get the boolean value and store
-// it in a temporary, because the Boost unit test macros do weird things and
-// will cause bizarre problems.
+// Be careful!  When writing new tests, always get the boolean value of each
+// trait and store it in a temporary, because the Boost unit test macros do
+// weird things and will cause bizarre problems.
 
 // Test the defaults.
 BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)

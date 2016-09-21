@@ -18,10 +18,4 @@ endforeach()
 # append sources (with directory name) to list of all mlpack sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mlpack_sparse_coding
-  sparse_coding_main.cpp
-)
-target_link_libraries(mlpack_sparse_coding
-  mlpack
-)
-install(TARGETS mlpack_sparse_coding RUNTIME DESTINATION bin)
+add_cli_executable(sparse_coding)

@@ -9,7 +9,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;
@@ -552,8 +552,8 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 //
 //  arma::Mat<size_t> neighbors;
 //  arma::mat distances;
-//  AllkNN allknn(origData);
-//  allknn.Search(numNeighbors, neighbors, distances);
+//  KNN knn(origData);
+//  knn.Search(numNeighbors, neighbors, distances);
 //
 //  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
 //  sdp.C().eye(numPoints, numPoints);

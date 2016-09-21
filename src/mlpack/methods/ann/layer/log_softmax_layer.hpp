@@ -4,8 +4,8 @@
  *
  * Definition of the LogSoftmaxLayer class.
  */
-#ifndef __MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_LAYER_HPP
-#define __MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -17,7 +17,7 @@ namespace ann /** Artificial Neural Network. */ {
  * the multinomial logistic loss of the softmax of its inputs. This layer is
  * meant to be used in combination with the negative log likelihood layer
  * (NegativeLogLikelihoodLayer), which expects that the input contains
- * log-probabilities for each class.  
+ * log-probabilities for each class.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

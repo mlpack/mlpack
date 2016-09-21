@@ -277,7 +277,7 @@ span.charliteral {
 color: #FFFF00;
 }
 
-span.vhdldigit { 
+span.vhdldigit {
   color: #FFFF00;
 }
 
@@ -285,11 +285,11 @@ span.vhdlchar {
   color: #FFFF00;
 }
 
-span.vhdlkeyword { 
+span.vhdlkeyword {
   color: #FF0000;
 }
 
-span.vhdllogic { 
+span.vhdllogic {
   color: #FF0000;
 }
 
@@ -465,7 +465,7 @@ table.memberdecls {
 .params .paramtype {
   font-style: italic;
   vertical-align: top;
-}       
+}
 
 .params .paramdir {
   font-family: "courier new",courier,monospace;

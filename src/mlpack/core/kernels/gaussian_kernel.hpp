@@ -74,9 +74,9 @@ class GaussianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * std::pow(t, 2.0));
   }
-  
+
   /**
-   * Evaluation of the gradient of Gaussian kernel 
+   * Evaluation of the gradient of Gaussian kernel
    * given the distance between two points.
    *
    * @param t The distance between the two points the kernel is evaluated on.
@@ -86,7 +86,7 @@ class GaussianKernel
   double Gradient(const double t) const {
     return 2 * t * gamma * exp(gamma * std::pow(t, 2.0));
   }
-  
+
   /**
    * Evaluation of the gradient of Gaussian kernel
    * given the squared distance between two points.
