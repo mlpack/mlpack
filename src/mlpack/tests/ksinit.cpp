@@ -45,13 +45,13 @@ template<
 
 
 void BuildVanillaNetwork(MatType& trainData,
-												 MatType& trainLabels,
-												 MatType& testData,
-												 MatType& testLabels,
-												 const size_t hiddenLayerSize,
-												 const size_t maxEpochs,
-												 double& trainError,
-												 double& testError)
+						 MatType& trainLabels,
+						 MatType& testData,
+						 MatType& testLabels,
+						 const size_t hiddenLayerSize,
+						 const size_t maxEpochs,
+						 double& trainError,
+						 double& testError)
 {
 	/*
 	@param trainError mean squared error of predictions on training data.
@@ -88,10 +88,10 @@ void BuildVanillaNetwork(MatType& trainData,
 	OutputLayerType classOutputLayer;
 
 	auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-													hiddenLayer1, hiddenBiasLayer1, outputLayer);
+							hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
 
-  //4.59 is a constant used in the paper.
+    //4.59 is a constant used in the paper.
 	KathirvalavakumarSubavathiInitialization init(trainData, 4.59); 
 
 	FFN<decltype(modules), decltype(classOutputLayer), 
@@ -165,7 +165,7 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k)
 	long double validationErrorAvg;
 	double trainErrorAvg;
 
-	for (size_t i=0; i < trainData.n_cols; i=i+validationDataSize)
+	for (size_t i=0; i < trainData.n_cols; i = i + validationDataSize)
 	{
 		validationDataSize = (int) trainData.n_cols/k;
 		
@@ -178,17 +178,17 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k)
 			validationDataSize = trainData.n_cols - i;
 
 		validationTestData = 
-        trainData.submat(0,i,trainData.n_rows-1, i+validationDataSize-1);
+        trainData.submat(0,i,trainData.n_rows-1, i + validationDataSize - 1);
 		
-    validationTestLabels = 
-        trainLabels.submat(0, i, trainLabels.n_rows-1, i+validationDataSize-1);
+   		validationTestLabels = 
+        	trainLabels.submat(0, i, trainLabels.n_rows-1, i+validationDataSize-1);
 
 		validationTrainData = trainData;
-		validationTrainData.shed_cols(i, i+validationDataSize-1);
+		validationTrainData.shed_cols(i, i + validationDataSize - 1);
 		
 
 		validationTrainLabels = trainLabels;
-		validationTrainLabels.shed_cols(i, i+validationDataSize-1);
+		validationTrainLabels.shed_cols(i, i + validationDataSize - 1);
 		
 		double trainError, validationError;
 
