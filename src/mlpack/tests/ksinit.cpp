@@ -138,7 +138,8 @@ struct Error
 
 */
 
-Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k)
+Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
+                      const size_t hiddenLayerSize, const size_t maxEpochs)
 {
 
 /*
@@ -196,7 +197,7 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k)
 											MulticlassClassificationLayer,
 											MeanSquaredErrorFunction>
       	(validationTrainData, validationTrainLabels, 
-         validationTestData, validationTestLabels, 3, 52, 
+         validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs, 
          trainError, validationError);
 
 		trainErrorAvg += trainError;
@@ -239,7 +240,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
       dataset.submat(dataset.n_rows-1, 0, dataset.n_rows-1, dataset.n_cols-1);
 
 
-	Error E = CrossValidation(trainData, trainLabels, 10);
+	Error E = CrossValidation(trainData, trainLabels, 10, 3, 52);
 
 	BOOST_REQUIRE_LE(E.trainErrorAvg, trainErrorThreshold);
 	BOOST_REQUIRE_LE(E.validationErrorAvg, validationErrorThreshold);
