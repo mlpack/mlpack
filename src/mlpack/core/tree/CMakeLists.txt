@@ -50,6 +50,10 @@ set(SOURCES
   hollow_ball_bound_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
+  octree.hpp
+  octree/octree.hpp
+  octree/octree_impl.hpp
+  octree/traits.hpp
   rectangle_tree.hpp
   rectangle_tree/rectangle_tree.hpp
   rectangle_tree/rectangle_tree_impl.hpp
