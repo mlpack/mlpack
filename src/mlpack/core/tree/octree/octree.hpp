@@ -193,12 +193,42 @@ class Octree
          const size_t maxLeafSize = 20);
 
   /**
+   * Copy the given tree.  Be careful!  This may use a lot of memory.
+   *
+   * @param other Tree to copy from.
+   */
+  Octree(const Octree& other);
+
+  /**
+   * Move the given tree.  The tree passed as a parameter will be emptied and
+   * will not be usable after this call.
+   *
+   * @param other Tree to move.
+   */
+  Octree(Octree&& other);
+
+  /**
+   * Initialize the tree from a boost::serialization archive.
+   *
+   * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
+   */
+  template<typename Archive>
+  Octree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+
+  /**
    * Destroy the tree.
    */
   ~Octree();
 
   //! Return the dataset used by this node.
   const MatType& Dataset() const { return *dataset; }
+
+  //! Get the pointer to the parent.
+  Octree* Parent() const { return parent; }
+  //! Modify the pointer to the parent (be careful!).
+  Octree*& Parent() { return parent; }
 
   //! Return the bound object for this node.
   const bound::HRectBound<MetricType>& Bound() const { return bound; }
@@ -333,6 +363,22 @@ class Octree
 
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) const { bound.Center(center); }
+
+  //! Serialize the tree.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid treee!  The method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  Octree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
 
  private:
   /**

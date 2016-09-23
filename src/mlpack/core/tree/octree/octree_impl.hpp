@@ -292,6 +292,8 @@ Octree<MetricType, StatisticType, MatType>::Octree(
   parent->Bound().Center(parentCenter);
   parentDistance = metric.Evaluate(trueCenter, parentCenter);
 
+  furthestDescendantDistance = 0.5 * bound.Diameter();
+
   // Initialize the statistic.
   stat = StatisticType(*this);
 }
@@ -325,8 +327,83 @@ Octree<MetricType, StatisticType, MatType>::Octree(
   parent->Bound().Center(parentCenter);
   parentDistance = metric.Evaluate(trueCenter, parentCenter);
 
+  furthestDescendantDistance = 0.5 * bound.Diameter();
+
   // Initialize the statistic.
   stat = StatisticType(*this);
+}
+
+//! Copy the given tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
+    begin(other.begin),
+    count(other.count),
+    bound(other.bound),
+    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+    parent(NULL),
+    stat(other.stat),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    metric(other.metric)
+{
+  // If we have any children, we need to create them, and then ensure that their
+  // parent links are set right.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
+    children.push_back(new Octree(other.Child(i)));
+    children[i]->parent = this;
+    children[i]->dataset = this->dataset;
+  }
+}
+
+//! Move the given tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
+    children(std::move(other.children)),
+    begin(other.begin),
+    count(other.count),
+    bound(std::move(other.bound)),
+    dataset(other.dataset),
+    parent(other.parent),
+    stat(std::move(other.stat)),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    metric(std::move(other.metric))
+{
+  // Update the parent pointers of the direct children.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->parent = this;
+
+  other.begin = 0;
+  other.count = 0;
+  other.dataset = new MatType();
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.parent = NULL;
+}
+
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>::Octree() :
+    begin(0),
+    count(0),
+    bound(0),
+    dataset(new MatType()),
+    parent(NULL),
+    parentDistance(0.0),
+    furthestDescendantDistance(0.0)
+{
+  // Nothing to do.
+}
+
+template<typename MetricType, typename StatisticType, typename MatType>
+template<typename Archive>
+Octree<MetricType, StatisticType, MatType>::Octree(
+    Archive& ar,
+    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    Octree() // Create an empty tree.
+{
+  // De-serialize the tree into this object.
+  ar >> data::CreateNVP(*this, "tree");
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -540,6 +617,85 @@ Octree<MetricType, StatisticType, MatType>::RangeDistance(
     typename boost::enable_if<IsVector<VecType>>::type*) const
 {
   return bound.RangeDistance(point);
+}
+
+//! Serialize the tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+template<typename Archive>
+void Octree<MetricType, StatisticType, MatType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // 
+
+  // If we're loading and we have children, they need to be deleted.
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < children.size(); ++i)
+      delete children[i];
+    children.clear();
+
+    if (!parent)
+      delete dataset;
+  }
+
+  ar & CreateNVP(begin, "begin");
+  ar & CreateNVP(count, "count");
+  ar & CreateNVP(bound, "bound");
+  ar & CreateNVP(stat, "stat");
+  ar & CreateNVP(parentDistance, "parentDistance");
+  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar & CreateNVP(metric, "metric");
+
+  // Due to quirks of boost::serialization, depending on how the user
+  // serializes the tree, it's possible that the root of the tree will
+  // accidentally be serialized twice.  So if we are a first-level child, we
+  // avoid serializing the parent.  The true (non-duplicated) parent will fix
+  // the parent link.
+  bool hasFakeParent = false;
+  if (Archive::is_saving::value && parent != NULL && parent->parent == NULL)
+  {
+    Octree* fakeParent = NULL;
+    hasFakeParent = true;
+    ar & CreateNVP(fakeParent, "parent");
+    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+  }
+  else
+  {
+    ar & CreateNVP(parent, "parent");
+    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+  }
+
+  // Only serialize the dataset if we don't have a fake parent.  Otherwise, the
+  // real parent will come and set it later.
+  if (!hasFakeParent)
+    ar & CreateNVP(dataset, "dataset");
+
+  size_t numChildren = 0;
+  if (Archive::is_saving::value)
+    numChildren = children.size();
+  ar & CreateNVP(numChildren, "numChildren");
+  if (Archive::is_loading::value)
+    children.resize(numChildren);
+
+  for (size_t i = 0; i < numChildren; ++i)
+  {
+    std::ostringstream oss;
+    oss << "child" << i;
+    ar & CreateNVP(children[i], oss.str());
+  }
+
+  // Fix the child pointers, if they were set to a fake parent.
+  if (Archive::is_loading::value && parent == NULL)
+  {
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      children[i]->dataset = this->dataset;
+      children[i]->parent = this;
+    }
+  }
 }
 
 //! Split the node.
