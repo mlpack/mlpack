@@ -11,5 +11,7 @@
 #include "bounds.hpp"
 #include "octree/octree.hpp"
 #include "octree/traits.hpp"
+#include "octree/single_tree_traverser.hpp"
+#include "octree/dual_tree_traverser.hpp"
 
 #endif

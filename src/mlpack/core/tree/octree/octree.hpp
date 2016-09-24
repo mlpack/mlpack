@@ -25,6 +25,14 @@ class Octree
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 
+  //! A single-tree traverser; see single_tree_traverser.hpp.
+  template<typename RuleType>
+  class SingleTreeTraverser;
+
+  //! A dual-tree traverser; see dual_tree_traverser.hpp.
+  template<typename RuleType>
+  class DualTreeTraverser;
+
  private:
   //! The children held by this node.
   std::vector<Octree*> children;
@@ -263,6 +271,11 @@ class Octree
   size_t GetFurthestChild(
       const VecType& point,
       typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+
+  /**
+   * Return whether or not the node is a leaf.
+   */
+  bool IsLeaf() const { return NumChildren() == 0; }
 
   /**
    * Return the index of the nearest child node to the given query node.  If it

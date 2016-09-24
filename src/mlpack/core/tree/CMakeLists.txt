@@ -53,6 +53,10 @@ set(SOURCES
   octree.hpp
   octree/octree.hpp
   octree/octree_impl.hpp
+  octree/single_tree_traverser.hpp
+  octree/single_tree_traverser_impl.hpp
+  octree/dual_tree_traverser.hpp
+  octree/dual_tree_traverser_impl.hpp
   octree/traits.hpp
   rectangle_tree.hpp
   rectangle_tree/rectangle_tree.hpp
