@@ -73,7 +73,8 @@ PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'r-plus-plus', 'spill'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
     "trees, random projection trees, UB trees, R trees, R* trees, X trees, "
-    "Hilbert R trees, R+ trees, R++ trees and spill trees).", "l", 20);
+    "Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees).", "l",
+    20);
 PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
     0);
 PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
@@ -276,11 +277,13 @@ int main(int argc, char *argv[])
       tree = KNNModel::MAX_RP_TREE;
     else if (treeType == "ub")
       tree = KNNModel::UB_TREE;
+    else if (treeType == "octree")
+      tree = KNNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus' and 'spill'."
-          << endl;
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', and "
+          << "'octree'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
