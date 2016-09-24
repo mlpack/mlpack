@@ -96,6 +96,15 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
     throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search specialized for octrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return SearchLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Bichromatic neighbor search on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
@@ -150,7 +159,7 @@ void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
 
 //! Train on the given NSType specialized for KDTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -159,7 +168,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
 
 //! Train on the given NSType specialized for BallTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -168,7 +177,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 
 //! Train specialized for SPTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
+void TrainVisitor<SortPolicy>::operator()(SpillKNN* ns) const
 {
   if (ns)
   {
@@ -182,6 +191,15 @@ void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
   }
   else
     throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Train specialized for Octrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return TrainLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Train on the given NSType considering the leafSize.
@@ -484,6 +502,9 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
     case UB_TREE:
       nSearch = new NSType<SortPolicy, tree::UBTree>(searchMode, epsilon);
+      break;
+    case OCTREE:
+      nSearch = new NSType<SortPolicy, tree::Octree>(searchMode, epsilon);
       break;
   }
 
