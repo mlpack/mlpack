@@ -566,26 +566,26 @@ size_t Octree<MetricType, StatisticType, MatType>::Point(const size_t index)
 
 template<typename MetricType, typename StatisticType, typename MatType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
-Octree<MetricType, StatisticType, MatType>::MinDistance(const Octree* other)
+Octree<MetricType, StatisticType, MatType>::MinDistance(const Octree& other)
     const
 {
-  return bound.MinDistance(other->Bound());
+  return bound.MinDistance(other.Bound());
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
-Octree<MetricType, StatisticType, MatType>::MaxDistance(const Octree* other)
+Octree<MetricType, StatisticType, MatType>::MaxDistance(const Octree& other)
     const
 {
-  return bound.MaxDistance(other->Bound());
+  return bound.MaxDistance(other.Bound());
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
-Octree<MetricType, StatisticType, MatType>::RangeDistance(const Octree* other)
+Octree<MetricType, StatisticType, MatType>::RangeDistance(const Octree& other)
     const
 {
-  return bound.RangeDistance(other->Bound());
+  return bound.RangeDistance(other.Bound());
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>

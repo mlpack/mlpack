@@ -352,11 +352,11 @@ class Octree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const Octree* other) const;
+  ElemType MinDistance(const Octree& other) const;
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const Octree* other) const;
+  ElemType MaxDistance(const Octree& other) const;
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const Octree* other) const;
+  math::RangeType<ElemType> RangeDistance(const Octree& other) const;
 
   //! Return the minimum distance to the given point.
   template<typename VecType>
