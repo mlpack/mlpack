@@ -44,9 +44,9 @@ class Imputer
   }
 
   /**
-  * Given an input dataset, replace missing values with given imputation
-  * strategy. This overload does not produce output matrix, but overwrites the
-  * result into the input matrix.
+  * Given an input dataset, replace missing values of a dimension with given
+  * imputation strategy. This function does not produce output matrix, but
+  * overwrites the result into the input matrix.
   *
   * @param input Input dataset to apply imputation.
   * @oaran missingValue User defined missing value; it can be anything.
