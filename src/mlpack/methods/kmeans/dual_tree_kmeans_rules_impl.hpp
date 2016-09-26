@@ -216,7 +216,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
       {
         // If this might affect the lower bound, make it more exact.
         queryNode.Stat().LowerBound() = std::min(queryNode.Stat().LowerBound(),
-            queryNode.MinDistance(&referenceNode));
+            queryNode.MinDistance(referenceNode));
         ++scores;
       }
 
@@ -228,7 +228,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-    const math::Range distances = queryNode.RangeDistance(&referenceNode);
+    const math::Range distances = queryNode.RangeDistance(referenceNode);
 
     score = distances.Lo();
     ++scores;

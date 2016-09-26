@@ -16,9 +16,11 @@ RandomizedSVD::RandomizedSVD(const arma::mat& data,
                              arma::mat& v,
                              const size_t iteratedPower,
                              const size_t maxIterations,
-                             const size_t rank) :
+                             const size_t rank,
+                             const double eps) :
     iteratedPower(iteratedPower),
-    maxIterations(maxIterations)
+    maxIterations(maxIterations),
+    eps(eps)
 {
   if (rank == 0)
   {
@@ -31,9 +33,11 @@ RandomizedSVD::RandomizedSVD(const arma::mat& data,
 }
 
 RandomizedSVD::RandomizedSVD(const size_t iteratedPower,
-                             const size_t maxIterations) :
+                             const size_t maxIterations,
+                             const double eps) :
     iteratedPower(iteratedPower),
-    maxIterations(maxIterations)
+    maxIterations(maxIterations),
+    eps(eps)
 {
   /* Nothing to do here */
 }
@@ -48,21 +52,20 @@ void RandomizedSVD::Apply(const arma::mat& data,
     iteratedPower = rank + 2;
 
   // Center the data into a temporary matrix.
-  arma::vec rowMean = arma::sum(data, 1) / data.n_cols;
+  arma::vec rowMean = arma::sum(data, 1) / data.n_cols + eps;
 
   arma::mat R, Q, Qdata;
-  ann::RandomInitialization randomInit;
 
   // Apply the centered data matrix to a random matrix, obtaining Q.
   if (data.n_cols >= data.n_rows)
   {
-    randomInit.Initialize(R, data.n_rows, iteratedPower);
+    R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
     Q = (data.t() * R) - arma::repmat(arma::trans(R.t() * rowMean),
         data.n_cols, 1);
   }
   else
   {
-    randomInit.Initialize(R, data.n_cols, iteratedPower);
+    R = arma::randn<arma::mat>(data.n_cols, iteratedPower);
     Q = (data * R) - (rowMean * (arma::ones(1, data.n_cols) * R));
   }
 

@@ -92,6 +92,8 @@ else
 fi
 
 echo "Filtering coverage files..."
+# Clear negative entries in coverage file
+sed -E 's/-([0-9]+)/$max_cov_count/g' -i .coverage.wtest.run
 # Merge coverage tracefiles.
 lcov -a .coverage.wtest.base -a .coverage.wtest.run  -o .coverage.total >> ./coveragehistory/$current_log_file
 

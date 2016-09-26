@@ -19,7 +19,8 @@ if (BUILD_TESTS)
   add_subdirectory(tests)
 endif ()
 
-# MLPACK_SRCS is set in the subdirectories.
+# MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
+# are set in the root CMakeLists.txt.
 add_library(mlpack ${MLPACK_SRCS})
 
 if (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
@@ -38,24 +39,13 @@ if (NOT BUILD_SHARED_LIBS)
 endif ()
 
 target_link_libraries(mlpack
-  ${ARMADILLO_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${LIBXML2_LIBRARIES}
-  ${COMPILER_SUPPORT_LIBRARIES}
-  ${COMPILER_MLPACK_SUPPORT_LIBRARIES}
-)
+  ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
   VERSION 2.0
   SOVERSION 2
 )
-
-# Make sure the linker can find the needed library.
-# rt: clock_gettime()
-if(UNIX AND NOT APPLE)
-    target_link_libraries(mlpack rt)
-endif()
 
 # Backtrace for Linux need those libs.
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

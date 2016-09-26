@@ -23,14 +23,16 @@ namespace tree {
  *
  * The tree can be thought of as a hierarchy with the root node at the top level
  * and the leaf nodes at the bottom level.  Each level in the tree has an
- * assigned 'scale' i.  The tree follows these three conditions:
+ * assigned 'scale' i.  The tree follows these two invariants:
  *
  * - nesting: the level C_i is a subset of the level C_{i - 1}.
  * - covering: all node in level C_{i - 1} have at least one node in the
  *     level C_i with distance less than or equal to b^i (exactly one of these
  *     is a parent of the point in level C_{i - 1}.
- * - separation: all nodes in level C_i have distance greater than b^i to all
- *     other nodes in level C_i.
+ *
+ * Note that in the cover tree paper, there is a third invariant (the
+ * 'separation invariant'), but that does not apply to our implementation,
+ * because we have relaxed the invariant.
  *
  * The value 'b' refers to the base, which is a parameter of the tree.  These
  * three properties make the cover tree very good for fast, high-dimensional
@@ -333,11 +335,11 @@ class CoverTree
   size_t GetFurthestChild(const CoverTree& queryNode);
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const CoverTree* other) const;
+  ElemType MinDistance(const CoverTree& other) const;
 
   //! Return the minimum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MinDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MinDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the minimum distance to another point.
   ElemType MinDistance(const arma::vec& other) const;
@@ -347,11 +349,11 @@ class CoverTree
   ElemType MinDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const CoverTree* other) const;
+  ElemType MaxDistance(const CoverTree& other) const;
 
   //! Return the maximum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MaxDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MaxDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the maximum distance to another point.
   ElemType MaxDistance(const arma::vec& other) const;
@@ -361,11 +363,11 @@ class CoverTree
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other) const;
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other,
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other,
                                           const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
