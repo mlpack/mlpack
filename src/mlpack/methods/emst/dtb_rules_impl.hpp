@@ -115,7 +115,7 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
     return DBL_MAX;
 
   ++scores;
-  const double distance = queryNode.MinDistance(&referenceNode);
+  const double distance = queryNode.MinDistance(referenceNode);
   const double bound = CalculateBound(queryNode);
 
   // If all the points in the reference node are farther than the candidate

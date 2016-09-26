@@ -724,7 +724,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MinDistance(&queryNode);
+    ElemType distance = children[i]->MinDistance(queryNode);
     if (distance <= bestDistance)
     {
       bestDistance = distance;
@@ -752,7 +752,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MaxDistance(&queryNode);
+    ElemType distance = children[i]->MaxDistance(queryNode);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -771,12 +771,12 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const CoverTree* other) const
+    MinDistance(const CoverTree& other) const
 {
   // Every cover tree node will contain points up to base^(scale + 1) away.
   return std::max(metric->Evaluate(dataset->col(point),
-      other->Dataset().col(other->Point())) -
-      furthestDescendantDistance - other->FurthestDescendantDistance(), 0.0);
+      other.Dataset().col(other.Point())) -
+      furthestDescendantDistance - other.FurthestDescendantDistance(), 0.0);
 }
 
 template<
@@ -788,11 +788,11 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const CoverTree* other, const ElemType distance) const
+    MinDistance(const CoverTree& other, const ElemType distance) const
 {
   // We already have the distance as evaluated by the metric.
   return std::max(distance - furthestDescendantDistance -
-      other->FurthestDescendantDistance(), 0.0);
+      other.FurthestDescendantDistance(), 0.0);
 }
 
 template<
@@ -833,11 +833,11 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const CoverTree* other) const
+    MaxDistance(const CoverTree& other) const
 {
   return metric->Evaluate(dataset->col(point),
-      other->Dataset().col(other->Point())) +
-      furthestDescendantDistance + other->FurthestDescendantDistance();
+      other.Dataset().col(other.Point())) +
+      furthestDescendantDistance + other.FurthestDescendantDistance();
 }
 
 template<
@@ -849,11 +849,11 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const CoverTree* other, const ElemType distance) const
+    MaxDistance(const CoverTree& other, const ElemType distance) const
 {
   // We already have the distance as evaluated by the metric.
   return distance + furthestDescendantDistance +
-      other->FurthestDescendantDistance();
+      other.FurthestDescendantDistance();
 }
 
 template<
@@ -895,16 +895,16 @@ template<
 math::RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const CoverTree* other) const
+    RangeDistance(const CoverTree& other) const
 {
   const ElemType distance = metric->Evaluate(dataset->col(point),
-      other->Dataset().col(other->Point()));
+      other.Dataset().col(other.Point()));
 
   math::RangeType<ElemType> result;
   result.Lo() = distance - furthestDescendantDistance -
-      other->FurthestDescendantDistance();
+      other.FurthestDescendantDistance();
   result.Hi() = distance + furthestDescendantDistance +
-      other->FurthestDescendantDistance();
+      other.FurthestDescendantDistance();
 
   return result;
 }
@@ -920,14 +920,14 @@ template<
 math::RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const CoverTree* other,
+    RangeDistance(const CoverTree& other,
                   const ElemType distance) const
 {
   math::RangeType<ElemType> result;
   result.Lo() = distance - furthestDescendantDistance -
-      other->FurthestDescendantDistance();
+      other.FurthestDescendantDistance();
   result.Hi() = distance + furthestDescendantDistance +
-      other->FurthestDescendantDistance();
+      other.FurthestDescendantDistance();
 
   return result;
 }

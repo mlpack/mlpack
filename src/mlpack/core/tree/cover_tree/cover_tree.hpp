@@ -335,11 +335,11 @@ class CoverTree
   size_t GetFurthestChild(const CoverTree& queryNode);
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const CoverTree* other) const;
+  ElemType MinDistance(const CoverTree& other) const;
 
   //! Return the minimum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MinDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MinDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the minimum distance to another point.
   ElemType MinDistance(const arma::vec& other) const;
@@ -349,11 +349,11 @@ class CoverTree
   ElemType MinDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const CoverTree* other) const;
+  ElemType MaxDistance(const CoverTree& other) const;
 
   //! Return the maximum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MaxDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MaxDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the maximum distance to another point.
   ElemType MaxDistance(const arma::vec& other) const;
@@ -363,11 +363,11 @@ class CoverTree
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other) const;
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other,
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other,
                                           const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.

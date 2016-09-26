@@ -554,8 +554,8 @@ size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   if (IsLeaf() || !left || !right)
     return 0;
 
-  ElemType leftDist = left->MinDistance(&queryNode);
-  ElemType rightDist = right->MinDistance(&queryNode);
+  ElemType leftDist = left->MinDistance(queryNode);
+  ElemType rightDist = right->MinDistance(queryNode);
   if (leftDist < rightDist)
     return 0;
   if (rightDist < leftDist)
@@ -579,8 +579,8 @@ size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   if (IsLeaf() || !left || !right)
     return 0;
 
-  ElemType leftDist = left->MaxDistance(&queryNode);
-  ElemType rightDist = right->MaxDistance(&queryNode);
+  ElemType leftDist = left->MaxDistance(queryNode);
+  ElemType rightDist = right->MaxDistance(queryNode);
   if (leftDist > rightDist)
     return 0;
   if (rightDist > leftDist)
