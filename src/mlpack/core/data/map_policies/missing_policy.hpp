@@ -86,11 +86,8 @@ class MissingPolicy
     }
     else
     {
-      // This string already exists in the mapping
-      // or not included in missingSet.
-      // Unlike IncrementPolicy, MissingPolicy counts all mapped values.
-      size_t& numMappings = maps[dimension].second;
-      ++numMappings;
+      // This string already exists in the mapping or not included in
+      // the missingSet.
       return NaN;
     }
   }

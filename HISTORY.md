@@ -11,6 +11,8 @@
   * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
     KFN class), leading to orders-of-magnitude speedups in some cases.
 
+  * Bump minimum required version of Armadillo to 4.200.0.
+
 ### mlpack 2.0.3
 ###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can

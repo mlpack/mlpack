@@ -32,7 +32,9 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
 PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
 PARAM_STRING_OUT("output_file", "File to save output", "o");
 PARAM_STRING_IN("missing_value", "User defined missing value", "m", "");
-PARAM_STRING_IN("strategy", "imputation strategy to be applied", "s", "");
+PARAM_STRING_IN("strategy", "imputation strategy to be applied. Strategies "
+    "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
+    "s", "");
 PARAM_DOUBLE_IN("custom_value", "user_defined custom value", "c", 0.0);
 PARAM_INT_IN("dimension", "the dimension to apply imputation", "d", 0);
 
@@ -92,83 +94,98 @@ int main(int argc, char** argv)
         << "'custom' strategy" << endl;
 
   arma::mat input;
-  arma::mat output;
   // Policy tells how the DatasetMapper should map the values.
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
-  std::vector<size_t> dirtyDimensions;
 
   Load(inputFile, input, info, true, true);
 
   // print how many mapping exist in each dimensions
+  std::vector<size_t> dirtyDimensions;
   for (size_t i = 0; i < input.n_rows; ++i)
   {
     size_t numMappings = info.NumMappings(i);
-    Log::Info << numMappings << " mappings in dimension " << i << "."
-        << endl;
     if (numMappings > 0)
     {
+      Log::Info << "Replacing " << numMappings << " values in dimension " << i
+          << "." << endl;
       dirtyDimensions.push_back(i);
     }
   }
 
-  // Initialize imputer class
-  Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-  if (strategy == "mean")
+  if (dirtyDimensions.size() == 0)
   {
+    Log::Warn << "The file does not contain any user-defined missing "
+        << "variables. The program did not perform any imputation." << endl;
+  }
+  else if (CLI::HasParam("dimension") &&
+      !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
+      != dirtyDimensions.end()))
+  {
+    Log::Warn << "The given dimension of the file does not contain any "
+      << "user-defined missing variables. The program did not perform any "
+      << "imputation." << endl;
+  }
+  else
+  {
+    // Initialize imputer class
     Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-  }
-  else if (strategy == "median")
-  {
-    Imputer<double, MapperType, MedianImputation<double>> imputer(info);
-  }
-  else if (strategy == "listwise_deletion")
-  {
-    Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
-  }
-  else if (strategy == "custom")
-  {
-    CustomImputation<double> strat(customValue);
-    Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
-  }
-  else
-  {
-    Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-        << endl;
-  }
-
-  Timer::Start("imputation");
-  if (CLI::HasParam("dimension"))
-  {
-    // when --dimension is specified,
-    // the program will apply the changes to only the given dimension.
-    Log::Info << "Performing '" << strategy << "' imputation strategy "
-        << "to replace '" << missingValue << "' on dimension " << dimension
-        << "." << endl;
-
-    imputer.Impute(input, missingValue, dimension);
-  }
-  else
-  {
-    // when --dimension is not specified,
-    // the program will apply the changes to all dimensions.
-    Log::Info << "Performing '" << strategy << "' imputation strategy "
-        << "to replace '" << missingValue << "' on all dimensions." << endl;
-
-    for (size_t i : dirtyDimensions)
+    if (strategy == "mean")
     {
-      imputer.Impute(input, missingValue, i);
+      Imputer<double, MapperType, MeanImputation<double>> imputer(info);
     }
-  }
-  Timer::Stop("imputation");
+    else if (strategy == "median")
+    {
+      Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+    }
+    else if (strategy == "listwise_deletion")
+    {
+      Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+    }
+    else if (strategy == "custom")
+    {
+      CustomImputation<double> strat(customValue);
+      Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
+    }
+    else
+    {
+      Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
+          << endl;
+    }
 
-  if (!outputFile.empty())
-  {
-    Log::Info << "Saving results to '" << outputFile << "'." << endl;
-    Save(outputFile, input, false);
+    Timer::Start("imputation");
+    if (CLI::HasParam("dimension"))
+    {
+      // when --dimension is specified,
+      // the program will apply the changes to only the given dimension.
+      Log::Info << "Performing '" << strategy << "' imputation strategy "
+          << "to replace '" << missingValue << "' on dimension " << dimension
+          << "." << endl;
+
+      imputer.Impute(input, missingValue, dimension);
+    }
+    else
+    {
+      // when --dimension is not specified,
+      // the program will apply the changes to all dimensions.
+      Log::Info << "Performing '" << strategy << "' imputation strategy "
+          << "to replace '" << missingValue << "' on all dimensions." << endl;
+
+      for (size_t i : dirtyDimensions)
+      {
+        imputer.Impute(input, missingValue, i);
+      }
+    }
+    Timer::Stop("imputation");
+
+    if (!outputFile.empty())
+    {
+      Log::Info << "Saving results to '" << outputFile << "'." << endl;
+      Save(outputFile, input, false);
+    }
   }
 }
 
