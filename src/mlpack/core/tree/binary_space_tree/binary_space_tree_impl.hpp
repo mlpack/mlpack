@@ -448,7 +448,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-  ~BinarySpaceTree()
+    ~BinarySpaceTree()
 {
   delete left;
   delete right;
