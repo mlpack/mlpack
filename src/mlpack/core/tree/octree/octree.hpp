@@ -419,6 +419,26 @@ class Octree
                  const double width,
                  std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize);
+
+  /**
+   * This is used for sorting points while splitting.
+   */
+  struct SplitInfo
+  {
+    //! Create the SplitInfo object.
+    SplitInfo(const size_t d, const arma::vec& c) : d(d), center(c) {}
+
+    //! The dimension we are splitting on.
+    size_t d;
+    //! The center of the node.
+    const arma::vec& center;
+
+    template<typename VecType>
+    static bool AssignToLeftNode(const VecType& point, const SplitInfo& s)
+    {
+      return point[s.d] < s.center[s.d];
+    }
+  };
 };
 
 } // namespace tree
