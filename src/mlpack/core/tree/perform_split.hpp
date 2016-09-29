@@ -8,9 +8,8 @@
  * of the split column, and points from the right subtree are on the right side
  * of the split column.
  */
-
-#ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_PERFORM_SPLIT_HPP
-#define MLPACK_CORE_TREE_BINARY_SPACE_TREE_PERFORM_SPLIT_HPP
+#ifndef MLPACK_CORE_TREE_PERFORM_SPLIT_HPP
+#define MLPACK_CORE_TREE_PERFORM_SPLIT_HPP
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -41,11 +40,16 @@ size_t PerformSplit(MatType& data,
 
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle.
-  while (SplitType::AssignToLeftNode(data.col(left), splitInfo) && (left <= right))
+  while ((left <= right) &&
+      (SplitType::AssignToLeftNode(data.col(left), splitInfo)))
     left++;
   while ((!SplitType::AssignToLeftNode(data.col(right), splitInfo)) &&
       (left <= right) && (right > 0))
     right--;
+
+  // Shortcut for when all points are on the right.
+  if (left == right && right == 0)
+    return left;
 
   while (left <= right)
   {
@@ -102,11 +106,16 @@ size_t PerformSplit(MatType& data,
 
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle.
-  while (SplitType::AssignToLeftNode(data.col(left), splitInfo) && (left <= right))
+  while ((left <= right) &&
+         (SplitType::AssignToLeftNode(data.col(left), splitInfo)))
     left++;
   while ((!SplitType::AssignToLeftNode(data.col(right), splitInfo)) &&
-      (left <= right) && (right > 0))
+         (left <= right) && (right > 0))
     right--;
+
+  // Shortcut for when all points are on the right.
+  if (left == right && right == 0)
+    return left;
 
   while (left <= right)
   {
@@ -135,7 +144,6 @@ size_t PerformSplit(MatType& data,
   }
 
   Log::Assert(left == right + 1);
-
   return left;
 }
 
