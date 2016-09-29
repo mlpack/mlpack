@@ -630,8 +630,6 @@ void Octree<MetricType, StatisticType, MatType>::Serialize(
 {
   using data::CreateNVP;
 
-  // 
-
   // If we're loading and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {
