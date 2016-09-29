@@ -711,7 +711,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     return;
 
   // This will hold the index of the first point in each child.
-  arma::Col<size_t> childBegins(std::pow(2, dataset->n_rows) + 1);
+  arma::Col<size_t> childBegins(((size_t) 1 << dataset->n_rows) + 1);
   childBegins[0] = begin;
   childBegins[childBegins.n_elem - 1] = begin + count;
 
@@ -741,7 +741,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
 
     // We can set the first index of the right child.  The first index of the
     // left child is already set.
-    const size_t rightChildIndex = leftChildIndex + std::pow(2, d);
+    const size_t rightChildIndex = leftChildIndex + ((size_t) 1 << d);
     childBegins[rightChildIndex] = firstRight;
 
     // Now we have to recurse, if this was not the last dimension.
@@ -813,7 +813,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     return;
 
   // This will hold the index of the first point in each child.
-  arma::Col<size_t> childBegins(std::pow(2, dataset->n_rows) + 1);
+  arma::Col<size_t> childBegins(((size_t) 1 << dataset->n_rows) + 1);
   childBegins[0] = begin;
   childBegins[childBegins.n_elem - 1] = begin + count;
 
@@ -843,7 +843,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
 
     // We can set the first index of the right child.  The first index of the
     // left child is already set.
-    const size_t rightChildIndex = leftChildIndex + std::pow(2, d);
+    const size_t rightChildIndex = leftChildIndex + ((size_t) 1 << d);
     childBegins[rightChildIndex] = firstRight;
 
     // Now we have to recurse, if this was not the last dimension.
