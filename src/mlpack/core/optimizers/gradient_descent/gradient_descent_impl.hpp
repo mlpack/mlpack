@@ -35,25 +35,25 @@ double GradientDescent<FunctionType>::Optimize(
   double lastObjective = DBL_MAX;
 
   // Now iterate!
-  arma::vec gradient(iterate.n_cols);
+  arma::mat gradient(iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Output current objective function.
     Log::Info << "Gradient Descent: iteration " << i << ", objective " 
-      << overallObjective << "." << std::endl;
+        << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Gradient Descent: converged to " << overallObjective 
-        << "; terminating" << " with failure.  Try a smaller step size?" 
-        << std::endl;
+          << "; terminating" << " with failure.  Try a smaller step size?" 
+          << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
       Log::Info << "Gradient Descent: minimized within tolerance " 
-        << tolerance << "; " << "terminating optimization." << std::endl;
+          << tolerance << "; " << "terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -70,7 +70,7 @@ double GradientDescent<FunctionType>::Optimize(
   }
 
   Log::Info << "Gradient Descent: maximum iterations (" << maxIterations 
-    << ") reached; " << "terminating optimization." << std::endl;
+      << ") reached; " << "terminating optimization." << std::endl;
   return overallObjective;
 }
 
