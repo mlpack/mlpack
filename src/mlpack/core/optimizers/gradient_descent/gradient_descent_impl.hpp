@@ -35,7 +35,7 @@ double GradientDescent<FunctionType>::Optimize(
   double lastObjective = DBL_MAX;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_cols);
+  arma::mat gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Output current objective function.
