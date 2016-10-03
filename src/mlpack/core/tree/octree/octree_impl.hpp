@@ -483,7 +483,7 @@ size_t Octree<MetricType, StatisticType, MatType>::GetNearestChild(
   size_t bestIndex = NumChildren();
   for (size_t i = 0; i < NumChildren(); ++i)
   {
-    const double dist = children[i]->MaxDistance(queryNode);
+    const double dist = children[i]->MinDistance(queryNode);
     if (dist < bestDistance)
     {
       bestDistance = dist;
