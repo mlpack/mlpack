@@ -81,12 +81,13 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
     // We have to recurse down the reference node, so we need to do it in an
     // ordered manner.
     arma::vec scores(referenceNode.NumChildren());
-    std::vector<typename RuleType::TraversalInfoType> tis;
+    std::vector<typename RuleType::TraversalInfoType>
+        tis(referenceNode.NumChildren());
     for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
     {
       rule.TraversalInfo() = traversalInfo;
       scores[i] = rule.Score(queryNode, referenceNode.Child(i));
-      tis.push_back(rule.TraversalInfo());
+      tis[i] = rule.TraversalInfo();
     }
 
     // Sort the scores.
