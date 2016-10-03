@@ -620,6 +620,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "random projection tree (max split)";
     case UB_TREE:
       return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }
