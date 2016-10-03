@@ -70,7 +70,7 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
-    "'r-plus-plus', 'spill'.", "t", "kd");
+    "'r-plus-plus', 'spill', 'oct'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
     "trees, random projection trees, UB trees, R trees, R* trees, X trees, "
     "Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees).", "l",
@@ -277,13 +277,13 @@ int main(int argc, char *argv[])
       tree = KNNModel::MAX_RP_TREE;
     else if (treeType == "ub")
       tree = KNNModel::UB_TREE;
-    else if (treeType == "octree")
+    else if (treeType == "oct")
       tree = KNNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
           << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', and "
-          << "'octree'." << endl;
+          << "'oct'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;

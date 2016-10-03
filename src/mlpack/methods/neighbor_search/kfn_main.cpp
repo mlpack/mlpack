@@ -68,7 +68,7 @@ PARAM_INT_IN("k", "Number of furthest neighbors to find.", "k", 0);
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
-    "'r-plus-plus', 'octree'.", "t", "kd");
+    "'r-plus-plus', 'oct'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
     "vp trees, random projection trees, UB trees, R trees, R* trees, X trees, "
     "Hilbert R trees, R+ trees, R++ trees, and octrees).", "l", 20);
@@ -262,12 +262,12 @@ int main(int argc, char *argv[])
       tree = KFNModel::MAX_RP_TREE;
     else if (treeType == "ub")
       tree = KFNModel::UB_TREE;
-    else if (treeType == "octree")
+    else if (treeType == "oct")
       tree = KFNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', and 'octree'."
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', and 'oct'."
           << endl;
 
     kfn.TreeType() = tree;
