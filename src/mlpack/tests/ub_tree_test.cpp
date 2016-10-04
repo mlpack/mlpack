@@ -282,9 +282,9 @@ BOOST_AUTO_TEST_CASE(UBTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for(size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
     {
-      for(size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; j++)
       {
         BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
         BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));

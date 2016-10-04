@@ -12,6 +12,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 
 #include "ra_search.hpp"
 
@@ -44,7 +45,8 @@ class RAModel
     HILBERT_R_TREE,
     R_PLUS_TREE,
     R_PLUS_PLUS_TREE,
-    UB_TREE
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -85,6 +87,8 @@ class RAModel
   RAType<tree::RPlusPlusTree>* rPlusPlusTreeRA;
   //! Non-NULL if the UB tree is used.
   RAType<tree::UBTree>* ubTreeRA;
+  //! Non-NULL if the octree is used.
+  RAType<tree::Octree>* octreeRA;
 
  public:
   /**

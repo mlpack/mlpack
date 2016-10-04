@@ -13,6 +13,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 
 #include "range_search.hpp"
 
@@ -36,7 +37,8 @@ class RSModel
     VP_TREE,
     RP_TREE,
     MAX_RP_TREE,
-    UB_TREE
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -84,6 +86,8 @@ class RSModel
   //! Universal B tree based range search object
   //! (NULL if not in use).
   RSType<tree::UBTree>* ubTreeRS;
+  //! Octree-based range search object (NULL if not in use).
+  RSType<tree::Octree>* octreeRS;
 
  public:
   /**

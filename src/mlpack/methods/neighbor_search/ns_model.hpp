@@ -14,6 +14,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
@@ -133,6 +134,9 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic neighbor search specialized for SPTrees.
   void operator()(SpillKNN* ns) const;
 
+  //! Bichromatic neighbor search specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
+
   //! Construct the BiSearchVisitor.
   BiSearchVisitor(const arma::mat& querySet,
                   const size_t k,
@@ -187,6 +191,9 @@ class TrainVisitor : public boost::static_visitor<void>
 
   //! Train specialized for SPTrees.
   void operator()(SpillKNN* ns) const;
+
+  //! Train specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
   //! for BinarySpaceTrees, and tau and rho for spill trees.
@@ -287,7 +294,8 @@ class NSModel
     RP_TREE,
     MAX_RP_TREE,
     SPILL_TREE,
-    UB_TREE
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -325,7 +333,8 @@ class NSModel
                  NSType<SortPolicy, tree::RPTree>*,
                  NSType<SortPolicy, tree::MaxRPTree>*,
                  SpillKNN*,
-                 NSType<SortPolicy, tree::UBTree>*> nSearch;
+                 NSType<SortPolicy, tree::UBTree>*,
+                 NSType<SortPolicy, tree::Octree>*> nSearch;
 
  public:
   /**
