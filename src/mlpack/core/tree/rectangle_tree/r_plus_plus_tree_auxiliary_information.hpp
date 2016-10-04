@@ -112,7 +112,7 @@ class RPlusPlusTreeAuxiliaryInformation
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
-   * returned, the update will be propogated upward.
+   * returned, the update will be propagated upward.
    *
    * @param node The node in which the auxiliary information being update.
    */

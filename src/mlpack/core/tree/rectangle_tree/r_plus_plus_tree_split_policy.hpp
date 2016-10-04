@@ -2,7 +2,7 @@
  * @file r_plus_plus_tree_split_policy.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion and implementation of the RPlusPlusTreeSplitPolicy class, a class
+ * Definition and implementation of the RPlusPlusTreeSplitPolicy class, a class
  * that helps to determine the subtree into which we should insert an
  * intermediate node.
  */
