@@ -23,6 +23,13 @@ endif ()
 # are set in the root CMakeLists.txt.
 add_library(mlpack ${MLPACK_SRCS})
 
+# If we are not forcing C++11 support, check that the compiler supports C++11
+# and enable it.
+if (NOT FORCE_CXX11)
+  # Use the newer C++11 checks.
+  include(../../CMake/NewCXX11.cmake)
+endif ()
+
 # Generate export symbols for Windows, instead of adding __declspec(dllimport)
 # and __declspec(dllexport) everywhere.  However, those modifiers are still
 # necessary for global variables (of which there are a few in mlpack).

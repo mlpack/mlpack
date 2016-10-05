@@ -35,11 +35,9 @@ if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
     message(FATAL_ERROR "No C++11 compiler available!")
   endif()
   enable_cxx11()
-elseif (NOT FORCE_CXX11)
-  # Use the newer C++11 checks.
-  include(CMake/NewCXX11.cmake)
 endif ()
-
+# Otherwise, we may have to set the C++11 mode after the mlpack target is
+# defined.
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
