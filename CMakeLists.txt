@@ -518,21 +518,41 @@ if (PKG_CONFIG_FOUND)
       "${MLPACK_INCLUDE_DIRS_STRING} -I${CMAKE_INSTALL_PREFIX}/include/")
 
   # Create the list of link directories.
+  set(MLPACK_LIBRARIES_LIST)
   foreach (linkdir ${MLPACK_LIBRARY_DIRS})
-    set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${linkdir}")
+    list(APPEND MLPACK_LIBRARIES_LIST "-L${linkdir}")
   endforeach ()
 
   foreach(lib ${MLPACK_LIBRARIES})
     string(SUBSTRING "${lib}" 0 1 first)
     if ("${first}" STREQUAL "/")
-      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${lib}")
+      # We need to split the directory and the library.
+      string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+
+      list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
     else ()
-      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -l${lib}")
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${lib}")
     endif ()
   endforeach ()
   # Don't forget to add mlpack as a dependency too.
-  set(MLPACK_LIBRARIES_STRING
-      "${MLPACK_LIBRARIES_STRING} -L${CMAKE_INSTALL_PREFIX}/lib/ -lmlpack")
+  list(APPEND MLPACK_LIBRARIES_LIST "-L${CMAKE_INSTALL_PREFIX}/lib/")
+  list(APPEND MLPACK_LIBRARIES_LIST "-lmlpack")
+
+  # Filter duplicate dependencies and directories.
+  list(REMOVE_DUPLICATES MLPACK_LIBRARIES_LIST)
+
+  # Filter out known unnecessary directories.
+  list(REMOVE_ITEM MLPACK_LIBRARIES_LIST
+      "-L/usr/lib"
+      "-L/usr/lib/"
+      "-L/usr/lib/x86_64-linux-gnu"
+      "-L/usr/lib/x86_64-linux-gnu/"
+      "-L/usr/lib/i386-linux-gnu"
+      "-L/usr/lib/i386-linux-gnu/")
+
+  string(REPLACE ";" " " MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_LIST}")
 
   # Do first stage of configuration.
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
