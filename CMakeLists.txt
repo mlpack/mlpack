@@ -17,8 +17,8 @@ option(BUILD_WITH_COVERAGE
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
-    "Don't check that the compiler supports C++11, just assume it.  Make sure \
-     to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
+    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS."
+    OFF)
 enable_testing()
 
 # Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
