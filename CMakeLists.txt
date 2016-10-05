@@ -1,21 +1,6 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if (${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-endif()
-
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -31,7 +16,30 @@ option(BUILD_WITH_COVERAGE
     "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
+option(FORCE_CXX11
+    "Don't check that the compiler supports C++11, just assume it.  Make sure \
+     to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
 enable_testing()
+
+# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
+# done with target_compile_features() when the mlpack library target is added in
+# src/mlpack/CMakeLists.txt.
+if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
+    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
+    AND NOT FORCE_CXX11)
+  # Older versions of CMake do not support target_compile_features(), so we have
+  # to use something kind of hacky.
+  include(CMake/CXX11.cmake)
+  check_for_cxx11_compiler(HAS_CXX11)
+  if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+  endif()
+  enable_cxx11()
+elseif (NOT FORCE_CXX11)
+  # Use the newer C++11 checks.
+  include(../../CMake/NewCXX11.cmake)
+endif ()
+
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
