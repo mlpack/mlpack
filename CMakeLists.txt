@@ -37,7 +37,7 @@ if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
   enable_cxx11()
 elseif (NOT FORCE_CXX11)
   # Use the newer C++11 checks.
-  include(../../CMake/NewCXX11.cmake)
+  include(CMake/NewCXX11.cmake)
 endif ()
 
 
