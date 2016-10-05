@@ -107,6 +107,44 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
   // Nothing to do.
 }
 
+// One dataset, pre-built tree.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree& referenceTree,
+                                                const bool singleMode) :
+    referenceSet(&this->referenceTree->Dataset()),
+    referenceTree(new Tree(referenceTree)),
+    treeOwner(true),
+    setOwner(false),
+    singleMode(singleMode),
+    naive(false),
+    metric(&this->referenceTree->Metric())
+{
+  // Nothing to do.
+}
+
+// One dataset, pre-built tree.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree&& referenceTree,
+                                                const bool singleMode) :
+    referenceSet(&this->referenceTree->Dataset()),
+    referenceTree(new Tree(std::move(referenceTree))),
+    treeOwner(true),
+    setOwner(false),
+    singleMode(singleMode),
+    naive(false),
+    metric(&this->referenceTree->Metric())
+{
+  // Nothing to do.
+}
+
 template<typename KernelType,
          typename MatType,
          template<typename TreeMetricType,
@@ -185,10 +223,60 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
   this->metric = metric::IPMetric<KernelType>(tree->Metric().Kernel());
   this->setOwner = false;
 
-  if (treeOwner && referenceTree)
-    delete referenceTree;
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
 
   this->referenceTree = tree;
+  this->treeOwner = false;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(Tree& tree)
+{
+  if (naive)
+    throw std::invalid_argument("cannot call FastMKS::Train() with a tree when "
+        "in naive search mode");
+
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->referenceSet = &this->tree->Dataset();
+  this->metric = metric::IPMetric<KernelType>(tree->Metric().Kernel());
+  this->setOwner = false;
+
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
+
+  this->referenceTree = new Tree(tree);
+  this->treeOwner = true;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(Tree&& tree)
+{
+  if (naive)
+    throw std::invalid_argument("cannot call FastMKS::Train() with a tree when "
+        "in naive search mode");
+
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->referenceTree = new Tree(std::move(tree));
+  this->referenceSet = &this->referenceTree->Dataset();
+  this->metric = metric::IPMetric<KernelType>(tree.Metric().Kernel());
+  this->setOwner = false;
+
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
+
   this->treeOwner = true;
 }
 
@@ -282,7 +370,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   Tree queryTree(querySet);
   Timer::Stop("tree_building");
 
-  Search(&queryTree, k, indices, kernels);
+  Search(queryTree, k, indices, kernels);
 }
 
 template<typename KernelType,
@@ -292,6 +380,20 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
     Tree* queryTree,
+    const size_t k,
+    arma::Mat<size_t>& indices,
+    arma::mat& kernels)
+{
+	Search(*queryTree, k, indices, kernels);
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Search(
+    Tree& queryTree,
     const size_t k,
     arma::Mat<size_t>& indices,
     arma::mat& kernels)
@@ -312,16 +414,16 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   }
 
   // No remapping will be necessary because we are using the cover tree.
-  indices.set_size(k, queryTree->Dataset().n_cols);
-  kernels.set_size(k, queryTree->Dataset().n_cols);
+  indices.set_size(k, queryTree.Dataset().n_cols);
+  kernels.set_size(k, queryTree.Dataset().n_cols);
 
   Timer::Start("computing_products");
   typedef FastMKSRules<KernelType, Tree> RuleType;
-  RuleType rules(*referenceSet, queryTree->Dataset(), k, metric.Kernel());
+  RuleType rules(*referenceSet, queryTree.Dataset(), k, metric.Kernel());
 
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
-  traverser.Traverse(*queryTree, *referenceTree);
+  traverser.Traverse(queryTree, *referenceTree);
 
   Log::Info << rules.BaseCases() << " base cases." << std::endl;
   Log::Info << rules.Scores() << " scores." << std::endl;

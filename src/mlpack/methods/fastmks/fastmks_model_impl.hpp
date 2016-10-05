@@ -29,11 +29,10 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
     // Create the tree with the specified base.
     Timer::Start("tree_building");
     metric::IPMetric<KernelType> metric(k);
-    typename FastMKS<KernelType>::Tree* tree =
-        new typename FastMKS<KernelType>::Tree(referenceData, metric, base);
+    typename FastMKS<KernelType>::Tree tree(referenceData, metric, base);
     Timer::Stop("tree_building");
 
-    f.Train(tree);
+    f.Train(std::move(tree));
   }
 }
 
@@ -205,7 +204,7 @@ void FastMKSModel::Search(FastMKSType& f,
     typename FastMKSType::Tree queryTree(querySet, base);
     Timer::Stop("tree_building");
 
-    f.Search(&queryTree, k, indices, kernels);
+    f.Search(queryTree, k, indices, kernels);
   }
 }
 
