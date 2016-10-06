@@ -2,7 +2,7 @@
  * @file r_tree_star_split.hpp
  * @author Andrew Wells
  *
- * Defintion of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
+ * Definition of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
  * at a leaf node and moving upwards if necessary.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP

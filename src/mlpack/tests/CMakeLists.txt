@@ -57,6 +57,7 @@ add_executable(mlpack_test
   network_util_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
+  octree_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   quic_svd_test.cpp

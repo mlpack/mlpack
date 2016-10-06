@@ -65,10 +65,11 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'ub', 'cover', 'r', "
-    "'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus'.", "t", "kd");
+    "'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'.", "t",
+    "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
-    "UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees and "
-    "R++ trees).", "l", 20);
+    "UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, "
+    "R++ trees, and octrees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -182,10 +183,12 @@ int main(int argc, char *argv[])
       tree = RANNModel::R_PLUS_PLUS_TREE;
     else if (treeType == "ub")
       tree = RANNModel::UB_TREE;
+    else if (treeType == "oct")
+      tree = RANNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'ub', 'cover', 'r', 'r-star', 'x', 'hilbert-r', "
-          << "'r-plus' and 'r-plus-plus'." << endl;
+          << "'r-plus', 'r-plus-plus', 'oct'." << endl;
 
     rann.TreeType() = tree;
     rann.RandomBasis() = randomBasis;

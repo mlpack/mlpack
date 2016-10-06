@@ -47,7 +47,7 @@ A list of all the sections this tutorial contains.
 
 @section cli_rstut The 'mlpack_range_search' command-line executable
 
-\b mlpack provides an exectuable, \c mlpack_range_search, which can be used to
+\b mlpack provides an executable, \c mlpack_range_search, which can be used to
 perform range searches quickly and simply from the command-line.  This program
 will perform the range search and place the resulting neighbor index list into
 one file and their corresponding distances into another file.  These files are

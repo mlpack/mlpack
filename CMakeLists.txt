@@ -1,21 +1,6 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if (${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-endif()
-
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -31,7 +16,28 @@ option(BUILD_WITH_COVERAGE
     "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
+option(FORCE_CXX11
+    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS."
+    OFF)
 enable_testing()
+
+# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
+# done with target_compile_features() when the mlpack library target is added in
+# src/mlpack/CMakeLists.txt.
+if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
+    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
+    AND NOT FORCE_CXX11)
+  # Older versions of CMake do not support target_compile_features(), so we have
+  # to use something kind of hacky.
+  include(CMake/CXX11.cmake)
+  check_for_cxx11_compiler(HAS_CXX11)
+  if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+  endif()
+  enable_cxx11()
+endif ()
+# Otherwise, we may have to set the C++11 mode after the mlpack target is
+# defined.
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
@@ -510,21 +516,41 @@ if (PKG_CONFIG_FOUND)
       "${MLPACK_INCLUDE_DIRS_STRING} -I${CMAKE_INSTALL_PREFIX}/include/")
 
   # Create the list of link directories.
+  set(MLPACK_LIBRARIES_LIST)
   foreach (linkdir ${MLPACK_LIBRARY_DIRS})
-    set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${linkdir}")
+    list(APPEND MLPACK_LIBRARIES_LIST "-L${linkdir}")
   endforeach ()
 
   foreach(lib ${MLPACK_LIBRARIES})
     string(SUBSTRING "${lib}" 0 1 first)
     if ("${first}" STREQUAL "/")
-      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -L${lib}")
+      # We need to split the directory and the library.
+      string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+
+      list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
     else ()
-      set(MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_STRING} -l${lib}")
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${lib}")
     endif ()
   endforeach ()
   # Don't forget to add mlpack as a dependency too.
-  set(MLPACK_LIBRARIES_STRING
-      "${MLPACK_LIBRARIES_STRING} -L${CMAKE_INSTALL_PREFIX}/lib/ -lmlpack")
+  list(APPEND MLPACK_LIBRARIES_LIST "-L${CMAKE_INSTALL_PREFIX}/lib/")
+  list(APPEND MLPACK_LIBRARIES_LIST "-lmlpack")
+
+  # Filter duplicate dependencies and directories.
+  list(REMOVE_DUPLICATES MLPACK_LIBRARIES_LIST)
+
+  # Filter out known unnecessary directories.
+  list(REMOVE_ITEM MLPACK_LIBRARIES_LIST
+      "-L/usr/lib"
+      "-L/usr/lib/"
+      "-L/usr/lib/x86_64-linux-gnu"
+      "-L/usr/lib/x86_64-linux-gnu/"
+      "-L/usr/lib/i386-linux-gnu"
+      "-L/usr/lib/i386-linux-gnu/")
+
+  string(REPLACE ";" " " MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_LIST}")
 
   # Do first stage of configuration.
   set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")

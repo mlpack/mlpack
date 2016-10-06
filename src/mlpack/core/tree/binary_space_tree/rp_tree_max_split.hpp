@@ -9,7 +9,7 @@
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MAX_SPLIT_HPP
 
 #include <mlpack/core.hpp>
-#include "perform_split.hpp"
+#include <mlpack/core/tree/perform_split.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

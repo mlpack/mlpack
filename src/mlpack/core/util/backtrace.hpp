@@ -16,7 +16,7 @@ namespace mlpack {
  * Provides a backtrace.
  *
  * The Backtrace class retrieve addresses of each called function from the
- * stack and decode file name, function & line number. Retrieved informations
+ * stack and decode file name, function & line number. Retrieved information
  * can be printed in form:
  *
  * @code

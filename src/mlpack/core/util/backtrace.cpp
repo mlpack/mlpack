@@ -141,7 +141,7 @@ void Backtrace::DecodeAddress(long addr)
     if (FIND_LINE)
     {
       DemangleFunction();
-      // Save retrieved informations.
+      // Save retrieved information.
       stack.push_back(frame);
     }
   }

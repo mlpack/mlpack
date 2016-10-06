@@ -14,7 +14,7 @@ namespace mlpack {
 namespace tree {
 
 /**
- * This is a specialization of the TreeType class to the BinarySpaceTree tree
+ * This is a specialization of the TreeTraits class to the BinarySpaceTree tree
  * type.  It defines characteristics of the binary space tree, and is used to
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.

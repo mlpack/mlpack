@@ -2,7 +2,7 @@
  * @file hilbert_r_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the HilbertRTreeSplit class, a class that splits the nodes of an R
+ * Definition of the HilbertRTreeSplit class, a class that splits the nodes of an R
  * tree, starting at a leaf node and moving upwards if necessary.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_SPLIT_HPP

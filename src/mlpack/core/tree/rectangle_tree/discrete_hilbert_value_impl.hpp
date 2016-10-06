@@ -2,7 +2,7 @@
  * @file discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the DiscreteHilbertValue class, a class that calculates
+ * Definition of the DiscreteHilbertValue class, a class that calculates
  * the ordering of points using the Hilbert curve.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_IMPL_HPP

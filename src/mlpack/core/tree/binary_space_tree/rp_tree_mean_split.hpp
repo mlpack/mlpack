@@ -10,7 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include "rp_tree_max_split.hpp"
-#include "perform_split.hpp"
+#include <mlpack/core/tree/perform_split.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

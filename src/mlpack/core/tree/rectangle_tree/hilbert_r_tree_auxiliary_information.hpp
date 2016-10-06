@@ -106,7 +106,7 @@ class HilbertRTreeAuxiliaryInformation
 
   /**
    * Update the auxiliary information in the node. The method returns true if
-   * the update should be propogated downward.
+   * the update should be propagated downward.
    *
    * @param node The node in which the auxiliary information being update.
    */

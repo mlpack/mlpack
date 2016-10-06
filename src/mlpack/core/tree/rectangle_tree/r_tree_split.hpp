@@ -2,7 +2,7 @@
  * @file r_tree_split.hpp
  * @author Andrew Wells
  *
- * Defintion of the RTreeSplit class, a class that splits the nodes of an R
+ * Definition of the RTreeSplit class, a class that splits the nodes of an R
  * tree, starting at a leaf node and moving upwards if necessary.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_HPP
