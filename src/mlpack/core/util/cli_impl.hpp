@@ -64,7 +64,6 @@ void CLI::Add(const std::string& identifier,
     outstr << "Parameter --" << identifier << "(-" << alias << ") "
            << "is defined multiple times with same alias." << std::endl;
 
-  po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
   std::string progOptId =
           alias.length() ? identifier + "," + alias : identifier;
@@ -73,7 +72,7 @@ void CLI::Add(const std::string& identifier,
   AddAlias(alias, identifier);
 
   // Add the option to boost program_options.
-  desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
+  GetSingleton().AddOption<T>(progOptId.c_str(), description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
   ParamData data;
@@ -143,6 +142,24 @@ T& CLI::GetParam(const std::string& identifier)
     gmap[key].value = boost::any(tmp);
 
   return *boost::any_cast<T>(&gmap[key].value);
+}
+
+template<typename T>
+void CLI::AddOption(
+    const char* optId,
+    const char* descr,
+    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */)
+{
+  desc.add_options()(optId, po::value<T>(), descr);
+}
+
+template<typename T>
+void CLI::AddOption(
+    const char* optId,
+    const char* descr,
+    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+{
+  desc.add_options()(optId, po::value<T>()->multitoken(), descr);
 }
 
 } // namespace mlpack

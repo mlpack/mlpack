@@ -135,6 +135,67 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 }
 
 /**
+ * Test that a vector option works correctly.
+ */
+BOOST_AUTO_TEST_CASE(TestVectorOption)
+{
+  PARAM_VECTOR_IN(size_t, "test_vec", "test description", "t");
+
+  int argc = 5;
+  const char* argv[5];
+  argv[0] = "./test";
+  argv[1] = "--test_vec";
+  argv[2] = "1";
+  argv[3] = "2";
+  argv[4] = "4";
+
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  BOOST_REQUIRE(CLI::HasParam("test_vec"));
+
+  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test_vec");
+
+  BOOST_REQUIRE_EQUAL(v.size(), 3);
+  BOOST_REQUIRE_EQUAL(v[0], 1);
+  BOOST_REQUIRE_EQUAL(v[1], 2);
+  BOOST_REQUIRE_EQUAL(v[2], 4);
+}
+
+/**
+ * Test that we can use a vector option by specifying it many times.
+ */
+BOOST_AUTO_TEST_CASE(TestVectorOption2)
+{
+  PARAM_VECTOR_IN(size_t, "test2_vec", "test description", "T");
+
+  int argc = 7;
+  const char* argv[7];
+  argv[0] = "./test";
+  argv[1] = "--test2_vec";
+  argv[2] = "1";
+  argv[3] = "--test2_vec";
+  argv[4] = "2";
+  argv[5] = "--test2_vec";
+  argv[6] = "4";
+
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  BOOST_REQUIRE(CLI::HasParam("test_vec"));
+
+  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test_vec");
+
+  BOOST_REQUIRE_EQUAL(v.size(), 3);
+  BOOST_REQUIRE_EQUAL(v[0], 1);
+  BOOST_REQUIRE_EQUAL(v[1], 2);
+  BOOST_REQUIRE_EQUAL(v[2], 4);
+
+}
+
+/**
  * Test that we can correctly output Armadillo objects to PrefixedOutStream
  * objects.
  */

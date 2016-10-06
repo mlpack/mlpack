@@ -425,6 +425,42 @@ class CLI
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
+
+  //! Metaprogramming structure for vector detection.
+  template<typename T>
+  struct IsStdVector { const static bool value = false; };
+
+  //! Metaprogramming structure for vector detection.
+  template<typename eT>
+  struct IsStdVector<std::vector<eT>> { const static bool value = true; };
+
+  /**
+   * Add an option if it is not a vector type.  This is a utility function used
+   * by CLI::Add.
+   *
+   * @tparam Type of parameter.
+   * @param optId Name of parameter.
+   * @param descr Description.
+   */
+  template<typename T>
+  void AddOption(
+      const char* optId,
+      const char* descr,
+      const typename boost::disable_if<IsStdVector<T>>::type* /* junk */ = 0);
+
+  /**
+   * Add an option if it is a vector type.  This is a utility function used by
+   * CLI::Add.
+   *
+   * @tparam Type of parameter.
+   * @param optId Name of parameter.
+   * @param descr Description.
+   */
+  template<typename T>
+  void AddOption(
+      const char* optId,
+      const char* descr,
+      const typename boost::enable_if<IsStdVector<T>>::type* /* junk */ = 0);
 };
 
 } // namespace mlpack
