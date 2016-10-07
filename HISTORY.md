@@ -13,6 +13,8 @@
 
   * Bump minimum required version of Armadillo to 4.200.0.
 
+  * Added Simple Gradient Descent Optimizer.
+
 ### mlpack 2.0.3
 ###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
