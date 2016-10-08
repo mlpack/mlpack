@@ -599,6 +599,8 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   delete ubTreeRA;
   delete octreeRA;
 
+  this->leafSize = leafSize;
+
   if (randomBasis)
     referenceSet = q * referenceSet;
 
