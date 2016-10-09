@@ -517,7 +517,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // Dual-tree implementation.
   Timer::Stop("computing_products");
 
-  Search(referenceTree, k, indices, kernels);
+  Search(std::move(referenceTree), k, indices, kernels);
 }
 
 //! Serialize the model.
