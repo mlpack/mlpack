@@ -15,8 +15,6 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-CLI* CLI::singleton = NULL;
-
 /* For clarity, we will alias boost's namespace. */
 namespace po = boost::program_options;
 
