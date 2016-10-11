@@ -1,6 +1,8 @@
 /**
  * @file singletons.cpp
  * @author Ryan Curtin
+ *
+ * Declaration of singletons in libmlpack.so.
  */
 #include "singletons.hpp"
 #include "log.hpp"
