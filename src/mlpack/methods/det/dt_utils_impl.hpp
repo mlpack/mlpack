@@ -10,22 +10,23 @@
 using namespace mlpack;
 using namespace det;
 
-void mlpack::det::PrintLeafMembership(DTree* dtree,
-                                      const arma::mat& data,
+template <typename MatType, typename VecType, typename TagType>
+void mlpack::det::PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
+                                      const MatType& data,
                                       const arma::Mat<size_t>& labels,
                                       const size_t numClasses,
                                       const std::string leafClassMembershipFile)
 {
   // Tag the leaves with numbers.
-  int numLeaves = dtree->TagTree();
+  TagType numLeaves = dtree->TagTree();
 
   arma::Mat<size_t> table(numLeaves, (numClasses + 1));
   table.zeros();
 
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    const arma::vec testPoint = data.unsafe_col(i);
-    const int leafTag = dtree->FindBucket(testPoint);
+    const VecType testPoint = data.unsafe_col(i);
+    const TagType leafTag = dtree->FindBucket(testPoint);
     const size_t label = labels[i];
     table(leafTag, label) += 1;
   }
@@ -57,8 +58,8 @@ void mlpack::det::PrintLeafMembership(DTree* dtree,
   return;
 }
 
-
-void mlpack::det::PrintVariableImportance(const DTree* dtree,
+template <typename MatType, typename VecType, typename TagType>
+void mlpack::det::PrintVariableImportance(const DTree<MatType, VecType, TagType>* dtree,
                                           const std::string viFile)
 {
   arma::vec imps;
@@ -96,15 +97,16 @@ void mlpack::det::PrintVariableImportance(const DTree* dtree,
 
 // This function trains the optimal decision tree using the given number of
 // folds.
-DTree* mlpack::det::Trainer(arma::mat& dataset,
-                            const size_t folds,
-                            const bool useVolumeReg,
-                            const size_t maxLeafSize,
-                            const size_t minLeafSize,
-                            const std::string unprunedTreeOutput)
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
+                                                       const size_t folds,
+                                                       const bool useVolumeReg,
+                                                       const size_t maxLeafSize,
+                                                       const size_t minLeafSize,
+                                                       const std::string unprunedTreeOutput)
 {
   // Initialize the tree.
-  DTree dtree(dataset);
+  DTree<MatType, VecType, TagType> dtree(dataset);
 
   // Prepare to grow the tree...
   arma::Col<size_t> oldFromNew(dataset.n_cols);
@@ -112,7 +114,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     oldFromNew[i] = i;
 
   // Save the dataset since it would be modified while growing the tree.
-  arma::mat newDataset(dataset);
+  MatType newDataset(dataset);
 
   // Growing the tree
   double oldAlpha = 0.0;
@@ -148,8 +150,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   std::vector<std::pair<double, double> > prunedSequence;
   while (dtree.SubtreeLeaves() > 1)
   {
-    std::pair<double, double> treeSeq(oldAlpha,
-        dtree.SubtreeLeavesLogNegError());
+    std::pair<double, double> treeSeq(oldAlpha, dtree.SubtreeLeavesLogNegError());
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree.PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
@@ -157,20 +158,18 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     // Some sanity checks.  It seems that on some datasets, the error does not
     // increase as the tree is pruned but instead stays the same---hence the
     // "<=" in the final assert.
-    Log::Assert((alpha < std::numeric_limits<double>::max()) ||
-        (dtree.SubtreeLeaves() == 1));
+    Log::Assert((alpha < std::numeric_limits<double>::max()) || (dtree.SubtreeLeaves() == 1));
     Log::Assert(alpha > oldAlpha);
     Log::Assert(dtree.SubtreeLeavesLogNegError() <= treeSeq.second);
   }
 
-  std::pair<double, double> treeSeq(oldAlpha,
-      dtree.SubtreeLeavesLogNegError());
+  std::pair<double, double> treeSeq(oldAlpha, dtree.SubtreeLeavesLogNegError());
   prunedSequence.push_back(treeSeq);
 
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 
-  arma::mat cvData(dataset);
+  MatType cvData(dataset);
   size_t testSize = dataset.n_cols / folds;
 
   arma::vec regularizationConstants(prunedSequence.size());
@@ -194,8 +193,8 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     size_t start = fold * testSize;
     size_t end = std::min((size_t) (fold + 1) * testSize, (size_t) cvData.n_cols);
 
-    arma::mat test = cvData.cols(start, end - 1);
-    arma::mat train(cvData.n_rows, cvData.n_cols - test.n_cols);
+    MatType test = cvData.cols(start, end - 1);
+    MatType train(cvData.n_rows, cvData.n_cols - test.n_cols);
 
     if (start == 0 && end < cvData.n_cols)
     {
@@ -212,7 +211,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     }
 
     // Initialize the tree.
-    DTree cvDTree(train);
+    DTree<MatType, VecType, TagType> cvDTree(train);
 
     // Getting ready to grow the tree...
     arma::Col<size_t> cvOldFromNew(train.n_cols);
@@ -252,13 +251,12 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     double cvVal = 0.0;
     for (size_t i = 0; i < test.n_cols; ++i)
     {
-      arma::vec testPoint = test.unsafe_col(i);
+      VecType testPoint = test.unsafe_col(i);
       cvVal += cvDTree.ComputeValue(testPoint);
     }
 
     if (prunedSequence.size() > 2)
-      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
-          (double) dataset.n_cols;
+      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal / (double) dataset.n_cols;
 
     #pragma omp critical
     regularizationConstants += cvRegularizationConstants;
@@ -285,7 +283,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   Log::Info << "Optimal alpha: " << optimalAlpha << "." << std::endl;
 
   // Initialize the tree.
-  DTree* dtreeOpt = new DTree(dataset);
+  DTree<MatType, VecType, TagType>* dtreeOpt = new DTree<MatType, VecType, TagType>(dataset);
 
   // Getting ready to grow the tree...
   for (size_t i = 0; i < oldFromNew.n_elem; i++)
@@ -296,8 +294,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
 
   // Grow the tree.
   oldAlpha = -DBL_MAX;
-  alpha = dtreeOpt->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
-      minLeafSize);
+  alpha = dtreeOpt->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize, minLeafSize);
 
   // Prune with optimal alpha.
   while ((oldAlpha < optimalAlpha) && (dtreeOpt->SubtreeLeaves() > 1))

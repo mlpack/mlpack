@@ -73,7 +73,7 @@ class DTree
    * @param data Dataset to build tree on.
    */
   DTree(MatType& data);
-
+  
   /**
    * Create a child node of a density estimation tree given the bounding box
    * specified by maxVals and minVals, using the size given in start and end and
@@ -154,7 +154,7 @@ class DTree
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
-  TagType TagTree(const TagType tag = 0);
+  TagType TagTree(const TagType& tag = 0);
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for
@@ -271,13 +271,9 @@ class DTree
 
   //! Return the maximum values.
   const VecType& MaxVals() const { return maxVals; }
-  //! Modify the maximum values.
-  VecType& MaxVals() { return maxVals; }
 
   //! Return the minimum values.
   const VecType& MinVals() const { return minVals; }
-  //! Modify the minimum values.
-  VecType& MinVals() { return minVals; }
 
   /**
    * Serialize the density estimation tree.
