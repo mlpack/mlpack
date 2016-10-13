@@ -12,7 +12,8 @@
 using namespace mlpack;
 using namespace det;
 
-DTree::DTree() :
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::DTree() :
     start(0),
     end(0),
     splitDim(size_t(-1)),
@@ -31,9 +32,11 @@ DTree::DTree() :
 
 
 // Root node initializers
-DTree::DTree(const arma::vec& maxVals,
-             const arma::vec& minVals,
-             const size_t totalPoints) :
+
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
+                                        const VecType& minVals,
+                                        const size_t totalPoints) :
     start(0),
     end(totalPoints),
     maxVals(maxVals),
@@ -52,7 +55,8 @@ DTree::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-DTree::DTree(arma::mat& data) :
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
     splitDim(size_t(-1)),
@@ -88,11 +92,12 @@ DTree::DTree(arma::mat& data) :
 
 
 // Non-root node initializers
-DTree::DTree(const arma::vec& maxVals,
-             const arma::vec& minVals,
-             const size_t start,
-             const size_t end,
-             const double logNegError) :
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
+                                        const VecType& minVals,
+                                        const size_t start,
+                                        const size_t end,
+                                        const double logNegError) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -111,11 +116,12 @@ DTree::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-DTree::DTree(const arma::vec& maxVals,
-             const arma::vec& minVals,
-             const size_t totalPoints,
-             const size_t start,
-             const size_t end) :
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
+                                        const VecType& minVals,
+                                        const size_t totalPoints,
+                                        const size_t start,
+                                        const size_t end) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -134,7 +140,8 @@ DTree::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-DTree::~DTree()
+template <typename MatType, typename VecType, typename TagType>
+DTree<MatType, VecType, TagType>::~DTree()
 {
   delete left;
   delete right;
@@ -142,7 +149,8 @@ DTree::~DTree()
 
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
-double DTree::LogNegativeError(const size_t totalPoints) const
+template <typename MatType, typename VecType, typename TagType>
+double DTree<MatType, VecType, TagType>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   double err = 2 * std::log((double) (end - start)) -
@@ -162,12 +170,13 @@ double DTree::LogNegativeError(const size_t totalPoints) const
 // This function finds the best split with respect to the L2-error, by trying
 // all possible splits.  The dataset is the full data set but the start and
 // end are used to obtain the point in this node.
-bool DTree::FindSplit(const arma::mat& data,
-                      size_t& splitDim,
-                      double& splitValue,
-                      double& leftError,
-                      double& rightError,
-                      const size_t minLeafSize) const
+template <typename MatType, typename VecType, typename TagType>
+bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
+                                                 size_t& splitDim,
+                                                 ElemType& splitValue,
+                                                 double& leftError,
+                                                 double& rightError,
+                                                 const size_t minLeafSize) const
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
@@ -180,12 +189,20 @@ bool DTree::FindSplit(const arma::mat& data,
   bool splitFound = false;
 
   // Loop through each dimension.
-  for (size_t dim = 0; dim < maxVals.n_elem; dim++)
+#ifdef _WIN32
+  #pragma omp parallel for default(none) \
+    shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
+  for (intmax_t dim = 0; fold < (intmax_t) maxVals.n_elem; ++dim)
+#else
+  #pragma omp parallel for default(none) \
+    shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
+  for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
+#endif
   {
     // Have to deal with REAL, INTEGER, NOMINAL data differently, so we have to
     // think of how to do that...
-    const double min = minVals[dim];
-    const double max = maxVals[dim];
+    const ElemType min = minVals[dim];
+    const ElemType max = maxVals[dim];
 
     // If there is nothing to split in this dimension, move on.
     if (max - min == 0.0)
@@ -197,7 +214,7 @@ bool DTree::FindSplit(const arma::mat& data,
     double minDimError = std::pow(points, 2.0) / (max - min);
     double dimLeftError = 0.0; // For -Wuninitialized.  These variables will
     double dimRightError = 0.0; // always be set to something else before use.
-    double dimSplitValue = 0.0;
+    ElemType dimSplitValue = 0.0;
 
     // Find the log volume of all the other dimensions.
     double volumeWithoutDim = logVolume - std::log(max - min);
@@ -214,7 +231,7 @@ bool DTree::FindSplit(const arma::mat& data,
     {
       // This makes sense for real continuous data.  This kinda corrupts the
       // data and estimation if the data is ordinal.
-      const double split = (dimVec[i] + dimVec[i + 1]) / 2.0;
+      const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
 
       if (split == dimVec[i])
         continue; // We can't split here (two points are the same).
@@ -269,10 +286,11 @@ bool DTree::FindSplit(const arma::mat& data,
   return splitFound;
 }
 
-size_t DTree::SplitData(arma::mat& data,
-                        const size_t splitDim,
-                        const double splitValue,
-                        arma::Col<size_t>& oldFromNew) const
+template <typename MatType, typename VecType, typename TagType>
+size_t DTree<MatType, VecType, TagType>::SplitData(MatType& data,
+                                                   const size_t splitDim,
+                                                   const double splitValue,
+                                                   arma::Col<size_t>& oldFromNew) const
 {
   // Swap all columns such that any columns with value in dimension splitDim
   // less than or equal to splitValue are on the left side, and all others are
@@ -303,11 +321,12 @@ size_t DTree::SplitData(arma::mat& data,
 }
 
 // Greedily expand the tree
-double DTree::Grow(arma::mat& data,
-                   arma::Col<size_t>& oldFromNew,
-                   const bool useVolReg,
-                   const size_t maxLeafSize,
-                   const size_t minLeafSize)
+template <typename MatType, typename VecType, typename TagType>
+double DTree<MatType, VecType, TagType>::Grow(MatType& data,
+                                              arma::Col<size_t>& oldFromNew,
+                                              const bool useVolReg,
+                                              const size_t maxLeafSize,
+                                              const size_t minLeafSize)
 {
   Log::Assert(data.n_rows == maxVals.n_elem);
   Log::Assert(data.n_rows == minVals.n_elem);
@@ -450,10 +469,10 @@ double DTree::Grow(arma::mat& data,
 }
 
 
-double DTree::PruneAndUpdate(const double oldAlpha,
-                             const size_t points,
-                             const bool useVolReg)
-
+template <typename MatType, typename VecType, typename TagType>
+double DTree<MatType, VecType, TagType>::PruneAndUpdate(const double oldAlpha,
+                                                        const size_t points,
+                                                        const bool useVolReg)
 {
   // Compute gT.
   if (subtreeLeaves == 1) // If we are a leaf...
@@ -565,7 +584,8 @@ double DTree::PruneAndUpdate(const double oldAlpha,
 //
 // Future improvement: Open up the range with epsilons on both sides where
 // epsilon depends on the density near the boundary.
-bool DTree::WithinRange(const arma::vec& query) const
+template <typename MatType, typename VecType, typename TagType>
+bool DTree<MatType, VecType, TagType>::WithinRange(const VecType& query) const
 {
   for (size_t i = 0; i < query.n_elem; ++i)
     if ((query[i] < minVals[i]) || (query[i] > maxVals[i]))
@@ -575,7 +595,8 @@ bool DTree::WithinRange(const arma::vec& query) const
 }
 
 
-double DTree::ComputeValue(const arma::vec& query) const
+template <typename MatType, typename VecType, typename TagType>
+double DTree<MatType, VecType, TagType>::ComputeValue(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -607,35 +628,9 @@ double DTree::ComputeValue(const arma::vec& query) const
 }
 
 
-void DTree::WriteTree(FILE *fp, const size_t level) const
-{
-  if (subtreeLeaves > 1)
-  {
-    fprintf(fp, "\n");
-    for (size_t i = 0; i < level; ++i)
-      fprintf(fp, "|\t");
-    fprintf(fp, "Var. %zu > %lg", splitDim, splitValue);
-
-    right->WriteTree(fp, level + 1);
-
-    fprintf(fp, "\n");
-    for (size_t i = 0; i < level; ++i)
-      fprintf(fp, "|\t");
-    fprintf(fp, "Var. %zu <= %lg ", splitDim, splitValue);
-
-    left->WriteTree(fp, level);
-  }
-  else // If we are a leaf...
-  {
-    fprintf(fp, ": f(x)=%lg", std::exp(std::log(ratio) - logVolume));
-    if (bucketTag != -1)
-      fprintf(fp, " BT:%d", bucketTag);
-  }
-}
-
-
 // Index the buckets for possible usage later.
-int DTree::TagTree(const int tag)
+template <typename MatType, typename VecType, typename TagType>
+TagType DTree<MatType, VecType, TagType>::TagTree(const TagType tag)
 {
   if (subtreeLeaves == 1)
   {
@@ -650,7 +645,8 @@ int DTree::TagTree(const int tag)
 }
 
 
-int DTree::FindBucket(const arma::vec& query) const
+template <typename MatType, typename VecType, typename TagType>
+TagType DTree<MatType, VecType, TagType>::FindBucket(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -670,8 +666,8 @@ int DTree::FindBucket(const arma::vec& query) const
   }
 }
 
-
-void DTree::ComputeVariableImportance(arma::vec& importances) const
+template <typename MatType, typename VecType, typename TagType>
+void DTree<MatType, VecType, TagType>::ComputeVariableImportance(arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -697,3 +693,37 @@ void DTree::ComputeVariableImportance(arma::vec& importances) const
     nodes.push(curNode.Right());
   }
 }
+
+template <typename MatType, typename VecType, typename TagType>
+template <typename Archive>
+void DTree<MatType, VecType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  using data::CreateNVP;
+  
+  ar & CreateNVP(start, "start");
+  ar & CreateNVP(end, "end");
+  ar & CreateNVP(maxVals, "maxVals");
+  ar & CreateNVP(minVals, "minVals");
+  ar & CreateNVP(splitDim, "splitDim");
+  ar & CreateNVP(splitValue, "splitValue");
+  ar & CreateNVP(logNegError, "logNegError");
+  ar & CreateNVP(subtreeLeavesLogNegError, "subtreeLeavesLogNegError");
+  ar & CreateNVP(subtreeLeaves, "subtreeLeaves");
+  ar & CreateNVP(root, "root");
+  ar & CreateNVP(ratio, "ratio");
+  ar & CreateNVP(logVolume, "logVolume");
+  ar & CreateNVP(bucketTag, "bucketTag");
+  ar & CreateNVP(alphaUpper, "alphaUpper");
+  
+  if (Archive::is_loading::value)
+  {
+    if (left)
+      delete left;
+    if (right)
+      delete right;
+  }
+  
+  ar & CreateNVP(left, "left");
+  ar & CreateNVP(right, "right");
+}
+

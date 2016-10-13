@@ -4,7 +4,7 @@
 set(SOURCES
   # the DET class
   dtree.hpp
-  dtree.cpp
+  dtree_impl.hpp
 
   # the util file
   dt_utils.hpp
