@@ -518,6 +518,12 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
+// Don't perform any HDF5 tests on Armadillo 4.300-4.400 (inclusive).  A bug
+// causes loading to fail.
+#if ((ARMA_VERSION_MAJOR == 4) && \
+        (ARMA_VERSION_MINOR < 300 || ARMA_VERSION_MINOR > 400)) || \
+    (ARMA_VERSION_MAJOR >= 5)
+
 #if defined(ARMA_USE_HDF5)
 /**
  * Make sure load as HDF5 is successful.
@@ -648,6 +654,8 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
   BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
   Log::Warn.ignoreInput = false;
 }
+#endif
+
 #endif
 
 /**
