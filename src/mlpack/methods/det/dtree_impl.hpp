@@ -250,12 +250,12 @@ bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
 
   // Loop through each dimension.
 #ifdef _WIN32
-  #pragma omp parallel for default(none) \
-    shared(minError, splitFound, points, data, minVals, maxVals, minLeafSize, maxLeafSize)
+  #pragma omp parallel for default(shared) \
+    shared(splitValue, splitDim, data)
   for (intmax_t dim = 0; dim < (intmax_t) maxVals.n_elem; ++dim)
 #else
-  #pragma omp parallel for default(none) \
-    shared(minError, splitFound, points, data, minVals, maxVals, minLeafSize, maxLeafSize)
+  #pragma omp parallel for default(shared) \
+    shared(splitValue, splitDim, data)
   for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
 #endif
   {
@@ -327,17 +327,20 @@ bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
 
     double actualMinDimError = std::log(minDimError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
 
-#pragma omp critical
+#pragma omp atomic
     if ((actualMinDimError > minError) && dimSplitFound)
     {
-      // Calculate actual error (in logspace) by adding terms back to our
-      // estimate.
-      minError = actualMinDimError;
-      splitDim = dim;
-      splitValue = dimSplitValue;
-      leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
-      rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
-      splitFound = true;
+#pragma omp critical DTreeFindUpdate
+      {
+        // Calculate actual error (in logspace) by adding terms back to our
+        // estimate.
+        minError = actualMinDimError;
+        splitDim = dim;
+        splitValue = dimSplitValue;
+        leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
+        rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
+        splitFound = true;
+      }
     } // end if better split found in this dimension.
   }
 
