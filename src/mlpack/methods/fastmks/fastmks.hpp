@@ -110,7 +110,8 @@ class FastMKS
    * necessary), so this is the constructor to use when copies absolutely must
    * be avoided.
    *
-   * Deprecated.
+   * Deprecated. This will be removed in mlpack 3.0.0!
+   * Constructor taking a reference to the reference tree are preferred.
    *
    * @param referenceTree Tree built on reference data.
    * @param single Whether or not to run single-tree search.
@@ -181,6 +182,9 @@ class FastMKS
    * of the tree, so you do not need to delete it!  This will throw an exception
    * if the model is searching in naive mode (i.e. if Naive() == true).
    *
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The Train() method taking a reference to the reference tree is preferred.
+   *
    * @param tree Tree to use as reference data.
    */
   void Train(Tree* referenceTree);
@@ -250,7 +254,8 @@ class FastMKS
    * here are with respect to the modified input matrix (that is,
    * queryTree->Dataset()).
    *
-   * Deprecated.
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The Search() method taking a reference to the query tree is preferred.
    *
    * @param queryTree Tree built on query points.
    * @param k The number of maximum kernels to find.

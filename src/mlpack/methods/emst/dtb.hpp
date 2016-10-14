@@ -142,7 +142,8 @@ class DualTreeBoruvka
    * naive computation, construct a tree with all the points in one leaf (i.e.
    * leafSize = number of points).
    *
-   * Deprecated.
+   * Deprecated. This will be removed in mlpack 3.0.0!
+   * Constructors taking a reference to the tree are preferred.
    *
    * @note
    * Because tree-building (at least with BinarySpaceTree) modifies the ordering
@@ -239,7 +240,8 @@ class DualTreeBoruvka
    * This function resets the values in the nodes of the tree nearest neighbor
    * distance, and checks for fully connected nodes.
    *
-   * Deprecated.
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The CleanupHelper() method taking a reference to the tree is preferred.
    *
    */
   void CleanupHelper(Tree* tree);
