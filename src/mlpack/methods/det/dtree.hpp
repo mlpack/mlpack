@@ -37,7 +37,6 @@ namespace det /** Density Estimation Trees */ {
  * @endcode
  */
 template <typename MatType,
-          typename VecType,
           typename TagType = int>
 class DTree
 {
@@ -46,6 +45,7 @@ class DTree
    * The actual, underlying type we're working with
    */
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatType::vec_type  VecType;
   
   /**
    * Create an empty density estimation tree.

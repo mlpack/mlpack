@@ -25,8 +25,8 @@ namespace det {
  * @param numClasses Number of classes in dataset.
  * @param leafClassMembershipFile Name of file to print to (optional).
  */
-template <typename MatType, typename VecType, typename TagType>
-void PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
+template <typename MatType, typename TagType>
+void PrintLeafMembership(DTree<MatType, TagType>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
                          const size_t numClasses,
@@ -40,8 +40,8 @@ void PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
  * @param dtree Density tree to use.
  * @param viFile Name of file to print to (optional).
  */
-template <typename MatType, typename VecType, typename TagType>
-void PrintVariableImportance(const DTree<MatType, VecType, TagType>* dtree,
+template <typename MatType, typename TagType>
+void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                              const std::string viFile = "");
 
 /**
@@ -56,13 +56,13 @@ void PrintVariableImportance(const DTree<MatType, VecType, TagType>* dtree,
  * @param minLeafSize Minimum number of points allowed in a leaf.
  * @param unprunedTreeOutput Filename to print unpruned tree to (optional).
  */
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>* Trainer(MatType& dataset,
-                                          const size_t folds,
-                                          const bool useVolumeReg = false,
-                                          const size_t maxLeafSize = 10,
-                                          const size_t minLeafSize = 5,
-                                          const std::string unprunedTreeOutput = "");
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>* Trainer(MatType& dataset,
+                                 const size_t folds,
+                                 const bool useVolumeReg = false,
+                                 const size_t maxLeafSize = 10,
+                                 const size_t minLeafSize = 5,
+                                 const std::string unprunedTreeOutput = "");
 
 } // namespace det
 } // namespace mlpack

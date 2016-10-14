@@ -32,63 +32,10 @@ namespace detail
     ElemType    splitVal;
     size_t      splitDimension;
   };
-  
-  /**
-   * We need that function, to be able to specialize it for sparse matrices
-   * in a way which is much faster then usual iteration.
-   */
-  template <typename MatType, typename VecType>
-  void ExtractMinMax(const MatType& data,
-                     VecType& minVals,
-                     VecType& maxVals)
-  {
-    // Initialize to first column; values will be overwritten if necessary.
-    maxVals = data.col(0);
-    minVals = data.col(0);
-    
-    // Loop over data to extract maximum and minimum values in each dimension.
-    for (size_t i = 1; i < data.n_cols; ++i)
-    {
-      for (size_t j = 0; j < data.n_rows; ++j)
-      {
-        if (data(j, i) > maxVals[j])
-          maxVals[j] = data(j, i);
-        if (data(j, i) < minVals[j])
-          minVals[j] = data(j, i);
-      }
-    }
-  }
-  
-  /**
-   * Here is the optimized specialization
-   */
-  template <typename ElemType>
-  void ExtractMinMax(const arma::SpMat<ElemType>& data,
-                     arma::SpCol<ElemType>& minVals,
-                     arma::SpCol<ElemType>& maxVals)
-  {
-    // Initialize to first column; values will be overwritten if necessary.
-    maxVals = data.col(0);
-    minVals = data.col(0);
-    
-    typename arma::sp_mat::iterator dataEnd = data.end();
-    
-    // Loop over data to extract maximum and minimum values in each dimension.
-    for (typename arma::sp_mat::iterator i = data.begin(); i != dataEnd; ++i)
-    {
-      size_t j = i.row();
-      if (i.col() == 0)
-        continue; // we've already taken these values.
-      else if (*i > maxVals[j])
-        maxVals[j] = *i;
-      else if (*i < minVals[j])
-        minVals[j] = *i;
-    }
-  }
 };
 
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::DTree() :
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree() :
     start(0),
     end(0),
     splitDim(size_t(-1)),
@@ -108,10 +55,10 @@ DTree<MatType, VecType, TagType>::DTree() :
 
 // Root node initializers
 
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
-                                        const VecType& minVals,
-                                        const size_t totalPoints) :
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const VecType& maxVals,
+                               const VecType& minVals,
+                               const size_t totalPoints) :
     start(0),
     end(totalPoints),
     maxVals(maxVals),
@@ -130,8 +77,8 @@ DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::DTree(MatType & data) :
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
     splitDim(size_t(-1)),
@@ -146,17 +93,31 @@ DTree<MatType, VecType, TagType>::DTree(MatType & data) :
     left(NULL),
     right(NULL)
 {
-  detail::ExtractMinMax(data, minVals, maxVals);
+  maxVals = data.col(0);
+  minVals = data.col(0);
+  
+  typename MatType::row_col_iterator dataEnd = data.end_row_col();
+  
+  // Loop over data to extract maximum and minimum values in each dimension.
+  for (typename MatType::row_col_iterator i = data.begin_row_col(); i != dataEnd; ++i)
+  {
+    size_t j = i.row();
+    if (*i > maxVals[j])
+      maxVals[j] = *i;
+    else if (*i < minVals[j])
+      minVals[j] = *i;
+  }
+
   logNegError = LogNegativeError(data.n_cols);
 }
 
 // Non-root node initializers
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
-                                        const VecType& minVals,
-                                        const size_t start,
-                                        const size_t end,
-                                        const double logNegError) :
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const VecType& maxVals,
+                               const VecType& minVals,
+                               const size_t start,
+                               const size_t end,
+                               const double logNegError) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -175,12 +136,12 @@ DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
-                                        const VecType& minVals,
-                                        const size_t totalPoints,
-                                        const size_t start,
-                                        const size_t end) :
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const VecType& maxVals,
+                               const VecType& minVals,
+                               const size_t totalPoints,
+                               const size_t start,
+                               const size_t end) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -199,8 +160,8 @@ DTree<MatType, VecType, TagType>::DTree(const VecType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>::~DTree()
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::~DTree()
 {
   delete left;
   delete right;
@@ -208,8 +169,8 @@ DTree<MatType, VecType, TagType>::~DTree()
 
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
-template <typename MatType, typename VecType, typename TagType>
-double DTree<MatType, VecType, TagType>::LogNegativeError(const size_t totalPoints) const
+template <typename MatType, typename TagType>
+double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   double err = 2 * std::log((double) (end - start)) -
@@ -230,13 +191,13 @@ double DTree<MatType, VecType, TagType>::LogNegativeError(const size_t totalPoin
 // This function finds the best split with respect to the L2-error, by trying
 // all possible splits.  The dataset is the full data set but the start and
 // end are used to obtain the point in this node.
-template <typename MatType, typename VecType, typename TagType>
-bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
-                                                 size_t& splitDim,
-                                                 ElemType& splitValue,
-                                                 double& leftError,
-                                                 double& rightError,
-                                                 const size_t minLeafSize) const
+template <typename MatType, typename TagType>
+bool DTree<MatType, TagType>::FindSplit(const MatType& data,
+                                        size_t& splitDim,
+                                        ElemType& splitValue,
+                                        double& leftError,
+                                        double& rightError,
+                                        const size_t minLeafSize) const
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
@@ -280,7 +241,7 @@ bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
     double volumeWithoutDim = logVolume - std::log(max - min);
 
     // Get the values for the dimension.
-    VecType dimVec = data.row(dim).subvec(start, end - 1);
+    typename MatType::row_type dimVec = data.row(dim).subvec(start, end - 1);
 
     // Sort the values in ascending order.
     dimVec = arma::sort(dimVec);
@@ -347,11 +308,11 @@ bool DTree<MatType, VecType, TagType>::FindSplit(const MatType& data,
   return splitFound;
 }
 
-template <typename MatType, typename VecType, typename TagType>
-size_t DTree<MatType, VecType, TagType>::SplitData(MatType& data,
-                                                   const size_t splitDim,
-                                                   const ElemType splitValue,
-                                                   arma::Col<size_t>& oldFromNew) const
+template <typename MatType, typename TagType>
+size_t DTree<MatType, TagType>::SplitData(MatType& data,
+                                          const size_t splitDim,
+                                          const ElemType splitValue,
+                                          arma::Col<size_t>& oldFromNew) const
 {
   // Swap all columns such that any columns with value in dimension splitDim
   // less than or equal to splitValue are on the left side, and all others are
@@ -382,12 +343,12 @@ size_t DTree<MatType, VecType, TagType>::SplitData(MatType& data,
 }
 
 // Greedily expand the tree
-template <typename MatType, typename VecType, typename TagType>
-double DTree<MatType, VecType, TagType>::Grow(MatType& data,
-                                              arma::Col<size_t>& oldFromNew,
-                                              const bool useVolReg,
-                                              const size_t maxLeafSize,
-                                              const size_t minLeafSize)
+template <typename MatType, typename TagType>
+double DTree<MatType, TagType>::Grow(MatType& data,
+                                     arma::Col<size_t>& oldFromNew,
+                                     const bool useVolReg,
+                                     const size_t maxLeafSize,
+                                     const size_t minLeafSize)
 {
   Log::Assert(data.n_rows == maxVals.n_elem);
   Log::Assert(data.n_rows == minVals.n_elem);
@@ -527,10 +488,10 @@ double DTree<MatType, VecType, TagType>::Grow(MatType& data,
 }
 
 
-template <typename MatType, typename VecType, typename TagType>
-double DTree<MatType, VecType, TagType>::PruneAndUpdate(const double oldAlpha,
-                                                        const size_t points,
-                                                        const bool useVolReg)
+template <typename MatType, typename TagType>
+double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
+                                               const size_t points,
+                                               const bool useVolReg)
 {
   // Compute gT.
   if (subtreeLeaves == 1) // If we are a leaf...
@@ -642,8 +603,8 @@ double DTree<MatType, VecType, TagType>::PruneAndUpdate(const double oldAlpha,
 //
 // Future improvement: Open up the range with epsilons on both sides where
 // epsilon depends on the density near the boundary.
-template <typename MatType, typename VecType, typename TagType>
-bool DTree<MatType, VecType, TagType>::WithinRange(const VecType& query) const
+template <typename MatType, typename TagType>
+bool DTree<MatType, TagType>::WithinRange(const VecType& query) const
 {
   for (size_t i = 0; i < query.n_elem; ++i)
     if ((query[i] < minVals[i]) || (query[i] > maxVals[i]))
@@ -653,8 +614,8 @@ bool DTree<MatType, VecType, TagType>::WithinRange(const VecType& query) const
 }
 
 
-template <typename MatType, typename VecType, typename TagType>
-double DTree<MatType, VecType, TagType>::ComputeValue(const VecType& query) const
+template <typename MatType, typename TagType>
+double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -680,8 +641,8 @@ double DTree<MatType, VecType, TagType>::ComputeValue(const VecType& query) cons
 
 
 // Index the buckets for possible usage later.
-template <typename MatType, typename VecType, typename TagType>
-TagType DTree<MatType, VecType, TagType>::TagTree(const TagType& tag)
+template <typename MatType, typename TagType>
+TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
 {
   if (subtreeLeaves == 1)
   {
@@ -696,8 +657,8 @@ TagType DTree<MatType, VecType, TagType>::TagTree(const TagType& tag)
 }
 
 
-template <typename MatType, typename VecType, typename TagType>
-TagType DTree<MatType, VecType, TagType>::FindBucket(const VecType& query) const
+template <typename MatType, typename TagType>
+TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -712,8 +673,8 @@ TagType DTree<MatType, VecType, TagType>::FindBucket(const VecType& query) const
   }
 }
 
-template <typename MatType, typename VecType, typename TagType>
-void DTree<MatType, VecType, TagType>::ComputeVariableImportance(arma::vec& importances) const
+template <typename MatType, typename TagType>
+void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -740,9 +701,9 @@ void DTree<MatType, VecType, TagType>::ComputeVariableImportance(arma::vec& impo
   }
 }
 
-template <typename MatType, typename VecType, typename TagType>
+template <typename MatType, typename TagType>
 template <typename Archive>
-void DTree<MatType, VecType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
+void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
   
