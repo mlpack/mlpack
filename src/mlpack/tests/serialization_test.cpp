@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
 BOOST_AUTO_TEST_CASE(DETTest)
 {
   using det::DTree;
-  typedef DTree<arma::mat, arma::vec>   DTreeX;
+  typedef DTree<arma::mat>   DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);

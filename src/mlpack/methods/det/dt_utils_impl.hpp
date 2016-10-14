@@ -10,8 +10,8 @@
 using namespace mlpack;
 using namespace det;
 
-template <typename MatType, typename VecType, typename TagType>
-void mlpack::det::PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
+template <typename MatType, typename TagType>
+void mlpack::det::PrintLeafMembership(DTree<MatType, TagType>* dtree,
                                       const MatType& data,
                                       const arma::Mat<size_t>& labels,
                                       const size_t numClasses,
@@ -25,7 +25,7 @@ void mlpack::det::PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
 
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    const VecType testPoint = data.unsafe_col(i);
+    const typename MatType::vec_type testPoint = data.unsafe_col(i);
     const TagType leafTag = dtree->FindBucket(testPoint);
     const size_t label = labels[i];
     table(leafTag, label) += 1;
@@ -58,8 +58,8 @@ void mlpack::det::PrintLeafMembership(DTree<MatType, VecType, TagType>* dtree,
   return;
 }
 
-template <typename MatType, typename VecType, typename TagType>
-void mlpack::det::PrintVariableImportance(const DTree<MatType, VecType, TagType>* dtree,
+template <typename MatType, typename TagType>
+void mlpack::det::PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                                           const std::string viFile)
 {
   arma::vec imps;
@@ -97,8 +97,8 @@ void mlpack::det::PrintVariableImportance(const DTree<MatType, VecType, TagType>
 
 // This function trains the optimal decision tree using the given number of
 // folds.
-template <typename MatType, typename VecType, typename TagType>
-DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
                                                        const size_t folds,
                                                        const bool useVolumeReg,
                                                        const size_t maxLeafSize,
@@ -106,7 +106,7 @@ DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
                                                        const std::string unprunedTreeOutput)
 {
   // Initialize the tree.
-  DTree<MatType, VecType, TagType> dtree(dataset);
+  DTree<MatType, TagType> dtree(dataset);
 
   // Prepare to grow the tree...
   arma::Col<size_t> oldFromNew(dataset.n_cols);
@@ -211,7 +211,7 @@ DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
     }
 
     // Initialize the tree.
-    DTree<MatType, VecType, TagType> cvDTree(train);
+    DTree<MatType, TagType> cvDTree(train);
 
     // Getting ready to grow the tree...
     arma::Col<size_t> cvOldFromNew(train.n_cols);
@@ -251,7 +251,7 @@ DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
     double cvVal = 0.0;
     for (size_t i = 0; i < test.n_cols; ++i)
     {
-      VecType testPoint = test.unsafe_col(i);
+      typename MatType::vec_type testPoint = test.unsafe_col(i);
       cvVal += cvDTree.ComputeValue(testPoint);
     }
 
@@ -283,7 +283,7 @@ DTree<MatType, VecType, TagType>* mlpack::det::Trainer(MatType& dataset,
   Log::Info << "Optimal alpha: " << optimalAlpha << "." << std::endl;
 
   // Initialize the tree.
-  DTree<MatType, VecType, TagType>* dtreeOpt = new DTree<MatType, VecType, TagType>(dataset);
+  DTree<MatType, TagType>* dtreeOpt = new DTree<MatType, TagType>(dataset);
 
   // Getting ready to grow the tree...
   for (size_t i = 0; i < oldFromNew.n_elem; i++)

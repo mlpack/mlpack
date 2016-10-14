@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         << "(-T) is not specified." << endl;
 
   // Are we training a DET or loading from file?
-  DTree<arma::mat, arma::vec, int>* tree;
+  DTree<arma::mat, int>* tree;
   if (CLI::HasParam("training_file"))
   {
     const string trainSetFile = CLI::GetParam<string>("training_file");
@@ -127,8 +127,7 @@ int main(int argc, char *argv[])
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, arma::vec, int>(trainingData, folds, regularization, maxLeafSize,
-        minLeafSize, "");
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization, maxLeafSize, minLeafSize, "");
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
