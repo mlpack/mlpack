@@ -5,113 +5,98 @@
  * Implementations of some declared functions in
  * the Density Estimation Tree class.
  *
+ * Sparsification and optimizations.
+ * @author Ivan Georgiev (ivan@jonan.info)
+ *
  */
 #include "dtree.hpp"
 #include <stack>
-#include <algorithm>
 #include <vector>
-#include <mlpack/core/tree/perform_split.hpp>
 
 using namespace mlpack;
 using namespace det;
 
-namespace arma
+namespace details
 {
-  template <typename ElemType>
-  SpMat<ElemType> sort(const SpMat<ElemType>& data)
+  /**
+   * This one sorts and scand the given per-dimension extract and puts all splits
+   * in a vector, that can easily be iterated afterwards.
+   */
+  template <typename ElemType, typename RowType>
+  std::vector<std::pair<ElemType, size_t>> ExtractSplits(RowType& row, size_t minLeafSize)
   {
-    typedef std::vector<ElemType> ElemVectorType;
+    typedef std::pair<ElemType, size_t> SplitItem;
+    std::vector<SplitItem>  splitVec;
     
-    // Construct the vector of values / locations...
-    ElemVectorType indexVec(data.begin(), data.end());
+    // We want to do that inplace for optimization purposes;
+    std::sort(row.begin(), row.end());
+    
+    // Ensure the minimum leaf size on both sides. We need to figure out why
+    // there are spikes if this minLeafSize is enforced here...
+    for (size_t i = minLeafSize - 1; i < row.n_elem - minLeafSize; ++i)
+    {
+      // This makes sense for real continuous data.  This kinda corrupts the
+      // data and estimation if the data is ordinal.
+      const ElemType split = (row[i] + row[i + 1]) / 2.0;
+      
+      // Check if we can split here (two points are different)
+      if (split != row[i])
+        splitVec.push_back(SplitItem(split, i));
+    }
+    
+    return splitVec;
+    
+  }
+  
+  // This the custom, sparse optimized implementation of the same routine.
+  template <typename ElemType>
+  std::vector<std::pair<ElemType, size_t>> ExtractSplits(arma::SpRow<ElemType>& row, size_t minLeafSize)
+  {
+    typedef std::pair<ElemType, size_t> SplitItem;
+    std::vector<SplitItem>  splitVec;
+    
+    // Construct a vector of values.
+    std::vector<ElemType> valsVec(row.begin(), row.end());
     
     // ... and sort it!
-    std::sort(indexVec.begin(), indexVec.end());
+    std::sort(valsVec.begin(), valsVec.end());
     
-    // Now prepare the structures for the batch construction of the
-    // sorted sparse row.
-    arma::umat locations(2, data.n_nonzero);
-    arma::Col<ElemType> vals(data.n_nonzero);
+    // Now iterate over the values, taking account for the over-the-zeroes
+    // jump and construct the splits vector.
     ElemType lastVal = -std::numeric_limits<ElemType>::max();
-    size_t padding = 0;
-    
-    for (size_t ii = 0; ii < indexVec.size(); ++ii)
+    size_t padding = 0, zeroes = row.n_elem - row.n_nonzero;
+
+    for (size_t i = 0; i < valsVec.size(); ++i)
     {
-      const ElemType newVal = indexVec[ii];
-      if (lastVal < ElemType(0) && newVal > ElemType(0))
+      const ElemType newVal = valsVec[i];
+      if (lastVal < ElemType(0) && newVal > ElemType(0) && zeroes > 0)
       {
-        assert(padding == 0); // we should arrive here once!
-        padding = data.n_elem - data.n_nonzero;
+        Log::Assert(padding == 0); // we should arrive here once!
+        if (lastVal >= valsVec[0] && // i.e. we're not in the beginning
+            i >= minLeafSize &&
+            i <= row.n_elem - minLeafSize)
+          splitVec.push_back(SplitItem(lastVal / 2.0, i - 1));
+
+        padding = zeroes;
+        lastVal = ElemType(0);
       }
       
-      locations.at(0, ii) = (ii + padding) % data.n_rows;
-      locations.at(1, ii) = (ii + padding) / data.n_rows;
-      vals.at(ii) = lastVal = newVal;
+      if (i + padding >= minLeafSize && i + padding <= row.n_elem - minLeafSize)// the normal case
+      {
+        // This makes sense for real continuous data.  This kinda corrupts the
+        // data and estimation if the data is ordinal.
+        const ElemType split = (lastVal + newVal) / 2.0;
+        
+        // Check if we can split here (two points are different)
+        if (split != newVal)
+          splitVec.push_back(SplitItem(split, i + padding - 1));
+      }
+      
+      lastVal = newVal;
     }
     
-    return SpMat<ElemType>(locations, vals, data.n_rows, data.n_cols, false, false);
-  };
-  
-};
-
-namespace detail
-{
-  template <typename ElemType>
-  class DTreeSplit
-  {
-  public:
-    typedef DTreeSplit<ElemType>    SplitInfo;
-    
-    template<typename VecType>
-    static bool AssignToLeftNode(const VecType& point,
-                                 const SplitInfo& splitInfo)
-    {
-      return point[splitInfo.splitDimension] < splitInfo.splitVal;
-    }
-    
-  private:
-    ElemType    splitVal;
-    size_t      splitDimension;
-  };
-  
-  /**
-   * Get the values for the dimension and sort them. The old implementation:
-   *   dimVec = data.row(dim).subvec(start, end - 1);
-   *   dimVec = arma::sort(dimVec);
-   * was quite inefficient, due to many (3) vector copy operations. This could be a
-   * problem especially for sparse matrices. That's why they have custom implementation.
-   */
-  template <typename MatType>
-  typename MatType::row_type ExtractSortedRow(const MatType& data,
-                                              size_t dim,
-                                              size_t start,
-                                              size_t end)
-  {
-    typedef typename MatType::elem_type ElemType;
-    
-    assert(start < end);
-    
-    typename MatType::row_type dimVec = data(dim, arma::span(start, end - 1));
-    std::sort(dimVec.begin(), dimVec.end());
-    return dimVec;
+    return splitVec;
   }
-  
-  /**
-   * We need a custom implementation for sparse matrix, in order to save sorting of
-   * all these zeroes.
-   */
-  template <typename ElemType>
-  arma::SpRow<ElemType> ExtractSortedRow(const arma::SpMat<ElemType>& data,
-                                         size_t dim,
-                                         size_t start,
-                                         size_t end)
-  {
-    assert(start < end);
-    
-    arma::SpRow<ElemType> dimVec = data(dim, arma::span(start, end - 1));
-    return arma::sort(dimVec);
-  }
-  
 };
 
 template <typename MatType, typename TagType>
@@ -136,8 +121,8 @@ DTree<MatType, TagType>::DTree() :
 // Root node initializers
 
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const VecType& maxVals,
-                               const VecType& minVals,
+DTree<MatType, TagType>::DTree(const StatType& maxVals,
+                               const StatType& minVals,
                                const size_t totalPoints) :
     start(0),
     end(totalPoints),
@@ -161,6 +146,8 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
+    minVals(arma::min(data, 1)),
+    maxVals(arma::max(data, 1)),
     splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
     subtreeLeavesLogNegError(-DBL_MAX),
@@ -173,28 +160,13 @@ DTree<MatType, TagType>::DTree(MatType & data) :
     left(NULL),
     right(NULL)
 {
-  maxVals = data.col(0);
-  minVals = data.col(0);
-  
-  typename MatType::row_col_iterator dataEnd = data.end_row_col();
-  
-  // Loop over data to extract maximum and minimum values in each dimension.
-  for (typename MatType::row_col_iterator i = data.begin_row_col(); i != dataEnd; ++i)
-  {
-    size_t j = i.row();
-    if (*i > maxVals[j])
-      maxVals[j] = *i;
-    else if (*i < minVals[j])
-      minVals[j] = *i;
-  }
-
   logNegError = LogNegativeError(data.n_cols);
 }
 
 // Non-root node initializers
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const VecType& maxVals,
-                               const VecType& minVals,
+DTree<MatType, TagType>::DTree(const StatType& maxVals,
+                               const StatType& minVals,
                                const size_t start,
                                const size_t end,
                                const double logNegError) :
@@ -217,8 +189,8 @@ DTree<MatType, TagType>::DTree(const VecType& maxVals,
 { /* Nothing to do. */ }
 
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const VecType& maxVals,
-                               const VecType& minVals,
+DTree<MatType, TagType>::DTree(const StatType& maxVals,
+                               const StatType& minVals,
                                const size_t totalPoints,
                                const size_t start,
                                const size_t end) :
@@ -256,13 +228,12 @@ double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
   double err = 2 * std::log((double) (end - start)) -
                2 * std::log((double) totalPoints);
 
-  VecType valDiffs = maxVals - minVals;
-  typename VecType::iterator valEnd = valDiffs.end();
-  for (typename VecType::iterator i = valDiffs.begin(); i != valEnd; ++i)
+  StatType valDiffs = maxVals - minVals;
+  for (size_t i = 0;i < valDiffs.n_elem; ++i)
   {
     // Ignore very small dimensions to prevent overflow.
-    if (*i > 1e-50)
-      err -= std::log(*i);
+    if (valDiffs[i] > 1e-50)
+      err -= std::log(valDiffs[i]);
   }
 
   return err;
@@ -279,10 +250,12 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
                                         double& rightError,
                                         const size_t minLeafSize) const
 {
+  typedef std::pair<ElemType, size_t>   SplitItem;
+  
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
-  assert(data.n_rows == maxVals.n_elem);
-  assert(data.n_rows == minVals.n_elem);
+  Log::Assert(data.n_rows == maxVals.n_elem);
+  Log::Assert(data.n_rows == minVals.n_elem);
 
   const size_t points = end - start;
 
@@ -319,44 +292,24 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
     // Find the log volume of all the other dimensions.
     double volumeWithoutDim = logVolume - std::log(max - min);
-    
-    // Get a sorted version of the dimension in interest,
-    // from the given samples range. This is the most expensive step.
-    typename MatType::row_type dimVec = detail::ExtractSortedRow(data,
-                                                                 dim,
-                                                                 start,
-                                                                 end);
-    
-    typename MatType::row_col_iterator dimVecEnd = dimVec.end_row_col();
-    typename MatType::row_col_iterator dI = dimVec.begin_row_col();
 
-    // Find the best split for this dimension.
-    for (;;)
+    // Get the values for splitting. The old implementation:
+    //   dimVec = data.row(dim).subvec(start, end - 1);
+    //   dimVec = arma::sort(dimVec);
+    // could be quite inefficient for sparse matrices, due to copy operations (3).
+    // This one has custom implementation for dense and sparse matrices.
+
+    typename MatType::row_type dimVec = data(dim, arma::span(start, end - 1));
+    std::vector<SplitItem> splitVec = details::ExtractSplits<ElemType>(dimVec, minLeafSize);
+    
+    // Iterate on all the splits for this dimension
+    for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
+         i != splitVec.end();
+         ++i)
     {
-      const size_t position = dI.col();
+      const ElemType split = i->first;
+      const size_t position = i->second;
       
-      // Ensure the minimum leaf size on both sides. We need to figure out why
-      // there are spikes if this minLeafSize is enforced here...
-      if (position >= dimVec.n_cols - minLeafSize)
-        break;
-      if (position < minLeafSize - 1)
-        continue;
-      
-      ElemType split = *dI;
-
-      // In case of sparse matrices and all present values being negative
-      // this can happen - last many elements being 0, so we need to check.
-      if (++dI == dimVecEnd)
-        break;
-      
-      // This makes sense for real continuous data.  This kinda corrupts the
-      // data and estimation if the data is ordinal.
-      split += *dI;
-      split /= 2.0;
-      
-      if (split == *dI)
-        continue; // We can't split here (two points are the same).
-
       // Another way of picking split is using this:
       //   split = leftsplit;
       if ((split - min > 0.0) && (max - split > 0.0))
@@ -475,14 +428,13 @@ double DTree<MatType, TagType>::Grow(MatType& data,
     {
       // Move the data around for the children to have points in a node lie
       // contiguously (to increase efficiency during the training).
-//      const size_t splitIndex = splt::PerformSplit(data, start, end - start, )
       const size_t splitIndex = SplitData(data, dim, splitValueTmp, oldFromNew);
 
       // Make max and min vals for the children.
-      arma::vec maxValsL(maxVals);
-      arma::vec maxValsR(maxVals);
-      arma::vec minValsL(minVals);
-      arma::vec minValsR(minVals);
+      StatType maxValsL(maxVals);
+      StatType maxValsR(maxVals);
+      StatType minValsL(minVals);
+      StatType minValsR(minVals);
 
       maxValsL[dim] = splitValueTmp;
       minValsR[dim] = splitValueTmp;
@@ -524,7 +476,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
   else
   {
     // We can make this a leaf node.
-    assert((size_t) (end - start) >= minLeafSize);
+    Log::Assert((size_t) (end - start) >= minLeafSize);
     subtreeLeaves = 1;
     subtreeLeavesLogNegError = logNegError;
   }

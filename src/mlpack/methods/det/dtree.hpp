@@ -44,8 +44,9 @@ class DTree
   /**
    * The actual, underlying type we're working with
    */
-  typedef typename MatType::elem_type ElemType;
-  typedef typename MatType::vec_type  VecType;
+  typedef typename MatType::elem_type     ElemType;
+  typedef typename MatType::vec_type      VecType;
+  typedef typename arma::Col<ElemType>  StatType;
   
   /**
    * Create an empty density estimation tree.
@@ -60,8 +61,8 @@ class DTree
    * @param minVals Minimum values of the bounding box.
    * @param totalPoints Total number of points in the dataset.
    */
-  DTree(const VecType& maxVals,
-        const VecType& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t totalPoints);
 
   /**
@@ -86,8 +87,8 @@ class DTree
    * @param end End of points represented by this node in the data matrix.
    * @param error log-negative error of this node.
    */
-  DTree(const VecType& maxVals,
-        const VecType& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t start,
         const size_t end,
         const double logNegError);
@@ -103,8 +104,8 @@ class DTree
    * @param start Start of points represented by this node in the data matrix.
    * @param end End of points represented by this node in the data matrix.
    */
-  DTree(const VecType& maxVals,
-        const VecType& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t totalPoints,
         const size_t start,
         const size_t end);
@@ -199,9 +200,9 @@ class DTree
   size_t end;
 
   //! Upper half of bounding box for this node.
-  VecType maxVals;
+  StatType maxVals;
   //! Lower half of bounding box for this node.
-  VecType minVals;
+  StatType minVals;
 
   //! The splitting dimension for this node.
   size_t splitDim;
@@ -270,10 +271,10 @@ class DTree
   TagType BucketTag() const { return subtreeLeaves == 1 ? bucketTag : -1; }
 
   //! Return the maximum values.
-  const VecType& MaxVals() const { return maxVals; }
+  const StatType& MaxVals() const { return maxVals; }
 
   //! Return the minimum values.
-  const VecType& MinVals() const { return minVals; }
+  const StatType& MinVals() const { return minVals; }
 
   /**
    * Serialize the density estimation tree.
