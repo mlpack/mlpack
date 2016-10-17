@@ -199,9 +199,9 @@ class DTree
   size_t end;
 
   //! Upper half of bounding box for this node.
-  arma::vec maxVals;
+  VecType maxVals;
   //! Lower half of bounding box for this node.
-  arma::vec minVals;
+  VecType minVals;
 
   //! The splitting dimension for this node.
   size_t splitDim;
