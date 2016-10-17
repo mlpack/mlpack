@@ -60,8 +60,8 @@ int main()
   NeighborSearch<NearestNeighborSort, ManhattanDistance> nn(data);
 
   // Create the object we will store the nearest neighbors in.
-  arma::Col<size_t> neighbors;
-  arma::vec distances; // We need to store the distance too.
+  arma::Mat<size_t> neighbors;
+  arma::mat distances; // We need to store the distance too.
 
   // Compute the neighbors.
   nn.Search(1, neighbors, distances);
