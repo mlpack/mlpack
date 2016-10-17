@@ -69,6 +69,9 @@ namespace arma {
 
   // unary minus for sparse matrices
   #include "operator_minus.hpp"
+  
+  // sorting of sparse matrices
+  #include "fn_sort_sparse.hpp"
 };
 
 #endif
