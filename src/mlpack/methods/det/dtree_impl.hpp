@@ -8,12 +8,51 @@
  */
 #include "dtree.hpp"
 #include <stack>
-#include <vector>
 #include <algorithm>
+#include <vector>
 #include <mlpack/core/tree/perform_split.hpp>
 
 using namespace mlpack;
 using namespace det;
+
+namespace arma
+{
+  template <typename ElemType>
+  SpMat<ElemType> sort(const SpMat<ElemType>& data)
+  {
+    typedef std::vector<ElemType> ElemVectorType;
+    
+    // Construct the vector of values / locations...
+    ElemVectorType indexVec(data.begin(), data.end());
+    
+    // ... and sort it!
+    std::sort(indexVec.begin(), indexVec.end());
+    
+    // Now prepare the structures for the batch construction of the
+    // sorted sparse row.
+    arma::umat locations(2, data.n_nonzero);
+    arma::Col<ElemType> vals(data.n_nonzero);
+    ElemType lastVal = -std::numeric_limits<ElemType>::max();
+    size_t padding = 0;
+    
+    for (size_t ii = 0; ii < indexVec.size(); ++ii)
+    {
+      const ElemType newVal = indexVec[ii];
+      if (lastVal < ElemType(0) && newVal > ElemType(0))
+      {
+        assert(padding == 0); // we should arrive here once!
+        padding = data.n_elem - data.n_nonzero;
+      }
+      
+      locations.at(0, ii) = (ii + padding) % data.n_rows;
+      locations.at(1, ii) = (ii + padding) / data.n_rows;
+      vals.at(ii) = lastVal = newVal;
+    }
+    
+    return SpMat<ElemType>(locations, vals, data.n_rows, data.n_cols, false, false);
+  };
+  
+};
 
 namespace detail
 {
@@ -57,44 +96,21 @@ namespace detail
     return dimVec;
   }
   
-//  template <typename ElemType>
-//  std::vector<SortedItem<ElemType> > ExtractSortedRow(const arma::SpMat<ElemType>& data,
-//                                                      size_t dim,
-//                                                      size_t start,
-//                                                      size_t end,
-//                                                      size_t padding)
-//  {
-//    typedef SortedItem<ElemType>        SortedType;
-//    
-//    assert(padding > 0);
-//    assert(start < end);
-//    
-//    arma::SpRow<ElemType> dimVec = data(dim, arma::span(start, end - 1));
-//    typename arma::SpRow<ElemType>::iterator dimVecEnd = dimVec.end();
-//    
-//    // Build the vector to be sorted with values in ascending order.
-//    std::vector<SortedType> sortedDim = std::vector<SortedType>();
-//    sortedDim.reserve(dimVec.n_elem / 2);
-//    
-//    // Prepare these for the iteration.
-//    ElemType lastVal = 0;
-//    --padding;
-//    
-//    // Iterate over the row and put only different values, also skipping
-//    // `padding` number of elements from both sides of the row.
-//    for (typename MatType::row_col_iterator di = dimVec.begin_row_col(); di != dimVecEnd; ++di)
-//    {
-//      if (di.col() < padding || di.col() >= dimVec.n_elem - padding)
-//        continue;
-//      //      if (*di == lastVal && sortedDim.size() > 0)
-//      //        continue;
-//      
-//      sortedDim.push_back(lastVal = *di);
-//    }
-//    
-//    std::sort(sortedDim.begin(), sortedDim.end());
-//    return sortedDim;
-//  }
+  /**
+   * We need a custom implementation for sparse matrix, in order to save sorting of
+   * all these zeroes.
+   */
+  template <typename ElemType>
+  arma::SpRow<ElemType> ExtractSortedRow(const arma::SpMat<ElemType>& data,
+                                         size_t dim,
+                                         size_t start,
+                                         size_t end)
+  {
+    assert(start < end);
+    
+    arma::SpRow<ElemType> dimVec = data(dim, arma::span(start, end - 1));
+    return arma::sort(dimVec);
+  }
   
 };
 
@@ -314,20 +330,24 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     typename MatType::row_col_iterator dimVecEnd = dimVec.end_row_col();
     typename MatType::row_col_iterator dI = dimVec.begin_row_col();
 
-    // Find the best split for this dimension.  We need to figure out why
-    // there are spikes if this minLeafSize is enforced here...
+    // Find the best split for this dimension.
     for (;;)
     {
       const size_t position = dI.col();
       
+      // Ensure the minimum leaf size on both sides. We need to figure out why
+      // there are spikes if this minLeafSize is enforced here...
       if (position >= dimVec.n_cols - minLeafSize)
         break;
       if (position < minLeafSize - 1)
         continue;
       
       ElemType split = *dI;
+
+      // In case of sparse matrices and all present values being negative
+      // this can happen - last many elements being 0, so we need to check.
       if (++dI == dimVecEnd)
-        break; // This means we have same values till the end => No split.
+        break;
       
       // This makes sense for real continuous data.  This kinda corrupts the
       // data and estimation if the data is ordinal.
