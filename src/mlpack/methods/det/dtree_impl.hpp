@@ -146,8 +146,8 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
-    minVals(arma::min(data, 1)),
     maxVals(arma::max(data, 1)),
+    minVals(arma::min(data, 1)),
     splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
     subtreeLeavesLogNegError(-DBL_MAX),
@@ -264,11 +264,11 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
   // Loop through each dimension.
 #ifdef _WIN32
-  #pragma omp parallel for default(shared) \
+  #pragma omp parallel for default(none) \
     shared(splitValue, splitDim, data)
   for (intmax_t dim = 0; dim < (intmax_t) maxVals.n_elem; ++dim)
 #else
-  #pragma omp parallel for default(shared) \
+  #pragma omp parallel for default(none) \
     shared(splitValue, splitDim, data)
   for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
 #endif
@@ -341,10 +341,9 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
     double actualMinDimError = std::log(minDimError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
 
-#pragma omp atomic
+#pragma omp critical (DTreeFindUpdate)
     if ((actualMinDimError > minError) && dimSplitFound)
     {
-#pragma omp critical DTreeFindUpdate
       {
         // Calculate actual error (in logspace) by adding terms back to our
         // estimate.
