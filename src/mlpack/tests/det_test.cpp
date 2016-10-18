@@ -141,6 +141,70 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   BOOST_REQUIRE_EQUAL(oTest[3], 2);
   BOOST_REQUIRE_EQUAL(oTest[4], 5);
 }
+
+BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
+{
+  arma::mat realData(4,7);
+  
+  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
+           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
+           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
+           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  
+  arma::sp_mat testData(realData);
+  
+  DTree<arma::sp_mat> testDTree(testData);
+  
+  size_t obDim, trueDim;
+  double trueLeftError, obLeftError, trueRightError, obRightError, obSplit, trueSplit;
+  
+  trueDim = 1;
+  trueSplit = .5;
+  trueLeftError = 2 * log(3.0 / 7.0) - (log(7.0) + log(0.5) + log(8.0) + log(6.0));
+  trueRightError = 2 * log(4.0 / 7.0) - (log(7.0) + log(6.5) + log(8.0) + log(6.0));
+  
+  testDTree.logVolume = log(7.0) + log(7.0) + log(8.0) + log(6.0);
+  BOOST_REQUIRE(testDTree.FindSplit(testData, obDim, obSplit, obLeftError, obRightError, 1));
+  
+  BOOST_REQUIRE(trueDim == obDim);
+  BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
+  
+  BOOST_REQUIRE_CLOSE(trueLeftError, obLeftError, 1e-10);
+  BOOST_REQUIRE_CLOSE(trueRightError, obRightError, 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(TestSparseSplitData)
+{
+  arma::mat realData(4,7);
+  
+  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
+           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
+           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
+           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  
+  arma::sp_mat testData(realData);
+  
+  DTree<arma::sp_mat> testDTree(testData);
+  
+  arma::Col<size_t> oTest(7);
+  oTest << 1 << 2 << 3 << 4 << 5 << 6 << 7;
+  
+  size_t splitDim = 1;
+  double trueSplitVal = .5;
+  
+  size_t splitInd = testDTree.SplitData(testData, splitDim, trueSplitVal, oTest);
+  
+  BOOST_REQUIRE_EQUAL(splitInd, 3); // 2 points on left side.
+  
+  BOOST_REQUIRE_EQUAL(oTest[0], 1);
+  BOOST_REQUIRE_EQUAL(oTest[1], 4);
+  BOOST_REQUIRE_EQUAL(oTest[2], 3);
+  BOOST_REQUIRE_EQUAL(oTest[3], 2);
+  BOOST_REQUIRE_EQUAL(oTest[4], 5);
+  BOOST_REQUIRE_EQUAL(oTest[5], 6);
+  BOOST_REQUIRE_EQUAL(oTest[6], 7);
+}
+
 #endif
 
 // Tests for the public functions.
@@ -305,6 +369,79 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
   BOOST_REQUIRE_CLOSE((double) 0.0, imps[0], 1e-10);
   BOOST_REQUIRE_CLOSE((double) (rError - (rlError + rrError)), imps[1], 1e-10);
   BOOST_REQUIRE_CLOSE((double) (rootError - (lError + rError)), imps[2], 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
+{
+  arma::mat realData(3, 5);
+  
+  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  
+  arma::sp_mat testData(realData);
+  
+  arma::Col<size_t> oTest(5);
+  oTest << 0 << 1 << 2 << 3 << 4;
+  
+  DTree<arma::sp_mat> testDTree(testData);
+  double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
+  alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
+  
+  BOOST_REQUIRE_CLOSE(alpha, numeric_limits<double>::max(), 1e-10);
+  BOOST_REQUIRE(testDTree.SubtreeLeaves() == 1);
+  
+  double rootError = -log(4.0) - log(7.0) - log(7.0);
+  
+  BOOST_REQUIRE_CLOSE(testDTree.LogNegError(), rootError, 1e-10);
+  BOOST_REQUIRE_CLOSE(testDTree.SubtreeLeavesLogNegError(), rootError, 1e-10);
+  BOOST_REQUIRE(testDTree.Left() == NULL);
+  BOOST_REQUIRE(testDTree.Right() == NULL);
+}
+
+BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
+{
+  arma::mat realData(3, 5);
+  
+  Log::Info << "OMP threads: " << omp_get_thread_num() << std::endl;
+  
+  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  
+  arma::vec _q1(3), _q2(3), _q3(3), _q4(3);
+  
+  _q1 << 4 << 2 << 2;
+  _q2 << 5 << 0.25 << 6;
+  _q3 << 5 << 3 << 7;
+  _q4 << 2 << 3 << 3;
+  
+  arma::sp_mat testData(realData);
+  arma::sp_vec q1(_q1), q2(_q2), q3(_q3), q4(_q4);
+  
+  arma::Col<size_t> oTest(5);
+  oTest << 0 << 1 << 2 << 3 << 4;
+  
+  DTree<arma::sp_mat> testDTree(testData);
+  double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
+  
+  double d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
+  double d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
+  double d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
+  
+  BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(q1), 1e-10);
+  BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(q2), 1e-10);
+  BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(q3), 1e-10);
+  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
+  
+  alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
+  
+  double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
+  
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q1), 1e-10);
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q2), 1e-10);
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q3), 1e-10);
+  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
 }
 
 /**

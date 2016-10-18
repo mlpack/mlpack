@@ -46,7 +46,7 @@ class DTree
    */
   typedef typename MatType::elem_type     ElemType;
   typedef typename MatType::vec_type      VecType;
-  typedef typename arma::Col<ElemType>  StatType;
+  typedef typename arma::Col<ElemType>    StatType;
   
   /**
    * Create an empty density estimation tree.

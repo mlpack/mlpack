@@ -99,11 +99,11 @@ void mlpack::det::PrintVariableImportance(const DTree<MatType, TagType>* dtree,
 // folds.
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
-                                                       const size_t folds,
-                                                       const bool useVolumeReg,
-                                                       const size_t maxLeafSize,
-                                                       const size_t minLeafSize,
-                                                       const std::string unprunedTreeOutput)
+                                              const size_t folds,
+                                              const bool useVolumeReg,
+                                              const size_t maxLeafSize,
+                                              const size_t minLeafSize,
+                                              const std::string unprunedTreeOutput)
 {
   // Initialize the tree.
   DTree<MatType, TagType> dtree(dataset);
@@ -170,7 +170,7 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
       << " " << oldAlpha << "." << std::endl;
 
   MatType cvData(dataset);
-  size_t testSize = dataset.n_cols / folds;
+  const size_t testSize = dataset.n_cols / folds;
 
   arma::vec regularizationConstants(prunedSequence.size());
   regularizationConstants.fill(0.0);
@@ -181,17 +181,17 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
   // implementation.
 #ifdef _WIN32
   #pragma omp parallel for default(none) \
-      shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
+      shared(testSize, cvData, prunedSequence, regularizationConstants)
   for (intmax_t fold = 0; fold < (intmax_t) folds; fold++)
 #else
   #pragma omp parallel for default(none) \
-      shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
+      shared(testSize, cvData, prunedSequence, regularizationConstants)
   for (size_t fold = 0; fold < folds; fold++)
 #endif
   {
     // Break up data into train and test sets.
-    size_t start = fold * testSize;
-    size_t end = std::min((size_t) (fold + 1) * testSize, (size_t) cvData.n_cols);
+    const size_t start = fold * testSize;
+    const size_t end = std::min((size_t) (fold + 1) * testSize, (size_t) cvData.n_cols);
 
     MatType test = cvData.cols(start, end - 1);
     MatType train(cvData.n_rows, cvData.n_cols - test.n_cols);
@@ -239,11 +239,10 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
       }
 
       // Update the cv regularization constant.
-      cvRegularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
+      cvRegularizationConstants[i] += 2.0 * cvVal / (double) cvData.n_cols;
 
       // Determine the new alpha value and prune accordingly.
-      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first +
-          prunedSequence[i + 2].first);
+      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first + prunedSequence[i + 2].first);
       cvDTree.PruneAndUpdate(cvOldAlpha, train.n_cols, useVolumeReg);
     }
 
@@ -256,9 +255,9 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
     }
 
     if (prunedSequence.size() > 2)
-      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal / (double) dataset.n_cols;
+      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal / (double) cvData.n_cols;
 
-    #pragma omp critical
+    #pragma omp critical (DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
   }
   Timer::Stop("cross_validation");
