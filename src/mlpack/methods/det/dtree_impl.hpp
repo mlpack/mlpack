@@ -264,12 +264,10 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
   // Loop through each dimension.
 #ifdef _WIN32
-  #pragma omp parallel for default(none) \
-    shared(splitValue, splitDim, data)
+  #pragma omp parallel for default(shared)
   for (intmax_t dim = 0; dim < (intmax_t) maxVals.n_elem; ++dim)
 #else
-  #pragma omp parallel for default(none) \
-    shared(splitValue, splitDim, data)
+  #pragma omp parallel for default(shared)
   for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
 #endif
   {

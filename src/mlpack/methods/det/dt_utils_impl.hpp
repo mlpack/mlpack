@@ -181,11 +181,11 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
   // implementation.
 #ifdef _WIN32
   #pragma omp parallel for default(none) \
-      shared(testSize, cvData, prunedSequence, regularizationConstants)
+      shared(cvData, prunedSequence, regularizationConstants)
   for (intmax_t fold = 0; fold < (intmax_t) folds; fold++)
 #else
   #pragma omp parallel for default(none) \
-      shared(testSize, cvData, prunedSequence, regularizationConstants)
+      shared(cvData, prunedSequence, regularizationConstants)
   for (size_t fold = 0; fold < folds; fold++)
 #endif
   {
