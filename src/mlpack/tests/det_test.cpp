@@ -403,8 +403,6 @@ BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
 {
   arma::mat realData(3, 5);
   
-  Log::Info << "OMP threads: " << omp_get_thread_num() << std::endl;
-  
   realData << 4 << 5 << 7 << 3 << 5 << arma::endr
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
