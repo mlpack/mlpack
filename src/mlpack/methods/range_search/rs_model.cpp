@@ -30,7 +30,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rpTreeRS(NULL),
     maxRPTreeRS(NULL),
     ubTreeRS(NULL),
-    octreeRS(NULL)
+    octreeRS(NULL),
+    leafSize(0)
 {
   // Nothing to do.
 }
@@ -52,6 +53,8 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     Log::Info << "Creating random basis..." << endl;
     math::RandomBasis(q, referenceSet.n_rows);
   }
+
+  this->leafSize = leafSize;
 
   // Clean memory, if necessary.
   CleanMemory();
