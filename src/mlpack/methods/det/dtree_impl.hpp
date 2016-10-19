@@ -22,25 +22,34 @@ namespace details
    * This one sorts and scand the given per-dimension extract and puts all splits
    * in a vector, that can easily be iterated afterwards.
    */
-  template <typename ElemType, typename RowType>
-  std::vector<std::pair<ElemType, size_t>> ExtractSplits(RowType& row, size_t minLeafSize)
+  template <typename MatType>
+  std::vector<std::pair<typename MatType::elem_type, size_t>>
+  ExtractSplits(const MatType& data,
+                size_t dim,
+                size_t start,
+                size_t end,
+                size_t minLeafSize)
   {
+    typedef typename MatType::elem_type ElemType;
     typedef std::pair<ElemType, size_t> SplitItem;
-    std::vector<SplitItem>  splitVec;
+    typename MatType::row_type dimVec = data(dim, arma::span(start, end - 1));
     
-    // We want to do that inplace for optimization purposes;
-    std::sort(row.begin(), row.end());
+    // We sort these, in-place (it's a copy of the data, anyways).
+    std::sort(dimVec.begin(), dimVec.end());
+    
+    // We're going to collect results here.
+    std::vector<SplitItem>  splitVec;
     
     // Ensure the minimum leaf size on both sides. We need to figure out why
     // there are spikes if this minLeafSize is enforced here...
-    for (size_t i = minLeafSize - 1; i < row.n_elem - minLeafSize; ++i)
+    for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
     {
       // This makes sense for real continuous data.  This kinda corrupts the
       // data and estimation if the data is ordinal.
-      const ElemType split = (row[i] + row[i + 1]) / 2.0;
+      const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
       
       // Check if we can split here (two points are different)
-      if (split != row[i])
+      if (split != dimVec[i])
         splitVec.push_back(SplitItem(split, i));
     }
     
@@ -50,21 +59,34 @@ namespace details
   
   // This the custom, sparse optimized implementation of the same routine.
   template <typename ElemType>
-  std::vector<std::pair<ElemType, size_t>> ExtractSplits(arma::SpRow<ElemType>& row, size_t minLeafSize)
+  std::vector<std::pair<ElemType, size_t>>
+  ExtractSplits(const arma::SpMat<ElemType>& data,
+                size_t dim,
+                size_t start,
+                size_t end,
+                size_t minLeafSize)
   {
+    typedef typename arma::SpMat<ElemType>::const_row_iterator  RowIterator;
     typedef std::pair<ElemType, size_t> SplitItem;
-    std::vector<SplitItem>  splitVec;
+    const size_t n_elem = end - start;
     
     // Construct a vector of values.
-    std::vector<ElemType> valsVec(row.begin(), row.end());
+    std::vector<ElemType> valsVec;
+    valsVec.reserve(n_elem);
+    
+    for (RowIterator j(data, dim, start);j.col() < end; ++j)
+      valsVec.push_back(*j);
     
     // ... and sort it!
     std::sort(valsVec.begin(), valsVec.end());
-    
+
+    // We're going to collect our splits here.
+    std::vector<SplitItem>  splitVec;
+
     // Now iterate over the values, taking account for the over-the-zeroes
     // jump and construct the splits vector.
     ElemType lastVal = -std::numeric_limits<ElemType>::max();
-    size_t padding = 0, zeroes = row.n_elem - row.n_nonzero;
+    size_t padding = 0, zeroes = n_elem - valsVec.size();
 
     for (size_t i = 0; i < valsVec.size(); ++i)
     {
@@ -74,14 +96,14 @@ namespace details
         Log::Assert(padding == 0); // we should arrive here once!
         if (lastVal >= valsVec[0] && // i.e. we're not in the beginning
             i >= minLeafSize &&
-            i <= row.n_elem - minLeafSize)
+            i <= n_elem - minLeafSize)
           splitVec.push_back(SplitItem(lastVal / 2.0, i - 1));
 
         padding = zeroes;
         lastVal = ElemType(0);
       }
       
-      if (i + padding >= minLeafSize && i + padding <= row.n_elem - minLeafSize)// the normal case
+      if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)// the normal case
       {
         // This makes sense for real continuous data.  This kinda corrupts the
         // data and estimation if the data is ordinal.
@@ -297,8 +319,11 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // could be quite inefficient for sparse matrices, due to copy operations (3).
     // This one has custom implementation for dense and sparse matrices.
 
-    typename MatType::row_type dimVec = data(dim, arma::span(start, end - 1));
-    std::vector<SplitItem> splitVec = details::ExtractSplits<ElemType>(dimVec, minLeafSize);
+    std::vector<SplitItem> splitVec = details::ExtractSplits(data,
+                                                             dim,
+                                                             start,
+                                                             end,
+                                                             minLeafSize);
     
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
