@@ -74,7 +74,7 @@ namespace details
     std::vector<ElemType> valsVec;
     valsVec.reserve(n_elem);
     
-    for (RowIterator j(data, dim, start);j.col() < end; ++j)
+    for (RowIterator j(data, dim, start);j.row() == dim && j.col() < end; ++j)
       valsVec.push_back(*j);
     
     // ... and sort it!
