@@ -23,12 +23,12 @@ namespace details
    * in a vector, that can easily be iterated afterwards.
    */
   template <typename MatType>
-  std::vector<std::pair<typename MatType::elem_type, size_t>>
-  ExtractSplits(const MatType& data,
-                size_t dim,
-                size_t start,
-                size_t end,
-                size_t minLeafSize)
+  void ExtractSplits(std::vector<std::pair<typename MatType::elem_type, size_t>>& splitVec,
+                     const MatType& data,
+                     size_t dim,
+                     size_t start,
+                     size_t end,
+                     size_t minLeafSize)
   {
     typedef typename MatType::elem_type ElemType;
     typedef std::pair<ElemType, size_t> SplitItem;
@@ -36,9 +36,6 @@ namespace details
     
     // We sort these, in-place (it's a copy of the data, anyways).
     std::sort(dimVec.begin(), dimVec.end());
-    
-    // We're going to collect results here.
-    std::vector<SplitItem>  splitVec;
     
     // Ensure the minimum leaf size on both sides. We need to figure out why
     // there are spikes if this minLeafSize is enforced here...
@@ -52,36 +49,26 @@ namespace details
       if (split != dimVec[i])
         splitVec.push_back(SplitItem(split, i));
     }
-    
-    return splitVec;
-    
   }
   
   // This the custom, sparse optimized implementation of the same routine.
   template <typename ElemType>
-  std::vector<std::pair<ElemType, size_t>>
-  ExtractSplits(const arma::SpMat<ElemType>& data,
-                size_t dim,
-                size_t start,
-                size_t end,
-                size_t minLeafSize)
+  void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
+                     const arma::SpMat<ElemType>& data,
+                     size_t dim,
+                     size_t start,
+                     size_t end,
+                     size_t minLeafSize)
   {
-    typedef typename arma::SpMat<ElemType>::const_row_iterator  RowIterator;
     typedef std::pair<ElemType, size_t> SplitItem;
     const size_t n_elem = end - start;
     
     // Construct a vector of values.
-    std::vector<ElemType> valsVec;
-    valsVec.reserve(n_elem);
-    
-    for (RowIterator j(data, dim, start);j.row() == dim && j.col() < end; ++j)
-      valsVec.push_back(*j);
+    const arma::SpRow<ElemType> row = data(dim, arma::span(start, end - 1));
+    std::vector<ElemType> valsVec(row.begin(), row.end());
     
     // ... and sort it!
     std::sort(valsVec.begin(), valsVec.end());
-
-    // We're going to collect our splits here.
-    std::vector<SplitItem>  splitVec;
 
     // Now iterate over the values, taking account for the over-the-zeroes
     // jump and construct the splits vector.
@@ -116,8 +103,6 @@ namespace details
       
       lastVal = newVal;
     }
-    
-    return splitVec;
   }
 };
 
@@ -319,11 +304,8 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // could be quite inefficient for sparse matrices, due to copy operations (3).
     // This one has custom implementation for dense and sparse matrices.
 
-    std::vector<SplitItem> splitVec = details::ExtractSplits(data,
-                                                             dim,
-                                                             start,
-                                                             end,
-                                                             minLeafSize);
+    std::vector<SplitItem> splitVec;
+    details::ExtractSplits(splitVec, data, dim, start, end, minLeafSize);
     
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
