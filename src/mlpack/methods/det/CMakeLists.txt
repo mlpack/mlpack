@@ -5,6 +5,10 @@ set(SOURCES
   # the DET class
   dtree.hpp
   dtree_impl.hpp
+
+  # Utility files
+  dt_utils.hpp
+  dt_utils_impl.hpp
 )
 
 # add directory name to sources

@@ -23,7 +23,8 @@ namespace details
    * in a vector, that can easily be iterated afterwards.
    */
   template <typename MatType>
-  void ExtractSplits(std::vector<std::pair<typename MatType::elem_type, size_t>>& splitVec,
+  void ExtractSplits(std::vector<
+                      std::pair<typename MatType::elem_type, size_t>>& splitVec,
                      const MatType& data,
                      size_t dim,
                      size_t start,
@@ -90,7 +91,8 @@ namespace details
         lastVal = ElemType(0);
       }
       
-      if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)// the normal case
+      // the normal case
+      if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)
       {
         // This makes sense for real continuous data.  This kinda corrupts the
         // data and estimation if the data is ordinal.
@@ -278,8 +280,6 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
   for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
 #endif
   {
-    // Have to deal with REAL, INTEGER, NOMINAL data differently, so we have to
-    // think of how to do that...
     const ElemType min = minVals[dim];
     const ElemType max = maxVals[dim];
 
@@ -329,8 +329,10 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
         // and because the volume is only dependent on the dimension we are
         // splitting, we can assume V_l is just the range of the left and V_r is
         // just the range of the right.
-        double negLeftError = std::pow(position + 1, 2.0) / (split - min);
-        double negRightError = std::pow(points - position - 1, 2.0) / (max - split);
+        double negLeftError = std::pow(position + 1, 2.0)
+          / (split - min);
+        double negRightError = std::pow(points - position - 1, 2.0)
+          / (max - split);
 
         // If this is better, take it.
         if ((negLeftError + negRightError) >= minDimError)
@@ -344,21 +346,23 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
       }
     }
 
-    double actualMinDimError = std::log(minDimError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
+    double actualMinDimError = std::log(minDimError)
+      - 2 * std::log((double) data.n_cols)
+      - volumeWithoutDim;
 
 #pragma omp critical (DTreeFindUpdate)
     if ((actualMinDimError > minError) && dimSplitFound)
     {
-      {
-        // Calculate actual error (in logspace) by adding terms back to our
-        // estimate.
-        minError = actualMinDimError;
-        splitDim = dim;
-        splitValue = dimSplitValue;
-        leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
-        rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
-        splitFound = true;
-      }
+      // Calculate actual error (in logspace) by adding terms back to our
+      // estimate.
+      minError = actualMinDimError;
+      splitDim = dim;
+      splitValue = dimSplitValue;
+      leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols)
+        - volumeWithoutDim;
+      rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols)
+        - volumeWithoutDim;
+      splitFound = true;
     } // end if better split found in this dimension.
   }
 
@@ -451,8 +455,10 @@ double DTree<MatType, TagType>::Grow(MatType& data,
       left = new DTree(maxValsL, minValsL, start, splitIndex, leftError);
       right = new DTree(maxValsR, minValsR, splitIndex, end, rightError);
 
-      leftG = left->Grow(data, oldFromNew, useVolReg, maxLeafSize, minLeafSize);
-      rightG = right->Grow(data, oldFromNew, useVolReg, maxLeafSize, minLeafSize);
+      leftG = left->Grow(data, oldFromNew, useVolReg, maxLeafSize,
+                         minLeafSize);
+      rightG = right->Grow(data, oldFromNew, useVolReg, maxLeafSize,
+                           minLeafSize);
 
       // Store values of R(T~) and |T~|.
       subtreeLeaves = left->SubtreeLeaves() + right->SubtreeLeaves();
@@ -517,12 +523,15 @@ double DTree<MatType, TagType>::Grow(MatType& data,
 
     if (right->SubtreeLeaves() > 1)
     {
-      const double exponent = 2 * std::log((double) data.n_cols) + logVolume + right->AlphaUpper();
+      const double exponent = 2 * std::log((double) data.n_cols)
+        + logVolume
+        + right->AlphaUpper();
 
       tmpAlphaSum += std::exp(exponent);
     }
 
-    alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) data.n_cols) - logVolume;
+    alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) data.n_cols)
+      - logVolume;
 
     double gT;
     if (useVolReg)
@@ -689,7 +698,9 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
   else
   {
     // Return either of the two children - left or right, depending on the splitValue
-    return (query[splitDim] <= splitValue) ? left->ComputeValue(query) : right->ComputeValue(query);
+    return (query[splitDim] <= splitValue) ?
+      left->ComputeValue(query) :
+      right->ComputeValue(query);
   }
 
   return 0.0;
@@ -725,12 +736,15 @@ TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
   else
   {
     // Return the tag from either of the two children - left or right.
-    return (query[splitDim] <= splitValue) ? left->FindBucket(query) : right->FindBucket(query);
+    return (query[splitDim] <= splitValue) ?
+      left->FindBucket(query) :
+      right->FindBucket(query);
   }
 }
 
 template <typename MatType, typename TagType>
-void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
+void
+DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);

@@ -158,7 +158,8 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
     // Some sanity checks.  It seems that on some datasets, the error does not
     // increase as the tree is pruned but instead stays the same---hence the
     // "<=" in the final assert.
-    Log::Assert((alpha < std::numeric_limits<double>::max()) || (dtree.SubtreeLeaves() == 1));
+    Log::Assert((alpha < std::numeric_limits<double>::max())
+                || (dtree.SubtreeLeaves() == 1));
     Log::Assert(alpha > oldAlpha);
     Log::Assert(dtree.SubtreeLeavesLogNegError() <= treeSeq.second);
   }
@@ -191,7 +192,8 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
   {
     // Break up data into train and test sets.
     const size_t start = fold * testSize;
-    const size_t end = std::min((size_t) (fold + 1) * testSize, (size_t) cvData.n_cols);
+    const size_t end = std::min((size_t) (fold + 1)
+                                * testSize, (size_t) cvData.n_cols);
 
     MatType test = cvData.cols(start, end - 1);
     MatType train(cvData.n_rows, cvData.n_cols - test.n_cols);
@@ -242,7 +244,8 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
       cvRegularizationConstants[i] += 2.0 * cvVal / (double) cvData.n_cols;
 
       // Determine the new alpha value and prune accordingly.
-      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first + prunedSequence[i + 2].first);
+      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first
+                                 + prunedSequence[i + 2].first);
       cvDTree.PruneAndUpdate(cvOldAlpha, train.n_cols, useVolumeReg);
     }
 
@@ -255,7 +258,8 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
     }
 
     if (prunedSequence.size() > 2)
-      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal / (double) cvData.n_cols;
+      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal
+        / (double) cvData.n_cols;
 
     #pragma omp critical (DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
@@ -293,7 +297,11 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
 
   // Grow the tree.
   oldAlpha = -DBL_MAX;
-  alpha = dtreeOpt->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize, minLeafSize);
+  alpha = dtreeOpt->Grow(newDataset,
+                         oldFromNew,
+                         useVolumeReg,
+                         maxLeafSize,
+                         minLeafSize);
 
   // Prune with optimal alpha.
   while ((oldAlpha < optimalAlpha) && (dtreeOpt->SubtreeLeaves() > 1))
