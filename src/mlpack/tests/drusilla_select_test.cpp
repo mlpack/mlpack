@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(DrusillaSelectTest);
 BOOST_AUTO_TEST_CASE(DrusillaSelectExtremeOutlierTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
-  dataset.col(100) += 100; // Make last column very large.
+  dataset.col(99) += 100; // Make last column very large.
 
   // Construct with some reasonable parameters.
   DrusillaSelect<> ds(dataset, 5, 5);
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(DrusillaSelectExtremeOutlierTest)
   // Query with every point except the extreme point.
   arma::mat distances;
   arma::Mat<size_t> neighbors;
-  ds.Search(dataset.cols(0, 99), 1, neighbors, distances);
+  ds.Search(dataset.cols(0, 98), 1, neighbors, distances);
 
   BOOST_REQUIRE_EQUAL(neighbors.n_cols, 99);
   BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
@@ -37,7 +37,9 @@ BOOST_AUTO_TEST_CASE(DrusillaSelectExtremeOutlierTest)
   BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
 
   for (size_t i = 0; i < 99; ++i)
-    BOOST_REQUIRE_EQUAL(neighbors[i], 100);
+  {
+    BOOST_REQUIRE_EQUAL(neighbors[i], 99);
+  }
 }
 
 // If we use only one projection with the number of points equal to what is in
@@ -82,7 +84,6 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
   arma::Mat<size_t> neighbors;
   ds.Search(dataset, 1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
   BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
   BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
   BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
@@ -97,11 +98,11 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   DrusillaSelect<> ds(dataset, 3, 3);
 
-  arma::mat fakeDataset1 = arma::randu<arma::mat>(2, 5);
-  arma::mat fakeDataset2 = arma::randu<arma::mat>(10, 8);
-  DrusillaSelect<> dsXml(fakeDataset1, 10, 10);
+  arma::mat fakeDataset1 = arma::randu<arma::mat>(2, 15);
+  arma::mat fakeDataset2 = arma::randu<arma::mat>(10, 18);
+  DrusillaSelect<> dsXml(fakeDataset1, 5, 3);
   DrusillaSelect<> dsText(2, 2);
-  DrusillaSelect<> dsBinary(5, 6);
+  DrusillaSelect<> dsBinary(5, 2);
   dsBinary.Train(fakeDataset2);
 
   // Now do the serialization.
