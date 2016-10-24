@@ -16,6 +16,7 @@ using namespace mlpack::range;
  */
 RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
+    leafSize(0),
     randomBasis(randomBasis),
     kdTreeRS(NULL),
     coverTreeRS(NULL),
@@ -30,8 +31,7 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     rpTreeRS(NULL),
     maxRPTreeRS(NULL),
     ubTreeRS(NULL),
-    octreeRS(NULL),
-    leafSize(0)
+    octreeRS(NULL)
 {
   // Nothing to do.
 }
