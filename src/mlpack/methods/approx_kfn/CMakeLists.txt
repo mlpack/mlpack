@@ -4,6 +4,9 @@ set(SOURCES
   # DrusillaSelect sources.
   drusilla_select.hpp
   drusilla_select_impl.hpp
+  # QDAFN sources.
+  qdafn.hpp
+  qdafn_impl.hpp
 )
 
 # Add directory name to sources.
