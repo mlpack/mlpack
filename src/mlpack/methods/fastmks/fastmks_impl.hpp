@@ -212,22 +212,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
 {
-  if (naive)
-    throw std::invalid_argument("cannot call FastMKS::Train() with a tree when "
-        "in naive search mode");
-
-  if (setOwner)
-    delete this->referenceSet;
-
-  this->referenceSet = &tree->Dataset();
-  this->metric = metric::IPMetric<KernelType>(tree->Metric().Kernel());
-  this->setOwner = false;
-
-  if (treeOwner && referenceTree)
-    delete referenceTree;
-
-  this->referenceTree = tree;
-  this->treeOwner = false;
+  train(*tree);
 }
 
 template<typename KernelType,
