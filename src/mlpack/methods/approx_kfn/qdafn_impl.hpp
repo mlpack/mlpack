@@ -49,7 +49,7 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     {
       sIndices(j, i) = sortedIndices[j];
       sValues(j, i) = projections(sortedIndices[j], i);
-      candidateSet.slice(l).col(j) = referenceSet.col(sortedIndices[j]);
+      candidateSet.slice(i).col(j) = referenceSet.col(sortedIndices[j]);
     }
   }
 }
