@@ -4,8 +4,8 @@
  *
  * Implementation of QDAFN class methods.
  */
-#ifndef QDAFN_IMPL_HPP
-#define QDAFN_IMPL_HPP
+#ifndef MLPACK_METHODS_APPROX_KFN_QDAFN_IMPL_HPP
+#define MLPACK_METHODS_APPROX_KFN_QDAFN_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "qdafn.hpp"
@@ -13,7 +13,8 @@
 #include <queue>
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
-namespace qdafn {
+namespace mlpack {
+namespace neighbor {
 
 // Constructor.
 template<typename MatType>
@@ -86,6 +87,10 @@ void QDAFN<MatType>::Search(const MatType& querySet,
     arma::Col<size_t> tableLocations = arma::zeros<arma::Col<size_t>>(l);
 
     // Now that the queue is initialized, iterate over m elements.
+    std::vector<std::pair<double, size_t>> v(k, std::make_pair(-1.0,
+        size_t(-1)));
+    std::priority_queue<std::pair<double, size_t>>
+        resultsQueue(std::less<std::pair<double, size_t>>(), std::move(v));
     for (size_t i = 0; i < m; ++i)
     {
       std::pair<size_t, double> p = queue.top();
@@ -99,25 +104,11 @@ void QDAFN<MatType>::Search(const MatType& querySet,
           querySet.col(q), referenceSet.col(referenceIndex));
 
       // Is this neighbor good enough to insert into the results?
-      arma::vec queryDist = distances.unsafe_col(q);
-      arma::Col<size_t> queryIndices = neighbors.unsafe_col(q);
-      const size_t insertPosition =
-          mlpack::neighbor::FurthestNeighborSort::SortDistance(queryDist,
-          queryIndices, dist);
-      bool found = false;
-      for (size_t j = 0; j < neighbors.n_rows; ++j)
+      if (dist > resultsQueue.top().first)
       {
-        if (neighbors(j, q) == referenceIndex)
-        {
-          found = true;
-          break;
-        }
+        resultsQueue.pop();
+        resultsQueue.push(std::make_pair(dist, referenceIndex));
       }
-
-      // SortDistance() returns (size_t() - 1) if we shouldn't add it.
-      if (insertPosition != (size_t() - 1) && !found)
-        InsertNeighbor(distances, neighbors, q, insertPosition, referenceIndex,
-            dist);
 
       // Now (line 14) get the next element and insert into the queue.  Do this
       // by adjusting the previous value.  Don't insert anything if we are at
@@ -131,6 +122,14 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 
         queue.push(std::make_pair(val, p.second));
       }
+    }
+
+    // Extract the results.
+    for (size_t j = 1; j <= k; ++j)
+    {
+      neighbors(k - j, q) = resultsQueue.top().second;
+      distances(k - j, q) = resultsQueue.top().first;
+      resultsQueue.pop();
     }
   }
 }
@@ -160,6 +159,7 @@ void QDAFN<MatType>::InsertNeighbor(arma::mat& distances,
   neighbors(pos, queryIndex) = neighbor;
 }
 
-} // namespace qdafn
+} // namespace neighbor
+} // namespace mlpack
 
 #endif

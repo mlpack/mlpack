@@ -16,12 +16,13 @@
  * }
  * @endcode
  */
-#ifndef QDAFN_HPP
-#define QDAFN_HPP
+#ifndef MLPACK_METHODS_APPROX_KFN_QDAFN_HPP
+#define MLPACK_METHODS_APPROX_KFN_QDAFN_HPP
 
 #include <mlpack/core.hpp>
 
-namespace qdafn {
+namespace mlpack {
+namespace neighbor {
 
 template<typename MatType = arma::mat>
 class QDAFN
@@ -77,7 +78,8 @@ class QDAFN
                       const double distance) const;
 };
 
-} // namespace qdafn
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "qdafn_impl.hpp"

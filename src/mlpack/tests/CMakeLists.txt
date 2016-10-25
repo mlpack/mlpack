@@ -60,6 +60,7 @@ add_executable(mlpack_test
   nystroem_method_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
   randomized_svd_test.cpp

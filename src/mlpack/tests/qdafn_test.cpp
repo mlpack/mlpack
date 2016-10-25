@@ -4,19 +4,20 @@
  *
  * Test the QDAFN functionality.
  */
-#define BOOST_TEST_MODULE QDAFNTest
-
 #include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
+#include "serialization.hpp"
 
 #include <mlpack/core.hpp>
-#include "qdafn.hpp"
+#include <mlpack/methods/approx_kfn/qdafn.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace qdafn;
 using namespace mlpack::neighbor;
+
+BOOST_AUTO_TEST_SUITE(QDAFNTest);
 
 /**
  * With one reference point, make sure that is the one that is returned.
@@ -100,3 +101,5 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
 
   BOOST_REQUIRE_GE(successes, 700);
 }
+
+BOOST_AUTO_TEST_SUITE_END();
