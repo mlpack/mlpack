@@ -29,6 +29,15 @@ class QDAFN
 {
  public:
   /**
+   * Construct the QDAFN object but do not train it.  Be sure to call Train()
+   * before calling Search().
+   *
+   * @param l Number of projections.
+   * @param m Number of elements to store for each projection.
+   */
+  QDAFN(const size_t l, const size_t m);
+
+  /**
    * Construct the QDAFN object with the given reference set (this is the set
    * that will be searched).
    *
@@ -57,9 +66,9 @@ class QDAFN
 
  private:
   //! The number of projections.
-  const size_t l;
+  size_t l;
   //! The number of elements to store for each projection.
-  const size_t m;
+  size_t m;
   //! The random lines we are projecting onto.  Has l columns.
   arma::mat lines;
   //! Projections of each point onto each random line.

@@ -33,7 +33,7 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     "\n\n"
     "Specify a reference set (set to search in) with --reference_file, "
     "specify a query set with --query_file, and specify algorithm parameters "
-    "with --num_tables (-l) and --num_projections (-m) (or don't and defaults "
+    "with --num_tables (-t) and --num_projections (-p) (or don't and defaults "
     "will be used).  The algorithm to be used (either 'ds'---the default---or "
     "'qdafn') may be specified with --algorithm.  Also specify the number of "
     "neighbors to search for with --k.  Each of those options also has short "
@@ -54,13 +54,13 @@ PARAM_STRING_IN("query_file", "File containing query points.", "q", "");
 
 // Model loading and saving.
 PARAM_STRING_IN("input_model_file", "File containing input model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save output model to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save output model to.", "M");
 
-PARAM_INT_IN("k", "Number of furthest neighbors to search for.", "k");
+PARAM_INT_IN("k", "Number of furthest neighbors to search for.", "k", 0);
 
-PARAM_INT_IN("num_tables", "Number of hash tables to use.", "l", 5);
+PARAM_INT_IN("num_tables", "Number of hash tables to use.", "t", 5);
 PARAM_INT_IN("num_projections", "Number of projections to use in each hash "
-    "table.", "m", 5);
+    "table.", "p", 5);
 PARAM_STRING_IN("algorithm", "Algorithm to use: 'ds' or 'qdafn'.", "a", "ds");
 
 PARAM_STRING_IN("neighbors_file", "File to save furthest neighbor indices to.",
@@ -79,10 +79,11 @@ class ApproxKFNModel
 {
  public:
   int type;
-  boost::any model;
+  DrusillaSelect<> ds;
+  QDAFN<> qdafn;
 
   //! Constructor, which does nothing.
-  ApproxKFNModel() : type(0) { /* Nothing to do. */ }
+  ApproxKFNModel() : type(0), ds(1, 1), qdafn(1, 1) { }
 
   //! Serialize the model.
   template<typename Archive>
@@ -90,9 +91,13 @@ class ApproxKFNModel
   {
     ar & data::CreateNVP(type, "type");
     if (type == 0)
-      ar & data::CreateNVP(boost::any_cast<DrusillaSelect<>>(model), "model");
+    {
+      ar & data::CreateNVP(ds, "model");
+    }
     else
-      ar & data::CreateNVP(boost::any_cast<QDAFN<>>(model), "model");
+    {
+      ar & data::CreateNVP(qdafn, "model");
+    }
   }
 };
 
@@ -162,8 +167,7 @@ int main(int argc, char** argv)
       Timer::Start("drusilla_select_construct");
       Log::Info << "Building DrusillaSelect model..." << endl;
       m.type = 0;
-      m.model = boost::any(DrusillaSelect<>(referenceSet, numTables,
-          numProjections));
+      m.ds = DrusillaSelect<>(referenceSet, numTables, numProjections);
       Timer::Stop("drusilla_select_construct");
     }
     else
@@ -171,7 +175,7 @@ int main(int argc, char** argv)
       Timer::Start("qdafn_construct");
       Log::Info << "Building QDAFN model..." << endl;
       m.type = 1;
-      m.model = boost::any(QDAFN<>(referenceSet, numTables, numProjections));
+      m.qdafn = QDAFN<>(referenceSet, numTables, numProjections);
       Timer::Stop("qdafn_construct");
     }
   }
@@ -179,52 +183,41 @@ int main(int argc, char** argv)
   {
     // We must load the model from file.
     const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, m);
+    data::Load(inputModelFile, "approx_kfn", m);
   }
 
   // Now, do we need to do any queries?
   if (CLI::HasParam("k"))
   {
+    arma::mat querySet; // This may or may not be used.
     const size_t k = (size_t) CLI::GetParam<int>("k");
 
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
+    arma::mat& set = CLI::HasParam("query_file") ? querySet : referenceSet;
     if (CLI::HasParam("query_file"))
     {
       const string queryFile = CLI::GetParam<string>("query_file");
-      arma::mat querySet;
-      data::Load(querySet, queryFile);
+      data::Load(queryFile, querySet);
+    }
 
-      if (m.type == 0)
-      {
-        Timer::Start("drusilla_select_search");
-        boost::any_cast<DrusillaSelect<>>(m.model).Search(querySet, k,
-            neighbors, distances);
-        Timer::Stop("drusilla_select_search");
-      }
-      else
-      {
-        Timer::Start("qdafn_search");
-        boost::any_cast<QDAFN<>>(m.model).Search(querySet, k, neighbors,
-            distances);
-        Timer::Stop("qdafn_search");
-      }
+    if (m.type == 0)
+    {
+      Timer::Start("drusilla_select_search");
+      m.ds.Search(set, k, neighbors, distances);
+      Timer::Stop("drusilla_select_search");
     }
     else
     {
-      // We will do search with the reference set.
-      if (m.type == 0)
-        boost::any_cast<DrusillaSelect<>>(m.model).Search(k, neighbors,
-            distances);
-      else
-        boost::any_cast<QDAFN<>>(m.model).Search(k, neighbors, distances);
+      Timer::Start("qdafn_search");
+      m.qdafn.Search(set, k, neighbors, distances);
+      Timer::Stop("qdafn_search");
     }
 
     // Should we calculate error?
     if (CLI::HasParam("calculate_error"))
     {
-      arma::mat& set = CLI::HasParam("query_file") ? querySet : referenceSet;
       arma::mat exactDistances;
       if (CLI::HasParam("exact_distances_file"))
       {
@@ -239,10 +232,10 @@ int main(int argc, char** argv)
         arma::Mat<size_t> exactNeighbors;
         kfn.Search(set, k, exactNeighbors, exactDistances);
 
-        const double averageError = arma::sum(trueDistances / distances.row(0))
+        const double averageError = arma::sum(exactDistances / distances.row(0))
             / distances.n_cols;
-        const double minError = arma::min(trueDistances / distances.row(0));
-        const double maxError = arma::max(trueDistances / distances.row(0));
+        const double minError = arma::min(exactDistances / distances.row(0));
+        const double maxError = arma::max(exactDistances / distances.row(0));
 
         Log::Info << "Average error: " << averageError << "." << endl;
         Log::Info << "Maximum error: " << maxError << "." << endl;
@@ -259,5 +252,5 @@ int main(int argc, char** argv)
 
   // Should we save the model?
   if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), m);
+    data::Save(CLI::GetParam<string>("output_model_file"), "approx_kfn", m);
 }

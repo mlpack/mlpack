@@ -104,7 +104,7 @@ void DrusillaSelect<MatType>::Train(
         const double distortion = arma::norm(refCopy.col(j) - offset * line);
         sums[j] = std::abs(offset) - std::abs(distortion);
         closeAngle[j] =
-            (std::atan(distortion / std::abs(offset)) >= (M_PI / 8.0));
+            (std::atan(distortion / std::abs(offset)) < (M_PI / 8.0));
       }
       else
       {

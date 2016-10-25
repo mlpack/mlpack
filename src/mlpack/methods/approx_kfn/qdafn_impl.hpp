@@ -16,6 +16,10 @@
 namespace mlpack {
 namespace neighbor {
 
+// Non-training constructor.
+template<typename MatType>
+QDAFN<MatType>::QDAFN(const size_t l, const size_t m) : l(l), m(m) { }
+
 // Constructor.
 template<typename MatType>
 QDAFN<MatType>::QDAFN(const MatType& referenceSet,
