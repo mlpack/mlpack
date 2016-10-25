@@ -68,8 +68,8 @@ PARAM_STRING_IN("neighbors_file", "File to save furthest neighbor indices to.",
 PARAM_STRING_IN("distances_file", "File to save furthest neighbor distances to.",
     "d", "");
 
-PARAM_FLAG("calculate_error", "If set, calculate the average distance error.",
-    "e");
+PARAM_FLAG("calculate_error", "If set, calculate the average distance error for"
+    " the first furthest neighbor only.", "e");
 PARAM_STRING_IN("exact_distances_file", "File containing exact distances to "
     "furthest neighbors; this can be used to avoid explicit calculation when "
     "--calculate_error is set.", "x", "");
@@ -178,6 +178,7 @@ int main(int argc, char** argv)
       m.qdafn = QDAFN<>(referenceSet, numTables, numProjections);
       Timer::Stop("qdafn_construct");
     }
+    Log::Info << "Model built." << endl;
   }
   else
   {
@@ -205,15 +206,20 @@ int main(int argc, char** argv)
     if (m.type == 0)
     {
       Timer::Start("drusilla_select_search");
+      Log::Info << "Searching for " << k << " furthest neighbors with "
+          << "DrusillaSelect..." << endl;
       m.ds.Search(set, k, neighbors, distances);
       Timer::Stop("drusilla_select_search");
     }
     else
     {
       Timer::Start("qdafn_search");
+      Log::Info << "Searching for " << k << " furthest neighbors with "
+          << "QDAFN..." << endl;
       m.qdafn.Search(set, k, neighbors, distances);
       Timer::Stop("qdafn_search");
     }
+    Log::Info << "Search complete." << endl;
 
     // Should we calculate error?
     if (CLI::HasParam("calculate_error"))
@@ -228,19 +234,21 @@ int main(int argc, char** argv)
       {
         // Calculate exact distances.  We are guaranteed the reference set is
         // available.
+        Log::Info << "Calculating exact distances..." << endl;
         AllkFN kfn(referenceSet);
         arma::Mat<size_t> exactNeighbors;
-        kfn.Search(set, k, exactNeighbors, exactDistances);
-
-        const double averageError = arma::sum(exactDistances / distances.row(0))
-            / distances.n_cols;
-        const double minError = arma::min(exactDistances / distances.row(0));
-        const double maxError = arma::max(exactDistances / distances.row(0));
-
-        Log::Info << "Average error: " << averageError << "." << endl;
-        Log::Info << "Maximum error: " << maxError << "." << endl;
-        Log::Info << "Minimum error: " << minError << "." << endl;
+        kfn.Search(set, 1, exactNeighbors, exactDistances);
+        Log::Info << "Calculation complete." << endl;
       }
+
+      const double averageError = arma::sum(exactDistances / distances.row(0)) /
+          distances.n_cols;
+      const double minError = arma::min(exactDistances / distances.row(0));
+      const double maxError = arma::max(exactDistances / distances.row(0));
+
+      Log::Info << "Average error: " << averageError << "." << endl;
+      Log::Info << "Maximum error: " << maxError << "." << endl;
+      Log::Info << "Minimum error: " << minError << "." << endl;
     }
 
     // Save results, if desired.
