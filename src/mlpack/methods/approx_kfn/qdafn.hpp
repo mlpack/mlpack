@@ -51,10 +51,11 @@ class QDAFN
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
- private:
-  //! The reference set.
-  const MatType& referenceSet;
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
+ private:
   //! The number of projections.
   const size_t l;
   //! The number of elements to store for each projection.
@@ -69,13 +70,7 @@ class QDAFN
   //! Values of a_i * x for each point in S.
   arma::mat sValues;
 
-  //! Insert a neighbor into a set of results for a given query point.
-  void InsertNeighbor(arma::mat& distances,
-                      arma::Mat<size_t>& neighbors,
-                      const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance) const;
+  arma::cube candidateSet;
 };
 
 } // namespace neighbor
