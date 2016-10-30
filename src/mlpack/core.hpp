@@ -51,6 +51,7 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
+ * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
  * - mlpack_det
