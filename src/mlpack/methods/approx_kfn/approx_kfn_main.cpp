@@ -241,10 +241,12 @@ int main(int argc, char** argv)
         Log::Info << "Calculation complete." << endl;
       }
 
-      const double averageError = arma::sum(exactDistances / distances.row(0)) /
-          distances.n_cols;
-      const double minError = arma::min(exactDistances / distances.row(0));
-      const double maxError = arma::max(exactDistances / distances.row(0));
+      const double averageError = arma::sum(exactDistances.row(0) /
+          distances.row(0)) / distances.n_cols;
+      const double minError = arma::min(exactDistances.row(0) /
+          distances.row(0));
+      const double maxError = arma::max(exactDistances.row(0) /
+          distances.row(0));
 
       Log::Info << "Average error: " << averageError << "." << endl;
       Log::Info << "Maximum error: " << maxError << "." << endl;
