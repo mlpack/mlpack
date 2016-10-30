@@ -176,6 +176,8 @@ void QDAFN<MatType>::Serialize(Archive& ar, const unsigned int /* version */)
   ar & CreateNVP(projections, "projections");
   ar & CreateNVP(sIndices, "sIndices");
   ar & CreateNVP(sValues, "sValues");
+  if (Archive::is_loading::value)
+    candidateSet.clear();
   ar & CreateNVP(candidateSet, "candidateSet");
 }
 
