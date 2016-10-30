@@ -64,6 +64,11 @@ class QDAFN
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+  //! Get the candidate set for the given projection table.
+  const MatType& CandidateSet(const size_t t) const { return candidateSet[t]; }
+  //! Modify the candidate set for the given projection table.  Careful!
+  MatType& CandidateSet(const size_t t) { return candidateSet[t]; }
+
  private:
   //! The number of projections.
   size_t l;
@@ -79,7 +84,8 @@ class QDAFN
   //! Values of a_i * x for each point in S.
   arma::mat sValues;
 
-  arma::cube candidateSet;
+  // Candidate sets; one element in the vector for each table.
+  std::vector<MatType> candidateSet;
 };
 
 } // namespace neighbor

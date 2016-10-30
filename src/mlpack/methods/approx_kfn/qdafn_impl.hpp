@@ -43,9 +43,10 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
   // Loop over each projection and find the top m elements.
   sIndices.set_size(m, l);
   sValues.set_size(m, l);
-  candidateSet.set_size(referenceSet.n_rows, m, l);
+  candidateSet.resize(l);
   for (size_t i = 0; i < l; ++i)
   {
+    candidateSet[i].set_size(referenceSet.n_rows, m);
     arma::uvec sortedIndices = arma::sort_index(projections.col(i), "descend");
 
     // Grab the top m elements.
@@ -53,7 +54,7 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     {
       sIndices(j, i) = sortedIndices[j];
       sValues(j, i) = projections(sortedIndices[j], i);
-      candidateSet.slice(i).col(j) = referenceSet.col(sortedIndices[j]);
+      candidateSet[i].col(j) = referenceSet.col(sortedIndices[j]);
     }
   }
 }
@@ -106,7 +107,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 
       // Calculate distance from query point.
       const double dist = mlpack::metric::EuclideanDistance::Evaluate(
-          querySet.col(q), candidateSet.slice(p.second).col(tableIndex));
+          querySet.col(q), candidateSet[p.second].col(tableIndex));
 
       // Is this neighbor good enough to insert into the results?
       if (dist > resultsQueue.top().first)
