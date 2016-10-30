@@ -76,12 +76,15 @@ void DrusillaSelect<MatType>::Train(
   candidateSet.set_size(referenceSet.n_rows, l * m);
   candidateIndices.set_size(l * m);
 
-  arma::vec dataMean = arma::mean(referenceSet, 1);
+  arma::vec dataMean(arma::mean(referenceSet, 1));
   arma::vec norms(referenceSet.n_cols);
 
-  arma::mat refCopy = referenceSet.each_col() - dataMean;
+  MatType refCopy(referenceSet.n_rows, referenceSet.n_cols);
   for (size_t i = 0; i < refCopy.n_cols; ++i)
-    norms[i] = arma::norm(refCopy.col(i) - dataMean);
+  {
+    refCopy.col(i) = referenceSet.col(i) - dataMean;
+    norms[i] = arma::norm(refCopy.col(i));
+  }
 
   // Find the top m points for each of the l projections...
   for (size_t i = 0; i < l; ++i)
@@ -90,7 +93,7 @@ void DrusillaSelect<MatType>::Train(
     arma::uword maxIndex;
     norms.max(maxIndex);
 
-    arma::vec line = refCopy.col(maxIndex) / arma::norm(refCopy.col(maxIndex));
+    arma::vec line(refCopy.col(maxIndex) / arma::norm(refCopy.col(maxIndex)));
     const size_t n_nonzero = (size_t) arma::sum(norms > 0);
 
     // Calculate distortion and offset and make scores.
@@ -176,7 +179,7 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
   // TreeType.
   metric::EuclideanDistance metric;
   NeighborSearchRules<FurthestNeighborSort, metric::EuclideanDistance,
-      tree::KDTree<metric::EuclideanDistance, tree::EmptyStatistic, arma::mat>>
+      tree::KDTree<metric::EuclideanDistance, tree::EmptyStatistic, MatType>>
       rules(candidateSet, querySet, k, metric, 0, false);
 
   for (size_t q = 0; q < querySet.n_cols; ++q)

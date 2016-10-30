@@ -143,4 +143,23 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   }
 }
 
+// Make sure we can create the object with a sparse matrix.
+BOOST_AUTO_TEST_CASE(SparseTest)
+{
+  arma::sp_mat dataset;
+  dataset.sprandu(50, 1000, 0.3);
+
+  DrusillaSelect<arma::sp_mat> ds(dataset, 5, 10);
+
+  // Run a search.
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  ds.Search(dataset, 3, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
