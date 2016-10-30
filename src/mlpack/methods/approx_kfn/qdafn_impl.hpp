@@ -28,6 +28,15 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     l(l),
     m(m)
 {
+  Train(referenceSet);
+}
+
+// Train the object.
+template<typename MatType>
+void QDAFN<MatType>::Train(const MatType& referenceSet,
+                           const size_t l,
+                           const size_t m)
+{
   // Build tables.  This is done by drawing random points from a Gaussian
   // distribution as the vectors we project onto.  The Gaussian should have zero
   // mean and unit variance.

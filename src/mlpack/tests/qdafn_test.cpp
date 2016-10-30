@@ -102,4 +102,105 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
   BOOST_REQUIRE_GE(successes, 700);
 }
 
+/**
+ * Test re-training method.
+ */
+BOOST_AUTO_TEST_CASE(RetrainTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(25, 500);
+  arma::mat newDataset = arma::randu<arma::mat>(15, 600);
+
+  QDAFN<> qdafn(dataset, 20, 60);
+
+  qdafn.Train(newDataset, 10, 50);
+
+  BOOST_REQUIRE_EQUAL(qdafn.NumProjections(), 10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(qdafn.CandidateSet(i).n_rows, 15);
+    BOOST_REQUIRE_EQUAL(qdafn.CandidateSet(i).n_cols, 50);
+  }
+}
+
+/**
+ * Test serialization of QDAFN.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Use a random dataset.
+  arma::mat dataset = arma::randu<arma::mat>(15, 300);
+
+  QDAFN<> qdafn(dataset, 10, 50);
+
+  arma::mat fakeDataset1 = arma::randu<arma::mat>(10, 200);
+  arma::mat fakeDataset2 = arma::randu<arma::mat>(50, 500);
+  QDAFN<> qdafnXml(fakeDataset1, 5, 10);
+  QDAFN<> qdafnText(6, 50);
+  QDAFN<> qdafnBinary(7, 15);
+  qdafnBinary.Train(fakeDataset2);
+
+  // Serialize the objects.
+  SerializeObjectAll(qdafn, qdafnXml, qdafnText, qdafnBinary);
+
+  // Check that the tables are all the same.
+  BOOST_REQUIRE_EQUAL(qdafnXml.NumProjections(), qdafn.NumProjections());
+  BOOST_REQUIRE_EQUAL(qdafnText.NumProjections(), qdafn.NumProjections());
+  BOOST_REQUIRE_EQUAL(qdafnBinary.NumProjections(), qdafn.NumProjections());
+
+  for (size_t i = 0; i < qdafn.NumProjections(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_rows,
+        qdafn.CandidateSet(i).n_rows);
+    BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_rows,
+        qdafn.CandidateSet(i).n_rows);
+    BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_rows,
+        qdafn.CandidateSet(i).n_rows);
+
+    BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_cols,
+        qdafn.CandidateSet(i).n_cols);
+    BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_cols,
+        qdafn.CandidateSet(i).n_cols);
+    BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_cols,
+        qdafn.CandidateSet(i).n_cols);
+
+    for (size_t j = 0; j < qdafn.CandidateSet(i).n_elem; ++j)
+    {
+      if (std::abs(qdafn.CandidateSet(i)[j]) < 1e-5)
+      {
+        BOOST_REQUIRE_SMALL(qdafnXml.CandidateSet(i)[j], 1e-5);
+        BOOST_REQUIRE_SMALL(qdafnText.CandidateSet(i)[j], 1e-5);
+        BOOST_REQUIRE_SMALL(qdafnBinary.CandidateSet(i)[j], 1e-5);
+      }
+      else
+      {
+        const double value = qdafn.CandidateSet(i)[j];
+        BOOST_REQUIRE_CLOSE(qdafnXml.CandidateSet(i)[j], value, 1e-5);
+        BOOST_REQUIRE_CLOSE(qdafnText.CandidateSet(i)[j], value, 1e-5);
+        BOOST_REQUIRE_CLOSE(qdafnBinary.CandidateSet(i)[j], value, 1e-5);
+      }
+    }
+  }
+}
+
+// Make sure QDAFN works with sparse data.
+BOOST_AUTO_TEST_CASE(SparseTest)
+{
+  arma::sp_mat dataset;
+  dataset.sprandu(200, 1000, 0.3);
+
+  // Create a sparse version.
+  QDAFN<arma::sp_mat> sparse(dataset, 15, 50);
+
+  // Make sure the results are of the right shape.  It's hard to test anything
+  // more than that because we don't have easy-to-check performance guarantees.
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  sparse.Search(dataset, 3, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 1000);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

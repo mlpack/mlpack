@@ -50,6 +50,19 @@ class QDAFN
         const size_t m);
 
   /**
+   * Train the QDAFN model on the given reference set, optionally setting new
+   * parameters for the number of projections/tables (l) and the number of
+   * elements stored for each projection/table (m).
+   *
+   * @param referenceSet Reference set to train on.
+   * @param l Number of projections.
+   * @param m Number of elements to store for each projection.
+   */
+  void Train(const MatType& referenceSet,
+             const size_t l = 0,
+             const size_t m = 0);
+
+  /**
    * Search for the k furthest neighbors of the given query set.  (The query set
    * can contain just one point, that is okay.)  The results will be stored in
    * the given neighbors and distances matrices, in the same format as the
@@ -63,6 +76,9 @@ class QDAFN
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
+
+  //! Get the number of projections.
+  size_t NumProjections() const { return candidateSet.size(); }
 
   //! Get the candidate set for the given projection table.
   const MatType& CandidateSet(const size_t t) const { return candidateSet[t]; }
