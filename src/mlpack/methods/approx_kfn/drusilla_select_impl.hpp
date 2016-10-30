@@ -125,7 +125,7 @@ void DrusillaSelect<MatType>::Train(
       }
     };
 
-    std::vector<Candidate> clist(m, std::make_pair(double(-1.0), size_t(-1)));
+    std::vector<Candidate> clist(m, std::make_pair(double(-DBL_MAX), size_t(-1)));
     std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
         pq(CandidateCmp(), std::move(clist));
 
