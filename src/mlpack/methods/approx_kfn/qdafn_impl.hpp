@@ -20,9 +20,9 @@ namespace neighbor {
 template<typename MatType>
 QDAFN<MatType>::QDAFN(const size_t l, const size_t m) : l(l), m(m)
 {
-  if (l > 0)
+  if (l == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
-  if (m > 0)
+  if (m == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
 }
 
@@ -34,9 +34,9 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     l(l),
     m(m)
 {
-  if (l > 0)
+  if (l == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
-  if (m > 0)
+  if (m == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
 
   Train(referenceSet);
