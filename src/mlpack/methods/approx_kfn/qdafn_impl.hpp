@@ -20,9 +20,9 @@ namespace neighbor {
 template<typename MatType>
 QDAFN<MatType>::QDAFN(const size_t l, const size_t m) : l(l), m(m)
 {
-  if (l > 0)
+  if (l == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
-  if (m > 0)
+  if (m == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
 }
 
@@ -34,9 +34,9 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     l(l),
     m(m)
 {
-  if (l > 0)
+  if (l == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
-  if (m > 0)
+  if (m == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
 
   Train(referenceSet);
@@ -176,6 +176,8 @@ void QDAFN<MatType>::Serialize(Archive& ar, const unsigned int /* version */)
   ar & CreateNVP(projections, "projections");
   ar & CreateNVP(sIndices, "sIndices");
   ar & CreateNVP(sValues, "sValues");
+  if (Archive::is_loading::value)
+    candidateSet.clear();
   ar & CreateNVP(candidateSet, "candidateSet");
 }
 
