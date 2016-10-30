@@ -1,4 +1,4 @@
-### mlpack 2.x.x
+### mlpack 2.1.x
 ###### 2016-??-??
   * Fixed CoverTree to properly handle single-point datasets.
 
