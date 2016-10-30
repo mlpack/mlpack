@@ -450,6 +450,7 @@ if (UNIX)
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
           mlpack_adaboost
+          mlpack_approx_kfn
           mlpack_kfn
           mlpack_knn
           mlpack_krann
