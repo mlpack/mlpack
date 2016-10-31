@@ -1,11 +1,16 @@
 /**
-  * @file single_tree_traverser.hpp
-  * @author Andrew Wells
-  *
-  * A nested class of Rectangle Tree for traversing rectangle type trees
-  * with a given set of rules which indicate the branches to prune and the
-  * order in which to recurse.  This is a depth-first traverser.
-  */
+ * @file single_tree_traverser.hpp
+ * @author Andrew Wells
+ *
+ * A nested class of Rectangle Tree for traversing rectangle type trees
+ * with a given set of rules which indicate the branches to prune and the
+ * order in which to recurse.  This is a depth-first traverser.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_HPP
 

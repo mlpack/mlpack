@@ -5,6 +5,11 @@
  * This file implements the CLI subsystem which is intended to replace FX.
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_CLI_HPP
 #define MLPACK_CORE_UTIL_CLI_HPP
