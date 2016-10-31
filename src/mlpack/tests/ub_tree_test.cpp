@@ -1,3 +1,14 @@
+/**
+ * @file ub_tree_test.cpp
+ * @author Mikhail Lozhnikov
+ *
+ * Tests for the UB tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -347,9 +358,4 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
   }
 }
 
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
 BOOST_AUTO_TEST_SUITE_END();
