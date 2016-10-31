@@ -1,9 +1,6 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  activation_functions_test.cpp
   adaboost_test.cpp
-  adam_test.cpp
-  ada_delta_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   arma_extend_test.cpp
@@ -12,8 +9,6 @@ add_executable(mlpack_test
   binarize_test.cpp
   cf_test.cpp
   cli_test.cpp
-  convolution_test.cpp
-  convolutional_network_test.cpp
   cosine_tree_test.cpp
   decision_stump_test.cpp
   det_test.cpp
@@ -21,7 +16,6 @@ add_executable(mlpack_test
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
-  feedforward_network_test.cpp
   gmm_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
@@ -29,7 +23,6 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   imputation_test.cpp
   ind2sub_test.cpp
-  init_rules_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
@@ -56,7 +49,6 @@ add_executable(mlpack_test
   mlpack_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  network_util_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
@@ -67,10 +59,8 @@ add_executable(mlpack_test
   radical_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
-  recurrent_network_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
-  rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
