@@ -21,6 +21,11 @@
  * to query to find an approximate furthest neighbor.  The strange name is a
  * result of the algorithm being named after a cat.  The cat in question may be
  * viewed at http://www.ratml.org/misc_img/drusilla_fence.png.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_APPROX_KFN_DRUSILLA_SELECT_HPP
 #define MLPACK_METHODS_APPROX_KFN_DRUSILLA_SELECT_HPP

@@ -5,6 +5,11 @@
  * Test the LayerTraits class. Because all of the values are known at compile
  * time, this test is meant to ensure that uses of LayerTraits still compile
  * okay and react as expected.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
