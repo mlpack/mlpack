@@ -1,5 +1,5 @@
-### mlpack 2.x.x
-###### 2016-??-??
+### mlpack 2.1.0
+###### 2016-10-31
   * Fixed CoverTree to properly handle single-point datasets.
 
   * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
