@@ -342,7 +342,8 @@ void CLI::ParseCommandLine(int argc, char** line)
             // If neither has a value, consider it a duplicate flag and remove
             // the duplicate. It's important to not break out of this loop
             // because there might be another duplicate later on in the vector.
-            bpo.options.erase(bpo.options.begin() +  j);
+            bpo.options.erase(bpo.options.begin() + j);
+            --j;
           }
           else
           {
