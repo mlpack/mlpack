@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of Serialize() and inline functions for RSModel.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_IMPL_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_IMPL_HPP
@@ -81,6 +86,10 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
     case UB_TREE:
       ar & CreateNVP(ubTreeRS, "range_search_model");
       break;
+
+    case OCTREE:
+      ar & CreateNVP(octreeRS, "range_search_model");
+      break;
   }
 }
 
@@ -112,6 +121,8 @@ inline const arma::mat& RSModel::Dataset() const
     return maxRPTreeRS->ReferenceSet();
   else if (ubTreeRS)
     return ubTreeRS->ReferenceSet();
+  else if (octreeRS)
+    return octreeRS->ReferenceSet();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -144,6 +155,8 @@ inline bool RSModel::SingleMode() const
     return maxRPTreeRS->SingleMode();
   else if (ubTreeRS)
     return ubTreeRS->SingleMode();
+  else if (octreeRS)
+    return octreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -176,6 +189,8 @@ inline bool& RSModel::SingleMode()
     return maxRPTreeRS->SingleMode();
   else if (ubTreeRS)
     return ubTreeRS->SingleMode();
+  else if (octreeRS)
+    return octreeRS->SingleMode();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -208,6 +223,8 @@ inline bool RSModel::Naive() const
     return maxRPTreeRS->Naive();
   else if (ubTreeRS)
     return ubTreeRS->Naive();
+  else if (octreeRS)
+    return octreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }
@@ -240,6 +257,8 @@ inline bool& RSModel::Naive()
     return maxRPTreeRS->Naive();
   else if (ubTreeRS)
     return ubTreeRS->Naive();
+  else if (octreeRS)
+    return octreeRS->Naive();
 
   throw std::runtime_error("no range search model initialized");
 }

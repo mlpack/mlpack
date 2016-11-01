@@ -6,6 +6,11 @@
  * search as a black box.  The conditions under which this will perform best are
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP

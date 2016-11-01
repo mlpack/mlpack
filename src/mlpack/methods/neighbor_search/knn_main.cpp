@@ -4,6 +4,11 @@
  *
  * Implementation of the AllkNN executable.  Allows some number of standard
  * options.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
@@ -68,10 +73,11 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
-    "'r-plus-plus', 'spill'.", "t", "kd");
+    "'r-plus-plus', 'spill', 'oct'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
     "trees, random projection trees, UB trees, R trees, R* trees, X trees, "
-    "Hilbert R trees, R+ trees, R++ trees and spill trees).", "l", 20);
+    "Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees).", "l",
+    20);
 PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
     0);
 PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
@@ -273,11 +279,13 @@ int main(int argc, char *argv[])
       tree = KNNModel::MAX_RP_TREE;
     else if (treeType == "ub")
       tree = KNNModel::UB_TREE;
+    else if (treeType == "oct")
+      tree = KNNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus' and 'spill'."
-          << endl;
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', and "
+          << "'oct'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;

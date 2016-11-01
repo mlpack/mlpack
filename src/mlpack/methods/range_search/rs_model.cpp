@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of the range search model class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "rs_model.hpp"
 
@@ -16,6 +21,7 @@ using namespace mlpack::range;
  */
 RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
+    leafSize(0),
     randomBasis(randomBasis),
     kdTreeRS(NULL),
     coverTreeRS(NULL),
@@ -29,7 +35,8 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     vpTreeRS(NULL),
     rpTreeRS(NULL),
     maxRPTreeRS(NULL),
-    ubTreeRS(NULL)
+    ubTreeRS(NULL),
+    octreeRS(NULL)
 {
   // Nothing to do.
 }
@@ -51,6 +58,8 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     Log::Info << "Creating random basis..." << endl;
     math::RandomBasis(q, referenceSet.n_rows);
   }
+
+  this->leafSize = leafSize;
 
   // Clean memory, if necessary.
   CleanMemory();
@@ -163,6 +172,28 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     case UB_TREE:
       ubTreeRS = new RSType<tree::UBTree>(move(referenceSet),
           naive, singleMode);
+      break;
+
+    case OCTREE:
+      // If necessary, build the octree.
+      if (naive)
+      {
+        octreeRS = new RSType<tree::Octree>(move(referenceSet), naive,
+            singleMode);
+      }
+      else
+      {
+        vector<size_t> oldFromNewReferences;
+        RSType<tree::Octree>::Tree* octree =
+            new RSType<tree::Octree>::Tree(move(referenceSet),
+            oldFromNewReferences, leafSize);
+        octreeRS = new RSType<tree::Octree>(octree, singleMode);
+
+        // Give the model ownership of the tree and the mappings.
+        octreeRS->treeOwner = true;
+        octreeRS->oldFromNewReferences = move(oldFromNewReferences);
+      }
+
       break;
   }
 
@@ -301,6 +332,38 @@ void RSModel::Search(arma::mat&& querySet,
     case UB_TREE:
       ubTreeRS->Search(querySet, range, neighbors, distances);
       break;
+
+    case OCTREE:
+      if (!octreeRS->Naive() && !octreeRS->SingleMode())
+      {
+        // Build a query tree and search.
+        Timer::Start("tree_building");
+        Log::Info << "Building query tree..." << endl;
+        vector<size_t> oldFromNewQueries;
+        RSType<tree::Octree>::Tree queryTree(move(querySet), oldFromNewQueries,
+            leafSize);
+        Log::Info << "Tree built." << endl;
+        Timer::Stop("tree_building");
+
+        vector<vector<size_t>> neighborsOut;
+        vector<vector<double>> distancesOut;
+        octreeRS->Search(&queryTree, range, neighborsOut, distancesOut);
+
+        // Remap the query points.
+        neighbors.resize(queryTree.Dataset().n_cols);
+        distances.resize(queryTree.Dataset().n_cols);
+        for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
+        {
+          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+          distances[oldFromNewQueries[i]] = distancesOut[i];
+        }
+      }
+      else
+      {
+        // Search without building a second tree.
+        octreeRS->Search(querySet, range, neighbors, distances);
+      }
+      break;
   }
 }
 
@@ -371,6 +434,10 @@ void RSModel::Search(const math::Range& range,
     case UB_TREE:
       ubTreeRS->Search(range, neighbors, distances);
       break;
+
+    case OCTREE:
+      octreeRS->Search(range, neighbors, distances);
+      break;
   }
 }
 
@@ -405,6 +472,8 @@ std::string RSModel::TreeName() const
       return "random projection tree (max split)";
     case UB_TREE:
       return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }
@@ -413,32 +482,20 @@ std::string RSModel::TreeName() const
 // Clean memory.
 void RSModel::CleanMemory()
 {
-  if (kdTreeRS)
-    delete kdTreeRS;
-  if (coverTreeRS)
-    delete coverTreeRS;
-  if (rTreeRS)
-    delete rTreeRS;
-  if (rStarTreeRS)
-    delete rStarTreeRS;
-  if (ballTreeRS)
-    delete ballTreeRS;
-  if (xTreeRS)
-    delete xTreeRS;
-  if (hilbertRTreeRS)
-    delete hilbertRTreeRS;
-  if (rPlusTreeRS)
-    delete rPlusTreeRS;
-  if (rPlusPlusTreeRS)
-    delete rPlusPlusTreeRS;
-  if (vpTreeRS)
-    delete vpTreeRS;
-  if (rpTreeRS)
-    delete rpTreeRS;
-  if (maxRPTreeRS)
-    delete maxRPTreeRS;
-  if (ubTreeRS)
-    delete ubTreeRS;
+  delete kdTreeRS;
+  delete coverTreeRS;
+  delete rTreeRS;
+  delete rStarTreeRS;
+  delete ballTreeRS;
+  delete xTreeRS;
+  delete hilbertRTreeRS;
+  delete rPlusTreeRS;
+  delete rPlusPlusTreeRS;
+  delete vpTreeRS;
+  delete rpTreeRS;
+  delete maxRPTreeRS;
+  delete ubTreeRS;
+  delete octreeRS;
 
   kdTreeRS = NULL;
   coverTreeRS = NULL;
@@ -453,4 +510,5 @@ void RSModel::CleanMemory()
   rpTreeRS = NULL;
   maxRPTreeRS = NULL;
   ubTreeRS = NULL;
+  octreeRS = NULL;
 }

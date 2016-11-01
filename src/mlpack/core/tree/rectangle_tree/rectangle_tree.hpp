@@ -4,6 +4,11 @@
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
  * and hilbert_r_tree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
@@ -463,21 +468,21 @@ class RectangleTree
   size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const RectangleTree* other) const
+  ElemType MinDistance(const RectangleTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const RectangleTree* other) const
+  ElemType MaxDistance(const RectangleTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const RectangleTree* other) const
+  math::RangeType<ElemType> RangeDistance(const RectangleTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.

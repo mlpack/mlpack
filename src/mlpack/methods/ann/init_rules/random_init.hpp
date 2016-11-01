@@ -4,6 +4,11 @@
  *
  * Intialization rule for the neural networks. This simple initialization is
  * performed by assigning a random matrix to the weight matrix.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_INIT_RULES_RANDOM_INIT_HPP
 #define MLPACK_METHODS_ANN_INIT_RULES_RANDOM_INIT_HPP
@@ -32,7 +37,7 @@ class RandomInitialization
 
   /**
    * Initialize the random initialization rule with the given bound.
-   * Using the negative of the bound as lower bound and the postive bound as
+   * Using the negative of the bound as lower bound and the positive bound as
    * upper bound.
    *
    * @param bound The number used as lower bound

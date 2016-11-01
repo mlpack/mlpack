@@ -4,6 +4,11 @@
  *
  * Definition of the DropConnectLayer class, which implements a regularizer
  * that randomly sets connections to zero. Preventing units from co-adapting.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
@@ -42,7 +47,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputLayer Layer used instead of the internel linear layer.
+ * @tparam InputLayer Layer used instead of the internal linear layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,

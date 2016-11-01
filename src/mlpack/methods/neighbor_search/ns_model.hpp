@@ -6,6 +6,11 @@
  * that it provides an easy way to serialize a model, abstracts away the
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
@@ -14,6 +19,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
@@ -84,7 +90,7 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 
 /**
  * BiSearchVisitor executes a bichromatic neighbor search on the given NSType.
- * We use template specialization to differenciate those tree types that
+ * We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, before doing neighbor search,
  * a query tree with proper leafSize is built from the querySet.
  */
@@ -133,6 +139,9 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic neighbor search specialized for SPTrees.
   void operator()(SpillKNN* ns) const;
 
+  //! Bichromatic neighbor search specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
+
   //! Construct the BiSearchVisitor.
   BiSearchVisitor(const arma::mat& querySet,
                   const size_t k,
@@ -145,7 +154,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
 
 /**
  * TrainVisitor sets the reference set to a new reference set on the given
- * NSType. We use template specialization to differenciate those tree types that
+ * NSType. We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, a reference tree with proper
  * leafSize is built from the referenceSet.
  */
@@ -187,6 +196,9 @@ class TrainVisitor : public boost::static_visitor<void>
 
   //! Train specialized for SPTrees.
   void operator()(SpillKNN* ns) const;
+
+  //! Train specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
   //! for BinarySpaceTrees, and tau and rho for spill trees.
@@ -287,7 +299,8 @@ class NSModel
     RP_TREE,
     MAX_RP_TREE,
     SPILL_TREE,
-    UB_TREE
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -325,7 +338,8 @@ class NSModel
                  NSType<SortPolicy, tree::RPTree>*,
                  NSType<SortPolicy, tree::MaxRPTree>*,
                  SpillKNN*,
-                 NSType<SortPolicy, tree::UBTree>*> nSearch;
+                 NSType<SortPolicy, tree::UBTree>*,
+                 NSType<SortPolicy, tree::Octree>*> nSearch;
 
  public:
   /**

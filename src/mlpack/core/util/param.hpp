@@ -6,6 +6,11 @@
  * Definition of PARAM_*_IN() and PARAM_*_OUT() macros, as well as the
  * PROGRAM_INFO() macro, which are used to define input and output parameters of
  * command-line programs and bindings to other languages.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP

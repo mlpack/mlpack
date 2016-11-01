@@ -2,6 +2,11 @@
  * @file tree_test.cpp
  *
  * Tests for tree-building methods.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
@@ -1833,62 +1838,6 @@ void CheckCovering(const TreeType& node)
   }
 }
 
-template<typename TreeType, typename MetricType>
-void CheckIndividualSeparation(const TreeType& constantNode,
-                               const TreeType& node)
-{
-  // Don't check points at a lower scale.
-  if (node.Scale() < constantNode.Scale())
-    return;
-
-  // If at a higher scale, recurse.
-  if (node.Scale() > constantNode.Scale())
-  {
-    for (size_t i = 0; i < node.NumChildren(); ++i)
-    {
-      // Don't recurse into leaves.
-      if (node.Child(i).NumChildren() > 0)
-        CheckIndividualSeparation<TreeType, MetricType>(constantNode,
-            node.Child(i));
-    }
-
-    return;
-  }
-
-  // Don't compare the same point against itself.
-  if (node.Point() == constantNode.Point())
-    return;
-
-  // Now we know we are at the same scale, so make the comparison.
-  const typename TreeType::Mat& dataset = constantNode.Dataset();
-  const size_t constantPoint = constantNode.Point();
-  const size_t nodePoint = node.Point();
-
-  // Make sure the distance is at least the following value (in accordance with
-  // the separation principle of cover trees).
-  double minDistance = pow(constantNode.Base(),
-      constantNode.Scale());
-
-  double distance = MetricType::Evaluate(dataset.col(constantPoint),
-      dataset.col(nodePoint));
-
-  BOOST_REQUIRE_GE(distance, minDistance);
-}
-
-template<typename TreeType, typename MetricType>
-void CheckSeparation(const TreeType& node, const TreeType& root)
-{
-  // Check the separation between this point and all other points on this scale.
-  CheckIndividualSeparation<TreeType, MetricType>(node, root);
-
-  // Check the children, but only if they are not leaves.  Leaves don't need to
-  // be checked.
-  for (size_t i = 0; i < node.NumChildren(); ++i)
-    if (node.Child(i).NumChildren() > 0)
-      CheckSeparation<TreeType, MetricType>(node.Child(i), root);
-}
-
-
 /**
  * Create a simple cover tree and then make sure it is valid.
  */
@@ -1942,8 +1891,8 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
   // than or equal to a certain distance apart).
   CheckCovering<TreeType, LMetric<2, true>>(tree);
 
-  // Each node's children must be separated by at least a certain value.
-  CheckSeparation<TreeType, LMetric<2, true>>(tree, tree);
+  // There's no need to check the separation invariant because that is relaxed
+  // in our implementation.
 }
 
 /**
@@ -1974,8 +1923,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
   // than or equal to a certain distance apart).
   CheckCovering<TreeType, LMetric<2, true> >(tree);
 
-  // Each node's children must be separated by at least a certain value.
-  CheckSeparation<TreeType, LMetric<2, true> >(tree, tree);
+  // There's no need to check the separation because that is relaxed in our
+  // implementation.
 }
 
 /**
@@ -2006,8 +1955,8 @@ BOOST_AUTO_TEST_CASE(SparseCoverTreeConstructionTest)
   // than or equal to a certain distance apart).
   CheckCovering<TreeType, LMetric<2, true> >(tree);
 
-  // Each node's children must be separated by at least a certain value.
-  CheckSeparation<TreeType, LMetric<2, true> >(tree, tree);
+  // There's no need to check the separation invariant because that is relaxed
+  // in our implementation.
 }
 
 /**
@@ -2059,8 +2008,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
   // than or equal to a certain distance apart).
   CheckCovering<TreeType, ManhattanDistance>(tree);
 
-  // Each node's children must be separated by at least a certain value.
-  CheckSeparation<TreeType, ManhattanDistance>(tree, tree);
+  // There's no need to check the separation invariant because that is relaxed
+  // in our implementation.
 }
 
 /**

@@ -5,6 +5,11 @@
  * This file implements the CLI subsystem which is intended to replace FX.
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_CLI_HPP
 #define MLPACK_CORE_UTIL_CLI_HPP
@@ -435,6 +440,42 @@ class CLI
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
+
+  //! Metaprogramming structure for vector detection.
+  template<typename T>
+  struct IsStdVector { const static bool value = false; };
+
+  //! Metaprogramming structure for vector detection.
+  template<typename eT>
+  struct IsStdVector<std::vector<eT>> { const static bool value = true; };
+
+  /**
+   * Add an option if it is not a vector type.  This is a utility function used
+   * by CLI::Add.
+   *
+   * @tparam Type of parameter.
+   * @param optId Name of parameter.
+   * @param descr Description.
+   */
+  template<typename T>
+  void AddOption(
+      const char* optId,
+      const char* descr,
+      const typename boost::disable_if<IsStdVector<T>>::type* /* junk */ = 0);
+
+  /**
+   * Add an option if it is a vector type.  This is a utility function used by
+   * CLI::Add.
+   *
+   * @tparam Type of parameter.
+   * @param optId Name of parameter.
+   * @param descr Description.
+   */
+  template<typename T>
+  void AddOption(
+      const char* optId,
+      const char* descr,
+      const typename boost::enable_if<IsStdVector<T>>::type* /* junk */ = 0);
 };
 
 } // namespace mlpack

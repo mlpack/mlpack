@@ -4,6 +4,11 @@
  *
  * Definition of the Option class, which is used to define parameters which are
  * used by CLI.  The ProgramDoc class also resides here.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_OPTION_HPP
 #define MLPACK_CORE_UTIL_OPTION_HPP

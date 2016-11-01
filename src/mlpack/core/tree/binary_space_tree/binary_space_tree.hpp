@@ -2,6 +2,11 @@
  * @file binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
@@ -200,6 +205,7 @@ class BinarySpaceTree
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -216,14 +222,15 @@ class BinarySpaceTree
    *
    * A mapping of the old point indices to the new point indices is filled, but
    * it is expected that the vector is already allocated with size greater than
-   * or equal to (begin_in + count_in), and if that is not true, invalid memory
-   * reads (and writes) will occur.
+   * or equal to (begin + count), and if that is not true, invalid memory reads
+   * (and writes) will occur.
    *
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -428,21 +435,21 @@ class BinarySpaceTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const BinarySpaceTree* other) const
+  ElemType MinDistance(const BinarySpaceTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const BinarySpaceTree* other) const
+  ElemType MaxDistance(const BinarySpaceTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree* other) const
+  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.
@@ -483,7 +490,7 @@ class BinarySpaceTree
   size_t& Count() { return count; }
 
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) { bound.Center(center); }
+  void Center(arma::vec& center) const { bound.Center(center); }
 
  private:
   /**

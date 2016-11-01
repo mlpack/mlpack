@@ -6,6 +6,11 @@
  * that it provides an easy way to serialize a model, abstracts away the
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
@@ -96,6 +101,15 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
     throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search specialized for octrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return SearchLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Bichromatic neighbor search on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
@@ -150,7 +164,7 @@ void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
 
 //! Train on the given NSType specialized for KDTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -159,7 +173,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
 
 //! Train on the given NSType specialized for BallTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -168,7 +182,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 
 //! Train specialized for SPTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
+void TrainVisitor<SortPolicy>::operator()(SpillKNN* ns) const
 {
   if (ns)
   {
@@ -182,6 +196,15 @@ void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
   }
   else
     throw std::runtime_error("no neighbor search model initialized");
+}
+
+//! Train specialized for Octrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return TrainLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Train on the given NSType considering the leafSize.
@@ -485,6 +508,9 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case UB_TREE:
       nSearch = new NSType<SortPolicy, tree::UBTree>(searchMode, epsilon);
       break;
+    case OCTREE:
+      nSearch = new NSType<SortPolicy, tree::Octree>(searchMode, epsilon);
+      break;
   }
 
   TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize, tau, rho);
@@ -599,6 +625,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "random projection tree (max split)";
     case UB_TREE:
       return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }

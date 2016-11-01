@@ -2,8 +2,13 @@
  * @file r_tree_star_split.hpp
  * @author Andrew Wells
  *
- * Defintion of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
+ * Definition of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
  * at a leaf node and moving upwards if necessary.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP

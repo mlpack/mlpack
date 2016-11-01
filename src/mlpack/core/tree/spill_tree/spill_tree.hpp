@@ -2,6 +2,11 @@
  * @file spill_tree.hpp
  *
  * Definition of generalized hybrid spill tree (SpillTree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_HPP
@@ -368,21 +373,21 @@ class SpillTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const SpillTree* other) const
+  ElemType MinDistance(const SpillTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const SpillTree* other) const
+  ElemType MaxDistance(const SpillTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const SpillTree* other) const
+  math::RangeType<ElemType> RangeDistance(const SpillTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.

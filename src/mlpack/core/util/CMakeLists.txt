@@ -20,6 +20,8 @@ set(SOURCES
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   sfinae_utility.hpp
+  singletons.hpp
+  singletons.cpp
   timers.hpp
   timers.cpp
   version.hpp

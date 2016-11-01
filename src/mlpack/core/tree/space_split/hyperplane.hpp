@@ -3,6 +3,11 @@
  * @author Marcos Pividori
  *
  * Definition of Hyperplane and AxisOrthogonalHyperplane.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_HYPERPLANE_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_HYPERPLANE_HPP
@@ -57,7 +62,7 @@ class HyperplaneBase
   {};
 
   /**
-   * Project the given point on the projection vector and substract th
+   * Project the given point on the projection vector and subtract the
    * split value.
    *
    * @param point Point to be projected.
