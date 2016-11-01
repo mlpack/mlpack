@@ -152,8 +152,7 @@ In case you want to output the density estimates at the points in the training
 set, use the \c -e (\c --training_set_estimates_file) option to specify the
 output file to which the estimates will be saved.  The first line in
 density_estimates.txt will correspond to the density at the first point in the
-training set.  Note that the logarithm of the density estimates are given, which
-allows smaller estimates to be saved.
+training set.
 
 @code
 $ mlpack_det -t dataset.csv -e density_estimates.txt -v
@@ -165,9 +164,7 @@ Often, it is useful to train a density estimation tree on a training set and
 then obtain density estimates from the learned estimator for a separate set of
 test points.  The \c -T (\c --test_file) option allows specification of a set of
 test points, and the \c -E (\c --test_set_estimates_file) option allows
-specification of the file into which the test set estimates are saved.  Note
-that the logarithm of the density estimates are saved; this allows smaller
-values to be saved.
+specification of the file into which the test set estimates are saved.
 
 @code
 $ mlpack_det -t dataset.csv -T test_points.csv -E test_density_estimates.txt -v
@@ -249,8 +246,7 @@ double alpha = det.Grow(data, oldFromNew, false, maxLeafSize, minLeafSize);
 Note that the alternate volume regularization should not be used (see ticket
 #238).
 
-To estimate the density at a given query point, use the following code.  Note
-that the logarithm of the density is returned.
+To estimate the density at a given query point, use the following code.
 
 @code
 // For a given query, you can obtain the density estimate.
