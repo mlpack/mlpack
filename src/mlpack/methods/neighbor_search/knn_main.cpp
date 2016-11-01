@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
     data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
 
     // Adjust search mode.
-    knn.SetSearchMode(searchMode);
+    knn.SearchMode() = searchMode;
     knn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
