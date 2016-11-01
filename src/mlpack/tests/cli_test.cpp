@@ -125,6 +125,47 @@ BOOST_AUTO_TEST_CASE(TestOption)
 }
 
 /**
+ * Test that duplicate flags are filtered out correctly.
+ */
+BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
+{
+  AddRequiredCLIOptions();
+
+  PARAM_FLAG("test", "test", "t");
+
+  int argc = 3;
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--test";
+  argv[2] = "--test";
+
+  // This should not throw an exception.
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+}
+
+/**
+ * Test that duplicate options throw an exception.
+ */
+BOOST_AUTO_TEST_CASE(TestDuplicateParam)
+{
+  AddRequiredCLIOptions();
+
+  int argc = 5;
+  const char* argv[5];
+  argv[0] = "./test";
+  argv[1] = "--info";
+  argv[2] = "test1";
+  argv[3] = "--info";
+  argv[4] = "test2";
+
+  // This should throw an exception.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
  * Ensure that a Boolean option which we define is set correctly.
  */
 BOOST_AUTO_TEST_CASE(TestBooleanOption)
