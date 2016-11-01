@@ -10,17 +10,20 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_DET_DT_UTILS_IMPL_HPP
+#define MLPACK_METHODS_DET_DT_UTILS_IMPL_HPP
+
 #include "dt_utils.hpp"
 
-using namespace mlpack;
-using namespace det;
+namespace mlpack {
+namespace det {
 
 template <typename MatType, typename TagType>
-void mlpack::det::PrintLeafMembership(DTree<MatType, TagType>* dtree,
-                                      const MatType& data,
-                                      const arma::Mat<size_t>& labels,
-                                      const size_t numClasses,
-                                      const std::string leafClassMembershipFile)
+void PrintLeafMembership(DTree<MatType, TagType>* dtree,
+                         const MatType& data,
+                         const arma::Mat<size_t>& labels,
+                         const size_t numClasses,
+                         const std::string leafClassMembershipFile)
 {
   // Tag the leaves with numbers.
   TagType numLeaves = dtree->TagTree();
@@ -64,8 +67,8 @@ void mlpack::det::PrintLeafMembership(DTree<MatType, TagType>* dtree,
 }
 
 template <typename MatType, typename TagType>
-void mlpack::det::PrintVariableImportance(const DTree<MatType, TagType>* dtree,
-                                          const std::string viFile)
+void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
+                             const std::string viFile)
 {
   arma::vec imps;
   dtree->ComputeVariableImportance(imps);
@@ -103,12 +106,12 @@ void mlpack::det::PrintVariableImportance(const DTree<MatType, TagType>* dtree,
 // This function trains the optimal decision tree using the given number of
 // folds.
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
-                                              const size_t folds,
-                                              const bool useVolumeReg,
-                                              const size_t maxLeafSize,
-                                              const size_t minLeafSize,
-                                              const std::string unprunedTreeOutput)
+DTree<MatType, TagType>* Trainer(MatType& dataset,
+                                 const size_t folds,
+                                 const bool useVolumeReg,
+                                 const size_t maxLeafSize,
+                                 const size_t minLeafSize,
+                                 const std::string unprunedTreeOutput)
 {
   // Initialize the tree.
   DTree<MatType, TagType> dtree(dataset);
@@ -325,3 +328,8 @@ DTree<MatType, TagType>* mlpack::det::Trainer(MatType& dataset,
 
   return dtreeOpt;
 }
+
+} // namespace det
+} // namespace mlpack
+
+#endif
