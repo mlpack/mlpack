@@ -331,12 +331,15 @@ void CLI::ParseCommandLine(int argc, char** line)
         po::parse_command_line(argc, line, desc));
 
     // Iterate over all the program_options, looking for duplicate parameters.
-    // If we find any, remove the duplicates.
+    // If we find any, remove the duplicates.  Note that vector options can have
+    // duplicates so we check for those with max_tokens().
     for (unsigned int i = 0; i < bpo.options.size(); i++)
     {
       for (unsigned int j = i + 1; j < bpo.options.size(); j++)
       {
-        if (bpo.options[i].string_key == bpo.options[j].string_key)
+        if ((bpo.options[i].string_key == bpo.options[j].string_key) &&
+            (desc.find(bpo.options[i].string_key, false).
+                semantic()->max_tokens() <= 1))
         {
           // If a duplicate is found, check to see if either one has a value.
           if (bpo.options[i].value.size() == 0 &&

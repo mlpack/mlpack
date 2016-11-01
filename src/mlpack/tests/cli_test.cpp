@@ -206,6 +206,8 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
  */
 BOOST_AUTO_TEST_CASE(TestVectorOption)
 {
+  AddRequiredCLIOptions();
+
   PARAM_VECTOR_IN(size_t, "test_vec", "test description", "t");
 
   int argc = 5;
@@ -235,6 +237,8 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
  */
 BOOST_AUTO_TEST_CASE(TestVectorOption2)
 {
+  AddRequiredCLIOptions();
+
   PARAM_VECTOR_IN(size_t, "test2_vec", "test description", "T");
 
   int argc = 7;
@@ -247,13 +251,13 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   argv[5] = "--test2_vec";
   argv[6] = "4";
 
-  Log::Fatal.ignoreInput = true;
+//  Log::Fatal.ignoreInput = true;
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
+//  Log::Fatal.ignoreInput = false;
 
-  BOOST_REQUIRE(CLI::HasParam("test_vec"));
+  BOOST_REQUIRE(CLI::HasParam("test2_vec"));
 
-  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test_vec");
+  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test2_vec");
 
   BOOST_REQUIRE_EQUAL(v.size(), 3);
   BOOST_REQUIRE_EQUAL(v[0], 1);

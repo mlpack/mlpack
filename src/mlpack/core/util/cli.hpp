@@ -446,8 +446,8 @@ class CLI
   struct IsStdVector { const static bool value = false; };
 
   //! Metaprogramming structure for vector detection.
-  template<typename eT>
-  struct IsStdVector<std::vector<eT>> { const static bool value = true; };
+  template<typename T, typename A>
+  struct IsStdVector<std::vector<T, A>> { const static bool value = true; };
 
   /**
    * Add an option if it is not a vector type.  This is a utility function used
