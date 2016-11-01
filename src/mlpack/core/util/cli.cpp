@@ -204,7 +204,7 @@ CLI::~CLI()
 
   // Notify the user if we are debugging, but only if we actually parsed the
   // options.  This way this output doesn't show up inexplicably for someone who
-  // may not have wanted it there (i.e. in Boost unit tests).
+  // may not have wanted it there, such as in Boost unit tests.
   if (didParse)
     Log::Debug << "Compiled with debugging symbols." << std::endl;
 }
