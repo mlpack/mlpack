@@ -16,6 +16,14 @@
 template<typename Archive>
 void serialize(Archive& ar, const unsigned int version);
 
+/**
+ * These will help us refer the proper vector / column types, only with
+ * specifying the matrix type we want to use.
+ */
+typedef SpCol<elem_type>   vec_type;
+typedef SpCol<elem_type>   col_type;
+typedef SpRow<elem_type>   row_type;
+
 /*
  * Extra functions for SpMat<eT>
  * Adding definition of row_col_iterator to generalize with Mat<eT>::row_col_iterator
