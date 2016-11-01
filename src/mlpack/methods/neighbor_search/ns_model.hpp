@@ -206,29 +206,12 @@ class TrainVisitor : public boost::static_visitor<void>
 /**
  * SearchModeVisitor exposes the SearchMode() method of the given NSType.
  */
-class SearchModeVisitor : public boost::static_visitor<NeighborSearchMode>
+class SearchModeVisitor : public boost::static_visitor<NeighborSearchMode&>
 {
  public:
   //! Return the search mode.
   template<typename NSType>
-  NeighborSearchMode operator()(NSType* ns) const;
-};
-
-/**
- * SetSearchModeVisitor modifies the SearchMode method of the given NSType.
- */
-class SetSearchModeVisitor : public boost::static_visitor<void>
-{
-  NeighborSearchMode searchMode;
- public:
-  //! Construct the SetSearchModeVisitor object with the given mode.
-  SetSearchModeVisitor(const NeighborSearchMode searchMode) :
-      searchMode(searchMode)
-  {};
-
-  //! Set the search mode.
-  template<typename NSType>
-  void operator()(NSType* ns) const;
+  NeighborSearchMode& operator()(NSType* ns) const;
 };
 
 /**
@@ -353,10 +336,9 @@ class NSModel
   //! Expose the dataset.
   const arma::mat& Dataset() const;
 
-  //! Access the search mode.
+  //! Expose SearchMode.
   NeighborSearchMode SearchMode() const;
-  //! Modify the search mode.
-  void SetSearchMode(const NeighborSearchMode mode);
+  NeighborSearchMode& SearchMode();
 
   //! Expose Epsilon.
   double Epsilon() const;
