@@ -59,7 +59,6 @@ struct ParameterType
  * arma::mat (since it is not clear how to specify a matrix on the
  * command-line).
  */
-template<>
 template<typename eT>
 struct ParameterType<arma::Mat<eT>>
 {
