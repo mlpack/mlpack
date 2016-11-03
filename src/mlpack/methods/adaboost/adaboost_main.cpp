@@ -69,10 +69,8 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "a file specified by the --output_model_file (-M) parameter.");
 
 // Input for training.
-PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
-    "");
-PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
-    "l", "");
+PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
+PARAM_UMATRIX_IN("labels", "Labels for the training set.", "l");
 
 // Loading/saving of a model.
 PARAM_STRING_IN("input_model_file", "File containing input AdaBoost model.",
@@ -81,9 +79,8 @@ PARAM_STRING_OUT("output_model_file", "File to save trained AdaBoost model to.",
     "M");
 
 // Classification options.
-PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
-    " test set will be written.", "o");
+PARAM_MATRIX_IN("test", "Test dataset.", "T");
+PARAM_UMATRIX_OUT("output", "Predicted labels for the test set.", "o");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -220,14 +217,14 @@ int main(int argc, char *argv[])
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
   {
     Log::Fatal << "Only one of --training_file or --input_model_file may be "
         << "specified!" << endl;
   }
 
   // The user must specify either a training file or an input model file.
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
   {
     Log::Fatal << "Either --training_file or --input_model_file must be "
         << "specified!" << endl;
@@ -242,8 +239,8 @@ int main(int argc, char *argv[])
         << "'; must be 'decision_stump' or 'perceptron'." << endl;
   }
 
-  // --labels_file can't be specified without --training_file.
-  if (CLI::HasParam("labels_file") && !CLI::HasParam("training_file"))
+  // --labels can't be specified without --training.
+  if (CLI::HasParam("labels") && !CLI::HasParam("training"))
     Log::Warn << "--labels_file ignored, because --training_file was not "
         << "passed." << endl;
 
@@ -263,49 +260,46 @@ int main(int argc, char *argv[])
   }
 
   // Training parameters are ignored if no training file is given.
-  if (CLI::HasParam("tolerance") && !CLI::HasParam("training_file"))
+  if (CLI::HasParam("tolerance") && !CLI::HasParam("training"))
   {
     Log::Warn << "--tolerance ignored, because --training_file was not "
         << "passed." << endl;
   }
-  if (CLI::HasParam("iterations") && !CLI::HasParam("training_file"))
+  if (CLI::HasParam("iterations") && !CLI::HasParam("training"))
   {
     Log::Warn << "--iterations ignored, because --training_file was not "
         << "passed." << endl;
   }
 
-  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("output"))
   {
     Log::Warn << "Neither --output_model_file nor --output_file are specified; "
         << "no results will be saved." << endl;
   }
 
-  if (CLI::HasParam("output_file") && !CLI::HasParam("test_file"))
+  if (CLI::HasParam("output") && !CLI::HasParam("test"))
   {
     Log::Warn << "--output_file ignored because --test_file is not specified."
         << endl;
   }
 
   AdaBoostModel m;
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    const string trainingDataFilename = CLI::GetParam<string>("training_file");
-    mat trainingData;
-    data::Load(trainingDataFilename, trainingData, true);
+    mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
-    const string labelsFilename = CLI::GetParam<string>("labels_file");
     // Load labels.
-    Mat<size_t> labelsIn;
+    arma::Mat<size_t> labelsIn;
 
-    if (CLI::HasParam("labels_file"))
+    if (CLI::HasParam("labels"))
     {
-      const string labelsFilename = CLI::GetParam<string>("labels_file");
       // Load labels.
-      data::Load(labelsFilename, labelsIn, true);
+      labelsIn = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
 
-      // Do the labels need to be transposed?
-      if (labelsIn.n_cols == 1)
+      if (labelsIn.n_rows > 1)
         labelsIn = labelsIn.t();
+      if (labelsIn.n_rows > 1)
+        Log::Fatal << "Labels must be one-dimensional!" << std::endl;
     }
     else
     {
@@ -344,11 +338,9 @@ int main(int argc, char *argv[])
   }
 
   // Perform classification, if desired.
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    const string testingDataFilename = CLI::GetParam<string>("test_file");
-    mat testingData;
-    data::Load(testingDataFilename, testingData, true);
+    mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows != m.Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -363,8 +355,8 @@ int main(int argc, char *argv[])
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m.Mappings(), results);
 
-    if (CLI::HasParam("output_file"))
-      data::Save(CLI::GetParam<string>("output_file"), results, true);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(results);
   }
 
   // Should we save the model, too?

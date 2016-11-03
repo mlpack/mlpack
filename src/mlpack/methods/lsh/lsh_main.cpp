@@ -43,10 +43,9 @@ PROGRAM_INFO("All K-Approximate-Nearest-Neighbor Search with LSH",
     "set the random seed.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
-    "");
-PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
-PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
+PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
+PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
+PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
 // We can load or save models.
 PARAM_STRING_IN("input_model_file", "File to load LSH model from.  (Cannot be "
@@ -54,12 +53,11 @@ PARAM_STRING_IN("input_model_file", "File to load LSH model from.  (Cannot be "
 PARAM_STRING_OUT("output_model_file", "File to save LSH model to.", "M");
 
 // For testing recall.
-PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute "
-    "recall with (the recall is printed when -v is specified).", "t", "");
+PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute "
+    "recall with (the recall is printed when -v is specified).", "t");
 
 PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
-PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
-    "");
+PARAM_MATRIX_IN("query", "Matrix containing query points (optional).", "q");
 
 PARAM_INT_IN("projections", "The number of hash functions for each table", "K",
     10);
@@ -86,9 +84,6 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) time(NULL));
 
   // Get all the parameters.
-  const string referenceFile = CLI::GetParam<string>("reference_file");
-  const string distancesFile = CLI::GetParam<string>("distances_file");
-  const string neighborsFile = CLI::GetParam<string>("neighbors_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
 
@@ -96,20 +91,20 @@ int main(int argc, char *argv[])
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
   size_t bucketSize = CLI::GetParam<int>("bucket_size");
 
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("reference_file"))
+  if (CLI::HasParam("input_model_file") && CLI::HasParam("reference"))
   {
     Log::Fatal << "Cannot specify both --reference_file and --input_model_file!"
         << " Either create a new model with --reference_file or use an existing"
         << " model with --input_model_file." << endl;
   }
 
-  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("reference_file"))
+  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("reference"))
   {
     Log::Fatal << "Must specify either --input_model_file or --reference_file!"
         << endl;
   }
 
-  if (!CLI::HasParam("neighbors_file") && !CLI::HasParam("distances_file") &&
+  if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
       !CLI::HasParam("output_model_file"))
   {
     Log::Warn << "Neither --neighbors_file, --distances_file, nor "
@@ -117,8 +112,8 @@ int main(int argc, char *argv[])
         << endl;
   }
 
-  if ((CLI::HasParam("query_file") && !CLI::HasParam("k")) ||
-      (!CLI::HasParam("query_file") && !CLI::HasParam("reference_file") &&
+  if ((CLI::HasParam("query") && !CLI::HasParam("k")) ||
+      (!CLI::HasParam("query") && !CLI::HasParam("reference") &&
        CLI::HasParam("k")))
   {
     Log::Fatal << "Both --query_file or --reference_file and --k must be "
@@ -126,12 +121,20 @@ int main(int argc, char *argv[])
   }
 
   if (CLI::HasParam("input_model_file") && CLI::HasParam("k") &&
-      !CLI::HasParam("query_file"))
+      !CLI::HasParam("query"))
   {
     Log::Info << "Performing LSH-based approximate nearest neighbor search on "
         << "the reference dataset in the model stored in '" << inputModelFile
         << "'." << endl;
   }
+
+  if (!CLI::HasParam("k") && CLI::HasParam("neighbors"))
+    Log::Warn << "--neighbors_file ignored because --k is not specified."
+        << endl;
+
+  if (!CLI::HasParam("k") && CLI::HasParam("distances"))
+    Log::Warn << "--distances_file ignored because --k is not specified."
+        << endl;
 
   // These declarations are here so that the matrices don't go out of scope.
   arma::mat referenceData;
@@ -154,10 +157,11 @@ int main(int argc, char *argv[])
         numTables << " tables (L) with hash width(r): " << hashWidth << endl;
 
   LSHSearch<> allkann;
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
-    data::Load(referenceFile, referenceData, true);
-    Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+    referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Loaded reference data from '"
+        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
         << referenceData.n_rows << " x " << referenceData.n_cols << ")."
         << endl;
 
@@ -175,16 +179,13 @@ int main(int argc, char *argv[])
   {
     Log::Info << "Computing " << k << " distance approximate nearest neighbors."
         << endl;
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
     {
-      if (CLI::GetParam<string>("query_file") != "")
-      {
-        string queryFile = CLI::GetParam<string>("query_file");
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Loaded query data from '"
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
-        data::Load(queryFile, queryData, true);
-        Log::Info << "Loaded query data from '" << queryFile << "' ("
-            << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-      }
       allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
@@ -196,16 +197,14 @@ int main(int argc, char *argv[])
   Log::Info << "Neighbors computed." << endl;
 
   // Compute recall, if desired.
-  if (CLI::HasParam("true_neighbors_file"))
+  if (CLI::HasParam("true_neighbors"))
   {
-    const string trueNeighborsFile =
-        CLI::GetParam<string>("true_neighbors_file");
-
     // Load the true neighbors.
-    arma::Mat<size_t> trueNeighbors;
-    data::Load(trueNeighborsFile, trueNeighbors, true);
+    arma::Mat<size_t> trueNeighbors =
+        std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
     Log::Info << "Loaded true neighbor indices from '"
-        << trueNeighborsFile << "'." << endl;
+        << CLI::GetUnmappedParam<arma::Mat<size_t>>("true_neighbors") << "'."
+        << endl;
 
     // Compute recall and print it.
     double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
@@ -215,10 +214,10 @@ int main(int argc, char *argv[])
   }
 
   // Save output, if desired.
-  if (CLI::HasParam("distances_file"))
-    data::Save(distancesFile, distances);
-  if (CLI::HasParam("neighbors_file"))
-    data::Save(neighborsFile, neighbors);
+  if (CLI::HasParam("distances"))
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+  if (CLI::HasParam("neighbors"))
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
   if (CLI::HasParam("output_model_file"))
     data::Save(outputModelFile, "lsh_model", allkann);
 }

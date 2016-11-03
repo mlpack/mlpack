@@ -43,16 +43,15 @@ PARAM_STRING_OUT("output_model_file", "File to save trained Naive Bayes model "
     "to.", "M");
 
 // Training parameters.
-PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
-    "");
-PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
-    "l", "");
+PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
+PARAM_UMATRIX_IN("labels", "A file containing labels for the training set.",
+    "l");
 PARAM_FLAG("incremental_variance", "The variance of each class will be "
     "calculated incrementally.", "I");
 
 // Test parameters.
-PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
+PARAM_UMATRIX_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
 using namespace mlpack;
@@ -82,54 +81,52 @@ int main(int argc, char* argv[])
   CLI::ParseCommandLine(argc, argv);
 
   // Check input parameters.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Cannot specify both --training_file (-t) and "
         << "--input_model_file (-m)!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
         << " specified!" << endl;
 
-  if (!CLI::HasParam("training_file") && CLI::HasParam("labels_file"))
+  if (!CLI::HasParam("training") && CLI::HasParam("labels"))
     Log::Warn << "--labels_file (-l) ignored because --training_file (-t) is "
         << "not specified." << endl;
-  if (!CLI::HasParam("training_file") && CLI::HasParam("incremental_variance"))
+  if (!CLI::HasParam("training") && CLI::HasParam("incremental_variance"))
     Log::Warn << "--incremental_variance (-I) ignored because --training_file "
         << "(-t) is not specified." << endl;
 
-  if (!CLI::HasParam("output_file") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model_file"))
     Log::Warn << "Neither --output_file (-o) nor --output_model_file (-M) "
         << "specified; no output will be saved!" << endl;
 
-  if (CLI::HasParam("output_file") && !CLI::HasParam("test_file"))
+  if (CLI::HasParam("output") && !CLI::HasParam("test"))
     Log::Warn << "--output_file (-o) ignored because no test file specified "
         << "with --test_file (-T)." << endl;
 
-  if (!CLI::HasParam("output_file") && CLI::HasParam("test_file"))
+  if (!CLI::HasParam("output") && CLI::HasParam("test"))
     Log::Warn << "--test_file (-T) specified, but classification results will "
         << "not be saved because --output_file (-o) is not specified." << endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    const string trainingFile = CLI::GetParam<string>("training_file");
-    mat trainingData;
-    data::Load(trainingFile, trainingData, true);
+    mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     Row<size_t> labels;
 
     // Did the user pass in labels?
-    const string labelsFilename = CLI::GetParam<string>("labels_file");
-    if (labelsFilename != "")
+    if (CLI::HasParam("labels"))
     {
       // Load labels.
-      mat rawLabels;
-      data::Load(labelsFilename, rawLabels, true, false);
+      Mat<size_t> rawLabels = std::move(CLI::GetParam<Mat<size_t>>("labels"));
 
       // Do the labels need to be transposed?
       if (rawLabels.n_cols == 1)
         rawLabels = rawLabels.t();
+      if (rawLabels.n_rows > 1)
+        Log::Fatal << "Labels must be one-dimensional!" << endl;
 
       data::NormalizeLabels(rawLabels.row(0), labels, model.mappings);
     }
@@ -158,11 +155,9 @@ int main(int argc, char* argv[])
   }
 
   // Do we need to do testing?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    const string testingDataFilename = CLI::GetParam<std::string>("test_file");
-    mat testingData;
-    data::Load(testingDataFilename, testingData, true);
+    mat testingData = std::move(CLI::GetParam<mat>("test"));
 
     if (testingData.n_rows != model.nbc.Means().n_rows)
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -175,15 +170,14 @@ int main(int argc, char* argv[])
     model.nbc.Classify(testingData, results);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("output_file"))
+    if (CLI::HasParam("output"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(results, model.mappings, rawResults);
 
       // Output results.
-      const string outputFilename = CLI::GetParam<string>("output_file");
-      data::Save(outputFilename, rawResults, true);
+      CLI::GetParam<Mat<size_t>>("output") = std::move(rawResults);
     }
   }
 

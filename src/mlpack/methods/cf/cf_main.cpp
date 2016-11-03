@@ -61,14 +61,14 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "parameter.");
 
 // Parameters for training a model.
-PARAM_STRING_IN("training_file", "Input dataset to perform CF on.", "t", "");
+PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");
 PARAM_STRING_IN("algorithm", "Algorithm used for matrix factorization.", "a",
     "NMF");
 PARAM_INT_IN("neighborhood", "Size of the neighborhood of similar users to "
     "consider for each query user.", "n", 5);
 PARAM_INT_IN("rank", "Rank of decomposed matrices (if 0, a heuristic is used to"
     " estimate the rank).", "R", 0);
-PARAM_STRING_IN("test_file", "Test set to calculate RMSE on.", "T", "");
+PARAM_MATRIX_IN("test", "Test set to calculate RMSE on.", "T");
 
 // Offer the user the option to set the maximum number of iterations, and
 // terminate only based on the number of iterations.
@@ -84,11 +84,12 @@ PARAM_STRING_IN("input_model_file", "File to load trained CF model from.", "m",
 PARAM_STRING_OUT("output_model_file", "File to save trained CF model to.", "M");
 
 // Query settings.
-PARAM_STRING_IN("query_file", "List of users for which recommendations are to "
-    "be generated.", "q", "");
+PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
+    " be generated.", "q");
 PARAM_FLAG("all_user_recommendations", "Generate recommendations for all "
     "users.", "A");
-PARAM_STRING_OUT("output_file","File to save output recommendations to.", "o");
+PARAM_UMATRIX_OUT("output", "Matrix that will store output recommendations.",
+    "o");
 PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
     " query user.", "c", 5);
 
@@ -99,18 +100,19 @@ void ComputeRecommendations(CF& cf,
                             arma::Mat<size_t>& recommendations)
 {
   // Reading users.
-  const string queryFile = CLI::GetParam<string>("query_file");
-  if (queryFile != "")
+  if (CLI::HasParam("query"))
   {
     // User matrix.
-    arma::Mat<size_t> userTmp;
-    arma::Col<size_t> users;
-    data::Load(queryFile, userTmp, true, false /* Don't transpose. */);
-    users = userTmp.col(0);
+    arma::Mat<size_t> users =
+        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+    if (users.n_rows > 1)
+      users = users.t();
+    if (users.n_rows > 1)
+      Log::Fatal << "List of query users must be one-dimensional!" << std::endl;
 
-    Log::Info << "Generating recommendations for " << users.n_elem << " users "
-        << "in '" << queryFile << "'." << endl;
-    cf.GetRecommendations(numRecs, recommendations, users);
+    Log::Info << "Generating recommendations for " << users.n_elem << " users."
+        << endl;
+    cf.GetRecommendations(numRecs, recommendations, users.row(0).t());
   }
   else
   {
@@ -122,9 +124,7 @@ void ComputeRecommendations(CF& cf,
 void ComputeRMSE(CF& cf)
 {
   // Now, compute each test point.
-  const string testFile = CLI::GetParam<string>("test_file");
-  arma::mat testData;
-  data::Load(testFile, testData, true);
+  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
   // Assemble the combination matrix to get RMSE value.
   arma::Mat<size_t> combinations(2, testData.n_cols);
@@ -150,7 +150,7 @@ void ComputeRMSE(CF& cf)
 
 void PerformAction(CF& c)
 {
-  if (CLI::HasParam("query_file") || CLI::HasParam("all_user_recommendations"))
+  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
     // Get parameters for generating recommendations.
     const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
@@ -160,12 +160,11 @@ void PerformAction(CF& c)
     ComputeRecommendations(c, numRecs, recommendations);
 
     // Save the output.
-    const string outputFile = CLI::GetParam<string>("output_file");
-    if (outputFile != "")
-      data::Save(outputFile, recommendations);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::Mat<size_t>>("output") = recommendations;
   }
 
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
   if (CLI::HasParam("output_model_file"))
@@ -255,35 +254,33 @@ int main(int argc, char** argv)
     math::RandomSeed(CLI::GetParam<int>("seed"));
 
   // Validate parameters.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
-    Log::Fatal << "Only one of --training_file (t) or --input_model_file (-m) "
+  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
+    Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
         << "may be specified!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
         << " specified!" << endl;
 
   // Check that nothing stupid is happening.
-  if (CLI::HasParam("query_file") && CLI::HasParam("all_user_recommendations"))
+  if (CLI::HasParam("query") && CLI::HasParam("all_user_recommendations"))
     Log::Fatal << "Both --query_file and --all_user_recommendations are given, "
         << "but only one is allowed!" << endl;
 
-  if (!CLI::HasParam("output_file") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model_file"))
     Log::Warn << "Neither --output_file nor --output_model_file are specified; "
         << "no output will be saved." << endl;
 
-  if (CLI::HasParam("output_file") && (!CLI::HasParam("query_file") ||
+  if (CLI::HasParam("output") && (!CLI::HasParam("query") ||
       CLI::HasParam("all_user_recommendations")))
     Log::Warn << "--output_file is ignored because neither --query_file nor "
         << "--all_user_recommendations are specified." << endl;
 
   // Either load from a model, or train a model.
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
     // Read from the input file.
-    const string trainingFile = CLI::GetParam<string>("training_file");
-    arma::mat dataset;
-    data::Load(trainingFile, dataset, true);
+    arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
 
     // Recommendation matrix.
     arma::Mat<size_t> recommendations;

@@ -70,13 +70,13 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed up"
     " kernel machines\", 2001) can be used to calculate the kernel matrix by "
     "specifying the --nystroem_method (-n) option. This approach works by using"
-    " a subset of the data as basis to reconstruct the kernel matrix; to specify"
-    " the sampling scheme, the --sampling parameter is used, the sampling scheme"
-    " for the nystr\u00F6m method can be chosen from the following list: kmeans,"
-    " random, ordered.");
+    " a subset of the data as basis to reconstruct the kernel matrix; to "
+    "specify the sampling scheme, the --sampling parameter is used, the "
+    "sampling scheme for the nystr\u00F6m method can be chosen from the following"
+    " list: kmeans, random, ordered.");
 
-PARAM_STRING_IN_REQ("input_file", "Input dataset to perform KPCA on.", "i");
-PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
+PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
 PARAM_STRING_IN_REQ("kernel", "The kernel to use; see the above documentation "
     "for the list of usable kernels.", "k");
 
@@ -149,14 +149,12 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be saved!"
         << endl;
 
   // Load input dataset.
-  mat dataset;
-  const string inputFile = CLI::GetParam<string>("input_file");
-  data::Load(inputFile, dataset, true); // Fatal on failure.
+  mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Get the new dimensionality, if it is necessary.
   size_t newDim = dataset.n_rows;
@@ -242,7 +240,6 @@ int main(int argc, char** argv)
   }
 
   // Save the output dataset.
-  const string outputFile = CLI::GetParam<string>("output_file");
-  if (outputFile != "")
-    data::Save(outputFile, dataset, true); // Fatal on failure.
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
 }

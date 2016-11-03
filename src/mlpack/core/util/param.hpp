@@ -53,7 +53,7 @@
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
-    PARAM_FLAG_INTERNAL(ID, DESC, ALIAS);
+    PARAM_IN(bool, ID, DESC, ALIAS, false, false);
 
 /**
  * Define an integer input parameter.
@@ -187,22 +187,14 @@
 /**
  * Define a string output parameter.
  *
- * If the parameter name does not end in "_file" (i.e. "output_file",
- * "predictions_file", etc.), then the string will be printed to stdout at the
- * end of the program.  For instance, if there was a string output parameter
- * called "something" with value "hello", at the end of the program the output
- * would be of the following form:
+ * The string will be printed to stdout at the end of the program.  For
+ * instance, if there was a string output parameter called "something" with
+ * value "hello", at the end of the program the output would be of the following
+ * form:
  *
  * @code
  * something: "hello"
  * @endcode
- *
- * If the parameter is not set by the end of the program, a fatal runtime error
- * will be issued.
- *
- * An alias is still allowed for string output parameters, because if the
- * parameter name ends in "_file", then the user must be able to specify it as
- * input.  The default value will always be the empty string.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -220,6 +212,262 @@
  */
 #define PARAM_STRING_OUT(ID, DESC, ALIAS) \
     PARAM_OUT(std::string, ID, DESC, ALIAS, "", false)
+
+/**
+ * Define a matrix input parameter.  From the command line, the user can specify
+ * the file that holds the matrix, using the name of the matrix parameter with
+ * "_file" appended (and the same alias).  So for instance, if the name of the
+ * matrix parameter was "mat", the user could specify that the "mat" matrix was
+ * held in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_MATRIX_IN(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define a required matrix input parameter.  From the command line, the user
+ * can specify the file that holds the matrix, using the name of the matrix
+ * parameter with "_file" appended (and the same alias).  So for instance, if
+ * the name of the matrix parameter was "mat", the user could specify that the
+ * "mat" matrix was held in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, true, true, true)
+
+/**
+ * Define a matrix output parameter.  When the program terminates, the matrix
+ * will be saved to whatever it was set to by CLI::GetParam<arma::mat>(ID)
+ * during the program.  From the command-line, the user may specify the file in
+ * which to save the output matrix using a string option that is the name of the
+ * matrix parameter with "_file" appended.  So, for instance, if the name of the
+ * output matrix parameter was "mat", the user could speicfy that the "mat"
+ * matrix should be saved in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * The output matrix will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_MATRIX_OUT(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
+
+/**
+ * Define a transposed matrix input parameter.  This is useful when data is
+ * desired in row-major form instead of the usual column-major form.  From the
+ * command line, the user can specify the file that holds the matrix, using the
+ * name of the matrix parameter with "_file" appended (and the same alias).  So
+ * for instance, if the name of the matrix parameter was "mat", the user could
+ * specify that the "mat" matrix was held in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_IN(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, true)
+
+/**
+ * Define a required transposed matrix input parameter.  This is useful when
+ * data is desired in row-major form instead of the usual column-major form.
+ * From the command line, the user can specify the file that holds the matrix,
+ * using the name of the matrix parameter with "_file" appended (and the same
+ * alias).  So for instance, if the name of the matrix parameter was "mat", the
+ * user could specify that the "mat" matrix was held in matrix.csv by giving the
+ * parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, true, false, true)
+
+/**
+ * Define a transposed matrix output parameter.  This is useful when data is
+ * stored in a row-major form instead of the usual column-major form.  When the
+ * program terminates, the matrix will be saved to whatever it was set to by
+ * CLI::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * user may specify the file in which to save the output matrix using a string
+ * option that is the name of the matrix parameter with "_file" appended.  So,
+ * for instance, if the name of the output matrix parameter was "mat", the user
+ * could speicfy that the "mat" matrix should be saved in matrix.csv by giving
+ * the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * The output matrix will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_TMATRIX_OUT(ID, DESC, ALIAS) \
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, false)
+
+/**
+ * Define an unsigned matrix input parameter (arma::Mat<size_t>).  From the
+ * command line, the user can specify the file that holds the matrix, using the
+ * name of the matrix parameter with "_file" appended (and the same alias).  So
+ * for instance, if the name of the matrix parameter was "mat", the user could
+ * specify that the "mat" matrix was held in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UMATRIX_IN(ID, DESC, ALIAS) \
+    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define a required unsigned matrix input parameter (arma::Mat<size_t>).  From
+ * the command line, the user can specify the file that holds the matrix, using
+ * the name of the matrix parameter with "_file" appended (and the same alias).
+ * So for instance, if the name of the matrix parameter was "mat", the user
+ * could specify that the "mat" matrix was held in matrix.csv by giving the
+ * parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UMATRIX_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_UMATRIX(ID, DESC, ALIAS, true, true, true)
+
+/**
+ * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
+ * program terminates, the matrix will be saved to whatever it was set to by
+ * CLI::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * command-line, the user may specify the file in which to save the output
+ * matrix using a string option that is the name of the matrix parameter with
+ * "_file" appended.  So, for instance, if the name of the output matrix
+ * parameter was "mat", the user could speicfy that the "mat" matrix should be
+ * saved in matrix.csv by giving the parameter
+ *
+ * @code
+ * --mat_file matrix.csv
+ * @endcode
+ *
+ * The output matrix will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UMATRIX_OUT(ID, DESC, ALIAS) \
+    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define a vector input parameter.
@@ -392,40 +640,46 @@
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_in_, __COUNTER__) \
-      (false, DEF, ID, DESC, ALIAS, REQ, true);
+      (DEF, ID, DESC, ALIAS, REQ, true, false);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_out_, __COUNTER__) \
-      (false, DEF, ID, DESC, ALIAS, REQ, false);
+      (DEF, ID, DESC, ALIAS, REQ, false, false);
 
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __COUNTER__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
+  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::mat> \
+      JOIN(cli_option_dummy_matrix_, __COUNTER__) \
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
+  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::Mat<size_t>> \
+      JOIN(cli_option_dummy_umatrix_, __COUNTER__) \
+      (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 #else
-  // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
+  // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
-      (false, DEF, ID, DESC, ALIAS, REQ, true);
+      JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, REQ, true, false);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_out_, __LINE__), opt) \
-      (false, DEF, ID, DESC, ALIAS, REQ, false);
+      JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, REQ, false, false);
 
-  /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static \
-      mlpack::util::Option<bool> JOIN(__io_option_flag_object_, __LINE__) \
-      (ID, DESC, ALIAS);
-  /** @endcond */
+  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::mat> \
+      JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
+  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+      static mlpack::util::Option<arma::Mat<size_t>> \
+      JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
+      (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 #endif
 
 #endif
