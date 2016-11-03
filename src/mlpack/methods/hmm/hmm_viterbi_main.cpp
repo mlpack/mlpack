@@ -23,10 +23,9 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
     "(--input_file), using the Viterbi algorithm.  The computed state sequence "
     "is saved to the specified output file (--output_file).");
 
-PARAM_STRING_IN_REQ("input_file", "File containing observations,", "i");
+PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
 PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
-PARAM_STRING_OUT("output_file", "File to save predicted state sequence to.",
-    "o");
+PARAM_UMATRIX_OUT("output", "File to save predicted state sequence to.", "o");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -44,11 +43,7 @@ struct Viterbi
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load observations.
-    const string inputFile = CLI::GetParam<string>("input_file");
-    const string outputFile = CLI::GetParam<string>("output_file");
-
-    mat dataSeq;
-    data::Load(inputFile, dataSeq, true);
+    mat dataSeq = std::move(CLI::GetParam<arma::mat>("input"));
 
     // See if transposing the data could make it the right dimensionality.
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
@@ -68,8 +63,8 @@ struct Viterbi
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
-    if (CLI::HasParam("output_file"))
-      data::Save(outputFile, sequence, true);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
   }
 };
 
@@ -78,7 +73,7 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 

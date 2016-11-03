@@ -34,9 +34,9 @@ PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
     "$ mlpack_preprocess_binarize -i dataset.csv -t 5 -d 0 -o result.csv");
 
 // Define parameters for data.
-PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 // Define optional parameters.
-PARAM_STRING_OUT("output_file", "File to save the output.", "o");
+PARAM_MATRIX_OUT("output", "Matrix in which to save the output.", "o");
 PARAM_INT_IN("dimension", "Dimension to apply the binarization. If not set, the"
     " program will binarize every dimension by default.", "d", 0);
 PARAM_DOUBLE_IN("threshold", "Threshold to be applied for binarization. If not "
@@ -50,28 +50,25 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
   const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   const double threshold = CLI::GetParam<double>("threshold");
 
   // Check on data parameters.
   if (!CLI::HasParam("dimension"))
     Log::Warn << "You did not specify --dimension, so the program will perform "
-        << "binarize on every dimensions." << endl;
+        << "binarize on every dimension." << endl;
 
   if (!CLI::HasParam("threshold"))
     Log::Warn << "You did not specify --threshold, so the threshold will be "
         << "automatically set to '0.0'." << endl;
 
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "You did not specify --output_file, so no result will be "
         << "saved." << endl;
 
   // Load the data.
-  arma::mat input;
+  arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat output;
-  data::Load(inputFile, input, true);
 
   Timer::Start("binarize");
   if (CLI::HasParam("dimension"))
@@ -85,6 +82,6 @@ int main(int argc, char** argv)
   }
   Timer::Stop("binarize");
 
-  if (CLI::HasParam("output_file"))
-    data::Save(outputFile, output, false);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(output);
 }

@@ -66,10 +66,9 @@ PROGRAM_INFO("Perceptron",
     );
 
 // Training parameters.
-PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
-    "");
-PARAM_STRING_IN("labels_file", "A file containing labels for the training set.",
-    "l", "");
+PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
+PARAM_UMATRIX_IN("labels", "A matrix containing labels for the training set.",
+    "l");
 PARAM_INT_IN("max_iterations","The maximum number of iterations the perceptron "
     "is to be run", "n", 1000);
 
@@ -80,8 +79,8 @@ PARAM_STRING_OUT("output_model_file", "File to save trained perceptron model "
     "to.", "M");
 
 // Testing/classification parameters.
-PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING_OUT("output_file", "The file in which the predicted labels for the"
+PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
+PARAM_UMATRIX_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
 // When we save a model, we must also save the class mappings.  So we use this
@@ -109,32 +108,29 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // First, get all parameters and validate them.
-  const string trainingDataFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string testDataFile = CLI::GetParam<string>("test_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // We must either load a model or train a model.
-  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training_file"))
+  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training"))
     Log::Fatal << "Either an input model must be specified with "
         << "--input_model_file or training data must be given "
         << "(--training_file)!" << endl;
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("test_file"))
+  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("test"))
     Log::Warn << "Output will not be saved!  (Neither --test_file nor "
         << "--output_model_file are specified.)" << endl;
 
-  if (testDataFile == "" && outputFile != "")
+  if (!CLI::HasParam("test") && CLI::HasParam("output"))
     Log::Warn << "--output_file will be ignored because --test_file is not "
         << "specified." << endl;
 
-  if (CLI::HasParam("test_file") && !CLI::HasParam("output_file"))
-    Log::Fatal << "--output_file must be specified with --test_file." << endl;
+  if (CLI::HasParam("test") && !CLI::HasParam("output"))
+    Log::Warn << "--output_file not specified, so the predictions for "
+        << "--test_file will not be saved." << endl;
 
   // Now, load our model, if there is one.
   Perceptron<>* p = NULL;
@@ -152,35 +148,35 @@ int main(int argc, char** argv)
   }
 
   // Next, load the training data and labels (if they have been given).
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    Log::Info << "Training perceptron on dataset '" << trainingDataFile;
-    if (labelsFile != "")
-      Log::Info << "' with labels in '" << labelsFile << "'";
+    Log::Info << "Training perceptron on dataset '"
+        << CLI::GetUnmappedParam<mat>("training");
+    if (CLI::HasParam("labels"))
+      Log::Info << "' with labels in '"
+          << CLI::GetUnmappedParam<Mat<size_t>>("labels") << "'";
     else
       Log::Info << "'";
     Log::Info << " for a maximum of " << maxIterations << " iterations."
         << endl;
 
-    mat trainingData;
-    data::Load(trainingDataFile, trainingData, true);
+    mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     // Load labels.
-    mat labelsIn;
+    Mat<size_t> labelsIn;
 
     // Did the user pass in labels?
-    if (CLI::HasParam("labels_file"))
+    if (CLI::HasParam("labels"))
     {
-      // Load labels.
-      const string labelsFile = CLI::GetParam<string>("labels_file");
-      data::Load(labelsFile, labelsIn, true);
+      labelsIn = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
     }
     else
     {
       // Use the last row of the training data as the labels.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-      labelsIn = trainingData.row(trainingData.n_rows - 1).t();
+      labelsIn = arma::conv_to<arma::Mat<size_t>>::from(
+          trainingData.row(trainingData.n_rows - 1).t());
       trainingData.shed_row(trainingData.n_rows - 1);
     }
 
@@ -209,8 +205,8 @@ int main(int argc, char** argv)
       {
         Log::Fatal << "Perceptron from '" << inputModelFile << "' is built on "
             << "data with " << p->Weights().n_rows << " dimensions, but data in"
-            << " '" << trainingDataFile << "' has " << trainingData.n_rows
-            << "dimensions!" << endl;
+            << " '" << CLI::GetUnmappedParam<arma::mat>("training") << "' has "
+            << trainingData.n_rows << "dimensions!" << endl;
       }
 
       // Check the number of labels.
@@ -230,11 +226,11 @@ int main(int argc, char** argv)
   }
 
   // Now, the training procedure is complete.  Do we have any test data?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    Log::Info << "Classifying dataset '" << testDataFile << "'." << endl;
-    mat testData;
-    data::Load(testDataFile, testData, true);
+    Log::Info << "Classifying dataset '"
+        << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+    mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (testData.n_rows != p->Weights().n_rows)
     {
@@ -254,8 +250,8 @@ int main(int argc, char** argv)
     data::RevertLabels(predictedLabels, mappings, results);
 
     // Save the predicted labels.
-    if (outputFile != "")
-      data::Save(outputFile, results, false /* non-fatal */);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(results);
   }
 
   // Lastly, do we need to save the output model?

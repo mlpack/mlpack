@@ -50,7 +50,7 @@ void CF::GetRecommendations(const size_t numRecs,
 
 void CF::GetRecommendations(const size_t numRecs,
                             arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users)
+                            const arma::Col<size_t>& users)
 {
   // We want to avoid calculating the full rating matrix, so we will do nearest
   // neighbor search only on the H matrix, using the observation that if the

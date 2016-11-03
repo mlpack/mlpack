@@ -45,8 +45,8 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "option.  The model with greatest log-likelihood will be taken.");
 
 // Parameters for training.
-PARAM_STRING_IN_REQ("input_file", "File containing the data on which the model "
-    "will be fit.", "i");
+PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "
+    "fit.", "i");
 PARAM_INT_IN_REQ("gaussians", "Number of Gaussians in the GMM.", "g");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -99,8 +99,7 @@ int main(int argc, char* argv[])
     Log::Warn << "--output_model_file is not specified, so no model will be "
         << "saved!" << endl;
 
-  arma::mat dataPoints;
-  data::Load(CLI::GetParam<string>("input_file"), dataPoints, true);
+  arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Do we need to add noise to the dataset?
   if (CLI::HasParam("noise"))

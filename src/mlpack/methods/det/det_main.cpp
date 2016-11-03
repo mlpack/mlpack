@@ -37,8 +37,8 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "into the file specified with the --test_set_estimates_file (-E) option.");
 
 // Input data files.
-PARAM_STRING_IN("training_file", "The data set on which to build a density "
-    "estimation tree.", "t", "");
+PARAM_MATRIX_IN("training", "The data set on which to build a density "
+    "estimation tree.", "t");
 
 // Input or output model.
 PARAM_STRING_IN("input_model_file", "File containing already trained density "
@@ -47,23 +47,22 @@ PARAM_STRING_OUT("output_model_file", "File to save trained density estimation "
     "tree to.", "M");
 
 // Output data files.
-PARAM_STRING_IN("test_file", "A set of test points to estimate the density of.",
-    "T", "");
-PARAM_STRING_OUT("training_set_estimates_file", "The file in which to output "
-    "the density estimates on the training set from the final optimally pruned "
-    "tree.", "e");
-PARAM_STRING_OUT("test_set_estimates_file", "The file in which to output the "
-    "estimates on the test set from the final optimally pruned tree.", "E");
-PARAM_STRING_OUT("vi_file", "The file to output the variable importance values "
-    "for each feature.", "i");
+PARAM_MATRIX_IN("test", "A set of test points to estimate the density of.",
+    "T");
+PARAM_MATRIX_OUT("training_set_estimates", "The output density estimates on "
+    "the training set from the final optimally pruned tree.", "e");
+PARAM_MATRIX_OUT("test_set_estimates", "The output estimates on the test set "
+    "from the final optimally pruned tree.", "E");
+PARAM_MATRIX_OUT("vi", "The output variable importance values for each "
+    "feature.", "i");
 
 // Parameters for the training algorithm.
-PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for the "
-    "estimation (0 is LOOCV)", "f", 10);
-PARAM_INT_IN("min_leaf_size", "The minimum size of a leaf in the unpruned, fully "
-    "grown DET.", "l", 5);
-PARAM_INT_IN("max_leaf_size", "The maximum size of a leaf in the unpruned, fully "
-    "grown DET.", "L", 10);
+PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for "
+    "the estimation (0 is LOOCV)", "f", 10);
+PARAM_INT_IN("min_leaf_size", "The minimum size of a leaf in the unpruned, "
+    "fully grown DET.", "l", 5);
+PARAM_INT_IN("max_leaf_size", "The maximum size of a leaf in the unpruned, "
+    "fully grown DET.", "L", 10);
 /*
 PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "a form of regularization similar to the usual alpha-pruning in decision "
@@ -77,17 +76,17 @@ int main(int argc, char *argv[])
   CLI::ParseCommandLine(argc, argv);
 
   // Validate input parameters.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
         << "may be specified!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) "
         << "are specified!" << endl;
 
-  if (!CLI::HasParam("training_file"))
+  if (!CLI::HasParam("training"))
   {
-    if (CLI::HasParam("training_set_estimates_file"))
+    if (CLI::HasParam("training_set_estimates"))
       Log::Warn << "--training_set_estimates_file (-e) ignored because "
           << "--training_file (-t) is not specified." << endl;
     if (CLI::HasParam("folds"))
@@ -100,18 +99,23 @@ int main(int argc, char *argv[])
       Log::Warn << "--max_leaf_size (-L) ignored because --training_file (-t) "
           << "is not specified." << endl;
   }
+  else if (!CLI::HasParam("output_model_file") &&
+           !CLI::HasParam("training_set_estimates") &&
+           !CLI::HasParam("vi"))
+  {
+    Log::Warn << "None of --output_model_file (-M), --training_set_estimates "
+        << "(-e), or --vi (-i) are specified; no output will be saved!" << endl;
+  }
 
-  if (!CLI::HasParam("test_file") && CLI::HasParam("test_set_estimates_file"))
+  if (!CLI::HasParam("test") && CLI::HasParam("test_set_estimates"))
     Log::Warn << "--test_set_estimates_file (-E) ignored because --test_file "
         << "(-T) is not specified." << endl;
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    const string trainSetFile = CLI::GetParam<string>("training_file");
-    arma::mat trainingData;
-    data::Load(trainSetFile, trainingData, true);
+    arma::mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
     // Cross-validation here.
     size_t folds = CLI::GetParam<int>("folds");
@@ -132,11 +136,12 @@ int main(int argc, char *argv[])
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, int>(trainingData, folds, regularization, maxLeafSize, minLeafSize, "");
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
+        maxLeafSize, minLeafSize, "");
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
-    if (CLI::HasParam("training_set_estimates_file"))
+    if (CLI::HasParam("training_set_estimates"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);
@@ -145,8 +150,8 @@ int main(int argc, char *argv[])
         trainingDensities[i] = tree->ComputeValue(trainingData.unsafe_col(i));
       Timer::Stop("det_estimation_time");
 
-      data::Save(CLI::GetParam<string>("training_set_estimates_file"),
-          trainingDensities);
+      CLI::GetParam<arma::mat>("training_set_estimates") =
+          std::move(trainingDensities);
     }
   }
   else
@@ -157,11 +162,9 @@ int main(int argc, char *argv[])
 
   // Compute the density at the provided test points and output the density in
   // the given file.
-  const string testFile = CLI::GetParam<string>("test_file");
-  if (testFile != "")
+  if (CLI::HasParam("test"))
   {
-    arma::mat testData;
-    data::Load(testFile, testData, true);
+    arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
     // Compute test set densities.
     Timer::Start("det_test_set_estimation");
@@ -170,14 +173,17 @@ int main(int argc, char *argv[])
       testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
     Timer::Stop("det_test_set_estimation");
 
-    if (CLI::GetParam<string>("test_set_estimates_file") != "")
-      data::Save(CLI::GetParam<string>("test_set_estimates_file"),
-          testDensities);
+    if (CLI::HasParam("test_set_estimates"))
+      CLI::GetParam<arma::mat>("test_set_estimates") = std::move(testDensities);
   }
 
   // Print variable importance.
-  if (CLI::HasParam("vi_file"))
-    PrintVariableImportance(tree, CLI::GetParam<string>("vi_file"));
+  if (CLI::HasParam("vi"))
+  {
+    arma::vec importances;
+    tree->ComputeVariableImportance(importances);
+    CLI::GetParam<arma::mat>("vi") = std::move(importances.t());
+  }
 
   // Save the model, if desired.
   if (CLI::HasParam("output_model_file"))
