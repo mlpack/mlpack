@@ -1,8 +1,8 @@
 /**
- * @file smarthash_main.cpp
+ * @file approx_kfn_main.cpp
  * @author Ryan Curtin
  *
- * Command-line program for the SmartHash algorithm.
+ * Command-line program for various furthest neighbor search algorithms.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
