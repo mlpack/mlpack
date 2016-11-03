@@ -99,7 +99,6 @@ void DrusillaSelect<MatType>::Train(
     norms.max(maxIndex);
 
     arma::vec line(refCopy.col(maxIndex) / arma::norm(refCopy.col(maxIndex)));
-    const size_t n_nonzero = (size_t) arma::sum(norms > 0);
 
     // Calculate distortion and offset and make scores.
     std::vector<bool> closeAngle(referenceSet.n_cols, false);
