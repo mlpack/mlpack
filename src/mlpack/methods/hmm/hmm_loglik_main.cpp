@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Compute the log-likelihood of a given sequence for a given HMM.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -16,8 +21,10 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
     "log-likelihood of a given sequence of observations (--input_file).  The "
     "computed log-likelihood is given directly to stdout.");
 
-PARAM_STRING_REQ("input_file", "File containing observations,", "i");
-PARAM_STRING_REQ("model_file", "File containing HMM.", "m");
+PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
+PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
+
+PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -35,9 +42,7 @@ struct Loglik
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
-    const string inputFile = CLI::GetParam<string>("input_file");
-    mat dataSeq;
-    data::Load(inputFile, dataSeq, true);
+    mat dataSeq = std::move(CLI::GetParam<mat>("input"));
 
     // Detect if we need to transpose the data, in the case where the input data
     // has one dimension.
@@ -55,7 +60,7 @@ struct Loglik
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
-    cout << loglik << endl;
+    CLI::GetParam<double>("log_likelihood") = loglik;
   }
 };
 

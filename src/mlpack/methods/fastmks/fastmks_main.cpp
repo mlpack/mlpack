@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Main executable for maximum inner product search.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -41,45 +46,45 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "build the cover tree can be specified with the --base option.");
 
 // Model-building parameters.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
-    "");
-PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine', "
-    "'gaussian', 'epanechnikov', 'triangular', 'hyptan'.", "K", "linear");
-PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
+PARAM_MATRIX_IN("reference", "The reference dataset.", "r");
+PARAM_STRING_IN("kernel", "Kernel type to use: 'linear', 'polynomial', "
+    "'cosine', 'gaussian', 'epanechnikov', 'triangular', 'hyptan'.", "K",
+    "linear");
+PARAM_DOUBLE_IN("base", "Base to use during cover tree construction.", "b",
+    2.0);
 
 // Kernel parameters.
-PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
-PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
-    "o", 0.0);
-PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
+PARAM_DOUBLE_IN("degree", "Degree of polynomial kernel.", "d", 2.0);
+PARAM_DOUBLE_IN("offset", "Offset of kernel (for polynomial and hyptan "
+    "kernels).", "o", 0.0);
+PARAM_DOUBLE_IN("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
     "triangular kernels).", "w", 1.0);
-PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
+PARAM_DOUBLE_IN("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 // Load/save models.
-PARAM_STRING("input_model_file", "File containing FastMKS model.", "m", "");
-PARAM_STRING("output_model_file", "File to save FastMKS model to.", "M", "");
+PARAM_STRING_IN("input_model_file", "File containing FastMKS model.", "m", "");
+PARAM_STRING_OUT("output_model_file", "File to save FastMKS model to.", "M");
 
 // Search preferences.
-PARAM_STRING("query_file", "File containing the query dataset.", "q", "");
-PARAM_INT("k", "Number of maximum kernels to find.", "k", 0);
+PARAM_MATRIX_IN("query", "The query dataset.", "q");
+PARAM_INT_IN("k", "Number of maximum kernels to find.", "k", 0);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "S");
 
-PARAM_STRING("kernels_file", "File to save kernels into.", "p", "");
-PARAM_STRING("indices_file", "File to save indices of kernels into.",
-    "i", "");
+PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
+PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
   // Validate command-line parameters.
-  if (CLI::HasParam("reference_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Cannot specify both --reference_file (-r) and "
         << "--input_model_file (-m)!" << endl;
 
-  if (!CLI::HasParam("reference_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "Must specify either --reference_file (-r) or "
         << "--input_model_file (-m)!" << endl;
 
@@ -100,15 +105,19 @@ int main(int argc, char** argv)
   }
 
   if (!CLI::HasParam("k") &&
-      (CLI::HasParam("indices_file") || CLI::HasParam("kernels_file")))
+      (CLI::HasParam("indices") || CLI::HasParam("kernels")))
     Log::Warn << "--indices_file and --kernels_file ignored, because no search "
         << "task is specified (i.e., --k is not specified)!" << endl;
 
   if (CLI::HasParam("k") &&
-      !(CLI::HasParam("indices_file") || CLI::HasParam("kernels_file")))
+      !(CLI::HasParam("indices") || CLI::HasParam("kernels")))
     Log::Warn << "Search specified with --k, but no output will be saved "
         << "because neither --indices_file nor --kernels_file are specified!"
         << endl;
+
+  if (CLI::HasParam("query") && !CLI::HasParam("k"))
+    Log::Warn << "--query_file ignored, because no search task is specified "
+        << "(i.e., --k is not specified)!" << endl;
 
   // Check on kernel type.
   const string kernelType = CLI::GetParam<string>("kernel");
@@ -128,14 +137,12 @@ int main(int argc, char** argv)
 
   FastMKSModel model;
   arma::mat referenceData;
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
-    data::Load(CLI::GetParam<string>("reference_file"), referenceData, true);
+    referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '"
-        << CLI::GetParam<string>("reference_file") << "' ("
-        << referenceData.n_rows << " x " << referenceData.n_cols << ")."
-        << endl;
+    Log::Info << "Loaded reference data (" << referenceData.n_rows << " x "
+        << referenceData.n_cols << ")." << endl;
 
     // For cover tree construction.
     const double base = CLI::GetParam<double>("base");
@@ -211,16 +218,14 @@ int main(int argc, char** argv)
     arma::mat kernels;
     arma::Mat<size_t> indices;
 
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
     {
-      const string queryFile = CLI::GetParam<string>("query_file");
       const double base = CLI::GetParam<double>("base");
 
-      arma::mat queryData;
-      data::Load(queryFile, queryData, true);
+      arma::mat queryData = std::move(CLI::GetParam<arma::mat>("query"));
 
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+      Log::Info << "Loaded query data (" << queryData.n_rows << " x "
+          << queryData.n_cols << ")." << endl;
 
       model.Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
           kernels, base);
@@ -231,17 +236,11 @@ int main(int argc, char** argv)
     }
 
     // Save output, if we were asked to.
-    if (CLI::HasParam("kernels_file"))
-    {
-      const string kernelsFile = CLI::GetParam<string>("kernels_file");
-      data::Save(kernelsFile, kernels, false);
-    }
+    if (CLI::HasParam("kernels"))
+      CLI::GetParam<arma::mat>("kernels") = std::move(kernels);
 
-    if (CLI::HasParam("indices_file"))
-    {
-      const string indicesFile = CLI::GetParam<string>("indices_file");
-      data::Save(indicesFile, indices, false);
-    }
+    if (CLI::HasParam("indices"))
+      CLI::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
   }
 
   // Save the model, if requested.

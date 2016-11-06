@@ -3,6 +3,11 @@
  * @author Nishant Mehta
  *
  * Executable for Local Coordinate Coding.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include "lcc.hpp"
@@ -40,29 +45,29 @@ PROGRAM_INFO("Local Coordinate Coding",
     "the -N option.");
 
 // Training parameters.
-PARAM_STRING("training_file", "Filename of the training data (X).", "t", "");
-PARAM_INT("atoms", "Number of atoms in the dictionary.", "k", 0);
-PARAM_DOUBLE("lambda", "Weighted l1-norm regularization parameter.", "l", 0.0);
-PARAM_INT("max_iterations", "Maximum number of iterations for LCC (0 indicates "
-    "no limit).", "n", 0);
-PARAM_STRING("initial_dictionary", "Filename for optional initial dictionary.",
-    "i", "");
+PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
+PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 0);
+PARAM_DOUBLE_IN("lambda", "Weighted l1-norm regularization parameter.", "l",
+    0.0);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for LCC (0 "
+    "indicates no limit).", "n", 0);
+PARAM_MATRIX_IN("initial_dictionary", "Optional initial dictionary.", "i");
 PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
     "before coding.", "N");
-PARAM_DOUBLE("tolerance", "Tolerance for objective function.", "o", 0.01);
+PARAM_DOUBLE_IN("tolerance", "Tolerance for objective function.", "o", 0.01);
 
 // Load/save a model.
-PARAM_STRING("input_model_file", "File containing input LCC model.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained LCC model to.", "M",
+PARAM_STRING_IN("input_model_file", "File containing input LCC model.", "m",
     "");
+PARAM_STRING_OUT("output_model_file", "File to save trained LCC model to.",
+    "M");
 
 // Test on another dataset.
-PARAM_STRING("test_file", "File of test points to encode.", "T", "");
-PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
-    "d", "");
-PARAM_STRING("codes_file", "Filename to save the output codes to.", "c", "");
+PARAM_MATRIX_IN("test", "Test points to encode.", "T");
+PARAM_MATRIX_OUT("dictionary", "Output dictionary matrix.", "d");
+PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace arma;
 using namespace std;
@@ -83,27 +88,27 @@ int main(int argc, char* argv[])
   // Check for parameter validity.
   if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
     Log::Fatal << "Cannot specify both --input_model_file (-m) and "
-        << "--initial_dictionary (-i)!" << endl;
+        << "--initial_dictionary_file (-i)!" << endl;
 
-  if (CLI::HasParam("training_file") && !CLI::HasParam("atoms"))
+  if (CLI::HasParam("training") && !CLI::HasParam("atoms"))
     Log::Fatal << "If --training_file is specified, the number of atoms in the "
         << "dictionary must be specified with --atoms (-k)!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
         << "be specified!" << endl;
 
-  if (!CLI::HasParam("codes_file") && !CLI::HasParam("dictionary_file") &&
+  if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
       !CLI::HasParam("output_model_file"))
     Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
         << "--output_model_file (-M) are specified; no output will be saved."
         << endl;
 
-  if (CLI::HasParam("codes_file") && !CLI::HasParam("test_file"))
+  if (CLI::HasParam("codes") && !CLI::HasParam("test"))
     Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
         << "specified with --test_file or -T) is given to encode!" << endl;
 
-  if (!CLI::HasParam("training_file"))
+  if (!CLI::HasParam("training"))
   {
     if (CLI::HasParam("atoms"))
       Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
@@ -112,8 +117,8 @@ int main(int argc, char* argv[])
       Log::Warn << "--lambda (-l) ignored because --training_file (-t) is not "
           << "specified." << endl;
     if (CLI::HasParam("initial_dictionary"))
-      Log::Warn << "--initial_dictionary (-i) ignored because --training_file "
-          << "(-t) is not specified." << endl;
+      Log::Warn << "--initial_dictionary_file (-i) ignored because "
+          << "--training_file (-t) is not specified." << endl;
     if (CLI::HasParam("max_iterations"))
       Log::Warn << "--max_iterations (-n) ignored because --training_file (-t) "
           << "is not specified." << endl;
@@ -133,10 +138,9 @@ int main(int argc, char* argv[])
         true);
   }
 
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    mat matX;
-    data::Load(CLI::GetParam<string>("training_file"), matX, true);
+    mat matX = std::move(CLI::GetParam<mat>("training"));
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
@@ -162,8 +166,7 @@ int main(int argc, char* argv[])
     else if (CLI::HasParam("initial_dictionary"))
     {
       // Load initial dictionary directly into LCC object.
-      data::Load(CLI::GetParam<string>("initial_dictionary"), lcc.Dictionary(),
-          true);
+      lcc.Dictionary() = std::move(CLI::GetParam<mat>("initial_dictionary"));
 
       // Validate the size of the initial dictionary.
       if (lcc.Dictionary().n_cols != lcc.Atoms())
@@ -191,15 +194,14 @@ int main(int argc, char* argv[])
   }
 
   // Now, do we have any matrix to encode?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    mat matY;
-    data::Load(CLI::GetParam<string>("test_file"), matY, true);
+    mat matY = std::move(CLI::GetParam<mat>("test"));
 
     if (matY.n_rows != lcc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
           << lcc.Dictionary().n_rows << ", but data in test file "
-          << CLI::GetParam<string>("test_file") << " has a dimensionality of "
+          << CLI::GetUnmappedParam<mat>("test") << " has a dimensionality of "
           << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
@@ -213,13 +215,13 @@ int main(int argc, char* argv[])
     mat codes;
     lcc.Encode(matY, codes);
 
-    if (CLI::HasParam("codes_file"))
-      data::Save(CLI::GetParam<string>("codes_file"), codes);
+    if (CLI::HasParam("codes"))
+      CLI::GetParam<mat>("codes") = std::move(codes);
   }
 
   // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary_file"))
-    data::Save(CLI::GetParam<string>("dictionary_file"), lcc.Dictionary());
+  if (CLI::HasParam("dictionary"))
+    CLI::GetParam<mat>("dictionary") = std::move(lcc.Dictionary());
 
   // Did the user want to save the model?
   if (CLI::HasParam("output_model_file"))

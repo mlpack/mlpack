@@ -1,5 +1,27 @@
+### mlpack 2.1.0
+###### 2016-10-31
+  * Fixed CoverTree to properly handle single-point datasets.
+
+  * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
+    some datasets (#717).
+
+  * Added mlpack_preprocess_describe program, which can be used to print
+    statistics on a given dataset (#742).
+
+  * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
+    KFN class), leading to orders-of-magnitude speedups in some cases.
+
+  * Bump minimum required version of Armadillo to 4.200.0.
+
+  * Added simple Gradient Descent optimizer, found in
+    src/mlpack/core/optimizers/gradient_descent/ (#792).
+
+  * Added approximate furthest neighbor search algorithms QDAFN and
+    DrusillaSelect in src/mlpack/methods/approx_kfn/, with command-line program
+    mlpack_approx_kfn.
+
 ### mlpack 2.0.3
-###### 2016-??-??
+###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
     now be used to control the number of extra bins that are probed, as can the
     -T (--num_probes) option to mlpack_lsh.
@@ -11,6 +33,8 @@
 
   * Added the mlpack_preprocess_split and mlpack_preprocess_binarize programs,
     which can be used for preprocessing code (#650, #666).
+
+  * Added OpenMP support to LSHSearch and mlpack_lsh (#700).
 
 ### mlpack 2.0.2
 ###### 2016-06-20

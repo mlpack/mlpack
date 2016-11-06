@@ -3,6 +3,11 @@
  * @author Andrew Wells
  *
  * Implementation of class (RTreeSplit) to split a RectangleTree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
@@ -23,6 +28,8 @@ namespace tree {
 template<typename TreeType>
 void RTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
+  if (tree->Count() <= tree->MaxLeafSize())
+    return;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.

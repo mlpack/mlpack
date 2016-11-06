@@ -5,6 +5,11 @@
  * Executable for MVU.
  *
  * Note: this implementation of MVU does not work.  See #189.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include "mvu.hpp"
@@ -15,11 +20,11 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
     "such that the distances to the nearest neighbors of each point are held "
     "constant.");
 
-PARAM_STRING_REQ("input_file", "Filename of input dataset.", "i");
-PARAM_INT_REQ("new_dim", "New dimensionality of dataset.", "d");
+PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
+PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
 
-PARAM_STRING("output_file", "Filename to save unfolded dataset to.", "o", "");
-PARAM_INT("num_neighbors", "Number of nearest neighbors to consider while "
+PARAM_MATRIX_OUT("output", "Matrix to save unfolded dataset to.", "o");
+PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
     "unfolding.", "k", 5);
 
 using namespace mlpack;
@@ -37,15 +42,14 @@ int main(int argc, char **argv)
   const int newDim = CLI::GetParam<int>("new_dim");
   const int numNeighbors = CLI::GetParam<int>("num_neighbors");
 
-  if (CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  mat data;
-  data::Load(inputFile, data, true);
+  mat data = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
   if (newDim <= 0 || newDim > (int) data.n_rows)
@@ -70,6 +74,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  if (CLI::HasParam("output_file"))
-    data::Save(outputFile, output, true);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(output);
 }

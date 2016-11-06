@@ -17,6 +17,11 @@
  *   pages = {297--336},
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
@@ -208,7 +213,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   }
 
   arma::colvec cMRow;
-  arma::uword maxIndex;
+  arma::uword maxIndex = 0;
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {

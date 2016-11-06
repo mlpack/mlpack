@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * This file includes some useful macros for tests.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_TESTS_TEST_TOOLS_HPP
 #define MLPACK_TESTS_TEST_TOOLS_HPP
@@ -37,6 +42,6 @@
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
 #define REQUIRE_RELATIVE_ERR( L, R, E ) \
-    BOOST_REQUIRE_LE( abs((R) - (L)), (E) * abs(R))
+    BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
 
 #endif

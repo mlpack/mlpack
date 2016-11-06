@@ -3,6 +3,11 @@
  * @author Marcus Edel
  *
  * Definition of the CNN class, which implements convolutional neural networks.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_CNN_IMPL_HPP
 #define MLPACK_METHODS_ANN_CNN_IMPL_HPP
@@ -127,6 +132,7 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Train(const arma::cube& predictors, const arma::mat& responses)
 {
   numFunctions = predictors.n_cols;
+  sampleSize = predictors.n_slices / responses.n_cols;
   this->predictors = predictors;
   this->responses = responses;
 
@@ -153,7 +159,8 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
          const arma::mat& responses,
          OptimizerType<NetworkType>& optimizer)
 {
-  numFunctions = predictors.n_cols;
+  numFunctions = responses.n_cols;
+  sampleSize = predictors.n_slices / responses.n_cols;
   this->predictors = predictors;
   this->responses = responses;
 
@@ -200,15 +207,15 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 
   arma::mat responsesTemp;
   ResetParameter(network);
-  Forward(predictors.slices(0, 0), network);
+  Forward(predictors.slices(0, sampleSize - 1), network);
   OutputPrediction(responsesTemp, network);
 
   responses = arma::mat(responsesTemp.n_elem, predictors.n_slices);
   responses.col(0) = responsesTemp.col(0);
 
-  for (size_t i = 1; i < predictors.n_slices; i++)
+  for (size_t i = 1; i < (predictors.n_slices / sampleSize); i++)
   {
-    Forward(predictors.slices(i, i), network);
+    Forward(predictors.slices(i, (i + 1) * sampleSize - 1), network);
 
     responsesTemp = arma::mat(responses.colptr(i), responses.n_rows, 1, false,
         true);
@@ -231,7 +238,7 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
   this->deterministic = deterministic;
 
   ResetParameter(network);
-  Forward(predictors.slices(i, i), network);
+  Forward(predictors.slices(i, (i + 1) * sampleSize - 1), network);
 
   return OutputError(arma::mat(responses.colptr(i), responses.n_rows, 1, false,
       true), error, network);
@@ -267,6 +274,7 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+  ar & data::CreateNVP(sampleSize, "sampleSize");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

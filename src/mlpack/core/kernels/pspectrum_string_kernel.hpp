@@ -7,6 +7,11 @@
  * one-dimensional data matrix (data vector) to FastMKS which stores indices of
  * strings; then, the actual strings are given to the PSpectrumStringKernel at
  * construction time, and the kernel knows to map the indices to actual strings.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP
 #define MLPACK_CORE_KERNELS_PSPECTRUM_STRING_KERNEL_HPP

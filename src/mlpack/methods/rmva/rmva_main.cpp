@@ -3,6 +3,11 @@
  * @author Marcus Edel
  *
  * Main executable for the Recurrent Model for Visual Attention.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -42,68 +47,68 @@ PROGRAM_INFO("Recurrent Model for Visual Attention",
     "should be given.");
 
 // Model loading/saving.
-PARAM_STRING("input_model_file", "File containing the Recurrent Model for "
+PARAM_STRING_IN("input_model_file", "File containing the Recurrent Model for "
     "Visual Attention.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained Recurrent Model for "
-    "Visual Attention to.", "M", "");
+PARAM_STRING_OUT("output_model_file", "File to save trained Recurrent Model for"
+    " Visual Attention to.", "M");
 
 // Training parameters.
-PARAM_STRING("training_file", "A file containing the training set.", "t", "");
-PARAM_STRING("labels_file", "A file containing labels for the training set.",
-    "l", "");
+PARAM_MATRIX_IN("training", "Matrix containing the training set.", "t");
+PARAM_MATRIX_IN("labels", "Matrix containing labels for the training set.",
+    "l");
 
-PARAM_STRING("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
+PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
     "'lbfgs'.", "O", "minibatch-sgd");
 
-PARAM_INT("max_iterations", "Maximum number of iterations for SGD or RMSProp "
-    "(0 indicates no limit).", "n", 500000);
-PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of SGD or "
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for SGD or RMSProp"
+    " (0 indicates no limit).", "n", 500000);
+PARAM_DOUBLE_IN("tolerance", "Maximum tolerance for termination of SGD or "
     "RMSProp.", "e", 1e-7);
 
-PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
-    "a", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for stochastic gradient descent "
+    "(alpha),", "a", 0.01);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
-PARAM_INT("batch_size", "Batch size for mini-batch SGD.", "b", 20);
+PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 20);
 
-PARAM_INT("rho", "Number of steps for the back-propagate through time.", "r",
+PARAM_INT_IN("rho", "Number of steps for the back-propagate through time.", "r",
     7);
 
-PARAM_INT("classes", "The number of classes.", "c", 10);
+PARAM_INT_IN("classes", "The number of classes.", "c", 10);
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 // Test parameters.
-PARAM_STRING("test_file", "A file containing the test set.", "T", "");
-PARAM_STRING("output_file", "The file in which the predicted labels for the "
-    "test set will be written.", "o", "");
+PARAM_MATRIX_IN("test", "Matrix containing the test set.", "T");
+PARAM_MATRIX_OUT("output", "The matrix in which the predicted labels for the "
+    "test set will be written.", "o");
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
- // Check input parameters.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
+  // Check input parameters.
+  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Cannot specify both --training_file (-t) and "
-        << "--input_model_file (-m)!" << endl;
+       << "--input_model_file (-m)!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
         << " specified!" << endl;
 
-  if (!CLI::HasParam("training_file") && CLI::HasParam("labels_file"))
+  if (!CLI::HasParam("training") && CLI::HasParam("labels"))
     Log::Warn << "--labels_file (-l) ignored because --training_file (-t) is "
         << "not specified." << endl;
 
-  if (!CLI::HasParam("output_file") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model_file"))
     Log::Warn << "Neither --output_file (-o) nor --output_model_file (-M) "
         << "specified; no output will be saved!" << endl;
 
-  if (CLI::HasParam("output_file") && !CLI::HasParam("test_file"))
+  if (CLI::HasParam("output") && !CLI::HasParam("test"))
     Log::Warn << "--output_file (-o) ignored because no test file specified "
         << "with --test_file (-T)." << endl;
 
-  if (!CLI::HasParam("output_file") && CLI::HasParam("test_file"))
+  if (!CLI::HasParam("output") && CLI::HasParam("test"))
     Log::Warn << "--test_file (-T) specified, but classification results will "
         << "not be saved because --output_file (-o) is not specified." << endl;
 
@@ -209,20 +214,17 @@ int main(int argc, char** argv)
         transfer, classifier, rewardPredictor, rho);
 
   // Either we have to train a model, or load a model.
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    const string trainingFile = CLI::GetParam<string>("training_file");
-    arma::mat trainingData;
-    data::Load(trainingFile, trainingData, true);
+    arma::mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
     arma::mat labels;
 
     // Did the user pass in labels?
-    const string labelsFilename = CLI::GetParam<string>("labels_file");
-    if (labelsFilename != "")
+    if (CLI::HasParam("labels"))
     {
       // Load labels.
-      data::Load(labelsFilename, labels, true, false);
+      labels = std::move(CLI::GetParam<arma::mat>("labels"));
 
       // Do the labels need to be transposed?
       if (labels.n_cols == 1)
@@ -263,11 +265,9 @@ int main(int argc, char** argv)
   }
 
   // Do we need to do testing?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    const string testingDataFilename = CLI::GetParam<std::string>("test_file");
-    arma::mat testingData;
-    data::Load(testingDataFilename, testingData, true);
+    arma::mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
     // Time the running of the Naive Bayes Classifier.
     arma::mat results;
@@ -275,12 +275,8 @@ int main(int argc, char** argv)
     net.Predict(testingData, results);
     Timer::Stop("rmva_testing");
 
-    if (CLI::HasParam("output_file"))
-    {
-      // Output results.
-      const string outputFilename = CLI::GetParam<string>("output_file");
-      data::Save(outputFilename, results, true);
-    }
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::mat>("output") = std::move(results);
   }
 
   // Save the model, if requested.

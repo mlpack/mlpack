@@ -2,6 +2,11 @@
  * @file random.hpp
  *
  * Miscellaneous math random-related routines.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_MATH_RANDOM_HPP
 #define MLPACK_CORE_MATH_RANDOM_HPP
@@ -95,6 +100,44 @@ inline double RandNormal()
 inline double RandNormal(const double mean, const double variance)
 {
   return variance * randNormalDist(randGen) + mean;
+}
+
+/**
+ * Obtains no more than maxNumSamples distinct samples. Each sample belongs to
+ * [loInclusive, hiExclusive).
+ *
+ * @param loInclusive The lower bound (inclusive).
+ * @param hiExclusive The high bound (exclusive).
+ * @param maxNumSamples The maximum number of samples to obtain.
+ * @param distinctSamples The samples that will be obtained.
+ */
+inline void ObtainDistinctSamples(const size_t loInclusive,
+                                  const size_t hiExclusive,
+                                  const size_t maxNumSamples,
+                                  arma::uvec& distinctSamples)
+{
+  const size_t samplesRangeSize = hiExclusive - loInclusive;
+
+  if (samplesRangeSize > maxNumSamples)
+  {
+    arma::Col<size_t> samples;
+
+    samples.zeros(samplesRangeSize);
+
+    for (size_t i = 0; i < maxNumSamples; i++)
+      samples [ (size_t) math::RandInt(samplesRangeSize) ]++;
+
+    distinctSamples = arma::find(samples > 0);
+
+    if (loInclusive > 0)
+      distinctSamples += loInclusive;
+  }
+  else
+  {
+    distinctSamples.set_size(samplesRangeSize);
+    for (size_t i = 0; i < samplesRangeSize; i++)
+      distinctSamples[i] = loInclusive + i;
+  }
 }
 
 } // namespace math

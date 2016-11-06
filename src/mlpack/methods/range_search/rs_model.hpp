@@ -6,6 +6,11 @@
  * way to serialize a model, abstracts away the different types of trees, and
  * also reflects the RangeSearch API and automatically directs to the right
  * tree types.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RS_MODEL_HPP
@@ -13,6 +18,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 
 #include "range_search.hpp"
 
@@ -30,7 +36,14 @@ class RSModel
     R_STAR_TREE,
     BALL_TREE,
     X_TREE,
-    HILBERT_R_TREE
+    HILBERT_R_TREE,
+    R_PLUS_TREE,
+    R_PLUS_PLUS_TREE,
+    VP_TREE,
+    RP_TREE,
+    MAX_RP_TREE,
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -63,6 +76,23 @@ class RSModel
   RSType<tree::XTree>* xTreeRS;
   //! Hilbert R tree based range search object (NULL if not in use).
   RSType<tree::HilbertRTree>* hilbertRTreeRS;
+  //! R+ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusTree>* rPlusTreeRS;
+  //! R++ tree based range search object (NULL if not in use).
+  RSType<tree::RPlusPlusTree>* rPlusPlusTreeRS;
+  //! VP tree based range search object (NULL if not in use).
+  RSType<tree::VPTree>* vpTreeRS;
+  //! Random projection tree (mean) based range search object
+  //! (NULL if not in use).
+  RSType<tree::RPTree>* rpTreeRS;
+  //! Random projection tree (max) based range search object
+  //! (NULL if not in use).
+  RSType<tree::MaxRPTree>* maxRPTreeRS;
+  //! Universal B tree based range search object
+  //! (NULL if not in use).
+  RSType<tree::UBTree>* ubTreeRS;
+  //! Octree-based range search object (NULL if not in use).
+  RSType<tree::Octree>* octreeRS;
 
  public:
   /**

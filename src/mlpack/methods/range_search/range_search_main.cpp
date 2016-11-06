@@ -5,6 +5,11 @@
  *
  * Implementation of the RangeSearch executable.  Allows some number of standard
  * options.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -50,36 +55,38 @@ PROGRAM_INFO("Range Search",
     "regardless of the given extension.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING("reference_file", "File containing the reference dataset.", "r",
-    "");
-PARAM_STRING("distances_file", "File to output distances into.", "d", "");
-PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
+PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
+PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
+PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_STRING("input_model_file", "File containing pre-trained range search "
+PARAM_STRING_IN("input_model_file", "File containing pre-trained range search "
     "model.", "m", "");
-PARAM_STRING("output_model_file", "If specified, the range search model will be"
-    " saved to the given file.", "M", "");
+PARAM_STRING_OUT("output_model_file", "If specified, the range search model "
+    "will be saved to the given file.", "M");
 
 // The user may specify a query file of query points and a range to search for.
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-PARAM_DOUBLE("max", "Upper bound in range (if not specified, +inf will be "
+PARAM_MATRIX_IN("query", "File containing query points (optional).", "q");
+PARAM_DOUBLE_IN("max", "Upper bound in range (if not specified, +inf will be "
     "used.", "U", 0.0);
-PARAM_DOUBLE("min", "Lower bound in range.", "L", 0.0);
+PARAM_DOUBLE_IN("min", "Lower bound in range.", "L", 0.0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
-    "'x', 'ball', 'hilbert-r'.", "t", "kd");
-PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
+PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
+    "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
+    "'r-plus-plus', 'oct'.", "t", "kd");
+PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
+    "vp trees, random projection trees, UB trees, R trees, R* trees, X trees, "
+    "Hilbert R trees, R+ trees, R++ trees, and octrees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
-PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
+PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "s");
+    "dual-tree search).", "S");
 
 typedef RangeSearch<> RSType;
 typedef CoverTree<EuclideanDistance, RangeSearchStat> CoverTreeType;
@@ -97,12 +104,12 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
@@ -153,10 +160,9 @@ int main(int argc, char *argv[])
   RSModel rs;
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
     // Get all the parameters.
-    const string referenceFile = CLI::GetParam<string>("reference_file");
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
@@ -175,17 +181,32 @@ int main(int argc, char *argv[])
       tree = RSModel::X_TREE;
     else if (treeType == "hilbert-r")
       tree = RSModel::HILBERT_R_TREE;
+    else if (treeType == "r-plus")
+      tree = RSModel::R_PLUS_TREE;
+    else if (treeType == "r-plus-plus")
+      tree = RSModel::R_PLUS_PLUS_TREE;
+    else if (treeType == "vp")
+      tree = RSModel::VP_TREE;
+    else if (treeType == "rp")
+      tree = RSModel::RP_TREE;
+    else if (treeType == "max-rp")
+      tree = RSModel::MAX_RP_TREE;
+    else if (treeType == "ub")
+      tree = RSModel::UB_TREE;
+    else if (treeType == "oct")
+      tree = RSModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
-          << "'kd', 'cover', 'r', 'r-star', 'x', 'ball' and 'hilbert-r'." << endl;
+          << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', and 'oct'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;
 
-    arma::mat referenceSet;
-    data::Load(referenceFile, referenceSet, true);
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+    Log::Info << "Loaded reference data from '"
+        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     const size_t leafSize = size_t(lsInt);
@@ -211,7 +232,6 @@ int main(int argc, char *argv[])
   // Perform search, if desired.
   if (CLI::HasParam("min") || CLI::HasParam("max"))
   {
-    const string queryFile = CLI::GetParam<string>("query_file");
     const double min = CLI::GetParam<double>("min");
     const double max = CLI::HasParam("max") ? CLI::GetParam<double>("max") :
         DBL_MAX;
@@ -219,10 +239,11 @@ int main(int argc, char *argv[])
     math::Range r(min, max);
 
     arma::mat queryData;
-    if (queryFile != "")
+    if (CLI::HasParam("query"))
     {
-      data::Load(queryFile, queryData, true);
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Loaded query data from '"
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -234,7 +255,7 @@ int main(int argc, char *argv[])
     vector<vector<size_t>> neighbors;
     vector<vector<double>> distances;
 
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
       rs.Search(std::move(queryData), r, neighbors, distances);
     else
       rs.Search(r, neighbors, distances);

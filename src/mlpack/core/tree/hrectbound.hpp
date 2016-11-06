@@ -5,6 +5,11 @@
  *
  * This file describes the interface for the HRectBound class, which implements
  * a hyperrectangle bound.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_HPP
@@ -181,6 +186,26 @@ class HRectBound
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
+
+  /**
+   * Determines if this bound partially contains a bound.
+   */
+  bool Contains(const HRectBound& bound) const;
+
+  /**
+   * Returns the intersection of this bound and another.
+   */
+  HRectBound operator&(const HRectBound& bound) const;
+
+  /**
+   * Intersects this bound with another.
+   */
+  HRectBound& operator&=(const HRectBound& bound);
+
+  /**
+   * Returns the volume of overlap of this bound and another.
+   */
+  ElemType Overlap(const HRectBound& bound) const;
 
   /**
    * Returns the diameter of the hyperrectangle (that is, the longest diagonal).

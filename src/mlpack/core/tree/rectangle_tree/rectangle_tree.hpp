@@ -4,6 +4,11 @@
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
  * and hilbert_r_tree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
@@ -168,7 +173,16 @@ class RectangleTree
    * @param other The tree to be copied.
    * @param deepCopy If false, the children are not recursively copied.
    */
-  RectangleTree(const RectangleTree& other, const bool deepCopy = true);
+  RectangleTree(const RectangleTree& other,
+                const bool deepCopy = true,
+                RectangleTree* newParent = NULL);
+
+  /**
+   * Create a rectangle tree by moving the other tree.
+   *
+   * @param other The tree to be copied.
+   */
+  RectangleTree(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.
@@ -343,6 +357,36 @@ class RectangleTree
   size_t& NumChildren() { return numChildren; }
 
   /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const RectangleTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const RectangleTree& queryNode);
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
@@ -424,21 +468,21 @@ class RectangleTree
   size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const RectangleTree* other) const
+  ElemType MinDistance(const RectangleTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const RectangleTree* other) const
+  ElemType MaxDistance(const RectangleTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const RectangleTree* other) const
+  math::RangeType<ElemType> RangeDistance(const RectangleTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.
@@ -489,9 +533,6 @@ class RectangleTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
  private:
   /**
    * Splits the current node, recursing up the tree.
@@ -511,6 +552,9 @@ class RectangleTree
 
   //! Friend access is given for the default constructor.
   friend class boost::serialization::access;
+
+  //! Give friend access for DescentType.
+  friend DescentType;
 
   //! Give friend access for SplitType.
   friend SplitType;

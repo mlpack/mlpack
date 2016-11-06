@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Load an ARFF dataset.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
@@ -15,10 +20,10 @@
 namespace mlpack {
 namespace data {
 
-template<typename eT>
+template<typename eT, typename PolicyType>
 void LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetInfo& info)
+              DatasetMapper<PolicyType>& info)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -98,7 +103,7 @@ void LoadARFF(const std::string& filename,
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
   {
-    info = DatasetInfo(dimensionality);
+    info = DatasetMapper<PolicyType>(dimensionality);
   }
   else if (info.Dimensionality() != dimensionality)
   {

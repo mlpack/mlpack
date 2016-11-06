@@ -4,6 +4,11 @@
  * @author Michael Fox
  *
  * Implementation of the Gaussian distribution.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
@@ -78,7 +83,7 @@ class GaussianDistribution
 
   /**
    * Calculates the multivariate Gaussian probability density function for each
-   * data point (column) in the given matrix
+   * data point (column) in the given matrix.
    *
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.

@@ -4,6 +4,11 @@
  *
  * Implementation of templated methods for the NearestNeighborSort SortPolicy
  * class for the NeighborSearch class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_IMPL_HPP
 #define MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_IMPL_HPP
@@ -18,7 +23,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return queryNode->MinDistance(referenceNode);
+  return queryNode->MinDistance(*referenceNode);
 }
 
 template<typename TreeType>
@@ -27,7 +32,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
     const TreeType* referenceNode,
     const double centerToCenterDistance)
 {
-  return queryNode->MinDistance(referenceNode, centerToCenterDistance);
+  return queryNode->MinDistance(*referenceNode, centerToCenterDistance);
 }
 
 template<typename TreeType>
@@ -37,7 +42,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
     const TreeType* referenceChildNode,
     const double centerToCenterDistance)
 {
-  return queryNode->MinDistance(referenceChildNode, centerToCenterDistance) -
+  return queryNode->MinDistance(*referenceChildNode, centerToCenterDistance) -
       referenceChildNode->ParentDistance();
 }
 

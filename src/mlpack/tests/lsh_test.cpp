@@ -2,6 +2,11 @@
  * @file lsh_test.cpp
  *
  * Unit tests for the 'LSHSearch' class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -479,14 +484,14 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
  */
 BOOST_AUTO_TEST_CASE(MultiprobeTest)
 {
+  // Test parameters.
   const double epsilonIncrease = 0.05;
-  const size_t repetitions = 5; // train five objects
+  const size_t repetitions = 5; // Train five objects.
 
   const size_t probeTrials = 5;
   const size_t numProbes[probeTrials] = {0, 1, 2, 3, 4};
 
-
-  /// algorithm parameters
+  // Algorithm parameters.
   const int k = 4;
   const int numTables = 16;
   const int numProj = 3;
@@ -501,7 +506,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   data::Load(trainSet, rdata, true);
   data::Load(testSet, qdata, true);
 
-  // Run classic knn on reference set
+  // Run classic knn on reference set.
   KNN knn(rdata);
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
@@ -596,19 +601,19 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   // Test that q1 search with 1 additional probe returns some C2 points.
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
   BOOST_REQUIRE(arma::all(
-        neighbors.col(0) == N ||
-        (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+        (neighbors.col(0) == N) ||
+        ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) == N ||
-      (neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2)));
+      (neighbors.col(0) == N) ||
+      ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 with 3 additional probes returns all C2 points.
   lshTest.Search(q2, k, neighbors, distances, 0, 3);
   BOOST_REQUIRE(arma::all(
-      neighbors.col(0) >= N / 4 && neighbors.col(0) < N / 2));
+      (neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2)));
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
@@ -751,5 +756,84 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
   BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
 }
+
+// These two tests are only compiled if the user has specified OpenMP to be
+// used.
+#ifdef HAS_OPENMP
+/**
+ * Test: This test verifies that parallel query processing returns correct
+ * results for the bichromatic search.
+ */
+BOOST_AUTO_TEST_CASE(ParallelBichromatic)
+{
+  // kNN and LSH parameters (use LSH default parameters).
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+
+  // Read iris training and testing data as reference and query sets.
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Where to store neighbors and distances
+  arma::Mat<size_t> sequentialNeighbors;
+  arma::Mat<size_t> parallelNeighbors;
+  arma::mat distances;
+
+  // Construct an LSH object. By default, it uses the maximum number of threads
+  LSHSearch<> lshTest(rdata, numProj, numTables); //default parameters
+  lshTest.Search(qdata, k, parallelNeighbors, distances);
+
+  // Now perform same search but with 1 thread
+  size_t prevNumThreads = omp_get_max_threads(); // Store number of threads used.
+  omp_set_num_threads(1);
+  lshTest.Search(qdata, k, sequentialNeighbors, distances);
+  omp_set_num_threads(prevNumThreads);
+
+  // Require both have same results
+  double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  BOOST_REQUIRE_EQUAL(recall, 1);
+}
+
+/**
+ * Test: This test verifies that parallel query processing returns correct
+ * results for the monochromatic search.
+ */
+BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
+{
+  // kNN and LSH parameters.
+  const int k = 4;
+  const int numTables = 16;
+  const int numProj = 3;
+
+  // Read iris training data as reference and query set.
+  const string trainSet = "iris_train.csv";
+  arma::mat rdata;
+  data::Load(trainSet, rdata, true);
+
+  // Where to store neighbors and distances
+  arma::Mat<size_t> sequentialNeighbors;
+  arma::Mat<size_t> parallelNeighbors;
+  arma::mat distances;
+
+  // Construct an LSH object, using maximum number of available threads.
+  LSHSearch<> lshTest(rdata, numProj, numTables);
+  lshTest.Search(k, parallelNeighbors, distances);
+
+  // Now perform same search but with 1 thread.
+  size_t prevNumThreads = omp_get_max_threads(); // Store number of threads used.
+  omp_set_num_threads(1);
+  lshTest.Search(k, sequentialNeighbors, distances);
+  omp_set_num_threads(prevNumThreads);
+
+  // Require both have same results.
+  double recall = LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
+  BOOST_REQUIRE_EQUAL(recall, 1);
+}
+#endif
 
 BOOST_AUTO_TEST_SUITE_END();

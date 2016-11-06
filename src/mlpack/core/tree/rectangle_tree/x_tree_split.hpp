@@ -2,10 +2,15 @@
  * @file x_tre_split.hpp
  * @author Andrew Wells
  *
- * Defintion of the XTreeSplit class, a class that splits the nodes of an X
+ * Definition of the XTreeSplit class, a class that splits the nodes of an X
  * tree, starting at a leaf node and moving upwards if necessary.
  *
  * This is known to have a bug: see #368.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
@@ -48,31 +53,22 @@ class XTreeSplit
 
  private:
   /**
-   * Class to allow for faster sorting.
-   */
-  template<typename ElemType>
-  class sortStruct
-  {
-   public:
-    ElemType d;
-    int n;
-  };
-
-  /**
-   * Comparator for sorting with sortStruct.
-   */
-  template<typename ElemType>
-  static bool structComp(const sortStruct<ElemType>& s1,
-                         const sortStruct<ElemType>& s2)
-  {
-    return s1.d < s2.d;
-  }
-
-  /**
    * Insert a node into another node.
    */
   template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
+
+  /**
+   * Comparator for sorting with std::pair. This comparator works a little bit
+   * faster then the default comparator.
+   */
+  template<typename ElemType>
+  static bool PairComp(const std::pair<ElemType, size_t>& p1,
+                       const std::pair<ElemType, size_t>& p2)
+  {
+    return p1.first < p2.first;
+  }
+
 };
 
 } // namespace tree

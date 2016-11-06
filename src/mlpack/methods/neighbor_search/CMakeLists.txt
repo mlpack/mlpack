@@ -9,10 +9,8 @@ set(SOURCES
   ns_model.hpp
   ns_model_impl.hpp
   sort_policies/nearest_neighbor_sort.hpp
-  sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp
   sort_policies/furthest_neighbor_sort.hpp
-  sort_policies/furthest_neighbor_sort.cpp
   sort_policies/furthest_neighbor_sort_impl.hpp
   typedef.hpp
   unmap.hpp

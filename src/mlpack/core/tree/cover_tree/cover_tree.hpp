@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
@@ -23,14 +28,16 @@ namespace tree {
  *
  * The tree can be thought of as a hierarchy with the root node at the top level
  * and the leaf nodes at the bottom level.  Each level in the tree has an
- * assigned 'scale' i.  The tree follows these three conditions:
+ * assigned 'scale' i.  The tree follows these two invariants:
  *
  * - nesting: the level C_i is a subset of the level C_{i - 1}.
  * - covering: all node in level C_{i - 1} have at least one node in the
  *     level C_i with distance less than or equal to b^i (exactly one of these
  *     is a parent of the point in level C_{i - 1}.
- * - separation: all nodes in level C_i have distance greater than b^i to all
- *     other nodes in level C_i.
+ *
+ * Note that in the cover tree paper, there is a third invariant (the
+ * 'separation invariant'), but that does not apply to our implementation,
+ * because we have relaxed the invariant.
  *
  * The value 'b' refers to the base, which is a parameter of the tree.  These
  * three properties make the cover tree very good for fast, high-dimensional
@@ -223,6 +230,14 @@ class CoverTree
   CoverTree(const CoverTree& other);
 
   /**
+   * Move constructor for a Cover Tree, possess all the members of the given
+   * tree.
+   *
+   * @param other Cover Tree to move.
+   */
+  CoverTree(CoverTree&& other);
+
+  /**
    * Create a cover tree from a boost::serialization archive.
    */
   template<typename Archive>
@@ -294,12 +309,42 @@ class CoverTree
   //! Modify the statistic for this node.
   StatisticType& Stat() { return stat; }
 
+  /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const CoverTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const CoverTree& queryNode);
+
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const CoverTree* other) const;
+  ElemType MinDistance(const CoverTree& other) const;
 
   //! Return the minimum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MinDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MinDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the minimum distance to another point.
   ElemType MinDistance(const arma::vec& other) const;
@@ -309,11 +354,11 @@ class CoverTree
   ElemType MinDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const CoverTree* other) const;
+  ElemType MaxDistance(const CoverTree& other) const;
 
   //! Return the maximum distance to another node given that the point-to-point
   //! distance has already been calculated.
-  ElemType MaxDistance(const CoverTree* other, const ElemType distance) const;
+  ElemType MaxDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the maximum distance to another point.
   ElemType MaxDistance(const arma::vec& other) const;
@@ -323,11 +368,11 @@ class CoverTree
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other) const;
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const CoverTree* other,
+  math::RangeType<ElemType> RangeDistance(const CoverTree& other,
                                           const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
@@ -337,9 +382,6 @@ class CoverTree
   //! point-to-point distance has already been calculated.
   math::RangeType<ElemType> RangeDistance(const arma::vec& other,
                                           const ElemType distance) const;
-
-  //! Returns true: this tree does have self-children.
-  static bool HasSelfChildren() { return true; }
 
   //! Get the parent node.
   CoverTree* Parent() const { return parent; }

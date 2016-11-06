@@ -4,6 +4,11 @@
  *
  * Definition of the VRClassRewardLayer class, which implements the variance
  * reduced classification reinforcement layer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_LAYER_HPP
@@ -71,7 +76,7 @@ class VRClassRewardLayer
   double Forward(const arma::Mat<eT>& input, const arma::Mat<eT>& target)
   {
     reward = 0;
-    arma::uword index;
+    arma::uword index = 0;
 
     for (size_t i = 0; i < input.n_cols; i++)
     {

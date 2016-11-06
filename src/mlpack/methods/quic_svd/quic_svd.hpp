@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * An implementation of QUIC-SVD.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
 #define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
@@ -77,9 +82,7 @@ class QUIC_SVD
    * @param v Second unitary matrix.
    * @param sigma Diagonal matrix of singular values.
    */
-  void ExtractSVD(arma::mat& u,
-                  arma::mat& v,
-                  arma::mat& sigma);
+  void ExtractSVD(arma::mat& u, arma::mat& v, arma::mat& sigma);
 
  private:
   //! Matrix for which cosine tree is constructed.
@@ -90,8 +93,5 @@ class QUIC_SVD
 
 } // namespace svd
 } // namespace mlpack
-
-// Include implementation.
-#include "quic_svd_impl.hpp"
 
 #endif

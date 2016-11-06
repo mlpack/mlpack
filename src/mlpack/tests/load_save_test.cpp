@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Tests for data::Load() and data::Save().
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <sstream>
 
@@ -518,9 +523,13 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
-#if defined(ARMA_USE_HDF5) && (ARMA_VERSION_MAJOR == 3 \
-    || (ARMA_VERSION_MAJOR == 4 && (ARMA_VERSION_MINOR < 300 \
-    ||  ARMA_VERSION_MINOR > 400)))
+// Don't perform any HDF5 tests on Armadillo 4.300-4.400 (inclusive).  A bug
+// causes loading to fail.
+#if ((ARMA_VERSION_MAJOR == 4) && \
+        (ARMA_VERSION_MINOR < 300 || ARMA_VERSION_MINOR > 400)) || \
+    (ARMA_VERSION_MAJOR >= 5)
+
+#if defined(ARMA_USE_HDF5)
 /**
  * Make sure load as HDF5 is successful.
  */
@@ -650,6 +659,8 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
   BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
   Log::Warn.ignoreInput = false;
 }
+#endif
+
 #endif
 
 /**
@@ -1401,6 +1412,8 @@ BOOST_AUTO_TEST_CASE(HarderKeonTest)
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(1), 5);
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(2), 5);
   BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
+
+  remove("test.csv");
 }
 
 /**

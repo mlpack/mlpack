@@ -4,6 +4,11 @@
  *
  * Implementation of RASearch class to perform rank-approximate
  * all-nearest-neighbors on two specified data sets.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 #define MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
@@ -347,29 +352,27 @@ Search(const MatType& querySet,
       neighborPtr = new arma::Mat<size_t>;
     }
 
-    if (treeOwner)
+    else if (treeOwner)
       neighborPtr = new arma::Mat<size_t>; // All indices need mapping.
   }
 
   // Set the size of the neighbor and distance matrices.
   neighborPtr->set_size(k, querySet.n_cols);
   distancePtr->set_size(k, querySet.n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
 
   if (naive)
   {
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
-                   tau, alpha, naive, sampleAtLeaves, firstLeafExact,
-                   singleSampleLimit, false);
+    RuleType rules(*referenceSet, querySet, k, metric, tau, alpha, naive,
+        sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
     // Find how many samples from the reference set we need and sample uniformly
     // from the reference set without replacement.
     const size_t numSamples = RAUtil::MinimumSamplesReqd(referenceSet->n_cols,
         k, tau, alpha);
     arma::uvec distinctSamples;
-    RAUtil::ObtainDistinctSamples(numSamples, referenceSet->n_cols,
+    math::ObtainDistinctSamples(0, referenceSet->n_cols, numSamples,
         distinctSamples);
 
     // Run the base case on each combination of query point and sampled
@@ -377,12 +380,13 @@ Search(const MatType& querySet,
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < distinctSamples.n_elem; ++j)
         rules.BaseCase(i, (size_t) distinctSamples[j]);
+
+    rules.GetResults(*neighborPtr, *distancePtr);
   }
   else if (singleMode)
   {
-    RuleType rules(*referenceSet, querySet, *neighborPtr, *distancePtr, metric,
-                   tau, alpha, naive, sampleAtLeaves, firstLeafExact,
-                   singleSampleLimit, false);
+    RuleType rules(*referenceSet, querySet, k, metric, tau, alpha, naive,
+        sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
     // If the reference root node is a leaf, then the sampling has already been
     // done in the RASearchRules constructor.  This happens when naive = true.
@@ -402,6 +406,8 @@ Search(const MatType& querySet,
           << (rules.NumDistComputations() / querySet.n_cols) << "."
           << std::endl;
     }
+
+    rules.GetResults(*neighborPtr, *distancePtr);
   }
   else // Dual-tree recursion.
   {
@@ -415,9 +421,8 @@ Search(const MatType& querySet,
     Timer::Stop("tree_building");
     Timer::Start("computing_neighbors");
 
-    RuleType rules(*referenceSet, queryTree->Dataset(), *neighborPtr,
-                   *distancePtr, metric, tau, alpha, naive, sampleAtLeaves,
-                   firstLeafExact, singleSampleLimit, false);
+    RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
+        naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     Log::Info << "Query statistic pre-search: "
@@ -428,6 +433,8 @@ Search(const MatType& querySet,
     Log::Info << "Dual-tree traversal complete." << std::endl;
     Log::Info << "Average number of distance calculations per query point: "
         << (rules.NumDistComputations() / querySet.n_cols) << "." << std::endl;
+
+    rules.GetResults(*neighborPtr, *distancePtr);
 
     delete queryTree;
   }
@@ -523,19 +530,18 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
-  neighborPtr->fill(size_t() - 1);
   distances.set_size(k, querySet.n_cols);
-  distances.fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the tree traversal.
   typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, queryTree->Dataset(), *neighborPtr, distances,
-                 metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
-                 singleSampleLimit, false);
+  RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
+      naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
   // Create the traverser.
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
+
+  rules.GetResults(*neighborPtr, distances);
 
   Timer::Stop("computing_neighbors");
 
@@ -580,15 +586,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 
   // Initialize results.
   neighborPtr->set_size(k, referenceSet->n_cols);
-  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, referenceSet->n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the tree traversal.
   typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, *referenceSet, *neighborPtr, *distancePtr,
-                 metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
-                 singleSampleLimit, true /* sets are the same */);
+  RuleType rules(*referenceSet, *referenceSet, k, metric, tau, alpha, naive,
+      sampleAtLeaves, firstLeafExact, singleSampleLimit, true /* same sets */);
 
   if (naive)
   {
@@ -597,7 +600,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     const size_t numSamples = RAUtil::MinimumSamplesReqd(referenceSet->n_cols,
         k, tau, alpha);
     arma::uvec distinctSamples;
-    RAUtil::ObtainDistinctSamples(numSamples, referenceSet->n_cols,
+    math::ObtainDistinctSamples(0, referenceSet->n_cols, numSamples,
         distinctSamples);
 
     // The naive brute-force solution.
@@ -621,6 +624,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 
     traverser.Traverse(*referenceTree, *referenceTree);
   }
+
+  rules.GetResults(*neighborPtr, *distancePtr);
 
   Timer::Stop("computing_neighbors");
 

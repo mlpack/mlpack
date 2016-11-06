@@ -7,6 +7,11 @@
  *
  * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "cf.hpp"
 
@@ -45,7 +50,7 @@ void CF::GetRecommendations(const size_t numRecs,
 
 void CF::GetRecommendations(const size_t numRecs,
                             arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users)
+                            const arma::Col<size_t>& users)
 {
   // We want to avoid calculating the full rating matrix, so we will do nearest
   // neighbor search only on the H matrix, using the observation that if the
@@ -79,9 +84,8 @@ void CF::GetRecommendations(const size_t numRecs,
   // Generate recommendations for each query user by finding the maximum numRecs
   // elements in the averages matrix.
   recommendations.set_size(numRecs, users.n_elem);
-  recommendations.fill(cleanedData.n_rows); // Invalid item number.
   arma::mat values(numRecs, users.n_elem);
-  values.fill(-DBL_MAX); // The smallest possible value.
+
   for (size_t i = 0; i < users.n_elem; i++)
   {
     // First, calculate average of neighborhood values.
@@ -92,6 +96,14 @@ void CF::GetRecommendations(const size_t numRecs,
       averages += w * h.col(neighborhood(j, i));
     averages /= neighborhood.n_rows;
 
+    // Let's build the list of candidate recomendations for the given user.
+    // Default candidate: the smallest possible value and invalid item number.
+    const Candidate def = std::make_pair(-DBL_MAX, cleanedData.n_rows);
+    std::vector<Candidate> vect(numRecs, def);
+    typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+        CandidateList;
+    CandidateList pqueue(CandidateCmp(), std::move(vect));
+
     // Look through the averages column corresponding to the current user.
     for (size_t j = 0; j < averages.n_rows; ++j)
     {
@@ -99,29 +111,27 @@ void CF::GetRecommendations(const size_t numRecs,
       if (cleanedData(j, users(i)) != 0.0)
         continue; // The user already rated the item.
 
-      // Is the estimated value better than the worst candidate?
-      const double value = averages[j];
-      if (value > values(values.n_rows - 1, i))
-      {
-        // It should be inserted.  Which position?
-        size_t insertPosition = values.n_rows - 1;
-        while (insertPosition > 0)
-        {
-          if (value <= values(insertPosition - 1, i))
-            break; // The current value is the right one.
-          insertPosition--;
-        }
 
-        // Now insert it into the list.
-        InsertNeighbor(i, insertPosition, j, value, recommendations,
-            values);
+      // Is the estimated value better than the worst candidate?
+      if (averages[i] > pqueue.top().first)
+      {
+        Candidate c = std::make_pair(averages[j], j);
+        pqueue.pop();
+        pqueue.push(c);
       }
+    }
+
+    for (size_t p = 1; p <= numRecs; p++)
+    {
+      recommendations(numRecs - p, i) = pqueue.top().second;
+      values(numRecs - p, i) = pqueue.top().first;
+      pqueue.pop();
     }
 
     // If we were not able to come up with enough recommendations, issue a
     // warning.
-    if (recommendations(values.n_rows - 1, i) == cleanedData.n_rows + 1)
-      Log::Warn << "Could not provide " << values.n_rows << " recommendations "
+    if (recommendations(numRecs - 1, i) == def.second)
+      Log::Warn << "Could not provide " << numRecs << " recommendations "
           << "for user " << users(i) << " (not enough un-rated items)!"
           << std::endl;
   }
@@ -154,7 +164,7 @@ double CF::Predict(const size_t user, const size_t item) const
 
   // Calculate the neighborhood of the queried users.
   // This should be a templatized option.
-  neighbor::KNN a(stretchedH, false, true /* single-tree mode */);
+  neighbor::KNN a(stretchedH, neighbor::SINGLE_TREE_MODE);
   arma::mat resultingDistances; // Temporary storage.
 
   a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
@@ -245,38 +255,6 @@ void CF::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
 
   // Fill sparse matrix.
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
-}
-
-/**
- * Helper function to insert a point into the recommendation matrices.
- *
- * @param queryIndex Index of point whose recommendations we are inserting into.
- * @param pos Position in list to insert into.
- * @param neighbor Index of item being inserted as a recommendation.
- * @param value Value of recommendation.
- */
-void CF::InsertNeighbor(const size_t queryIndex,
-                        const size_t pos,
-                        const size_t neighbor,
-                        const double value,
-                        arma::Mat<size_t>& recommendations,
-                        arma::mat& values) const
-{
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (recommendations.n_rows - 1))
-  {
-    const int len = (values.n_rows - 1) - pos;
-    memmove(values.colptr(queryIndex) + (pos + 1),
-        values.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(recommendations.colptr(queryIndex) + (pos + 1),
-        recommendations.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
-  }
-
-  // Now put the new information in the right index.
-  values(pos, queryIndex) = value;
-  recommendations(pos, queryIndex) = neighbor;
 }
 
 } // namespace mlpack

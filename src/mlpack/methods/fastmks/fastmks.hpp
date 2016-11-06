@@ -4,6 +4,11 @@
  *
  * Definition of the FastMKS class, which implements fast exact max-kernel
  * search.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_HPP
@@ -250,13 +255,20 @@ class FastMKS
   //! The instantiated inner-product metric induced by the given kernel.
   metric::IPMetric<KernelType> metric;
 
-  //! Utility function.  Copied too many times from too many places.
-  void InsertNeighbor(arma::Mat<size_t>& indices,
-                      arma::mat& products,
-                      const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
+  //! Candidate represents a possible candidate point (value, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the value.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
+    {
+      return c1.first > c2.first;
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate points.
+  typedef std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp> CandidateList;
 };
 
 } // namespace fastmks

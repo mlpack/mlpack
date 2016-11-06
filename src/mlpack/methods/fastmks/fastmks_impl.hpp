@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of the FastMKS class (fast max-kernel search).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
@@ -13,7 +18,6 @@
 #include "fastmks_rules.hpp"
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <queue>
 
 namespace mlpack {
 namespace fastmks {
@@ -221,25 +225,31 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // Naive implementation.
   if (naive)
   {
-    // Fill kernels.
-    kernels.fill(-DBL_MAX);
-
     // Simple double loop.  Stupid, slow, but a good benchmark.
     for (size_t q = 0; q < querySet.n_cols; ++q)
     {
+      const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
+      std::vector<Candidate> cList(k, def);
+      CandidateList pqueue(CandidateCmp(), std::move(cList));
+
       for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
         const double eval = metric.Kernel().Evaluate(querySet.col(q),
                                                      referenceSet->col(r));
 
-        size_t insertPosition;
-        for (insertPosition = 0; insertPosition < indices.n_rows;
-            ++insertPosition)
-          if (eval > kernels(insertPosition, q))
-            break;
+        if (eval > pqueue.top().first)
+        {
+          Candidate c = std::make_pair(eval, r);
+          pqueue.pop();
+          pqueue.push(c);
+        }
+      }
 
-        if (insertPosition < indices.n_rows)
-          InsertNeighbor(indices, kernels, q, insertPosition, r, eval);
+      for (size_t j = 1; j <= k; j++)
+      {
+        indices(k - j, q) = pqueue.top().second;
+        kernels(k - j, q) = pqueue.top().first;
+        pqueue.pop();
       }
     }
 
@@ -251,13 +261,10 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // Single-tree implementation.
   if (singleMode)
   {
-    // Fill kernels.
-    kernels.fill(-DBL_MAX);
-
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
     typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(*referenceSet, querySet, indices, kernels, metric.Kernel());
+    RuleType rules(*referenceSet, querySet, k, metric.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -266,6 +273,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
     Log::Info << rules.BaseCases() << " base cases." << std::endl;
     Log::Info << rules.Scores() << " scores." << std::endl;
+
+    rules.GetResults(indices, kernels);
 
     Timer::Stop("computing_products");
     return;
@@ -310,12 +319,10 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // No remapping will be necessary because we are using the cover tree.
   indices.set_size(k, queryTree->Dataset().n_cols);
   kernels.set_size(k, queryTree->Dataset().n_cols);
-  kernels.fill(-DBL_MAX);
 
   Timer::Start("computing_products");
   typedef FastMKSRules<KernelType, Tree> RuleType;
-  RuleType rules(*referenceSet, queryTree->Dataset(), indices, kernels,
-      metric.Kernel());
+  RuleType rules(*referenceSet, queryTree->Dataset(), k, metric.Kernel());
 
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
@@ -323,6 +330,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
   Log::Info << rules.BaseCases() << " base cases." << std::endl;
   Log::Info << rules.Scores() << " scores." << std::endl;
+
+  rules.GetResults(indices, kernels);
 
   Timer::Stop("computing_products");
 }
@@ -341,7 +350,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   Timer::Start("computing_products");
   indices.set_size(k, referenceSet->n_cols);
   kernels.set_size(k, referenceSet->n_cols);
-  kernels.fill(-DBL_MAX);
 
   // Naive implementation.
   if (naive)
@@ -349,6 +357,10 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Simple double loop.  Stupid, slow, but a good benchmark.
     for (size_t q = 0; q < referenceSet->n_cols; ++q)
     {
+      const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
+      std::vector<Candidate> cList(k, def);
+      CandidateList pqueue(CandidateCmp(), std::move(cList));
+
       for (size_t r = 0; r < referenceSet->n_cols; ++r)
       {
         if (q == r)
@@ -357,14 +369,19 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         const double eval = metric.Kernel().Evaluate(referenceSet->col(q),
                                                      referenceSet->col(r));
 
-        size_t insertPosition;
-        for (insertPosition = 0; insertPosition < indices.n_rows;
-            ++insertPosition)
-          if (eval > kernels(insertPosition, q))
-            break;
+        if (eval > pqueue.top().first)
+        {
+          Candidate c = std::make_pair(eval, r);
+          pqueue.pop();
+          pqueue.push(c);
+        }
+      }
 
-        if (insertPosition < indices.n_rows)
-          InsertNeighbor(indices, kernels, q, insertPosition, r, eval);
+      for (size_t j = 1; j <= k; j++)
+      {
+        indices(k - j, q) = pqueue.top().second;
+        kernels(k - j, q) = pqueue.top().first;
+        pqueue.pop();
       }
     }
 
@@ -379,8 +396,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
     typedef FastMKSRules<KernelType, Tree> RuleType;
-    RuleType rules(*referenceSet, *referenceSet, indices, kernels,
-        metric.Kernel());
+    RuleType rules(*referenceSet, *referenceSet, k, metric.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -395,6 +411,8 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     Log::Info << rules.BaseCases() << " base cases." << std::endl;
     Log::Info << rules.Scores() << " scores." << std::endl;
 
+    rules.GetResults(indices, kernels);
+
     Timer::Stop("computing_products");
     return;
   }
@@ -403,44 +421,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   Timer::Stop("computing_products");
 
   Search(referenceTree, k, indices, kernels);
-}
-
-/**
- * Helper function to insert a point into the neighbors and distances matrices.
- *
- * @param queryIndex Index of point whose neighbors we are inserting into.
- * @param pos Position in list to insert into.
- * @param neighbor Index of reference point which is being inserted.
- * @param distance Distance from query point to reference point.
- */
-template<typename KernelType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
-    arma::Mat<size_t>& indices,
-    arma::mat& products,
-    const size_t queryIndex,
-    const size_t pos,
-    const size_t neighbor,
-    const double distance)
-{
-  // We only memmove() if there is actually a need to shift something.
-  if (pos < (products.n_rows - 1))
-  {
-    int len = (products.n_rows - 1) - pos;
-    memmove(products.colptr(queryIndex) + (pos + 1),
-        products.colptr(queryIndex) + pos,
-        sizeof(double) * len);
-    memmove(indices.colptr(queryIndex) + (pos + 1),
-        indices.colptr(queryIndex) + pos,
-        sizeof(size_t) * len);
-  }
-
-  // Now put the new information in the right index.
-  products(pos, queryIndex) = distance;
-  indices(pos, queryIndex) = neighbor;
 }
 
 //! Serialize the model.

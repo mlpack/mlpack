@@ -2,6 +2,11 @@
  * @file binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
@@ -53,6 +58,8 @@ class BinarySpaceTree
   typedef MatType Mat;
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
+
+  typedef SplitType<BoundType<MetricType>, MatType> Split;
 
  private:
   //! The left child node.
@@ -198,6 +205,7 @@ class BinarySpaceTree
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -214,14 +222,15 @@ class BinarySpaceTree
    *
    * A mapping of the old point indices to the new point indices is filled, but
    * it is expected that the vector is already allocated with size greater than
-   * or equal to (begin_in + count_in), and if that is not true, invalid memory
-   * reads (and writes) will occur.
+   * or equal to (begin + count), and if that is not true, invalid memory reads
+   * (and writes) will occur.
    *
    * @param parent Parent of this node.  Its dataset will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
+   * @param splitter Instantiated node splitter object.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -331,6 +340,36 @@ class BinarySpaceTree
   size_t NumChildren() const;
 
   /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const BinarySpaceTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const BinarySpaceTree& queryNode);
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
@@ -396,21 +435,21 @@ class BinarySpaceTree
   size_t Point(const size_t index) const;
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const BinarySpaceTree* other) const
+  ElemType MinDistance(const BinarySpaceTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const BinarySpaceTree* other) const
+  ElemType MaxDistance(const BinarySpaceTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree* other) const
+  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.
@@ -450,11 +489,8 @@ class BinarySpaceTree
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
 
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
-
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) { bound.Center(center); }
+  void Center(arma::vec& center) const { bound.Center(center); }
 
  private:
   /**
@@ -477,6 +513,23 @@ class BinarySpaceTree
   void SplitNode(std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize,
                  SplitType<BoundType<MetricType>, MatType>& splitter);
+
+  /**
+   * Update the bound of the current node. This method does not take into
+   * account bound-specific properties.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  template<typename BoundType2>
+  void UpdateBound(BoundType2& boundToUpdate);
+
+  /**
+   * Update the bound of the current node. This method is designed for
+   * HollowBallBound only.
+   *
+   * @param boundToUpdate The bound to update.
+   */
+  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
 
  protected:
   /**

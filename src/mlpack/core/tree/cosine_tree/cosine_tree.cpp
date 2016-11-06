@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Implementation of cosine tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "cosine_tree.hpp"
 
@@ -81,7 +86,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
   arma::vec tempVector = arma::zeros(dataset.n_rows);
-  root.L2Error(0);
+  root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
   treeQueue.push(&root);
 
@@ -95,7 +100,20 @@ CosineTree::CosineTree(const arma::mat& dataset,
     currentNode = treeQueue.top();
     treeQueue.pop();
 
-    // Split the node into left and right children.
+    // If the priority is 0, we can't improve anything, and we can assume that
+    // we've done the best we can.
+    if (currentNode->L2Error() == 0.0)
+    {
+      Log::Warn << "CosineTree::CosineTree(): could not build tree to "
+          << "desired relative error " << epsilon << "; failing with estimated "
+          << "relative error " << (monteCarloError / root.FrobNormSquared())
+          << "." << std::endl;
+      break;
+    }
+
+    // Split the node into left and right children.  We assume that this cannot
+    // fail; it might fail if L2Error() is 0, but we have already avoided that
+    // case.
     currentNode->CosineNodeSplit();
 
     // Obtain pointers to the left and right children of the current node.
@@ -277,14 +295,16 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
 void CosineTree::CosineNodeSplit()
 {
-  //! If less than two nodes, splitting does not make sense.
-  if (numColumns < 3) return;
+  // If less than two points, splitting does not make sense---there is nothing
+  // to split.
+  if (numColumns < 2)
+    return;
 
-  //! Calculate cosines with respect to the splitting point.
+  // Calculate cosines with respect to the splitting point.
   arma::vec cosines;
   CalculateCosines(cosines);
 
-  //! Compute maximum and minimum cosine values.
+  // Compute maximum and minimum cosine values.
   double cosineMax, cosineMin;
   cosineMax = arma::max(cosines % (cosines < 1));
   cosineMin = arma::min(cosines);
@@ -293,17 +313,16 @@ void CosineTree::CosineNodeSplit()
 
   // Split columns into left and right children. The splitting condition for the
   // column to be in the left child is as follows:
-  //       cos_max - cos(i) <= cos(i) - cos_min
+  //       cos_max - cos(i) < cos(i) - cos_min
+  // We deviate from the paper here and use < instead of <= in order to handle
+  // the edge case where cosineMax == cosineMin, and force there to be at least
+  // one point in the right node.
   for (size_t i = 0; i < numColumns; i++)
   {
-    if (cosineMax - cosines(i) <= cosines(i) - cosineMin)
-    {
+    if (cosineMax - cosines(i) < cosines(i) - cosineMin)
       leftIndices.push_back(i);
-    }
     else
-    {
       rightIndices.push_back(i);
-    }
   }
 
   // Split the node into left and right children.
@@ -413,8 +432,9 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
     }
     else
     {
-      cosines(i) = arma::norm_dot(dataset.col(indices[splitPointIndex]),
-                                  dataset.col(indices[i]));
+      cosines(i) =
+          std::abs(arma::norm_dot(dataset.col(indices[splitPointIndex]),
+                                  dataset.col(indices[i])));
     }
   }
 }
