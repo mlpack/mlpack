@@ -10,6 +10,7 @@
 
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/lsh/lshmodel.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -830,5 +831,83 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 #endif
+
+// Test that LSHModel::Rho() returns reasonable results.
+BOOST_AUTO_TEST_CASE(RhoTest)
+{
+  arma::mat data(10, 1000, arma::fill::randu);
+  LSHModel<> m(data, 0.1, 3);
+  m.GenerateTemplateSequence(5, 5);
+
+  // Two identical points should have high probability of being in the same bin.
+  for (double hw = 0.1; hw < 0.5; hw++)
+    BOOST_REQUIRE_CLOSE(m.Rho(0.0, hw, 5, 5, 5), 1.0, 1e-5);
+
+  // Two very faraway points should have very small probability of being in the
+  // same bin.
+  for (double hw = 0.1; hw <= 0.5; hw++)
+    BOOST_REQUIRE_SMALL(m.Rho(5.0, hw, 5, 5, 5), 1e-5);
+}
+
+// Test that LSHModel::SameBucketProbability() returns reasonable results when
+// delta = 0.
+BOOST_AUTO_TEST_CASE(SameBucketProbabilityDelta0Test)
+{
+  // Create a simple LSHModel.
+  arma::mat data(10, 100, arma::fill::randu);
+  LSHModel<> m(data, 0.1, 1);
+
+  // When the points are far and the hash width is small the probability should
+  // be very close to 0.
+  BOOST_REQUIRE_SMALL(m.SameBucketProbability(1e6, 1e-2, 0, 5, 10), 1e-5);
+
+  // When the points are close and the hash width is large the probability
+  // should be very close to 1.
+  BOOST_REQUIRE_CLOSE(m.SameBucketProbability(1e-2, 1e6, 0, 0, 3), 1.0, 1e-5);
+
+  // For random points, the probability should be between 0 and 1.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    const double r = math::Random();
+
+    const double p = m.SameBucketProbability(r, 0.5, 0, 0, 3);
+    BOOST_REQUIRE_GE(p, 0.0);
+    BOOST_REQUIRE_LE(p, 1.0);
+  }
+}
+
+// Test that LSHModel::SameBucketProbability() returns reasonable results when
+// delta = 1 or delta = -1.
+BOOST_AUTO_TEST_CASE(SameBucketProbabilityDelta1Test)
+{
+  // Create a simple LSHModel.
+  arma::mat data(10, 100, arma::fill::randu);
+  LSHModel<> m(data, 0.1, 1);
+
+  // When the points are very far and the hash width is small the probability
+  // should be very close to 0, regardless of delta.
+  BOOST_REQUIRE_SMALL(m.SameBucketProbability(1e6, 1e-2, 1, 5, 10), 1e-5);
+  BOOST_REQUIRE_SMALL(m.SameBucketProbability(1e6, 1e-2, -1, 5, 10), 1e-5);
+
+  // When the points are close(ish) and the hash width is large the probability
+  // should still be close to 0 because delta != 0 means the we are searching
+  // adjacent bins.
+  BOOST_REQUIRE_SMALL(m.SameBucketProbability(1e-2, 1e2, 1, 0, 3), 1e-5);
+  BOOST_REQUIRE_SMALL(m.SameBucketProbability(1e-2, 1e2, -1, 0, 3), 1e-5);
+
+  // For random points, the probability should be between 0 and 1.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    const double r = math::Random();
+
+    const double p = m.SameBucketProbability(r, 0.5, 1, 0, 3);
+    BOOST_REQUIRE_GE(p, 0.0);
+    BOOST_REQUIRE_LE(p, 1.0);
+
+    const double p2 = m.SameBucketProbability(r, 0.5, -1, 0, 3);
+    BOOST_REQUIRE_GE(p2, 0.0);
+    BOOST_REQUIRE_LE(p2, 1.0);
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();
