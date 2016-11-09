@@ -35,6 +35,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+// Increase the number of template arguments for the boost list class.
+#undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#undef BOOST_MPL_LIMIT_LIST_SIZE
+#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#define BOOST_MPL_LIMIT_LIST_SIZE 30
+
 // For tgamma().
 #include <boost/math/special_functions/gamma.hpp>
 
