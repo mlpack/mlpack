@@ -1,8 +1,3 @@
-prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${exec_prefix}/include
-
 Name: mlpack
 Description: scalable C++ machine learning library
 URL: http://www.mlpack.org/
