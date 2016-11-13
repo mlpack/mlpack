@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of rules for range search with generic trees.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_IMPL_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_IMPL_HPP
@@ -176,45 +181,10 @@ double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
     // Update the last distances performed for the query and reference node.
     traversalInfo.LastBaseCase() = baseCase;
   }
-  else if (tree::TreeTraits<TreeType>::FirstSiblingFirstPointIsCentroid &&
-      queryNode.Parent() && referenceNode.Parent() &&
-      !queryNode.IsLeaf() && !referenceNode.IsLeaf())
-  {
-    // The first point of the first sibling is the centroid, so we have to
-    // calculate the distance between the centroids if we have not calculated
-    // that yet.
-    // We can not use this property if the traverser does not recurse down
-    // the query or the reference node since two siblings may be traversed
-    // in two different branches of the recursion.
-    double baseCase;
-
-    TreeType* firstQuerySibling = &queryNode.Parent()->Child(0);
-    TreeType* firstReferenceSibling = &referenceNode.Parent()->Child(0);
-
-    if (firstQuerySibling != traversalInfo.LastQueryNode() ||
-        firstReferenceSibling != traversalInfo.LastReferenceNode())
-    {
-      baseCase = BaseCase(firstQuerySibling->Point(0),
-          firstReferenceSibling->Point(0));
-
-      // We update the traversal information only if we come across new
-      // centroids.
-      traversalInfo.LastQueryNode() = firstQuerySibling;
-      traversalInfo.LastReferenceNode() = firstReferenceSibling;
-      traversalInfo.LastBaseCase() = baseCase;
-    }
-    else
-      baseCase = traversalInfo.LastBaseCase();
-
-    distances.Lo() = baseCase - queryNode.FurthestDescendantDistance()
-        - referenceNode.FurthestDescendantDistance();
-    distances.Hi() = baseCase + queryNode.FurthestDescendantDistance()
-        + referenceNode.FurthestDescendantDistance();
-  }
   else
   {
     // Just perform the calculation.
-    distances = referenceNode.RangeDistance(&queryNode);
+    distances = referenceNode.RangeDistance(queryNode);
     ++scores;
   }
 
@@ -233,11 +203,8 @@ double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
 
   // Otherwise the score doesn't matter.  Recursion order is irrelevant in range
   // search.
-  if (!tree::TreeTraits<TreeType>::FirstSiblingFirstPointIsCentroid)
-  {
-    traversalInfo.LastQueryNode() = &queryNode;
-    traversalInfo.LastReferenceNode() = &referenceNode;
-  }
+  traversalInfo.LastQueryNode() = &queryNode;
+  traversalInfo.LastReferenceNode() = &referenceNode;
   return 0.0;
 }
 

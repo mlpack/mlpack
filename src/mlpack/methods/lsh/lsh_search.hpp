@@ -35,6 +35,11 @@
  *  pages={950--961}
  * }
  *
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
@@ -355,7 +360,8 @@ class LSHSearch
    * @param scores vector containing score of each perturbation.
   */
   double PerturbationScore(const std::vector<bool>& A,
-                                  const arma::vec& scores) const;
+                           const arma::vec& scores) const;
+
   /**
    * Inline function used by GetAdditionalProbingBins. The vector shift operation
    * replaces the largest element of a vector A with (largest element) + 1.

@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test file for RangeSearch<> class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
@@ -1249,7 +1254,7 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[20];
+  RSModel models[28];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1270,6 +1275,14 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   models[17] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, false);
   models[18] = RSModel(RSModel::TreeTypes::VP_TREE, true);
   models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
+  models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
+  models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[24] = RSModel(RSModel::TreeTypes::UB_TREE, true);
+  models[25] = RSModel(RSModel::TreeTypes::UB_TREE, false);
+  models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
+  models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1283,7 +1296,7 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 20; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have std::move() constructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1327,7 +1340,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[20];
+  RSModel models[28];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1348,6 +1361,14 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   models[17] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, false);
   models[18] = RSModel(RSModel::TreeTypes::VP_TREE, true);
   models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
+  models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
+  models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[24] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[25] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
+  models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1360,7 +1381,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 20; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have std::move() cosntructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);

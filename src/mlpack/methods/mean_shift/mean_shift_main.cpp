@@ -2,9 +2,13 @@
  * @file mean_shift_main.cpp
  * @author Shangtong Zhang
  *
- * Executable for running Mean Shift
+ * Executable for running Mean Shift.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include "mean_shift.hpp"
@@ -21,8 +25,7 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     "in a separate file.");
 
 // Required options.
-PARAM_STRING_IN("input_file", "Input dataset to perform clustering on.",
-    "i", "");
+PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
 // This is kept for reverse compatibility and may be removed in mlpack 3.0.0.
 // At that time, --input_file should be made a required parameter.
 PARAM_STRING_IN("inputFile", "Input dataset to perform clustering on.", "", "");
@@ -33,10 +36,10 @@ PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "--output_file is overridden.", "P");
 PARAM_FLAG("labels_only", "If specified, only the output labels will be "
     "written to the file specified by --output_file.", "l");
-PARAM_STRING_OUT("output_file", "File to write output labels or labeled data "
-    "to.", "o");
-PARAM_STRING_OUT("centroid_file", "If specified, the centroids of each cluster "
-    "will be written to the given file.", "C");
+PARAM_MATRIX_OUT("output", "Matrix to write output labels or labeled data to.",
+    "o");
+PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
+    "be written to the given matrix.", "C");
 
 // Mean shift configuration options.
 PARAM_INT_IN("max_iterations", "Maximum number of iterations before mean shift "
@@ -51,20 +54,20 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // This is for reverse compatibility and may be removed in mlpack 3.0.0.
-  if (CLI::HasParam("inputFile") && CLI::HasParam("input_file"))
+  if (CLI::HasParam("inputFile") && CLI::HasParam("input"))
     Log::Fatal << "Cannot specify both --input_file and --inputFile!" << endl;
 
   if (CLI::HasParam("inputFile"))
   {
     Log::Warn << "--inputFile is deprecated and will be removed in mlpack "
         << "3.0.0; use --input_file instead." << endl;
-    CLI::GetParam<string>("input_file") = CLI::GetParam<string>("inputFile");
+    CLI::GetUnmappedParam<string>("input_file") =
+        CLI::GetParam<string>("inputFile");
   }
 
-  if (CLI::GetParam<string>("input_file") == "")
+  if (!CLI::HasParam("input"))
     Log::Fatal << "--input_file must be specified!" << endl;
 
-  const string inputFile = CLI::GetParam<string>("input_file");
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
@@ -75,19 +78,26 @@ int main(int argc, char** argv)
   }
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("output_file") &&
-      !CLI::HasParam("centroid_file"))
+  if (!CLI::HasParam("in_place") && !CLI::HasParam("output") &&
+      !CLI::HasParam("centroid"))
   {
     Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
         << "no results will be saved." << endl;
   }
 
-  if (CLI::HasParam("labels_only") && !CLI::HasParam("output_file"))
+  if (CLI::HasParam("labels_only") && !CLI::HasParam("output"))
     Log::Warn << "--labels_only ignored because --output_file is not specified."
         << endl;
 
-  arma::mat dataset;
-  data::Load(inputFile, dataset, true); // Fatal upon failure.
+  if (CLI::HasParam("in_place") && CLI::HasParam("output"))
+    Log::Warn << "--output_file ignored because --in_place is specified."
+        << endl;
+
+  if (CLI::HasParam("in_place") && CLI::HasParam("labels_only"))
+    Log::Warn << "--labels_only ignored because --in_place is specified."
+        << endl;
+
+  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat centroids;
   arma::Col<size_t> assignments;
 
@@ -112,10 +122,14 @@ int main(int argc, char** argv)
 
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
-    // Save the dataset.
-    data::Save(inputFile, dataset);
+    // Save the dataset.  This takes a little trickery, because we have to set
+    // the output matrix parameter to have the same filename associated with it
+    // as the input.
+    CLI::GetUnmappedParam<arma::mat>("output") =
+        CLI::GetUnmappedParam<arma::mat>("input");
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
   }
-  else
+  else if (CLI::HasParam("output"))
   {
     if (!CLI::HasParam("labels_only"))
     {
@@ -127,19 +141,22 @@ int main(int argc, char** argv)
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      string outputFile = CLI::GetParam<string>("output_file");
-      if (outputFile != "")
-        data::Save(outputFile, dataset);
+      CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
-      string outputFile = CLI::GetParam<string>("output_file");
-      if (outputFile != "")
-        data::Save(outputFile, assignments, false, false); // No transpose.
+      // We have to add an unsigned matrix output parameter so we can save the
+      // labels as the right type.
+      CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
+          "Labels for input dataset.", '\0', false, false, true);
+      CLI::GetUnmappedParam<arma::Mat<size_t>>("output_labels") =
+          CLI::GetUnmappedParam<arma::mat>("output");
+      CLI::GetParam<arma::Mat<size_t>>("output_labels") =
+          std::move(assignments);
     }
   }
 
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroid_file"))
-    data::Save(CLI::GetParam<std::string>("centroid_file"), centroids);
+  if (CLI::HasParam("centroid"))
+    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
 }

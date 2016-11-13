@@ -2,6 +2,18 @@
 
 @section buildintro Introduction
 
+This document discusses how to build mlpack from source.  However, mlpack is in
+the repositories of many Linux distributions and so it may be easier to use the
+package manager for your system.  For example, on Ubuntu, you can install mlpack
+with the following command:
+
+@code
+$ sudo apt-get install libmlpack-dev
+@endcode
+
+If mlpack is not available in your system's package manager, then you can follow
+this document for how to compile and install mlpack from source.
+
 mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
@@ -11,14 +23,14 @@ href="http://keon.io/mlpack-on-windows.html">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 Download latest mlpack build from here:
-<a href="http://www.mlpack.org/files/mlpack-2.0.3.tar.gz">mlpack-2.0.3</a>
+<a href="http://www.mlpack.org/files/mlpack-2.1.0.tar.gz">mlpack-2.1.0</a>
 
 @section builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-2.0.3
+$ cd mlpack-2.1.0
 $ mkdir build
 @endcode
 
@@ -30,7 +42,7 @@ enough.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 4.100.0 (with LAPACK support)
+ - Armadillo >= 4.200.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap)
       >= 1.49
 
@@ -108,11 +120,26 @@ want to build everything in the library:
 $ make mlpack_pca mlpack_knn mlpack_kfn
 @endcode
 
-If the build fails and you cannot figure out why, register an account on Trac
-and submit a ticket and the mlpack developers will quickly help you figure it
+One particular component of interest is mlpack_test, which runs the mlpack test
+suite.  You can build this component with
+
+@code
+$ make mlpack_test
+@endcode
+
+and then run all of the tests, or an individual test suite:
+
+@code
+$ bin/mlpack_test
+$ bin/mlpack_test -t KNNTest
+@endcode
+
+If the build fails and you cannot figure out why, register an account on Github
+and submit an issue and the mlpack developers will quickly help you figure it
 out:
 
 http://mlpack.org/
+http://github.com/mlpack/mlpack
 
 Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
 

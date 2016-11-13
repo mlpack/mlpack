@@ -5,6 +5,11 @@
  * Definition of the HilbertRTreeAuxiliaryInformation class,
  * a class that provides some Hilbert r-tree specific information
  * about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
@@ -30,11 +35,32 @@ class HilbertRTreeAuxiliaryInformation
   HilbertRTreeAuxiliaryInformation(const TreeType* node);
 
   /**
-   * Create an auxiliary information object by copying from the other node.
+   * Create an auxiliary information object by copying from another object.
    *
-   * @param other The node from which the information will be copied.
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
    */
   HilbertRTreeAuxiliaryInformation(
+      const HilbertRTreeAuxiliaryInformation& other,
+      TreeType* tree = NULL,
+      bool deepCopy = true);
+
+  /**
+   * Create an auxiliary information object by moving from the other node.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other);
+
+  /**
+   * Copy the auxiliary information.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  HilbertRTreeAuxiliaryInformation& operator=(
       const HilbertRTreeAuxiliaryInformation& other);
 
   /**
@@ -85,7 +111,7 @@ class HilbertRTreeAuxiliaryInformation
 
   /**
    * Update the auxiliary information in the node. The method returns true if
-   * the update should be propogated downward.
+   * the update should be propagated downward.
    *
    * @param node The node in which the auxiliary information being update.
    */
@@ -93,6 +119,10 @@ class HilbertRTreeAuxiliaryInformation
 
   //! Clear memory.
   void NullifyData();
+
+  //! Return the children vector of the tree.
+  static const std::vector<TreeType*> Children(const TreeType* tree)
+  { return tree->children; }
 
  private:
   //! The largest Hilbert value of a point enclosed by the node.

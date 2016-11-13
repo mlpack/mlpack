@@ -1,0 +1,6 @@
+Name: mlpack
+Description: scalable C++ machine learning library
+URL: http://www.mlpack.org/
+Version: @MLPACK_VERSION_STRING@
+Cflags: @MLPACK_INCLUDE_DIRS_STRING@
+Libs: @MLPACK_LIBRARIES_STRING@

@@ -4,6 +4,11 @@
  * @author Matthew Amidon
  *
  * Implementation of templated PrefixedOutStream member functions.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
@@ -78,9 +83,9 @@ void PrefixedOutStream::BaseLogic(const T& val)
       {
         destination << line.substr(pos, nl - pos);
         destination << std::endl;
-        newlined = true;
       }
 
+      newlined = true; // Ensure this is set for the fatal exception if needed.
       carriageReturned = true; // Regardless of whether or not we display it.
 
       pos = nl + 1;
@@ -97,11 +102,12 @@ void PrefixedOutStream::BaseLogic(const T& val)
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
   {
-    std::cout << std::endl;
+    if (!ignoreInput)
+      std::cout << std::endl;
 
     // Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
-    if (fatal)
+    if (fatal && !ignoreInput)
     {
       size_t nl;
       size_t pos = 0;
@@ -112,8 +118,11 @@ void PrefixedOutStream::BaseLogic(const T& val)
       {
         PrefixIfNeeded();
 
-        destination << btLine.substr(pos, nl - pos);
-        destination << std::endl;
+        if (!ignoreInput)
+        {
+          destination << btLine.substr(pos, nl - pos);
+          destination << std::endl;
+        }
 
         carriageReturned = true; // Regardless of whether or not we display it.
 

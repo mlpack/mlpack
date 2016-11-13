@@ -5,6 +5,11 @@
  * This is a model for rank-approximate nearest neighbor search.  It provides an
  * easy way to serialize a rank-approximate neighbor search model by abstracting
  * the types of trees and reflecting the RASearch API.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANN_RA_MODEL_HPP
 #define MLPACK_METHODS_RANN_RA_MODEL_HPP
@@ -12,6 +17,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 
 #include "ra_search.hpp"
 
@@ -43,7 +49,9 @@ class RAModel
     X_TREE,
     HILBERT_R_TREE,
     R_PLUS_TREE,
-    R_PLUS_PLUS_TREE
+    R_PLUS_PLUS_TREE,
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -82,6 +90,10 @@ class RAModel
   RAType<tree::RPlusTree>* rPlusTreeRA;
   //! Non-NULL if the R++ tree is used.
   RAType<tree::RPlusPlusTree>* rPlusPlusTreeRA;
+  //! Non-NULL if the UB tree is used.
+  RAType<tree::UBTree>* ubTreeRA;
+  //! Non-NULL if the octree is used.
+  RAType<tree::Octree>* octreeRA;
 
  public:
   /**

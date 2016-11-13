@@ -3,6 +3,11 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_HPP
 #define MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_HPP
@@ -15,9 +20,10 @@ namespace mlpack {
 namespace bound {
 
 /**
- * Ball bound encloses a set of points at a specific distance (radius) from a
- * specific point (center). MetricType is the custom metric type that defaults
- * to the Euclidean (L2) distance.
+ * Hollow ball bound encloses a set of points at a specific distance (radius)
+ * from a specific point (center) except points at a specific distance from
+ * another point (the center of the hole). MetricType is the custom metric type
+ * that defaults to the Euclidean (L2) distance.
  *
  * @tparam TMetricType metric type used in the distance measure.
  * @tparam ElemType Type of element (float or double or similar).
@@ -35,6 +41,8 @@ class HollowBallBound
   math::RangeType<ElemType> radii;
   //! The center of the ball bound.
   arma::Col<ElemType> center;
+  //! The center of the hollow.
+  arma::Col<ElemType> hollowCenter;
   //! The metric used in this bound.
   MetricType* metric;
 
@@ -96,6 +104,11 @@ class HollowBallBound
   const arma::Col<ElemType>& Center() const { return center; }
   //! Modify the center point of the ball.
   arma::Col<ElemType>& Center() { return center; }
+
+  //! Get the center point of the hollow.
+  const arma::Col<ElemType>& HollowCenter() const { return hollowCenter; }
+  //! Modify the center point of the hollow.
+  arma::Col<ElemType>& HollowCenter() { return hollowCenter; }
 
   //! Get the dimensionality of the ball.
   size_t Dim() const { return center.n_elem; }

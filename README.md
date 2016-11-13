@@ -6,9 +6,9 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
-**Download [current stable version (2.0.3)](http://www.mlpack.org/files/mlpack-2.0.3.tar.gz).**
+**Download [current stable version (2.1.0)](http://www.mlpack.org/files/mlpack-2.1.0.tar.gz).**
 
-[![Build Status](http://big.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://big.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a>
+[![Build Status](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a> [![Coverage Status](https://coveralls.io/repos/github/mlpack/mlpack/badge.svg?branch=master)](https://coveralls.io/github/mlpack/mlpack?branch=master)
 
 0. Contents
 -----------
@@ -58,7 +58,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 4.100.0
+      Armadillo     >= 4.200.0
       Boost (program_options, math_c99, unit_test_framework, serialization)
       CMake         >= 2.8.5
 
@@ -71,7 +71,17 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 4. Building mlpack from source
 ------------------------------
 
-(see also [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html))
+This section discusses how to build mlpack from source.  However, mlpack is in
+the repositories of many Linux distributions and so it may be easier to use the
+package manager for your system.  For example, on Ubuntu, you can install mlpack
+with the following command:
+
+    $ sudo apt-get install libmlpack-dev
+
+There are some other useful pages to consult in addition to this section:
+
+  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html)
+  - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for

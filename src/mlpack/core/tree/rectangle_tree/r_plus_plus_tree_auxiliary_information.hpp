@@ -5,6 +5,11 @@
  * Definition of the RPlusPlusTreeAuxiliaryInformation class,
  * a class that provides some r++-tree specific information
  * about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
@@ -35,13 +40,26 @@ class RPlusPlusTreeAuxiliaryInformation
   RPlusPlusTreeAuxiliaryInformation(const TreeType* /* node */);
 
   /**
-   * Create an auxiliary information object by copying from another node.
+   * Create an auxiliary information object by copying from another object.
    *
-   * @param other The auxiliary information object from which the information
-   * will be copied.
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
    */
   RPlusPlusTreeAuxiliaryInformation(
-      const RPlusPlusTreeAuxiliaryInformation& other);
+      const RPlusPlusTreeAuxiliaryInformation& other,
+      TreeType* tree,
+      bool /* deepCopy */ = true);
+
+  /**
+   * Create an auxiliary information object by moving from another node.
+   *
+   * @param other The auxiliary information object from which the information
+   * will be moved.
+   */
+  RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other);
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -99,7 +117,7 @@ class RPlusPlusTreeAuxiliaryInformation
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
-   * returned, the update will be propogated upward.
+   * returned, the update will be propagated upward.
    *
    * @param node The node in which the auxiliary information being update.
    */

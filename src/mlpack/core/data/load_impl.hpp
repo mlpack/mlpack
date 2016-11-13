@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of templatized load() function defined in load.hpp.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_LOAD_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMPL_HPP
@@ -420,7 +425,7 @@ bool Load(const std::string& filename,
     stream.close();
     stream.open(filename, std::fstream::in);
 
-    if(transpose)
+    if (transpose)
     {
       std::vector<std::vector<std::string>> tokensArray;
       std::vector<std::string> tokens;
@@ -430,7 +435,7 @@ bool Load(const std::string& filename,
         std::getline(stream, buffer, '\n');
         Tokenizer lineTok(buffer, sep);
         tokens = details::ToTokens(lineTok);
-        if(tokens.size() == cols)
+        if (tokens.size() == cols)
         {
           tokensArray.emplace_back(std::move(tokens));
         }
