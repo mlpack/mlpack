@@ -1,21 +1,6 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if (${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-endif()
-
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -26,10 +11,33 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)" ON)
+    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
-    "Build with support for code coverage tools (gcc only)" OFF)
+    "Build with support for code coverage tools (gcc only)." OFF)
+option(MATHJAX
+    "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
+option(FORCE_CXX11
+    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS."
+    OFF)
 enable_testing()
+
+# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
+# done with target_compile_features() when the mlpack library target is added in
+# src/mlpack/CMakeLists.txt.
+if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
+    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
+    AND NOT FORCE_CXX11)
+  # Older versions of CMake do not support target_compile_features(), so we have
+  # to use something kind of hacky.
+  include(CMake/CXX11.cmake)
+  check_for_cxx11_compiler(HAS_CXX11)
+  if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+  endif()
+  enable_cxx11()
+endif ()
+# Otherwise, we may have to set the C++11 mode after the mlpack target is
+# defined.
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
@@ -46,8 +54,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 # These support libraries are used if we need to link against something
-# specific.
-set(COMPILER_SUPPORT_LIBRARIES_MLPACK "")
+# specific.  This list is a subset of MLPACK_LIBRARIES.
 set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If using clang, we have to link against libc++ depending on the
@@ -79,6 +86,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
   # Link everything with -lm.
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
 endif()
 
 # Setup build for test coverage
@@ -94,8 +102,7 @@ if(BUILD_WITH_COVERAGE)
           "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
     endif()
 
-    set(COMPILER_MLPACK_SUPPORT_LIBRARIES
-        ${COMPILER_SUPPORT_MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
@@ -113,13 +120,20 @@ if(BUILD_WITH_COVERAGE)
   endif()
 endif()
 
+# For clock_gettime().
+if (UNIX AND NOT APPLE)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
+endif ()
+
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
-  endif ()
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
@@ -128,8 +142,10 @@ if(DEBUG)
     find_package(LibDL)
     if(LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
-      include_directories(${LIBBFD_INCLUDE_DIRS})
-      include_directories(${LIBDL_INCLUDE_DIRS})
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
+          ${LIBDL_INCLUDE_DIRS})
+      set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
+          ${LIBDL_LIBRARIES})
       add_definitions(-DHAS_BFD_DL)
     else()
       message(WARNING "No libBFD and/or libDL has been found!")
@@ -168,8 +184,9 @@ endif()
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
+#   MATHJAX_ROOT - root of MathJax installation
 
-find_package(Armadillo 4.100.0 REQUIRED)
+find_package(Armadillo 4.200.0 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
@@ -243,7 +260,8 @@ if (WIN32)
 endif ()
 
 # Include directories for the previous dependencies.
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
@@ -256,7 +274,6 @@ find_package(Boost 1.49
       serialization
     REQUIRED
 )
-include_directories(${Boost_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -267,6 +284,10 @@ if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
   set(Boost_LIBRARIES "")
 endif ()
+
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
@@ -298,6 +319,7 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${MLPACK_INCLUDE_DIRS})
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
@@ -374,11 +396,22 @@ add_dependencies(mlpack mlpack_arma_config)
 # I guess this option will just be unavailable.
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
+  if (MATHJAX)
+    find_package(MathJax)
+    if (NOT MATHJAX_FOUND)
+      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+          "Be careful, formulas will not be shown without the internet.")
+    endif ()
+  endif ()
   # Preprocess the Doxyfile.  This is done before 'make doc'.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -D DESTDIR="${CMAKE_BINARY_DIR}" -P
-          "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+      COMMAND ${CMAKE_COMMAND}
+          -D DESTDIR="${CMAKE_BINARY_DIR}"
+          -D MATHJAX="${MATHJAX}"
+          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+          -D MATHJAX_PATH="${MATHJAX_PATH}"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
       COMMENT "Creating Doxyfile to generate Doxygen documentation"
@@ -417,6 +450,7 @@ if (UNIX)
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
           mlpack_adaboost
+          mlpack_approx_kfn
           mlpack_kfn
           mlpack_knn
           mlpack_krann
@@ -457,4 +491,81 @@ if (UNIX)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
         DESTINATION share/man/man1/)
   endif ()
+endif ()
+
+# Create the pkg-config file, if we have pkg-config.
+find_package(PkgConfig)
+if (PKG_CONFIG_FOUND)
+  # mlpack.pc must be generated as a separate target, otherwise it is possible
+  # that the given version could be out of date.  We don't need to worry about
+  # the library or include directories changing, because CMake will re-run this
+  # portion of the code whenever any of those changes.  But the version must be
+  # re-extracted every time the library is built.
+
+  # So, we have to parse our list of library directories, libraries, and include
+  # directories in order to get the correct line to give to pkg-config.
+  # Next, adapt the list of include directories.
+  foreach (incldir ${MLPACK_INCLUDE_DIRS})
+    # Filter out some obviously unnecessary directories.
+    if (NOT "${incldir}" STREQUAL "/usr/include")
+      set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING}
+          -I${incldir}")
+    endif ()
+  endforeach ()
+  # Add the install directory too.
+  set(MLPACK_INCLUDE_DIRS_STRING
+      "${MLPACK_INCLUDE_DIRS_STRING} -I${CMAKE_INSTALL_PREFIX}/include/")
+
+  # Create the list of link directories.
+  set(MLPACK_LIBRARIES_LIST)
+  foreach (linkdir ${MLPACK_LIBRARY_DIRS})
+    list(APPEND MLPACK_LIBRARIES_LIST "-L${linkdir}")
+  endforeach ()
+
+  foreach(lib ${MLPACK_LIBRARIES})
+    string(SUBSTRING "${lib}" 0 1 first)
+    if ("${first}" STREQUAL "/")
+      # We need to split the directory and the library.
+      string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+
+      list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
+    else ()
+      list(APPEND MLPACK_LIBRARIES_LIST "-l${lib}")
+    endif ()
+  endforeach ()
+  # Don't forget to add mlpack as a dependency too.
+  list(APPEND MLPACK_LIBRARIES_LIST "-L${CMAKE_INSTALL_PREFIX}/lib/")
+  list(APPEND MLPACK_LIBRARIES_LIST "-lmlpack")
+
+  # Filter duplicate dependencies and directories.
+  list(REMOVE_DUPLICATES MLPACK_LIBRARIES_LIST)
+
+  # Filter out known unnecessary directories.
+  list(REMOVE_ITEM MLPACK_LIBRARIES_LIST
+      "-L/usr/lib"
+      "-L/usr/lib/"
+      "-L/usr/lib/x86_64-linux-gnu"
+      "-L/usr/lib/x86_64-linux-gnu/"
+      "-L/usr/lib/i386-linux-gnu"
+      "-L/usr/lib/i386-linux-gnu/")
+
+  string(REPLACE ";" " " MLPACK_LIBRARIES_STRING "${MLPACK_LIBRARIES_LIST}")
+
+  # Do first stage of configuration.
+  set(MLPACK_VERSION_STRING "@MLPACK_VERSION_STRING@")
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/mlpack.pc.in
+    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial @ONLY)
+
+  add_custom_target(pkgconfig ALL
+      ${CMAKE_COMMAND}
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
+      DEPENDS mlpack_headers
+      COMMENT "Generating mlpack.pc (pkg-config) file.")
+
+  # Do we need a different directory?
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
+      DESTINATION lib/pkgconfig/)
 endif ()

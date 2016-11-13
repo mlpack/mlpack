@@ -4,6 +4,11 @@
  *
  * Definition of the DropConnectLayer class, which implements a regularizer
  * that randomly sets connections to zero. Preventing units from co-adapting.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
@@ -42,7 +47,7 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputLayer Layer used instead of the internel linear layer.
+ * @tparam InputLayer Layer used instead of the internal linear layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -108,7 +113,7 @@ class DropConnectLayer
     // (during testing).
     if (deterministic)
     {
-      if(uselayer)
+      if (uselayer)
       {
         baseLayer.Forward(input, output);
       }
@@ -119,7 +124,7 @@ class DropConnectLayer
     }
     else
     {
-      if(uselayer)
+      if (uselayer)
       {
         // Scale with input / (1 - ratio) and set values to zero with
         // probability ratio.
@@ -162,7 +167,7 @@ class DropConnectLayer
   template<typename DataType>
   void Backward(const DataType& input, const DataType& gy, DataType& g)
   {
-    if(uselayer)
+    if (uselayer)
     {
       baseLayer.Backward(input, gy, g);
     }
@@ -184,7 +189,7 @@ class DropConnectLayer
                 const arma::Mat<eT>& d,
                 GradientDataType& g)
   {
-    if(uselayer)
+    if (uselayer)
     {
       baseLayer.Gradient(input, d, g);
 
@@ -203,7 +208,7 @@ class DropConnectLayer
   //! Get the weights.
   OutputDataType const& Weights() const
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Weights();
 
     return weights;
@@ -212,7 +217,7 @@ class DropConnectLayer
   //! Modify the weights.
   OutputDataType& Weights()
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Weights();
 
     return weights;
@@ -221,7 +226,7 @@ class DropConnectLayer
   //! Get the input parameter.
   InputDataType &InputParameter() const
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.InputParameter();
 
     return inputParameter;
@@ -230,7 +235,7 @@ class DropConnectLayer
   //! Modify the input parameter.
   InputDataType &InputParameter()
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.InputParameter();
 
     return inputParameter;
@@ -239,7 +244,7 @@ class DropConnectLayer
   //! Get the output parameter.
   OutputDataType &OutputParameter() const
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.OutputParameter();
 
     return outputParameter;
@@ -248,7 +253,7 @@ class DropConnectLayer
   //! Modify the output parameter.
   OutputDataType &OutputParameter()
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.OutputParameter();
 
     return outputParameter;
@@ -257,7 +262,7 @@ class DropConnectLayer
   //! Get the delta.
   OutputDataType const& Delta() const
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Delta();
 
     return delta;
@@ -266,7 +271,7 @@ class DropConnectLayer
   //! Modify the delta.
   OutputDataType& Delta()
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Delta();
 
     return delta;
@@ -275,7 +280,7 @@ class DropConnectLayer
   //! Get the gradient.
   OutputDataType const& Gradient() const
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Gradient();
 
     return gradient;
@@ -284,7 +289,7 @@ class DropConnectLayer
   //! Modify the gradient.
   OutputDataType& Gradient()
   {
-    if(uselayer)
+    if (uselayer)
       return baseLayer.Gradient();
 
     return gradient;

@@ -3,6 +3,11 @@
  * @author Andrew Wells
  *
  * Specialization of the TreeTraits class for the RectangleTree type of tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_TRAITS_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_TRAITS_HPP
@@ -34,15 +39,14 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
   static const bool HasOverlappingChildren = true;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
-
-  /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of a node.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
 
   /**
    * Points are not contained at multiple levels of the R-tree.
@@ -60,6 +64,12 @@ class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 /**
@@ -88,15 +98,14 @@ class TreeTraits<RectangleTree<MetricType,
   static const bool HasOverlappingChildren = false;
 
   /**
+   * An R-tree node doesn't share points with another node.
+   */
+  static const bool HasDuplicatedPoints = false;
+
+  /**
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
-
-  /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
 
   /**
    * Points are not contained at multiple levels of the R-tree.
@@ -114,6 +123,12 @@ class TreeTraits<RectangleTree<MetricType,
    * This tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * Rectangle trees don't have duplicated points, so NumDescendants()
+   * represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

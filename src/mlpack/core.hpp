@@ -3,6 +3,11 @@
  *
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_HPP
 #define MLPACK_CORE_HPP
@@ -51,6 +56,7 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
+ * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
  * - mlpack_det
@@ -194,6 +200,8 @@
  *   - Keon Kim <kwk236@gmail.com>
  *   - Nilay Jain <nilayjain13@gmail.com>
  *   - Peter Lehner <peter.lehner@dlr.de>
+ *   - Anuraj Kanodia <akanuraj200@gmail.com>
+ *   - Ivan Georgiev <ivan@jonan.info>
  */
 
 // First, include all of the prerequisites.
@@ -203,6 +211,7 @@
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>

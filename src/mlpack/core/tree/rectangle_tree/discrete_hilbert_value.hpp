@@ -2,8 +2,13 @@
  * @file discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the DiscreteHilbertValue class, a class that calculates
+ * Definition of the DiscreteHilbertValue class, a class that calculates
  * the ordering of points using the Hilbert curve.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
@@ -45,9 +50,21 @@ class DiscreteHilbertValue
   /**
    * Create a Hilbert value object by copying from another one.
    *
-   * @param other The Hilbert value object from which the value will be copied.
+   * @param other The object from which the value will be copied.
+   * @param tree The node that holds the Hilbert value.
+   * @param deepCopy If false, the dataset will not be copied.
    */
-  DiscreteHilbertValue(const DiscreteHilbertValue& other);
+  template<typename TreeType>
+  DiscreteHilbertValue(const DiscreteHilbertValue& other,
+                       TreeType* tree,
+                       bool deepCopy);
+
+  /**
+   * Create a Hilbert value object by moving another one.
+   *
+   * @param other The Hilbert value object from which the value will be moved.
+   */
+  DiscreteHilbertValue(DiscreteHilbertValue&& other);
 
   //! Free memory
   ~DiscreteHilbertValue();
@@ -224,12 +241,21 @@ class DiscreteHilbertValue
   arma::Mat<HilbertElemType>*& LocalHilbertValues()
   { return localHilbertValues; }
 
+  //! Return the ownsLocalHilbertValues variable.
+  bool OwnsLocalHilbertValues() const { return ownsLocalHilbertValues; }
+  //! Modify the ownsLocalHilbertValues variable.
+  bool& OwnsLocalHilbertValues() { return ownsLocalHilbertValues; }
+
   //! Return the cached point (valueToInsert).
   const arma::Col<HilbertElemType>* ValueToInsert() const
   { return valueToInsert; }
   //! Modify the cached point (valueToInsert).
   arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
 
+  //! Return the ownsValueToInsert variable.
+  bool OwnsValueToInsert() const { return ownsValueToInsert; }
+  //! Modify the ownsValueToInsert variable.
+  bool& OwnsValueToInsert() { return ownsValueToInsert; }
  private:
   //! The number of bits that we can store.
   static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;

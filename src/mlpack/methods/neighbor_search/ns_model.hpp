@@ -6,6 +6,11 @@
  * that it provides an easy way to serialize a model, abstracts away the
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
@@ -13,7 +18,8 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
-#include <mlpack/core/tree/vantage_point_tree.hpp>
+#include <mlpack/core/tree/spill_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
@@ -84,7 +90,7 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 
 /**
  * BiSearchVisitor executes a bichromatic neighbor search on the given NSType.
- * We use template specialization to differenciate those tree types that
+ * We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, before doing neighbor search,
  * a query tree with proper leafSize is built from the querySet.
  */
@@ -102,6 +108,10 @@ class BiSearchVisitor : public boost::static_visitor<void>
   arma::mat& distances;
   //! The number of points in a leaf (for BinarySpaceTrees).
   const size_t leafSize;
+  //! Overlapping size (for spill trees).
+  const double tau;
+  //! Balance threshold (for spill trees).
+  const double rho;
 
   //! Bichromatic neighbor search on the given NSType considering the leafSize.
   template<typename NSType>
@@ -126,17 +136,25 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic neighbor search on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
+  //! Bichromatic neighbor search specialized for SPTrees.
+  void operator()(SpillKNN* ns) const;
+
+  //! Bichromatic neighbor search specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
+
   //! Construct the BiSearchVisitor.
   BiSearchVisitor(const arma::mat& querySet,
                   const size_t k,
                   arma::Mat<size_t>& neighbors,
                   arma::mat& distances,
-                  const size_t leafSize);
+                  const size_t leafSize,
+                  const double tau,
+                  const double rho);
 };
 
 /**
  * TrainVisitor sets the reference set to a new reference set on the given
- * NSType. We use template specialization to differenciate those tree types that
+ * NSType. We use template specialization to differentiate those tree types that
  * accept leafSize as a parameter. In these cases, a reference tree with proper
  * leafSize is built from the referenceSet.
  */
@@ -148,6 +166,10 @@ class TrainVisitor : public boost::static_visitor<void>
   arma::mat&& referenceSet;
   //! The leaf size, used only by BinarySpaceTree.
   size_t leafSize;
+  //! Overlapping size (for spill trees).
+  const double tau;
+  //! Balance threshold (for spill trees).
+  const double rho;
 
   //! Train on the given NSType considering the leafSize.
   template<typename NSType>
@@ -172,31 +194,29 @@ class TrainVisitor : public boost::static_visitor<void>
   //! Train on the given NSType specialized for BallTrees.
   void operator()(NSTypeT<tree::BallTree>* ns) const;
 
-  //! Construct the TrainVisitor object with the given reference set and leaf
-  //! size for BinarySpaceTrees.
-  TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
+  //! Train specialized for SPTrees.
+  void operator()(SpillKNN* ns) const;
+
+  //! Train specialized for octrees.
+  void operator()(NSTypeT<tree::Octree>* ns) const;
+
+  //! Construct the TrainVisitor object with the given reference set, leafSize
+  //! for BinarySpaceTrees, and tau and rho for spill trees.
+  TrainVisitor(arma::mat&& referenceSet,
+               const size_t leafSize,
+               const double tau,
+               const double rho);
 };
 
 /**
- * SingleModeVisitor exposes the SingleMode method of the given NSType.
+ * SearchModeVisitor exposes the SearchMode() method of the given NSType.
  */
-class SingleModeVisitor : public boost::static_visitor<bool&>
+class SearchModeVisitor : public boost::static_visitor<NeighborSearchMode&>
 {
  public:
-  //! Return whether or not single-tree search is enabled.
+  //! Return the search mode.
   template<typename NSType>
-  bool& operator()(NSType* ns) const;
-};
-
-/**
- * NaiveVisitor exposes the Naive method of the given NSType.
- */
-class NaiveVisitor : public boost::static_visitor<bool&>
-{
- public:
-  //! Return whether or not naive search is enabled.
-  template<typename NSType>
-  bool& operator()(NSType *ns) const;
+  NeighborSearchMode& operator()(NSType* ns) const;
 };
 
 /**
@@ -258,7 +278,12 @@ class NSModel
     HILBERT_R_TREE,
     R_PLUS_TREE,
     R_PLUS_PLUS_TREE,
-    VP_TREE
+    VP_TREE,
+    RP_TREE,
+    MAX_RP_TREE,
+    SPILL_TREE,
+    UB_TREE,
+    OCTREE
   };
 
  private:
@@ -267,6 +292,11 @@ class NSModel
 
   //! For tree types that accept the maxLeafSize parameter.
   size_t leafSize;
+
+  //! Overlapping size (for spill trees).
+  double tau;
+  //! Balance threshold (for spill trees).
+  double rho;
 
   //! If true, random projections are used.
   bool randomBasis;
@@ -287,7 +317,12 @@ class NSModel
                  NSType<SortPolicy, tree::HilbertRTree>*,
                  NSType<SortPolicy, tree::RPlusTree>*,
                  NSType<SortPolicy, tree::RPlusPlusTree>*,
-                 NSType<SortPolicy, tree::VPTree>*> nSearch;
+                 NSType<SortPolicy, tree::VPTree>*,
+                 NSType<SortPolicy, tree::RPTree>*,
+                 NSType<SortPolicy, tree::MaxRPTree>*,
+                 SpillKNN*,
+                 NSType<SortPolicy, tree::UBTree>*,
+                 NSType<SortPolicy, tree::Octree>*> nSearch;
 
  public:
   /**
@@ -306,13 +341,9 @@ class NSModel
   //! Expose the dataset.
   const arma::mat& Dataset() const;
 
-  //! Expose singleMode.
-  bool SingleMode() const;
-  bool& SingleMode();
-
-  //! Expose naiveMode.
-  bool Naive() const;
-  bool& Naive();
+  //! Expose SearchMode.
+  NeighborSearchMode SearchMode() const;
+  NeighborSearchMode& SearchMode();
 
   //! Expose Epsilon.
   double Epsilon() const;
@@ -321,6 +352,14 @@ class NSModel
   //! Expose leafSize.
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
+
+  //! Expose tau.
+  double Tau() const { return tau; }
+  double& Tau() { return tau; }
+
+  //! Expose rho.
+  double Rho() const { return rho; }
+  double& Rho() { return rho; }
 
   //! Expose treeType.
   TreeTypes TreeType() const { return treeType; }
@@ -333,8 +372,7 @@ class NSModel
   //! Build the reference tree.
   void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,
-                  const bool naive,
-                  const bool singleMode,
+                  const NeighborSearchMode searchMode,
                   const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
@@ -354,6 +392,10 @@ class NSModel
 
 } // namespace neighbor
 } // namespace mlpack
+
+//! Set the serialization version of the NSModel class.
+BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
+    mlpack::neighbor::NSModel<SortPolicy>, 1);
 
 // Include implementation.
 #include "ns_model_impl.hpp"

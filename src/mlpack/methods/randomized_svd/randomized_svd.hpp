@@ -3,13 +3,17 @@
  * @author Marcus Edel
  *
  * An implementation of the randomized SVD method.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #ifndef MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 #define MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -61,7 +65,7 @@ namespace svd {
  */
 class RandomizedSVD
 {
-  public:
+ public:
   /**
    * Create object for the randomized SVD method.
    *
@@ -74,6 +78,8 @@ class RandomizedSVD
    * @param maxIterations Number of iterations for the power method
    *        (Default: 2).
    * @param rank Rank of the approximation (Default: number of rows.)
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
    */
   RandomizedSVD(const arma::mat& data,
                 arma::mat& u,
@@ -81,7 +87,8 @@ class RandomizedSVD
                 arma::mat& v,
                 const size_t iteratedPower = 0,
                 const size_t maxIterations = 2,
-                const size_t rank = 0);
+                const size_t rank = 0,
+                const double eps = 1e-7);
 
   /**
    * Create object for the randomized SVD method.
@@ -90,8 +97,12 @@ class RandomizedSVD
    *        (Default: rank + 2).
    * @param maxIterations Number of iterations for the power method
    *        (Default: 2).
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
    */
-  RandomizedSVD(const size_t iteratedPower = 0, const size_t maxIterations = 2);
+  RandomizedSVD(const size_t iteratedPower = 0,
+                const size_t maxIterations = 2,
+                const double eps = 1e-7);
 
   /**
    * Apply Principal Component Analysis to the provided data set using the
@@ -119,12 +130,20 @@ class RandomizedSVD
   //! Modify the number of iterations for the power method.
   size_t& MaxIterations() { return maxIterations; }
 
-  private:
-    //! Locally stored size of the normalized power iterations.
-    size_t iteratedPower;
+  //! Get the value used for decomposition stability.
+  double Epsilon() const { return eps; }
+  //! Modify the value used for decomposition stability.
+  double& Epsilon() { return eps; }
 
-    //! Locally stored number of iterations for the power method.
-    size_t maxIterations;
+ private:
+  //! Locally stored size of the normalized power iterations.
+  size_t iteratedPower;
+
+  //! Locally stored number of iterations for the power method.
+  size_t maxIterations;
+
+  //! The value used for numerical stability.
+  double eps;
 };
 
 } // namespace svd

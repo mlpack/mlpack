@@ -7,6 +7,11 @@
  * Defines the PCA class to perform Principal Components Analysis on the
  * specified data set. There are many variations on how to do this, so
  * template parameters allow the selection of different techniques.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_PCA_PCA_HPP
 #define MLPACK_METHODS_PCA_PCA_HPP

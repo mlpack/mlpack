@@ -3,6 +3,11 @@
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (HilbertRTreeSplit) to split a RectangleTree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_SPLIT_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_SPLIT_IMPL_HPP
@@ -28,6 +33,10 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
   {
     // We actually want to copy this way.  Pointers and everything.
     TreeType* copy = new TreeType(*tree, false);
+    // Only the root node owns this variable.
+    copy->AuxiliaryInfo().HilbertValue().OwnsValueToInsert() = false;
+    // Only leaf nodes own this variable.
+    tree->AuxiliaryInfo().HilbertValue().OwnsLocalHilbertValues() = false;
     copy->Parent() = tree;
     tree->Count() = 0;
     tree->NullifyData();
@@ -89,7 +98,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   {
     // We actually want to copy this way.  Pointers and everything.
     TreeType* copy = new TreeType(*tree, false);
-
+    // Only the root node owns this variable.
+    copy->AuxiliaryInfo().HilbertValue().OwnsValueToInsert() = false;
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();

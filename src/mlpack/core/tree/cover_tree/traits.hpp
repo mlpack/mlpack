@@ -4,6 +4,11 @@
  *
  * This file contains the specialization of the TreeTraits class for the
  * CoverTree type of tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_TRAITS_HPP
@@ -33,16 +38,16 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
   static const bool HasOverlappingChildren = true;
 
   /**
+   * Cover trees do have self-children, so points can be included in more than
+   * one node.
+   */
+  static const bool HasDuplicatedPoints = true;
+
+  /**
    * Each cover tree node contains only one point, and that point is its
    * centroid.
    */
   static const bool FirstPointIsCentroid = true;
-
-  /**
-   * There is no guarantee that the first point of the first sibling is the
-   * centroid of other siblings.
-   */
-  static const bool FirstSiblingFirstPointIsCentroid = false;
 
   /**
    * Cover trees do have self-children.
@@ -58,6 +63,11 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
    * The cover tree is not necessarily a binary tree.
    */
   static const bool BinaryTree = false;
+
+  /**
+   * NumDescendants() represents the number of unique descendant points.
+   */
+  static const bool UniqueNumDescendants = true;
 };
 
 } // namespace tree

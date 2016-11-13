@@ -748,7 +748,7 @@ The \c RangeDistance() function allows a way for both bounds to be calculated at
 once.  It is possible to implement this as a call to \c MinDistance() followed
 by a call to \c MaxDistance(), but this may incur more metric \c Evaluate()
 calls than necessary.  Often calculating both bounds at once can be more
-efficent and can be done with fewer \c Evaluate() calls than calling both
+efficient and can be done with fewer \c Evaluate() calls than calling both
 \c MinDistance() and \c MaxDistance().
 
 @subsection treetype_rigorous_serialization Serialization

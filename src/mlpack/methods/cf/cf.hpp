@@ -7,6 +7,11 @@
  *
  * Defines the CF class to perform collaborative filtering on the specified data
  * set using alternating least squares (ALS).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_CF_CF_HPP
 #define MLPACK_METHODS_CF_CF_HPP
@@ -212,7 +217,7 @@ class CF
    */
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
-                          arma::Col<size_t>& users);
+                          const arma::Col<size_t>& users);
 
   //! Converts the User, Item, Value Matrix to User-Item Table
   static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);

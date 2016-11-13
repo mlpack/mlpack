@@ -4,6 +4,11 @@
  *
  * Defines the pruning rules and base case rules necessary to perform a
  * tree-based search (with an arbitrary tree) for the NeighborSearch class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
@@ -75,6 +80,22 @@ class NeighborSearchRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode);
+
+  /**
+   * Get the child node with the best score.
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceNode Candidate node to be recursed into.
+   */
+  size_t GetBestChild(const size_t queryIndex, TreeType& referenceNode);
+
+  /**
+   * Get the child node with the best score.
+   *
+   * @param queryNode Node to be considered.
+   * @param referenceNode Candidate node to be recursed into.
+   */
+  size_t GetBestChild(const TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority

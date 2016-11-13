@@ -4,6 +4,11 @@
  *
  * Defines the NeighborSearch class, which performs an abstract
  * nearest-neighbor-like query on two datasets.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
@@ -30,6 +35,15 @@ namespace neighbor /** Neighbor-search routines.  These include
 template<typename SortPolicy>
 class TrainVisitor;
 
+//! NeighborSearchMode represents the different neighbor search modes available.
+enum NeighborSearchMode
+{
+  NAIVE_MODE,
+  SINGLE_TREE_MODE,
+  DUAL_TREE_MODE,
+  GREEDY_SINGLE_TREE_MODE
+};
+
 /**
  * The NeighborSearch class is a template class for performing distance-based
  * neighbor searches.  It takes a query dataset and a reference dataset (or just
@@ -48,8 +62,10 @@ class TrainVisitor;
  * @tparam MetricType The metric to use for computation.
  * @tparam MatType The type of data matrix.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
- * @tparam TraversalType The type of traversal to use (defaults to the tree's
- *      default traverser).
+ * @tparam DualTreeTraversalType The type of dual tree traversal to use
+ *     (defaults to the tree's default traverser).
+ * @tparam SingleTreeTraversalType The type of single tree traversal to use
+ *     (defaults to the tree's default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::EuclideanDistance,
@@ -57,10 +73,14 @@ template<typename SortPolicy = NearestNeighborSort,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::KDTree,
-         template<typename RuleType> class TraversalType =
+         template<typename RuleType> class DualTreeTraversalType =
              TreeType<MetricType,
                       NeighborSearchStat<SortPolicy>,
-                      MatType>::template DualTreeTraverser>
+                      MatType>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<MetricType,
+                      NeighborSearchStat<SortPolicy>,
+                      MatType>::template SingleTreeTraverser>
 class NeighborSearch
 {
  public:
@@ -70,9 +90,9 @@ class NeighborSearch
   /**
    * Initialize the NeighborSearch object, passing a reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
-   * naive mode or single-tree mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
+   * a different mode.  An initialized distance metric can be given, for cases
+   * where the metric has internal data (i.e. the distance::MahalanobisDistance
+   * class).
    *
    * This method will copy the matrices to internal copies, which are rearranged
    * during tree-building.  You can avoid this extra copy by pre-constructing
@@ -80,24 +100,20 @@ class NeighborSearch
    * construct that takes an rvalue reference to the dataset.
    *
    * @param referenceSet Set of reference points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
+   * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(const MatType& referenceSet,
-                 const bool naive = false,
-                 const bool singleMode = false,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object, taking ownership of the reference
    * dataset (this is the dataset which is searched).  Optionally, perform the
-   * computation in naive mode or single-tree mode.  An initialized distance
-   * metric can be given, for cases where the metric has internal data (i.e. the
+   * computation in a different mode.  An initialized distance metric can be
+   * given, for cases where the metric has internal data (i.e. the
    * distance::MahalanobisDistance class).
    *
    * This method will not copy the data matrix, but will take ownership of it,
@@ -106,30 +122,25 @@ class NeighborSearch
    * const reference to the data instead.
    *
    * @param referenceSet Set of reference points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
+   * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(MatType&& referenceSet,
-                 const bool naive = false,
-                 const bool singleMode = false,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
 
   /**
-   * Initialize the NeighborSearch object with the given pre-constructed
-   * reference tree (this is the tree built on the points that will be
-   * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
-   * available as an option for this constructor.  Additionally, an instantiated
-   * distance metric can be given, for cases where the distance metric holds
-   * data.
+   * Initialize the NeighborSearch object with a copy of the given
+   * pre-constructed reference tree (this is the tree built on the points that
+   * will be searched).  Optionally, choose to use single-tree mode.  Naive mode
+   * is not available as an option for this constructor.  Additionally, an
+   * instantiated distance metric can be given, for cases where the distance
+   * metric holds data.
    *
-   * There is no copying of the data matrices in this constructor (because
-   * tree-building is not necessary), so this is the constructor to use when
-   * copies absolutely must be avoided.
+   * This method will copy the given tree.  You can avoid this copy by using the
+   * construct that takes a rvalue reference to the tree.
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -139,33 +150,58 @@ class NeighborSearch
    * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param referenceSet Set of reference points corresponding to referenceTree.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
+   * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(Tree* referenceTree,
-                 const bool singleMode = false,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
+  NeighborSearch(
+      const Tree& referenceTree,
+      const NeighborSearchMode mode = DUAL_TREE_MODE,
+      const double epsilon = 0,
+      const MetricType metric = MetricType());
+
+  /**
+   * Initialize the NeighborSearch object with the given pre-constructed
+   * reference tree (this is the tree built on the points that will be
+   * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
+   * available as an option for this constructor.  Additionally, an instantiated
+   * distance metric can be given, for cases where the distance metric holds
+   * data.
+   *
+   * This method will take ownership of the given tree. There is no copying of
+   * the data matrices (because tree-building is not necessary), so this is the
+   * constructor to use when copies absolutely must be avoided.
+   *
+   * @note
+   * Mapping the points of the matrix back to their original indices is not done
+   * when this constructor is used, so if the tree type you are using maps
+   * points (like BinarySpaceTree), then you will have to perform the re-mapping
+   * manually.
+   * @endnote
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   * @param mode Neighbor search mode.
+   * @param epsilon Relative approximate error (non-negative).
+   * @param metric Instantiated distance metric.
+   */
+  NeighborSearch(
+      Tree&& referenceTree,
+      const NeighborSearchMode mode = DUAL_TREE_MODE,
+      const double epsilon = 0,
+      const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
    * called before a reference set is set with Train(), an exception will be
    * thrown.
    *
-   * @param naive Whether to use naive search.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
+   * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated metric.
    */
-  NeighborSearch(const bool naive = false,
-                 const bool singleMode = false,
+  NeighborSearch(const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
-
 
   /**
    * Delete the NeighborSearch object. The tree is the only member we are
@@ -194,9 +230,23 @@ class NeighborSearch
   void Train(MatType&& referenceSet);
 
   /**
-   * Set the reference tree to a new reference tree.
+   * Set the reference tree as a copy of the given reference tree.
+   *
+   * This method will copy the given tree.  You can avoid this copy by using the
+   * Train() method that takes a rvalue reference to the tree.
+   *
+   * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(Tree* referenceTree);
+  void Train(const Tree& referenceTree);
+
+  /**
+   * Set the reference tree to a new reference tree.
+   *
+   * This method will take ownership of the given tree.
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   */
+  void Train(Tree&& referenceTree);
 
   /**
    * For each point in the query set, compute the nearest neighbors and store
@@ -237,11 +287,14 @@ class NeighborSearch
    * @param neighbors Matrix storing lists of neighbors for each query point.
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
+   * @param sameSet Denotes whether or not the reference and query sets are the
+   *      same.
    */
-  void Search(Tree* queryTree,
+  void Search(Tree& queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+              arma::mat& distances,
+              bool sameSet = false);
 
   /**
    * Search for the nearest neighbors of every point in the reference set.  This
@@ -261,6 +314,38 @@ class NeighborSearch
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
+  /**
+   * Calculate the average relative error (effective error) between the
+   * distances calculated and the true distances provided.  The input matrices
+   * must have the same size.
+   *
+   * Cases where the true distance is zero (the same point) or the calculated
+   * distance is SortPolicy::WorstDistance() (didn't find enough points) will be
+   * ignored.
+   *
+   * @param foundDistances Matrix storing lists of calculated distances for each
+   *     query point.
+   * @param realDistances Matrix storing lists of true best distances for each
+   *     query point.
+   * @return Average relative error.
+   */
+  static double EffectiveError(arma::mat& foundDistances,
+                               arma::mat& realDistances);
+
+  /**
+   * Calculate the recall (% of neighbors found) given the list of found
+   * neighbors and the true set of neighbors.  The recall returned will be in
+   * the range [0, 1].
+   *
+   * @param foundNeighbors Matrix storing lists of calculated neighbors for each
+   *     query point.
+   * @param realNeighbors Matrix storing lists of true best neighbors for each
+   *     query point.
+   * @return Recall.
+   */
+  static double Recall(arma::Mat<size_t>& foundNeighbors,
+                       arma::Mat<size_t>& realNeighbors);
+
   //! Return the total number of base case evaluations performed during the last
   //! search.
   size_t BaseCases() const { return baseCases; }
@@ -268,15 +353,10 @@ class NeighborSearch
   //! Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
 
-  //! Access whether or not search is done in naive linear scan mode.
-  bool Naive() const { return naive; }
-  //! Modify whether or not search is done in naive linear scan mode.
-  bool& Naive() { return naive; }
-
-  //! Access whether or not search is done in single-tree mode.
-  bool SingleMode() const { return singleMode; }
-  //! Modify whether or not search is done in single-tree mode.
-  bool& SingleMode() { return singleMode; }
+  //! Access the search mode.
+  NeighborSearchMode SearchMode() const { return searchMode; }
+  //! Modify the search mode.
+  NeighborSearchMode& SearchMode() { return searchMode; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
@@ -285,6 +365,11 @@ class NeighborSearch
 
   //! Access the reference dataset.
   const MatType& ReferenceSet() const { return *referenceSet; }
+
+  //! Access the reference tree.
+  const Tree& ReferenceTree() const { return *referenceTree; }
+  //! Modify the reference tree.
+  Tree& ReferenceTree() { return *referenceTree; }
 
   //! Serialize the NeighborSearch model.
   template<typename Archive>
@@ -303,10 +388,8 @@ class NeighborSearch
   //! If true, we own the reference set.
   bool setOwner;
 
-  //! Indicates if O(n^2) naive search is being used.
-  bool naive;
-  //! Indicates if single-tree search is being used (as opposed to dual-tree).
-  bool singleMode;
+  //! Indicates the neighbor search mode.
+  NeighborSearchMode searchMode;
   //! Indicates the relative error to be considered in approximate search.
   double epsilon;
 
@@ -323,7 +406,8 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  friend class TrainVisitor<SortPolicy>;
+  template<typename SortPol>
+  friend class TrainVisitor;
 }; // class NeighborSearch
 
 } // namespace neighbor

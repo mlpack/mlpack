@@ -4,6 +4,11 @@
  *
  * Defines Imputer class a utility function to replace missing variables in a
  * dataset.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_IMPUTER_HPP
 #define MLPACK_CORE_DATA_IMPUTER_HPP
@@ -44,9 +49,9 @@ class Imputer
   }
 
   /**
-  * Given an input dataset, replace missing values with given imputation
-  * strategy. This overload does not produce output matrix, but overwrites the
-  * result into the input matrix.
+  * Given an input dataset, replace missing values of a dimension with given
+  * imputation strategy. This function does not produce output matrix, but
+  * overwrites the result into the input matrix.
   *
   * @param input Input dataset to apply imputation.
   * @oaran missingValue User defined missing value; it can be anything.

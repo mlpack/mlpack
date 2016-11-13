@@ -5,6 +5,11 @@
  * @author Michael Fox
  *
  * Implementation of HMMRegression class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
 #define MLPACK_METHODS_HMM_HMM_REGRESSION_IMPL_HPP
@@ -101,7 +106,7 @@ void HMMRegression::Filter(const arma::mat& predictors,
   Forward(predictors, responses, scales, forwardProb);
 
   // Propagate state, predictors ahead
-  if(ahead != 0) {
+  if (ahead != 0) {
     forwardProb = pow(transition, ahead)*forwardProb;
     forwardProb = forwardProb.cols(0, forwardProb.n_cols-ahead-1);
   }

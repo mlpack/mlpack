@@ -5,6 +5,11 @@
  *
  * Compute the most probably hidden state sequence of a given observation
  * sequence for a given HMM.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -23,8 +28,8 @@ PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
 PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
 
 PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
-PARAM_STRING_OUT("output_file", "File to save observation sequence to.", "o");
-PARAM_STRING_OUT("state_file", "File to save hidden state sequence to.", "S");
+PARAM_MATRIX_OUT("output", "Matrix to save observation sequence to.", "o");
+PARAM_UMATRIX_OUT("state", "Matrix to save hidden state sequence to.", "S");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
@@ -49,8 +54,6 @@ struct Generate
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
     const size_t length = (size_t) CLI::GetParam<int>("length");
-    const string outputFile = CLI::GetParam<string>("output_file");
-    const string sequenceFile = CLI::GetParam<string>("state_file");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
@@ -61,16 +64,12 @@ struct Generate
     hmm.Generate(length, observations, sequence, startState);
 
     // Now save the output.
-    if (CLI::HasParam("output_file"))
-      data::Save(outputFile, observations, true);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<mat>("output") = std::move(observations);
 
     // Do we want to save the hidden sequence?
-    if (CLI::HasParam("state_file"))
-      data::Save(sequenceFile, sequence, true);
-
-    if (outputFile == "" && sequenceFile == "")
-      Log::Warn << "Neither --output_file nor --state_file are specified; no "
-          << "output will be saved." << endl;
+    if (CLI::HasParam("state"))
+      CLI::GetParam<Mat<size_t>>("state") = std::move(sequence);
   }
 };
 
@@ -79,7 +78,7 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("output_file") && !CLI::HasParam("state_file"))
+  if (!CLI::HasParam("output") && !CLI::HasParam("state"))
     Log::Warn << "Neither --output_file nor --state_file are specified; no "
         << "output will be saved!" << endl;
 

@@ -3,6 +3,11 @@
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef _MLPACK_METHODS_AMF_SIMPLE_TOLERANCE_TERMINATION_HPP_INCLUDED
 #define _MLPACK_METHODS_AMF_SIMPLE_TOLERANCE_TERMINATION_HPP_INCLUDED
@@ -78,7 +83,7 @@ class SimpleToleranceTermination
         for(size_t j = 0;j < m;j++)
         {
             double temp = 0;
-            if((temp = (*V)(i,j)) != 0)
+            if ((temp = (*V)(i,j)) != 0)
             {
                 temp = (temp - WH(i, j));
                 temp = temp * temp;
@@ -118,18 +123,18 @@ class SimpleToleranceTermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if(residue <= c_indexOld && isCopy == true)
+      if (residue <= c_indexOld && isCopy == true)
       {
         isCopy = false;
       }
     }
 
     // check if termination criterion is met
-    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    if (reverseStepCount == reverseStepTolerance || iteration > maxIterations)
     {
       // if stored values are present replace them with current value as they
       // represent the minimum residue point
-      if(isCopy)
+      if (isCopy)
       {
         W = this->W;
         H = this->H;

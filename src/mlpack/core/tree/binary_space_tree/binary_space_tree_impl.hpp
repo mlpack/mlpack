@@ -2,6 +2,11 @@
  * @file binary_space_tree_impl.hpp
  *
  * Implementation of generalized space partitioning tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_IMPL_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_IMPL_HPP
@@ -407,6 +412,12 @@ BinarySpaceTree(BinarySpaceTree&& other) :
   other.furthestDescendantDistance = 0.0;
   other.minimumBoundDistance = 0.0;
   other.dataset = NULL;
+
+  //Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
 }
 
 /**
@@ -442,7 +453,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-  ~BinarySpaceTree()
+    ~BinarySpaceTree()
 {
   delete left;
   delete right;
@@ -482,6 +493,104 @@ inline size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
     return 1;
 
   return 0;
+}
+
+/**
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetNearestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (left->MinDistance(point) <= right->MinDistance(point))
+    return 0;
+  return 1;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename VecType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetFurthestChild(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >::type*)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  if (left->MaxDistance(point) > right->MaxDistance(point))
+    return 0;
+  return 1;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetNearestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  ElemType leftDist = left->MinDistance(queryNode);
+  ElemType rightDist = right->MinDistance(queryNode);
+  if (leftDist < rightDist)
+    return 0;
+  if (rightDist < leftDist)
+    return 1;
+  return NumChildren();
+}
+
+/**
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+    SplitType>::GetFurthestChild(const BinarySpaceTree& queryNode)
+{
+  if (IsLeaf() || !left || !right)
+    return 0;
+
+  ElemType leftDist = left->MaxDistance(queryNode);
+  ElemType rightDist = right->MaxDistance(queryNode);
+  if (leftDist > rightDist)
+    return 0;
+  if (rightDist > leftDist)
+    return 1;
+  return NumChildren();
 }
 
 /**
@@ -639,8 +748,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
               SplitType<BoundType<MetricType>, MatType>& splitter)
 {
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -654,15 +762,24 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   // child.
   size_t splitCol;
 
-  // Split the node. The elements of 'data' are reordered by the splitting
-  // algorithm. This function call updates splitCol.
+  // Find the partition of the node. This method does not perform the split.
+  typename Split::SplitInfo splitInfo;
+
   const bool split = splitter.SplitNode(bound, *dataset, begin, count,
-      splitCol);
+      splitInfo);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
     return;
+
+  // Perform the actual splitting.  This will order the dataset such that
+  // points that belong to the left subtree are on the left of splitCol, and
+  // points from the right subtree are on the right side of splitCol.
+  splitCol = splitter.PerformSplit(*dataset, begin, count, splitInfo);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -696,10 +813,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
           const size_t maxLeafSize,
           SplitType<BoundType<MetricType>, MatType>& splitter)
 {
-  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  if (count > 0)
-    bound |= dataset->cols(begin, begin + count - 1);
+  UpdateBound(bound);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -713,15 +828,25 @@ SplitNode(std::vector<size_t>& oldFromNew,
   // child.
   size_t splitCol;
 
-  // Split the node. The elements of 'data' are reordered by the splitting
-  // algorithm. This function call updates splitCol and oldFromNew.
-  const bool split = splitter.SplitNode(bound, *dataset, begin, count, splitCol,
-      oldFromNew);
+  // Find the partition of the node. This method does not perform the split.
+  typename Split::SplitInfo splitInfo;
+
+  const bool split = splitter.SplitNode(bound, *dataset, begin, count,
+      splitInfo);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
   if (!split)
     return;
+
+  // Perform the actual splitting.  This will order the dataset such that
+  // points that belong to the left subtree are on the left of splitCol, and
+  // points from the right subtree are on the right side of splitCol.
+  splitCol = splitter.PerformSplit(*dataset, begin, count, splitInfo,
+      oldFromNew);
+
+  assert(splitCol > begin);
+  assert(splitCol < begin + count);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -742,6 +867,46 @@ SplitNode(std::vector<size_t>& oldFromNew,
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+template<typename BoundType2>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(BoundType2& boundToUpdate)
+{
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
+{
+  if (!parent)
+  {
+    if (count > 0)
+      boundToUpdate |= dataset->cols(begin, begin + count - 1);
+    return;
+  }
+
+  if (parent->left != NULL && parent->left != this)
+  {
+    boundToUpdate.HollowCenter() = parent->left->bound.Center();
+    boundToUpdate.InnerRadius() = std::numeric_limits<ElemType>::max();
+  }
+
+  if (count > 0)
+    boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
 // Default constructor (private), for boost::serialization.

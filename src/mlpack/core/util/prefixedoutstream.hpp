@@ -4,6 +4,11 @@
  * @author Matthew Amidon
  *
  * Declaration of the PrefixedOutStream class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
@@ -112,7 +117,7 @@ class PrefixedOutStream
   template<typename T>
   PrefixedOutStream& operator<<(const T& s);
 
-  //! The output stream that all data is to be sent too; example: std::cout.
+  //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& destination;
 
   //! Discards input, prints nothing if true.

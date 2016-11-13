@@ -1,9 +1,24 @@
-### mlpack 2.x.x
-###### 2016-??-??
+### mlpack 2.1.0
+###### 2016-10-31
   * Fixed CoverTree to properly handle single-point datasets.
 
   * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
     some datasets (#717).
+
+  * Added mlpack_preprocess_describe program, which can be used to print
+    statistics on a given dataset (#742).
+
+  * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
+    KFN class), leading to orders-of-magnitude speedups in some cases.
+
+  * Bump minimum required version of Armadillo to 4.200.0.
+
+  * Added simple Gradient Descent optimizer, found in
+    src/mlpack/core/optimizers/gradient_descent/ (#792).
+
+  * Added approximate furthest neighbor search algorithms QDAFN and
+    DrusillaSelect in src/mlpack/methods/approx_kfn/, with command-line program
+    mlpack_approx_kfn.
 
 ### mlpack 2.0.3
 ###### 2016-07-21
