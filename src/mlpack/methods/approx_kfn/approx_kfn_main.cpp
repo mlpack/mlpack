@@ -57,10 +57,6 @@ PROGRAM_INFO("Approximate furthest neighbor search",
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");
 
-// Model loading and saving.
-PARAM_STRING_IN("input_model_file", "File containing input model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save output model to.", "M");
-
 PARAM_INT_IN("k", "Number of furthest neighbors to search for.", "k", 0);
 
 PARAM_INT_IN("num_tables", "Number of hash tables to use.", "t", 5);
@@ -104,6 +100,12 @@ class ApproxKFNModel
     }
   }
 };
+
+// Model loading and saving.
+PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
+    "m");
+PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
+    "M");
 
 int main(int argc, char** argv)
 {
