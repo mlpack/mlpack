@@ -9,7 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <iostream>
 #include <sstream>
 
@@ -35,6 +34,7 @@
 
 using namespace mlpack;
 using namespace mlpack::util;
+using namespace mlpack::kernel;
 
 // When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
@@ -723,8 +723,12 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
       true);
   CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
   CLI::Add<double>(0.0, "double2", "Test double", 'D', false, true, false);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, true, true);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel2", "Test kernel", 'K',
+      false, false, true);
 
-  const char* argv[7];
+  const char* argv[11];
   argv[0] = "./test";
   argv[1] = "--matrix_file";
   argv[2] = "file1.csv";
@@ -732,8 +736,12 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   argv[4] = "file2.csv";
   argv[5] = "-d";
   argv[6] = "1.334";
+  argv[7] = "-k";
+  argv[8] = "kernel.txt";
+  argv[9] = "-K";
+  argv[10] = "kernel2.txt";
 
-  int argc = 7;
+  int argc = 11;
 
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
@@ -742,12 +750,20 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file2.csv");
   BOOST_REQUIRE_CLOSE(CLI::GetUnmappedParam<double>("double"), 1.334, 1e-10);
   BOOST_REQUIRE_SMALL(CLI::GetUnmappedParam<double>("double2"), 1e-10);
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel"),
+      "kernel.txt");
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
+      "kernel2.txt");
 
   // Can we assign an unmapped parameter?
   CLI::GetUnmappedParam<arma::mat>("matrix2") =
       CLI::GetUnmappedParam<arma::mat>("matrix");
+  CLI::GetUnmappedParam<GaussianKernel>("kernel2") =
+      CLI::GetUnmappedParam<GaussianKernel>("kernel");
 
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
+      "kernel.txt");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
