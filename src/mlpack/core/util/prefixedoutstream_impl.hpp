@@ -103,7 +103,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
   if (fatal && newlined)
   {
     if (!ignoreInput)
-      std::cout << std::endl;
+      destination << std::endl;
 
     // Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
