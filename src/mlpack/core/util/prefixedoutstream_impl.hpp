@@ -102,7 +102,8 @@ void PrefixedOutStream::BaseLogic(const T& val)
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
   {
-    std::cout << std::endl;
+    if (!ignoreInput)
+      destination << std::endl;
 
     // Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
