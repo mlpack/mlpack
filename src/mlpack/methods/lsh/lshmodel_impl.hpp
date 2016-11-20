@@ -152,7 +152,7 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
 
     arma::Mat<size_t> neighbors; // Not going to be used but required.
     arma::mat kNNDistances; // What we need.
-    KNN naive(refMat, true); // true: train and use naive kNN.
+    KNN naive(refMat, NAIVE_MODE); // true: train and use naive kNN.
     naive.Search(queryMat, k, neighbors, kNNDistances);
 
     // Replace 0s again.
@@ -349,15 +349,19 @@ SameBucketProbability(double chi, double hashWidth, short delta, size_t proj,
   if (delta == 0)
   {
     // No perturbation - probability of two queries sharing the same bin.
-    return 2 * pdf(phi, hashWidth / chi) - 1
-      + std::sqrt(2 / M_PI) 
-      * (std::exp(-pow((hashWidth / chi), 2) / 2.0 - 1.0)) / (hashWidth / chi);
+    // The derivation to come to this solution is... pretty intense.  If you
+    // want to reproduce it, take equation (13) from the paper and expand it.
+    // Integrate the Gaussian PDF phi((z - x) / d), then take the expected value
+    // over z assuming a uniform distribution (so f(z) = 1/W).  After some
+    // integration and algebraic simplification, you should come to the result
+    // below.
+    return 2 * cdf(phi, hashWidth / chi) - 1.0;
   }
   else
   {
     // +1/-1 perturbation - probability of two queries being in adjacent bins.
     double deltaI = (proj + 1.0) / (2.0 * (numProj + 2.0));
-    
+
     // Negative perturbation - flip deltaI.
     if (delta == -1)
       deltaI = 1 - deltaI;

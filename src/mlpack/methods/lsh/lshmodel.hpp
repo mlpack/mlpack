@@ -219,6 +219,7 @@ class LSHModel
     *     want to compute the template perturbation sequence.
     * @param numProbes The number of probes to generate.
     */
+ public:
    void GenerateTemplateSequence(size_t numProj,
                                  size_t numProbes);
 
@@ -241,6 +242,7 @@ class LSHModel
               size_t numTables,
               size_t numProj,
               size_t numProbes) const;
+
    /**
     * This is a helper function that is called by Rho() and returns the inner
     * value of the product used in the calculation of the probability that Rho
@@ -257,6 +259,7 @@ class LSHModel
                                        short delta,
                                        size_t proj,
                                        size_t numProj) const;
+ private:
 
    /**
     * This function calculates the recall of LSH for a given set of parameters.
