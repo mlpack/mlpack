@@ -152,7 +152,7 @@ void LSHModel<SortPolicy, ObjectiveFunction>::Train(
 
     arma::Mat<size_t> neighbors; // Not going to be used but required.
     arma::mat kNNDistances; // What we need.
-    KNN naive(refMat, true); // true: train and use naive kNN.
+    KNN naive(refMat, NAIVE_MODE); // true: train and use naive kNN.
     naive.Search(queryMat, k, neighbors, kNNDistances);
 
     // Replace 0s again.
