@@ -25,6 +25,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -35,7 +36,7 @@ BOOST_AUTO_TEST_SUITE(KernelTest);
 /**
  * Basic test of the Manhattan distance.
  */
-BOOST_AUTO_TEST_CASE(manhattan_distance)
+BOOST_AUTO_TEST_CASE(ManhattanDistance)
 {
   // A couple quick tests.
   arma::vec a = "1.0 3.0 4.0";
@@ -52,7 +53,7 @@ BOOST_AUTO_TEST_CASE(manhattan_distance)
 /**
  * Basic test of squared Euclidean distance.
  */
-BOOST_AUTO_TEST_CASE(squared_euclidean_distance)
+BOOST_AUTO_TEST_CASE(SquaredEuclideanDistance)
 {
   // Sample 2-dimensional vectors.
   arma::vec a = "1.0  2.0";
@@ -65,7 +66,7 @@ BOOST_AUTO_TEST_CASE(squared_euclidean_distance)
 /**
  * Basic test of Euclidean distance.
  */
-BOOST_AUTO_TEST_CASE(euclidean_distance)
+BOOST_AUTO_TEST_CASE(EuclideanDistance)
 {
   arma::vec a = "1.0 3.0 5.0 7.0";
   arma::vec b = "4.0 0.0 2.0 0.0";
@@ -77,7 +78,7 @@ BOOST_AUTO_TEST_CASE(euclidean_distance)
 /**
  * Arbitrary test case for coverage.
  */
-BOOST_AUTO_TEST_CASE(arbitrary_case)
+BOOST_AUTO_TEST_CASE(ArbitraryCase)
 {
   arma::vec a = "3.0 5.0 6.0 7.0";
   arma::vec b = "1.0 2.0 1.0 0.0";
@@ -93,7 +94,7 @@ BOOST_AUTO_TEST_CASE(arbitrary_case)
  * Make sure two vectors of all zeros return zero distance, for a few different
  * powers.
  */
-BOOST_AUTO_TEST_CASE(lmetric_zeros)
+BOOST_AUTO_TEST_CASE(LMetricZeros)
 {
   arma::vec a(250);
   a.fill(0.0);
@@ -116,7 +117,7 @@ BOOST_AUTO_TEST_CASE(lmetric_zeros)
  * Simple test of Mahalanobis distance with unset covariance matrix in
  * constructor.
  */
-BOOST_AUTO_TEST_CASE(md_unset_covariance)
+BOOST_AUTO_TEST_CASE(MDUnsetCovariance)
 {
   MahalanobisDistance<false> md;
   md.Covariance() = arma::eye<arma::mat>(4, 4);
@@ -131,7 +132,7 @@ BOOST_AUTO_TEST_CASE(md_unset_covariance)
  * Simple test of Mahalanobis distance with unset covariance matrix in
  * constructor and t_take_root set to true.
  */
-BOOST_AUTO_TEST_CASE(md_root_unset_covariance)
+BOOST_AUTO_TEST_CASE(MDRootUnsetCovariance)
 {
   MahalanobisDistance<true> md;
   md.Covariance() = arma::eye<arma::mat>(4, 4);
@@ -146,7 +147,7 @@ BOOST_AUTO_TEST_CASE(md_root_unset_covariance)
  * Simple test of Mahalanobis distance setting identity covariance in
  * constructor.
  */
-BOOST_AUTO_TEST_CASE(md_eye_covariance)
+BOOST_AUTO_TEST_CASE(MDEyeCovariance)
 {
   MahalanobisDistance<false> md(4);
   arma::vec a = "1.0 2.0 2.0 3.0";
@@ -160,7 +161,7 @@ BOOST_AUTO_TEST_CASE(md_eye_covariance)
  * Simple test of Mahalanobis distance setting identity covariance in
  * constructor and t_take_root set to true.
  */
-BOOST_AUTO_TEST_CASE(md_root_eye_covariance)
+BOOST_AUTO_TEST_CASE(MDRootEyeCovariance)
 {
   MahalanobisDistance<true> md(4);
   arma::vec a = "1.0 2.0 2.5 5.0";
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE(md_root_eye_covariance)
 /**
  * Simple test with diagonal covariance matrix.
  */
-BOOST_AUTO_TEST_CASE(md_diagonal_covariance)
+BOOST_AUTO_TEST_CASE(MDDiagonalCovariance)
 {
   arma::mat cov = arma::eye<arma::mat>(5, 5);
   cov(0, 0) = 2.0;
@@ -193,7 +194,7 @@ BOOST_AUTO_TEST_CASE(md_diagonal_covariance)
 /**
  * More specific case with more difficult covariance matrix.
  */
-BOOST_AUTO_TEST_CASE(md_full_covariance)
+BOOST_AUTO_TEST_CASE(MDFullCovariance)
 {
   arma::mat cov = "1.0 2.0 3.0 4.0;"
                   "0.5 0.6 0.7 0.1;"
@@ -211,7 +212,7 @@ BOOST_AUTO_TEST_CASE(md_full_covariance)
 /**
  * Simple test case for the cosine distance.
  */
-BOOST_AUTO_TEST_CASE(cosine_distance_same_angle)
+BOOST_AUTO_TEST_CASE(CosineDistanceSameAngle)
 {
   arma::vec a = "1.0 2.0 3.0";
   arma::vec b = "2.0 4.0 6.0";
@@ -223,7 +224,7 @@ BOOST_AUTO_TEST_CASE(cosine_distance_same_angle)
 /**
  * Now let's have them be orthogonal.
  */
-BOOST_AUTO_TEST_CASE(cosine_distance_orthogonal)
+BOOST_AUTO_TEST_CASE(CosineDistanceOrthogonal)
 {
   arma::vec a = "0.0 1.0";
   arma::vec b = "1.0 0.0";
@@ -235,7 +236,7 @@ BOOST_AUTO_TEST_CASE(cosine_distance_orthogonal)
 /**
  * Some random angle test.
  */
-BOOST_AUTO_TEST_CASE(cosine_distance_random_test)
+BOOST_AUTO_TEST_CASE(CosineDistanceRandomTest)
 {
   arma::vec a = "0.1 0.2 0.3 0.4 0.5";
   arma::vec b = "1.2 1.0 0.8 -0.3 -0.5";
@@ -247,7 +248,7 @@ BOOST_AUTO_TEST_CASE(cosine_distance_random_test)
 /**
  * Linear Kernel test.
  */
-BOOST_AUTO_TEST_CASE(linear_kernel)
+BOOST_AUTO_TEST_CASE(LinearKernel)
 {
   arma::vec a = ".2 .3 .4 .1";
   arma::vec b = ".56 .21 .623 .82";
@@ -260,7 +261,7 @@ BOOST_AUTO_TEST_CASE(linear_kernel)
 /**
  * Linear Kernel test, orthogonal vectors.
  */
-BOOST_AUTO_TEST_CASE(linear_kernel_orthogonal)
+BOOST_AUTO_TEST_CASE(LinearKernelOrthogonal)
 {
   arma::vec a = "1 0 0";
   arma::vec b = "0 0 1";
@@ -270,7 +271,7 @@ BOOST_AUTO_TEST_CASE(linear_kernel_orthogonal)
   BOOST_REQUIRE_SMALL(lk.Evaluate(b,a), 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(gaussian_kernel)
+BOOST_AUTO_TEST_CASE(GaussianKernel)
 {
   arma::vec a = "1 0 0";
   arma::vec b = "0 1 0";
@@ -296,10 +297,9 @@ BOOST_AUTO_TEST_CASE(gaussian_kernel)
   BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,b), 0.024304474038457577, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,c), 0.024304474038457577, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(b,c), 0.024304474038457577, 1e-5);
-
 }
 
-BOOST_AUTO_TEST_CASE(spherical_kernel)
+BOOST_AUTO_TEST_CASE(SphericalKernel)
 {
   arma::vec a = "1.0 0.0";
   arma::vec b = "0.0 1.0";
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(spherical_kernel)
   BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(b,c), 1.0021155029652784, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(epanechnikov_kernel)
+BOOST_AUTO_TEST_CASE(EpanechnikovKernel)
 {
   arma::vec a = "1.0 0.0";
   arma::vec b = "0.0 1.0";
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(epanechnikov_kernel)
   BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(b,c), 1.5263455690698258, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(polynomial_kernel)
+BOOST_AUTO_TEST_CASE(PolynomialKernel)
 {
   arma::vec a = "0 0 1";
   arma::vec b = "0 1 0";
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(polynomial_kernel)
   BOOST_REQUIRE_CLOSE(pk.Evaluate(b, a), 3125.0, 0);
 }
 
-BOOST_AUTO_TEST_CASE(hyperbolic_tangent_kernel)
+BOOST_AUTO_TEST_CASE(HyperbolicTangentKernel)
 {
   arma::vec a = "0 0 1";
   arma::vec b = "0 1 0";
@@ -371,7 +371,7 @@ BOOST_AUTO_TEST_CASE(hyperbolic_tangent_kernel)
   BOOST_REQUIRE_CLOSE(tk.Evaluate(b, a), 0.9999092, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(laplacian_kernel)
+BOOST_AUTO_TEST_CASE(LaplacianKernel)
 {
   arma::vec a = "0 0 1";
   arma::vec b = "0 1 0";
