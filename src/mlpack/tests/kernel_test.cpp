@@ -299,6 +299,20 @@ BOOST_AUTO_TEST_CASE(GaussianKernelTest)
   BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(b,c), 0.024304474038457577, 1e-5);
 }
 
+BOOST_AUTO_TEST_CASE(GaussianKernelSerializationTest)
+{
+  GaussianKernel gk(0.5);
+  GaussianKernel xmlGk(1.5), textGk, binaryGk(15.0);
+
+  // Serialize the kernels.
+  SerializeObjectAll(gk, xmlGk, textGk, binaryGk);
+
+  BOOST_REQUIRE_CLOSE(gk.Bandwidth(), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(xmlGk.Bandwidth(), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(textGk.Bandwidth(), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(binaryGk.Bandwidth(), 0.5, 1e-5);
+}
+
 BOOST_AUTO_TEST_CASE(SphericalKernelTest)
 {
   arma::vec a = "1.0 0.0";
