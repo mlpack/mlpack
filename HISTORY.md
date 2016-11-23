@@ -1,5 +1,5 @@
-### mlpack 2.1.1
-###### 2016-11-23
+### mlpack ?.?.?
+###### ????-??-??
   * Bugfix for mlpack_knn program (#816).
 
   * Minor fix for formatted output (#814).
