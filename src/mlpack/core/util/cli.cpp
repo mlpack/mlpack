@@ -391,20 +391,7 @@ void CLI::PrintHelp(const std::string& param)
         + std::string(1, data.alias) + ")" : "";
 
     // Figure out the name of the type.
-    std::string type = "";
-    if (data.tname == TYPENAME(std::string))
-      type = " [string]";
-    else if (data.tname == TYPENAME(int))
-      type = " [int]";
-    else if (data.tname == TYPENAME(bool))
-      type = ""; // Nothing to pass for a flag.
-    else if (data.tname == TYPENAME(float))
-      type = " [float]";
-    else if (data.tname == TYPENAME(double))
-      type = " [double]";
-    else if (data.tname == TYPENAME(arma::mat) ||
-             data.tname == TYPENAME(arma::Mat<size_t>))
-      type = " [string]"; // Since we take strings for matrices.
+    std::string type = " [" + data.stringTypeFunction() + "]";
 
     // Now, print the descriptions.
     std::string fullDesc = "  --" + usedParam + alias + type + "  ";
@@ -474,44 +461,10 @@ void CLI::PrintHelp(const std::string& param)
       }
 
       if (pass >= 1) // Append default value to description.
-      {
-        desc += "  Default value ";
-        std::stringstream tmp;
-
-        if (data.tname == TYPENAME(std::string))
-          tmp << "'" << boost::any_cast<std::string>(data.value) << "'.";
-        else if (data.tname == TYPENAME(int))
-          tmp << boost::any_cast<int>(data.value) << '.';
-        else if (data.tname == TYPENAME(bool))
-          desc = data.desc; // No extra output for that.
-        else if (data.tname == TYPENAME(float))
-          tmp << boost::any_cast<float>(data.value) << '.';
-        else if (data.tname == TYPENAME(double))
-          tmp << boost::any_cast<double>(data.value) << '.';
-        else if (data.tname == TYPENAME(arma::mat) ||
-                 data.tname == TYPENAME(arma::Mat<size_t>))
-          tmp << "'" << boost::any_cast<std::string>(data.value) << "'.";
-
-        desc += tmp.str();
-      }
-
-      // Figure out the name of the type.
-      std::string type = "";
-      if (data.tname == TYPENAME(std::string))
-        type = " [string]";
-      else if (data.tname == TYPENAME(int))
-        type = " [int]";
-      else if (data.tname == TYPENAME(bool))
-        type = ""; // Nothing to pass for a flag.
-      else if (data.tname == TYPENAME(float))
-        type = " [float]";
-      else if (data.tname == TYPENAME(double))
-        type = " [double]";
-      else if (data.tname == TYPENAME(arma::mat) ||
-               data.tname == TYPENAME(arma::Mat<size_t>))
-        type = " [string]";
+        desc += "  Default value " + data.defaultFunction(data) + ".";
 
       // Now, print the descriptions.
+      std::string type = " [" + data.stringTypeFunction() + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
 
       if (fullDesc.length() <= 32) // It all fits on one line.

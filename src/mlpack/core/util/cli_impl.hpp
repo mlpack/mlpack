@@ -97,6 +97,8 @@ void CLI::Add(const T& defaultValue,
   data.boostName = util::MapParameterName<T>(identifier);
   data.outputFunction = input ? NULL : &util::OutputParam<T>;
   data.printFunction = &util::PrintParam<T>;
+  data.defaultFunction = &util::DefaultParam<T>;
+  data.stringTypeFunction = &util::StringTypeParam<T>;
 
   // Apply default value.
   if (std::is_same<T, typename util::ParameterType<T>::type>::value)

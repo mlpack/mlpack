@@ -121,7 +121,10 @@ struct ParamData
   //! parameter.
   void (*printFunction)(const ParamData&);
   //! When the CLI object is asked to print help, output the default value.
-  void (*defaultFunction)(const ParamData&);
+  std::string (*defaultFunction)(const ParamData&);
+  //! When the CLI object is asked to print parameter types, output a string
+  //! version of this parameter's type.
+  std::string (*stringTypeFunction)();
 };
 
 /**

@@ -32,8 +32,8 @@
 #include "param_data.hpp"
 #include "print_param.hpp"
 #include "output_param.hpp"
-//#include "default_param.hpp"
-//#include "print_type_param.hpp"
+#include "default_param.hpp"
+#include "string_type_param.hpp"
 
 namespace po = boost::program_options;
 
