@@ -565,8 +565,9 @@
  * --model_file model.bin
  * @endcode
  *
- * The model will be saved at the termination of the program (specifically, when
- * the destructor of CLI is called).
+ * The model will be saved at the termination of the program.  If you use a
+ * parameter of this type, you must call CLI::Destroy() at the end of your
+ * program.
  *
  * @param TYPE Type of the model to be saved.
  * @param ID Name of the parameter.
