@@ -764,6 +764,8 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
       "kernel.txt");
+
+  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
