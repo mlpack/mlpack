@@ -770,4 +770,50 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   remove("kernel.txt");
 }
 
+/**
+ * Test that we can serialize a model and then deserialize it through the CLI
+ * interface.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, false, true);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--kernel_file";
+  argv[2] = "kernel.txt";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Create the kernel we'll save.
+  GaussianKernel gk(0.5);
+
+  CLI::GetParam<GaussianKernel>("kernel") = std::move(gk);
+
+  // Save it.
+  CLI::Destroy();
+
+  // Now create a new CLI object and load it.
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, true, true);
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Load the kernel from file.
+  GaussianKernel gk2 = std::move(CLI::GetParam<GaussianKernel>("kernel"));
+
+  BOOST_REQUIRE_CLOSE(gk2.Bandwidth(), 0.5, 1e-5);
+
+  // Now destroy the CLI object and remove the file we made.
+  CLI::Destroy();
+  remove("kernel.txt");
+}
+
 BOOST_AUTO_TEST_SUITE_END();
