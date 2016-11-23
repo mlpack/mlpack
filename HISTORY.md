@@ -1,3 +1,9 @@
+### mlpack 2.1.1
+###### 2016-11-23
+  * Bugfix for mlpack_knn program (#816).
+
+  * Minor fix for formatted output (#814).
+
 ### mlpack 2.1.0
 ###### 2016-10-31
   * Fixed CoverTree to properly handle single-point datasets.
