@@ -766,6 +766,8 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
       "kernel.txt");
 
   CLI::Destroy();
+
+  remove("kernel.txt");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
