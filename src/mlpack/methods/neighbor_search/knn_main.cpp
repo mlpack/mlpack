@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<std::string>("query") << "' ("
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
