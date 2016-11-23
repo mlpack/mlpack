@@ -69,7 +69,7 @@ int main()
   // Write each neighbor and distance using Log.
   for (size_t i = 0; i < neighbors.n_elem; ++i)
   {
-    Log::Info << "Nearest neighbor of point " << i << " is point "
+    std::cout << "Nearest neighbor of point " << i << " is point "
         << neighbors[i] << " and the distance is " << distances[i] << ".\n";
   }
 }
