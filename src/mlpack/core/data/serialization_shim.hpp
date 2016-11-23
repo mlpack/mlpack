@@ -2,7 +2,7 @@
  * @file serialization_shim.hpp
  * @author Ryan Curtin
  *
- * This file contains the necessary shims to make boost.serialization work with
+ * This file contains the necessary shims to make boost::serialization work with
  * classes that have a Serialize() method (instead of a serialize() method).
  *
  * This allows our mlpack naming conventions to remain intact, and only costs a
