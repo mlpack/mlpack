@@ -302,7 +302,7 @@ T& HandleParameter(
   T& model = *boost::any_cast<T>(&d.mappedValue);
   if (d.input && !d.loaded)
   {
-    data::Load(value, model, true);
+    data::Load(value, "model", model, true);
   }
 
   return model;
@@ -398,7 +398,7 @@ void OutputParamImpl(
   const std::string& filename = *boost::any_cast<std::string>(&data.value);
 
   if (filename != "")
-    data::Save(filename, "model", output, false);
+    data::Save(filename, "model", output);
 }
 
 } // namespace util

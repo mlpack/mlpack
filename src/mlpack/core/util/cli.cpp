@@ -55,6 +55,8 @@ CLI::~CLI()
     {
       ParamData& d = parameters[*it];
       d.outputFunction(d);
+
+      ++it;
     }
   }
 
@@ -88,6 +90,8 @@ CLI::~CLI()
       util::ParamData& data = iter->second;
       data.printFunction(data);
       Log::Info << std::endl;
+
+      ++iter;
     }
 
     Log::Info << "Program timers:" << std::endl;
