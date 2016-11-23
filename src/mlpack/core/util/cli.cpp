@@ -134,8 +134,9 @@ void CLI::Destroy()
 bool CLI::HasParam(const std::string& key)
 {
   std::string usedKey = key;
-  po::variables_map vmap = GetSingleton().vmap;
-  std::map<std::string, util::ParamData> parameters = GetSingleton().parameters;
+  const po::variables_map& vmap = GetSingleton().vmap;
+  const std::map<std::string, util::ParamData>& parameters =
+      GetSingleton().parameters;
 
   if (!parameters.count(key))
   {
@@ -148,8 +149,9 @@ bool CLI::HasParam(const std::string& key)
       Log::Fatal << "Parameter '--" << key << "' does not exist in this "
           << "program." << std::endl;
   }
+  const std::string& checkKey = usedKey;
 
-  return (vmap.count(parameters[usedKey].boostName) > 0);
+  return (vmap.count(parameters.at(checkKey).boostName) > 0);
 }
 
 /**
