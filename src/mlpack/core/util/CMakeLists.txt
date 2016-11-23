@@ -16,9 +16,15 @@ set(SOURCES
   nulloutstream.hpp
   option.hpp
   option.cpp
+  output_param.hpp
+  output_param_impl.hpp
+  param_data.hpp
+  param_data_impl.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
+  print_param.hpp
+  print_param_impl.hpp
   sfinae_utility.hpp
   singletons.hpp
   singletons.cpp
