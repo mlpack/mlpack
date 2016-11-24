@@ -65,15 +65,6 @@ PARAM_MATRIX_IN("test", "A dataset to calculate predictions for.", "T");
 PARAM_UMATRIX_OUT("predictions", "The output matrix that will hold the "
     "predicted labels for the test set.", "p");
 
-// We may load or save a model.
-PARAM_STRING_IN("input_model_file", "File containing decision stump model to "
-    "load.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained decision stump "
-    "model to.", "M");
-
-PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
-    "decision stump bucket.", "b", 6);
-
 /**
  * This is the structure that actually saves to disk.  We have to save the
  * label mappings, too, otherwise everything we load at test time in a future
@@ -95,25 +86,34 @@ struct DSModel
   }
 };
 
+// We may load or save a model.
+PARAM_MODEL_IN(DSModel, "input_model", "Decision stump model to "
+    "load.", "m");
+PARAM_MODEL_OUT(DSModel, "output_model", "Output decision stump model to save.",
+    "M");
+
+PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
+    "decision stump bucket.", "b", 6);
+
 int main(int argc, char *argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
   // Check that the parameters are reasonable.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
   {
     Log::Fatal << "Both --training_file and --input_model_file are specified, "
         << "but a trained model cannot be retrained.  Only one of these options"
         << " may be specified." << endl;
   }
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
   {
     Log::Fatal << "Neither --training_file nor --input_model_file are given; "
         << "one must be specified." << endl;
   }
 
-  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("predictions"))
+  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
   {
     Log::Warn << "Neither --output_model_file nor --predictions_file are "
         << "specified; no results will be saved!" << endl;
@@ -161,8 +161,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "decision_stump_model", model, true);
+    model = std::move(CLI::GetParam<DSModel>("input_model"));
   }
 
   // Now, do we need to do any testing?
@@ -193,7 +192,8 @@ int main(int argc, char *argv[])
   }
 
   // Save the model, if desired.
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"),
-        "decision_stump_model", model);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<DSModel>("output_model") = std::move(model);
+
+  CLI::Destroy();
 }

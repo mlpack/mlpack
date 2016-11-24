@@ -62,8 +62,8 @@ PARAM_DOUBLE_IN("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
 PARAM_DOUBLE_IN("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 // Load/save models.
-PARAM_STRING_IN("input_model_file", "File containing FastMKS model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save FastMKS model to.", "M");
+PARAM_MODEL_IN(FastMKSModel, "input_model", "Input FastMKS model to use.", "m");
+PARAM_MODEL_OUT(FastMKSModel, "output_model", "Output for FastMKS model.", "M");
 
 // Search preferences.
 PARAM_MATRIX_IN("query", "The query dataset.", "q");
@@ -80,15 +80,15 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Validate command-line parameters.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --reference_file (-r) and "
         << "--input_model_file (-m)!" << endl;
 
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "Must specify either --reference_file (-r) or "
         << "--input_model_file (-m)!" << endl;
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
     if (CLI::HasParam("kernel"))
       Log::Warn << "--kernel (-k) ignored because --input_model_file (-m) is "
@@ -204,8 +204,7 @@ int main(int argc, char** argv)
   else
   {
     // Load model from file, then do whatever is necessary.
-    data::Load(CLI::GetParam<string>("input_model_file"), "fastmks_model",
-        model, true);
+    model = std::move(CLI::GetParam<FastMKSModel>("input_model"));
   }
 
   // Set search preferences.
@@ -244,7 +243,8 @@ int main(int argc, char** argv)
   }
 
   // Save the model, if requested.
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "fastmks_model",
-        model);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<FastMKSModel>("output_model") = std::move(model);
+
+  CLI::Destroy();
 }
