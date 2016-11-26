@@ -47,13 +47,17 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
       std::is_same<Border, ValidConvolution>::value, void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
-              arma::Mat<eT>& output)
+              arma::Mat<eT>& output,
+              const size_t dW = 1,
+              const size_t dH = 1)
   {
     arma::Mat<eT> inputPadded = input;
     arma::Mat<eT> filterPadded = filter;
@@ -82,13 +86,17 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
       std::is_same<Border, FullConvolution>::value, void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
-              arma::Mat<eT>& output)
+              arma::Mat<eT>& output,
+              const size_t dW = 1,
+              const size_t dH = 1)
   {
     // In case of the full convolution outputRows and outputCols doesn't
     // represent the true output size when the padLastDim parameter is set,
@@ -130,11 +138,15 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output)
+                          arma::Cube<eT>& output,
+                          const size_t dW = 1,
+                          const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
@@ -162,11 +174,15 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
                           const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output)
+                          arma::Cube<eT>& output,
+                          const size_t dW = 1,
+                          const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
     FFTConvolution<BorderMode>::Convolution(input, filter.slice(0),
@@ -191,11 +207,15 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Mat<eT>& filter,
-                          arma::Cube<eT>& output)
+                          arma::Cube<eT>& output,
+                          const size_t dW = 1,
+                          const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
     FFTConvolution<BorderMode>::Convolution(input.slice(0), filter,
