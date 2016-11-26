@@ -58,6 +58,43 @@ class DTree
    */
   DTree();
 
+  
+//Creating a copy constructor for the DTree 
+  
+  Dtree(const Dtree &second_tree)
+  : left(nullptr),
+    right(nullptr),
+    value(second_tree.value)
+{
+    if (second_tree.left != nullptr )
+    {
+        left = new DTree(*second_tree.left);
+    }
+    if (second_tree.right != nullptr)
+    {
+        right = new DTree(*second_tree.right);
+    }
+}
+
+
+// Creating the copy Assignment operator
+
+DTree& operator=(const DTree& second_tree)
+{
+    value = second_tree.value;
+
+    DTree * left_orig = left;
+    left = new DTree(*second_tree.left);
+    delete left_orig;
+
+    DTree * right_orig = right;
+    right = new DTree(*second_tree.right);
+    delete right_orig;
+
+    return *this;
+}
+
+
   /**
    * Create a density estimation tree with the given bounds and the given number
    * of total points.  Children will not be created.
@@ -244,6 +281,9 @@ class DTree
   //! The right child.
   DTree* right;
 
+  //! The value.
+  DTree* value;
+
  public:
   //! Return the starting index of points contained in this node.
   size_t Start() const { return start; }
@@ -269,6 +309,8 @@ class DTree
   //! Return the right child.
   DTree* Right() const { return right; }
   //! Return whether or not this is the root of the tree.
+  DTree* Value() const { return value; }
+  
   bool Root() const { return root; }
   //! Return the upper part of the alpha sum.
   double AlphaUpper() const { return alphaUpper; }
