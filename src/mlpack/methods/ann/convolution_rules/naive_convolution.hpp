@@ -104,7 +104,11 @@ class NaiveConvolution
         filter.n_cols - 1 + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
+<<<<<<< HEAD
         output, 1, 1);
+=======
+        output, dW, dH);
+>>>>>>> Use the stride parameter inside the convolution function.
   }
 
   /*
