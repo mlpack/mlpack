@@ -779,7 +779,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   AddRequiredCLIOptions();
 
   CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, false, true);
+      false, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -802,7 +802,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   AddRequiredCLIOptions();
 
   CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, true, true);
+      false, true);
 
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
@@ -814,6 +814,28 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   // Now destroy the CLI object and remove the file we made.
   CLI::Destroy();
   remove("kernel.txt");
+}
+
+/**
+ * Test that an exception is thrown when a required model is not specified.
+ */
+BOOST_AUTO_TEST_CASE(RequiredModelTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k', true,
+      true);
+
+  // Don't specify any input parameters.
+  const char* argv[1];
+  argv[0] = "./test";
+
+  int argc = 1;
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -552,7 +552,39 @@
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_IN(TYPE, ID, DESC, ALIAS) \
-    PARAM_MODEL(TYPE, ID, DESC, ALIAS, true)
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, false, true)
+
+/**
+ * Define a required input model.  From the command line, the user can specify
+ * the file that holds the model, using the name of the model parameter with
+ * "_file" appended (and the same alias).  So for instance, if the name of the
+ * model parameter was "model", the user could specify that the "model" model
+ * was held in model.bin by giving the parameter
+ *
+ * @code
+ * --model_file model.bin
+ * @endcode
+ *
+ * Note that the first parameter of this model is the type (the class name) of
+ * the model to be loaded.  This model type must have a Serialize() function; a
+ * compilation error (a very long and complex one) will result if the model type
+ * does not have the following function:
+ *
+ * @code
+ * template<typename Archive>
+ * void Serialize(Archive& ar, const unsigned int version);
+ * @endcode
+ *
+ * This is the boost::serialization serialize() function, just with a capital s
+ * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
+ *
+ * @param TYPE Type of the model to be loaded.
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_MODEL_IN_REQ(TYPE, ID, DESC, ALIAS) \
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, true, true)
 
 /**
  * Define an output model.  From the command line, the user can specify the file
@@ -575,7 +607,7 @@
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_OUT(TYPE, ID, DESC, ALIAS) \
-    PARAM_MODEL(TYPE, ID, DESC, ALIAS, false)
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, false, false)
 
 /**
  * Define a required integer input parameter.
@@ -714,10 +746,10 @@
 
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
-  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, IN) \
+  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE> \
       JOIN(cli_option_dummy_model_, __COUNTER__) \
-      (TYPE(), ID, DESC, ALIAS, false, IN);
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -743,10 +775,10 @@
       JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
-  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, IN) \
+  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE> \
       JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
-      (TYPE(), ID, DESC, ALIAS, false, IN);
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
 #endif
 
 #endif
