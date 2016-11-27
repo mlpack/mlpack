@@ -73,10 +73,9 @@ PARAM_DOUBLE_IN("percentage", "If using --refined_start, specify the percentage"
     "p", 0.02);
 
 // Parameters for model saving/loading.
-PARAM_STRING_IN("input_model_file", "File containing initial input GMM model.",
-    "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained GMM model to.",
-    "M");
+PARAM_MODEL_IN(GMM, "input_model_file", "Initial input GMM model to start "
+    "training with.", "m");
+PARAM_MODEL_OUT(GMM, "output_model_file", "Output for trained GMM model.", "M");
 
 int main(int argc, char* argv[])
 {
@@ -95,7 +94,7 @@ int main(int argc, char* argv[])
         "be greater than or equal to 1." << std::endl;
   }
 
-  if (!CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output_model"))
     Log::Warn << "--output_model_file is not specified, so no model will be "
         << "saved!" << endl;
 
@@ -115,9 +114,9 @@ int main(int argc, char* argv[])
   // Initialize GMM.
   GMM gmm(size_t(gaussians), dataPoints.n_rows);
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
-    data::Load(CLI::GetParam<string>("input_model_file"), "gmm", gmm, true);
+    gmm = std::move(CLI::GetParam<GMM>("input_model"));
 
     if (gmm.Dimensionality() != dataPoints.n_rows)
       Log::Fatal << "Given input data (with --input_file) has dimensionality "
@@ -199,6 +198,6 @@ int main(int argc, char* argv[])
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << "." << endl;
 
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "gmm", gmm);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<GMM>("output_model") = std::move(gmm);
 }
