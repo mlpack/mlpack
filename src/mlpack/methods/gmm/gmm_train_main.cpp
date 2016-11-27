@@ -73,9 +73,9 @@ PARAM_DOUBLE_IN("percentage", "If using --refined_start, specify the percentage"
     "p", 0.02);
 
 // Parameters for model saving/loading.
-PARAM_MODEL_IN(GMM, "input_model_file", "Initial input GMM model to start "
-    "training with.", "m");
-PARAM_MODEL_OUT(GMM, "output_model_file", "Output for trained GMM model.", "M");
+PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
+    "with.", "m");
+PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
 int main(int argc, char* argv[])
 {
@@ -200,4 +200,6 @@ int main(int argc, char* argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<GMM>("output_model") = std::move(gmm);
+
+  CLI::Destroy();
 }
