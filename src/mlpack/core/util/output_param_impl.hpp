@@ -21,7 +21,8 @@ void OutputParamImpl(
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
 {
-  std::cout << data.name << ": " << *boost::any_cast<T>(&data.value);
+  std::cout << data.name << ": " << *boost::any_cast<T>(&data.value)
+      << std::endl;
 }
 
 //! Output a vector option.
@@ -34,6 +35,7 @@ void OutputParamImpl(
   const T& t = *boost::any_cast<T>(&data.value);
   for (size_t i = 0; i < t.size(); ++i)
     std::cout << t[i] << " ";
+  std::cout << std::endl;
 }
 
 //! Output a matrix option (this saves it to file).
