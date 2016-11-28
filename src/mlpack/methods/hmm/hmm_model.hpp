@@ -56,9 +56,9 @@ class HMMModel
     if (type == HMMType::DiscreteHMM)
       discreteHMM = new HMM<distribution::DiscreteDistribution>();
     else if (type == HMMType::GaussianHMM)
-      gaussianHMM = new HMM<distribution::GaussianHMM>();
+      gaussianHMM = new HMM<distribution::GaussianDistribution>();
     else if (type == HMMType::GaussianMixtureModelHMM)
-      gmmHMM = new HMM<distribution::GaussianMixtureModelHMM>();
+      gmmHMM = new HMM<gmm::GMM>();
   }
 
   //! Copy another model.
@@ -79,7 +79,7 @@ class HMMModel
   }
 
   //! Take ownership of another model.
-  HMMModel(const HMMModel& other) :
+  HMMModel(HMMModel&& other) :
       type(other.type),
       discreteHMM(other.discreteHMM),
       gaussianHMM(other.gaussianHMM),
@@ -91,39 +91,36 @@ class HMMModel
     other.gmmHMM = NULL;
   }
 
+  //! Copy assignment operator.
+  HMMModel& operator=(const HMMModel& other)
+  {
+    delete discreteHMM;
+    delete gaussianHMM;
+    delete gmmHMM;
+
+    discreteHMM = NULL;
+    gaussianHMM = NULL;
+    gmmHMM = NULL;
+
+    type = other.type;
+    if (type == HMMType::DiscreteHMM)
+      discreteHMM =
+          new HMM<distribution::DiscreteDistribution>(*other.discreteHMM);
+    else if (type == HMMType::GaussianHMM)
+      gaussianHMM =
+          new HMM<distribution::GaussianDistribution>(*other.gaussianHMM);
+    else if (type == HMMType::GaussianMixtureModelHMM)
+      gmmHMM = new HMM<gmm::GMM>(*other.gmmHMM);
+
+    return *this;
+  }
+
   //! Clean memory.
   ~HMMModel()
   {
     delete discreteHMM;
     delete gaussianHMM;
     delete gmmHMM;
-  }
-
-  //! Get the discrete distribution model.  This throws an exception if the
-  //! model type is not HMMType::DiscreteHMM.
-  HMM<distribution::DiscreteDistribution>& DiscreteHMM()
-  {
-    if (type != HMMType::DiscreteHMM)
-      throw std::runtime_error("HMM model type is not discrete!");
-    return *discreteHMM;
-  }
-
-  //! Get the Gaussian distribution model.  This throws an exception if the
-  //! model type is not HMMType::GaussianHMM.
-  HMM<distribution::GaussianDistribution>& GaussianHMM()
-  {
-    if (type != HMMType::GaussianHMM)
-      throw std::runtime_error("HMM model type is not Gaussian!");
-    return *gaussianHMM;
-  }
-
-  //! Get the GMM distribution model.  This throws an exception if the model
-  //! type is not HMMType::GaussianMixtureModelHMM.
-  HMM<gmm::GMM>& GaussianMixtureModelHMM()
-  {
-    if (type != HMMType::GaussianMixtureModelHMM)
-      throw std::runtime_error("HMM model type is not GMM!");
-    return *gmmHMM;
   }
 
   /**
@@ -154,6 +151,10 @@ class HMMModel
       delete discreteHMM;
       delete gaussianHMM;
       delete gmmHMM;
+
+      discreteHMM = NULL;
+      gaussianHMM = NULL;
+      gmmHMM = NULL;
     }
 
     if (type == HMMType::DiscreteHMM)

@@ -90,6 +90,7 @@ int main(int argc, char** argv)
     RandomSeed((size_t) time(NULL));
 
   // Load model, and perform the generation.
-  HMMModel hmm = std::move(CLI::GetParam<HMMModel>("model"));
+  HMMModel hmm;
+  hmm = std::move(CLI::GetParam<HMMModel>("model"));
   hmm.PerformAction<Generate, void>(NULL); // No extra data required.
 }
