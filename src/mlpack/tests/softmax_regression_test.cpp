@@ -12,8 +12,13 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
+#include <mlpack/core/optimizers/gradient_decsent.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+
+#include <iostream>
+using namespace std;
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -21,7 +26,7 @@ using namespace mlpack::distribution;
 using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SoftmaxRegressionTest);
-
+/**
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
 {
   const size_t points = 1000;
@@ -171,7 +176,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
     }
   }
 }
-
+**/
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
 {
   const size_t points = 1000;
@@ -198,7 +203,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<GradientDescent> sr(data, labels, numClasses, lambda);
+  
+  cout << sr.Parameters() << endl;
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -220,7 +227,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   const double testAcc = sr.ComputeAccuracy(data, labels);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
 }
-
+/**
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
 {
   // Generate a two-Gaussian dataset,
@@ -412,5 +419,5 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
       BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
   }
 }
-
+**/
 BOOST_AUTO_TEST_SUITE_END();

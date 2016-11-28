@@ -10,6 +10,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
  #include "softmax_regression_function.hpp"
+ 
+#include <iostream>
+using namespace std;
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -65,6 +68,10 @@ void SoftmaxRegressionFunction::InitializeWeights(
     weights.randn(numClasses, featureSize + 1);
   else
     weights.randn(numClasses, featureSize);
+    
+  for(auto it = weights.begin_row(numClasses - 1);it != weights.end_row(numClasses - 1);it ++)
+    *it = 0;
+    
   weights *= 0.005;
 }
 
@@ -166,7 +173,7 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   // The cost is the sum of the negative log likelihood and the regularization
   // terms.
   cost = -logLikelihood + weightDecay;
-
+  cout << "Cost: " << cost << endl;
   return cost;
 }
 
@@ -186,7 +193,7 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   GetProbabilitiesMatrix(parameters, probabilities);
 
   // Calculate the parameter gradients.
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  gradient.zeros(parameters.n_rows, parameters.n_cols);
   if (fitIntercept)
   {
     // Treating the intercept term parameters.col(0) seperately to avoid
@@ -201,7 +208,11 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   }
   else
   {
-    gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
-               lambda * parameters;
+    cout << "Parameters" << endl;
+    cout << parameters << endl;
+    gradient.rows(0, parameters.n_rows - 2) = (probabilities.rows(0, parameters.n_rows - 2) - groundTruth.rows(0, parameters.n_rows - 2)) * data.t() / data.n_cols +
+               lambda * parameters(0, parameters.n_rows - 2);
+    cout << "Gradients" << endl;
+    cout << gradient << endl;
   }
 }
