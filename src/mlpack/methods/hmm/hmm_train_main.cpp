@@ -12,9 +12,18 @@
 #include <mlpack/core.hpp>
 
 #include "hmm.hpp"
-#include "hmm_util.hpp"
+#include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
+
+using namespace mlpack;
+using namespace mlpack::hmm;
+using namespace mlpack::distribution;
+using namespace mlpack::util;
+using namespace mlpack::gmm;
+using namespace mlpack::math;
+using namespace arma;
+using namespace std;
 
 PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "Hidden Markov Model to be trained on labeled or unlabeled data.  It "
@@ -47,24 +56,27 @@ PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
     "model_file is specified.", "n", 0);
 PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
     " is 'gmm'.", "g", 0);
-PARAM_STRING_IN("model_file", "Pre-existing HMM model file.", "m", "");
+PARAM_MODEL_IN(HMMModel, "input_model", "Pre-existing HMM model to initialize "
+    "training with.", "m");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "M");
+PARAM_STRING_OUT(HMMModel, "output_model", "Output for trained HMM.", "M");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
     1e-5);
 PARAM_FLAG("random_initialization", "Initialize emissions and transition "
     "matrices with a uniform random distribution.", "r");
 
-using namespace mlpack;
-using namespace mlpack::hmm;
-using namespace mlpack::distribution;
-using namespace mlpack::util;
-using namespace mlpack::gmm;
-using namespace mlpack::math;
-using namespace arma;
-using namespace std;
+// Because we don't know what the type of our HMM is, we need to write a
+// function that can take arbitrary HMM types.
+struct Init
+{
+  template<typename HMMType>
+  static void Apply(HMMType& hmm, void* /* unused */ = NULL)
+  {
+    
+  }
+}
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
@@ -185,11 +197,8 @@ struct Train
     }
 
     // Save the model.
-    if (CLI::HasParam("output_model_file"))
-    {
-      const string modelFile = CLI::GetParam<string>("output_model_file");
-      SaveHMM(hmm, modelFile);
-    }
+    if (CLI::HasParam("output_model"))
+      CLI::GetParam<HMMModel>("output_model") = std::move(hmm);
   }
 };
 
@@ -205,7 +214,6 @@ int main(int argc, char** argv)
     RandomSeed((size_t) time(NULL));
 
   // Validate parameters.
-  const string modelFile = CLI::GetParam<string>("model_file");
   const string inputFile = CLI::GetParam<string>("input_file");
   const string type = CLI::GetParam<string>("type");
   const size_t states = CLI::GetParam<int>("states");
@@ -218,7 +226,7 @@ int main(int argc, char** argv)
         << "one is required." << endl;
 
   // If no model is specified, make sure we are training with valid parameters.
-  if (modelFile == "")
+  if (!CLI::HasParam("input_model"))
   {
     // Validate number of states.
     if (states == 0)
@@ -226,7 +234,7 @@ int main(int argc, char** argv)
           << "specified!" << endl;
   }
 
-  if (modelFile != "" && CLI::HasParam("tolerance"))
+  if (CLI::HasParam("model_file") && CLI::HasParam("tolerance"))
     Log::Info << "Tolerance of existing model in '" << modelFile << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
 
@@ -276,9 +284,11 @@ int main(int argc, char** argv)
   }
 
   // If we have a model file, we can autodetect the type.
-  if (CLI::HasParam("model_file"))
+  HMMModel hmm;
+  if (CLI::HasParam("input_model"))
   {
-    LoadHMMAndPerformAction<Train>(modelFile, &trainSeq);
+    hmm = std::move(CLI::GetParam<HMMModel>("input_model"))
+    hmm.PerformAction<Train, vector<mat>>(&trainSeq);
   }
   else
   {
@@ -302,29 +312,33 @@ int main(int argc, char** argv)
           << endl;
 
       // Create HMM object.
-      HMM<DiscreteDistribution> hmm(size_t(states),
+      hmm = HMMModel(HMMType::DiscreteHMM);
+      HMM<DiscreteDistribution>& h = hmm.DiscreteHMM();
+      h = HMM<DiscreteDistribution>(size_t(states),
           DiscreteDistribution(maxEmission), tolerance);
 
       // Initialize with random starting point.
       if (CLI::HasParam("random_initialization"))
       {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
+        h.Transition().randu();
+        for (size_t c = 0; c < h.Transition().n_cols; ++c)
+          h.Transition().col(c) /= arma::accu(h.Transition().col(c));
 
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
+        for (size_t e = 0; e < h.Emission().size(); ++e)
         {
-          hmm.Emission()[e].Probabilities().randu();
-          hmm.Emission()[e].Probabilities() /=
-              arma::accu(hmm.Emission()[e].Probabilities());
+          h.Emission()[e].Probabilities().randu();
+          h.Emission()[e].Probabilities() /=
+              arma::accu(h.Emission()[e].Probabilities());
         }
       }
 
       // Now train it.  Pass the already-loaded training data.
-      Train::Apply(hmm, &trainSeq);
+      Train::Apply(h, &trainSeq);
     }
     else if (type == "gaussian")
     {
+      hmm = HMMModel(HMMType::GaussianHMM);
+
       // Find dimension of the data.
       const size_t dimensionality = trainSeq[0].n_rows;
 
@@ -335,30 +349,34 @@ int main(int argc, char** argv)
               << trainSeq[i].n_rows << " is incorrect (should be "
               << dimensionality << ")!" << endl;
 
-      HMM<GaussianDistribution> hmm(size_t(states),
+      // Get the model and initialize it.
+      HMM<GaussianDistribution>& h = hmm.GaussianHMM();
+      h = HMM<GaussianDistribution>(size_t(states),
           GaussianDistribution(dimensionality), tolerance);
 
       // Initialize with random starting point.
       if (CLI::HasParam("random_initialization"))
       {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
+        h.Transition().randu();
+        for (size_t c = 0; c < h.Transition().n_cols; ++c)
+          h.Transition().col(c) /= arma::accu(h.Transition().col(c));
 
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
+        for (size_t e = 0; e < h.Emission().size(); ++e)
         {
-          hmm.Emission()[e].Mean().randu();
+          h.Emission()[e].Mean().randu();
           // Generate random covariance.
           arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
-          hmm.Emission()[e].Covariance(r * r.t());
+          h.Emission()[e].Covariance(r * r.t());
         }
       }
 
       // Now train it.
-      Train::Apply(hmm, &trainSeq);
+      Train::Apply(h, &trainSeq);
     }
     else if (type == "gmm")
     {
+      hmm = HMMModel(HMMType::GaussianMixtureModelHMM);
+
       // Find dimension of the data.
       const size_t dimensionality = trainSeq[0].n_rows;
 
@@ -373,32 +391,33 @@ int main(int argc, char** argv)
             << "be greater than or equal to 1." << endl;
 
       // Create HMM object.
-      HMM<GMM> hmm(size_t(states), GMM(size_t(gaussians), dimensionality),
+      HMM<GMM>& h = hmm.GaussianMixtureModelHMM();
+      h = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality),
           tolerance);
 
       // Initialize with random starting point.
       if (CLI::HasParam("random_initialization"))
       {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
+        h.Transition().randu();
+        for (size_t c = 0; c < h.Transition().n_cols; ++c)
+          h.Transition().col(c) /= arma::accu(h.Transition().col(c));
 
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
+        for (size_t e = 0; e < h.Emission().size(); ++e)
         {
           // Random weights.
-          hmm.Emission()[e].Weights().randu();
-          hmm.Emission()[e].Weights() /=
-              arma::accu(hmm.Emission()[e].Weights());
+          h.Emission()[e].Weights().randu();
+          h.Emission()[e].Weights() /=
+              arma::accu(h.Emission()[e].Weights());
 
           // Random means and covariances.
           for (int g = 0; g < gaussians; ++g)
           {
-            hmm.Emission()[e].Component(g).Mean().randu();
+            h.Emission()[e].Component(g).Mean().randu();
 
             // Generate random covariance.
             arma::mat r = arma::randu<arma::mat>(dimensionality,
                 dimensionality);
-            hmm.Emission()[e].Component(g).Covariance(r * r.t());
+            h.Emission()[e].Component(g).Covariance(r * r.t());
           }
         }
       }
@@ -416,4 +435,6 @@ int main(int argc, char** argv)
           << "'gaussian', or 'gmm'." << endl;
     }
   }
+
+  CLI::Destroy();
 }

@@ -14,23 +14,9 @@
 #include <mlpack/core.hpp>
 
 #include "hmm.hpp"
-#include "hmm_util.hpp"
+#include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
-    "utility takes an already-trained HMM (--model_file) and generates a "
-    "random observation sequence and hidden state sequence based on its "
-    "parameters, saving them to the specified files (--output_file and "
-    "--state_file)");
-
-PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
-PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
-
-PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
-PARAM_MATRIX_OUT("output", "Matrix to save observation sequence to.", "o");
-PARAM_UMATRIX_OUT("state", "Matrix to save hidden state sequence to.", "S");
-PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -40,6 +26,21 @@ using namespace mlpack::gmm;
 using namespace mlpack::math;
 using namespace arma;
 using namespace std;
+
+PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
+    "utility takes an already-trained HMM (--model_file) and generates a "
+    "random observation sequence and hidden state sequence based on its "
+    "parameters, saving them to the specified files (--output_file and "
+    "--state_file)");
+
+PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
+    "m");
+PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
+
+PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
+PARAM_MATRIX_OUT("output", "Matrix to save observation sequence to.", "o");
+PARAM_UMATRIX_OUT("state", "Matrix to save hidden state sequence to.", "S");
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function which can take arbitrary HMM types.
@@ -89,6 +90,6 @@ int main(int argc, char** argv)
     RandomSeed((size_t) time(NULL));
 
   // Load model, and perform the generation.
-  const string modelFile = CLI::GetParam<string>("model_file");
-  LoadHMMAndPerformAction<Generate>(modelFile);
+  HMMModel hmm = std::move(CLI::GetParam<HMMModel>("model"));
+  hmm.PerformAction<Generate, void>(NULL); // No extra data required.
 }
