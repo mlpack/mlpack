@@ -13,6 +13,11 @@
 
 #include "lars.hpp"
 
+using namespace arma;
+using namespace std;
+using namespace mlpack;
+using namespace mlpack::regression;
+
 PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "
     "L1-regularized linear regression (LASSO) and L1+L2-regularized linear "
@@ -50,8 +55,8 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_STRING_IN("input_model_file", "File to load model from.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save model to.", "M");
+PARAM_MODEL_IN(LARS, "input_model", "Trained LARS model to use.", "m");
+PARAM_MODEL_OUT(LARS, "output_model", "Output LARS model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
     "points).", "t");
@@ -65,11 +70,6 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
     0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
-
-using namespace arma;
-using namespace std;
-using namespace mlpack;
-using namespace mlpack::regression;
 
 int main(int argc, char* argv[])
 {
@@ -91,17 +91,16 @@ int main(int argc, char* argv[])
     Log::Fatal << "--responses_file (-r) is specified, but --input_file (-i) is"
         << " not!" << endl;
 
-  if (!CLI::HasParam("input") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("input") && !CLI::HasParam("input_model"))
     Log::Fatal << "No input data specified (with --input_file (-i) and "
         << "--responses_file (-r)), and no input model specified (with "
         << "--input_model_file (-m))!" << endl;
 
-  if (CLI::HasParam("input") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input") && CLI::HasParam("input_model"))
     Log::Fatal << "Both --input_file (-i) and --input_model_file (-m) are "
         << "specified, but only one may be specified!" << endl;
 
-  if (!CLI::HasParam("output_predictions") &&
-      !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output_predictions") && !CLI::HasParam("output_model"))
     Log::Warn << "--output_predictions_file (-o) and --output_model_file (-M) "
         << "are not specified; no results will be saved!" << endl;
 
@@ -142,8 +141,7 @@ int main(int argc, char* argv[])
   }
   else // We must have --input_model_file.
   {
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "lars_model", lars, true);
+    lars = std::move(CLI::GetParam<LARS>("input_model"));
   }
 
   if (CLI::HasParam("test"))
@@ -168,9 +166,8 @@ int main(int argc, char* argv[])
       CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
   }
 
-  if (CLI::HasParam("output_model_file"))
-  {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "lars_model", lars, true);
-  }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<LARS>("output_model") = std::move(lars);
+
+  CLI::Destroy();
 }

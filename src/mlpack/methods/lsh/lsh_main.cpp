@@ -48,9 +48,9 @@ PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
 PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
 // We can load or save models.
-PARAM_STRING_IN("input_model_file", "File to load LSH model from.  (Cannot be "
-    "specified with --reference_file.)", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save LSH model to.", "M");
+PARAM_MODEL_IN(LSHSearch<>, "input_model", "Input LSH model.", "m");
+PARAM_MODEL_OUT(LSHSearch<>, "output_model", "Output for trained LSH model.",
+    "M");
 
 // For testing recall.
 PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute "
@@ -84,28 +84,25 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) time(NULL));
 
   // Get all the parameters.
-  const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string outputModelFile = CLI::GetParam<string>("output_model_file");
-
   size_t k = CLI::GetParam<int>("k");
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
   size_t bucketSize = CLI::GetParam<int>("bucket_size");
 
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("reference"))
+  if (CLI::HasParam("input_model") && CLI::HasParam("reference"))
   {
     Log::Fatal << "Cannot specify both --reference_file and --input_model_file!"
         << " Either create a new model with --reference_file or use an existing"
         << " model with --input_model_file." << endl;
   }
 
-  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("reference"))
+  if (!CLI::HasParam("input_model") && !CLI::HasParam("reference"))
   {
     Log::Fatal << "Must specify either --input_model_file or --reference_file!"
         << endl;
   }
 
   if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
-      !CLI::HasParam("output_model_file"))
+      !CLI::HasParam("output_model"))
   {
     Log::Warn << "Neither --neighbors_file, --distances_file, nor "
         << "--output_model_file are specified; no results will be saved."
@@ -120,12 +117,12 @@ int main(int argc, char *argv[])
         << "specified if search is to be done!" << endl;
   }
 
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("k") &&
+  if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
       !CLI::HasParam("query"))
   {
     Log::Info << "Performing LSH-based approximate nearest neighbor search on "
-        << "the reference dataset in the model stored in '" << inputModelFile
-        << "'." << endl;
+        << "the reference dataset in the model stored in '"
+        << CLI::GetUnmappedParam<LSHSearch<>>("input_model") << "'." << endl;
   }
 
   if (!CLI::HasParam("k") && CLI::HasParam("neighbors"))
@@ -170,9 +167,9 @@ int main(int argc, char *argv[])
         bucketSize);
     Timer::Stop("hash_building");
   }
-  else if (CLI::HasParam("input_model_file"))
+  else if (CLI::HasParam("input_model"))
   {
-    data::Load(inputModelFile, "lsh_model", allkann, true); // Fatal on fail.
+    allkann = std::move(CLI::GetParam<LSHSearch<>>("input_model"));
   }
 
   if (CLI::HasParam("k"))
@@ -218,6 +215,8 @@ int main(int argc, char *argv[])
     CLI::GetParam<arma::mat>("distances") = std::move(distances);
   if (CLI::HasParam("neighbors"))
     CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-  if (CLI::HasParam("output_model_file"))
-    data::Save(outputModelFile, "lsh_model", allkann);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<LSHSearch<>>("output_model") = std::move(allkann);
+
+  CLI::Destroy();
 }

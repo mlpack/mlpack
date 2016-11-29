@@ -84,7 +84,7 @@ class LogisticRegression
    * @param dimensionality Dimensionality of the data.
    * @param lambda L2-regularization parameter.
    */
-  LogisticRegression(const size_t dimensionality,
+  LogisticRegression(const size_t dimensionality = 0,
                      const double lambda = 0);
 
   /**
