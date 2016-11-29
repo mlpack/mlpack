@@ -21,6 +21,7 @@
 #endif
 
 #include <iostream>
+#include <sstream>
 
 namespace mlpack {
 namespace util {
@@ -51,8 +52,8 @@ void PrefixedOutStream::BaseLogic(const T& val)
     PrefixIfNeeded();
     if (!ignoreInput)
     {
-      destination << "Failed lexical_cast<std::string>(T) for output; output"
-          " not shown." << std::endl;
+      destination << "Failed type conversion to string for output; output not "
+          "shown." << std::endl;
       newlined = true;
     }
   }

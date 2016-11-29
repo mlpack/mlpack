@@ -43,8 +43,8 @@ namespace tree {
  * @code
  * template<typename TreeType>
  * void Compute(TreeType& node,
- *              boost::enable_if<
- *                  TreeTraits<TreeType>::RearrangesDataset>::type*)
+ *              std::enable_if_t<
+ *                  TreeTraits<TreeType>::RearrangesDataset>*)
  * {
  *   // Computation where special dataset-rearranging tree constructor is
  *   // called.
@@ -52,14 +52,14 @@ namespace tree {
  *
  * template<typename TreeType>
  * void Compute(TreeType& node,
- *              boost::enable_if<
- *                  !TreeTraits<TreeType>::RearrangesDataset>::type*)
+ *              std::enable_if_t<
+ *                  !TreeTraits<TreeType>::RearrangesDataset>*)
  * {
  *   // Computation where normal tree constructor is called.
  * }
  * @endcode
  *
- * In those two examples, the boost::enable_if<> class takes a boolean template
+ * In those two examples, the std::enable_if_t<> class takes a boolean template
  * parameter which allows that function to be called when the boolean is true.
  *
  * Each trait must be a static const value and not a function; only const values

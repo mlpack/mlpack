@@ -50,6 +50,16 @@
   #define force_inline __forceinline
 #endif
 
+// Backport this functionality from C++14, if it doesn't exist.
+#if __cplusplus <= 201103L
+namespace std {
+
+template<bool B, class T = void>
+using enable_if_t = typename enable_if<B, T>::type;
+
+}
+#endif
+
 // We'll need the necessary boost::serialization features, as well as what we
 // use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
 // defined, but we still need to define it (as nothing) so that the mlpack

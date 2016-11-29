@@ -23,13 +23,13 @@
  * // Only accepts VecTypes that are actually Armadillo vector types.
  * template<typename VecType>
  * void Function(const VecType& argumentA,
- *               typename boost::enable_if<IsVector<VecType> >* = 0);
+ *               typename std::enable_if_t<IsVector<VecType>::value>* = 0);
  * @endcode
  *
- * The use of the enable_if object allows the compiler to instantiate Function()
- * only if VecType is one of the Armadillo vector types.  It has a default
- * argument because it isn't meant to be used in either the function call or the
- * function body.
+ * The use of the enable_if_t object allows the compiler to instantiate
+ * Function() only if VecType is one of the Armadillo vector types.  It has a
+ * default argument because it isn't meant to be used in either the function
+ * call or the function body.
  */
 template<typename VecType>
 struct IsVector

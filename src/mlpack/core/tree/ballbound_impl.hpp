@@ -130,7 +130,7 @@ template<typename OtherVecType>
 typename BallBound<MetricType, VecType>::ElemType
 BallBound<MetricType, VecType>::MinDistance(
     const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
@@ -164,7 +164,7 @@ template<typename OtherVecType>
 typename BallBound<MetricType, VecType>::ElemType
 BallBound<MetricType, VecType>::MaxDistance(
     const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
@@ -196,7 +196,7 @@ template<typename OtherVecType>
 math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
 BallBound<MetricType, VecType>::RangeDistance(
     const OtherVecType& point,
-    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
   if (radius < 0)
     return math::Range(std::numeric_limits<ElemType>::max(),

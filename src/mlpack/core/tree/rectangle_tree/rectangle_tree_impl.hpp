@@ -248,7 +248,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
@@ -638,7 +638,7 @@ template<typename VecType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;
@@ -671,7 +671,7 @@ template<typename VecType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;

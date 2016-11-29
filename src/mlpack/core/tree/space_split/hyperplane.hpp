@@ -69,7 +69,7 @@ class HyperplaneBase
    */
   template<typename VecType>
   double Project(const VecType& point,
-                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     if (splitVal == DBL_MAX)
       return 0;
@@ -84,7 +84,7 @@ class HyperplaneBase
    */
   template<typename VecType>
   bool Left(const VecType& point,
-            typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+            typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) <= 0;
   };
@@ -97,7 +97,7 @@ class HyperplaneBase
    */
   template<typename VecType>
   bool Right(const VecType& point,
-            typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+            typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) > 0;
   };
