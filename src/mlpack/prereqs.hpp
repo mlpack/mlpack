@@ -62,7 +62,7 @@
 #include <boost/serialization/map.hpp>
 // boost_backport.hpp handles the version and backporting of serialization (and
 // other) features.
-#include "mlpack/core/boost_backport/boost_backport.hpp"
+#include "mlpack/core/boost_backport/boost_backport_serialization.hpp"
 // Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
 // any issue by setting BOOST_PFTO to nothing.
 #ifndef BOOST_PFTO
