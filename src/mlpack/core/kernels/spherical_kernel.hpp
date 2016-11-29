@@ -10,7 +10,6 @@
 #ifndef MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
 #define MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
 
-#include <boost/math/special_functions/gamma.hpp>
 #include <mlpack/core.hpp>
 
 namespace mlpack {
@@ -88,7 +87,7 @@ class SphericalKernel
   double Normalizer(size_t dimension) const
   {
     return pow(bandwidth, (double) dimension) * pow(M_PI, dimension / 2.0) /
-        boost::math::tgamma(dimension / 2.0 + 1.0);
+        std::tgamma(dimension / 2.0 + 1.0);
   }
 
   /**

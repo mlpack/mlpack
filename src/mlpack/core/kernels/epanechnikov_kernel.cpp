@@ -11,8 +11,6 @@
  */
 #include "epanechnikov_kernel.hpp"
 
-#include <boost/math/special_functions/gamma.hpp>
-
 using namespace mlpack;
 using namespace mlpack::kernel;
 
@@ -25,7 +23,7 @@ double EpanechnikovKernel::Normalizer(const size_t dimension)
 {
   return 2.0 * pow(bandwidth, (double) dimension) *
       std::pow(M_PI, dimension / 2.0) /
-      (boost::math::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
+      (std::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
 }
 
 /**
