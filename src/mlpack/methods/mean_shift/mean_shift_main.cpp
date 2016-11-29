@@ -26,9 +26,6 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
 
 // Required options.
 PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
-// This is kept for reverse compatibility and may be removed in mlpack 3.0.0.
-// At that time, --input_file should be made a required parameter.
-PARAM_STRING_IN("inputFile", "Input dataset to perform clustering on.", "", "");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
@@ -52,18 +49,6 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
-
-  // This is for reverse compatibility and may be removed in mlpack 3.0.0.
-  if (CLI::HasParam("inputFile") && CLI::HasParam("input"))
-    Log::Fatal << "Cannot specify both --input_file and --inputFile!" << endl;
-
-  if (CLI::HasParam("inputFile"))
-  {
-    Log::Warn << "--inputFile is deprecated and will be removed in mlpack "
-        << "3.0.0; use --input_file instead." << endl;
-    CLI::GetUnmappedParam<string>("input_file") =
-        CLI::GetParam<string>("inputFile");
-  }
 
   if (!CLI::HasParam("input"))
     Log::Fatal << "--input_file must be specified!" << endl;
