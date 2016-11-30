@@ -9,8 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- #include "softmax_regression_function.hpp"
- 
+
+#include "softmax_regression_function.hpp"
+
 #include <iostream>
 using namespace std;
 
@@ -65,12 +66,9 @@ void SoftmaxRegressionFunction::InitializeWeights(
   // a Gaussian distribution with mean zero and variance one.
   // If the fitIntercept flag is true, parameters.col(0) is the intercept.
   if (fitIntercept)
-    weights.randn(numClasses, featureSize + 1);
+    weights.randn(numClasses - 1, featureSize + 1);
   else
-    weights.randn(numClasses, featureSize);
-    
-  for(auto it = weights.begin_row(numClasses - 1);it != weights.end_row(numClasses - 1);it ++)
-    *it = 0;
+    weights.randn(numClasses - 1, featureSize);
     
   weights *= 0.005;
 }
@@ -107,6 +105,8 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
   // Calculate the matrix.
   groundTruth = arma::sp_mat(rowPointers, colPointers, values, numClasses,
                              labels.n_elem);
+  lastClass = groundTruth.rows(numClasses - 1, numClasses - 1).t();
+  groundTruth = groundTruth.rows(0, numClasses - 2);
 }
 
 /**
@@ -117,8 +117,6 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     const arma::mat& parameters,
     arma::mat& probabilities) const
 {
-  arma::mat hypothesis;
-
   if (fitIntercept)
   {
     // In order to add the intercept term, we should compute following matrix:
@@ -127,16 +125,66 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     //
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
-    hypothesis = arma::exp(arma::repmat(parameters.col(0), 1, data.n_cols) +
+    probabilities = arma::exp(arma::repmat(parameters.col(0), 1, data.n_cols) +
                            parameters.cols(1, parameters.n_cols - 1) * data);
   }
   else
   {
-    hypothesis = arma::exp(parameters * data);
+    probabilities = arma::exp(parameters * data);
   }
+  
+  arma::rowvec col_sums = arma::sum(probabilities, 0);
+  
+  size_t n_column = 0;
+  size_t i = 0;
+  for(auto it = probabilities.begin();it != probabilities.end();it++)
+  {
+    n_column = i % probabilities.n_cols;
+    *it = *it / (col_sums(n_column) + 1);
+    i++;
+  }
+}
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
-                                            numClasses, 1);
+/**
+ * Evaluate the probabilities matrix. If fitIntercept flag is true,
+ * it should consider the parameters.cols(0) intercept term.
+ */
+void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
+    const arma::mat& parameters,
+    arma::mat& probabilities,
+    arma::mat& lastClass_probabilities) const
+{
+  if (fitIntercept)
+  {
+    // In order to add the intercept term, we should compute following matrix:
+    //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
+    //     hypothesis = arma::exp(parameters * [1; data]).
+    //
+    // Since the cost of join maybe high due to the copy of original data,
+    // split the hypothesis computation to two components.
+    probabilities = arma::exp(arma::repmat(parameters.col(0), 1, data.n_cols) +
+                           parameters.cols(1, parameters.n_cols - 1) * data);
+  }
+  else
+  {
+    probabilities = arma::exp(parameters * data);
+  }
+  
+  lastClass_probabilities = arma::sum(probabilities, 0);
+  
+  size_t n_column = 0;
+  size_t i = 0;
+  for(auto it = probabilities.begin();it != probabilities.end();it++)
+  {
+    n_column = i % probabilities.n_cols;
+    *it = *it / (lastClass_probabilities(n_column) + 1);
+    i++;
+  }
+  
+  for(auto it = lastClass_probabilities.begin();it != lastClass_probabilities.end();it++)
+  {
+    *it = 1.0 / (*it + 1); 
+  }
 }
 
 /**
@@ -161,19 +209,25 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
   arma::mat probabilities;
-  GetProbabilitiesMatrix(parameters, probabilities);
+  arma::mat lastClass_probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities, lastClass_probabilities);
 
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay, cost;
 
-  logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
+  logLikelihood = (arma::accu(groundTruth % arma::log(probabilities)) + arma::as_scalar(lastClass_probabilities * lastClass))/
                   data.n_cols;
-  weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
+  
+  if(lambda != 0)
+  {
+    weightDecay = 0.5 * lambda * arma::trace(parameters.t() * parameters);
 
-  // The cost is the sum of the negative log likelihood and the regularization
-  // terms.
-  cost = -logLikelihood + weightDecay;
-  cout << "Cost: " << cost << endl;
+    // The cost is the sum of the negative log likelihood and the regularization
+    // terms.
+    cost = -logLikelihood + weightDecay;
+  }
+  else cost = -logLikelihood;
+
   return cost;
 }
 
@@ -193,9 +247,9 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   GetProbabilitiesMatrix(parameters, probabilities);
 
   // Calculate the parameter gradients.
-  gradient.zeros(parameters.n_rows, parameters.n_cols);
   if (fitIntercept)
   {
+    gradient.set_size(parameters.n_rows, parameters.n_cols);
     // Treating the intercept term parameters.col(0) seperately to avoid
     // the cost of building matrix [1; data].
     arma::mat inner = probabilities - groundTruth;
@@ -205,14 +259,13 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
     gradient.cols(1, parameters.n_cols - 1) =
       inner * data.t() / data.n_cols +
       lambda * parameters.cols(1, parameters.n_cols - 1);
+    arma::join_vert(gradient, arma::zeros(1, gradient.n_cols));
   }
   else
   {
-    cout << "Parameters" << endl;
-    cout << parameters << endl;
-    gradient.rows(0, parameters.n_rows - 2) = (probabilities.rows(0, parameters.n_rows - 2) - groundTruth.rows(0, parameters.n_rows - 2)) * data.t() / data.n_cols +
-               lambda * parameters(0, parameters.n_rows - 2);
-    cout << "Gradients" << endl;
-    cout << gradient << endl;
+    //gradient.rows(0, parameters.n_rows - 2) = (probabilities.rows(0, parameters.n_rows - 2) - groundTruth.rows(0, parameters.n_rows - 2)) * data.t() / data.n_cols +
+    //           lambda * parameters(0, parameters.n_rows - 2);
+    gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
+               lambda * parameters;
   }
 }

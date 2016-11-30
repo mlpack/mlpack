@@ -87,6 +87,19 @@ class SoftmaxRegressionFunction
    * @param probabilities Pointer to arma::mat which stores the probabilities.
    */
   void GetProbabilitiesMatrix(const arma::mat& parameters,
+                              arma::mat& probabilities,
+                              arma::mat& lastClass_probabilities) const;
+                              
+  /**
+   * Evaluate the probabilities matrix with the passed parameters.
+   * probabilities(i, j) =
+   *     exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)).
+   * It represents the probability of data_j belongs to class i.
+   *
+   * @param parameters Current values of the model parameters.
+   * @param probabilities Pointer to arma::mat which stores the probabilities.
+   */
+  void GetProbabilitiesMatrix(const arma::mat& parameters,
                               arma::mat& probabilities) const;
 
   /**
@@ -137,6 +150,7 @@ class SoftmaxRegressionFunction
   const arma::mat& data;
   //! Label matrix for the provided data.
   arma::sp_mat groundTruth;
+  arma::sp_mat lastClass;
   //! Initial parameter point.
   arma::mat initialPoint;
   //! Number of classes.

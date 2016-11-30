@@ -11,14 +11,12 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
-#include <mlpack/core/optimizers/gradient_decsent.hpp>
+#include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
-
-#include <iostream>
-using namespace std;
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -177,57 +175,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   }
 }
 **/
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
-{
-  const size_t points = 1000;
-  const size_t inputSize = 3;
-  const size_t numClasses = 2;
-  const double lambda = 0.5;
-
-  // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 2; i++)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 2; i < points; i++)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-
-  // Train softmax regression object.
-  SoftmaxRegression<GradientDescent> sr(data, labels, numClasses, lambda);
-  
-  cout << sr.Parameters() << endl;
-
-  // Compare training accuracy to 100.
-  const double acc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
-
-  // Create test dataset.
-  for (size_t i = 0; i < points / 2; i++)
-  {
-    data.col(i) = g1.Random();
-    labels(i) =  0;
-  }
-  for (size_t i = points / 2; i < points; i++)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-
-  // Compare test accuracy to 100.
-  const double testAcc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
-}
-/**
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
 {
   // Generate a two-Gaussian dataset,
@@ -272,6 +219,57 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
 }
 
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 3;
+  const size_t numClasses = 2;
+  const double lambda = 0.5;
+
+  // Generate two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Train softmax regression object.
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+
+  // Compare training accuracy to 100.
+  const double acc = sr.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) =  0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Compare test accuracy to 100.
+  const double testAcc = sr.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+}
+
+
+/**
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 {
   const size_t points = 5000;

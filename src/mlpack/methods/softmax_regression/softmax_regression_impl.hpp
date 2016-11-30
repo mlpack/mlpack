@@ -147,6 +147,8 @@ double SoftmaxRegression<OptimizerType>::Train(
   Timer::Start("softmax_regression_optimization");
   const double out = optimizer.Optimize(parameters);
   Timer::Stop("softmax_regression_optimization");
+  
+  parameters = arma::join_vert(parameters, arma::zeros(1, parameters.n_cols));
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
             << "trained model is " << out << "." << std::endl;
