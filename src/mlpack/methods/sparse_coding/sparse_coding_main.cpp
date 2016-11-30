@@ -12,6 +12,12 @@
 #include <mlpack/core.hpp>
 #include "sparse_coding.hpp"
 
+using namespace arma;
+using namespace std;
+using namespace mlpack;
+using namespace mlpack::math;
+using namespace mlpack::sparse_coding;
+
 PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "Dictionary Learning, which achieves sparsity via an l1-norm regularizer on"
     " the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the "
@@ -70,22 +76,16 @@ PARAM_DOUBLE_IN("newton_tolerance", "Tolerance for convergence of Newton "
     "method.", "w", 1e-6);
 
 // Load/save a model.
-PARAM_STRING_IN("input_model_file", "File containing input sparse coding "
-    "model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained sparse coding "
-    "model to.", "M");
+PARAM_MODEL_IN(SparseCoding, "input_model", "File containing input sparse "
+    "coding model.", "m");
+PARAM_MODEL_OUT(SparseCoding, "output_model", "File to save trained sparse "
+    "coding model to.", "M");
 
 PARAM_MATRIX_OUT("dictionary", "Matrix to save the output dictionary to.", "d");
 PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
     "matrix (--test_file) to.", "c");
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
-
-using namespace arma;
-using namespace std;
-using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::sparse_coding;
 
 int main(int argc, char* argv[])
 {
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
+  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
     Log::Fatal << "Cannot specify both --input_model_file (-m) and "
         << "--initial_dictionary (-i)!" << endl;
 
@@ -105,12 +105,12 @@ int main(int argc, char* argv[])
     Log::Fatal << "If --training_file is specified, the number of atoms in the "
         << "dictionary must be specified with --atoms (-k)!" << endl;
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
         << "be specified!" << endl;
 
   if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
-      !CLI::HasParam("output_model_file"))
+      !CLI::HasParam("output_model"))
     Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
         << "--output_model_file (-M) are specified; no output will be saved."
         << endl;
@@ -149,11 +149,8 @@ int main(int argc, char* argv[])
 
   // Do we have an existing model?
   SparseCoding sc(0, 0.0);
-  if (CLI::HasParam("input_model_file"))
-  {
-    data::Load(CLI::GetParam<string>("input_model_file"), "sparse_coding_model",
-        sc, true);
-  }
+  if (CLI::HasParam("input_model"))
+    sc = std::move(CLI::GetParam<SparseCoding>("input_model"));
 
   if (CLI::HasParam("training"))
   {
@@ -175,11 +172,11 @@ int main(int argc, char* argv[])
     sc.NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
 
     // Inform the user if we are overwriting their model.
-    if (CLI::HasParam("input_model_file"))
+    if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetParam<string>("input_model_file") << "' as initial "
-          << "dictionary for training." << endl;
+          << CLI::GetUnmappedParam<SparseCoding>("input_model")
+          << "' as initial dictionary for training." << endl;
       sc.Train<NothingInitializer>(matX);
     }
     else if (CLI::HasParam("initial_dictionary"))
@@ -244,7 +241,8 @@ int main(int argc, char* argv[])
     CLI::GetParam<arma::mat>("dictionary") = std::move(sc.Dictionary());
 
   // Did the user want to save the model?
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"),
-        "sparse_coding_model", sc, false); // Non-fatal on failure.
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<SparseCoding>("output_model") = std::move(sc);
+
+  CLI::Destroy();
 }

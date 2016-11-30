@@ -15,6 +15,10 @@
 #include <memory>
 #include <set>
 
+using namespace std;
+using namespace mlpack;
+using namespace mlpack::regression;
+
 // Define parameters for the executable.
 PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "a generalization of logistic regression to the multiclass case, and has "
@@ -31,11 +35,11 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "(-r), and if an intercept term is not desired in the model, the "
     "--no_intercept (-N) can be specified."
     "\n\n"
-    "The trained model can be saved to a file with the --output_model_file (-m) "
-    "option.  If training is not desired, but only testing is, a model can be "
-    "loaded with the --input_model_file (-i) option.  At the current time, a loaded "
-    "model cannot be trained further, so specifying both -i and -t is not "
-    "allowed."
+    "The trained model can be saved to a file with the --output_model_file (-m)"
+    " option.  If training is not desired, but only testing is, a model can be "
+    "loaded with the --input_model_file (-i) option.  At the current time, a "
+    "loaded model cannot be trained further, so specifying both -i and -t is "
+    "not allowed."
     "\n\n"
     "The program is also able to evaluate a model on test data.  A test dataset"
     " can be specified with the --test_data (-T) option.  Class predictions "
@@ -51,10 +55,10 @@ PARAM_UMATRIX_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_STRING_IN("input_model_file", "File containing existing model "
-    "(parameters).", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained softmax regression "
-    "model to.", "M");
+PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
+    "model (parameters).", "m");
+PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
+    "softmax regression model to.", "M");
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
@@ -74,8 +78,6 @@ PARAM_DOUBLE_IN("lambda", "L2-regularization constant", "r", 0.0001);
 
 PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
 
-using namespace std;
-
 // Count the number of classes in the given labels (if numClasses == 0).
 size_t CalculateNumberOfClasses(const size_t numClasses,
                                 const arma::Row<size_t>& trainLabels);
@@ -86,21 +88,16 @@ void TestPredictAcc(const size_t numClasses, const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
-unique_ptr<Model> TrainSoftmax(const string& inputModelFile,
-                               const size_t maxIterations);
+unique_ptr<Model> TrainSoftmax(const size_t maxIterations);
 
 int main(int argc, char** argv)
 {
-  using namespace mlpack;
-
   CLI::ParseCommandLine(argc, argv);
 
-  const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string outputModelFile = CLI::GetParam<string>("output_model_file");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
-  if (!CLI::HasParam("input_model_file") && !CLI::HasParam("training"))
+  if (!CLI::HasParam("input_model") && !CLI::HasParam("training"))
     Log::Fatal << "One of --input_model_file or --training_file must be "
         << "specified." << endl;
 
@@ -114,19 +111,19 @@ int main(int argc, char** argv)
         << ")! Must be greater than or equal to 0." << endl;
 
   // Make sure we have an output file of some sort.
-  if (!CLI::HasParam("output_model_file") &&
-      !CLI::HasParam("predictions"))
+  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
     Log::Warn << "Neither --output_model_file nor --predictions_file are set; "
         << "no results from this program will be saved." << endl;
 
-  using SM = regression::SoftmaxRegression<>;
-  unique_ptr<SM> sm = TrainSoftmax<SM>(inputModelFile, maxIterations);
+  using SM = SoftmaxRegression<>;
+  unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
 
   TestPredictAcc(sm->NumClasses(), *sm);
 
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"),
-        "softmax_regression_model", *sm, true);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<SM>("output_model") = std::move(*sm);
+
+  CLI::Destroy();
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -219,18 +216,17 @@ void TestPredictAcc(size_t numClasses, const Model& model)
 }
 
 template<typename Model>
-unique_ptr<Model> TrainSoftmax(const std::string& inputModelFile,
-                               const size_t maxIterations)
+unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 {
   using namespace mlpack;
 
   using SRF = regression::SoftmaxRegressionFunction;
 
   unique_ptr<Model> sm;
-  if (!inputModelFile.empty())
+  if (CLI::HasParam("input_model"))
   {
     sm.reset(new Model(0, 0, false));
-    mlpack::data::Load(inputModelFile, "softmax_regression_model", *sm, true);
+    *sm = std::move(CLI::GetParam<Model>("input_model"));
   }
   else
   {

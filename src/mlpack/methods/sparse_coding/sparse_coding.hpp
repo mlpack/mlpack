@@ -168,8 +168,8 @@ class SparseCoding
    * @param newtonTolerance Tolerance for the Newton's method dictionary
    *     optimization step.
    */
-  SparseCoding(const size_t atoms,
-               const double lambda1,
+  SparseCoding(const size_t atoms = 0,
+               const double lambda1 = 0,
                const double lambda2 = 0,
                const size_t maxIterations = 0,
                const double objTolerance = 0.01,

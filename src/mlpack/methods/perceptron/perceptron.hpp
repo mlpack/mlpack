@@ -78,7 +78,7 @@ class Perceptron
    * @param D Weight vector to use while training. For boosting purposes.
    * @param labels The labels of data.
    */
-  Perceptron(const Perceptron<>& other,
+  Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
              const arma::rowvec& instanceWeights);
