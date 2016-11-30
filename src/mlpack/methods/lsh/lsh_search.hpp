@@ -125,28 +125,28 @@ class LSHSearch
   /**
    * Copy the given LSH model.
    *
-   * @param Other LSH model to copy.
+   * @param other Other LSH model to copy.
    */
   LSHSearch(const LSHSearch& other);
 
   /**
    * Take ownership of the given LSH model.
    *
-   * @param Other LSH model to take ownership of.
+   * @param other Other LSH model to take ownership of.
    */
   LSHSearch(LSHSearch&& other);
 
   /**
    * Copy the given LSH model.
    *
-   * @param Other LSH model to copy.
+   * @param other Other LSH model to copy.
    */
   LSHSearch& operator=(const LSHSearch& other);
 
   /**
    * Take ownership of the given LSH model.
    *
-   * @param Other LSH model to take ownership of.
+   * @param other Other LSH model to take ownership of.
    */
   LSHSearch& operator=(LSHSearch&& other);
 
