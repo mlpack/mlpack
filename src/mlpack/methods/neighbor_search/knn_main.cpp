@@ -2,7 +2,7 @@
  * @file knn_main.cpp
  * @author Ryan Curtin
  *
- * Implementation of the AllkNN executable.  Allows some number of standard
+ * Implementation of the kNN executable.  Allows some number of standard
  * options.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -26,6 +26,9 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+
+// Convenience typedef.
+typedef NSModel<NearestNeighborSort> KNNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("k-Nearest-Neighbors",
@@ -59,10 +62,9 @@ PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute the "
     "recall (it is printed when -v is specified).", "T");
 
 // The option exists to load or save models.
-PARAM_STRING_IN("input_model_file", "File containing pre-trained kNN model.",
-    "m", "");
-PARAM_STRING_OUT("output_model_file", "If specified, the kNN model will be "
-    "saved to the given file.", "M");
+PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
+PARAM_MODEL_OUT(KNNModel, "output_model", "If specified, the kNN model will be "
+    "output here.", "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
@@ -99,9 +101,6 @@ PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-// Convenience typedef.
-typedef NSModel<NearestNeighborSort> KNNModel;
-
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
@@ -113,16 +112,16 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
     // Notify the user of parameters that will be ignored.
     if (CLI::HasParam("tree_type"))
@@ -145,7 +144,7 @@ int main(int argc, char *argv[])
   }
 
   // The user should give something to do...
-  if (!CLI::HasParam("k") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("k") && !CLI::HasParam("output_model"))
     Log::Warn << "Neither -k nor --output_model_file are specified, so no "
         << "results from this program will be saved!" << endl;
 
@@ -199,7 +198,7 @@ int main(int argc, char *argv[])
         << endl;
 
   // We either have to load the reference data, or we have to load the model.
-  NSModel<NearestNeighborSort> knn;
+  KNNModel knn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
   NeighborSearchMode searchMode = DUAL_TREE_MODE;
@@ -305,8 +304,7 @@ int main(int argc, char *argv[])
   else
   {
     // Load the model from file.
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "knn_model", knn, true); // Fatal on failure.
+    knn = std::move(CLI::GetParam<KNNModel>("input_model"));
 
     // Adjust search mode.
     knn.SetSearchMode(searchMode);
@@ -318,7 +316,8 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("leaf_size"))
       knn.LeafSize() = size_t(lsInt);
 
-    Log::Info << "Loaded kNN model from '" << inputModelFile << "' (trained on "
+    Log::Info << "Loaded kNN model from '"
+        << CLI::GetUnmappedParam<KNNModel>("input_model") << "' (trained on "
         << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
         << endl;
   }
@@ -333,7 +332,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<std::string>("query") << "' ("
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -401,9 +400,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  if (CLI::HasParam("output_model_file"))
-  {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "knn_model", knn);
-  }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<KNNModel>("output_model") = std::move(knn);
+
+  CLI::Destroy();
 }
