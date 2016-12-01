@@ -340,7 +340,7 @@ NSModel<SortPolicy>::NSModel(NSModel&& other) :
     rho(other.rho),
     randomBasis(other.randomBasis),
     q(std::move(other.q)),
-    nSearch(std::move(other.nSearch))
+    nSearch(other.nSearch)
 {
   // Reset parameters of the other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -348,6 +348,7 @@ NSModel<SortPolicy>::NSModel(NSModel&& other) :
   other.tau = 0;
   other.rho = 0.7;
   other.randomBasis = false;
+  other.nSearch = decltype(other.nSearch)();
 }
 
 template<typename SortPolicy>
@@ -377,7 +378,8 @@ NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(NSModel&& other)
   rho = other.rho;
   randomBasis = other.randomBasis;
   q = std::move(other.q);
-  nSearch = std::move(other.nSearch);
+  // Copy the pointer and type.
+  nSearch = other.nSearch;
 
   // Reset parameters of the other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -385,6 +387,7 @@ NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(NSModel&& other)
   other.tau = 0;
   other.rho = 0.7;
   other.randomBasis = false;
+  other.nSearch = decltype(other.nSearch)();
 
   return *this;
 }
