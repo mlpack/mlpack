@@ -41,6 +41,181 @@ RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
   // Nothing to do.
 }
 
+// Copy constructor.
+RSModel::RSModel(const RSModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRS(NULL),
+    coverTreeRS(NULL),
+    rTreeRS(NULL),
+    rStarTreeRS(NULL),
+    ballTreeRS(NULL),
+    xTreeRS(NULL),
+    hilbertRTreeRS(NULL),
+    rPlusTreeRS(NULL),
+    rPlusPlusTreeRS(NULL),
+    vpTreeRS(NULL),
+    rpTreeRS(NULL),
+    maxRPTreeRS(NULL),
+    ubTreeRS(NULL),
+    octreeRS(NULL)
+{
+  if (other.kdTreeRS)
+    kdTreeRS = new RSType<tree::KDTree>(*other.kdTreeRS);
+  if (other.coverTreeRS)
+    coverTreeRS = new RSType<tree::StandardCoverTree>(*other.coverTreeRS);
+  if (other.rTreeRS)
+    rTreeRS = new RSType<tree::RTree>(*other.rTreeRS);
+  if (other.rStarTreeRS)
+    rStarTreeRS = new RSType<tree::RStarTree>(*other.rStarTreeRS);
+  if (other.ballTreeRS)
+    ballTreeRS = new RSType<tree::BallTree>(*other.ballTreeRS);
+  if (other.xTreeRS)
+    xTreeRS = new RSType<tree::XTree>(*other.xTreeRS);
+  if (other.hilbertRTreeRS)
+    hilbertRTreeRS = new RSType<tree::HilbertRTree>(*other.hilbertRTreeRS);
+  if (other.rPlusTreeRS)
+    rPlusTreeRS = new RSType<tree::RPlusTree>(*other.rPlusTreeRS);
+  if (other.rPlusPlusTreeRS)
+    rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRS);
+  if (other.vpTreeRS)
+    vpTreeRS = new RSType<tree::VPTree>(*other.vpTreeRS);
+  if (other.rpTreeRS)
+    rpTreeRS = new RSType<tree::RPTree>(*other.rpTreeRS);
+  if (other.maxRPTreeRS)
+    maxRPTreeRS = new RSType<tree::MaxRPTree>(*other.maxRPTreeRS);
+  if (other.ubTreeRS)
+    ubTreeRS = new RSType<tree::UBTree>(*other.ubTreeRS);
+  if (other.octreeRS)
+    octreeRS = new RSType<tree::Octree>(*other.octreeRS);
+}
+
+// Move constructor.
+RSModel::RSModel(RSModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRS(other.kdTreeRS),
+    coverTreeRS(other.coverTreeRS),
+    rTreeRS(other.rTreeRS),
+    rStarTreeRS(other.rStarTreeRS),
+    ballTreeRS(other.ballTreeRS),
+    xTreeRS(other.xTreeRS),
+    hilbertRTreeRS(other.hilbertRTreeRS),
+    rPlusTreeRS(other.rPlusTreeRS),
+    rPlusPlusTreeRS(other.rPlusPlusTreeRS),
+    vpTreeRS(other.vpTreeRS),
+    rpTreeRS(other.rpTreeRS),
+    maxRPTreeRS(other.maxRPTreeRS),
+    ubTreeRS(other.ubTreeRS),
+    octreeRS(other.octreeRS)
+{
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 0;
+  other.randomBasis = false;
+  other.kdTreeRS = NULL;
+  other.coverTreeRS = NULL;
+  other.rTreeRS = NULL;
+  other.rStarTreeRS = NULL;
+  other.ballTreeRS = NULL;
+  other.xTreeRS = NULL;
+  other.hilbertRTreeRS = NULL;
+  other.rPlusTreeRS = NULL;
+  other.rPlusPlusTreeRS = NULL;
+  other.vpTreeRS = NULL;
+  other.rpTreeRS = NULL;
+  other.maxRPTreeRS = NULL;
+  other.ubTreeRS = NULL;
+  other.octreeRS = NULL;
+}
+
+// Copy operator.
+RSModel& RSModel::operator=(const RSModel& other)
+{
+  CleanMemory();
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  if (other.kdTreeRS)
+    kdTreeRS = new RSType<tree::KDTree>(*other.kdTreeRS);
+  if (other.coverTreeRS)
+    coverTreeRS = new RSType<tree::StandardCoverTree>(*other.coverTreeRS);
+  if (other.rTreeRS)
+    rTreeRS = new RSType<tree::RTree>(*other.rTreeRS);
+  if (other.rStarTreeRS)
+    rStarTreeRS = new RSType<tree::RStarTree>(*other.rStarTreeRS);
+  if (other.ballTreeRS)
+    ballTreeRS = new RSType<tree::BallTree>(*other.ballTreeRS);
+  if (other.xTreeRS)
+    xTreeRS = new RSType<tree::XTree>(*other.xTreeRS);
+  if (other.hilbertRTreeRS)
+    hilbertRTreeRS = new RSType<tree::HilbertRTree>(*other.hilbertRTreeRS);
+  if (other.rPlusTreeRS)
+    rPlusTreeRS = new RSType<tree::RPlusTree>(*other.rPlusTreeRS);
+  if (other.rPlusPlusTreeRS)
+    rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRS);
+  if (other.vpTreeRS)
+    vpTreeRS = new RSType<tree::VPTree>(*other.vpTreeRS);
+  if (other.rpTreeRS)
+    rpTreeRS = new RSType<tree::RPTree>(*other.rpTreeRS);
+  if (other.maxRPTreeRS)
+    maxRPTreeRS = new RSType<tree::MaxRPTree>(*other.maxRPTreeRS);
+  if (other.ubTreeRS)
+    ubTreeRS = new RSType<tree::UBTree>(*other.ubTreeRS);
+  if (other.octreeRS)
+    octreeRS = new RSType<tree::Octree>(*other.octreeRS);
+
+  return *this;
+}
+
+// Move operator.
+RSModel& RSModel::operator=(RSModel&& other)
+{
+  CleanMemory();
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  kdTreeRS = other.kdTreeRS;
+  coverTreeRS = other.coverTreeRS;
+  rTreeRS = other.rTreeRS;
+  rStarTreeRS = other.rStarTreeRS;
+  ballTreeRS = other.ballTreeRS;
+  xTreeRS = other.xTreeRS;
+  hilbertRTreeRS = other.hilbertRTreeRS;
+  rPlusTreeRS = other.rPlusTreeRS;
+  rPlusPlusTreeRS = other.rPlusPlusTreeRS;
+  vpTreeRS = other.vpTreeRS;
+  rpTreeRS = other.rpTreeRS;
+  maxRPTreeRS = other.maxRPTreeRS;
+  ubTreeRS = other.ubTreeRS;
+  octreeRS = other.octreeRS;
+
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 0;
+  other.randomBasis = false;
+  other.kdTreeRS = NULL;
+  other.coverTreeRS = NULL;
+  other.rTreeRS = NULL;
+  other.rStarTreeRS = NULL;
+  other.ballTreeRS = NULL;
+  other.xTreeRS = NULL;
+  other.hilbertRTreeRS = NULL;
+  other.rPlusTreeRS = NULL;
+  other.rPlusPlusTreeRS = NULL;
+  other.vpTreeRS = NULL;
+  other.rpTreeRS = NULL;
+  other.maxRPTreeRS = NULL;
+  other.ubTreeRS = NULL;
+  other.octreeRS = NULL;
+
+  return *this;
+}
+
 // Clean memory, if necessary.
 RSModel::~RSModel()
 {
