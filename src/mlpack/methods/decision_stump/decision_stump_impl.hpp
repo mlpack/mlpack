@@ -202,17 +202,14 @@ void DecisionStump<MatType>::Serialize(Archive& ar,
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
 template<typename MatType>
-template<bool UseWeights>
+template<bool UseWeights, typename VecType>
 double DecisionStump<MatType>::SetupSplitDimension(
-    const arma::rowvec& dimension,
+    const VecType& dimension,
     const arma::Row<size_t>& labels,
     const arma::rowvec& weights)
 {
   size_t i, count, begin, end;
   double entropy = 0.0;
-
-  // Sort the dimension in order to calculate splitting ranges.
-  arma::rowvec sortedDim = arma::sort(dimension);
 
   // Store the indices of the sorted dimension to build a vector of sorted
   // labels.  This sort is stable.
@@ -301,7 +298,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
 {
   size_t i, count, begin, end;
 
-  arma::rowvec sortedSplitDim = arma::sort(dimension);
+  typename MatType::row_type sortedSplitDim = arma::sort(dimension);
   arma::uvec sortedSplitIndexDim = arma::stable_sort_index(dimension.t());
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   sortedLabels.fill(0);
