@@ -319,6 +319,76 @@ NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
   // Nothing to do.
 }
 
+template<typename SortPolicy>
+NSModel<SortPolicy>::NSModel(const NSModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    tau(other.tau),
+    rho(other.rho),
+    randomBasis(other.randomBasis),
+    q(other.q),
+    nSearch(other.nSearch)
+{
+  // Nothing to do.
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>::NSModel(NSModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    tau(other.tau),
+    rho(other.rho),
+    randomBasis(other.randomBasis),
+    q(std::move(other.q)),
+    nSearch(std::move(other.nSearch))
+{
+  // Reset parameters of the other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.tau = 0;
+  other.rho = 0.7;
+  other.randomBasis = false;
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(const NSModel& other)
+{
+  boost::apply_visitor(DeleteVisitor(), nSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  tau = other.tau;
+  rho = other.rho;
+  randomBasis = other.randomBasis;
+  q = other.q;
+  nSearch = other.nSearch;
+
+  return *this;
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(NSModel&& other)
+{
+  boost::apply_visitor(DeleteVisitor(), nSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  tau = other.tau;
+  rho = other.rho;
+  randomBasis = other.randomBasis;
+  q = std::move(other.q);
+  nSearch = std::move(other.nSearch);
+
+  // Reset parameters of the other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.tau = 0;
+  other.rho = 0.7;
+  other.randomBasis = false;
+
+  return *this;
+}
+
 //! Clean memory, if necessary.
 template<typename SortPolicy>
 NSModel<SortPolicy>::~NSModel()
