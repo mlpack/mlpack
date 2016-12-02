@@ -35,7 +35,7 @@ artifacts:
 notifications:
 - provider: Email
   to:
-  - mlpack-git@cc.gatech.edu
+  - mlpack-git@lists.mlpack.org
   on_build_success: true
   on_build_failure: true
   on_build_status_changed: true
