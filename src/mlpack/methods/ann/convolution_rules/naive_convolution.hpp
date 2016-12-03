@@ -93,8 +93,8 @@ class NaiveConvolution
               const size_t dW = 1,
               const size_t dH = 1)
   {
-    const size_t outputRows = input.n_rows + 2 * (filter.n_rows - 1);
-    const size_t outputCols = input.n_cols + 2 * (filter.n_cols - 1);
+    const size_t outputRows = (input.n_rows + 2 * (filter.n_rows - 1)) * dW;
+    const size_t outputCols = (input.n_cols + 2 * (filter.n_cols - 1)) * dH;
 
     // Pad filter and input to the working output shape.
     arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
@@ -104,7 +104,7 @@ class NaiveConvolution
         filter.n_cols - 1 + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, dW, dH);
+        output, 1, 1);
   }
 
   /*
