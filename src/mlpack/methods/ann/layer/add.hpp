@@ -39,7 +39,14 @@ class Add
    *
    * @param outSize The number of output units.
    */
+<<<<<<< HEAD
   Add(const size_t outSize);
+=======
+  Add(const size_t outSize) : outSize(outSize)
+  {
+    weights.set_size(outSize, 1);
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -49,7 +56,14 @@ class Add
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+  {
+    output = input + weights;
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -63,7 +77,14 @@ class Add
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 const arma::Mat<eT>&& gy,
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
+=======
+                arma::Mat<eT>&& g)
+  {
+    g = gy;
+  }
+>>>>>>> Refactor ann layer.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -75,7 +96,14 @@ class Add
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
+<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
+=======
+                arma::Mat<eT>&& gradient)
+  {
+    gradient = error;
+  }
+>>>>>>> Refactor ann layer.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -106,7 +134,14 @@ class Add
    * Serialize the layer
    */
   template<typename Archive>
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(weights, "weights");
+  }
+>>>>>>> Refactor ann layer.
 
  private:
   //! Locally-stored number of output units.
@@ -131,7 +166,10 @@ class Add
 } // namespace ann
 } // namespace mlpack
 
+<<<<<<< HEAD
 // Include implementation.
 #include "add_impl.hpp"
 
+=======
+>>>>>>> Refactor ann layer.
 #endif

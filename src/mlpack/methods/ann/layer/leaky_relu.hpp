@@ -1,16 +1,18 @@
 /**
- * @file hard_tanh.hpp
+ * @file leaky_relu.hpp
  * @author Dhawal Arora
  *
- * Definition and implementation of the HardTanH layer.
+ * Definition and implementation of LeakyReLU layer first introduced
+ * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
+ * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
-#define MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
+#define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
 
 #include <mlpack/core.hpp>
 
@@ -18,21 +20,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Hard Tanh activation function, defined by
+ * The LeakyReLU activation function, defined by
  *
  * @f{eqnarray*}{
- * f(x) &=& \left\{
- *   \begin{array}{lr}
- *     max & : x > maxValue \\
- *     min & : x \le minValue \\
- *     x   & : otherwise
- *   \end{array}
- * \right. \\
+ * f(x) &=& \max(x, alpha*x) \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     0 & : x > maxValue \\
- *     0 & : x \le minValue \\
- *     1 & : otherwise
+ *     1 & : x > 0 \\
+ *     alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -46,19 +41,17 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class HardTanH
+class LeakyReLU
 {
  public:
   /**
-   * Create the HardTanH object using the specified parameters. The range
-   * of the linear region can be adjusted by specifying the maxValue and
-   * minValue. Default (maxValue = 1, minValue = -1).
+   * Create the LeakyReLU object using the specified parameters.
+   * The non zero gradient can be adjusted by specifying tha parameter
+   * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
-   * @param maxValue Range of the linear region maximum value.
-   * @param minValue Range of the linear region minimum value.
+   * @param alpha Non zero gradient
    */
-  HardTanH(const double maxValue = 1, const double minValue = -1) :
-      maxValue(maxValue), minValue(minValue)
+  LeakyReLU(const double alpha = 0.03) : alpha(alpha)
   {
      // Nothing to do here.
   }
@@ -73,12 +66,7 @@ class HardTanH
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output)
   {
-    output = input;
-    for (size_t i = 0; i < input.n_elem; i++)
-    {
-      output(i) = (output(i) > maxValue ? maxValue :
-          (output(i) < minValue ? minValue : output(i)));
-    }
+    Fn(input, output);
   }
 
   /**
@@ -91,18 +79,11 @@ class HardTanH
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input,
-                DataType&& gy,
-                DataType&& g)
+  void Backward(const DataType&& input, DataType&& gy, DataType&& g)
   {
-    g = gy;
-    for (size_t i = 0; i < input.n_elem; i++)
-    {
-      if (input(i) < minValue || input(i) > maxValue)
-      {
-        g(i) = 0;
-      }
-    }
+    DataType derivative;
+    Deriv(input, derivative);
+    g = gy % derivative;
   }
 
   //! Get the input parameter.
@@ -120,15 +101,10 @@ class HardTanH
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the maximum value.
-  double const& MaxValue() const { return maxValue; }
-  //! Modify the maximum value.
-  double& MaxValue() { return maxValue; }
-
-  //! Get the minimum value.
-  double const& MinValue() const { return minValue; }
-  //! Modify the minimum value.
-  double& MinValue() { return minValue; }
+  //! Get the non zero gradient.
+  double const& Alpha() const { return alpha; }
+  //! Modify the non zero gradient.
+  double& Alpha() { return alpha; }
 
   /**
    * Serialize the layer.
@@ -136,65 +112,60 @@ class HardTanH
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(maxValue, "maxValue");
-    ar & data::CreateNVP(minValue, "minValue");
+    ar & data::CreateNVP(alpha, "alpha");
   }
 
  private:
   /**
-   * Computes the HardTanH function.
+   * Computes the LeakReLU function
    *
    * @param x Input data.
    * @return f(x).
    */
   double Fn(const double x)
   {
-    if (x > maxValue)
-      return maxValue;
-    else if (x < minValue)
-      return minValue;
-    return x;
+    return std::max(x, alpha * x);
   }
 
   /**
-   * Computes the HardTanH function using a dense matrix as input.
+   * Computes the Leaky ReLU function using a dense matrix as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = x;
-    y.transform( [&](eT val) { return std::min(
-        std::max( val, minValue ), maxValue ); } );
+    y = arma::max(x, alpha * x);
   }
 
   /**
-   * Computes the first derivative of the HardTanH function.
+   * Computes the first derivative of the LeakyReLU function.
    *
    * @param x Input data.
    * @return f'(x)
    */
   double Deriv(const double x)
   {
-    return (x > maxValue || x < minValue) ? 0 : 1;
+    return (x >= 0) ? 1 : alpha;
   }
 
   /**
-   * Computes the first derivative of the HardTanH function.
+   * Computes the first derivative of the LeakyReLU function.
    *
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
+
   template<typename InputType, typename OutputType>
-  void Deriv(const InputType&& x, OutputType& y)
+  void Deriv(const InputType& x, OutputType& y)
   {
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
+    {
       y(i) = Deriv(x(i));
+    }
   }
 
   //! Locally-stored delta object.
@@ -206,12 +177,10 @@ class HardTanH
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Maximum value for the HardTanH function.
-  double maxValue;
+  //! Leakyness Parameter in the range 0 <alpha< 1
+  double alpha;
 
-  //! Minimum value for the HardTanH function.
-  double minValue;
-}; // class HardTanH
+}; // class LeakyReLU
 
 } // namespace ann
 } // namespace mlpack

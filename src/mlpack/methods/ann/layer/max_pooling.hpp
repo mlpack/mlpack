@@ -53,8 +53,16 @@ template <
 class MaxPooling
 {
 public:
+<<<<<<< HEAD
   //! Create the MaxPooling object.
   MaxPooling();
+=======
+  //! Create the PoolingLayer object.
+  MaxPooling()
+  {
+    /* Nothing to do here */
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Create the MaxPooling object using the specified number of units.
@@ -66,10 +74,32 @@ public:
    * @param floor Rounding operator (floor or ceil).
    */
   MaxPooling(const size_t kW,
+<<<<<<< HEAD
              const size_t kH,
              const size_t dW = 1,
              const size_t dH = 1,
              const bool floor = true);
+=======
+          const size_t kH,
+          const size_t dW = 1,
+          const size_t dH = 1,
+          const bool floor = true) :
+      kW(kW),
+      kH(kH),
+      dW(dW),
+      dH(dH),
+      reset(false),
+      floor(floor),
+      offset(0),
+      inputWidth(0),
+      inputHeight(0),
+      outputWidth(0),
+      outputHeight(0),
+      deterministic(false)
+  {
+    /* Nothing to do here. */
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -79,7 +109,67 @@ public:
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+  {
+    const size_t slices = input.n_elem / (inputWidth * inputHeight);
+    inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, slices);
+
+    if (floor)
+    {
+      outputWidth = std::floor((inputWidth - (double) kW) / (double) dW + 1);
+      outputHeight = std::floor((inputHeight - (double) kH) / (double) dH + 1);
+      offset = 0;
+    }
+    else
+    {
+      outputWidth = std::ceil((inputWidth - (double) kW) / (double) dW + 1);
+      outputHeight = std::ceil((inputHeight - (double) kH) / (double) dH + 1);
+      offset = 1;
+    }
+
+    outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
+        slices);
+
+    if (!deterministic)
+    {
+      poolingIndices.push_back(outputTemp);
+    }
+
+    if (!reset)
+    {
+      size_t elements = inputWidth * inputHeight;
+      indicesCol = arma::linspace<arma::Col<size_t> >(0, (elements - 1),
+          elements);
+
+      indices = arma::Mat<size_t>(indicesCol.memptr(), inputWidth, inputHeight);
+
+      reset = true;
+    }
+
+    for (size_t s = 0; s < inputTemp.n_slices; s++)
+    {
+      if (!deterministic)
+      {
+        PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
+          poolingIndices.back().slice(s));
+      }
+      else
+      {
+        PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
+            inputTemp.slice(s));
+      }
+    }
+
+    output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
+
+    outputWidth = outputTemp.n_rows;
+    outputHeight = outputTemp.n_cols;
+    outSize = slices;
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -93,7 +183,28 @@ public:
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
+=======
+                arma::Mat<eT>&& g)
+  {
+    arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
+        outputHeight, outSize);
+
+    gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
+        inputTemp.n_cols, inputTemp.n_slices);
+
+    for (size_t s = 0; s < mappedError.n_slices; s++)
+    {
+      Unpooling(mappedError.slice(s), gTemp.slice(s),
+          poolingIndices.back().slice(s));
+    }
+
+    poolingIndices.pop_back();
+
+    g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
+  }
+>>>>>>> Refactor ann layer.
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -139,7 +250,17 @@ public:
    * Serialize the layer
    */
   template<typename Archive>
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(kW, "kW");
+    ar & data::CreateNVP(kH, "kH");
+    ar & data::CreateNVP(dW, "dW");
+    ar & data::CreateNVP(dH, "dH");
+  }
+>>>>>>> Refactor ann layer.
 
  private:
 
@@ -271,6 +392,7 @@ public:
   std::vector<arma::cube> poolingIndices;
 }; // class MaxPooling
 
+<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
@@ -278,3 +400,10 @@ public:
 #include "max_pooling_impl.hpp"
 
 #endif
+=======
+
+} // namespace ann
+} // namespace mlpack
+
+#endif
+>>>>>>> Refactor ann layer.

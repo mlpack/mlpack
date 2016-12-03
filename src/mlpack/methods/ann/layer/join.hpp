@@ -34,7 +34,14 @@ class Join
 {
  public:
   //! Create the Join object.
+<<<<<<< HEAD
   Join();
+=======
+  Join()
+  {
+    // Nothing to do here.
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -44,7 +51,16 @@ class Join
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
+<<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
+=======
+  void Forward(const InputType&& input, OutputType&& output)
+  {
+    inSizeRows = input.n_rows;
+    inSizeCols = input.n_cols;
+    output = arma::vectorise(input);
+  }
+>>>>>>> Refactor ann layer.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -58,7 +74,14 @@ class Join
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
+=======
+                arma::Mat<eT>&& g)
+  {
+    g = arma::mat(gy.memptr(), inSizeRows, inSizeCols, false, false);
+  }
+>>>>>>> Refactor ann layer.
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -79,7 +102,15 @@ class Join
    * Serialize the layer.
    */
   template<typename Archive>
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(inSizeRows, "inSizeRows");
+    ar & data::CreateNVP(inSizeCols, "inSizeCols");
+  }
+>>>>>>> Refactor ann layer.
 
  private:
   //! Locally-stored number of input rows.
@@ -101,7 +132,10 @@ class Join
 } // namespace ann
 } // namespace mlpack
 
+<<<<<<< HEAD
 // Include implementation.
 #include "join_impl.hpp"
 
+=======
+>>>>>>> Refactor ann layer.
 #endif
