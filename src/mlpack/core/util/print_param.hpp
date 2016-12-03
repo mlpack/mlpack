@@ -22,7 +22,9 @@ void PrintParamImpl(
     const ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Print a vector option, with spaces between it.
@@ -47,6 +49,15 @@ template<typename T>
 void PrintParamImpl(
     const ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+
+/**
+ * Print a mapped matrix option (this just prints the filename).
+ */
+template<typename T>
+void PrintParamImpl(
+    const ParamData& data,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Print an option.

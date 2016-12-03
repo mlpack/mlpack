@@ -66,6 +66,16 @@ struct ParameterType<arma::Mat<eT>>
 };
 
 /**
+ * For matrix+dataset info types, we should accept a std::string.
+ */
+template<typename eT, typename PolicyType>
+struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType>,
+                     arma::Mat<eT>>>
+{
+  typedef std::string type;
+};
+
+/**
  * This structure holds all of the information about a single parameter,
  * including its value (which is set when ParseCommandLine() is called).  It
  * does not hold any information about whether or not it was passed---that is
@@ -135,7 +145,9 @@ template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * If needed, map 'trueValue' to the right type and return it.  This is called
@@ -146,7 +158,9 @@ T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 //! This must be overloaded for matrices.
 template<typename T>
@@ -160,6 +174,21 @@ T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
+
+//! This must be overloaded for matrices and dataset info objects
+template<typename T>
+std::string MapParameterName(
+    const std::string& identifier,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+
+//! This must be overloaded for matrices and dataset info objects.
+template<typename T>
+T& HandleParameter(
+    typename util::ParameterType<T>::type& value,
+    util::ParamData& d,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 //! This must be overloaded for serializable objects.
 template<typename T>

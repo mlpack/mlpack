@@ -21,7 +21,9 @@ std::string DefaultParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T, std::string>>::type*)
+    const typename boost::disable_if<std::is_same<T, std::string>>::type*,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -68,6 +70,20 @@ template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+{
+  // Get the filename and return it, or return an empty string.
+  const std::string& filename = boost::any_cast<std::string>(data.value);
+  return "'" + filename + "'";
+}
+
+/**
+ * Return the default value of a DatasetInfo+matrix option.
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const ParamData& data,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
   const std::string& filename = boost::any_cast<std::string>(data.value);

@@ -21,7 +21,9 @@ std::string DefaultParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T, std::string>>::type* = 0);
+    const typename boost::disable_if<std::is_same<T, std::string>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Return the default value of a vector option.
@@ -56,6 +58,15 @@ template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
     const typename boost::enable_if<std::is_same<T, std::string>>::type* = 0);
+
+/**
+ * Return the default value of a DatasetInfo+matrix option.
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const ParamData& data,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be

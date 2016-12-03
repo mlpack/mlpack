@@ -141,8 +141,8 @@ void CLI::Add(const T& defaultValue,
   if (data.isFlag)
     desc.add_options()(progOptId.c_str(), description.c_str());
   else
-    GetSingleton().AddOption<typename util::ParameterType<T>::type>(progOptId.c_str(),
-        description.c_str());
+    GetSingleton().AddOption<typename util::ParameterType<T>::type>(
+        progOptId.c_str(), description.c_str());
 
   // If the option is required, add it to the required options list.
   if (required)

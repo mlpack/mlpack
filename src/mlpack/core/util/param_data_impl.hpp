@@ -19,7 +19,9 @@ template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   return identifier;
 }
@@ -29,6 +31,16 @@ template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
+{
+  return identifier + "_file";
+}
+
+//! This must be overloaded for matrices and dataset info objects
+template<typename T>
+std::string MapParameterName(
+    const std::string& identifier,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   return identifier + "_file";
 }
@@ -49,7 +61,9 @@ T& HandleParameter(
     typename ParameterType<T>::type& value,
     ParamData& /* d */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   return value;
 }
@@ -73,6 +87,29 @@ T& HandleParameter(
   }
 
   return matrix;
+}
+
+//! This must be overloaded for matrices and dataset info objects.
+template<typename T>
+T& HandleParameter(
+    typename util::ParameterType<T>::type& value,
+    util::ParamData& d,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+{
+  // If this is an input parameter, we need to load both the matrix and the
+  // dataset info.
+  std::tuple<mlpack::data::DatasetInfo, arma::mat>& tuple =
+      *boost::any_cast<std::tuple<mlpack::data::DatasetInfo,
+      arma::mat>>(&d.mappedValue);
+  if (d.input && !d.loaded)
+  {
+    data::Load(value, std::get<1>(tuple), std::get<0>(tuple), true,
+        !d.noTranspose);
+    d.loaded = true;
+  }
+
+  return tuple;
 }
 
 //! This is called for serializable mlpack objects, which have a different boost

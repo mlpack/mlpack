@@ -90,6 +90,14 @@ inline std::string StringTypeParam<double>()
   return "double";
 }
 
+//! Return "string";
+template<>
+inline std::string StringTypeParam<std::tuple<mlpack::data::DatasetInfo,
+    arma::mat>>()
+{
+  return "string";
+}
+
 } // namespace util
 } // namespace mlpack
 

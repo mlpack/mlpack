@@ -15,6 +15,19 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
+namespace mlpack {
+namespace data {
+
+class IncrementPolicy;
+
+template<typename PolicyType>
+class DatasetMapper;
+
+using DatasetInfo = DatasetMapper<IncrementPolicy>;
+
+} // namespace data
+} // namespace mlpack
+
 /**
  * Document an executable.  Only one instance of this macro should be
  * present in your program!  Therefore, use it in the main.cpp
@@ -521,6 +534,44 @@
  */
 #define PARAM_VECTOR_OUT(T, ID) \
     PARAM_OUT(std::vector<T>, ID, DESC, "", std::vector<T>(), false)
+
+/**
+ * Define an input DatasetInfo/matrix parameter.  From the command line, the
+ * user can specify the file that holds the matrix, using the name of the matrix
+ * parameter with "_file" appended (and the same alias).  So for instance, if
+ * the name of the matrix parameter was "matrix", the user could specify that
+ * the "matrix" matrix was held in file.csv by giving the parameter
+ *
+ * @code
+ * --matrix_file file.csv
+ * @endcode
+ *
+ * Then the DatasetInfo and matrix type could be accessed with
+ *
+ * @code
+ * DatasetInfo d = std::move(
+ *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<0>());
+ * arma::mat m = std::move(
+ *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<1>());
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param ALIAS One-character string representing the alias of the parameter.
+ *
+ * @see mlpack::CLI, PROGRAM_INFO()
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
+    PARAM_IN(TUPLE_TYPE, ID, DESC, ALIAS, TUPLE_TYPE(), false)
 
 /**
  * Define an input model.  From the command line, the user can specify the file

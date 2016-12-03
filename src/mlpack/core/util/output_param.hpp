@@ -21,7 +21,9 @@ void OutputParamImpl(
     const ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Output a vector option (print to stdout).
@@ -46,6 +48,15 @@ template<typename T>
 void OutputParamImpl(
     const ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+
+/**
+ * Output a mapped dataset.
+ */
+template<typename T>
+void OutputParamImpl(
+    const ParamData& data,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
  * Output an option.  This is the function that will be called by the CLI

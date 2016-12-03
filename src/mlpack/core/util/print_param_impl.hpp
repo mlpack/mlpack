@@ -18,7 +18,9 @@ void PrintParamImpl(
     const ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   Log::Info << boost::any_cast<T>(data.value);
 }
@@ -49,6 +51,16 @@ template<typename T>
 void PrintParamImpl(
     const ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+{
+  Log::Info << boost::any_cast<std::string>(data.value);
+}
+
+//! Print a mapped matrix option (this just prints the filename).
+template<typename T>
+void PrintParamImpl(
+    const ParamData& data,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   Log::Info << boost::any_cast<std::string>(data.value);
 }
