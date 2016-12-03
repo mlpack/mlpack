@@ -59,6 +59,22 @@ class DTree
   DTree();
 
   /**
+   * Create a copied density estimation tree.
+   */
+  DTree(const DTree& toBeCopied);
+
+   /**
+   * Move a density estimation tree into another.
+   */
+  DTree(const DTree&& toBeMoved);
+
+  /**
+   * Move a density estimation tree into another using copy assignment operator.
+   */
+  DTree& operator=(const DTree& toBeCopied);
+
+
+  /**
    * Create a density estimation tree with the given bounds and the given number
    * of total points.  Children will not be created.
    *

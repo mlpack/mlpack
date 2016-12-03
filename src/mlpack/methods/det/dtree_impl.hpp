@@ -165,6 +165,100 @@ DTree<MatType, TagType>::DTree() :
     right(NULL)
 { /* Nothing to do. */ }
 
+//Copy constructor
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const DTree& toBeCopied) :
+    start(toBeCopied.start),
+    end(toBeCopied.end),
+    splitDim(toBeCopied.splitDim),
+    splitValue(toBeCopied.splitValue),
+    logNegError(toBeCopied.logNegError),
+    subtreeLeavesLogNegError(toBeCopied.subtreeLeavesLogNegError),
+    subtreeLeaves(toBeCopied.subtreeLeaves),
+    root(toBeCopied.root),
+    ratio(toBeCopied.ratio),
+    logVolume(toBeCopied.logVolume),
+    bucketTag(toBeCopied.bucketTag),
+    alphaUpper(toBeCopied.alphaUpper),
+    left(toBeCopied.left),
+    right(toBeCopied.right)
+{ /* Nothing to do. */ }
+
+//Move constructor
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const DTree&& toBeMoved) :
+    start(toBeMoved.start),
+    end(toBeMoved.end),
+    splitDim(toBeMoved.splitDim),
+    splitValue(toBeMoved.splitValue),
+    logNegError(toBeMoved.logNegError),
+    subtreeLeavesLogNegError(toBeMoved.subtreeLeavesLogNegError),
+    subtreeLeaves(toBeMoved.subtreeLeaves),
+    root(toBeMoved.root),
+    ratio(toBeMoved.ratio),
+    logVolume(toBeMoved.logVolume),
+    bucketTag(toBeMoved.bucketTag),
+    alphaUpper(toBeMoved.alphaUpper),
+    left(toBeMoved.left),
+    right(toBeMoved.right)
+{
+  toBeMoved.start = 0;
+  toBeMoved.end = 0;
+  toBeMoved.splitDim = size_t(-1);
+  toBeMoved.splitValue = std::numeric_limits<ElemType>::max();
+  toBeMoved.logNegError = -DBL_MAX;
+  toBeMoved.subtreeLeavesLogNegError = -DBL_MAX;
+  toBeMoved.subtreeLeaves = 0;
+  toBeMoved.root = true;
+  toBeMoved.ratio = 1.0;
+  toBeMoved.logVolume = -DBL_MAX;
+  toBeMoved.bucketTag = -1;
+  toBeMoved.alphaUpper = 0.0;
+  toBeMoved.left = NULL;
+  toBeMoved.right = NULL;
+}
+
+//Copy Assignment operator
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree& toBeCopied)
+{
+  if(this != &toBeCopied)
+  {
+    //Freeing the existing resource
+    delete[] start;
+    delete[] end;
+    delete[] splitDim;
+    delete[] splitValue;
+    delete[] logNegError;
+    delete[] subtreeLeavesLogNegError;
+    delete[] subtreeLeaves;
+    delete[] root;
+    delete[] ratio;
+    delete[] logVolume;
+    delete[] bucketTag;
+    delete[] alphaUpper;
+    delete[] left;
+    delete[] right;
+
+    //Copy the data from source to destination
+    start = toBeCopied.start;
+    end = toBeCopied.end;
+    splitDim = toBeCopied.splitDim;
+    splitValue = toBeCopied.splitValue;
+    logNegError = toBeCopied.logNegError;
+    subtreeLeavesLogNegError = toBeCopied.subtreeLeavesLogNegError;
+    subtreeLeaves = toBeCopied.subtreeLeaves;
+    root = toBeCopied.root;
+    ratio = toBeCopied.ratio;
+    logVolume = toBeCopied.logVolume;
+    bucketTag = toBeCopied.bucketTag;
+    alphaUpper = toBeCopied.alphaUpper;
+    left = toBeCopied.left;
+    right = toBeCopied.right;
+  }
+
+  return *this;
+}
 
 // Root node initializers
 
