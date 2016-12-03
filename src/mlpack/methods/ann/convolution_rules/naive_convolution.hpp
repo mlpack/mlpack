@@ -105,10 +105,14 @@ class NaiveConvolution
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
 <<<<<<< HEAD
+<<<<<<< HEAD
         output, 1, 1);
 =======
         output, dW, dH);
 >>>>>>> Use the stride parameter inside the convolution function.
+=======
+        output, 1, 1);
+>>>>>>> Remove stride paramater from svd and fft convolution rule.
   }
 
   /*

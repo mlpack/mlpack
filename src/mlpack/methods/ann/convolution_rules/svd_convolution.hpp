@@ -55,9 +55,7 @@ class SVDConvolution
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
                           const arma::Mat<eT>& filter,
-                          arma::Mat<eT>& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1)
+                          arma::Mat<eT>& output)
   {
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
@@ -123,9 +121,7 @@ class SVDConvolution
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1)
+                          arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
@@ -156,9 +152,7 @@ class SVDConvolution
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
                           const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1)
+                          arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
     SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
@@ -188,9 +182,7 @@ class SVDConvolution
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Mat<eT>& filter,
-                          arma::Cube<eT>& output,
-                          const size_t dW = 1,
-                          const size_t dH = 1)
+                          arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);
