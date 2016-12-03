@@ -1,8 +1,8 @@
 /**
- * @file leaky_relu_layer.hpp
+ * @file leaky_relu.hpp
  * @author Dhawal Arora
  *
- * Definition and implementation of LeakyReLULayer layer first introduced
+ * Definition and implementation of LeakyReLU layer first introduced
  * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
  * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  *
@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
-#define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
+#define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
 
 #include <mlpack/core.hpp>
 
@@ -41,17 +41,17 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class LeakyReLULayer
+class LeakyReLU
 {
  public:
   /**
-   * Create the LeakyReLULayer object using the specified parameters.
+   * Create the LeakyReLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying tha parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
    * @param alpha Non zero gradient
    */
-  LeakyReLULayer(const double alpha = 0.03) : alpha(alpha)
+  LeakyReLU(const double alpha = 0.03) : alpha(alpha)
   {
      // Nothing to do here.
   }
@@ -64,7 +64,7 @@ class LeakyReLULayer
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output)
+  void Forward(const InputType&& input, OutputType&& output)
   {
     Fn(input, output);
   }
@@ -79,49 +79,11 @@ class LeakyReLULayer
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType& input,
-                const DataType& gy,
-                DataType& g)
+  void Backward(const DataType&& input, DataType&& gy, DataType&& g)
   {
     DataType derivative;
     Deriv(input, derivative);
     g = gy % derivative;
-  }
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Cube<eT>& g)
-  {
-    // Generate a cube using the backpropagated error matrix.
-    arma::Cube<eT> mappedError = arma::zeros<arma::cube>(input.n_rows,
-        input.n_cols, input.n_slices);
-
-    for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
-    {
-      for (size_t i = 0; i < gy.n_cols; i++)
-      {
-        arma::Col<eT> temp = gy.col(i).subvec(
-            j * input.n_rows * input.n_cols,
-            (j + 1) * input.n_rows * input.n_cols - 1);
-
-        mappedError.slice(s + i) = arma::Mat<eT>(temp.memptr(),
-            input.n_rows, input.n_cols);
-      }
-    }
-
-    arma::Cube<eT> derivative;
-    Deriv(input, derivative);
-    g = mappedError % derivative;
   }
 
   //! Get the input parameter.
@@ -178,20 +140,6 @@ class LeakyReLULayer
   }
 
   /**
-   * Computes the LeakyReLU function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y = x;
-    for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
-  }
-
-  /**
    * Computes the first derivative of the LeakyReLU function.
    *
    * @param x Input data.
@@ -215,10 +163,10 @@ class LeakyReLULayer
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
+    {
       y(i) = Deriv(x(i));
+    }
   }
-
-
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -232,7 +180,7 @@ class LeakyReLULayer
   //! Leakyness Parameter in the range 0 <alpha< 1
   double alpha;
 
-}; // class LeakyReLULayer
+}; // class LeakyReLU
 
 } // namespace ann
 } // namespace mlpack

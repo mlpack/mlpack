@@ -1,16 +1,16 @@
 /**
- * @file hard_tanh_layer.hpp
+ * @file hard_tanh.hpp
  * @author Dhawal Arora
  *
- * Definition and implementation of the HardTanHLayer layer.
+ * Definition and implementation of the HardTanH layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
-#define MLPACK_METHODS_ANN_LAYER_HARD_TANH_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
+#define MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
 
 #include <mlpack/core.hpp>
 
@@ -46,18 +46,18 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class HardTanHLayer
+class HardTanH
 {
  public:
   /**
-   * Create the HardTanHLayer object using the specified parameters. The range
+   * Create the HardTanH object using the specified parameters. The range
    * of the linear region can be adjusted by specifying the maxValue and
    * minValue. Default (maxValue = 1, minValue = -1).
    *
    * @param maxValue Range of the linear region maximum value.
    * @param minValue Range of the linear region minimum value.
    */
-  HardTanHLayer(const double maxValue = 1, const double minValue = -1) :
+  HardTanH(const double maxValue = 1, const double minValue = -1) :
       maxValue(maxValue), minValue(minValue)
   {
      // Nothing to do here.
@@ -71,9 +71,14 @@ class HardTanHLayer
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output)
+  void Forward(const InputType&& input, OutputType&& output)
   {
-    Fn(input, output);
+    output = input;
+    for (size_t i = 0; i < input.n_elem; i++)
+    {
+      output(i) = (output(i) > maxValue ? maxValue :
+          (output(i) < minValue ? minValue : output(i)));
+    }
   }
 
   /**
@@ -86,49 +91,18 @@ class HardTanHLayer
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType& input,
-                const DataType& gy,
-                DataType& g)
+  void Backward(const DataType&& input,
+                DataType&& gy,
+                DataType&& g)
   {
-    DataType derivative;
-    Deriv(input, derivative);
-    g = gy % derivative;
-  }
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Cube<eT>& g)
-  {
-    // Generate a cube using the backpropagated error matrix.
-    arma::Cube<eT> mappedError = arma::zeros<arma::cube>(input.n_rows,
-        input.n_cols, input.n_slices);
-
-    for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
+    g = gy;
+    for (size_t i = 0; i < input.n_elem; i++)
     {
-      for (size_t i = 0; i < gy.n_cols; i++)
+      if (input(i) < minValue || input(i) > maxValue)
       {
-        arma::Col<eT> temp = gy.col(i).subvec(
-            j * input.n_rows * input.n_cols,
-            (j + 1) * input.n_rows * input.n_cols - 1);
-
-        mappedError.slice(s + i) = arma::Mat<eT>(temp.memptr(),
-            input.n_rows, input.n_cols);
+        g(i) = 0;
       }
     }
-
-    arma::Cube<eT> derivative;
-    Deriv(input, derivative);
-    g = mappedError % derivative;
   }
 
   //! Get the input parameter.
@@ -198,20 +172,6 @@ class HardTanHLayer
   }
 
   /**
-   * Computes the HardTanH function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y = x;
-    for (size_t s = 0; s < x.n_slices; s++)
-      Fn(x.slice(s), y.slice(s));
-  }
-
-  /**
    * Computes the first derivative of the HardTanH function.
    *
    * @param x Input data.
@@ -229,7 +189,7 @@ class HardTanHLayer
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
+  void Deriv(const InputType&& x, OutputType& y)
   {
     y = x;
 
@@ -251,7 +211,7 @@ class HardTanHLayer
 
   //! Minimum value for the HardTanH function.
   double minValue;
-}; // class HardTanHLayer
+}; // class HardTanH
 
 } // namespace ann
 } // namespace mlpack

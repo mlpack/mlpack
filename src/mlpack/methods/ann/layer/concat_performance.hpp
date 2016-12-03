@@ -1,27 +1,31 @@
 /**
- * @file negative_log_likelihood.hpp
+ * @file concat_performance.hpp
  * @author Marcus Edel
  *
- * Definition of the NegativeLogLikelihood class.
+ * Definition of the ConcatPerformance class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_HPP
-#define MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_CONCAT_PERFORMANCE_HPP
+#define MLPACK_METHODS_ANN_LAYER_CONCAT_PERFORMANCE_HPP
 
 #include <mlpack/core.hpp>
+
+#include <boost/ptr_container/ptr_vector.hpp>
+
+#include "layer_types.hpp"
+#include "layer_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the negative log likelihood layer. The negative log
- * likelihood layer expectes that the input contains log-probabilities for each
- * class. The layer also expects a class index, in the range between 1 and the
- * number of classes, as target when calling the Forward function.
+ * Implementation of the concat performance class. The class works as a
+ * feed-forward fully connected network container which plugs performance layers
+ * together.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -29,16 +33,26 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
+    typename OutputLayerType = NegativeLogLikelihood<>,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class NegativeLogLikelihood
+class ConcatPerformance
 {
  public:
   /**
-   * Create the NegativeLogLikelihoodLayer object.
+   * Create the ConcatPerformance object.
+   *
+   * @param inSize The number of inputs.
+   * @param outputLayer Output layer used to evaluate the network.
    */
-  NegativeLogLikelihood() { /* Nothing to do here. */ }
+  ConcatPerformance(const size_t inSize,
+                    OutputLayerType&& outputLayer = OutputLayerType()) :
+      inSize(inSize),
+      outputLayer(std::move(outputLayer))
+  {
+    /* Nothing to do here. */
+  }
 
   /*
    * Computes the Negative log likelihood.
@@ -49,15 +63,13 @@ class NegativeLogLikelihood
   template<typename eT>
   double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
   {
+    const size_t elements = input.n_elem / inSize;
+
     double output = 0;
-
-    for (size_t i = 0; i < input.n_cols; ++i)
+    for (size_t i = 0; i < input.n_elem; i+= elements)
     {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
-
-      output -= input(currentTarget, i);
+      arma::mat subInput = input.submat(i, 0, i + elements - 1, 0);
+      output += outputLayer.Forward(std::move(subInput), std::move(target));
     }
 
     return output;
@@ -79,22 +91,25 @@ class NegativeLogLikelihood
                 const arma::Mat<eT>&& target,
                 arma::Mat<eT>&& output)
   {
-    // std::cout << "------------------------------------------------------\n";
-    // std::cout << "NegativeLogLikelihood\n";
+    const size_t elements = input.n_elem / inSize;
 
-    output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
-    for (size_t i = 0; i < input.n_cols; ++i)
+    arma::mat subInput = input.submat(0, 0, elements - 1, 0);
+    arma::mat subOutput;
+
+    outputLayer.Backward(std::move(subInput), std::move(target),
+        std::move(subOutput));
+
+    output = arma::zeros(subOutput.n_elem, inSize);
+    output.col(0) = subOutput;
+
+    for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, j++)
     {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
+      subInput = input.submat(i, 0, i + elements - 1, 0);
+      outputLayer.Backward(std::move(subInput), std::move(target),
+        std::move(subOutput));
 
-      output(currentTarget, i) = -1;
+      output.col(j) = subOutput;
     }
-
-    // std::cout << "output: \n" << output << std::endl;
-
-    // std::cout << "------------------------------------------------------\n";
   }
 
   //! Get the input parameter.
@@ -113,6 +128,12 @@ class NegativeLogLikelihood
   OutputDataType& Delta() { return delta; }
 
  private:
+  //! Locally-stored number of inputs.
+  size_t inSize;
+
+  //! Instantiated outputlayer used to evaluate the network.
+  OutputLayerType outputLayer;
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -121,7 +142,7 @@ class NegativeLogLikelihood
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class NegativeLogLikelihood
+}; // class ConcatPerformance
 
 }; // namespace ann
 }; // namespace mlpack

@@ -1,56 +1,40 @@
 /**
- * @file base_layer.hpp
+ * @file join.hpp
  * @author Marcus Edel
  *
- * Definition of the BaseLayer class, which attaches various functions to the
- * embedding layer.
+ * Definition of the Join module.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
-#define MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_JOIN_HPP
+#define MLPACK_METHODS_ANN_LAYER_JOIN_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
-#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the base layer. The base layer works as a metaclass which
- * attaches various functions to the embedding layer.
+ * Implementation of the Join module class. The Join class accumulates
+ * the output of various modules.
  *
- * A few convenience typedefs are given:
- *
- *  - SigmoidLayer
- *  - IdentityLayer
- *  - ReLULayer
- *  - TanHLayer
- *
- * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    class ActivationFunction = LogisticFunction,
+template<
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class BaseLayer
+class Join
 {
  public:
-  /**
-   * Create the BaseLayer object.
-   */
-  BaseLayer()
+  //! Create the Join object.
+  Join()
   {
     // Nothing to do here.
   }
@@ -65,7 +49,9 @@ class BaseLayer
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output)
   {
-    ActivationFunction::fn(input, output);
+    inSizeRows = input.n_rows;
+    inSizeCols = input.n_cols;
+    output = arma::vectorise(input);
   }
 
   /**
@@ -78,13 +64,11 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
+  void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
-    arma::Mat<eT> derivative;
-    ActivationFunction::deriv(input, derivative);
-    g = gy % derivative;
+    g = arma::mat(gy.memptr(), inSizeRows, inSizeCols, false, false);
   }
 
   //! Get the input parameter.
@@ -106,12 +90,19 @@ class BaseLayer
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    /* Nothing to do here */
+    ar & data::CreateNVP(inSizeRows, "inSizeRows");
+    ar & data::CreateNVP(inSizeCols, "inSizeCols");
   }
 
  private:
+  //! Locally-stored number of input rows.
+  size_t inSizeRows;
+
+  //! Locally-stored number of input cols.
+  size_t inSizeCols;
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -120,53 +111,7 @@ class BaseLayer
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class BaseLayer
-
-// Convenience typedefs.
-
-/**
- * Standard Sigmoid-Layer using the logistic activation function.
- */
-template <
-    class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SigmoidLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
-
-/**
- * Standard Identity-Layer using the identity activation function.
- */
-template <
-    class ActivationFunction = IdentityFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using IdentityLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
-
-/**
- * Standard rectified linear unit non-linearity layer.
- */
-template <
-    class ActivationFunction = RectifierFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using ReLULayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
-
-/**
- * Standard hyperbolic tangent layer.
- */
-template <
-    class ActivationFunction = TanhFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using TanHLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+}; // class Join
 
 } // namespace ann
 } // namespace mlpack
