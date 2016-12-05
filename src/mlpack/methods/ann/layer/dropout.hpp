@@ -65,7 +65,7 @@ class Dropout
   Dropout(const double ratio = 0.5, const bool rescale = true);
 =======
   Dropout(const double ratio = 0.5,
-               const bool rescale = true) :
+          const bool rescale = true) :
       ratio(ratio),
       scale(1.0 / (1.0 - ratio)),
       rescale(rescale)

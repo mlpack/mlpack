@@ -90,9 +90,6 @@ class NegativeLogLikelihood
 =======
                 arma::Mat<eT>&& output)
   {
-    // std::cout << "------------------------------------------------------\n";
-    // std::cout << "NegativeLogLikelihood\n";
-
     output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
     for (size_t i = 0; i < input.n_cols; ++i)
     {
@@ -102,10 +99,6 @@ class NegativeLogLikelihood
 
       output(currentTarget, i) = -1;
     }
-
-    // std::cout << "output: \n" << output << std::endl;
-
-    // std::cout << "------------------------------------------------------\n";
   }
 >>>>>>> Refactor ann layer.
 
