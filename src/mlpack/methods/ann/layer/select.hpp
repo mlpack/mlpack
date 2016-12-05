@@ -36,7 +36,7 @@ class Select
    * Create the Select object.
    *
    * @param index The column which should be extracted from the given input.
-   * @param index The number of elements that should be used.
+   * @param elements The number of elements that should be used.
    */
   Select(const size_t index, const size_t elements = 0) :
       index(index),
