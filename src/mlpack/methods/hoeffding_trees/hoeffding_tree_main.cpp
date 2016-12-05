@@ -283,7 +283,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
         100.0 << ")." << endl;
   }
 
-  // Get the number of nods in the tree.
+  // Get the number of nodes in the tree.
   std::queue<TreeType*> queue;
   queue.push(tree);
   size_t nodes = 0;
