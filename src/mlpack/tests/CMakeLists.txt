@@ -81,6 +81,7 @@ add_executable(mlpack_test
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
+  sparse_sort_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
   svd_batch_test.cpp
