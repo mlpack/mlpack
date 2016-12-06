@@ -170,6 +170,8 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const DTree& toBeCopied) :
     start(toBeCopied.start),
     end(toBeCopied.end),
+    maxVals(toBeCopied.maxVals),
+    minVals(toBeCopied.minVals),
     splitDim(toBeCopied.splitDim),
     splitValue(toBeCopied.splitValue),
     logNegError(toBeCopied.logNegError),
@@ -186,9 +188,11 @@ DTree<MatType, TagType>::DTree(const DTree& toBeCopied) :
 
 //Move constructor
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const DTree&& toBeMoved) :
+DTree<MatType, TagType>::DTree(DTree&& toBeMoved) :
     start(toBeMoved.start),
     end(toBeMoved.end),
+    maxVals(toBeMoved.maxVals),
+    minVals(toBeMoved.minVals),
     splitDim(toBeMoved.splitDim),
     splitValue(toBeMoved.splitValue),
     logNegError(toBeMoved.logNegError),
@@ -202,20 +206,7 @@ DTree<MatType, TagType>::DTree(const DTree&& toBeMoved) :
     left(toBeMoved.left),
     right(toBeMoved.right)
 {
-  toBeMoved.start = 0;
-  toBeMoved.end = 0;
-  toBeMoved.splitDim = size_t(-1);
-  toBeMoved.splitValue = std::numeric_limits<ElemType>::max();
-  toBeMoved.logNegError = -DBL_MAX;
-  toBeMoved.subtreeLeavesLogNegError = -DBL_MAX;
-  toBeMoved.subtreeLeaves = 0;
-  toBeMoved.root = true;
-  toBeMoved.ratio = 1.0;
-  toBeMoved.logVolume = -DBL_MAX;
-  toBeMoved.bucketTag = -1;
-  toBeMoved.alphaUpper = 0.0;
-  toBeMoved.left = NULL;
-  toBeMoved.right = NULL;
+  toBeMoved = DTree();
 }
 
 //Copy Assignment operator
@@ -225,24 +216,14 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree& toBeCop
   if(this != &toBeCopied)
   {
     //Freeing the existing resource
-    delete[] start;
-    delete[] end;
-    delete[] splitDim;
-    delete[] splitValue;
-    delete[] logNegError;
-    delete[] subtreeLeavesLogNegError;
-    delete[] subtreeLeaves;
-    delete[] root;
-    delete[] ratio;
-    delete[] logVolume;
-    delete[] bucketTag;
-    delete[] alphaUpper;
     delete[] left;
     delete[] right;
 
     //Copy the data from source to destination
     start = toBeCopied.start;
     end = toBeCopied.end;
+    maxVals = toBeCopied.maxVals;
+    minVals = toBeCopied.minVals;
     splitDim = toBeCopied.splitDim;
     splitValue = toBeCopied.splitValue;
     logNegError = toBeCopied.logNegError;
