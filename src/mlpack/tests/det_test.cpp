@@ -447,6 +447,78 @@ BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
   BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
 }
 
+// Test the copy constructor and the copy operator.
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::Mat<float> testData(3, 5);
+
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+
+   DTree<arma::Mat<float>> tree(testData);
+
+  // Copy the genarated DTree
+  DTree<arma::Mat<float>> tree2(tree);
+  DTree<arma::Mat<float>> tree3 = tree;
+
+  double max0, max1, max2, min0, min1, min2;
+
+  // Computing the max and min vals
+  max0 = tree.maxVals[0];
+  max1 = tree.maxVals[1];
+  max2 = tree.maxVals[2];
+  min0 = tree.minVals[0];
+  min1 = tree.minVals[1];
+  min2 = tree.minVals[2];
+
+  // Comparing with the DTree constructed using copy constructor
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], max0);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], max1);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], max2);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[0], min0);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[1], min1);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[2], min2);
+
+  // Comparing with the DTree constructed using copy operator
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[0], max0);
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[1], max1);
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[2], max2);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[0], min0);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[1], min1);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[2], min2);
+}
+
+// Test the move operator.
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::Mat<float> testData(3, 5);
+
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+
+  DTree<arma::Mat<float>> tree(testData);
+
+  double max0, max1, max2, min0, min1, min2, logNegError;
+
+  // Computing the max and min val and the logNegError that has been calculated
+  max0 = tree.maxVals[0];
+  max1 = tree.maxVals[1];
+  max2 = tree.maxVals[2];
+  min0 = tree.minVals[0];
+  min1 = tree.minVals[1];
+  min2 = tree.minVals[2]; 
+  logNegError = tree.logNegError;
+
+  DTree<arma::Mat<float>> tree2 = std::move(tree); 
+
+  BOOST_REQUIRE_EQUAL(tree2.logNegError, logNegError);
+
+  // Checking for the default values in tree after move is performed
+  BOOST_REQUIRE_EQUAL(tree.logNegError, -DBL_MAX);
+}
+
 /**
  * These are not yet implemented.
  *

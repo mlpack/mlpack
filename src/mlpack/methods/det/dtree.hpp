@@ -107,7 +107,7 @@ class DTree
    * @param data Dataset to build tree on.
    */
   DTree(MatType& data);
-  
+
   /**
    * Create a child node of a density estimation tree given the bounding box
    * specified by maxVals and minVals, using the size given in start and end and
