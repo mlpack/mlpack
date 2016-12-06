@@ -63,7 +63,7 @@ PARAM_MODEL_IN(HoeffdingTreeModel, "input_model", "Input trained Hoeffding tree"
 PARAM_MODEL_OUT(HoeffdingTreeModel, "output_model", "Output for trained "
     "Hoeffding tree model.", "M");
 
-PARAM_STRING_IN("test_file", "File containing testing dataset.", "T", "");
+PARAM_MATRIX_AND_INFO_IN("test", "Testing dataset (may be categorical).", "T");
 PARAM_UMATRIX_IN("test_labels", "Labels of test data.", "L");
 PARAM_UMATRIX_OUT("predictions", "Matrix to output label predictions for test "
     "data into.", "p");
@@ -96,9 +96,8 @@ int main(int argc, char** argv)
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((CLI::HasParam("predictions") ||
-       CLI::HasParam("probabilities")) &&
-       !CLI::HasParam("test_file"))
+  if ((CLI::HasParam("predictions") || CLI::HasParam("probabilities")) &&
+       !CLI::HasParam("test"))
     Log::Fatal << "--test_file must be specified if --predictions_file or "
         << "--probabilities_file is specified." << endl;
 
@@ -117,10 +116,8 @@ int main(int argc, char** argv)
     Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
         << endl;
 
-  if (CLI::HasParam("test_file") &&
-      !CLI::HasParam("predictions") &&
-      !CLI::HasParam("probabilities") &&
-      !CLI::HasParam("test_labels"))
+  if (CLI::HasParam("test") && !CLI::HasParam("predictions") &&
+      !CLI::HasParam("probabilities") && !CLI::HasParam("test_labels"))
     Log::Warn << "--test_file (-T) is specified, but none of "
         << "--predictions_file (-p), --probabilities_file (-P), or "
         << "--test_labels_file (-L) are specified, so no output will be given!"
@@ -239,10 +236,12 @@ int main(int argc, char** argv)
   Log::Info << model.NumNodes() << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    arma::mat testSet;
-    data::Load(CLI::GetParam<string>("test_file"), testSet, datasetInfo, true);
+    // Before loading, pre-set the dataset info by getting the raw parameter
+    // (that doesn't call data::Load()).
+    std::get<0>(CLI::GetRawParam<TupleType>("test")) = datasetInfo;
+    arma::mat testSet = std::get<1>(CLI::GetParam<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
