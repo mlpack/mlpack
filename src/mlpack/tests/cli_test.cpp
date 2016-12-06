@@ -912,6 +912,105 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
 
   remove("test.arff");
+
+  CLI::Destroy();
+}
+
+/**
+ * Test that we can access a parameter before we load it.
+ */
+BOOST_AUTO_TEST_CASE(RawIntegralParameter)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true);
+
+  const char* argv[1];
+  argv[0] = "./test";
+  int argc = 1;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Set the double.
+  CLI::GetRawParam<double>("double") = 3.0;
+
+  // Now when we get it, it should be what we just set it to.
+  BOOST_REQUIRE_CLOSE(CLI::GetParam<double>("double"), 3.0, 1e-5);
+
+  CLI::Destroy();
+}
+
+/**
+ * Test that we can load a dataset with a pre-set mapping through
+ * CLI::GetRawParam().
+ */
+BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
+{
+  AddRequiredCLIOptions();
+
+  // Create the ARFF that we will read.
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one STRING" << endl;
+  f << "@attribute two REAL" << endl;
+  f << endl;
+  f << "@attribute three STRING" << endl;
+  f << endl;
+  f << "\% a comment line " << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "hello, 1, moo" << endl;
+  f << "cheese, 2.34, goodbye" << endl;
+  f << "seven, 1.03e+5, moo" << endl;
+  f << "hello, -1.3, goodbye" << endl;
+  f.close();
+
+  CLI::Add<tuple<DatasetInfo, arma::mat>>(tuple<DatasetInfo, arma::mat>(),
+      "tuple", "Test tuple", 't', false, true);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--tuple_file";
+  argv[2] = "test.arff";
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Create a pre-filled DatasetInfo object.
+  DatasetInfo info(3);
+  info.Type(0) = Datatype::categorical;
+  info.Type(2) = Datatype::categorical;
+  info.MapString("seven", 0); // This will have mapped value 0.
+  info.MapString("cheese", 0); // This will have mapped value 1.
+  info.MapString("hello", 0); // This will have mapped value 2.
+  info.MapString("goodbye", 2); // This will have mapped value 0.
+  info.MapString("moo", 2); // This will have mapped value 1.
+
+  // Now set the dataset info.
+  std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;
+
+  // Now load the dataset.
+  arma::mat dataset =
+      std::get<1>(CLI::GetParam<tuple<DatasetInfo, arma::mat>>("tuple"));
+
+  // Check the values.
+  BOOST_REQUIRE_CLOSE(dataset(0, 0), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 1), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(2, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(0, 2), 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e+5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 3), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(2, 3), 1e-5);
+
+  remove("test.arff");
+  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

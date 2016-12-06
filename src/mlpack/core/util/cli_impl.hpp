@@ -227,6 +227,35 @@ typename util::ParameterType<T>::type& CLI::GetUnmappedParam(
 }
 
 template<typename T>
+T& CLI::GetRawParam(const std::string& identifier)
+{
+  // Only use the alias if the parameter does not exist as given.
+  std::string key =
+      (GetSingleton().parameters.count(identifier) == 0 &&
+       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
+      ? GetSingleton().aliases[identifier[0]] : identifier;
+
+  if (GetSingleton().parameters.count(key) == 0)
+    Log::Fatal << "Parameter --" << key << " does not exist in this program!"
+        << std::endl;
+
+  util::ParamData& d = GetSingleton().parameters[key];
+
+  // Make sure the types are correct.
+  if (TYPENAME(T) != d.tname)
+    Log::Fatal << "Attempted to access parameter --" << key << " as type "
+        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+        << std::endl;
+
+  // We already know that required options have been passed, so we have a valid
+  // value to return.  Because the parameters held are sometimes different types
+  // than what the user wants, we must pass through a utility function.
+  typename util::ParameterType<T>::type& v =
+      *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
+  return util::HandleRawParameter<T>(v, d);
+}
+
+template<typename T>
 void CLI::AddOption(
     const char* optId,
     const char* descr,

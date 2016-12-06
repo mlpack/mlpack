@@ -213,7 +213,7 @@ class CLI
 
   /**
    * Get the unmapped (i.e. what the user specifies on the command-line) value
-   * of type ParameterType<T>::value found while parsing.  You cans et the value
+   * of type ParameterType<T>::value found while parsing.  You can set the value
    * using this reference safely.  You should not need to use this function
    * unless you are doing something tricky (like getting the filename a user
    * specified for a matrix parameter or something).
@@ -223,6 +223,18 @@ class CLI
   template<typename T>
   static typename util::ParameterType<T>::type& GetUnmappedParam(
       const std::string& identifier);
+
+  /**
+   * Get the raw value of the parameter before the processing that GetParam()
+   * would normally do.  Note that this does not perform any data loading or
+   * manipulation like GetParam() does.  So if you want to access a matrix or
+   * model (or similar) parameter before it is loaded, this is the method to
+   * use.
+   *
+   * @param identifier The name of the parameter in question.
+   */
+  template<typename T>
+  static T& GetRawParam(const std::string& identifier);
 
   /**
    * Retrieve the singleton.

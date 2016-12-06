@@ -203,6 +203,50 @@ T& HandleParameter(
     util::ParamData& d,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
+//! This will just return the value.
+template<typename T>
+T& HandleRawParameter(
+    typename util::ParameterType<T>::type& value,
+    util::ParamData& /* d */,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+{
+  return value;
+}
+
+//! This will return the mapped value.
+template<typename T>
+T& HandleRawParameter(
+    typename util::ParameterType<T>::type& /* value */,
+    util::ParamData& d,
+    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+{
+  return *boost::any_cast<T>(&d.mappedValue);
+}
+
+//! This will return the mapped value.
+template<typename T>
+T& HandleRawParameter(
+    typename util::ParameterType<T>::type& /* value */,
+    util::ParamData& d,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+{
+  return *boost::any_cast<T>(&d.mappedValue);
+}
+
+//! This will return the mapped value.
+template<typename T>
+T& HandleRawParameter(
+    typename util::ParameterType<T>::type& /* value */,
+    util::ParamData& d,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+{
+  return *boost::any_cast<T>(&d.mappedValue);
+}
+
 } // namespace util
 } // namespace mlpack
 
