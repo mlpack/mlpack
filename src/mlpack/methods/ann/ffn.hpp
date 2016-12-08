@@ -14,10 +14,10 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/network_util.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer_visitor.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 
 namespace mlpack {
@@ -26,25 +26,20 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of a standard feed forward network.
  *
- * @tparam LayerTypes Contains all layer modules used to construct the network.
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
- * @tparam PerformanceFunction Performance strategy used to calculate the error.
  */
-template <
-  typename LayerTypes,
-  typename OutputLayerType,
-  typename InitializationRuleType = NguyenWidrowInitialization,
-  class PerformanceFunction = CrossEntropyErrorFunction<>
+
+// NguyenWidrowInitialization
+template<
+  typename OutputLayerType = NegativeLogLikelihood<>,
+  typename InitializationRuleType = RandomInitialization
 >
 class FFN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<LayerTypes,
-                          OutputLayerType,
-                          InitializationRuleType,
-                          PerformanceFunction>;
+  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
@@ -52,100 +47,32 @@ class FFN
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
-   * @param network Network modules used to construct the network.
    * @param outputLayer Output layer used to evaluate the network.
-   * @param predictors Input training variables.
-   * @param responses Outputs resulting from input training variables.
-   * @param optimizer Instantiated optimizer used to train the model.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
-   * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to calculate the error.
    */
-  template<typename LayerType,
-           typename OutputType,
-           template<typename> class OptimizerType>
-  FFN(LayerType &&network,
-      OutputType &&outputLayer,
-      const arma::mat& predictors,
-      const arma::mat& responses,
-      OptimizerType<NetworkType>& optimizer,
-      InitializationRuleType initializeRule = InitializationRuleType(),
-      PerformanceFunction performanceFunction = PerformanceFunction());
+  FFN(OutputLayerType&& outputLayer = OutputLayerType(),
+      InitializationRuleType initializeRule = InitializationRuleType());
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network). Optionally, specify which
-   * initialize rule and performance function should be used.
+   * the set that is used to train the network) and the given optimizer.
+   * Optionally, specify which initialize rule and performance function should
+   * be used.
    *
-   * @param network Network modules used to construct the network.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param predictors Input training variables.
-   * @param responses Outputs resulting from input training variables.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to calculate the error.
-   */
-  template<typename LayerType, typename OutputType>
-  FFN(LayerType &&network,
-      OutputType &&outputLayer,
-      const arma::mat& predictors,
-      const arma::mat& responses,
-      InitializationRuleType initializeRule = InitializationRuleType(),
-      PerformanceFunction performanceFunction = PerformanceFunction());
-
-  /**
-   * Create the FNN object with an empty predictors and responses set and
-   * default optimizer. Make sure to call Train(predictors, responses) when
-   * training.
-   *
-   * @param network Network modules used to construct the network.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   * @param performanceFunction Optional instantiated PerformanceFunction
-   *        object used to calculate the error.
-   */
-  template<typename LayerType, typename OutputType>
-  FFN(LayerType &&network,
-      OutputType &&outputLayer,
-      InitializationRuleType initializeRule = InitializationRuleType(),
-      PerformanceFunction performanceFunction = PerformanceFunction());
-
-  /**
-   * Train the feedforward network on the given input data. By default, the
-   * RMSprop optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
-   *
-   * This will use the existing model parameters as a starting point for the
-   * optimization. If this is not what you want, then you should access the
-   * parameters vector directly with Parameters() and modify it as desired.
-   *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param outputLayer Output layer used to evaluate the network.
+   * @param initializeRule Optional instantiated InitializationRule object
+   *        for initializing the network parameter.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::RMSprop
-  >
-  void Train(const arma::mat& predictors, const arma::mat& responses);
+  FFN(const arma::mat& predictors,
+      const arma::mat& responses,
+      OutputLayerType&& outputLayer = OutputLayerType(),
+      InitializationRuleType initializeRule = InitializationRuleType());
 
-  /**
-   * Train the feedforward network with the given instantiated optimizer.
-   * Using this overload allows configuring the instantiated optimizer before
-   * training is performed.
-   *
-   * This will use the existing model parameters as a starting point for the
-   * optimization. If this is not what you want, then you should access the
-   * parameters vector directly with Parameters() and modify it as desired.
-   *
-   * @param optimizer Instantiated optimizer used to train the model.
-   */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::RMSprop
-  >
-  void Train(OptimizerType<NetworkType>& optimizer);
+  //! Destructor to release allocated memory.
+  ~FFN();
 
   /**
    * Train the feedforward network on the given input data using the given
@@ -170,7 +97,7 @@ class FFN
   /**
    * Predict the responses to a given set of predictors. The responses will
    * reflect the output of the given output layer as returned by the
-   * OutputClass() function.
+   * output layer function.
    *
    * @param predictors Input predictors.
    * @param responses Matrix to put output predictions of responses into.
@@ -184,7 +111,7 @@ class FFN
    * @param parameters Matrix model parameters.
    * @param i Index of point to use for objective function evaluation.
    * @param deterministic Whether or not to train or test the model. Note some
-   * layer act differently in training or testing mode.
+   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
@@ -203,6 +130,21 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
+  /*
+   * Add a new module to the model.
+   *
+   * @param args The layer parameter.
+   */
+  template <class LayerType, class... Args>
+  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(LayerTypes layer) { network.push_back(layer); }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
@@ -216,214 +158,61 @@ class FFN
   void Serialize(Archive& ar, const unsigned int /* version */);
 
 private:
+  // Helper functions.
   /**
-   * Reset the network by zeroing the layer activations and by setting the
-   * layer status.
+   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
+   * forward probabilities for each module.
    *
-   * enable_if (SFINAE) is used to iterate through the network. The general
-   * case peels off the first type and recurses, as usual with
-   * variadic function templates.
+   * @param input Data sequence to compute probabilities for.
    */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ResetParameter(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
-
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ResetParameter(std::tuple<Tp...>& network)
-  {
-    ResetDeterministic(std::get<I>(network));
-    ResetParameter<I + 1, Tp...>(network);
-  }
+  void Forward(arma::mat&& input);
 
   /**
-   * Reset the layer status by setting the current deterministic parameter
-   * through all layer that implement the Deterministic function.
+   * The Backward algorithm (part of the Forward-Backward algorithm). Computes
+   * backward pass for module.
    */
-  template<typename T>
-  typename std::enable_if<
-      HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
-  ResetDeterministic(T& layer)
-  {
-    layer.Deterministic() = deterministic;
-  }
-
-  template<typename T>
-  typename std::enable_if<
-      !HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
-  ResetDeterministic(T& /* unused */) { /* Nothing to do here */ }
-
-  /**
-   * Run a single iteration of the feed forward algorithm, using the given
-   * input and target vector, store the calculated error into the error
-   * vector.
-   */
-  template<size_t I = 0, typename DataType, typename... Tp>
-  void Forward(const DataType& input, std::tuple<Tp...>& network)
-  {
-    std::get<I>(network).InputParameter() = input;
-
-    std::get<I>(network).Forward(std::get<I>(network).InputParameter(),
-        std::get<I>(network).OutputParameter());
-
-    ForwardTail<I + 1, Tp...>(network);
-  }
-
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ForwardTail(std::tuple<Tp...>& network)
-  {
-    LinkParameter(network);
-  }
-
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ForwardTail(std::tuple<Tp...>& network)
-  {
-    std::get<I>(network).Forward(std::get<I - 1>(network).OutputParameter(),
-                           std::get<I>(network).OutputParameter());
-
-    ForwardTail<I + 1, Tp...>(network);
-  }
-
-  /**
-   * Link the calculated activation with the connection layer.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LinkParameter(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */ }
-
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  LinkParameter(std::tuple<Tp...>& network)
-  {
-    if (!LayerTraits<typename std::remove_reference<
-        decltype(std::get<I>(network))>::type>::IsBiasLayer)
-    {
-      std::get<I>(network).InputParameter() = std::get<I - 1>(
-          network).OutputParameter();
-    }
-
-    LinkParameter<I + 1, Tp...>(network);
-  }
-
-  /*
-   * Calculate the output error and update the overall error.
-   */
-  template<typename DataType, typename ErrorType, typename... Tp>
-  double OutputError(const DataType& target,
-                     ErrorType& error,
-                     const std::tuple<Tp...>& network)
-  {
-    // Calculate and store the output error.
-    outputLayer.CalculateError(
-        std::get<sizeof...(Tp) - 1>(network).OutputParameter(), target, error);
-
-    // Measures the network's performance with the specified performance
-    // function.
-    return performanceFunc.Error(network, target, error);
-  }
-
-  /**
-   * Run a single iteration of the feed backward algorithm, using the given
-   * error of the output layer. Note that we iterate backward through the
-   * layer modules.
-   */
-  template<size_t I = 1, typename DataType, typename... Tp>
-  typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
-  Backward(const DataType& error, std::tuple<Tp ...>& network)
-  {
-    std::get<sizeof...(Tp) - I>(network).Backward(
-        std::get<sizeof...(Tp) - I>(network).OutputParameter(), error,
-        std::get<sizeof...(Tp) - I>(network).Delta());
-
-    BackwardTail<I + 1, DataType, Tp...>(error, network);
-  }
-
-  template<size_t I = 1, typename DataType, typename... Tp>
-  typename std::enable_if<I == (sizeof...(Tp)), void>::type
-  BackwardTail(const DataType& /* unused */,
-               std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
-
-  template<size_t I = 1, typename DataType, typename... Tp>
-  typename std::enable_if<I < (sizeof...(Tp)), void>::type
-  BackwardTail(const DataType& error, std::tuple<Tp...>& network)
-  {
-    std::get<sizeof...(Tp) - I>(network).Backward(
-        std::get<sizeof...(Tp) - I>(network).OutputParameter(),
-        std::get<sizeof...(Tp) - I + 1>(network).Delta(),
-        std::get<sizeof...(Tp) - I>(network).Delta());
-
-    BackwardTail<I + 1, DataType, Tp...>(error, network);
-  }
+  void Backward();
 
   /**
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  template<
-      size_t I = 0,
-      size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp
-  >
-  typename std::enable_if<I == Max, void>::type
-  UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
+  void Gradient();
 
-  template<
-      size_t I = 0,
-      size_t Max = std::tuple_size<LayerTypes>::value - 1,
-      typename... Tp
-  >
-  typename std::enable_if<I < Max, void>::type
-  UpdateGradients(std::tuple<Tp...>& network)
-  {
-    Update(std::get<I>(network), std::get<I>(network).OutputParameter(),
-           std::get<I + 1>(network).Delta());
-
-    UpdateGradients<I + 1, Max, Tp...>(network);
-  }
-
-  template<typename T, typename P, typename D>
-  typename std::enable_if<
-      HasGradientCheck<T, P&(T::*)()>::value, void>::type
-  Update(T& layer, P& /* unused */, D& delta)
-  {
-    layer.Gradient(layer.InputParameter(), delta, layer.Gradient());
-  }
-
-  template<typename T, typename P, typename D>
-  typename std::enable_if<
-      !HasGradientCheck<T, P&(T::*)()>::value, void>::type
-  Update(T& /* unused */, P& /* unused */, D& /* unused */)
-  {
-    /* Nothing to do here */
-  }
-
-  /*
-   * Calculate and store the output activation.
+  /**
+   * Reset the module infomration (weights/parameters).
    */
-  template<typename DataType, typename... Tp>
-  void OutputPrediction(DataType& output, std::tuple<Tp...>& network)
-  {
-    // Calculate and store the output prediction.
-    outputLayer.OutputClass(std::get<sizeof...(Tp) - 1>(
-        network).OutputParameter(), output);
-  }
+  void ResetParameters();
 
-  //! Instantiated feedforward network.
-  LayerTypes network;
+  /**
+   * Reset the module status by setting the current deterministic parameter
+   * for all modules that implement the Deterministic function.
+   */
+  void ResetDeterministic();
 
-  //! The output layer used to evaluate the network
+  /**
+   * Reset the gradient for all modules that implement the Gradient function.
+   */
+  void ResetGradients(arma::mat& gradient);
+
+  //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
 
-  //! Performance strategy used to calculate the error.
-  PerformanceFunction performanceFunc;
+  //! Instantiated InitializationRule object for initializing the network
+  //! parameter.
+  InitializationRuleType initializeRule;
 
-  //! The current evaluation mode (training or testing).
-  bool deterministic;
+  //! The input width.
+  size_t width;
 
-  //! Matrix of (trained) parameters.
-  arma::mat parameter;
+  //! The input height.
+  size_t height;
+
+  //! Indicator if we already trained the model.
+  bool reset;
+
+  //! Locally-stored model modules.
+  std::vector<LayerTypes> network;
 
   //! The matrix of data points (predictors).
   arma::mat predictors;
@@ -431,11 +220,56 @@ private:
   //! The matrix of responses to the input data points.
   arma::mat responses;
 
+  //! Matrix of (trained) parameters.
+  arma::mat parameter;
+
   //! The number of separable functions (the number of predictor points).
   size_t numFunctions;
 
-  //! Locally stored backward error.
+  //! The current error for the backward pass.
   arma::mat error;
+
+  //! THe current input of the forward/backward pass.
+  arma::mat currentInput;
+
+  //! THe current target of the forward/backward pass.
+  arma::mat currentTarget;
+
+  //! Locally-stored delta visitor.
+  DeltaVisitor deltaVisitor;
+
+  //! Locally-stored output parameter visitor.
+  OutputParameterVisitor outputParameterVisitor;
+
+  //! Locally-stored weight size visitor.
+  WeightSizeVisitor weightSizeVisitor;
+
+  //! Locally-stored output width visitor.
+  OutputWidthVisitor outputWidthVisitor;
+
+  //! Locally-stored output height visitor.
+  OutputHeightVisitor outputHeightVisitor;
+
+  //! Locally-stored reset visitor.
+  ResetVisitor resetVisitor;
+
+  //! Locally-stored delete visitor.
+  DeleteVisitor deleteVisitor;
+
+  //! The current evaluation mode (training or testing).
+  bool deterministic;
+
+  //! Locally-stored delta object.
+  arma::mat delta;
+
+  //! Locally-stored input parameter object.
+  arma::mat inputParameter;
+
+  //! Locally-stored output parameter object.
+  arma::mat outputParameter;
+
+  //! Locally-stored gradient parameter.
+  arma::mat gradient;
 }; // class FFN
 
 } // namespace ann
