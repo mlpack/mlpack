@@ -19,154 +19,90 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-template<typename LayerType,
-         typename OutputType,
-         template<typename> class OptimizerType
->
-RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::RNN(LayerType &&network,
-       OutputType &&outputLayer,
-       const arma::mat& predictors,
+template<typename OutputLayerType, typename InitializationRuleType>
+RNN<OutputLayerType,
+    InitializationRuleType
+>::RNN(const size_t rho,
+       const bool single,
+       OutputLayerType outputLayer,
+       InitializationRuleType initializeRule) :
+    rho(rho),
+    outputLayer(outputLayer),
+    initializeRule(initializeRule),
+    inputSize(0),
+    outputSize(0),
+    targetSize(0),
+    reset(false),
+    single(single)
+{
+  /* Nothing to do here */
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+RNN<OutputLayerType,
+    InitializationRuleType
+>::RNN(const arma::mat& predictors,
        const arma::mat& responses,
-       OptimizerType<NetworkType>& optimizer,
-       InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) :
-    network(std::forward<LayerType>(network)),
-    outputLayer(std::forward<OutputType>(outputLayer)),
-    performanceFunc(std::move(performanceFunction)),
-    predictors(predictors),
-    responses(responses),
-    numFunctions(predictors.n_cols),
+       const size_t rho,
+       const bool single,
+       OutputLayerType outputLayer,
+       InitializationRuleType initializeRule) :
+    rho(rho),
+    outputLayer(outputLayer),
+    initializeRule(initializeRule),
     inputSize(0),
-    outputSize(0)
+    outputSize(0),
+    targetSize(0),
+    reset(false),
+    single(single)
 {
-  static_assert(std::is_same<typename std::decay<LayerType>::type,
-                  LayerTypes>::value,
-                  "The type of network must be LayerTypes.");
+  numFunctions = responses.n_cols;
 
-  static_assert(std::is_same<typename std::decay<OutputType>::type,
-                OutputLayerType>::value,
-                "The type of outputLayer must be OutputLayerType.");
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
 
-  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
-  NetworkWeights(parameter, this->network);
+  this->deterministic = true;
+  ResetDeterministic();
 
-  // Train the model.
-  Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
-  Timer::Stop("rnn_optimization");
-
-  Log::Info << "RNN::RNN(): final objective of trained model is " << out
-      << "." << std::endl;
+  if (!reset)
+  {
+    ResetParameters();
+    reset = true;
+  }
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-template<typename LayerType, typename OutputType>
-RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::RNN(LayerType &&network,
-       OutputType &&outputLayer,
-       const arma::mat& predictors,
-       const arma::mat& responses,
-       InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) :
-    network(std::forward<LayerType>(network)),
-    outputLayer(std::forward<OutputType>(outputLayer)),
-    performanceFunc(std::move(performanceFunction)),
-    inputSize(0),
-    outputSize(0)
+template<typename OutputLayerType, typename InitializationRuleType>
+RNN<OutputLayerType,
+     InitializationRuleType
+>::~RNN()
 {
-  static_assert(std::is_same<typename std::decay<LayerType>::type,
-                  LayerTypes>::value,
-                  "The type of network must be LayerTypes.");
-
-  static_assert(std::is_same<typename std::decay<OutputType>::type,
-                OutputLayerType>::value,
-                "The type of outputLayer must be OutputLayerType.");
-
-  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
-  NetworkWeights(parameter, this->network);
-
-  Train(predictors, responses);
+  for (LayerTypes& layer : network)
+  {
+    boost::apply_visitor(deleteVisitor, layer);
+  }
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-template<typename LayerType, typename OutputType>
-RNN<LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::RNN(LayerType &&network,
-       OutputType &&outputLayer,
-       InitializationRuleType initializeRule,
-       PerformanceFunction performanceFunction) :
-    network(std::forward<LayerType>(network)),
-    outputLayer(std::forward<OutputType>(outputLayer)),
-    performanceFunc(std::move(performanceFunction)),
-    inputSize(0),
-    outputSize(0)
-{
-  static_assert(std::is_same<typename std::decay<LayerType>::type,
-                  LayerTypes>::value,
-                  "The type of network must be LayerTypes.");
-
-  static_assert(std::is_same<typename std::decay<OutputType>::type,
-                OutputLayerType>::value,
-                "The type of outputLayer must be OutputLayerType.");
-
-  initializeRule.Initialize(parameter, NetworkSize(this->network), 1);
-  NetworkWeights(parameter, this->network);
-}
-
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
+template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename> class OptimizerType>
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::Train(const arma::mat& predictors, const arma::mat& responses)
-{
-  numFunctions = predictors.n_cols;
-  this->predictors = predictors;
-  this->responses = responses;
-
-  OptimizerType<decltype(*this)> optimizer(*this);
-
-  // Train the model.
-  Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
-  Timer::Stop("rnn_optimization");
-
-  Log::Info << "RNN::RNN(): final objective of trained model is " << out
-      << "." << std::endl;
-}
-
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-template<template<typename> class OptimizerType>
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
+void RNN<OutputLayerType,
+         InitializationRuleType
 >::Train(const arma::mat& predictors,
          const arma::mat& responses,
          OptimizerType<NetworkType>& optimizer)
 {
-  numFunctions = predictors.n_cols;
-  this->predictors = predictors;
-  this->responses = responses;
+  numFunctions = responses.n_cols;
+
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+
+  this->deterministic = true;
+  ResetDeterministic();
+
+  if (!reset)
+  {
+    ResetParameters();
+    reset = true;
+  }
 
   // Train the model.
   Timer::Start("rnn_optimization");
@@ -177,117 +113,128 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
       << "." << std::endl;
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-template<
-    template<typename> class OptimizerType
->
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::Train(OptimizerType<NetworkType>& optimizer)
-{
-  // Train the model.
-  Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
-  Timer::Stop("rnn_optimization");
-
-  Log::Info << "RNN::RNN(): final objective of trained model is " << out
-      << "." << std::endl;
-}
-
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
 >::Predict(arma::mat& predictors, arma::mat& responses)
 {
-  arma::mat responsesTemp;
-  SinglePredict(arma::mat(predictors.colptr(0), predictors.n_rows,
-      1, false, true), responsesTemp);
-
-  responses = arma::mat(responsesTemp.n_elem, predictors.n_cols);
-  responses.col(0) = responsesTemp.col(0);
-
-  for (size_t i = 1; i < predictors.n_cols; i++)
+  if (parameter.is_empty())
   {
-    SinglePredict(arma::mat(predictors.colptr(i), predictors.n_rows,
-      1, false, true), responsesTemp);
-    responses.col(i) = responsesTemp.col(0);
+    ResetParameters();
+  }
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
+  responses = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
+  arma::mat responsesTemp = responses.col(0);
+
+  for (size_t i = 0; i < predictors.n_cols; i++)
+  {
+    SinglePredict(
+        arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
+        responsesTemp);
+
+    responses.col(i) = responsesTemp;
   }
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-double RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::Evaluate(const arma::mat& /* unused */,
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::SinglePredict(const arma::mat& predictors, arma::mat& responses)
+{
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+    currentInput = predictors.rows(seqNum * inputSize,
+        (seqNum + 1) * inputSize - 1);
+    Forward(std::move(currentInput));
+
+    responses.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
+        boost::apply_visitor(outputParameterVisitor, network.back());
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+double RNN<OutputLayerType,
+         InitializationRuleType
+>::Evaluate(const arma::mat& /* parameters */,
             const size_t i,
             const bool deterministic)
 {
-  this->deterministic = deterministic;
+  if (parameter.is_empty())
+  {
+    ResetParameters();
+    reset = true;
+  }
+
+  if (deterministic != this->deterministic)
+  {
+    this->deterministic = deterministic;
+    ResetDeterministic();
+  }
 
   arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
       1, false, true);
   arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
       1, false, true);
 
-  // Initialize the activation storage only once.
-  if (activations.empty())
-    InitLayer(input, target, network);
-
-  double networkError = 0;
-  seqLen = input.n_rows / inputSize;
-  ResetParameter(network);
-
-  error = arma::mat(outputSize, outputSize < target.n_elem ? seqLen : 1);
-
-  // Iterate through the input sequence and perform the feed forward pass.
-  for (seqNum = 0; seqNum < seqLen; seqNum++)
+  if (!inputSize)
   {
-    // Perform the forward pass and save the activations.
-    Forward(input.rows(seqNum * inputSize, (seqNum + 1) * inputSize - 1),
-        network);
-    SaveActivations(network);
-
-    // Retrieve output error of the subsequence.
-    if (seqOutput)
-    {
-      arma::mat seqError = error.unsafe_col(seqNum);
-      arma::mat seqTarget = target.submat(seqNum * outputSize, 0,
-          (seqNum + 1) * outputSize - 1, 0);
-      networkError += OutputError(seqTarget, seqError, network);
-    }
+    inputSize = input.n_elem / rho;
+    targetSize = target.n_elem / rho;
   }
 
-  // Retrieve output error of the complete sequence.
-  if (!seqOutput)
-    return OutputError(target, error, network);
+  double performance = 0;
 
-  return networkError;
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+    currentInput = input.rows(seqNum * inputSize, (seqNum + 1) * inputSize - 1);
+    arma::mat currentTarget = target.rows(seqNum * targetSize,
+        (seqNum + 1) * targetSize - 1);
+
+    Forward(std::move(currentInput));
+
+    if (!deterministic)
+    {
+      for (size_t l = 0; l < network.size(); ++l)
+      {
+        boost::apply_visitor(SaveOutputParameterVisitor(
+            std::move(moduleOutputParameter)), network[l]);
+      }
+    }
+
+    performance += outputLayer.Forward(std::move(boost::apply_visitor(
+        outputParameterVisitor, network.back())), std::move(currentTarget));
+  }
+
+  if (!outputSize)
+  {
+    outputSize = boost::apply_visitor(outputParameterVisitor,
+        network.back()).n_elem;
+  }
+
+  return performance;
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
->::Gradient(const arma::mat& /* unused */,
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::Gradient(const arma::mat& parameters,
             const size_t i,
             arma::mat& gradient)
 {
   if (gradient.is_empty())
   {
+    if (parameter.is_empty())
+    {
+      ResetParameters();
+      reset = true;
+    }
+
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
   else
@@ -295,59 +242,173 @@ LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
     gradient.zeros();
   }
 
-  Evaluate(parameter, i, false);
+  Evaluate(parameters, i, false);
 
-  arma::mat currentGradient = arma::mat(gradient.n_rows, gradient.n_cols);
-  NetworkGradients(currentGradient, network);
+  arma::mat currentGradient = arma::zeros<arma::mat>(parameter.n_rows,
+      parameter.n_cols);
+  ResetGradients(currentGradient);
 
-  const arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
+  arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
+      1, false, true);
+  arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
       1, false, true);
 
-  // Iterate through the input sequence and perform the feed backward pass.
-  for (seqNum = seqLen - 1; seqNum >= 0; seqNum--)
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    // Load the network activation for the upcoming backward pass.
-    LoadActivations(input.rows(seqNum * inputSize, (seqNum + 1) *
-        inputSize - 1), network);
+    currentGradient.zeros();
 
-    // Perform the backward pass.
-    if (seqOutput)
+    arma::mat currentTarget = target.rows((rho - seqNum - 1) * targetSize,
+        (rho - seqNum) * targetSize - 1);
+    currentInput = input.rows((rho - seqNum - 1) * inputSize,
+        (rho - seqNum) * inputSize - 1);
+
+    for (size_t l = 0; l < network.size(); ++l)
     {
-      arma::mat seqError = error.unsafe_col(seqNum);
-      Backward(seqError, network);
+      boost::apply_visitor(LoadOutputParameterVisitor(
+          std::move(moduleOutputParameter)), network[network.size() - 1 - l]);
+    }
+
+    if (single && seqNum > 0)
+    {
+      error.zeros();
     }
     else
     {
-      Backward(error, network);
+      outputLayer.Backward(std::move(boost::apply_visitor(
+          outputParameterVisitor, network.back())), std::move(currentTarget),
+          std::move(error));
     }
 
-    // Link the parameters and update the gradients.
-    LinkParameter(network);
-    UpdateGradients<>(network);
-
-    // Update the overall gradient.
+    Backward();
+    Gradient();
     gradient += currentGradient;
-
-    if (seqNum == 0) break;
   }
 }
 
-template<typename LayerTypes,
-         typename OutputLayerType,
-         typename InitializationRuleType,
-         typename PerformanceFunction
->
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
+{
+  size_t weights = 0;
+  for (LayerTypes& layer : network)
+  {
+    weights += boost::apply_visitor(weightSizeVisitor, layer);
+  }
+
+  parameter.set_size(weights, 1);
+  initializeRule.Initialize(parameter, parameter.n_elem, 1);
+
+  size_t offset = 0;
+  for (LayerTypes& layer : network)
+  {
+    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
+        offset), layer);
+
+    boost::apply_visitor(resetVisitor, layer);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::ResetDeterministic()
+{
+  DeterministicSetVisitor deterministicSetVisitor(deterministic);
+  std::for_each(network.begin(), network.end(),
+      boost::apply_visitor(deterministicSetVisitor));
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::ResetGradients(arma::mat& gradient)
+{
+  size_t offset = 0;
+  for (LayerTypes& layer : network)
+  {
+    offset += boost::apply_visitor(GradientSetVisitor(std::move(gradient),
+        offset), layer);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::Forward(arma::mat&& input)
+{
+  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
+      boost::apply_visitor(outputParameterVisitor, network.front()))),
+      network.front());
+
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    boost::apply_visitor(ForwardVisitor(
+        std::move(boost::apply_visitor(outputParameterVisitor, network[i - 1])),
+        std::move(boost::apply_visitor(outputParameterVisitor, network[i]))),
+        network[i]);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::Backward()
+{
+  boost::apply_visitor(BackwardVisitor(
+        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
+        std::move(error), std::move(boost::apply_visitor(deltaVisitor,
+        network.back()))), network.back());
+
+  for (size_t i = 2; i < network.size(); ++i)
+  {
+    boost::apply_visitor(BackwardVisitor(
+        std::move(boost::apply_visitor(outputParameterVisitor,
+        network[network.size() - i])), std::move(boost::apply_visitor(
+        deltaVisitor, network[network.size() - i + 1])), std::move(
+        boost::apply_visitor(deltaVisitor, network[network.size() - i]))),
+        network[network.size() - i]);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType,
+         InitializationRuleType
+>::Gradient()
+{
+  boost::apply_visitor(GradientVisitor(std::move(currentInput), std::move(
+      boost::apply_visitor(deltaVisitor, network[1]))), network.front());
+
+  for (size_t i = 1; i < network.size() - 1; ++i)
+  {
+    boost::apply_visitor(GradientVisitor(
+        std::move(boost::apply_visitor(outputParameterVisitor, network[i - 1])),
+        std::move(boost::apply_visitor(deltaVisitor, network[i + 1]))),
+        network[i]);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 template<typename Archive>
-void RNN<
-LayerTypes, OutputLayerType, InitializationRuleType, PerformanceFunction
+void RNN<OutputLayerType, InitializationRuleType
 >::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+  ar & data::CreateNVP(rho, "rho");
+  ar & data::CreateNVP(single, "single");
+  ar & data::CreateNVP(inputSize, "inputSize");
+  ar & data::CreateNVP(outputSize, "outputSize");
+  ar & data::CreateNVP(targetSize, "targetSize");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    NetworkWeights(parameter, network);
+    reset = false;
+
+    size_t offset = 0;
+    for (LayerTypes& layer : network)
+    {
+      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
+          offset), layer);
+
+      boost::apply_visitor(resetVisitor, layer);
+    }
   }
 }
 
