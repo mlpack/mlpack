@@ -40,7 +40,16 @@ class VRClassReward
    * @param scale Parameter used to scale the reward.
    * @param sizeAverage Take the average over all batches.
    */
+<<<<<<< HEAD
   VRClassReward(const double scale = 1, const bool sizeAverage = true);
+=======
+  VRClassReward(const double scale = 1, const bool sizeAverage = true) :
+      scale(scale),
+      sizeAverage(sizeAverage)
+  {
+    // Nothing to do here.
+  }
+>>>>>>> Refactor neural visual attention modules.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -51,7 +60,39 @@ class VRClassReward
    *        between 1 and the number of classes.
    */
   template<typename eT>
+<<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
+=======
+  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
+  {
+    double output = 0;
+
+    for (size_t i = 0; i < input.n_cols - 1; ++i)
+    {
+      size_t currentTarget = target(i) - 1;
+      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+          "Target class out of range.");
+
+      output -= input(currentTarget, i);
+    }
+
+    reward = 0;
+    arma::uword index = 0;
+
+    for (size_t i = 0; i < input.n_cols - 1; i++)
+    {
+      input.unsafe_col(i).max(index);
+      reward = ((index + 1) == target(i)) * scale;
+    }
+
+    if (sizeAverage)
+    {
+      return output - reward / (input.n_cols - 1);
+    }
+
+    return output - reward;
+  }
+>>>>>>> Refactor neural visual attention modules.
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -67,7 +108,33 @@ class VRClassReward
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
+<<<<<<< HEAD
                 arma::Mat<eT>&& output);
+=======
+                arma::Mat<eT>&& output)
+  {
+    output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
+    for (size_t i = 0; i < (input.n_cols - 1); ++i)
+    {
+      size_t currentTarget = target(i) - 1;
+      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+          "Target class out of range.");
+
+      output(currentTarget, i) = -1;
+    }
+
+    double vrReward = reward - input(0, 1);
+    if (sizeAverage)
+    {
+      vrReward /= input.n_cols - 1;
+    }
+
+    const double norm = sizeAverage ? 2.0 / (input.n_cols - 1) : 2.0;
+
+    output(0, 1) = norm * (input(0, 1) - reward);
+    boost::apply_visitor(RewardSetVisitor(vrReward), network.back());
+  }
+>>>>>>> Refactor neural visual attention modules.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const {return inputParameter; }
@@ -104,12 +171,15 @@ class VRClassReward
    */
   void Add(LayerTypes layer) { network.push_back(layer); }
 
+<<<<<<< HEAD
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+=======
+>>>>>>> Refactor neural visual attention modules.
  private:
   //! Locally-stored value to scale the reward.
   const double scale;
@@ -136,10 +206,15 @@ class VRClassReward
   std::vector<LayerTypes> network;
 }; // class VRClassReward
 
+<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "vr_class_reward_impl.hpp"
+=======
+}; // namespace ann
+}; // namespace mlpack
+>>>>>>> Refactor neural visual attention modules.
 
 #endif
