@@ -99,7 +99,7 @@ public:
   void Reset()
   {
     weight = arma::cube(weights.memptr(), kW, kH,
-        outSize * inSize, false,false);
+        outSize * inSize, false, false);
     bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
   }
@@ -196,8 +196,6 @@ public:
         {
           gTemp.slice(inMap) += output;
         }
-
-
       }
     }
 
