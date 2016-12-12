@@ -12,22 +12,12 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-#include <mlpack/methods/ann/layer/leaky_relu_layer.hpp>
-#include <mlpack/methods/ann/layer/hard_tanh_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -125,7 +115,7 @@ void CheckInverseCorrect(const arma::colvec input)
 
 /*
  * Implementation of the HardTanH activation function test. The function is
- * implemented as a HardTanH Layer in hard_tanh_layer.hpp
+ * implemented as a HardTanH Layer in hard_tanh.hpp
  *
  * @param input Input data used for evaluating the HardTanH activation function.
  * @param target Target data used to evaluate the HardTanH activation.
@@ -133,11 +123,11 @@ void CheckInverseCorrect(const arma::colvec input)
 void CheckHardTanHActivationCorrect(const arma::colvec input,
                                     const arma::colvec target)
 {
-  HardTanHLayer<> htf;
+  HardTanH<> htf;
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  htf.Forward(input, activations);
+  htf.Forward(std::move(input), std::move(activations));
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -146,7 +136,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
 
 /*
  * Implementation of the HardTanH activation function derivative test. The
- * derivative is implemented as HardTanH Layer in hard_tanh_layer.hpp
+ * derivative is implemented as HardTanH Layer in hard_tanh.hpp
  *
  * @param input Input data used for evaluating the HardTanH activation function.
  * @param target Target data used to evaluate the HardTanH activation.
@@ -154,14 +144,15 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
 void CheckHardTanHDerivativeCorrect(const arma::colvec input,
                                     const arma::colvec target)
 {
-  HardTanHLayer<> htf;
+  HardTanH<> htf;
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
 
   // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error(input.n_elem);
-  htf.Backward(input, (arma::colvec)error.ones(), derivatives);
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  htf.Backward(std::move(input), std::move(error), std::move(derivatives));
+
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -170,7 +161,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 
 /*
  * Implementation of the LeakyReLU activation function test. The function is
- * implemented as LeakyReLU layer in the file leaky_relu_layer.hpp
+ * implemented as LeakyReLU layer in the file leaky_relu.hpp
  *
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
@@ -178,11 +169,11 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 void CheckLeakyReLUActivationCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
-  LeakyReLULayer<> lrf;
+  LeakyReLU<> lrf;
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  lrf.Forward(input, activations);
+  lrf.Forward(std::move(input), std::move(activations));
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -197,18 +188,17 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the LeakyReLU activation function.
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
-
 void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
-  LeakyReLULayer<> lrf;
+  LeakyReLU<> lrf;
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
 
   // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error(input.n_elem);
-  lrf.Backward(input, (arma::colvec)error.ones(), derivatives);
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  lrf.Backward(std::move(input), std::move(error), std::move(derivatives));
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
