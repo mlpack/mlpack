@@ -32,7 +32,7 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
     typename FastMKS<KernelType>::Tree tree(referenceData, metric, base);
     Timer::Stop("tree_building");
 
-    f.Train(std::move(tree));
+    f.Train(tree);
   }
 }
 

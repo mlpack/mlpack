@@ -212,7 +212,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
 {
-  train(*tree);
+  Train(*tree);
 }
 
 template<typename KernelType,
@@ -232,9 +232,9 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree& tree)
   if (treeOwner && referenceTree)
     delete referenceTree;
     
-  referenceTree = new Tree(tree);    
-  referenceSet = &tree->Dataset();
-  metric = metric::IPMetric<KernelType>(tree->Metric().Kernel());
+  this->referenceTree = new Tree(tree);    
+  this->referenceSet = &referenceTree->Dataset();
+  this->metric = metric::IPMetric<KernelType>(referenceTree->Metric().Kernel());
   setOwner = false;    
   treeOwner = true;
 }
@@ -253,14 +253,14 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree&& tree)
   if (setOwner)
     delete this->referenceSet;
 
-  if (treeOwner && referenceTree)
-    delete referenceTree;
+  if (treeOwner && this->referenceTree)
+    delete this->referenceTree;
     
   this->referenceTree = new Tree(std::move(tree));
-  this->referenceSet = &this->referenceTree->Dataset();
-  this->metric = metric::IPMetric<KernelType>(tree.Metric().Kernel());
-  this->setOwner = false;
-  this->treeOwner = true;
+  this->referenceSet = &referenceTree->Dataset();
+  this->metric = metric::IPMetric<KernelType>(referenceTree->Metric().Kernel());
+  setOwner = false;
+  treeOwner = true;
 }
 
 template<typename KernelType,
