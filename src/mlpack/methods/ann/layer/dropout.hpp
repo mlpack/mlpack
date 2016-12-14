@@ -61,14 +61,7 @@ class Dropout
    * @param ratio The probability of setting a value to zero.
    * @param rescale If true the input is rescaled when deterministic is False.
    */
-  Dropout(const double ratio = 0.5,
-          const bool rescale = true) :
-      ratio(ratio),
-      scale(1.0 / (1.0 - ratio)),
-      rescale(rescale)
-  {
-    // Nothing to do here.
-  }
+  Dropout(const double ratio = 0.5, const bool rescale = true);
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -77,30 +70,7 @@ class Dropout
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    // The dropout mask will not be multiplied in the deterministic mode
-    // (during testing).
-    if (deterministic)
-    {
-      if (!rescale)
-      {
-        output = input;
-      }
-      else
-      {
-        output = input * scale;
-      }
-    }
-    else
-    {
-      // Scale with input / (1 - ratio) and set values to zero with probability
-      // ratio.
-      mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
-      mask.transform( [&](double val) { return (val > ratio); } );
-      output = input % mask * scale;
-    }
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of the dropout layer.
@@ -112,10 +82,7 @@ class Dropout
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = gy % mask * scale;
-  }
+                arma::Mat<eT>&& g);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -156,11 +123,7 @@ class Dropout
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(ratio, "ratio");
-    ar & data::CreateNVP(rescale, "rescale");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored delta object.
@@ -190,5 +153,8 @@ class Dropout
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "dropout_impl.hpp"
 
 #endif

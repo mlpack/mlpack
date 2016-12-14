@@ -39,10 +39,7 @@ class Add
    *
    * @param outSize The number of output units.
    */
-  Add(const size_t outSize) : outSize(outSize)
-  {
-    weights.set_size(outSize, 1);
-  }
+  Add(const size_t outSize);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -52,10 +49,7 @@ class Add
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = input + weights;
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -69,10 +63,7 @@ class Add
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 const arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = gy;
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -84,10 +75,7 @@ class Add
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient)
-  {
-    gradient = error;
-  }
+                arma::Mat<eT>&& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -118,10 +106,7 @@ class Add
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of output units.
@@ -145,5 +130,8 @@ class Add
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "add_impl.hpp"
 
 #endif

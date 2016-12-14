@@ -42,12 +42,7 @@ class Lookup
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Lookup(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
-  {
-    weights.set_size(outSize, inSize);
-  }
+  Lookup(const size_t inSize, const size_t outSize);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -57,10 +52,7 @@ class Lookup
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,10 +66,7 @@ class Lookup
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 const arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = gy;
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -89,11 +78,7 @@ class Lookup
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient)
-  {
-    gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
-    gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
-  }
+                arma::Mat<eT>&& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -124,12 +109,7 @@ class Lookup
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
 
@@ -157,5 +137,8 @@ class Lookup
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "lookup_impl.hpp"
 
 #endif
