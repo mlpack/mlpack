@@ -66,13 +66,18 @@ class DTree
   /**
    * Create a copy assignment operator.
    */
-  const DTree& operator=(const DTree& obj);
+  DTree& operator=(const DTree& obj);
 
   /**
    * Create a move constructor.
    */
   DTree(DTree&& obj);
   
+  /**
+   * Create a move assignment operator.
+   */
+  DTree& operator=(DTree&& obj);
+
   /**
    * Create a density estimation tree with the given bounds and the given number
    * of total points.  Children will not be created.

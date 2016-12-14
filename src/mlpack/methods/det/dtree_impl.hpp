@@ -180,22 +180,43 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
     ratio(obj.ratio),
     logVolume(obj.logVolume),
     bucketTag(obj.bucketTag),
-    alphaUpper(obj.alphaUpper)
-{   
-    //Allocate space to pointers
+    alphaUpper(obj.alphaUpper),
+    left(obj.left),
+    right(obj.right)
+{ /* Nothing to do. */ }
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType, TagType>& obj)
+{
+    if (this != &obj){
+
+    //Copying the values from obj 
+    start = obj.start;
+    end = obj.end;
+    maxVals = obj.maxVals;
+    minVals = obj.minVals;
+    splitDim = obj.splitDim;
+    splitValue = obj.splitValue;
+    logNegError = obj.logNegError;
+    subtreeLeavesLogNegError = obj.subtreeLeavesLogNegError;
+    subtreeLeaves = obj.subtreeLeaves;
+    root = obj.root;
+    ratio = obj.ratio;
+    logVolume = obj.logVolume;
+    bucketTag = obj.bucketTag;
+    alphaUpper = obj.alphaUpper;
+
+    //Free the space allocated
+    delete left;
+    delete right;
+
+    //Allocate space
     left = new DTree;
     right = new DTree;
 
-    // Copy the children 
-    *left = *obj.left;
-    *right = *obj.right;
-}
-
-template <typename MatType, typename TagType>
-const DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType, TagType>& obj)
-{
-    if (this != &obj){
-      DTree(obj);
+    //Copying the children 
+    left = obj.left;
+    right = obj.right;
     }
 
     return *this;
@@ -216,21 +237,15 @@ DTree<MatType, TagType>::DTree(DTree&& obj) :
     ratio(obj.ratio),
     logVolume(obj.logVolume),
     bucketTag(obj.bucketTag),
-    alphaUpper(obj.alphaUpper)
+    alphaUpper(obj.alphaUpper),
+    left(obj.left),
+    right(obj.right)
 {   
-    //Allocate space to pointers
-    left = new DTree;
-    right = new DTree;
-
-    // Copy the children 
-    *left = *obj.left;
-    *right = *obj.right;
-
     //Set obj to default values
     obj.start = 0;
     obj.end = 0;
     obj.splitDim = size_t(-1);
-    obj.splitValue = DBL_MAX;
+    obj.splitValue = std::numeric_limits<ElemType>::max();
     obj.logNegError = -DBL_MAX;
     obj.subtreeLeavesLogNegError = -DBL_MAX;
     obj.subtreeLeaves = 0;
@@ -241,10 +256,61 @@ DTree<MatType, TagType>::DTree(DTree&& obj) :
     obj.alphaUpper = 0.0;
     obj.left = NULL;
     obj.right = NULL;
-    obj.maxVals = arma::vec();
-    obj.minVals = arma::vec();
+
 }
 // Root node initializers
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
+{
+	if (this != &obj){  
+	//Copying the values from obj 
+    start = obj.start;
+    end = obj.end;
+    maxVals = obj.maxVals;
+    minVals = obj.minVals;
+    splitDim = obj.splitDim;
+    splitValue = obj.splitValue;
+    logNegError = obj.logNegError;
+    subtreeLeavesLogNegError = obj.subtreeLeavesLogNegError;
+    subtreeLeaves = obj.subtreeLeaves;
+    root = obj.root;
+    ratio = obj.ratio;
+    logVolume = obj.logVolume;
+    bucketTag = obj.bucketTag;
+    alphaUpper = obj.alphaUpper;
+    
+    //Free the space allocated
+    delete left;
+    delete right;
+    
+    //Allocate space to pointers
+    left = new DTree;
+    right = new DTree;
+
+    //Copying the children 
+    left = obj.left;
+    right = obj.right;
+
+    //Set obj to default values
+    obj.start = 0;
+    obj.end = 0;
+    obj.splitDim = size_t(-1);
+    obj.splitValue = std::numeric_limits<ElemType>::max();
+    obj.logNegError = -DBL_MAX;
+    obj.subtreeLeavesLogNegError = -DBL_MAX;
+    obj.subtreeLeaves = 0;
+    obj.root = true;
+    obj.ratio = 1.0;
+    obj.logVolume = -DBL_MAX;
+    obj.bucketTag = -1;
+    obj.alphaUpper = 0.0;
+    obj.left = NULL;
+    obj.right = NULL;
+	}  
+}
+
+
 
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
