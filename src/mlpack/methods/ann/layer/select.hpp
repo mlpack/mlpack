@@ -2,7 +2,7 @@
  * @file select.hpp
  * @author Marcus Edel
  *
- * Definition and implementation of the Select module.
+ * Definition of the Select module.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -38,12 +38,7 @@ class Select
    * @param index The column which should be extracted from the given input.
    * @param elements The number of elements that should be used.
    */
-  Select(const size_t index, const size_t elements = 0) :
-      index(index),
-      elements(elements)
-  {
-    /* Nothing to do here. */
-  }
+  Select(const size_t index, const size_t elements = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -53,17 +48,7 @@ class Select
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    if (elements == 0)
-    {
-      output = input.col(index);
-    }
-    else
-    {
-      output = input.submat(0, index, elements - 1, index);
-    }
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -77,17 +62,7 @@ class Select
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    if (elements == 0)
-    {
-      g = gy;
-    }
-    else
-    {
-      g = gy.submat(0, 0, elements - 1, 0);
-    }
-  }
+                arma::Mat<eT>&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -103,6 +78,12 @@ class Select
   OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored column index.
@@ -121,7 +102,10 @@ class Select
   OutputDataType outputParameter;
 }; // class Select
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "select_impl.hpp"
 
 #endif

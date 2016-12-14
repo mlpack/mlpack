@@ -2,8 +2,8 @@
  * @file leaky_relu.hpp
  * @author Dhawal Arora
  *
- * Definition and implementation of LeakyReLU layer first introduced
- * in the acoustic model, Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
+ * Definition of LeakyReLU layer first introduced in the acoustic model,
+ * Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
  * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -51,10 +51,7 @@ class LeakyReLU
    *
    * @param alpha Non zero gradient
    */
-  LeakyReLU(const double alpha = 0.03) : alpha(alpha)
-  {
-     // Nothing to do here.
-  }
+  LeakyReLU(const double alpha = 0.03);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -64,10 +61,7 @@ class LeakyReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    Fn(input, output);
-  }
+  void Forward(const InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -79,12 +73,7 @@ class LeakyReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g)
-  {
-    DataType derivative;
-    Deriv(input, derivative);
-    g = gy % derivative;
-  }
+  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -110,10 +99,7 @@ class LeakyReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(alpha, "alpha");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -184,5 +170,8 @@ class LeakyReLU
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "leaky_relu_impl.hpp"
 
 #endif

@@ -38,10 +38,7 @@ class AddMerge
 {
  public:
   //! Create the AddMerge object.
-  AddMerge()
-  {
-    // Nothing to do here.
-  }
+  AddMerge();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -51,15 +48,7 @@ class AddMerge
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& /* input */, OutputType&& output)
-  {
-    output = boost::apply_visitor(outputParameterVisitor, network.front());
-
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      output += boost::apply_visitor(outputParameterVisitor, network[i]);
-    }
-  }
+  void Forward(const InputType&& /* input */, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -73,10 +62,7 @@ class AddMerge
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = gy;
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Add a new module to the model.
@@ -120,10 +106,7 @@ class AddMerge
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(network, "network");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   std::vector<LayerTypes> network;
@@ -149,5 +132,8 @@ class AddMerge
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "add_merge_impl.hpp"
 
 #endif

@@ -47,22 +47,10 @@ class Sequential
    *
    * @param model Expose the all network modules.
    */
-  Sequential(const bool model = true) : model(model), reset(false)
-  {
-    /* Nothing to do here. */
-  }
+  Sequential(const bool model = true);
 
   //! Destroy the Sequential object.
-  ~Sequential()
-  {
-    if (!model)
-    {
-      for (LayerTypes& layer : network)
-      {
-        boost::apply_visitor(deleteVisitor, layer);
-      }
-    }
-  }
+  ~Sequential();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -72,64 +60,7 @@ class Sequential
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-        boost::apply_visitor(outputParameterVisitor, network.front()))),
-        network.front());
-
-    if (!reset)
-    {
-      if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
-      {
-        width = boost::apply_visitor(outputWidthVisitor, network.front());
-      }
-
-      if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
-      {
-        height = boost::apply_visitor(outputHeightVisitor, network.front());
-      }
-    }
-
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      if (!reset)
-      {
-        // Set the input width.
-        boost::apply_visitor(SetInputWidthVisitor(width, true), network[i]);
-
-        // Set the input height.
-        boost::apply_visitor(SetInputHeightVisitor(height, true), network[i]);
-      }
-
-      boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i - 1])), std::move(
-          boost::apply_visitor(outputParameterVisitor, network[i]))),
-          network[i]);
-
-      if (!reset)
-      {
-        // Get the output width.
-        if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
-        {
-          width = boost::apply_visitor(outputWidthVisitor, network[i]);
-        }
-
-        // Get the output height.
-        if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
-        {
-          height = boost::apply_visitor(outputHeightVisitor, network[i]);
-        }
-      }
-    }
-
-  if (!reset)
-  {
-    reset = true;
-  }
-
-    output = boost::apply_visitor(outputParameterVisitor, network.back());
-  }
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -143,24 +74,7 @@ class Sequential
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network.back())), std::move(gy),
-        std::move(boost::apply_visitor(deltaVisitor, network.back()))),
-        network.back());
-
-    for (size_t i = 2; i < network.size() + 1; ++i)
-    {
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[network.size() - i])), std::move(
-          boost::apply_visitor(deltaVisitor, network[network.size() - i + 1])),
-          std::move(boost::apply_visitor(deltaVisitor,
-          network[network.size() - i]))), network[network.size() - i]);
-    }
-
-    g = boost::apply_visitor(deltaVisitor, network.front());
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -172,18 +86,7 @@ class Sequential
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */)
-  {
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-        network.front());
-
-    for (size_t i = 1; i < network.size() - 1; ++i)
-    {
-      boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i - 1])), std::move(
-          boost::apply_visitor(deltaVisitor, network[i + 1]))), network[i]);
-    }
-  }
+                arma::Mat<eT>&& /* gradient */);
 
   /*
    * Add a new module to the model.
@@ -235,6 +138,12 @@ class Sequential
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
@@ -285,8 +194,10 @@ class Sequential
   size_t height;
 }; // class Sequential
 
-
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "sequential_impl.hpp"
 
 #endif

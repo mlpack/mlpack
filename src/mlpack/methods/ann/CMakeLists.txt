@@ -1,12 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  cnn.hpp
-  cnn_impl.hpp
   ffn.hpp
   ffn_impl.hpp
-  network_util.hpp
-  network_util_impl.hpp
   rnn.hpp
   rnn_impl.hpp
 )
@@ -23,6 +19,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(activation_functions)
 add_subdirectory(init_rules)
 add_subdirectory(layer)
-add_subdirectory(performance_functions)
-add_subdirectory(pooling_rules)
 add_subdirectory(convolution_rules)

@@ -41,13 +41,7 @@ class Constant
    * @param outSize The number of output units.
    * @param scalar The constant value used to create the constant output.
    */
-  Constant(const size_t outSize, const double scalar) :
-      inSize(0),
-      outSize(outSize)
-  {
-    constantOutput = OutputDataType(outSize, 1);
-    constantOutput.fill(scalar);
-  }
+  Constant(const size_t outSize, const double scalar);
 
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
@@ -57,15 +51,7 @@ class Constant
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    if (inSize == 0)
-    {
-      inSize = input.n_elem;
-    }
-
-    output = constantOutput;
-  }
+  void Forward(const InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network. The backward pass of the
@@ -76,10 +62,9 @@ class Constant
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& /* input */, DataType&& /* gy */, DataType&& g)
-  {
-    g = arma::zeros<DataType>(inSize, 1);
-  }
+  void Backward(const DataType&& /* input */,
+                DataType&& /* gy */,
+                DataType&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -100,10 +85,7 @@ class Constant
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(constantOutput, "constantOutput");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -125,7 +107,10 @@ class Constant
   OutputDataType outputParameter;
 }; // class ConstantLayer
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "constant_impl.hpp"
 
 #endif

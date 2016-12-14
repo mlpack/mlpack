@@ -34,10 +34,7 @@ class ReinforceNormal
    *
    * @param stdev Standard deviation used during the forward and backward pass.
    */
-  ReinforceNormal(const double stdev) : stdev(stdev)
-  {
-    // Nothing to do here.
-  }
+  ReinforceNormal(const double stdev);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -47,22 +44,7 @@ class ReinforceNormal
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    if (!deterministic)
-    {
-      // Multiply by standard deviations and re-center the means to the mean.
-      output = arma::randn<arma::Mat<eT> >(input.n_rows, input.n_cols) *
-          stdev + input;
-
-      moduleInputParameter.push_back(input);
-    }
-    else
-    {
-      // Use maximum a posteriori.
-      output = input;
-    }
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,17 +56,7 @@ class ReinforceNormal
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g)
-  {
-    g = (input - moduleInputParameter.back()) / std::pow(stdev, 2.0);
-
-    // Multiply by reward and multiply by -1.
-    g *= reward;
-    g *= -1;
-
-    moduleInputParameter.pop_back();
-  }
-
+  void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -111,6 +83,12 @@ class ReinforceNormal
   //! Modify the value of the deterministic parameter.
   double& Reward() { return reward; }
 
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+
  private:
   //! Standard deviation used during the forward and backward pass.
   const double stdev;
@@ -134,7 +112,10 @@ class ReinforceNormal
   bool deterministic;
 }; // class ReinforceNormal
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "reinforce_normal_impl.hpp"
 
 #endif

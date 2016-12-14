@@ -37,27 +37,19 @@ class LinearNoBias
 {
  public:
   //! Create the LinearNoBias object.
-  LinearNoBias() {}
+  LinearNoBias();
   /**
    * Create the LinearNoBias object using the specified number of units.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  LinearNoBias(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
-  {
-    weights.set_size(outSize * inSize, 1);
-  }
+  LinearNoBias(const size_t inSize, const size_t outSize);
 
   /*
    * Reset the layer parameter.
    */
-  void Reset()
-  {
-    weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-  }
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -67,10 +59,7 @@ class LinearNoBias
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = weight * input;
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -84,10 +73,7 @@ class LinearNoBias
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = weight.t() * gy;
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -99,11 +85,7 @@ class LinearNoBias
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient)
-  {
-    gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-        error * input.t());
-  }
+                arma::Mat<eT>&& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -134,12 +116,7 @@ class LinearNoBias
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
 
@@ -170,5 +147,8 @@ class LinearNoBias
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "linear_no_bias_impl.hpp"
 
 #endif
