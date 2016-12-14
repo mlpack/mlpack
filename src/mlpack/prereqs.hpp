@@ -52,12 +52,14 @@
 
 // Backport this functionality from C++14, if it doesn't exist.
 #if __cplusplus <= 201103L
+#if !defined(_MSC_VER) || _MSC_VER <= 1800
 namespace std {
 
 template<bool B, class T = void>
 using enable_if_t = typename enable_if<B, T>::type;
 
 }
+#endif
 #endif
 
 // We'll need the necessary boost::serialization features, as well as what we
