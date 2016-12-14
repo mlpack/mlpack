@@ -64,6 +64,7 @@ class DropConnect
  public:
   //! Create the DropConnect object.
 <<<<<<< HEAD
+<<<<<<< HEAD
   DropConnect();
 =======
   DropConnect()
@@ -71,6 +72,9 @@ class DropConnect
     /* Nothing to do here. */
   }
 >>>>>>> Refactor ann layer.
+=======
+  DropConnect();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Creates the DropConnect Layer as a Linear Object that takes input size,
@@ -82,6 +86,7 @@ class DropConnect
    */
   DropConnect(const size_t inSize,
               const size_t outSize,
+<<<<<<< HEAD
 <<<<<<< HEAD
               const double ratio = 0.5);
 
@@ -100,6 +105,11 @@ class DropConnect
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
 >>>>>>> Refactor ann layer.
+=======
+              const double ratio = 0.5);
+
+  ~DropConnect();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
   * Ordinary feed forward pass of the DropConnect layer.
@@ -108,6 +118,7 @@ class DropConnect
   * @param output Resulting output activation.
   */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -148,6 +159,9 @@ class DropConnect
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of the DropConnect layer.
@@ -159,6 +173,7 @@ class DropConnect
   template<typename eT>
   void Backward(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -173,6 +188,9 @@ class DropConnect
       baseLayer);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -185,6 +203,7 @@ class DropConnect
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
                 arma::Mat<eT>&& /* gradient */)
@@ -196,6 +215,9 @@ class DropConnect
     boost::apply_visitor(ParametersSetVisitor(std::move(denoise)), baseLayer);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -242,14 +264,20 @@ class DropConnect
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 private:
   //! The probability of setting a value to zero.
   double ratio;
@@ -292,9 +320,15 @@ private:
 }  // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "dropconnect_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "dropconnect_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

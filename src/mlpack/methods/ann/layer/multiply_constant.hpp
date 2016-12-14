@@ -33,6 +33,7 @@ class MultiplyConstant
    * Create the MultiplyConstant object.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   MultiplyConstant(const double scalar);
 =======
   MultiplyConstant(const double scalar) : scalar(scalar)
@@ -40,6 +41,9 @@ class MultiplyConstant
     // Nothing to do here.
   }
 >>>>>>> Refactor ann layer.
+=======
+  MultiplyConstant(const double scalar);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
@@ -50,6 +54,7 @@ class MultiplyConstant
    */
   template<typename InputType, typename OutputType>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
 =======
   void Forward(const InputType&& input, OutputType&& output)
@@ -57,6 +62,9 @@ class MultiplyConstant
     output = input * scalar;
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const InputType&& input, OutputType&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network. The backward pass
@@ -68,6 +76,7 @@ class MultiplyConstant
    */
   template<typename DataType>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g);
 =======
   void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g)
@@ -75,6 +84,9 @@ class MultiplyConstant
     g = gy * scalar;
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -96,6 +108,7 @@ class MultiplyConstant
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -103,6 +116,9 @@ class MultiplyConstant
     ar & data::CreateNVP(scalar, "scalar");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored constant scalar value.
@@ -119,14 +135,20 @@ class MultiplyConstant
 }; // class MultiplyConstant
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "multiply_constant_impl.hpp"
+<<<<<<< HEAD
 =======
 }; // namespace ann
 }; // namespace mlpack
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
 #endif

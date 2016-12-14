@@ -35,6 +35,7 @@ class ReinforceNormal
    * @param stdev Standard deviation used during the forward and backward pass.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   ReinforceNormal(const double stdev);
 =======
   ReinforceNormal(const double stdev) : stdev(stdev)
@@ -42,6 +43,9 @@ class ReinforceNormal
     // Nothing to do here.
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+  ReinforceNormal(const double stdev);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -51,6 +55,7 @@ class ReinforceNormal
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -71,6 +76,9 @@ class ReinforceNormal
     }
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -82,6 +90,7 @@ class ReinforceNormal
    * @param g The calculated gradient.
    */
   template<typename DataType>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
 =======
@@ -97,6 +106,9 @@ class ReinforceNormal
   }
 
 >>>>>>> Refactor neural visual attention modules.
+=======
+  void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -124,14 +136,20 @@ class ReinforceNormal
   double& Reward() { return reward; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor neural visual attention modules.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   //! Standard deviation used during the forward and backward pass.
   const double stdev;
@@ -156,14 +174,20 @@ class ReinforceNormal
 }; // class ReinforceNormal
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "reinforce_normal_impl.hpp"
+<<<<<<< HEAD
 =======
 }; // namespace ann
 }; // namespace mlpack
 >>>>>>> Refactor neural visual attention modules.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
 #endif

@@ -101,6 +101,7 @@ class Glimpse
           const size_t scale = 2,
           const size_t inputWidth = 0,
 <<<<<<< HEAD
+<<<<<<< HEAD
           const size_t inputHeight = 0);
 =======
           const size_t inputHeight = 0) :
@@ -114,6 +115,9 @@ class Glimpse
     // Nothing to do here.
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+          const size_t inputHeight = 0);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of the glimpse layer.
@@ -122,6 +126,7 @@ class Glimpse
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -206,6 +211,9 @@ class Glimpse
     outputHeight = outputTemp.n_cols;
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of the glimpse layer.
@@ -217,6 +225,7 @@ class Glimpse
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -305,6 +314,9 @@ class Glimpse
     g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const {return inputParameter; }
@@ -354,14 +366,20 @@ class Glimpse
   bool& Deterministic() { return deterministic; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor neural visual attention modules.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   /*
    * Transform the given input by changing rows to columns.
@@ -608,14 +626,20 @@ class Glimpse
 }; // class GlimpseLayer
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "glimpse_impl.hpp"
+<<<<<<< HEAD
 =======
 }; // namespace ann
 }; // namespace mlpack
 >>>>>>> Refactor neural visual attention modules.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
 #endif

@@ -57,6 +57,7 @@ class Recurrent
             const FeedbackModuleType& feedback,
             const TransferModuleType& transfer,
 <<<<<<< HEAD
+<<<<<<< HEAD
             const size_t rho);
 =======
             const size_t rho) :
@@ -95,6 +96,9 @@ class Recurrent
     network.push_back(recurrentModule);
   }
 >>>>>>> Refactor ann layer.
+=======
+            const size_t rho);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -104,6 +108,7 @@ class Recurrent
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -150,6 +155,9 @@ class Recurrent
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -163,6 +171,7 @@ class Recurrent
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -205,6 +214,9 @@ class Recurrent
     backwardStep++;
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -216,6 +228,7 @@ class Recurrent
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
@@ -252,6 +265,9 @@ class Recurrent
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -291,6 +307,7 @@ class Recurrent
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -298,6 +315,9 @@ class Recurrent
     ar & data::CreateNVP(rho, "rho");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored start module.
@@ -374,9 +394,15 @@ class Recurrent
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "recurrent_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "recurrent_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

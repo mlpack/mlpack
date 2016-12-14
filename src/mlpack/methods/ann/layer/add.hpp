@@ -40,6 +40,7 @@ class Add
    * @param outSize The number of output units.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   Add(const size_t outSize);
 =======
   Add(const size_t outSize) : outSize(outSize)
@@ -47,6 +48,9 @@ class Add
     weights.set_size(outSize, 1);
   }
 >>>>>>> Refactor ann layer.
+=======
+  Add(const size_t outSize);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -57,6 +61,7 @@ class Add
    */
   template<typename eT>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
@@ -64,6 +69,9 @@ class Add
     output = input + weights;
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -78,6 +86,7 @@ class Add
   void Backward(const arma::Mat<eT>&& /* input */,
                 const arma::Mat<eT>&& gy,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
                 arma::Mat<eT>&& g)
@@ -85,6 +94,9 @@ class Add
     g = gy;
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -97,6 +109,7 @@ class Add
   void Gradient(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
 =======
                 arma::Mat<eT>&& gradient)
@@ -104,6 +117,9 @@ class Add
     gradient = error;
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& gradient);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -135,6 +151,7 @@ class Add
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -142,6 +159,9 @@ class Add
     ar & data::CreateNVP(weights, "weights");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored number of output units.
@@ -167,9 +187,15 @@ class Add
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "add_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "add_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

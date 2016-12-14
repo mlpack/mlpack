@@ -38,16 +38,21 @@ class LinearNoBias
  public:
   //! Create the LinearNoBias object.
 <<<<<<< HEAD
+<<<<<<< HEAD
   LinearNoBias();
 =======
   LinearNoBias() {}
 >>>>>>> Refactor ann layer.
+=======
+  LinearNoBias();
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Create the LinearNoBias object using the specified number of units.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
+<<<<<<< HEAD
 <<<<<<< HEAD
   LinearNoBias(const size_t inSize, const size_t outSize);
 =======
@@ -58,10 +63,14 @@ class LinearNoBias
     weights.set_size(outSize * inSize, 1);
   }
 >>>>>>> Refactor ann layer.
+=======
+  LinearNoBias(const size_t inSize, const size_t outSize);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Reset the layer parameter.
    */
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Reset();
 =======
@@ -70,6 +79,9 @@ class LinearNoBias
     weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Reset();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -80,6 +92,7 @@ class LinearNoBias
    */
   template<typename eT>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
@@ -87,6 +100,9 @@ class LinearNoBias
     output = weight * input;
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -101,6 +117,7 @@ class LinearNoBias
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
                 arma::Mat<eT>&& g)
@@ -108,6 +125,9 @@ class LinearNoBias
     g = weight.t() * gy;
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -120,6 +140,7 @@ class LinearNoBias
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
 =======
                 arma::Mat<eT>&& gradient)
@@ -128,6 +149,9 @@ class LinearNoBias
         error * input.t());
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& gradient);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -159,6 +183,7 @@ class LinearNoBias
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -168,6 +193,9 @@ class LinearNoBias
     ar & data::CreateNVP(outSize, "outSize");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
 
@@ -200,9 +228,15 @@ class LinearNoBias
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "linear_no_bias_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "linear_no_bias_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

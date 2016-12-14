@@ -48,6 +48,7 @@ class ConcatPerformance
    */
   ConcatPerformance(const size_t inSize,
 <<<<<<< HEAD
+<<<<<<< HEAD
                     OutputLayerType&& outputLayer = OutputLayerType());
 =======
                     OutputLayerType&& outputLayer = OutputLayerType()) :
@@ -57,6 +58,9 @@ class ConcatPerformance
     /* Nothing to do here. */
   }
 >>>>>>> Refactor ann layer.
+=======
+                    OutputLayerType&& outputLayer = OutputLayerType());
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Computes the Negative log likelihood.
@@ -65,6 +69,7 @@ class ConcatPerformance
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
 =======
@@ -83,6 +88,9 @@ class ConcatPerformance
   }
 
 >>>>>>> Refactor ann layer.
+=======
+  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Ordinary feed backward pass of a neural network. The negative log
    * likelihood layer expectes that the input contains log-probabilities for
@@ -97,6 +105,7 @@ class ConcatPerformance
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& output);
 =======
@@ -123,6 +132,9 @@ class ConcatPerformance
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -140,14 +152,20 @@ class ConcatPerformance
   OutputDataType& Delta() { return delta; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored number of inputs.
   size_t inSize;
@@ -166,14 +184,20 @@ class ConcatPerformance
 }; // class ConcatPerformance
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "concat_performance_impl.hpp"
+<<<<<<< HEAD
 =======
 }; // namespace ann
 }; // namespace mlpack
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
 #endif

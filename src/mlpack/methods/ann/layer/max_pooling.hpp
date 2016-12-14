@@ -54,6 +54,7 @@ class MaxPooling
 {
 public:
 <<<<<<< HEAD
+<<<<<<< HEAD
   //! Create the MaxPooling object.
   MaxPooling();
 =======
@@ -63,6 +64,10 @@ public:
     /* Nothing to do here */
   }
 >>>>>>> Refactor ann layer.
+=======
+  //! Create the MaxPooling object.
+  MaxPooling();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Create the MaxPooling object using the specified number of units.
@@ -75,10 +80,14 @@ public:
    */
   MaxPooling(const size_t kW,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
              const size_t kH,
              const size_t dW = 1,
              const size_t dH = 1,
              const bool floor = true);
+<<<<<<< HEAD
 =======
           const size_t kH,
           const size_t dW = 1,
@@ -100,6 +109,8 @@ public:
     /* Nothing to do here. */
   }
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -109,6 +120,7 @@ public:
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -170,6 +182,9 @@ public:
     outSize = slices;
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -183,6 +198,7 @@ public:
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -205,6 +221,9 @@ public:
     g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -251,6 +270,7 @@ public:
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -261,6 +281,9 @@ public:
     ar & data::CreateNVP(dH, "dH");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
 
@@ -393,6 +416,7 @@ public:
 }; // class MaxPooling
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
@@ -407,3 +431,12 @@ public:
 
 #endif
 >>>>>>> Refactor ann layer.
+=======
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "max_pooling_impl.hpp"
+
+#endif
+>>>>>>> Split layer modules into definition and implementation.

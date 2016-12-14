@@ -45,10 +45,14 @@ class LSTM
  public:
   //! Create the LSTM object.
 <<<<<<< HEAD
+<<<<<<< HEAD
   LSTM();
 =======
   LSTM() { /* Nothing to do here */ }
 >>>>>>> Refactor ann layer.
+=======
+  LSTM();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Create the LSTM layer object using the specified parameters.
@@ -57,6 +61,7 @@ class LSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
+<<<<<<< HEAD
 <<<<<<< HEAD
   LSTM(const size_t inSize, const size_t outSize, const size_t rho);
 =======
@@ -97,6 +102,9 @@ class LSTM
     cellActivationError = arma::zeros<arma::mat>(outSize, 1);
   }
 >>>>>>> Refactor ann layer.
+=======
+  LSTM(const size_t inSize, const size_t outSize, const size_t rho);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -106,6 +114,7 @@ class LSTM
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -216,6 +225,9 @@ class LSTM
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -229,6 +241,7 @@ class LSTM
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -348,6 +361,9 @@ class LSTM
     g = boost::apply_visitor(deltaVisitor, input2GateModule);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -359,6 +375,7 @@ class LSTM
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
@@ -386,6 +403,9 @@ class LSTM
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -430,6 +450,7 @@ class LSTM
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -440,6 +461,9 @@ class LSTM
     ar & data::CreateNVP(rho, "rho");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
 
@@ -538,9 +562,15 @@ class LSTM
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "lstm_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "lstm_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

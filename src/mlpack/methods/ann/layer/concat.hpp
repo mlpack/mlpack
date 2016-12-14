@@ -46,6 +46,7 @@ class Concat
    * @param same Merge the error in the backward pass.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   Concat(const bool model = true, const bool same = true);
 =======
   Concat(const bool model = true, const bool same = true) :
@@ -55,6 +56,9 @@ class Concat
     parameters.set_size(0, 0);
   }
 >>>>>>> Refactor ann layer.
+=======
+  Concat(const bool model = true, const bool same = true);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -64,6 +68,7 @@ class Concat
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -104,6 +109,9 @@ class Concat
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -117,6 +125,7 @@ class Concat
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -182,6 +191,9 @@ class Concat
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -194,6 +206,7 @@ class Concat
   void Gradient(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
                 arma::Mat<eT>&& /* gradient */)
@@ -205,6 +218,9 @@ class Concat
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Add a new module to the model.
@@ -257,14 +273,20 @@ class Concat
   arma::mat& Gradient() { return gradient; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
@@ -304,6 +326,7 @@ class Concat
 }; // class Concat
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
@@ -316,4 +339,12 @@ class Concat
 } // namespace mlpack
 
 >>>>>>> Refactor ann layer.
+=======
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "concat_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

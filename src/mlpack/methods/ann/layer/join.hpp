@@ -35,6 +35,7 @@ class Join
  public:
   //! Create the Join object.
 <<<<<<< HEAD
+<<<<<<< HEAD
   Join();
 =======
   Join()
@@ -42,6 +43,9 @@ class Join
     // Nothing to do here.
   }
 >>>>>>> Refactor ann layer.
+=======
+  Join();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -52,6 +56,7 @@ class Join
    */
   template<typename InputType, typename OutputType>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
 =======
   void Forward(const InputType&& input, OutputType&& output)
@@ -61,6 +66,9 @@ class Join
     output = arma::vectorise(input);
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const InputType&& input, OutputType&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -75,6 +83,7 @@ class Join
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
                 arma::Mat<eT>&& g)
@@ -82,6 +91,9 @@ class Join
     g = arma::mat(gy.memptr(), inSizeRows, inSizeCols, false, false);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -103,6 +115,7 @@ class Join
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -111,6 +124,9 @@ class Join
     ar & data::CreateNVP(inSizeCols, "inSizeCols");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored number of input rows.
@@ -133,9 +149,15 @@ class Join
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "join_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "join_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

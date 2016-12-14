@@ -62,6 +62,7 @@ class Dropout
    * @param rescale If true the input is rescaled when deterministic is False.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   Dropout(const double ratio = 0.5, const bool rescale = true);
 =======
   Dropout(const double ratio = 0.5,
@@ -73,6 +74,9 @@ class Dropout
     // Nothing to do here.
   }
 >>>>>>> Refactor ann layer.
+=======
+  Dropout(const double ratio = 0.5, const bool rescale = true);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -81,6 +85,7 @@ class Dropout
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -109,6 +114,9 @@ class Dropout
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of the dropout layer.
@@ -121,6 +129,7 @@ class Dropout
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
                 arma::Mat<eT>&& g)
@@ -128,6 +137,9 @@ class Dropout
     g = gy % mask * scale;
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -169,6 +181,7 @@ class Dropout
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -177,6 +190,9 @@ class Dropout
     ar & data::CreateNVP(rescale, "rescale");
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored delta object.
@@ -208,9 +224,15 @@ class Dropout
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "dropout_impl.hpp"
 
 =======
 >>>>>>> Refactor ann layer.
+=======
+// Include implementation.
+#include "dropout_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

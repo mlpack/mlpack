@@ -40,10 +40,14 @@ class LogSoftMax
    * Create the LogSoftmax object.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   LogSoftMax();
 =======
   LogSoftMax() { /* Nothing to do here. */ }
 >>>>>>> Refactor ann layer.
+=======
+  LogSoftMax();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -53,6 +57,7 @@ class LogSoftMax
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
 =======
@@ -89,6 +94,9 @@ class LogSoftMax
     output = input - (maxInput + std::log(arma::accu(output)));
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(const InputType&& input, OutputType&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -103,6 +111,7 @@ class LogSoftMax
   void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
                 arma::Mat<eT>&& g)
@@ -110,6 +119,9 @@ class LogSoftMax
     g = gy - arma::exp(input) * arma::accu(gy);
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -127,14 +139,20 @@ class LogSoftMax
   InputDataType& Delta() { return delta; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -147,14 +165,20 @@ class LogSoftMax
 }; // class LogSoftmax
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "log_softmax_impl.hpp"
+<<<<<<< HEAD
 =======
 }; // namespace ann
 }; // namespace mlpack
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
 
 #endif

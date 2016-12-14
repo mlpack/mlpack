@@ -48,6 +48,7 @@ class Sequential
    * @param model Expose the all network modules.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   Sequential(const bool model = true);
 
   //! Destroy the Sequential object.
@@ -70,6 +71,12 @@ class Sequential
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+  Sequential(const bool model = true);
+
+  //! Destroy the Sequential object.
+  ~Sequential();
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -79,6 +86,7 @@ class Sequential
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -141,6 +149,9 @@ class Sequential
     output = boost::apply_visitor(outputParameterVisitor, network.back());
   }
 >>>>>>> Refactor ann layer.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -154,6 +165,7 @@ class Sequential
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -176,6 +188,9 @@ class Sequential
     g = boost::apply_visitor(deltaVisitor, network.front());
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -187,6 +202,7 @@ class Sequential
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
@@ -203,6 +219,9 @@ class Sequential
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Add a new module to the model.
@@ -255,14 +274,20 @@ class Sequential
   arma::mat& Gradient() { return gradient; }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
+<<<<<<< HEAD
 =======
 >>>>>>> Refactor ann layer.
+=======
+>>>>>>> Split layer modules into definition and implementation.
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
@@ -314,6 +339,7 @@ class Sequential
 }; // class Sequential
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
@@ -326,4 +352,12 @@ class Sequential
 } // namespace mlpack
 
 >>>>>>> Refactor ann layer.
+=======
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "sequential_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif

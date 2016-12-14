@@ -39,10 +39,14 @@ class NegativeLogLikelihood
    * Create the NegativeLogLikelihoodLayer object.
    */
 <<<<<<< HEAD
+<<<<<<< HEAD
   NegativeLogLikelihood();
 =======
   NegativeLogLikelihood() { /* Nothing to do here. */ }
 >>>>>>> Refactor ann layer.
+=======
+  NegativeLogLikelihood();
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Computes the Negative log likelihood.
@@ -51,6 +55,7 @@ class NegativeLogLikelihood
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
 =======
@@ -70,6 +75,9 @@ class NegativeLogLikelihood
     return output;
   }
 >>>>>>> Refactor ann layer.
+=======
+  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -86,6 +94,7 @@ class NegativeLogLikelihood
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& output);
 =======
                 arma::Mat<eT>&& output)
@@ -101,6 +110,9 @@ class NegativeLogLikelihood
     }
   }
 >>>>>>> Refactor ann layer.
+=======
+                arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -140,6 +152,12 @@ class NegativeLogLikelihood
 =======
 >>>>>>> Refactor ann layer.
 
+<<<<<<< HEAD
+=======
+} // namespace ann
+} // namespace mlpack
+
+>>>>>>> Split layer modules into definition and implementation.
 // Include implementation.
 #include "negative_log_likelihood_impl.hpp"
 

@@ -63,6 +63,7 @@ class RecurrentAttention
                      const RNNModuleType& rnn,
                      const ActionModuleType& action,
 <<<<<<< HEAD
+<<<<<<< HEAD
                      const size_t rho);
 =======
                      const size_t rho) :
@@ -78,6 +79,9 @@ class RecurrentAttention
     network.push_back(actionModule);
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+                     const size_t rho);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -87,6 +91,7 @@ class RecurrentAttention
    * @param output Resulting output activation.
    */
   template<typename eT>
+<<<<<<< HEAD
 <<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 =======
@@ -142,6 +147,9 @@ class RecurrentAttention
     backwardStep = 0;
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+>>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -155,6 +163,7 @@ class RecurrentAttention
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
+<<<<<<< HEAD
 <<<<<<< HEAD
                 arma::Mat<eT>&& g);
 =======
@@ -234,6 +243,9 @@ class RecurrentAttention
     }
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+                arma::Mat<eT>&& g);
+>>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -246,6 +258,7 @@ class RecurrentAttention
   void Gradient(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& /* error */,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
 =======
                 arma::Mat<eT>&& /* gradient */)
@@ -257,6 +270,9 @@ class RecurrentAttention
         std::move(attentionGradient), offset), actionModule);
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+                arma::Mat<eT>&& /* gradient */);
+>>>>>>> Split layer modules into definition and implementation.
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -296,6 +312,7 @@ class RecurrentAttention
    */
   template<typename Archive>
 <<<<<<< HEAD
+<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
 =======
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -306,6 +323,9 @@ class RecurrentAttention
     ar & data::CreateNVP(backwardStep, "backwardStep");
   }
 >>>>>>> Refactor neural visual attention modules.
+=======
+  void Serialize(Archive& ar, const unsigned int /* version */);
+>>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Calculate the gradient of the attention module.
@@ -426,9 +446,15 @@ class RecurrentAttention
 } // namespace mlpack
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Include implementation.
 #include "recurrent_attention_impl.hpp"
 
 =======
 >>>>>>> Refactor neural visual attention modules.
+=======
+// Include implementation.
+#include "recurrent_attention_impl.hpp"
+
+>>>>>>> Split layer modules into definition and implementation.
 #endif
