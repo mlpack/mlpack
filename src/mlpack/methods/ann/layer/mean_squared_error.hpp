@@ -2,7 +2,7 @@
  * @file mean_squared_error.hpp
  * @author Marcus Edel
  *
- * Definition and implementation of the mean squared error performance function.
+ * Definition of the mean squared error performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,7 +37,7 @@ class MeanSquaredError
   /**
    * Create the MeanSquaredError object.
    */
-  MeanSquaredError() { /* Nothing to do here. */ }
+  MeanSquaredError();
 
   /*
    * Computes the mean squared error function.
@@ -46,11 +46,7 @@ class MeanSquaredError
    * @param output Resulting output activation.
    */
   template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
-  {
-    return arma::mean(arma::mean(arma::square(input - target)));
-  }
-
+  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -61,10 +57,7 @@ class MeanSquaredError
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output)
-  {
-    output = (input - target);
-  }
+                arma::Mat<eT>&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -81,6 +74,12 @@ class MeanSquaredError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -92,7 +91,10 @@ class MeanSquaredError
   OutputDataType outputParameter;
 }; // class MeanSquaredError
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "mean_squared_error_impl.hpp"
 
 #endif

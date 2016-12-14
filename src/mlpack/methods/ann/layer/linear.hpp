@@ -37,7 +37,7 @@ class Linear
 {
  public:
   //! Create the Linear object.
-  Linear() {}
+  Linear();
 
   /**
    * Create the Linear layer object using the specified number of units.
@@ -45,22 +45,12 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
-  {
-    weights.set_size(outSize * inSize + outSize, 1);
-  }
+  Linear(const size_t inSize, const size_t outSize);;
 
   /*
    * Reset the layer parameter.
    */
-  void Reset()
-  {
-    weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
-  }
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -70,10 +60,7 @@ class Linear
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = (weight * input) + bias;
-  }
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -85,12 +72,9 @@ class Linear
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* unused */,
+  void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = weight.t() * gy;
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -102,12 +86,7 @@ class Linear
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient)
-  {
-    gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-        error * input.t());
-    gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = error;
-  }
+                arma::Mat<eT>&& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -138,12 +117,7 @@ class Linear
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -176,5 +150,8 @@ class Linear
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "linear_impl.hpp"
 
 #endif

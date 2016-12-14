@@ -62,18 +62,7 @@ class RecurrentAttention
   RecurrentAttention(const size_t outSize,
                      const RNNModuleType& rnn,
                      const ActionModuleType& action,
-                     const size_t rho) :
-      outSize(outSize),
-      rnnModule(new RNNModuleType(rnn)),
-      actionModule(new ActionModuleType(action)),
-      rho(rho),
-      forwardStep(0),
-      backwardStep(0),
-      deterministic(false)
-  {
-    network.push_back(rnnModule);
-    network.push_back(actionModule);
-  }
+                     const size_t rho);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -83,57 +72,7 @@ class RecurrentAttention
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    // Initialize the action input.
-    if (initialInput.is_empty())
-    {
-      initialInput = arma::zeros(outSize, input.n_cols);
-    }
-
-    // Propagate through the action and recurrent module.
-    for (forwardStep = 0; forwardStep < rho; ++forwardStep)
-    {
-      if (forwardStep == 0)
-      {
-        boost::apply_visitor(ForwardVisitor(std::move(initialInput), std::move(
-            boost::apply_visitor(outputParameterVisitor, actionModule))),
-            actionModule);
-      }
-      else
-      {
-        boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-            outputParameterVisitor, rnnModule)), std::move(boost::apply_visitor(
-            outputParameterVisitor, actionModule))), actionModule);
-      }
-
-      // Initialize the glimpse input.
-      arma::mat glimpseInput = arma::zeros(input.n_elem, 2);
-      glimpseInput.col(0) = input;
-      glimpseInput.submat(0, 1, boost::apply_visitor(outputParameterVisitor,
-          actionModule).n_elem - 1, 1) = boost::apply_visitor(
-          outputParameterVisitor, actionModule);
-
-      boost::apply_visitor(ForwardVisitor(std::move(glimpseInput),
-          std::move(boost::apply_visitor(outputParameterVisitor, rnnModule))),
-          rnnModule);
-
-      // Save the output parameter when training the module.
-      if (!deterministic)
-      {
-        for (size_t l = 0; l < network.size(); ++l)
-        {
-          boost::apply_visitor(SaveOutputParameterVisitor(
-              std::move(moduleOutputParameter)), network[l]);
-        }
-      }
-    }
-
-    output = boost::apply_visitor(outputParameterVisitor, rnnModule);
-
-    forwardStep = 0;
-    backwardStep = 0;
-  }
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -147,81 +86,7 @@ class RecurrentAttention
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    if (intermediateGradient.is_empty() && backwardStep == 0)
-    {
-      // Initialize the attention gradients.
-      size_t weights = boost::apply_visitor(weightSizeVisitor, rnnModule) +
-          boost::apply_visitor(weightSizeVisitor, actionModule);
-
-      intermediateGradient = arma::zeros(weights, 1);
-      attentionGradient = arma::zeros(weights, 1);
-
-      // Initialize the action error.
-      actionError = arma::zeros(
-        boost::apply_visitor(outputParameterVisitor, actionModule).n_rows,
-        boost::apply_visitor(outputParameterVisitor, actionModule).n_cols);
-    }
-
-    // Propagate the attention gradients.
-    if (backwardStep == 0)
-    {
-      size_t offset = 0;
-      offset += boost::apply_visitor(GradientSetVisitor(
-          std::move(intermediateGradient), offset), rnnModule);
-      boost::apply_visitor(GradientSetVisitor(
-          std::move(intermediateGradient), offset), actionModule);
-
-      attentionGradient.zeros();
-    }
-
-    // Back-propagate through time.
-    for (; backwardStep < rho; backwardStep++)
-    {
-      if (backwardStep == 0)
-      {
-        recurrentError = gy;
-      }
-      else
-      {
-        recurrentError = actionDelta;
-      }
-
-      for (size_t l = 0; l < network.size(); ++l)
-      {
-        boost::apply_visitor(LoadOutputParameterVisitor(
-           std::move(moduleOutputParameter)), network[network.size() - 1 - l]);
-      }
-
-      if (backwardStep == (rho - 1))
-      {
-        boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-            outputParameterVisitor, actionModule)), std::move(actionError),
-            std::move(actionDelta)), actionModule);
-      }
-      else
-      {
-        boost::apply_visitor(BackwardVisitor(std::move(initialInput),
-            std::move(actionError), std::move(actionDelta)), actionModule);
-      }
-
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, rnnModule)), std::move(recurrentError),
-          std::move(rnnDelta)), rnnModule);
-
-      if (backwardStep == 0)
-      {
-        g = rnnDelta.col(1);
-      }
-      else
-      {
-        g += rnnDelta.col(1);
-      }
-
-      IntermediateGradient();
-    }
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -233,14 +98,7 @@ class RecurrentAttention
   template<typename eT>
   void Gradient(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */)
-  {
-    size_t offset = 0;
-    offset += boost::apply_visitor(GradientUpdateVisitor(
-        std::move(attentionGradient), offset), rnnModule);
-    boost::apply_visitor(GradientUpdateVisitor(
-        std::move(attentionGradient), offset), actionModule);
-  }
+                arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -279,13 +137,7 @@ class RecurrentAttention
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(rho, "rho");
-    ar & data::CreateNVP(outSize, "outSize");
-    ar & data::CreateNVP(forwardStep, "forwardStep");
-    ar & data::CreateNVP(backwardStep, "backwardStep");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Calculate the gradient of the attention module.
@@ -404,5 +256,8 @@ class RecurrentAttention
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "recurrent_attention_impl.hpp"
 
 #endif

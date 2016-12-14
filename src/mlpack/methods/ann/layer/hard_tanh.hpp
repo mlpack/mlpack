@@ -57,11 +57,7 @@ class HardTanH
    * @param maxValue Range of the linear region maximum value.
    * @param minValue Range of the linear region minimum value.
    */
-  HardTanH(const double maxValue = 1, const double minValue = -1) :
-      maxValue(maxValue), minValue(minValue)
-  {
-     // Nothing to do here.
-  }
+  HardTanH(const double maxValue = 1, const double minValue = -1);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -71,15 +67,7 @@ class HardTanH
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    output = input;
-    for (size_t i = 0; i < input.n_elem; i++)
-    {
-      output(i) = (output(i) > maxValue ? maxValue :
-          (output(i) < minValue ? minValue : output(i)));
-    }
-  }
+  void Forward(const InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -93,17 +81,7 @@ class HardTanH
   template<typename DataType>
   void Backward(const DataType&& input,
                 DataType&& gy,
-                DataType&& g)
-  {
-    g = gy;
-    for (size_t i = 0; i < input.n_elem; i++)
-    {
-      if (input(i) < minValue || input(i) > maxValue)
-      {
-        g(i) = 0;
-      }
-    }
-  }
+                DataType&& g);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -134,69 +112,9 @@ class HardTanH
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(maxValue, "maxValue");
-    ar & data::CreateNVP(minValue, "minValue");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the HardTanH function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    if (x > maxValue)
-      return maxValue;
-    else if (x < minValue)
-      return minValue;
-    return x;
-  }
-
-  /**
-   * Computes the HardTanH function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = x;
-    y.transform( [&](eT val) { return std::min(
-        std::max( val, minValue ), maxValue ); } );
-  }
-
-  /**
-   * Computes the first derivative of the HardTanH function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return (x > maxValue || x < minValue) ? 0 : 1;
-  }
-
-  /**
-   * Computes the first derivative of the HardTanH function.
-   *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
-   */
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType&& x, OutputType& y)
-  {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Deriv(x(i));
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -215,5 +133,8 @@ class HardTanH
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "hard_tanh_impl.hpp"
 
 #endif

@@ -38,7 +38,7 @@ class NegativeLogLikelihood
   /**
    * Create the NegativeLogLikelihoodLayer object.
    */
-  NegativeLogLikelihood() { /* Nothing to do here. */ }
+  NegativeLogLikelihood();
 
   /*
    * Computes the Negative log likelihood.
@@ -47,21 +47,7 @@ class NegativeLogLikelihood
    * @param output Resulting output activation.
    */
   template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
-  {
-    double output = 0;
-
-    for (size_t i = 0; i < input.n_cols; ++i)
-    {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
-
-      output -= input(currentTarget, i);
-    }
-
-    return output;
-  }
+  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -77,18 +63,7 @@ class NegativeLogLikelihood
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output)
-  {
-    output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
-    for (size_t i = 0; i < input.n_cols; ++i)
-    {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
-
-      output(currentTarget, i) = -1;
-    }
-  }
+                arma::Mat<eT>&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -105,6 +80,12 @@ class NegativeLogLikelihood
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  /**
+   * Serialize the layer
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -116,7 +97,10 @@ class NegativeLogLikelihood
   OutputDataType outputParameter;
 }; // class NegativeLogLikelihood
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "negative_log_likelihood_impl.hpp"
 
 #endif

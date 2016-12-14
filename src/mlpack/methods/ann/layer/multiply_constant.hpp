@@ -32,10 +32,7 @@ class MultiplyConstant
   /**
    * Create the MultiplyConstant object.
    */
-  MultiplyConstant(const double scalar) : scalar(scalar)
-  {
-    // Nothing to do here.
-  }
+  MultiplyConstant(const double scalar);
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
@@ -45,10 +42,7 @@ class MultiplyConstant
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    output = input * scalar;
-  }
+  void Forward(const InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network. The backward pass
@@ -59,10 +53,7 @@ class MultiplyConstant
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g)
-  {
-    g = gy * scalar;
-  }
+  void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -83,10 +74,7 @@ class MultiplyConstant
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(scalar, "scalar");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored constant scalar value.
@@ -102,7 +90,10 @@ class MultiplyConstant
   OutputDataType outputParameter;
 }; // class MultiplyConstant
 
-}; // namespace ann
-}; // namespace mlpack
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "multiply_constant_impl.hpp"
 
 #endif
