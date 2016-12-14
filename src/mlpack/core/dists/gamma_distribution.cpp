@@ -3,9 +3,15 @@
  * @author Yannis Mentekidis
  *
  * Implementation of the methods of GammaDistribution.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gamma_distribution.hpp"
-#include <boost/math/special_functions/digamma.hpp>
+// This will include digamma and trigamma.
+#include <mlpack/core/boost_backport/boost_backport_math.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -48,11 +54,6 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   if (arma::size(rdata) == arma::size(arma::mat()))
     return;
 
-  // Use boost's definitions of digamma and tgamma, and std::log.
-  using boost::math::digamma;
-  using boost::math::trigamma;
-  using std::log;
-
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
   const arma::vec meanLogxVec = arma::mean(arma::log(rdata), 1);
   const arma::vec meanxVec = arma::mean(rdata, 1);
@@ -76,7 +77,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
 
   // Number of dimensions of gamma distribution.
   size_t ndim = logMeanxVec.n_rows;
-  
+
   // Sanity check - all vectors are same size.
   if (logMeanxVec.n_rows != meanLogxVec.n_rows ||
       logMeanxVec.n_rows != meanxVec.n_rows)
@@ -113,7 +114,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       if (denominator == 0)
         throw std::logic_error("GammaDistribution::Train() attempted division" 
             " by 0.");
-      
+
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
 
       // Protect against nan values (aEst will be passed to logarithm).
@@ -122,7 +123,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
             "negative value for parameter alpha!");
 
     } while (!Converged(aEst, aOld, tol));
-    
+
     alpha(row) = aEst;
     beta(row) = meanx / aEst;
   }
@@ -150,7 +151,7 @@ void GammaDistribution::Probability(const arma::mat& observations,
       // Compute probability using Multiplication Law.
       double factor = std::exp(-observations(d, i) / beta(d));
       double numerator = std::pow(observations(d, i), alpha(d) - 1);
-      
+
       probabilities(i) *= factor * numerator / denominators(d);
     }
   }
@@ -160,9 +161,8 @@ void GammaDistribution::Probability(const arma::mat& observations,
 // dimensions.
 double GammaDistribution::Probability(double x, size_t dim) const
 {
-  return 
-    std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) / 
-    (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
+  return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) / 
+      (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.

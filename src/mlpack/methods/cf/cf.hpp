@@ -7,6 +7,11 @@
  *
  * Defines the CF class to perform collaborative filtering on the specified data
  * set using alternating least squares (ALS).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_CF_CF_HPP
 #define MLPACK_METHODS_CF_CF_HPP
@@ -127,8 +132,8 @@ class CF
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0,
-     const typename boost::disable_if_c<
-         FactorizerTraits<FactorizerType>::UsesCoordinateList>::type* = 0);
+     const typename std::enable_if_t<
+         !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
 
   /**
    * Train the CF model (i.e. factorize the input matrix) using the parameters
@@ -153,9 +158,8 @@ class CF
   template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::sp_mat& data,
              FactorizerType factorizer = FactorizerType(),
-             const typename boost::disable_if_c<
-                 FactorizerTraits<FactorizerType>::UsesCoordinateList>::type*
-                 = 0);
+             const typename std::enable_if_t<
+                 !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
@@ -212,7 +216,7 @@ class CF
    */
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
-                          arma::Col<size_t>& users);
+                          const arma::Col<size_t>& users);
 
   //! Converts the User, Item, Value Matrix to User-Item Table
   static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);

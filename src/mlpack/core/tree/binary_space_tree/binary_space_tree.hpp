@@ -2,6 +2,11 @@
  * @file binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
@@ -286,7 +291,7 @@ class BinarySpaceTree
   template<typename Archive>
   BinarySpaceTree(
       Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -341,7 +346,7 @@ class BinarySpaceTree
   template<typename VecType>
   size_t GetNearestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Return the index of the furthest child node to the given query point.  If
@@ -350,7 +355,7 @@ class BinarySpaceTree
   template<typename VecType>
   size_t GetFurthestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Return the index of the nearest child node to the given query node.  If it
@@ -450,7 +455,7 @@ class BinarySpaceTree
   //! Return the minimum distance to another point.
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const
   {
     return bound.MinDistance(point);
@@ -459,7 +464,7 @@ class BinarySpaceTree
   //! Return the maximum distance to another point.
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const
   {
     return bound.MaxDistance(point);
@@ -469,7 +474,7 @@ class BinarySpaceTree
   template<typename VecType>
   math::RangeType<ElemType>
   RangeDistance(const VecType& point,
-                typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.RangeDistance(point);
   }

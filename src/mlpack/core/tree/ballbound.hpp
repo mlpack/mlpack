@@ -3,6 +3,11 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BALLBOUND_HPP
 #define MLPACK_CORE_TREE_BALLBOUND_HPP
@@ -118,9 +123,9 @@ class BallBound
    * Calculates minimum bound-to-point squared distance.
    */
   template<typename OtherVecType>
-  ElemType MinDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
-      const;
+  ElemType MinDistance(
+      const OtherVecType& point,
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -131,9 +136,9 @@ class BallBound
    * Computes maximum distance.
    */
   template<typename OtherVecType>
-  ElemType MaxDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
-      const;
+  ElemType MaxDistance(
+      const OtherVecType& point,
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -146,7 +151,7 @@ class BallBound
   template<typename OtherVecType>
   math::RangeType<ElemType> RangeDistance(
       const OtherVecType& other,
-      typename boost::enable_if<IsVector<OtherVecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.

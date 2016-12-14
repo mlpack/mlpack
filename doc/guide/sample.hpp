@@ -60,8 +60,8 @@ int main()
   NeighborSearch<NearestNeighborSort, ManhattanDistance> nn(data);
 
   // Create the object we will store the nearest neighbors in.
-  arma::Col<size_t> neighbors;
-  arma::vec distances; // We need to store the distance too.
+  arma::Mat<size_t> neighbors;
+  arma::mat distances; // We need to store the distance too.
 
   // Compute the neighbors.
   nn.Search(1, neighbors, distances);
@@ -69,7 +69,7 @@ int main()
   // Write each neighbor and distance using Log.
   for (size_t i = 0; i < neighbors.n_elem; ++i)
   {
-    Log::Info << "Nearest neighbor of point " << i << " is point "
+    std::cout << "Nearest neighbor of point " << i << " is point "
         << neighbors[i] << " and the distance is " << distances[i] << ".\n";
   }
 }

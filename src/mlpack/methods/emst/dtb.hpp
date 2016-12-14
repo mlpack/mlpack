@@ -16,6 +16,11 @@
  *   year = {2010}
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_EMST_DTB_HPP
 #define MLPACK_METHODS_EMST_DTB_HPP
@@ -129,7 +134,7 @@ class DualTreeBoruvka
    *
    * @param data Dataset to build a tree for.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
-   * @param leafSize The leaf size to be used during tree construction.
+   * @param metric An optional instantiated metric to use.
    */
   DualTreeBoruvka(const MatType& dataset,
                   const bool naive = false,
@@ -153,7 +158,7 @@ class DualTreeBoruvka
    * @endnote
    *
    * @param tree Pre-built tree.
-   * @param dataset Dataset corresponding to the pre-built tree.
+   * @param metric An optional instantiated metric to use.
    */
   DualTreeBoruvka(Tree* tree,
                   const MetricType metric = MetricType());

@@ -61,6 +61,7 @@ Copyright:
   Copyright 2016, Nilay Jain <nilayjain13@gmail.com>
   Copyright 2016, Peter Lehner <peter.lehner@dlr.de>
   Copyright 2016, Anuraj Kanodia <akanuraj200@gmail.com>
+  Copyright 2016, Ivan Georgiev <ivan@jonan.info>
 License: BSD-3-clause
   All rights reserved.
   .

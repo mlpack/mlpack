@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Main executable for logistic regression.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include "logistic_regression.hpp"
@@ -69,10 +74,10 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "be either 0 or 1.");
 
 // Training parameters.
-PARAM_STRING_IN("training_file", "A file containing the training set (the "
-    "matrix of predictors, X).", "t", "");
-PARAM_STRING_IN("labels_file", "A file containing labels (0 or 1) for the "
-    "points in the training set (y).", "l", "");
+PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
+    "of predictors, X).", "t");
+PARAM_UMATRIX_IN("labels", "A matrix containing labels (0 or 1) for the points "
+    "in the training set (y).", "l");
 
 // Optimizer parameters.
 PARAM_DOUBLE_IN("lambda", "L2-regularization parameter for training.", "L",
@@ -94,12 +99,12 @@ PARAM_STRING_OUT("output_model_file", "File to save trained logistic regression"
     " model to.", "M");
 
 // Testing.
-PARAM_STRING_IN("test_file", "File containing test dataset.", "T", "");
-PARAM_STRING_OUT("output_file", "If --test_file is specified, this file is "
-    "where the predictions for the test set will be saved.", "o");
-PARAM_STRING_OUT("output_probabilities_file", "If --test_file is specified, "
-    "this file is where the class probabilities for the test set will be "
-    "saved.", "p");
+PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+PARAM_UMATRIX_OUT("output", "If --test_file is specified, this matrix is where "
+    "the predictions for the test set will be saved.", "o");
+PARAM_MATRIX_OUT("output_probabilities", "If --test_file is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
+    "p");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -109,8 +114,6 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Collect command-line options.
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
   const double lambda = CLI::GetParam<double>("lambda");
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
@@ -119,22 +122,32 @@ int main(int argc, char** argv)
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
-  const string outputProbabilitiesFile =
-      CLI::GetParam<string>("output_probabilities_file");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
 
   // One of inputFile and modelFile must be specified.
-  if (trainingFile.empty() && inputModelFile.empty())
-    Log::Fatal << "One of --input_model or --training_file must be specified."
-        << endl;
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+    Log::Fatal << "One of --input_model_file or --training_file must be "
+        << "specified." << endl;
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  if (outputModelFile.empty() && !trainingFile.empty())
+  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("training"))
     Log::Warn << "--output_model_file not given; trained model will not be "
         << "saved." << endl;
+
+  if (CLI::HasParam("test") && !CLI::HasParam("output") &&
+      !CLI::HasParam("output_probabilities"))
+    Log::Warn << "--test_file specified, but neither --output_file nor "
+        << "--output_probabilities_file are specified; no test "
+        << "output will be saved!" << endl;
+
+  if (CLI::HasParam("output") && !CLI::HasParam("test"))
+    Log::Warn << "--output_file ignored because --test_file is not specified."
+        << endl;
+
+  if (CLI::HasParam("output_probabilities") && !CLI::HasParam("test"))
+    Log::Warn << "--output_probabilities_file ignored because --test_file is "
+        << "not specified." << endl;
 
   // Tolerance needs to be positive.
   if (tolerance < 0.0)
@@ -178,28 +191,26 @@ int main(int argc, char** argv)
   arma::Row<size_t> predictions;
 
   // Load data matrix.
-  if (!trainingFile.empty())
-    data::Load(trainingFile, regressors, true);
+  if (CLI::HasParam("training"))
+    regressors = std::move(CLI::GetParam<arma::mat>("training"));
 
   // Load the model, if necessary.
   LogisticRegression<> model(0, 0); // Empty model.
-  if (!inputModelFile.empty())
-  {
+  if (CLI::HasParam("input_model_file"))
     data::Load(inputModelFile, "logistic_regression_model", model);
-  }
   else
   {
     // Set the size of the parameters vector, if necessary.
-    if (labelsFile.empty())
+    if (!CLI::HasParam("labels"))
       model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows - 1);
     else
       model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows);
   }
 
   // Check if the responses are in a separate file.
-  if (!trainingFile.empty() && !labelsFile.empty())
+  if (CLI::HasParam("training") && CLI::HasParam("labels"))
   {
-    data::Load(labelsFile, responsesMat, true);
+    responsesMat = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
     if (responsesMat.n_cols == 1)
       responses = responsesMat.col(0).t();
     else
@@ -209,7 +220,7 @@ int main(int argc, char** argv)
       Log::Fatal << "The labels (--labels_file) must have the same number of "
           << "points as the training dataset (--training_file)." << endl;
   }
-  else if (!trainingFile.empty())
+  else if (CLI::HasParam("training"))
   {
     // The initial predictors for y, Nx1.
     responses = arma::conv_to<arma::Row<size_t>>::from(
@@ -218,12 +229,12 @@ int main(int argc, char** argv)
   }
 
   // Verify the labels.
-  if (!trainingFile.empty() && max(responses) > 1)
+  if (CLI::HasParam("training") && max(responses) > 1)
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
 
   // Now, do the training.
-  if (!trainingFile.empty())
+  if (CLI::HasParam("training"))
   {
     LogisticRegressionFunction<> lrf(regressors, responses, model.Parameters());
     if (optimizerType == "sgd")
@@ -261,29 +272,30 @@ int main(int argc, char** argv)
     }
   }
 
-  if (!testFile.empty())
+  if (CLI::HasParam("test"))
   {
-    data::Load(testFile, testSet, true);
+    testSet = std::move(CLI::GetParam<arma::mat>("test"));
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (!outputFile.empty())
+    if (CLI::HasParam("output"))
     {
-      Log::Info << "Predicting classes of points in '" << testFile << "'."
-          << endl;
+      Log::Info << "Predicting classes of points in '"
+          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
       model.Classify(testSet, predictions, decisionBoundary);
 
-      data::Save(outputFile, predictions, false);
+      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(predictions);
     }
 
-    if (!outputProbabilitiesFile.empty())
+    if (CLI::HasParam("output_probabilities"))
     {
-      Log::Info << "Calculating class probabilities of points in '" << testFile
-          << "'." << endl;
+      Log::Info << "Calculating class probabilities of points in '"
+          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model.Classify(testSet, probabilities);
 
-      data::Save(outputProbabilitiesFile, probabilities, false);
+      CLI::GetParam<arma::mat>("output_probabilities") =
+          std::move(probabilities);
     }
   }
 

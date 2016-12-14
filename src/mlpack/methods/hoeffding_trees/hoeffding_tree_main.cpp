@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * A command-line executable that can build a streaming decision tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
@@ -41,8 +46,8 @@ PROGRAM_INFO("Hoeffding trees",
     "probabilities for each predictions will be stored in the file specified by"
     " the --probabilities_file (-P) option.");
 
-PARAM_STRING_IN("training_file", "Training dataset file.", "t", "");
-PARAM_STRING_IN("labels_file", "Labels for training dataset.", "l", "");
+PARAM_STRING_IN("training_file", "File containing training dataset.", "t", "");
+PARAM_UMATRIX_IN("labels", "Labels for training dataset.", "l");
 
 PARAM_DOUBLE_IN("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
@@ -54,12 +59,12 @@ PARAM_INT_IN("min_samples", "Minimum number of samples before splitting.", "I",
 PARAM_STRING_IN("input_model_file", "File to load trained tree from.", "m", "");
 PARAM_STRING_OUT("output_model_file", "File to save trained tree to.", "M");
 
-PARAM_STRING_IN("test_file", "File of testing data.", "T", "");
-PARAM_STRING_IN("test_labels_file", "Labels of test data.", "L", "");
-PARAM_STRING_OUT("predictions_file", "File to output label predictions for "
-    "test data into.", "p");
-PARAM_STRING_OUT("probabilities_file", "In addition to predicting labels, "
-    "provide prediction probabilities in this file.", "P");
+PARAM_STRING_IN("test_file", "File containing testing dataset.", "T", "");
+PARAM_UMATRIX_IN("test_labels", "Labels of test data.", "L");
+PARAM_UMATRIX_OUT("predictions", "Matrix to output label predictions for test "
+    "data into.", "p");
+PARAM_MATRIX_OUT("probabilities", "In addition to predicting labels, provide "
+    "rediction probabilities in this matrix.", "P");
 
 PARAM_STRING_IN("numeric_split_strategy", "The splitting strategy to use for "
     "numeric features: 'domingos' or 'binary'.", "N", "binary");
@@ -86,19 +91,12 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Check input parameters for validity.
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile =
-      CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile =
-      CLI::GetParam<string>("probabilities_file");
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((CLI::HasParam("predictions_file") ||
-       CLI::HasParam("probabilities_file")) &&
+  if ((CLI::HasParam("predictions") ||
+       CLI::HasParam("probabilities")) &&
        !CLI::HasParam("test_file"))
     Log::Fatal << "--test_file must be specified if --predictions_file or "
         << "--probabilities_file is specified." << endl;
@@ -107,7 +105,7 @@ int main(int argc, char** argv)
     Log::Fatal << "One of --training_file or --input_model_file must be "
         << "specified!" << endl;
 
-  if (CLI::HasParam("training_file") && !CLI::HasParam("labels_file"))
+  if (CLI::HasParam("training_file") && !CLI::HasParam("labels"))
     Log::Fatal << "If --training_file is specified, --labels_file must be "
         << "specified too!" << endl;
 
@@ -116,6 +114,15 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
+        << endl;
+
+  if (CLI::HasParam("test_file") &&
+      !CLI::HasParam("predictions") &&
+      !CLI::HasParam("probabilities") &&
+      !CLI::HasParam("test_labels"))
+    Log::Warn << "--test_file (-T) is specified, but none of "
+        << "--predictions_file (-p), --probabilities_file (-P), or "
+        << "--test_labels_file (-L) are specified, so no output will be given!"
         << endl;
 
   if (CLI::HasParam("info_gain"))
@@ -172,18 +179,11 @@ template<typename TreeType>
 void PerformActions(const typename TreeType::NumericSplit& numericSplit)
 {
   // Load necessary parameters.
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
   const double confidence = CLI::GetParam<double>("confidence");
   const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
   const size_t minSamples = (size_t) CLI::GetParam<int>("min_samples");
   const string inputModelFile = CLI::GetParam<string>("input_model_file");
   const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile =
-      CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile =
-      CLI::GetParam<string>("probabilities_file");
   bool batchTraining = CLI::HasParam("batch_mode");
   const size_t passes = (size_t) CLI::GetParam<int>("passes");
   if (passes > 1)
@@ -194,23 +194,27 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   if (!CLI::HasParam("input_model_file"))
   {
     arma::mat trainingSet;
-    data::Load(trainingFile, trainingSet, datasetInfo, true);
+    data::Load(CLI::GetParam<string>("training_file"), trainingSet, datasetInfo,
+        true);
     for (size_t i = 0; i < trainingSet.n_rows; ++i)
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    arma::Col<size_t> labelsIn;
-    data::Load(labelsFile, labelsIn, true, false);
-    arma::Row<size_t> labels = labelsIn.t();
+    arma::Mat<size_t> labels = CLI::GetParam<arma::Mat<size_t>>("labels");
+
+    if (labels.n_rows > 1)
+      labels = labels.t();
+    if (labels.n_rows > 1)
+      Log::Fatal << "Labels must be one-dimensional!" << endl;
 
     // Now create the decision tree.
     Timer::Start("tree_training");
     if (passes > 1)
       Log::Info << "Taking " << passes << " passes over the dataset." << endl;
 
-    tree = new TreeType(trainingSet, datasetInfo, labels, max(labels) + 1,
-        batchTraining, confidence, maxSamples, 100, minSamples,
-        typename TreeType::CategoricalSplit(0, 0), numericSplit);
+    tree = new TreeType(trainingSet, datasetInfo, labels.row(0),
+        max(labels.row(0)) + 1, batchTraining, confidence, maxSamples, 100,
+        minSamples, typename TreeType::CategoricalSplit(0, 0), numericSplit);
 
     for (size_t i = 1; i < passes; ++i)
       tree->Train(trainingSet, labels, false);
@@ -224,14 +228,18 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     if (CLI::HasParam("training_file"))
     {
       arma::mat trainingSet;
-      data::Load(trainingFile, trainingSet, datasetInfo, true);
+      data::Load(CLI::GetParam<string>("training_file"), trainingSet,
+          datasetInfo, true);
       for (size_t i = 0; i < trainingSet.n_rows; ++i)
         Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
             << i << "." << endl;
 
-      arma::Col<size_t> labelsIn;
-      data::Load(labelsFile, labelsIn, true, false);
-      arma::Row<size_t> labels = labelsIn.t();
+      arma::Mat<size_t> labels = CLI::GetParam<arma::Mat<size_t>>("labels");
+
+      if (labels.n_rows > 1)
+        labels = labels.t();
+      if (labels.n_rows > 1)
+        Log::Fatal << "Labels must be one-dimensional!" << endl;
 
       // Now create the decision tree.
       Timer::Start("tree_training");
@@ -239,11 +247,11 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
       {
         Log::Info << "Taking " << passes << " passes over the dataset." << endl;
         for (size_t i = 0; i < passes; ++i)
-          tree->Train(trainingSet, labels, false);
+          tree->Train(trainingSet, labels.row(0), false);
       }
       else
       {
-        tree->Train(trainingSet, labels, batchTraining);
+        tree->Train(trainingSet, labels.row(0), batchTraining);
       }
       Timer::Stop("tree_training");
     }
@@ -253,13 +261,17 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   {
     // Get training error.
     arma::mat trainingSet;
-    data::Load(trainingFile, trainingSet, datasetInfo, true);
+    data::Load(CLI::GetParam<string>("training_file"), trainingSet, datasetInfo,
+        true);
     arma::Row<size_t> predictions;
     tree->Classify(trainingSet, predictions);
 
-    arma::Col<size_t> labelsIn;
-    data::Load(labelsFile, labelsIn, true, false);
-    arma::Row<size_t> labels = labelsIn.t();
+    arma::Mat<size_t> labels = CLI::GetParam<arma::Mat<size_t>>("labels");
+
+    if (labels.n_rows > 1)
+      labels = labels.t();
+    if (labels.n_rows > 1)
+      Log::Fatal << "Labels must be one-dimensional!" << endl;
 
     size_t correct = 0;
     for (size_t i = 0; i < labels.n_elem; ++i)
@@ -290,7 +302,7 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
   if (CLI::HasParam("test_file"))
   {
     arma::mat testSet;
-    data::Load(testFile, testSet, datasetInfo, true);
+    data::Load(CLI::GetParam<string>("test_file"), testSet, datasetInfo, true);
 
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
@@ -299,12 +311,14 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
     tree->Classify(testSet, predictions, probabilities);
     Timer::Stop("tree_testing");
 
-    if (CLI::HasParam("test_labels_file"))
+    if (CLI::HasParam("test_labels"))
     {
-      string testLabelsFile = CLI::GetParam<string>("test_labels_file");
-      arma::Col<size_t> testLabelsIn;
-      data::Load(testLabelsFile, testLabelsIn, true, false);
-      arma::Row<size_t> testLabels = testLabelsIn.t();
+      arma::Mat<size_t> testLabels =
+          std::move(CLI::GetParam<arma::Mat<size_t>>("test_labels"));
+      if (testLabels.n_rows > 1)
+        testLabels = testLabels.t();
+      if (testLabels.n_rows > 1)
+        Log::Fatal << "Test labels must be one-dimensional!" << endl;
 
       size_t correct = 0;
       for (size_t i = 0; i < testLabels.n_elem; ++i)
@@ -317,11 +331,11 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
           100.0 << ")." << endl;
     }
 
-    if (CLI::HasParam("predictions_file"))
-      data::Save(predictionsFile, predictions);
+    if (CLI::HasParam("predictions"))
+      CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictions);
 
-    if (CLI::HasParam("probabilities_file"))
-      data::Save(probabilitiesFile, probabilities);
+    if (CLI::HasParam("probabilities"))
+      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   // Check the accuracy on the training set.

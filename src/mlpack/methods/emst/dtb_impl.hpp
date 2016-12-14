@@ -3,6 +3,11 @@
  * @author Bill March (march@gatech.edu)
  *
  * Implementation of DTB.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_EMST_DTB_IMPL_HPP
 #define MLPACK_METHODS_EMST_DTB_IMPL_HPP
@@ -17,9 +22,9 @@ template<typename MatType, typename TreeType>
 TreeType* BuildTree(
     MatType& dataset,
     std::vector<size_t>& oldFromNew,
-    typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(dataset, oldFromNew);
 }
@@ -29,9 +34,9 @@ template<typename MatType, typename TreeType>
 TreeType* BuildTree(
     const MatType& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType
+    >* = 0)
 {
   return new TreeType(dataset);
 }

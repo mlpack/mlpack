@@ -3,6 +3,11 @@
  * @author Nishant Mehta
  *
  * Executable for RADICAL.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include <mlpack/core.hpp>
@@ -14,19 +19,10 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "dimensions of Y are independent components.  If the algorithm is running"
     "particularly slowly, try reducing the number of replicates.");
 
-PARAM_STRING_IN_REQ("input_file", "Input dataset filename for ICA.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
-// Kept for reverse compatibility until mlpack 3.0.0.
-PARAM_STRING_OUT("output_ic", "File to save independent components to "
-    "(deprecated: use --output_ic_file).", "");
-PARAM_STRING_OUT("output_unmixing", "File to save unmixing matrix to "
-    "(deprecated: use --output_unmixing_file).", "");
-
-// These are the new parameter names.
-PARAM_STRING_OUT("output_ic_file", "File to save independent components to.",
-    "o");
-PARAM_STRING_OUT("output_unmixing_file", "File to save unmixing matrix to.",
-    "u");
+PARAM_MATRIX_OUT("output_ic", "Matrix to save independent components to.", "o");
+PARAM_MATRIX_OUT("output_unmixing", "Matrix to save unmixing matrix to.", "u");
 
 PARAM_DOUBLE_IN("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);
@@ -51,46 +47,18 @@ int main(int argc, char* argv[])
   // Handle parameters.
   CLI::ParseCommandLine(argc, argv);
 
-  // Reverse compatibility.  We can remove these for mlpack 3.0.0.
-  if (CLI::HasParam("output_ic") && CLI::HasParam("output_ic_file"))
-    Log::Fatal << "Cannot specify both --output_ic and --output_ic_file!"
-        << endl;
-
-  if (CLI::HasParam("output_unmixing") && CLI::HasParam("output_unmixing_file"))
-    Log::Fatal << "Cannot specify both --output_unmixing and "
-        << "--output_unmixing_file!" << endl;
-
-  if (CLI::HasParam("output_ic"))
-  {
-    Log::Warn << "--output_ic is deprecated and will be removed in mlpack "
-        << "3.0.0; use --output_ic_file instead." << endl;
-    CLI::GetParam<string>("output_ic_file") =
-        CLI::GetParam<string>("output_ic");
-  }
-
-  if (CLI::HasParam("output_unmixing"))
-  {
-    Log::Warn << "--output_unmixing is deprecated and will be removed in mlpack"
-        << " 3.0.0; use --output_unmixing_file instead." << endl;
-    CLI::GetParam<string>("output_unmixing_file") =
-        CLI::GetParam<string>("output_unmixing");
-  }
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
-  if ((CLI::GetParam<string>("output_ic_file") == "") &&
-      (CLI::GetParam<string>("output_unmixing_file") == ""))
+  if (!CLI::HasParam("output_ic") && !CLI::HasParam("output_unmixing"))
     Log::Warn << "Neither --output_ic_file nor --output_unmixing_file were "
         << "specified; no output will be saved!" << endl;
 
   // Load the data.
-  const string matXFilename = CLI::GetParam<string>("input_file");
-  mat matX;
-  data::Load(matXFilename, matX);
+  mat matX = std::move(CLI::GetParam<mat>("input"));
 
   // Load parameters.
   double noiseStdDev = CLI::GetParam<double>("noise_std_dev");
@@ -110,13 +78,11 @@ int main(int argc, char* argv[])
   rad.DoRadical(matX, matY, matW);
 
   // Save results.
-  const string matYFilename = CLI::GetParam<string>("output_ic_file");
-  if (matYFilename != "")
-    data::Save(matYFilename, matY);
+  if (CLI::HasParam("output_ic"))
+    CLI::GetParam<mat>("output_ic") = std::move(matY);
 
-  const string matWFilename = CLI::GetParam<string>("output_unmixing_file");
-  if (matWFilename != "")
-    data::Save(matWFilename, matW);
+  if (CLI::HasParam("output_unmixing"))
+    CLI::GetParam<mat>("output_unmixing") = std::move(matW);
 
   if (CLI::HasParam("objective"))
   {

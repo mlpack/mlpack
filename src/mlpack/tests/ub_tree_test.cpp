@@ -1,3 +1,14 @@
+/**
+ * @file ub_tree_test.cpp
+ * @author Mikhail Lozhnikov
+ *
+ * Tests for the UB tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -304,12 +315,12 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   // Nearest neighbor search with the UB tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, false, true);
+      UBTree> knn1(dataset, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 
@@ -331,12 +342,12 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
 
   // Nearest neighbor search with the UB tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, false, false);
+      UBTree> knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
   // Nearest neighbor search the naive way.
-  KNN knn2(dataset, true, true);
+  KNN knn2(dataset, NAIVE_MODE);
 
   knn2.Search(5, neighbors2, distances2);
 

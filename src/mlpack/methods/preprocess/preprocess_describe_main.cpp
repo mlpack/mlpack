@@ -3,6 +3,11 @@
  * @author Keon Kim
  *
  * Descriptive Statistics Class and CLI executable.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <boost/format.hpp>
@@ -38,7 +43,7 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "$ mlpack_preprocess_describe -i dataset.csv -w 10 -p 5 -P -v");
 
 // Define parameters for data.
-PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
+PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");
 PARAM_INT_IN("dimension", "Dimension of the data. Use this to specify a "
     "dimension", "d", 0);
 PARAM_INT_IN("precision", "Precision of the output statistics.", "p", 4);
@@ -145,7 +150,6 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
-  const string inputFile = CLI::GetParam<string>("input_file");
   const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
   const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
@@ -153,8 +157,7 @@ int main(int argc, char** argv)
   const bool rowMajor = CLI::HasParam("row_major");
 
   // Load the data.
-  arma::mat data;
-  data::Load(inputFile, data);
+  arma::mat& data = CLI::GetParam<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
