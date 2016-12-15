@@ -63,18 +63,7 @@ class DropConnect
 {
  public:
   //! Create the DropConnect object.
-<<<<<<< HEAD
-<<<<<<< HEAD
   DropConnect();
-=======
-  DropConnect()
-  {
-    /* Nothing to do here. */
-  }
->>>>>>> Refactor ann layer.
-=======
-  DropConnect();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Creates the DropConnect Layer as a Linear Object that takes input size,
@@ -86,30 +75,9 @@ class DropConnect
    */
   DropConnect(const size_t inSize,
               const size_t outSize,
-<<<<<<< HEAD
-<<<<<<< HEAD
               const double ratio = 0.5);
 
   ~DropConnect();
-=======
-              const double ratio = 0.5) :
-      ratio(ratio),
-      scale(1.0 / (1 - ratio)),
-      baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))
-  {
-    network.push_back(baseLayer);
-  }
-
-  ~DropConnect()
-  {
-    boost::apply_visitor(DeleteVisitor(), baseLayer);
-  }
->>>>>>> Refactor ann layer.
-=======
-              const double ratio = 0.5);
-
-  ~DropConnect();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
   * Ordinary feed forward pass of the DropConnect layer.
@@ -118,50 +86,7 @@ class DropConnect
   * @param output Resulting output activation.
   */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    // The DropConnect mask will not be multiplied in the deterministic mode
-    // (during testing).
-    if (deterministic)
-    {
-      boost::apply_visitor(
-        ForwardVisitor(
-          std::move(input),
-          std::move(output)
-        ),
-        baseLayer);
-    }
-    else
-    {
-      // Save weights for denoising.
-      boost::apply_visitor(ParametersVisitor(std::move(denoise)), baseLayer);
-
-      // Scale with input / (1 - ratio) and set values to zero with
-      // probability ratio.
-      mask = arma::randu<arma::Mat<eT> >(denoise.n_rows, denoise.n_cols);
-      mask.transform([&](double val) { return (val > ratio); });
-
-      boost::apply_visitor(ParametersSetVisitor(std::move(denoise % mask)),
-          baseLayer);
-
-      boost::apply_visitor(
-        ForwardVisitor(
-          std::move(input),
-          std::move(output)
-        ),
-        baseLayer);
-
-      output = output * scale;
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of the DropConnect layer.
@@ -173,24 +98,7 @@ class DropConnect
   template<typename eT>
   void Backward(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    boost::apply_visitor(
-      BackwardVisitor(
-          std::move(input),
-          std::move(gy),
-          std::move(g)
-      ),
-      baseLayer);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -202,22 +110,7 @@ class DropConnect
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
-=======
-                arma::Mat<eT>&& /* gradient */)
-  {
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-        baseLayer);
-
-    // Denoise the weights.
-    boost::apply_visitor(ParametersSetVisitor(std::move(denoise)), baseLayer);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& /* gradient */);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -263,21 +156,12 @@ class DropConnect
     scale = 1.0 / (1.0 - ratio);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 private:
   //! The probability of setting a value to zero.
   double ratio;
@@ -319,16 +203,7 @@ private:
 }  // namespace ann
 }  // namespace mlpack
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Include implementation.
 #include "dropconnect_impl.hpp"
 
-=======
->>>>>>> Refactor ann layer.
-=======
-// Include implementation.
-#include "dropconnect_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

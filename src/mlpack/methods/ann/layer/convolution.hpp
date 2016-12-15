@@ -47,18 +47,7 @@ class Convolution
 {
 public:
   //! Create the Convolution object.
-<<<<<<< HEAD
-<<<<<<< HEAD
   Convolution();
-=======
-  Convolution()
-  {
-    /* Nothing to do here. */
-  }
->>>>>>> Refactor ann layer.
-=======
-  Convolution();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -84,49 +73,12 @@ public:
               const size_t padW = 0,
               const size_t padH = 0,
               const size_t inputWidth = 0,
-<<<<<<< HEAD
-<<<<<<< HEAD
               const size_t inputHeight = 0);
-=======
-              const size_t inputHeight = 0) :
-      inSize(inSize),
-      outSize(outSize),
-      kW(kW),
-      kH(kH),
-      dW(dW),
-      dH(dH),
-      padW(padW),
-      padH(padH),
-      inputWidth(inputWidth),
-      inputHeight(inputHeight),
-      outputWidth(0),
-      outputHeight(0)
-  {
-    weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
-  }
->>>>>>> Refactor ann layer.
-=======
-              const size_t inputHeight = 0);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Set the weight and bias term.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Reset();
-=======
-  void Reset()
-  {
-    weight = arma::cube(weights.memptr(), kW, kH,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Reset();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -136,56 +88,7 @@ public:
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, inSize);
-
-    if (padW != 0 || padH != 0)
-    {
-      Pad(inputTemp, padW, padH, inputPaddedTemp);
-    }
-
-    size_t wConv = ConvOutSize(inputWidth, kW, dW, padW);
-    size_t hConv = ConvOutSize(inputHeight, kH, dH, padH);
-
-    outputTemp = arma::zeros<arma::Cube<eT> >(wConv, hConv, outSize);
-
-    for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
-    {
-      for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
-      {
-        arma::Mat<eT> convOutput;
-
-        if (padW != 0 || padH != 0)
-        {
-          ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap),
-              weight.slice(outMapIdx), convOutput, dW, dH);
-        }
-        else
-        {
-          ForwardConvolutionRule::Convolution(inputTemp.slice(inMap),
-              weight.slice(outMapIdx), convOutput, dW, dH);
-        }
-
-        outputTemp.slice(outMap) += convOutput;
-      }
-
-      outputTemp.slice(outMap) += bias(outMap);
-    }
-
-    output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
-
-    outputWidth = outputTemp.n_rows;
-    outputHeight = outputTemp.n_cols;
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -199,48 +102,7 @@ public:
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    arma::cube mappedError = arma::cube(gy.memptr(),
-        outputWidth, outputHeight, outSize);
-    gTemp = arma::zeros<arma::Cube<eT> >(inputTemp.n_rows,
-        inputTemp.n_cols, inputTemp.n_slices);
-
-    for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
-    {
-      for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
-      {
-        arma::Mat<eT> rotatedFilter;
-        Rotate180(weight.slice(outMapIdx), rotatedFilter);
-
-        arma::Mat<eT> output;
-        BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-            rotatedFilter, output, dW, dH);
-
-        if (padW != 0 || padH != 0)
-        {
-          gTemp.slice(inMap) += output.submat(rotatedFilter.n_rows / 2,
-              rotatedFilter.n_cols / 2,
-              rotatedFilter.n_rows / 2 + gTemp.n_rows - 1,
-              rotatedFilter.n_cols / 2 + gTemp.n_cols - 1);
-        }
-        else
-        {
-          gTemp.slice(inMap) += output;
-        }
-      }
-    }
-
-    g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -252,82 +114,7 @@ public:
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
-=======
-                arma::Mat<eT>&& gradient)
-  {
-    arma::cube mappedError;
-    if (padW != 0 && padH != 0)
-    {
-      mappedError = arma::cube(error.memptr(), outputWidth / padW,
-          outputHeight / padH, outSize);
-    }
-    else
-    {
-      mappedError = arma::cube(error.memptr(), outputWidth,
-          outputHeight, outSize);
-    }
-
-    gradientTemp = arma::zeros<arma::Cube<eT> >(weight.n_rows, weight.n_cols,
-        weight.n_slices);
-
-    for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
-    {
-      for (size_t inMap = 0, s = outMap; inMap < inSize; inMap++, outMapIdx++,
-          s += outSize)
-      {
-        arma::Cube<eT> inputSlices;
-        if (padW != 0 || padH != 0)
-        {
-          inputSlices = inputPaddedTemp.slices(inMap, inMap);
-        }
-        else
-        {
-          inputSlices = inputTemp.slices(inMap, inMap);
-        }
-
-        arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
-
-        arma::Cube<eT> output;
-        GradientConvolutionRule::Convolution(inputSlices, deltaSlices,
-            output, dW, dH);
-
-        if ((padW != 0 || padH != 0) &&
-            (gradientTemp.n_rows < output.n_rows &&
-            gradientTemp.n_cols < output.n_cols))
-        {
-          for (size_t i = 0; i < output.n_slices; i++)
-          {
-            arma::mat subOutput = output.slice(i);
-
-            gradientTemp.slice(s) += subOutput.submat(subOutput.n_rows / 2,
-                subOutput.n_cols / 2,
-                subOutput.n_rows / 2 + gradientTemp.n_rows - 1,
-                subOutput.n_cols / 2 + gradientTemp.n_cols - 1);
-          }
-        }
-        else
-        {
-          for (size_t i = 0; i < output.n_slices; i++)
-          {
-            gradientTemp.slice(s) += output.slice(i);
-          }
-        }
-      }
-
-      gradient.submat(weight.n_elem + outMap, 0,
-          weight.n_elem + outMap, 0) = arma::accu(mappedError.slices(
-          outMap, outMap));
-    }
-
-    gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(gradientTemp);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& gradient);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -378,30 +165,7 @@ public:
    * Serialize the layer
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-    ar & data::CreateNVP(kW, "kW");
-    ar & data::CreateNVP(kH, "kH");
-    ar & data::CreateNVP(dW, "dW");
-    ar & data::CreateNVP(dH, "dH");
-    ar & data::CreateNVP(padW, "padW");
-    ar & data::CreateNVP(padH, "padH");
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inputWidth, "inputWidth");
-    ar & data::CreateNVP(inputHeight, "inputHeight");
-    ar & data::CreateNVP(outputWidth, "outputWidth");
-    ar & data::CreateNVP(outputHeight, "outputHeight");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
 
@@ -571,26 +335,10 @@ public:
   OutputDataType outputParameter;
 }; // class Convolution
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "convolution_impl.hpp"
 
-=======
-
-} // namespace ann
-} // namespace mlpack
-
->>>>>>> Refactor ann layer.
-=======
-} // namespace ann
-} // namespace mlpack
-
-// Include implementation.
-#include "convolution_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

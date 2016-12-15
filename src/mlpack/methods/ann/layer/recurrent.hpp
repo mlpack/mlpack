@@ -56,49 +56,7 @@ class Recurrent
             const InputModuleType& input,
             const FeedbackModuleType& feedback,
             const TransferModuleType& transfer,
-<<<<<<< HEAD
-<<<<<<< HEAD
             const size_t rho);
-=======
-            const size_t rho) :
-      startModule(new StartModuleType(start)),
-      inputModule(new InputModuleType(input)),
-      feedbackModule(new FeedbackModuleType(feedback)),
-      transferModule(new TransferModuleType(transfer)),
-      rho(rho),
-      forwardStep(0),
-      backwardStep(0),
-      gradientStep(0),
-      deterministic(false)
-
-  {
-    initialModule = new Sequential<>();
-    mergeModule = new AddMerge<>();
-    recurrentModule = new Sequential<>(false);
-
-    boost::apply_visitor(AddVisitor(inputModule), initialModule);
-    boost::apply_visitor(AddVisitor(startModule), initialModule);
-    boost::apply_visitor(AddVisitor(transferModule), initialModule);
-
-    boost::apply_visitor(weightSizeVisitor, startModule);
-    boost::apply_visitor(weightSizeVisitor, inputModule);
-    boost::apply_visitor(weightSizeVisitor, feedbackModule);
-    boost::apply_visitor(weightSizeVisitor, transferModule);
-
-    boost::apply_visitor(AddVisitor(inputModule), mergeModule);
-    boost::apply_visitor(AddVisitor(feedbackModule), mergeModule);
-    boost::apply_visitor(AddVisitor(mergeModule), recurrentModule);
-    boost::apply_visitor(AddVisitor(transferModule), recurrentModule);
-
-    network.push_back(initialModule);
-    network.push_back(mergeModule);
-    network.push_back(feedbackModule);
-    network.push_back(recurrentModule);
-  }
->>>>>>> Refactor ann layer.
-=======
-            const size_t rho);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -108,56 +66,7 @@ class Recurrent
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    if (forwardStep == 0)
-    {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-          initialModule);
-    }
-    else
-    {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-          boost::apply_visitor(outputParameterVisitor, inputModule))),
-          inputModule);
-
-      boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, transferModule)), std::move(
-          boost::apply_visitor(outputParameterVisitor, feedbackModule))),
-          feedbackModule);
-
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-          recurrentModule);
-    }
-
-    output = boost::apply_visitor(outputParameterVisitor, transferModule);
-
-    // Save the feedback output parameter when training the module.
-    if (!deterministic)
-    {
-      feedbackOutputParameter.push_back(output);
-    }
-
-    forwardStep++;
-    if (forwardStep == rho)
-    {
-      forwardStep = 0;
-      backwardStep = 0;
-
-      if (!recurrentError.is_empty())
-      {
-        recurrentError.zeros();
-      }
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -171,52 +80,7 @@ class Recurrent
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    if (!recurrentError.is_empty())
-    {
-      recurrentError += gy;
-    }
-    else
-    {
-      recurrentError = gy;
-    }
-
-    if (backwardStep < (rho - 1))
-    {
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, recurrentModule)), std::move(recurrentError),
-          std::move(boost::apply_visitor(deltaVisitor, recurrentModule))),
-          recurrentModule);
-
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, inputModule)), std::move(
-          boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(g)),
-          inputModule);
-
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, feedbackModule)), std::move(
-          boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(
-          boost::apply_visitor(deltaVisitor, feedbackModule))),feedbackModule);
-    }
-    else
-    {
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, initialModule)), std::move(recurrentError),
-          std::move(g)), initialModule);
-    }
-
-    recurrentError = boost::apply_visitor(deltaVisitor, feedbackModule);
-    backwardStep++;
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -228,46 +92,7 @@ class Recurrent
   template<typename eT>
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
-=======
-                arma::Mat<eT>&& /* gradient */)
-  {
-    if (gradientStep < (rho - 1))
-    {
-      boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-          recurrentModule);
-
-      boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-          boost::apply_visitor(deltaVisitor, mergeModule))), inputModule);
-
-      boost::apply_visitor(GradientVisitor(std::move(
-          feedbackOutputParameter[feedbackOutputParameter.size() - 2 -
-          gradientStep]), std::move(boost::apply_visitor(deltaVisitor,
-          mergeModule))), feedbackModule);
-    }
-    else
-    {
-      boost::apply_visitor(GradientZeroVisitor(), recurrentModule);
-      boost::apply_visitor(GradientZeroVisitor(), inputModule);
-      boost::apply_visitor(GradientZeroVisitor(), feedbackModule);
-
-      boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-          boost::apply_visitor(deltaVisitor, startModule))), initialModule);
-    }
-
-    gradientStep++;
-    if (gradientStep == rho)
-    {
-      gradientStep = 0;
-      feedbackOutputParameter.clear();
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& /* gradient */);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
@@ -306,18 +131,7 @@ class Recurrent
    * Serialize the layer
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(rho, "rho");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored start module.
@@ -393,16 +207,7 @@ class Recurrent
 } // namespace ann
 } // namespace mlpack
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Include implementation.
 #include "recurrent_impl.hpp"
 
-=======
->>>>>>> Refactor ann layer.
-=======
-// Include implementation.
-#include "recurrent_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

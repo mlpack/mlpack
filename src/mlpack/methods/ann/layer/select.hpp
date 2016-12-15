@@ -2,15 +2,7 @@
  * @file select.hpp
  * @author Marcus Edel
  *
-<<<<<<< HEAD
-<<<<<<< HEAD
  * Definition of the Select module.
-=======
- * Definition and implementation of the Select module.
->>>>>>> Refactor ann layer.
-=======
- * Definition of the Select module.
->>>>>>> Split layer modules into definition and implementation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -44,27 +36,9 @@ class Select
    * Create the Select object.
    *
    * @param index The column which should be extracted from the given input.
-<<<<<<< HEAD
-<<<<<<< HEAD
    * @param elements The number of elements that should be used.
    */
   Select(const size_t index, const size_t elements = 0);
-<<<<<<< HEAD
-=======
-   * @param index The number of elements that should be used.
-=======
-   * @param elements The number of elements that should be used.
->>>>>>> Minor style fixes.
-   */
-  Select(const size_t index, const size_t elements = 0) :
-      index(index),
-      elements(elements)
-  {
-    /* Nothing to do here. */
-  }
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -74,25 +48,7 @@ class Select
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    if (elements == 0)
-    {
-      output = input.col(index);
-    }
-    else
-    {
-      output = input.submat(0, index, elements - 1, index);
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -106,25 +62,7 @@ class Select
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    if (elements == 0)
-    {
-      g = gy;
-    }
-    else
-    {
-      g = gy.submat(0, 0, elements - 1, 0);
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -141,21 +79,12 @@ class Select
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored column index.
   size_t index;
@@ -173,21 +102,10 @@ class Select
   OutputDataType outputParameter;
 }; // class Select
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "select_impl.hpp"
-<<<<<<< HEAD
-=======
-}; // namespace ann
-}; // namespace mlpack
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
 #endif

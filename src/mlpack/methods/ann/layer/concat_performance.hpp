@@ -47,20 +47,7 @@ class ConcatPerformance
    * @param outputLayer Output layer used to evaluate the network.
    */
   ConcatPerformance(const size_t inSize,
-<<<<<<< HEAD
-<<<<<<< HEAD
                     OutputLayerType&& outputLayer = OutputLayerType());
-=======
-                    OutputLayerType&& outputLayer = OutputLayerType()) :
-      inSize(inSize),
-      outputLayer(std::move(outputLayer))
-  {
-    /* Nothing to do here. */
-  }
->>>>>>> Refactor ann layer.
-=======
-                    OutputLayerType&& outputLayer = OutputLayerType());
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Computes the Negative log likelihood.
@@ -69,28 +56,7 @@ class ConcatPerformance
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
-=======
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
-  {
-    const size_t elements = input.n_elem / inSize;
-
-    double output = 0;
-    for (size_t i = 0; i < input.n_elem; i+= elements)
-    {
-      arma::mat subInput = input.submat(i, 0, i + elements - 1, 0);
-      output += outputLayer.Forward(std::move(subInput), std::move(target));
-    }
-
-    return output;
-  }
-
->>>>>>> Refactor ann layer.
-=======
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Ordinary feed backward pass of a neural network. The negative log
    * likelihood layer expectes that the input contains log-probabilities for
@@ -105,36 +71,7 @@ class ConcatPerformance
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& output);
-=======
-                arma::Mat<eT>&& output)
-  {
-    const size_t elements = input.n_elem / inSize;
-
-    arma::mat subInput = input.submat(0, 0, elements - 1, 0);
-    arma::mat subOutput;
-
-    outputLayer.Backward(std::move(subInput), std::move(target),
-        std::move(subOutput));
-
-    output = arma::zeros(subOutput.n_elem, inSize);
-    output.col(0) = subOutput;
-
-    for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, j++)
-    {
-      subInput = input.submat(i, 0, i + elements - 1, 0);
-      outputLayer.Backward(std::move(subInput), std::move(target),
-        std::move(subOutput));
-
-      output.col(j) = subOutput;
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -151,21 +88,12 @@ class ConcatPerformance
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored number of inputs.
   size_t inSize;
@@ -183,21 +111,10 @@ class ConcatPerformance
   OutputDataType outputParameter;
 }; // class ConcatPerformance
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "concat_performance_impl.hpp"
-<<<<<<< HEAD
-=======
-}; // namespace ann
-}; // namespace mlpack
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
 #endif

@@ -41,21 +41,7 @@ class Constant
    * @param outSize The number of output units.
    * @param scalar The constant value used to create the constant output.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   Constant(const size_t outSize, const double scalar);
-=======
-  Constant(const size_t outSize, const double scalar) :
-      inSize(0),
-      outSize(outSize)
-  {
-    constantOutput = OutputDataType(outSize, 1);
-    constantOutput.fill(scalar);
-  }
->>>>>>> Refactor ann layer.
-=======
-  Constant(const size_t outSize, const double scalar);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
@@ -65,23 +51,7 @@ class Constant
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
-=======
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    if (inSize == 0)
-    {
-      inSize = input.n_elem;
-    }
-
-    output = constantOutput;
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const InputType&& input, OutputType&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network. The backward pass of the
@@ -92,22 +62,9 @@ class Constant
    * @param g The calculated gradient.
    */
   template<typename DataType>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Backward(const DataType&& /* input */,
                 DataType&& /* gy */,
                 DataType&& g);
-=======
-  void Backward(const DataType&& /* input */, DataType&& /* gy */, DataType&& g)
-  {
-    g = arma::zeros<DataType>(inSize, 1);
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Backward(const DataType&& /* input */,
-                DataType&& /* gy */,
-                DataType&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -128,18 +85,7 @@ class Constant
    * Serialize the layer.
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(constantOutput, "constantOutput");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored number of input units.
@@ -161,21 +107,10 @@ class Constant
   OutputDataType outputParameter;
 }; // class ConstantLayer
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "constant_impl.hpp"
-<<<<<<< HEAD
-=======
-}; // namespace ann
-}; // namespace mlpack
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
 #endif

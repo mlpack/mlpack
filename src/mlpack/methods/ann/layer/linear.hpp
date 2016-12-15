@@ -37,15 +37,7 @@ class Linear
 {
  public:
   //! Create the Linear object.
-<<<<<<< HEAD
-<<<<<<< HEAD
   Linear();
-=======
-  Linear() {}
->>>>>>> Refactor ann layer.
-=======
-  Linear();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Create the Linear layer object using the specified number of units.
@@ -53,38 +45,12 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   Linear(const size_t inSize, const size_t outSize);;
-=======
-  Linear(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
-  {
-    weights.set_size(outSize * inSize + outSize, 1);
-  }
->>>>>>> Refactor ann layer.
-=======
-  Linear(const size_t inSize, const size_t outSize);;
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Reset the layer parameter.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Reset();
-=======
-  void Reset()
-  {
-    weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Reset();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -94,18 +60,7 @@ class Linear
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = (weight * input) + bias;
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -117,24 +72,9 @@ class Linear
    * @param g The calculated gradient.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
-=======
-  void Backward(const arma::Mat<eT>&& /* unused */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    g = weight.t() * gy;
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -146,20 +86,7 @@ class Linear
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
-=======
-                arma::Mat<eT>&& gradient)
-  {
-    gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-        error * input.t());
-    gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = error;
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& gradient);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -190,20 +117,7 @@ class Linear
    * Serialize the layer
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
   //! Locally-stored number of input units.
@@ -237,16 +151,7 @@ class Linear
 } // namespace ann
 } // namespace mlpack
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Include implementation.
 #include "linear_impl.hpp"
 
-=======
->>>>>>> Refactor ann layer.
-=======
-// Include implementation.
-#include "linear_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

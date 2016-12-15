@@ -45,20 +45,7 @@ class Concat
    * @param model Expose all network modules.
    * @param same Merge the error in the backward pass.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   Concat(const bool model = true, const bool same = true);
-=======
-  Concat(const bool model = true, const bool same = true) :
-      model(model),
-      same(same)
-  {
-    parameters.set_size(0, 0);
-  }
->>>>>>> Refactor ann layer.
-=======
-  Concat(const bool model = true, const bool same = true);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -68,50 +55,7 @@ class Concat
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    size_t outSize = 0;
-
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-          boost::apply_visitor(outputParameterVisitor, network[i]))),
-          network[i]);
-
-      if (boost::apply_visitor(
-          outputParameterVisitor, network[i]).n_elem > outSize)
-      {
-        outSize = boost::apply_visitor(outputParameterVisitor,
-            network[i]).n_elem;
-      }
-    }
-
-    output = arma::zeros(outSize, network.size());
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      size_t elements = boost::apply_visitor(outputParameterVisitor,
-          network[i]).n_elem;
-
-      if (elements < outSize)
-      {
-        output.submat(0, i, elements - 1, i) = arma::vectorise(
-            boost::apply_visitor(outputParameterVisitor, network[i]));
-      }
-      else
-      {
-        output.col(i) = arma::vectorise(boost::apply_visitor(
-          outputParameterVisitor, network[i]));
-      }
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -125,75 +69,7 @@ class Concat
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    size_t outSize = 0;
-    size_t elements = 0;
-
-    for (size_t i = 0, j = 0; i < network.size(); ++i, j += elements)
-    {
-      elements = boost::apply_visitor(outputParameterVisitor,
-          network[i]).n_elem;
-
-      arma::mat delta;
-      if (gy.n_cols == 1)
-      {
-        delta = gy.submat(j, 0, j + elements - 1, 0);
-      }
-      else
-      {
-        delta = gy.submat(0, i, elements - 1, i);
-      }
-
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i])), std::move(delta), std::move(
-          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
-
-      if (boost::apply_visitor(deltaVisitor, network[i]).n_elem > outSize)
-      {
-        outSize = boost::apply_visitor(deltaVisitor, network[i]).n_elem;
-      }
-
-      if (same)
-      {
-        if (i == 0)
-        {
-          g = std::move(boost::apply_visitor(deltaVisitor, network[i]));
-        }
-        else
-        {
-          g += std::move(boost::apply_visitor(deltaVisitor, network[i]));
-        }
-      }
-    }
-
-    if (!same)
-    {
-      g = arma::zeros(outSize, network.size());
-      for (size_t i = 0; i < network.size(); ++i)
-      {
-        size_t elements = boost::apply_visitor(deltaVisitor, network[i]).n_elem;
-        if (elements < outSize)
-        {
-          g.submat(0, i, elements - 1, i) = arma::vectorise(
-              boost::apply_visitor(deltaVisitor, network[i]));
-        }
-        else
-        {
-          g.col(i) = arma::vectorise(
-              boost::apply_visitor(deltaVisitor, network[i]));
-        }
-      }
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -205,22 +81,7 @@ class Concat
   template<typename eT>
   void Gradient(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& /* gradient */);
-=======
-                arma::Mat<eT>&& /* gradient */)
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i])), std::move(error)), network[i]);
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& /* gradient */);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Add a new module to the model.
@@ -272,21 +133,12 @@ class Concat
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
@@ -325,26 +177,10 @@ class Concat
   arma::mat gradient;
 }; // class Concat
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "concat_impl.hpp"
 
-=======
-
-} // namespace ann
-} // namespace mlpack
-
->>>>>>> Refactor ann layer.
-=======
-} // namespace ann
-} // namespace mlpack
-
-// Include implementation.
-#include "concat_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

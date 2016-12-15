@@ -38,18 +38,7 @@ class AddMerge
 {
  public:
   //! Create the AddMerge object.
-<<<<<<< HEAD
-<<<<<<< HEAD
   AddMerge();
-=======
-  AddMerge()
-  {
-    // Nothing to do here.
-  }
->>>>>>> Refactor ann layer.
-=======
-  AddMerge();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -59,23 +48,7 @@ class AddMerge
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const InputType&& /* input */, OutputType&& output);
-=======
-  void Forward(const InputType&& /* input */, OutputType&& output)
-  {
-    output = boost::apply_visitor(outputParameterVisitor, network.front());
-
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      output += boost::apply_visitor(outputParameterVisitor, network[i]);
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const InputType&& /* input */, OutputType&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -89,18 +62,7 @@ class AddMerge
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    g = gy;
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Add a new module to the model.
@@ -144,18 +106,7 @@ class AddMerge
    * Serialize the layer.
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(network, "network");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
   std::vector<LayerTypes> network;
@@ -182,16 +133,7 @@ class AddMerge
 } // namespace ann
 } // namespace mlpack
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Include implementation.
 #include "add_merge_impl.hpp"
 
-=======
->>>>>>> Refactor ann layer.
-=======
-// Include implementation.
-#include "add_merge_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

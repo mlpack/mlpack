@@ -42,20 +42,7 @@ class Lookup
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   Lookup(const size_t inSize, const size_t outSize);
-=======
-  Lookup(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
-  {
-    weights.set_size(outSize, inSize);
-  }
->>>>>>> Refactor ann layer.
-=======
-  Lookup(const size_t inSize, const size_t outSize);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -65,18 +52,7 @@ class Lookup
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -90,18 +66,7 @@ class Lookup
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
                 const arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    g = gy;
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -113,19 +78,7 @@ class Lookup
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& gradient);
-=======
-                arma::Mat<eT>&& gradient)
-  {
-    gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
-    gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& gradient);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -156,20 +109,7 @@ class Lookup
    * Serialize the layer
    */
   template<typename Archive>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Serialize(Archive& ar, const unsigned int /* version */);
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(weights, "weights");
-    ar & data::CreateNVP(inSize, "inSize");
-    ar & data::CreateNVP(outSize, "outSize");
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Serialize(Archive& ar, const unsigned int /* version */);
->>>>>>> Split layer modules into definition and implementation.
 
  private:
 
@@ -198,16 +138,7 @@ class Lookup
 } // namespace ann
 } // namespace mlpack
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Include implementation.
 #include "lookup_impl.hpp"
 
-=======
->>>>>>> Refactor ann layer.
-=======
-// Include implementation.
-#include "lookup_impl.hpp"
-
->>>>>>> Split layer modules into definition and implementation.
 #endif

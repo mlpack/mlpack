@@ -38,15 +38,7 @@ class NegativeLogLikelihood
   /**
    * Create the NegativeLogLikelihoodLayer object.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   NegativeLogLikelihood();
-=======
-  NegativeLogLikelihood() { /* Nothing to do here. */ }
->>>>>>> Refactor ann layer.
-=======
-  NegativeLogLikelihood();
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Computes the Negative log likelihood.
@@ -55,29 +47,7 @@ class NegativeLogLikelihood
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
-=======
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
-  {
-    double output = 0;
-
-    for (size_t i = 0; i < input.n_cols; ++i)
-    {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
-
-      output -= input(currentTarget, i);
-    }
-
-    return output;
-  }
->>>>>>> Refactor ann layer.
-=======
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -93,26 +63,7 @@ class NegativeLogLikelihood
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& output);
-=======
-                arma::Mat<eT>&& output)
-  {
-    output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
-    for (size_t i = 0; i < input.n_cols; ++i)
-    {
-      size_t currentTarget = target(i) - 1;
-      Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-          "Target class out of range.");
-
-      output(currentTarget, i) = -1;
-    }
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -145,19 +96,10 @@ class NegativeLogLikelihood
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class NegativeLogLikelihood
-<<<<<<< HEAD
 
 } // namespace ann
 } // namespace mlpack
-=======
->>>>>>> Refactor ann layer.
 
-<<<<<<< HEAD
-=======
-} // namespace ann
-} // namespace mlpack
-
->>>>>>> Split layer modules into definition and implementation.
 // Include implementation.
 #include "negative_log_likelihood_impl.hpp"
 

@@ -2,15 +2,7 @@
  * @file mean_squared_error.hpp
  * @author Marcus Edel
  *
-<<<<<<< HEAD
-<<<<<<< HEAD
  * Definition of the mean squared error performance function.
-=======
- * Definition and implementation of the mean squared error performance function.
->>>>>>> Refactor ann layer.
-=======
- * Definition of the mean squared error performance function.
->>>>>>> Split layer modules into definition and implementation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -45,15 +37,7 @@ class MeanSquaredError
   /**
    * Create the MeanSquaredError object.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   MeanSquaredError();
-=======
-  MeanSquaredError() { /* Nothing to do here. */ }
->>>>>>> Refactor ann layer.
-=======
-  MeanSquaredError();
->>>>>>> Split layer modules into definition and implementation.
 
   /*
    * Computes the mean squared error function.
@@ -62,19 +46,7 @@ class MeanSquaredError
    * @param output Resulting output activation.
    */
   template<typename eT>
-<<<<<<< HEAD
-<<<<<<< HEAD
   double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
-=======
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
-  {
-    return arma::mean(arma::mean(arma::square(input - target)));
-  }
-
->>>>>>> Refactor ann layer.
-=======
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -85,18 +57,7 @@ class MeanSquaredError
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& output);
-=======
-                arma::Mat<eT>&& output)
-  {
-    output = (input - target);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -113,21 +74,12 @@ class MeanSquaredError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -139,21 +91,10 @@ class MeanSquaredError
   OutputDataType outputParameter;
 }; // class MeanSquaredError
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "mean_squared_error_impl.hpp"
-<<<<<<< HEAD
-=======
-}; // namespace ann
-}; // namespace mlpack
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
 #endif

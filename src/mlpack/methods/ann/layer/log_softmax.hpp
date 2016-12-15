@@ -39,15 +39,7 @@ class LogSoftMax
   /**
    * Create the LogSoftmax object.
    */
-<<<<<<< HEAD
-<<<<<<< HEAD
   LogSoftMax();
-=======
-  LogSoftMax() { /* Nothing to do here. */ }
->>>>>>> Refactor ann layer.
-=======
-  LogSoftMax();
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -57,46 +49,7 @@ class LogSoftMax
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-<<<<<<< HEAD
-<<<<<<< HEAD
   void Forward(const InputType&& input, OutputType&& output);
-=======
-  void Forward(const InputType&& input, OutputType&& output)
-  {
-    arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
-    output = (maxInput - input);
-
-    // Approximation of the hyperbolic tangent. The acuracy however is
-    // about 0.00001 lower as using tanh. Credits go to Leon Bottou.
-    output.transform( [](double x)
-    {
-      //! Fast approximation of exp(-x) for x positive.
-      static constexpr double A0 = 1.0;
-      static constexpr double A1 = 0.125;
-      static constexpr double A2 = 0.0078125;
-      static constexpr double A3 = 0.00032552083;
-      static constexpr double A4 = 1.0172526e-5;
-
-      if (x < 13.0)
-      {
-        double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
-        y *= y;
-        y *= y;
-        y *= y;
-        y = 1 / y;
-
-        return y;
-      }
-
-      return 0.0;
-    } );
-
-    output = input - (maxInput + std::log(arma::accu(output)));
-  }
->>>>>>> Refactor ann layer.
-=======
-  void Forward(const InputType&& input, OutputType&& output);
->>>>>>> Split layer modules into definition and implementation.
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -110,18 +63,7 @@ class LogSoftMax
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 arma::Mat<eT>&& g);
-=======
-                arma::Mat<eT>&& g)
-  {
-    g = gy - arma::exp(input) * arma::accu(gy);
-  }
->>>>>>> Refactor ann layer.
-=======
-                arma::Mat<eT>&& g);
->>>>>>> Split layer modules into definition and implementation.
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -138,21 +80,12 @@ class LogSoftMax
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
-<<<<<<< HEAD
-=======
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -164,21 +97,10 @@ class LogSoftMax
   OutputDataType outputParameter;
 }; // class LogSoftmax
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Split layer modules into definition and implementation.
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
 #include "log_softmax_impl.hpp"
-<<<<<<< HEAD
-=======
-}; // namespace ann
-}; // namespace mlpack
->>>>>>> Refactor ann layer.
-=======
->>>>>>> Split layer modules into definition and implementation.
 
 #endif
