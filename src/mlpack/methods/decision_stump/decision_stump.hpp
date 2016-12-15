@@ -29,8 +29,11 @@ namespace decision_stump {
  * Points that are below the first bin will take the label of the first bin.
  *
  * @tparam MatType Type of matrix that is being used (sparse or dense).
+ * @tparam NoRecursion If true, this will create a stump (a one-level decision
+ *       tree).
  */
-template<typename MatType = arma::mat>
+template<typename MatType = arma::mat,
+         bool NoRecursion = true>
 class DecisionStump
 {
  public:
@@ -72,6 +75,39 @@ class DecisionStump
   DecisionStump();
 
   /**
+   * Copy the given decision stump.
+   *
+   * @param other Decision stump to copy.
+   */
+  DecisionStump(const DecisionStump& other);
+
+  /**
+   * Take ownership of the given decision stump.
+   *
+   * @param other Decision stump to take ownership of.
+   */
+  DecisionStump(DecisionStump&& other);
+
+  /**
+   * Copy the given decision stump.
+   *
+   * @param other Decision stump to copy.
+   */
+  DecisionStump& operator=(const DecisionStump& other);
+
+  /**
+   * Take ownership of the given decision stump.
+   *
+   * @param other Decision stump to take ownership of.
+   */
+  DecisionStump& operator=(DecisionStump&& other);
+
+  /**
+   * Destroy the decision stump.
+   */
+  ~DecisionStump();
+
+  /**
    * Train the decision stump on the given data.  This completely overwrites any
    * previous training data, so after training the stump may be completely
    * different.
@@ -97,36 +133,54 @@ class DecisionStump
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   //! Access the splitting dimension.
-  size_t SplitDimension() const { return splitDimension; }
+  size_t SplitDimension() const { return splitDimensionOrLabel; }
   //! Modify the splitting dimension (be careful!).
-  size_t& SplitDimension() { return splitDimension; }
+  size_t& SplitDimension() { return splitDimensionOrLabel; }
 
   //! Access the splitting values.
-  const arma::vec& Split() const { return split; }
+  const arma::vec& Split() const { return splitOrClassProbs; }
   //! Modify the splitting values (be careful!).
-  arma::vec& Split() { return split; }
+  arma::vec& Split() { return splitOrClassProbs; }
 
-  //! Access the labels for each split bin.
-  const arma::Col<size_t> BinLabels() const { return binLabels; }
-  //! Modify the labels for each split bin (be careful!).
-  arma::Col<size_t>& BinLabels() { return binLabels; }
+  //! Access the label.
+  size_t Label() const { return splitDimensionOrLabel; }
+  //! Modify the label.
+  size_t& Label() { return splitDimensionOrLabel; }
+
+  //! Access the given child.
+  const DecisionStump& Child(const size_t i) const { return *children[i]; }
+  //! Modify the given child.
+  DecisionStump& Child(const size_t i) { return *children[i]; }
 
   //! Serialize the decision stump.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! The number of classes (we must store this for boosting).
+  /**
+   * Construct a leaf with the given probabilities and class label.
+   *
+   * @param bucketSize Bucket size for training.
+   * @param label Majority label of leaf.
+   * @param probabilities Class probabilities of leaf.
+   */
+  DecisionStump(const size_t bucketSize,
+                const size_t label,
+                arma::vec&& probabilities);
+
+  //! The number of classes in the model.
   size_t classes;
-  //! The minimum number of points in a bucket.
+  //! The minimum number of points in a bucket (training parameter).
   size_t bucketSize;
 
-  //! Stores the value of the dimension on which to split.
-  size_t splitDimension;
-  //! Stores the splitting values after training.
-  arma::vec split;
-  //! Stores the labels for each splitting bin.
-  arma::Col<size_t> binLabels;
+  //! Stores the value of the dimension on which to split, or the label.
+  size_t splitDimensionOrLabel;
+  //! Stores either the splitting values after training, or the class
+  //! probabilities.
+  arma::vec splitOrClassProbs;
+
+  //! Stores the children (if any).
+  std::vector<DecisionStump*> children;
 
   /**
    * Sets up dimension as if it were splitting on it and finds entropy when
@@ -136,8 +190,8 @@ class DecisionStump
    *     candidate for the splitting dimension.
    * @tparam UseWeights Whether we need to run a weighted Decision Stump.
    */
-  template<bool UseWeights>
-  double SetupSplitDimension(const arma::rowvec& dimension,
+  template<bool UseWeights, typename VecType>
+  double SetupSplitDimension(const VecType& dimension,
                              const arma::Row<size_t>& labels,
                              const arma::rowvec& weightD);
 
