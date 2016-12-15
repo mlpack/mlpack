@@ -228,7 +228,7 @@ typename util::ParameterType<T>::type& CLI::GetUnmappedParam(
 template<typename T>
 std::string util::MapParameterName(
     const std::string& identifier,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* /* junk */)
 {
   return identifier;
 }
@@ -239,7 +239,7 @@ template<typename T>
 T& util::HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& /* d */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* /* junk */)
 {
   return value;
 }
@@ -248,7 +248,7 @@ T& util::HandleParameter(
 template<typename T>
 std::string util::MapParameterName(
     const std::string& identifier,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename std::enable_if_t<arma::is_arma_type<T>::value>* /* junk */)
 {
   return identifier + "_file";
 }
@@ -258,7 +258,7 @@ template<typename T>
 T& util::HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename std::enable_if_t<arma::is_arma_type<T>::value>* /* junk */)
 {
   // If the matrix is an input matrix, we have to load the matrix.  'value'
   // contains the filename.  It's possible we could load empty matrices many
@@ -278,7 +278,7 @@ template<typename T>
 void CLI::AddOption(
     const char* optId,
     const char* descr,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if_t<!IsStdVector<T>::value>* /* junk */)
 {
   desc.add_options()(optId, po::value<T>(), descr);
 }
@@ -287,7 +287,7 @@ template<typename T>
 void CLI::AddOption(
     const char* optId,
     const char* descr,
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if_t<IsStdVector<T>::value>* /* junk */)
 {
   desc.add_options()(optId, po::value<T>()->multitoken(), descr);
 }

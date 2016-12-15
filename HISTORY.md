@@ -1,3 +1,11 @@
+### mlpack ?.?.?
+###### ????-??-??
+  * Bugfix for mlpack_knn program (#816).
+
+  * Minor fix for formatted output (#814).
+
+  * Fix DecisionStump to properly work with any input type.
+
 ### mlpack 2.1.0
 ###### 2016-10-31
   * Fixed CoverTree to properly handle single-point datasets.

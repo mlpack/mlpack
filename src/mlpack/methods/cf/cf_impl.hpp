@@ -30,8 +30,8 @@ void ApplyFactorizer(FactorizerType& factorizer,
                      const size_t rank,
                      arma::mat& w,
                      arma::mat& h,
-                     const typename boost::enable_if_c<FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>::type* = 0)
+                     const typename std::enable_if_t<FactorizerTraits<
+                         FactorizerType>::UsesCoordinateList>* = 0)
 {
   factorizer.Apply(data, rank, w, h);
 }
@@ -44,8 +44,8 @@ void ApplyFactorizer(FactorizerType& factorizer,
                      const size_t rank,
                      arma::mat& w,
                      arma::mat& h,
-                     const typename boost::disable_if_c<FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>::type* = 0)
+                     const typename std::enable_if_t<!FactorizerTraits<
+                         FactorizerType>::UsesCoordinateList>* = 0)
 {
   factorizer.Apply(cleanedData, rank, w, h);
 }
@@ -81,8 +81,8 @@ CF::CF(const arma::sp_mat& data,
        FactorizerType factorizer,
        const size_t numUsersForSimilarity,
        const size_t rank,
-       const typename boost::disable_if_c<FactorizerTraits<
-           FactorizerType>::UsesCoordinateList>::type*) :
+       const typename std::enable_if_t<
+           !FactorizerTraits<FactorizerType>::UsesCoordinateList>*) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank)
 {
@@ -128,8 +128,8 @@ void CF::Train(const arma::mat& data, FactorizerType factorizer)
 template<typename FactorizerType>
 void CF::Train(const arma::sp_mat& data,
                FactorizerType factorizer,
-               const typename boost::disable_if_c<FactorizerTraits<
-                   FactorizerType>::UsesCoordinateList>::type*)
+               const typename std::enable_if_t<!FactorizerTraits<
+                   FactorizerType>::UsesCoordinateList>*)
 {
   cleanedData = data;
 

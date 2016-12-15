@@ -146,7 +146,7 @@ class HollowBallBound
    */
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const;
 
   /**
@@ -159,7 +159,7 @@ class HollowBallBound
    */
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const;
 
   /**
@@ -173,7 +173,7 @@ class HollowBallBound
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
       const VecType& other,
-      typename boost::enable_if<IsVector<VecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.

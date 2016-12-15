@@ -25,9 +25,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     typename TreeType::Mat& dataset,
     std::vector<size_t>& oldFromNew,
-    typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
-    >::type = 0)
+    typename std::enable_if_t<
+        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(dataset, oldFromNew);
 }
@@ -37,9 +37,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     const typename TreeType::Mat& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(dataset);
 }
@@ -48,9 +48,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     typename TreeType::Mat&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(std::move(dataset), oldFromNew);
 }
@@ -59,9 +59,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     typename TreeType::Mat&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(std::move(dataset));
 }

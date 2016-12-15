@@ -228,7 +228,7 @@ class Octree
   template<typename Archive>
   Octree(
       Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Destroy the tree.
@@ -266,7 +266,7 @@ class Octree
   template<typename VecType>
   size_t GetNearestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>::type* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Return the index of the furthest child node to the given query point.  If
@@ -275,7 +275,7 @@ class Octree
   template<typename VecType>
   size_t GetFurthestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Return whether or not the node is a leaf.
@@ -367,17 +367,17 @@ class Octree
   template<typename VecType>
   ElemType MinDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>::type* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the maximum distance to the given point.
   template<typename VecType>
   ElemType MaxDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>::type* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the minimum and maximum distance to another node.
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>::type* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) const { bound.Center(center); }

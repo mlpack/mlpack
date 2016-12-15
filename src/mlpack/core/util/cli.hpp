@@ -114,7 +114,7 @@ struct ParamData
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* = 0);
 
 /**
  * If needed, map 'trueValue' to the right type and return it.  This is called
@@ -124,20 +124,20 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* = 0);
 
 //! This must be overloaded for matrices.
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
 
 //! This must be overloaded for matrices.
 template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
 
 } // namespace util
 
@@ -460,7 +460,7 @@ class CLI
   void AddOption(
       const char* optId,
       const char* descr,
-      const typename boost::disable_if<IsStdVector<T>>::type* /* junk */ = 0);
+      const typename std::enable_if_t<!IsStdVector<T>::value>* /* junk */ = 0);
 
   /**
    * Add an option if it is a vector type.  This is a utility function used by
@@ -474,7 +474,7 @@ class CLI
   void AddOption(
       const char* optId,
       const char* descr,
-      const typename boost::enable_if<IsStdVector<T>>::type* /* junk */ = 0);
+      const typename std::enable_if_t<IsStdVector<T>::value>* /* junk */ = 0);
 };
 
 } // namespace mlpack

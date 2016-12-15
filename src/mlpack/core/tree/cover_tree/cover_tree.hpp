@@ -243,7 +243,7 @@ class CoverTree
   template<typename Archive>
   CoverTree(
       Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Delete this cover tree node and its children.
@@ -316,7 +316,7 @@ class CoverTree
   template<typename VecType>
   size_t GetNearestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Return the index of the furthest child node to the given query point.  If
@@ -325,7 +325,7 @@ class CoverTree
   template<typename VecType>
   size_t GetFurthestChild(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Return the index of the nearest child node to the given query node.  If it

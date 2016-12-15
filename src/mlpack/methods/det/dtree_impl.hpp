@@ -36,11 +36,11 @@ namespace details
       std::is_same<typename MatType::elem_type, ElemType>::value == true,
       "The ElemType does not correspond to the matrix's element type."
                   );
-    
+
     typedef std::pair<ElemType, size_t> SplitItem;
     const typename MatType::row_type dimVec =
       arma::sort(data(dim, arma::span(start, end - 1)));
-    
+
     // Ensure the minimum leaf size on both sides. We need to figure out why
     // there are spikes if this minLeafSize is enforced here...
     for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
@@ -50,7 +50,7 @@ namespace details
       // that by taking into account ordinality later in the min/max update,
       // but then we can end-up with a zero-volumed dimension. No good.
       const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
-      
+
       // Check if we can split here (two points are different)
       if (split != dimVec[i])
         splitVec.push_back(SplitItem(split, i + 1));
@@ -67,11 +67,11 @@ namespace details
                      const size_t minLeafSize)
   {
     typedef std::pair<ElemType, size_t> SplitItem;
-    arma::vec dimVec = data(dim, arma::span(start, end - 1));
-    
+    arma::vec dimVec = data(dim, arma::span(start, end - 1)).t();
+
     // We sort these, in-place (it's a copy of the data, anyways).
     std::sort(dimVec.begin(), dimVec.end());
-    
+
     for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
     {
       // This makes sense for real continuous data. This kinda corrupts the
@@ -79,12 +79,12 @@ namespace details
       // that by taking into account ordinality later in the min/max update,
       // but then we can end-up with a zero-volumed dimension. No good.
       const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
-      
+
       if (split != dimVec[i])
         splitVec.push_back(SplitItem(split, i + 1));
     }
   }
-  
+
   // This the custom, sparse optimized implementation of the same routine.
   template <typename ElemType>
   void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
@@ -96,14 +96,14 @@ namespace details
   {
     // It's common sense, but we also use it in a check later.
     Log::Assert(minLeafSize > 0);
-    
+
     typedef std::pair<ElemType, size_t> SplitItem;
     const size_t n_elem = end - start;
-    
+
     // Construct a vector of values.
     const arma::SpRow<ElemType> row = data(dim, arma::span(start, end - 1));
     std::vector<ElemType> valsVec(row.begin(), row.end());
-    
+
     // ... and sort it!
     std::sort(valsVec.begin(), valsVec.end());
 
@@ -127,7 +127,7 @@ namespace details
         padding = zeroes;
         lastVal = ElemType(0);
       }
-      
+
       // the normal case
       if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)
       {
@@ -136,12 +136,12 @@ namespace details
         // that by taking into account ordinality later in the min/max update,
         // but then we can end-up with a zero-volumed dimension. No good.
         const ElemType split = (lastVal + newVal) / 2.0;
-        
+
         // Check if we can split here (two points are different)
         if (split != newVal)
           splitVec.push_back(SplitItem(split, i + padding));
       }
-      
+
       lastVal = newVal;
     }
   }
@@ -299,7 +299,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
                                         const size_t minLeafSize) const
 {
   typedef std::pair<ElemType, size_t>   SplitItem;
-  
+
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
   Log::Assert(data.n_rows == maxVals.n_elem);
@@ -328,7 +328,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
     // Find the log volume of all the other dimensions.
     const double volumeWithoutDim = logVolume - std::log(max - min);
-    
+
     // Initializing all other stuff for this dimension.
     bool dimSplitFound = false;
     // Take an error estimate for this dimension.
@@ -345,7 +345,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
     std::vector<SplitItem> splitVec;
     details::ExtractSplits<ElemType>(splitVec, data, dim, start, end, minLeafSize);
-    
+
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
          i != splitVec.end();
@@ -353,7 +353,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     {
       const ElemType split = i->first;
       const size_t position = i->second;
-      
+
       // Another way of picking split is using this:
       //   split = leftsplit;
       if ((split - min > 0.0) && (max - split > 0.0))
@@ -813,7 +813,7 @@ template <typename Archive>
 void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
-  
+
   ar & CreateNVP(start, "start");
   ar & CreateNVP(end, "end");
   ar & CreateNVP(maxVals, "maxVals");
@@ -828,7 +828,7 @@ void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* versi
   ar & CreateNVP(logVolume, "logVolume");
   ar & CreateNVP(bucketTag, "bucketTag");
   ar & CreateNVP(alphaUpper, "alphaUpper");
-  
+
   if (Archive::is_loading::value)
   {
     if (left)
@@ -836,7 +836,7 @@ void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* versi
     if (right)
       delete right;
   }
-  
+
   ar & CreateNVP(left, "left");
   ar & CreateNVP(right, "right");
 }
