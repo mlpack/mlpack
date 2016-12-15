@@ -44,6 +44,9 @@ void PrefixedOutStream::BaseLogic(const T& val)
   PrefixIfNeeded();
 
   std::ostringstream convert;
+  // Sync flags and precision with destination stream
+  convert.setf(destination.flags());
+  convert.precision(destination.precision());
   convert << val;
 
   if (convert.fail())
