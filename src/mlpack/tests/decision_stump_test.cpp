@@ -307,9 +307,9 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   for (size_t i = 0; i < ds.Split().n_elem; ++i)
   {
     if (ds.Split()[i] <= -3.0)
-      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 0);
+      BOOST_CHECK_EQUAL(ds.Child(i).Label(), 0);
     else if (ds.Split()[i] >= 3.0)
-      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 1);
+      BOOST_CHECK_EQUAL(ds.Child(i).Label(), 1);
   }
 }
 
@@ -356,6 +356,132 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
   BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
+}
+
+/**
+ * Test the copy constructor for a stump.
+ */
+BOOST_AUTO_TEST_CASE(DecisionStumpCopyConstructorTest)
+{
+  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
+  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
+  // found on page 176 (and a description of the correct splitting dimension is
+  // given below that).
+  mat trainingData;
+  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
+               << 2  << 2  << 2  << 2  << 2  << endr
+               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
+               << 80 << 70 << 80 << 80 << 96 << endr
+               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
+               << 1  << 1  << 0  << 0  << 0  << endr;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
+           << 0 << 1 << 1 << 0 << 0 << 0;
+
+  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
+
+  // Make a copy.
+  DecisionStump<> copy(d);
+  DecisionStump<> copy2 = d;
+
+  // Check the objects for similarity.
+  BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy.Split().n_elem);
+  BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy2.Split().n_elem);
+  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy.Child(i).Label());
+    CheckMatrices(d.Child(i).Split(), copy.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy2.Child(i).Label());
+    CheckMatrices(d.Child(i).Split(), copy2.Child(i).Split());
+  }
+}
+
+/**
+ * Test the move constructor for a stump.
+ */
+BOOST_AUTO_TEST_CASE(DecisionStumpMoveConstructorTest)
+{
+  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
+  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
+  // found on page 176 (and a description of the correct splitting dimension is
+  // given below that).
+  mat trainingData;
+  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
+               << 2  << 2  << 2  << 2  << 2  << endr
+               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
+               << 80 << 70 << 80 << 80 << 96 << endr
+               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
+               << 1  << 1  << 0  << 0  << 0  << endr;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
+           << 0 << 1 << 1 << 0 << 0 << 0;
+
+  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
+  DecisionStump<> copy(d); // A copy to compare against.
+
+  DecisionStump<> move(std::move(d));
+  DecisionStump<> empty; // An empty object to compare against.
+
+  BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
+  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
+    CheckMatrices(d.Child(i).Split(), empty.Child(i).Split());
+  }
+
+  BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
+  for (size_t i = 0; i < move.Split().n_elem + 1; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
+    CheckMatrices(move.Child(i).Split(), copy.Child(i).Split());
+  }
+}
+
+/**
+ * Test the move operator.
+ */
+BOOST_AUTO_TEST_CASE(DecisionStumpMoveOperatorTest)
+{
+  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
+  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
+  // found on page 176 (and a description of the correct splitting dimension is
+  // given below that).
+  mat trainingData;
+  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
+               << 2  << 2  << 2  << 2  << 2  << endr
+               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
+               << 80 << 70 << 80 << 80 << 96 << endr
+               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
+               << 1  << 1  << 0  << 0  << 0  << endr;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
+           << 0 << 1 << 1 << 0 << 0 << 0;
+
+  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
+  DecisionStump<> copy(d); // A copy to compare against.
+
+  DecisionStump<> move = std::move(d);
+  DecisionStump<> empty; // An empty object to compare against.
+
+  BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
+  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
+    CheckMatrices(d.Child(i).Split(), empty.Child(i).Split());
+  }
+
+  BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
+  for (size_t i = 0; i < move.Split().n_elem + 1; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
+    CheckMatrices(move.Child(i).Split(), copy.Child(i).Split());
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

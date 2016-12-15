@@ -875,10 +875,15 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
                   abText.WeakLearner(i).Split(),
                   abBinary.WeakLearner(i).Split());
 
-    CheckMatrices(ab.WeakLearner(i).BinLabels(),
-                  abXml.WeakLearner(i).BinLabels(),
-                  abText.WeakLearner(i).BinLabels(),
-                  abBinary.WeakLearner(i).BinLabels());
+    for (size_t j = 0; j < ab.WeakLearner(i).Split().n_elem + 1; ++j)
+    {
+      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
+                          abXml.WeakLearner(i).Child(j).Label());
+      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
+                          abText.WeakLearner(i).Child(j).Label());
+      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
+                          abBinary.WeakLearner(i).Child(j).Label());
+    }
   }
 }
 
