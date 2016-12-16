@@ -355,6 +355,20 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
 }
 
 /**
+ * Test formatted output.
+ */
+BOOST_AUTO_TEST_CASE(TestFormattedOutput)
+{
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ]" BASH_CLEAR);
+
+  const double pi = std::acos(-1.0);
+  pss << std::setprecision(10) << pi;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ]" BASH_CLEAR "3.141592654");
+}
+/**
  * We should be able to start and then stop a timer multiple times and it should
  * save the value.
  */
@@ -749,18 +763,5 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
 
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
 }
-/**
- * Test formatted output.
- */
-BOOST_AUTO_TEST_CASE(TestFormattedOutput)
-{
-  std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ]" BASH_CLEAR);
 
-  const double pi = std::acos(-1.0);
-  pss << std::setprecision(10) << pi;
-
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ]" BASH_CLEAR "3.141592654");
-}
 BOOST_AUTO_TEST_SUITE_END();
