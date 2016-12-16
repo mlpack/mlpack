@@ -85,6 +85,8 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   ub_tree_test.cpp
   vantage_point_tree_test.cpp
+  prefixedoutstream_test.cpp
+  timer_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
