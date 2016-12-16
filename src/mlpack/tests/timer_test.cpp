@@ -8,8 +8,7 @@
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- **/
-
+ */
 #ifndef _WIN32
   #include <sys/time.h>
 #endif
@@ -26,7 +25,6 @@
 
 using namespace mlpack;
 
-
 BOOST_AUTO_TEST_SUITE(TimerTest);
 
 /**
@@ -35,7 +33,6 @@ BOOST_AUTO_TEST_SUITE(TimerTest);
  */
 BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 {
-
   Timer::Start("test_timer");
 
   // On Windows (or, at least, in Windows not using VS2010) we cannot use
@@ -76,26 +73,21 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
-
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
 {
-
   Timer::Start("test_timer");
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
-
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
 {
-
   Timer::Start("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
