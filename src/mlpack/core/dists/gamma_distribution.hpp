@@ -101,11 +101,10 @@ class GammaDistribution
      * @param tol Convergence tolerance. This is *not* an absolute measure:
      *    It will stop the approximation once the *change* in the value is 
      *    smaller than tol.
-     *
+     */
     void Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const double tol = 1e-8);
-     */
 
     /**
      * This function trains (fits distribution parameters) to a dataset with
