@@ -64,6 +64,35 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   Train(logMeanxVec, meanLogxVec, meanxVec, tol);
 }
 
+//Fits an alpha and beta parameter according to observation probabilities.
+void GammaDistribution::Train(const arma::mat& rdata, const arma::vec& probabilities,
+                              const double tol)
+{
+  // If fittingSet is empty, nothing to do.
+  if (arma::size(rdata) == arma::size(arma::mat()))
+    return;
+
+  arma::vec meanLogxVec(rdata.n_rows, arma::fill::zeros);
+  arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
+  arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
+
+  for(size_t i=0; i<rdata.n_cols; i++)
+  {
+    meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
+    meanxVec += probabilities(i) * rdata.col(i);
+  }
+
+  double tot_probabilty = arma::accu(probabilities);
+
+  meanLogxVec /= tot_probabilty;
+  meanxVec /= tot_probabilty;
+  logMeanxVec = arma::log(meanxVec);
+
+  // Call the statistics-only GammaDistribution::Train() function to fit the
+  // parameters. That function does all the work so we're done.
+  Train(logMeanxVec, meanLogxVec, meanxVec, tol);
+}
+
 // Fits an alpha and beta parameter to each dimension of the data.
 void GammaDistribution::Train(const arma::vec& logMeanxVec, 
                               const arma::vec& meanLogxVec,
