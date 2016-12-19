@@ -447,6 +447,84 @@ BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
   BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
 }
 
+// Test the copy constructor and the copy operator.
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat testData(3, 5);
+
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+
+  DTree<arma::mat> tree(testData);
+
+  // Copy the Tree
+  DTree<arma::mat> tree2(tree);
+  DTree<arma::mat> tree3 = tree;
+
+  delete tree; 
+
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
+
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[0], 7);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[0], 3);
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[1], 7);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[1], 0);
+  BOOST_REQUIRE_EQUAL(tree3.maxVals[2], 8);
+  BOOST_REQUIRE_EQUAL(tree3.minVals[2], 1);
+}
+
+// Test the move constructor.
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat testData(3, 5);
+
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+
+  DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
+
+  DTree<arma::mat> tree2(std::move(*tree));
+
+  delete tree;
+
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);  
+}
+
+// Test the move operator.
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat testData(3, 5);
+
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
+           << 5 << 0 << 1 << 7 << 1 << arma::endr
+           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+
+  DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
+
+  DTree<arma::mat> tree2 = std::move(*tree);
+
+  delete tree;
+
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
+  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
+  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1); 
+}
+
 /**
  * These are not yet implemented.
  *

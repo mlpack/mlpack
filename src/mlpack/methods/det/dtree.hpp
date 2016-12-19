@@ -52,11 +52,31 @@ class DTree
   typedef typename MatType::elem_type     ElemType;
   typedef typename MatType::vec_type      VecType;
   typedef typename arma::Col<ElemType>    StatType;
-  
+
+  /**
+   * Swap Function
+   */
+  void swap(DTree& other)
+
   /**
    * Create an empty density estimation tree.
    */
   DTree();
+
+  /**
+   * Create a Copy Constructor.
+   */
+  DTree(const DTree& other);
+
+  /**
+   * Create a Move Constructor.
+   */
+  DTree(DTree&& other);
+
+  /**
+   * Create a Copy & Move Assignment Operator.
+   */
+  DTree& operator=(DTree other);
 
   /**
    * Create a density estimation tree with the given bounds and the given number
