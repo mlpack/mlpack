@@ -14,7 +14,6 @@
 
 // In case it hasn't been included.
 #include "lmetric.hpp"
-
 namespace mlpack {
 namespace metric {
 
@@ -73,6 +72,25 @@ typename VecTypeA::elem_type LMetric<2, false>::Evaluate(
   return accu(arma::square(a - b));
 }
 
+// L2-metric my own specializations.
+template<>
+template<typename VecTypeA, typename VecTypeB>
+typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
+    const VecTypeA& a,
+    const VecTypeB& b,
+    typename VecTypeA::elem_type bound)
+{
+
+  typename VecTypeA::elem_type sum = 0;
+  typename VecTypeA::elem_type bound_square = std::pow(bound, 2.0);
+  for (size_t i = 0; i < a.n_elem; i++)
+  {
+    sum += std::pow(fabs(a[i] - b[i]), 2.0);
+    if (sum >= bound_square)
+	return sum;
+  }
+  return sum;
+}
 // L3-metric specialization (not very likely to be used, but just in case).
 template<>
 template<typename VecTypeA, typename VecTypeB>

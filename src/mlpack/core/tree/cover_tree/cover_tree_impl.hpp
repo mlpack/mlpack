@@ -701,7 +701,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MaxDistance(point);
+    ElemType distance = children[i]->MaxDistanceForFast(point, bestDistance);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -757,7 +757,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MaxDistance(queryNode);
+    ElemType distance = children[i]->MaxDistanceForFast(queryNode, bestDistance);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -845,6 +845,23 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       furthestDescendantDistance + other.FurthestDescendantDistance();
 }
 
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+typename CoverTree<MetricType, StatisticType, MatType,
+    RootPointPolicy>::ElemType
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    MaxDistance(const CoverTree& other, const ElemType bestDistance, bool forOverload)
+{
+  return metric->Evaluate(dataset->col(point),
+			other.Dataset().col(other.Point()),
+			bestDistance - furthestDescendantDistance - other.FurthestDescendantDistance);
+}
+
 template<
     typename MetricType,
     typename StatisticType,
@@ -874,6 +891,23 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 {
   return metric->Evaluate(dataset->col(point), other) +
       furthestDescendantDistance;
+}
+
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+typename CoverTree<MetricType, StatisticType, MatType,
+    RootPointPolicy>::ElemType
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    MaxDistance(const arma::vec& other, const ElemType bestDistance, bool forOverload)
+{
+  return metric->Evaluate(dataset->col(point),
+			other,
+			bestDistance - furthestDescendantDistance);
 }
 
 template<
