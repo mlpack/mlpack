@@ -188,8 +188,6 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType, TagType>& obj)
 {
-    if (this != &obj){
-
     //Copying the values from obj 
     start = obj.start;
     end = obj.end;
@@ -205,42 +203,34 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
     logVolume = obj.logVolume;
     bucketTag = obj.bucketTag;
     alphaUpper = obj.alphaUpper;
-
-    //Free the space allocated
-    delete left;
-    delete right;
-
-    //Allocate space
-    left = new DTree;
-    right = new DTree;
-
+    
     //Copying the children 
-    left = obj.left;
-    right = obj.right;
-    }
+    left = new DTree(*obj.left);
+    right = new DTree(*obj.right);
 
     return *this;
 }
 
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(DTree&& obj) :
-    start(obj.start),
-    end(obj.end),
-    maxVals(obj.maxVals),
-    minVals(obj.minVals),
-    splitDim(obj.splitDim),
-    splitValue(obj.splitValue),
-    logNegError(obj.logNegError),
-    subtreeLeavesLogNegError(obj.subtreeLeavesLogNegError),
-    subtreeLeaves(obj.subtreeLeaves),
-    root(obj.root),
-    ratio(obj.ratio),
-    logVolume(obj.logVolume),
-    bucketTag(obj.bucketTag),
-    alphaUpper(obj.alphaUpper),
-    left(obj.left),
-    right(obj.right)
+DTree<MatType, TagType>::DTree(DTree&& obj) 
 {   
+	start = std::move(obj.start);
+    end = std::move(obj.end);
+    maxVals = std::move(obj.maxVals);
+    minVals = std::move(obj.minVals);
+    splitDim = std::move(obj.splitDim);
+    splitValue = std::move(obj.splitValue);
+    logNegError = std::move(obj.logNegError);
+    subtreeLeavesLogNegError = std::move(obj.subtreeLeavesLogNegError);
+    subtreeLeaves = std::move(obj.subtreeLeaves);
+    root = std::move(obj.root);
+    ratio = std::move(obj.ratio);
+    logVolume = std::move(obj.logVolume);
+    bucketTag = std::move(obj.bucketTag);
+    alphaUpper = std::move(obj.alphaUpper);
+    left = std::move(obj.left);
+    right =  std::move(obj.right);
+
     //Set obj to default values
     obj.start = 0;
     obj.end = 0;
@@ -258,39 +248,35 @@ DTree<MatType, TagType>::DTree(DTree&& obj) :
     obj.right = NULL;
 
 }
-// Root node initializers
 
+
+// Root node initializers
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
 {
-	if (this != &obj){  
-	//Copying the values from obj 
-    start = obj.start;
-    end = obj.end;
-    maxVals = obj.maxVals;
-    minVals = obj.minVals;
-    splitDim = obj.splitDim;
-    splitValue = obj.splitValue;
-    logNegError = obj.logNegError;
-    subtreeLeavesLogNegError = obj.subtreeLeavesLogNegError;
-    subtreeLeaves = obj.subtreeLeaves;
-    root = obj.root;
-    ratio = obj.ratio;
-    logVolume = obj.logVolume;
-    bucketTag = obj.bucketTag;
-    alphaUpper = obj.alphaUpper;
-    
+	//Moving the values from obj 
+    start = std::move(obj.start);
+    end = std::move(obj.end);
+    maxVals = std::move(obj.maxVals);
+    minVals = std::move(obj.minVals);
+    splitDim = std::move(obj.splitDim);
+    splitValue = std::move(obj.splitValue);
+    logNegError = std::move(obj.logNegError);
+    subtreeLeavesLogNegError = std::move(obj.subtreeLeavesLogNegError);
+    subtreeLeaves = std::move(obj.subtreeLeaves);
+    root = std::move(obj.root);
+    ratio = std::move(obj.ratio);
+    logVolume = std::move(obj.logVolume);
+    bucketTag = std::move(obj.bucketTag);
+    alphaUpper = std::move(obj.alphaUpper);
+        
     //Free the space allocated
     delete left;
     delete right;
-    
-    //Allocate space to pointers
-    left = new DTree;
-    right = new DTree;
 
-    //Copying the children 
-    left = obj.left;
-    right = obj.right;
+    //Moving the children 
+    left = std::move(obj.left);
+    right = std::move(obj.right);
 
     //Set obj to default values
     obj.start = 0;
@@ -307,7 +293,7 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagTy
     obj.alphaUpper = 0.0;
     obj.left = NULL;
     obj.right = NULL;
-	}  
+	  
 }
 
 

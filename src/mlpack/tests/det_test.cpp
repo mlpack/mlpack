@@ -511,7 +511,6 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
   DTree<arma::mat> tree3 = *tree;
 
   //Deleting original DTree
-  // DTree<arma::mat>* temp = &tree;
   delete tree;
 
   //Checking values of DTree made using copy constructor.
@@ -546,10 +545,6 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   // Moving DTree using move constructor
   DTree<arma::mat> tree2(std::move(*tree));
 
-  // Pointers to children of original tree
-  DTree<arma::mat>* leftChild = tree->Left();
-  DTree<arma::mat>* rightChild = tree->Right();
-
   // Deleting original DTree
   delete tree;
 
@@ -560,11 +555,6 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
   BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
   BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
-
-  //Checking children were safely moved
-  BOOST_REQUIRE(tree2.Left()==leftChild);
-  BOOST_REQUIRE(tree2.Right()==rightChild);
-
 }
 
 // Test the move operator.
@@ -582,10 +572,6 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
   // Constructing copy of DTree using move operator
   DTree<arma::mat> tree2 = std::move(*tree);
 
-  // Pointers to children of original tree
-  DTree<arma::mat>* leftChild = tree->Left();
-  DTree<arma::mat>* rightChild = tree->Right();
-
   //Deleting original DTree
   delete tree;
 
@@ -596,11 +582,6 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
   BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
   BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
   BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
-  
-  //Checking children were safely moved
-  BOOST_REQUIRE(tree2.Left()==leftChild);
-  BOOST_REQUIRE(tree2.Right()==rightChild);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
