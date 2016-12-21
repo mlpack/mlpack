@@ -214,8 +214,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(DTree&& obj) 
 {   
-	//Moving the values from object
-	start = std::move(obj.start);
+    //Moving the values from object
+    start = std::move(obj.start);
     end = std::move(obj.end);
     maxVals = std::move(obj.maxVals);
     minVals = std::move(obj.minVals);
@@ -235,7 +235,7 @@ DTree<MatType, TagType>::DTree(DTree&& obj)
     delete right;
     
     //Moving the children 	
-	left = std::move(obj.left);
+    left = std::move(obj.left);
     right =  std::move(obj.right);
 
     //Set obj to default values
@@ -257,11 +257,10 @@ DTree<MatType, TagType>::DTree(DTree&& obj)
 }
 
 
-// Root node initializers
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
 {
-	//Moving the values from obj 
+    //Moving the values from obj 
     start = std::move(obj.start);
     end = std::move(obj.end);
     maxVals = std::move(obj.maxVals);
@@ -304,7 +303,7 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagTy
 }
 
 
-
+// Root node initializers
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
