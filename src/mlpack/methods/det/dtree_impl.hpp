@@ -203,17 +203,57 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
     logVolume = obj.logVolume;
     bucketTag = obj.bucketTag;
     alphaUpper = obj.alphaUpper;
-    
+
     //Copying the children 
     left = new DTree(*obj.left);
     right = new DTree(*obj.right);
-
+    
     return *this;
 }
 
 template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(DTree&& obj) 
+DTree<MatType, TagType>::DTree(DTree&& obj)     
 {   
+    //Moving the values from object
+    start = std::move(obj.start);
+    end = std::move(obj.end);
+    maxVals = std::move(obj.maxVals);
+    minVals = std::move(obj.minVals);
+    splitDim = std::move(obj.splitDim);
+    splitValue = std::move(obj.splitValue);
+    logNegError = std::move(obj.logNegError);
+    subtreeLeavesLogNegError = std::move(obj.subtreeLeavesLogNegError);
+    subtreeLeaves = std::move(obj.subtreeLeaves);
+    root = std::move(obj.root);
+    ratio = std::move(obj.ratio);
+    logVolume = std::move(obj.logVolume);
+    bucketTag = std::move(obj.bucketTag);
+    alphaUpper = std::move(obj.alphaUpper);
+    left = std::move(obj.left);
+    right = std::move(obj.right);
+
+    //Set obj to default values
+    obj.start = 0;
+    obj.end = 0;
+    obj.splitDim = size_t(-1);
+    obj.splitValue = std::numeric_limits<ElemType>::max();
+    obj.logNegError = -DBL_MAX;
+    obj.subtreeLeavesLogNegError = -DBL_MAX;
+    obj.subtreeLeaves = 0;
+    obj.root = true;
+    obj.ratio = 1.0;
+    obj.logVolume = -DBL_MAX;
+    obj.bucketTag = -1;
+    obj.alphaUpper = 0.0;
+    obj.left = NULL;
+    obj.right = NULL;
+
+}
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
+{
+    if (this != &obj){  
     //Moving the values from object
     start = std::move(obj.start);
     end = std::move(obj.end);
@@ -234,53 +274,7 @@ DTree<MatType, TagType>::DTree(DTree&& obj)
     delete left;
     delete right;
     
-    //Moving the children 	
-    left = std::move(obj.left);
-    right =  std::move(obj.right);
-
-    //Set obj to default values
-    obj.start = 0;
-    obj.end = 0;
-    obj.splitDim = size_t(-1);
-    obj.splitValue = std::numeric_limits<ElemType>::max();
-    obj.logNegError = -DBL_MAX;
-    obj.subtreeLeavesLogNegError = -DBL_MAX;
-    obj.subtreeLeaves = 0;
-    obj.root = true;
-    obj.ratio = 1.0;
-    obj.logVolume = -DBL_MAX;
-    obj.bucketTag = -1;
-    obj.alphaUpper = 0.0;
-    obj.left = NULL;
-    obj.right = NULL;
-
-}
-
-
-template <typename MatType, typename TagType>
-DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
-{
-    //Moving the values from obj 
-    start = std::move(obj.start);
-    end = std::move(obj.end);
-    maxVals = std::move(obj.maxVals);
-    minVals = std::move(obj.minVals);
-    splitDim = std::move(obj.splitDim);
-    splitValue = std::move(obj.splitValue);
-    logNegError = std::move(obj.logNegError);
-    subtreeLeavesLogNegError = std::move(obj.subtreeLeavesLogNegError);
-    subtreeLeaves = std::move(obj.subtreeLeaves);
-    root = std::move(obj.root);
-    ratio = std::move(obj.ratio);
-    logVolume = std::move(obj.logVolume);
-    bucketTag = std::move(obj.bucketTag);
-    alphaUpper = std::move(obj.alphaUpper);
-        
-    //Free the space allocated
-    delete left;
-    delete right;
-
-    //Moving the children 
+    //Moving children
     left = std::move(obj.left);
     right = std::move(obj.right);
 
@@ -299,9 +293,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagTy
     obj.alphaUpper = 0.0;
     obj.left = NULL;
     obj.right = NULL;
-	  
+    }  
 }
-
 
 // Root node initializers
 template <typename MatType, typename TagType>
