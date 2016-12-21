@@ -214,6 +214,7 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(DTree&& obj) 
 {   
+	//Moving the values from object
 	start = std::move(obj.start);
     end = std::move(obj.end);
     maxVals = std::move(obj.maxVals);
@@ -228,7 +229,13 @@ DTree<MatType, TagType>::DTree(DTree&& obj)
     logVolume = std::move(obj.logVolume);
     bucketTag = std::move(obj.bucketTag);
     alphaUpper = std::move(obj.alphaUpper);
-    left = std::move(obj.left);
+    
+    //Free the space allocated
+    delete left;
+    delete right;
+    
+    //Moving the children 	
+	left = std::move(obj.left);
     right =  std::move(obj.right);
 
     //Set obj to default values
