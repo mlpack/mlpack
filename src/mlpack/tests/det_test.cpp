@@ -509,11 +509,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
   // Constructing copy of DTree using copy constructor and copy operator
   DTree<arma::mat> tree2(*tree);
   DTree<arma::mat> tree3 = *tree;
-
-  // Pointers to children of original tree
-  DTree<arma::mat>* leftChild = tree->Left();
-  DTree<arma::mat>* rightChild = tree->Right();
-
+  
   //Deleting original DTree
   delete tree;
 
@@ -533,13 +529,6 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
   BOOST_REQUIRE_EQUAL(tree3.maxVals[2], 8);
   BOOST_REQUIRE_EQUAL(tree3.minVals[2], 1);
 
-  //Checking children were safely copied
-  BOOST_REQUIRE(tree2.Left()==leftChild);
-  BOOST_REQUIRE(tree2.Right()==rightChild);
-  BOOST_REQUIRE(tree3.Left()==leftChild);
-  BOOST_REQUIRE(tree3.Right()==rightChild);
-
-
 }
 
 // Test the move constructor.
@@ -554,13 +543,6 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   // Constructing a DTree
   DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
 
-<<<<<<< HEAD
-=======
-  // Pointers to children of original tree
-  DTree<arma::mat>* leftChild = tree->Left();
-  DTree<arma::mat>* rightChild = tree->Right();
-
->>>>>>> 952211b83dcfe89a39f9c66df0971c18c451734f
   // Moving DTree using move constructor
   DTree<arma::mat> tree2(std::move(*tree));
 
@@ -587,14 +569,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 
   // Constructing a DTree
   DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
-
-<<<<<<< HEAD
-=======
-  // Pointers to children of original tree
-  DTree<arma::mat>* leftChild = tree->Left();
-  DTree<arma::mat>* rightChild = tree->Right();
   
->>>>>>> 952211b83dcfe89a39f9c66df0971c18c451734f
   // Constructing copy of DTree using move operator
   DTree<arma::mat> tree2 = std::move(*tree);
 
@@ -608,14 +583,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
   BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
   BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
   BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
-<<<<<<< HEAD
-=======
 
-  //Checking children were safely moved
-  BOOST_REQUIRE(tree2.Left()==leftChild);
-  BOOST_REQUIRE(tree2.Right()==rightChild);
-
->>>>>>> 952211b83dcfe89a39f9c66df0971c18c451734f
 }
 
 BOOST_AUTO_TEST_SUITE_END();
