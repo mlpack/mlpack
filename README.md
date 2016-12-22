@@ -227,10 +227,10 @@ development team will try to quickly resolve your issue.
 In addition, mailing lists are available.  The mlpack discussion list is
 available at
 
-  [mlpack discussion list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack)
+  [mlpack discussion list](https://lists.mlpack.org/mailman/listinfo/mlpack)
 
 and the git commit list is available at
 
-  [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-git)
+  [commit list](https://lists.mlpack.org/mailman/listinfo/mlpack-git)
 
 Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
