@@ -29,11 +29,16 @@ HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
     emission(states, /* default distribution */ emissions),
-    transition(arma::ones<arma::mat>(states, states) / (double) states),
-    initial(arma::ones<arma::vec>(states) / (double) states),
+    transition(arma::randu<arma::mat>(states, states)),
+    initial(arma::randu<arma::vec>(states) / (double) states),
     dimensionality(emissions.Dimensionality()),
     tolerance(tolerance)
-{ /* nothing to do */ }
+{
+  // Normalize the transition probabilities and initial state probabilities.
+  initial /= arma::accu(initial);
+  for (size_t i = 0; i < transition.n_cols; ++i)
+    transition.col(i) /= arma::accu(transition.col(i));
+}
 
 /**
  * Create the Hidden Markov Model with the given transition matrix and the given
