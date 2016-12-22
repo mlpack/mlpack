@@ -25,7 +25,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
 {
   typedef typename TreeType::ElemType ElemType;
   size_t bestIndex = 0;
-  bool success;
+  bool success = true;
 
   // Try to find a node that contains the point.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
