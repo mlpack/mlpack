@@ -2,6 +2,14 @@
 ###### ????-??-??
   * Bugfix for mlpack_knn program (#816).
 
+### mlpack 2.1.1
+###### 2016-12-22
+  * HMMs now use random initialization; this should fix some convergence issues
+    (#828).
+
+  * HMMs now initialize emissions according to the distribution of observations
+    (#833).
+
   * Minor fix for formatted output (#814).
 
   * Fix DecisionStump to properly work with any input type.
