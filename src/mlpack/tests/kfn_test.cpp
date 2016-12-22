@@ -2,6 +2,11 @@
  * @file kfn_test.cpp
  *
  * Tests for KFN (k-furthest-neighbors).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -56,15 +61,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        kfn.Naive() = false;
-        kfn.SingleMode() = false;
+        kfn.SearchMode() = DUAL_TREE_MODE;
         break;
       case 1: // Use the single-tree method.
-        kfn.Naive() = false;
-        kfn.SingleMode() = true;
+        kfn.SearchMode() = SINGLE_TREE_MODE;
         break;
       case 2: // Use the naive method.
-        kfn.Naive() = true;
+        kfn.SearchMode() = NAIVE_MODE;
         break;
     }
 

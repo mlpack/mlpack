@@ -1,11 +1,16 @@
 /**
-  * @file dual_tree_traverser_impl.hpp
-  * @author Andrew Wells
-  *
-  * A class for traversing rectangle type trees with a given set of rules
-  * which indicate the branches to prune and the order in which to recurse.
-  * This is a depth-first traverser.
-  */
+ * @file dual_tree_traverser_impl.hpp
+ * @author Andrew Wells
+ *
+ * A class for traversing rectangle type trees with a given set of rules
+ * which indicate the branches to prune and the order in which to recurse.
+ * This is a depth-first traverser.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPAC_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 #define MLPAC_CORE_TREE_RECTANGLE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 

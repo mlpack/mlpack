@@ -3,6 +3,11 @@
  * @author Marcos Pividori
  *
  * Definition of ProjVector and AxisParallelProjVector.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
@@ -38,7 +43,7 @@ class AxisParallelProjVector
    */
   template<typename VecType>
   double Project(const VecType& point,
-                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return point[dim];
   };
@@ -112,7 +117,7 @@ class ProjVector
    */
   template<typename VecType>
   double Project(const VecType& point,
-                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return arma::dot(point, projVect);
   };

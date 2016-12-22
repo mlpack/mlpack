@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Executable which trains an HMM and saves the trained HMM to file.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -45,7 +50,7 @@ PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
 PARAM_STRING_IN("model_file", "Pre-existing HMM model file.", "m", "");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "o");
+PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "M");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
     1e-5);
@@ -306,14 +311,37 @@ int main(int argc, char** argv)
         hmm.Transition().randu();
         for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
           hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
-        {
-          hmm.Emission()[e].Probabilities().randu();
-          hmm.Emission()[e].Probabilities() /=
-              arma::accu(hmm.Emission()[e].Probabilities());
-        }
       }
+
+      // Initialize emissions using the distribution of the full data.
+      DiscreteDistribution sampleEmission;
+      if (trainSeq.size() > 1)
+      {
+        // Flatten data matrix for training of an emission distribution.  This
+        // is not efficient!
+        size_t totalCols = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+          totalCols += trainSeq[i].n_cols;
+
+        arma::mat flatData(trainSeq[0].n_rows, totalCols);
+        size_t currentCol = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+        {
+          flatData.cols(currentCol, currentCol + trainSeq[i].n_cols - 1) =
+              trainSeq[i];
+          currentCol += trainSeq[i].n_cols;
+        }
+
+        sampleEmission.Train(flatData);
+      }
+      else
+      {
+        sampleEmission.Train(trainSeq[0]);
+      }
+
+      // Apply initialized emissions.
+      for (size_t e = 0; e < hmm.Transition().n_cols; ++e)
+        hmm.Emission()[e] = sampleEmission;
 
       // Now train it.  Pass the already-loaded training data.
       Train::Apply(hmm, &trainSeq);
@@ -339,15 +367,37 @@ int main(int argc, char** argv)
         hmm.Transition().randu();
         for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
           hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
-        {
-          hmm.Emission()[e].Mean().randu();
-          // Generate random covariance.
-          arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
-          hmm.Emission()[e].Covariance(r * r.t());
-        }
       }
+
+      // Initialize emissions using the distribution of the full data.
+      GaussianDistribution sampleEmission;
+      if (trainSeq.size() > 1)
+      {
+        // Flatten data matrix for training of an emission distribution.  This
+        // is not efficient!
+        size_t totalCols = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+          totalCols += trainSeq[i].n_cols;
+
+        arma::mat flatData(trainSeq[0].n_rows, totalCols);
+        size_t currentCol = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+        {
+          flatData.cols(currentCol, currentCol + trainSeq[i].n_cols - 1) =
+              trainSeq[i];
+          currentCol += trainSeq[i].n_cols;
+        }
+
+        sampleEmission.Train(flatData);
+      }
+      else
+      {
+        sampleEmission.Train(trainSeq[0]);
+      }
+
+      // Set all emissions to the initialized emission.
+      for (size_t e = 0; e < hmm.Transition().n_cols; ++e)
+        hmm.Emission()[e] = sampleEmission;
 
       // Now train it.
       Train::Apply(hmm, &trainSeq);
@@ -377,26 +427,42 @@ int main(int argc, char** argv)
         hmm.Transition().randu();
         for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
           hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-
-        for (size_t e = 0; e < hmm.Emission().size(); ++e)
-        {
-          // Random weights.
-          hmm.Emission()[e].Weights().randu();
-          hmm.Emission()[e].Weights() /=
-              arma::accu(hmm.Emission()[e].Weights());
-
-          // Random means and covariances.
-          for (int g = 0; g < gaussians; ++g)
-          {
-            hmm.Emission()[e].Component(g).Mean().randu();
-
-            // Generate random covariance.
-            arma::mat r = arma::randu<arma::mat>(dimensionality,
-                dimensionality);
-            hmm.Emission()[e].Component(g).Covariance(r * r.t());
-          }
-        }
       }
+
+      // Initialize emissions using the distribution of the full data.
+      // Super-simple emission training: we don't want it to take long at all.
+      GMM sampleEmission;
+      EMFit<> fitter(1, 0.01); // Only one iteration of EM GMM training.
+      if (trainSeq.size() > 1)
+      {
+        // Flatten data matrix for training of an emission distribution.  This
+        // is not efficient!
+        size_t totalCols = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+          totalCols += trainSeq[i].n_cols;
+
+        arma::mat flatData(trainSeq[0].n_rows, totalCols);
+        size_t currentCol = 0;
+        for (size_t i = 0; i < trainSeq.size(); ++i)
+        {
+          flatData.cols(currentCol, currentCol + trainSeq[i].n_cols - 1) =
+              trainSeq[i];
+          currentCol += trainSeq[i].n_cols;
+        }
+
+        sampleEmission.Train(flatData, 1, false, fitter);
+      }
+      else
+      {
+        sampleEmission.Train(trainSeq[0], 1, false, fitter);
+      }
+
+      // Set all emissions to the initialized emission.
+      for (size_t e = 0; e < hmm.Transition().n_cols; ++e)
+        hmm.Emission()[e] = sampleEmission;
+
+      // Now train it.
+      Train::Apply(hmm, &trainSeq);
 
       // Issue a warning if the user didn't give labels.
       if (!CLI::HasParam("labels_file"))

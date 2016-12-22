@@ -4,6 +4,11 @@
  *
  * Definition of the DiscreteHilbertValue class, a class that calculates
  * the ordering of points using the Hilbert curve.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
@@ -74,9 +79,11 @@ class DiscreteHilbertValue
    * @param pt2 The second point.
    */
   template<typename VecType1, typename VecType2>
-  static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
-                           typename boost::enable_if<IsVector<VecType1>>* = 0,
-                           typename boost::enable_if<IsVector<VecType2>>* = 0);
+  static int ComparePoints(
+      const VecType1& pt1,
+      const VecType2& pt2,
+      typename std::enable_if_t<IsVector<VecType1>::value>* = 0,
+      typename std::enable_if_t<IsVector<VecType2>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -109,8 +116,9 @@ class DiscreteHilbertValue
    * @param pt The point to compare with.
    */
   template<typename VecType>
-  int CompareWith(const VecType& pt,
-                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
+  int CompareWith(
+      const VecType& pt,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Compare the Hilbert value of the cached point with the Hilbert value of the
@@ -125,7 +133,7 @@ class DiscreteHilbertValue
   template<typename VecType>
   int CompareWithCachedPoint(
       const VecType& pt,
-      typename boost::enable_if<IsVector<VecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Update the largest Hilbert value of the node and insert the point in the
@@ -137,7 +145,7 @@ class DiscreteHilbertValue
   template<typename TreeType, typename VecType>
   size_t InsertPoint(TreeType *node,
                      const VecType& pt,
-                     typename boost::enable_if<IsVector<VecType>>* = 0);
+                     typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Update the largest Hilbert value of the node.
@@ -211,7 +219,7 @@ class DiscreteHilbertValue
   template<typename VecType>
   static arma::Col<HilbertElemType> CalculateValue(
       const VecType& pt,
-      typename boost::enable_if<IsVector<VecType>>* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than

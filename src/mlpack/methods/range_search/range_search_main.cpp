@@ -5,6 +5,11 @@
  *
  * Implementation of the RangeSearch executable.  Allows some number of standard
  * options.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -50,8 +55,7 @@ PROGRAM_INFO("Range Search",
     "regardless of the given extension.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
-    "");
+PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
 PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
@@ -62,8 +66,7 @@ PARAM_STRING_OUT("output_model_file", "If specified, the range search model "
     "will be saved to the given file.", "M");
 
 // The user may specify a query file of query points and a range to search for.
-PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
-    "");
+PARAM_MATRIX_IN("query", "File containing query points (optional).", "q");
 PARAM_DOUBLE_IN("max", "Upper bound in range (if not specified, +inf will be "
     "used.", "U", 0.0);
 PARAM_DOUBLE_IN("min", "Lower bound in range.", "L", 0.0);
@@ -83,7 +86,7 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 // Search settings.
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "s");
+    "dual-tree search).", "S");
 
 typedef RangeSearch<> RSType;
 typedef CoverTree<EuclideanDistance, RangeSearchStat> CoverTreeType;
@@ -101,12 +104,12 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
@@ -157,10 +160,9 @@ int main(int argc, char *argv[])
   RSModel rs;
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
     // Get all the parameters.
-    const string referenceFile = CLI::GetParam<string>("reference_file");
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
@@ -201,10 +203,10 @@ int main(int argc, char *argv[])
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;
 
-    arma::mat referenceSet;
-    data::Load(referenceFile, referenceSet, true);
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+    Log::Info << "Loaded reference data from '"
+        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     const size_t leafSize = size_t(lsInt);
@@ -230,7 +232,6 @@ int main(int argc, char *argv[])
   // Perform search, if desired.
   if (CLI::HasParam("min") || CLI::HasParam("max"))
   {
-    const string queryFile = CLI::GetParam<string>("query_file");
     const double min = CLI::GetParam<double>("min");
     const double max = CLI::HasParam("max") ? CLI::GetParam<double>("max") :
         DBL_MAX;
@@ -238,10 +239,11 @@ int main(int argc, char *argv[])
     math::Range r(min, max);
 
     arma::mat queryData;
-    if (queryFile != "")
+    if (CLI::HasParam("query"))
     {
-      data::Load(queryFile, queryData, true);
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Loaded query data from '"
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -253,7 +255,7 @@ int main(int argc, char *argv[])
     vector<vector<size_t>> neighbors;
     vector<vector<double>> distances;
 
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
       rs.Search(std::move(queryData), r, neighbors, distances);
     else
       rs.Search(r, neighbors, distances);

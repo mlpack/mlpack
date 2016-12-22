@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of generalized octree (Octree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_OCTREE_OCTREE_IMPL_HPP
 #define MLPACK_CORE_TREE_OCTREE_OCTREE_IMPL_HPP
@@ -401,7 +406,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
@@ -431,7 +436,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename VecType>
 size_t Octree<MetricType, StatisticType, MatType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>::type*) const
+    typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   // It's possible that this could be improved by caching which children we have
   // and which we don't, but for now this is just a brute force search.
@@ -454,7 +459,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename VecType>
 size_t Octree<MetricType, StatisticType, MatType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>::type*) const
+    typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   // It's possible that this could be improved by caching which children we have
   // and which we don't, but for now this is just a brute force search.
@@ -595,7 +600,7 @@ template<typename VecType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
 Octree<MetricType, StatisticType, MatType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>::type*) const
+    typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return bound.MinDistance(point);
 }
@@ -605,7 +610,7 @@ template<typename VecType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
 Octree<MetricType, StatisticType, MatType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>::type*) const
+    typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return bound.MaxDistance(point);
 }
@@ -616,7 +621,7 @@ template<typename VecType>
 math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
 Octree<MetricType, StatisticType, MatType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>::type*) const
+    typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return bound.RangeDistance(point);
 }

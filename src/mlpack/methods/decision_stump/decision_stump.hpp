@@ -3,6 +3,11 @@
  * @author Udit Saxena
  *
  * Definition of decision stumps.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
 #define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
@@ -131,8 +136,8 @@ class DecisionStump
    *     candidate for the splitting dimension.
    * @tparam UseWeights Whether we need to run a weighted Decision Stump.
    */
-  template<bool UseWeights>
-  double SetupSplitDimension(const arma::rowvec& dimension,
+  template<bool UseWeights, typename VecType>
+  double SetupSplitDimension(const VecType& dimension,
                              const arma::Row<size_t>& labels,
                              const arma::rowvec& weightD);
 

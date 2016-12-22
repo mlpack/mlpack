@@ -2,6 +2,11 @@
  * @file knn_test.cpp
  *
  * Test file for KNN class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -333,7 +338,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
 
   dataset = arma::randu<arma::mat>(3, 300);
-  knn.Naive() = true;
+  knn.SearchMode() = NAIVE_MODE;
   knn.Train(std::move(dataset));
   knn.Search(1, neighbors, distances);
 
@@ -383,15 +388,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        knn.Naive() = false;
-        knn.SingleMode() = false;
+        knn.SearchMode() = DUAL_TREE_MODE;
         break;
       case 1: // Use the single-tree method.
-        knn.Naive() = false;
-        knn.SingleMode() = true;
+        knn.SearchMode() = SINGLE_TREE_MODE;
         break;
       case 2: // Use the naive method.
-        knn.Naive() = true;
+        knn.SearchMode() = NAIVE_MODE;
         break;
     }
 
@@ -917,7 +920,8 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
 
   for (size_t mode = 0; mode < 2; mode++)
   {
-    spTreeSearch.SingleMode() = (mode == 0);
+    if (mode)
+      spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
 
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;
@@ -954,7 +958,8 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
 
     for (size_t mode = 0; mode < 2; mode++)
     {
-      spTreeSearch.SingleMode() = (mode == 0);
+      if (mode)
+        spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
 
       spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
 

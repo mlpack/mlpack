@@ -3,6 +3,11 @@
  * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
@@ -243,7 +248,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
@@ -633,7 +638,7 @@ template<typename VecType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;
@@ -666,7 +671,7 @@ template<typename VecType>
 size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     AuxiliaryInformationType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;

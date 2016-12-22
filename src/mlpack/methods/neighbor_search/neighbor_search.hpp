@@ -4,6 +4,11 @@
  *
  * Defines the NeighborSearch class, which performs an abstract
  * nearest-neighbor-like query on two datasets.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
@@ -199,114 +204,6 @@ class NeighborSearch
                  const MetricType metric = MetricType());
 
   /**
-   * Initialize the NeighborSearch object, passing a reference dataset (this is
-   * the dataset which is searched).  Optionally, perform the computation in
-   * naive mode or single-tree mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
-   *
-   * Deprecated. Will be removed in mlpack 3.0.0.
-   *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a different constructor, or by using the
-   * construct that takes an rvalue reference to the dataset.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric An optional instance of the MetricType class.
-   */
-  mlpack_deprecated NeighborSearch(const MatType& referenceSet,
-                                   const bool naive,
-                                   const bool singleMode = false,
-                                   const double epsilon = 0,
-                                   const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object, taking ownership of the reference
-   * dataset (this is the dataset which is searched).  Optionally, perform the
-   * computation in naive mode or single-tree mode.  An initialized distance
-   * metric can be given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
-   *
-   * Deprecated. Will be removed in mlpack 3.0.0.
-   *
-   * This method will not copy the data matrix, but will take ownership of it,
-   * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the constructor that takes a
-   * const reference to the data instead.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric An optional instance of the MetricType class.
-   */
-  mlpack_deprecated NeighborSearch(MatType&& referenceSet,
-                                   const bool naive,
-                                   const bool singleMode = false,
-                                   const double epsilon = 0,
-                                   const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object with the given pre-constructed
-   * reference tree (this is the tree built on the points that will be
-   * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
-   * available as an option for this constructor.  Additionally, an instantiated
-   * distance metric can be given, for cases where the distance metric holds
-   * data.
-   *
-   * Deprecated. Will be removed in mlpack 3.0.0.
-   *
-   * This method won't take ownership of the given tree. There is no copying of
-   * the data matrices in this constructor (because tree-building is not
-   * necessary), so this is the constructor to use when copies absolutely must
-   * be avoided.
-   *
-   * @note
-   * Mapping the points of the matrix back to their original indices is not done
-   * when this constructor is used, so if the tree type you are using maps
-   * points (like BinarySpaceTree), then you will have to perform the re-mapping
-   * manually.
-   * @endnote
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated distance metric.
-   */
-  mlpack_deprecated NeighborSearch(Tree* referenceTree,
-                                   const bool singleMode,
-                                   const double epsilon = 0,
-                                   const MetricType metric = MetricType());
-
-  /**
-   * Create a NeighborSearch object without any reference data.  If Search() is
-   * called before a reference set is set with Train(), an exception will be
-   * thrown.
-   *
-   * Deprecated. Will be removed in mlpack 3.0.0.
-   *
-   * @param naive Whether to use naive search.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated metric.
-   */
-  mlpack_deprecated NeighborSearch(const bool naive,
-                                   const bool singleMode = false,
-                                   const double epsilon = 0,
-                                   const MetricType metric = MetricType());
-
-
-  /**
    * Delete the NeighborSearch object. The tree is the only member we are
    * responsible for deleting.  The others will take care of themselves.
    */
@@ -331,16 +228,6 @@ class NeighborSearch
    * @param referenceSet New set of reference data.
    */
   void Train(MatType&& referenceSet);
-
-  /**
-   * Set the reference tree to a new reference tree.
-   *
-   * This method is deprecated and will be removed in mlpack 3.0.0! Train()
-   * methods taking a reference to the reference tree are preferred.
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   */
-  mlpack_deprecated void Train(Tree* referenceTree);
 
   /**
    * Set the reference tree as a copy of the given reference tree.
@@ -382,35 +269,6 @@ class NeighborSearch
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
-
-  /**
-   * Given a pre-built query tree, search for the nearest neighbors of each
-   * point in the query tree, storing the output in the given matrices.  The
-   * matrices will be set to the size of n columns by k rows, where n is the
-   * number of points in the query dataset and k is the number of neighbors
-   * being searched for.
-   *
-   * This method is deprecated and will be removed in mlpack 3.0.0! The Search()
-   * method taking a reference to the query tree is preferred.
-   *
-   * Note that if you are calling Search() multiple times with a single query
-   * tree, you need to reset the bounds in the statistic of each query node,
-   * otherwise the result may be wrong!  You can do this by calling
-   * TreeType::Stat()::Reset() on each node in the query tree.
-   *
-   * @param queryTree Tree built on query points.
-   * @param k Number of neighbors to search for.
-   * @param neighbors Matrix storing lists of neighbors for each query point.
-   * @param distances Matrix storing distances of neighbors for each query
-   *      point.
-   * @param sameSet Denotes whether or not the reference and query sets are the
-   *      same.
-   */
-  mlpack_deprecated void Search(Tree* queryTree,
-                                const size_t k,
-                                arma::Mat<size_t>& neighbors,
-                                arma::mat& distances,
-                                bool sameSet = false);
 
   /**
    * Given a pre-built query tree, search for the nearest neighbors of each
@@ -495,32 +353,10 @@ class NeighborSearch
   //! Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
 
-  //! Access whether or not search is done in naive linear scan mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode SearchMode().
-  bool Naive() const { return naive; }
-  //! Modify whether or not search is done in naive linear scan mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode& SearchMode().
-  bool& Naive() { return naive; }
-
-  //! Access whether or not search is done in single-tree mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode SearchMode().
-  bool SingleMode() const { return singleMode; }
-  //! Modify whether or not search is done in single-tree mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode& SearchMode().
-  bool& SingleMode() { return singleMode; }
-
-  //! Access whether or not search is done in greedy mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode SearchMode().
-  bool Greedy() const { return greedy; }
-  //! Modify whether or not search is done in greedy mode.
-  //! Deprecated. Will be replaced in mlpack 3.0.0, by a new method:
-  //! NeighborSearchMode& SearchMode().
-  bool& Greedy() { return greedy; }
+  //! Access the search mode.
+  NeighborSearchMode SearchMode() const { return searchMode; }
+  //! Modify the search mode.
+  NeighborSearchMode& SearchMode() { return searchMode; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
@@ -554,12 +390,6 @@ class NeighborSearch
 
   //! Indicates the neighbor search mode.
   NeighborSearchMode searchMode;
-  //! Indicates if O(n^2) naive search is being used.
-  bool naive;
-  //! Indicates if single-tree search is being used (as opposed to dual-tree).
-  bool singleMode;
-  //! Indicates if greedy search is being used.
-  bool greedy;
   //! Indicates the relative error to be considered in approximate search.
   double epsilon;
 
@@ -574,16 +404,6 @@ class NeighborSearch
   //! If this is true, the reference tree bounds need to be reset on a call to
   //! Search() without a query set.
   bool treeNeedsReset;
-
-  //! Updates searchMode to be according to naive, singleMode and greedy
-  //! booleans.  This is only necessary until the modifiers Naive(),
-  //! SingleMode() and Greedy() are removed in mlpack 3.0.0.
-  void UpdateSearchMode();
-
-  //! Updates naive, singleMode and greedy flags according to searchMode.  This
-  //! is only necessary until the modifiers Naive(), SingleMode() and Greedy()
-  //! are removed in mlpack 3.0.0.
-  void UpdateSearchModeFlags();
 
   //! The NSModel class should have access to internal members.
   template<typename SortPol>
