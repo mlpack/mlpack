@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelLinearTest)
   m.Search(3, mIndices, mKernels);
   mNaive.Search(3, mNaiveIndices, mNaiveKernels);
   mSingle.Search(3, mSingleIndices, mSingleKernels);
-
+	
   BOOST_REQUIRE_EQUAL(indices.n_cols, mIndices.n_cols);
   BOOST_REQUIRE_EQUAL(indices.n_cols, mNaiveIndices.n_cols);
   BOOST_REQUIRE_EQUAL(indices.n_cols, mSingleIndices.n_cols);
