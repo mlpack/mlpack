@@ -29,9 +29,9 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
     "provided.  The tolerance of the Baum-Welch algorithm can be set with the "
-    "--tolerance option.  In general it is a good idea to use random "
-    "initialization in this case, which can be specified with the "
-    "--random_initialization (-r) option."
+    "--tolerance option.  By default, the transition matrix is randomly "
+    "initialized and the emission distributions are initialized to fit the "
+    "extent of the data."
     "\n\n"
     "Optionally, a pre-created HMM model can be used as a guess for the "
     "transition matrix and emission probabilities; this is specifiable with "
@@ -54,8 +54,6 @@ PARAM_STRING_OUT("output_model_file", "File to save trained HMM to.", "o");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
     1e-5);
-PARAM_FLAG("random_initialization", "Initialize emissions and transition "
-    "matrices with a uniform random distribution.", "r");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -305,14 +303,6 @@ int main(int argc, char** argv)
       HMM<DiscreteDistribution> hmm(size_t(states),
           DiscreteDistribution(maxEmission), tolerance);
 
-      // Initialize with random starting point.
-      if (CLI::HasParam("random_initialization"))
-      {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-      }
-
       // Initialize emissions using the distribution of the full data.
       DiscreteDistribution sampleEmission;
       if (trainSeq.size() > 1)
@@ -360,14 +350,6 @@ int main(int argc, char** argv)
 
       HMM<GaussianDistribution> hmm(size_t(states),
           GaussianDistribution(dimensionality), tolerance);
-
-      // Initialize with random starting point.
-      if (CLI::HasParam("random_initialization"))
-      {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-      }
 
       // Initialize emissions using the distribution of the full data.
       GaussianDistribution sampleEmission;
@@ -420,14 +402,6 @@ int main(int argc, char** argv)
       // Create HMM object.
       HMM<GMM> hmm(size_t(states), GMM(size_t(gaussians), dimensionality),
           tolerance);
-
-      // Initialize with random starting point.
-      if (CLI::HasParam("random_initialization"))
-      {
-        hmm.Transition().randu();
-        for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-          hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-      }
 
       // Initialize emissions using the distribution of the full data.
       // Super-simple emission training: we don't want it to take long at all.
