@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = mlpack
-PROJECT_NUMBER         = 2.1.0
+PROJECT_NUMBER         = 2.1.1
 OUTPUT_DIRECTORY       = ./doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English

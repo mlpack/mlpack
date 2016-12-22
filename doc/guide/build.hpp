@@ -23,7 +23,7 @@ href="http://keon.io/mlpack-on-windows.html">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 Download latest mlpack build from here:
-<a href="http://www.mlpack.org/files/mlpack-2.1.0.tar.gz">mlpack-2.1.0</a>
+<a href="http://www.mlpack.org/files/mlpack-2.1.1.tar.gz">mlpack-2.1.1</a>
 
 @section builddir Creating Build Directory
 
