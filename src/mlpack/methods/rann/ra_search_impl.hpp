@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 #define MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "ra_search_rules.hpp"
 

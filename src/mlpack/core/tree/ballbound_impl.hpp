@@ -14,6 +14,7 @@
 
 // In case it hasn't been included already.
 #include "ballbound.hpp"
+#include <mlpack/core/math/clamp.hpp>
 
 #include <string>
 

@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
 #define MLPACK_CORE_KERNELS_POLYNOMIAL_KERNEL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kernel {

@@ -24,7 +24,8 @@
 #ifndef MLPACK_METHODS_APPROX_KFN_QDAFN_HPP
 #define MLPACK_METHODS_APPROX_KFN_QDAFN_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/dists/gaussian_distribution.hpp>
 
 namespace mlpack {
 namespace neighbor {

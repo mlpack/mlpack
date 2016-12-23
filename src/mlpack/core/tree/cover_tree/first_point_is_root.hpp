@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
 #define MLPACK_CORE_TREE_FIRST_POINT_IS_ROOT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace tree {

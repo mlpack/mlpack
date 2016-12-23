@@ -24,7 +24,7 @@
 #ifndef MLPACK_METHODS_LARS_LARS_HPP
 #define MLPACK_METHODS_LARS_LARS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace regression {

@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "bounds.hpp"
 #include "binary_space_tree/midpoint_split.hpp"
 #include "binary_space_tree/mean_split.hpp"

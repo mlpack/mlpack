@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 #define MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace svd {

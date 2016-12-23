@@ -12,7 +12,8 @@
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/traversal_info.hpp>
 #include <boost/heap/priority_queue.hpp>

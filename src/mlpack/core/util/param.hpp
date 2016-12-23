@@ -15,6 +15,8 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
+#include <mlpack/core/util/cli.hpp>
+
 /**
  * Document an executable.  Only one instance of this macro should be
  * present in your program!  Therefore, use it in the main.cpp

@@ -11,7 +11,7 @@
 #define MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP
 
 #include <boost/math/special_functions/gamma.hpp>
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kernel {

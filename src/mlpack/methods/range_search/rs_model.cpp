@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "rs_model.hpp"
+#include <mlpack/core/math/random_basis.hpp>
 
 using namespace std;
 using namespace mlpack;

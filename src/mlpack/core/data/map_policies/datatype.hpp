@@ -11,7 +11,7 @@
 #ifndef MLPACK_CORE_DATA_MAP_POLICIES_DATATYPE_HPP
 #define MLPACK_CORE_DATA_MAP_POLICIES_DATATYPE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {

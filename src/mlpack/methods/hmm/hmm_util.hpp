@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_HMM_HMM_UTIL_HPP
 #define MLPACK_METHODS_HMM_HMM_UTIL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace hmm {

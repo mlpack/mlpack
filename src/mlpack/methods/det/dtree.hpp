@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_DET_DTREE_HPP
 #define MLPACK_METHODS_DET_DTREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace det /** Density Estimation Trees */ {

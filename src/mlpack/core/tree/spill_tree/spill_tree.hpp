@@ -11,7 +11,7 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "../space_split/midpoint_space_split.hpp"
 #include "../statistic.hpp"
 

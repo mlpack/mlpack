@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_MIDPOINT_SPACE_SPLIT_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_MIDPOINT_SPACE_SPLIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "hyperplane.hpp"
 
 namespace mlpack {

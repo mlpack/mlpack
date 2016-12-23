@@ -11,7 +11,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_HPP
 #define MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sdp/sdp.hpp>
 
 namespace mlpack {

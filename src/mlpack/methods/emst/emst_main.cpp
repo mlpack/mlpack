@@ -26,7 +26,7 @@
  */
 #include "dtb.hpp"
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
     "the Euclidean minimum spanning tree of a set of input points using the "
