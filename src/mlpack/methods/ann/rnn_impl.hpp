@@ -20,12 +20,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename OutputLayerType, typename InitializationRuleType>
-RNN<OutputLayerType,
-    InitializationRuleType
->::RNN(const size_t rho,
-       const bool single,
-       OutputLayerType outputLayer,
-       InitializationRuleType initializeRule) :
+RNN<OutputLayerType, InitializationRuleType>::RNN(
+    const size_t rho,
+    const bool single,
+    OutputLayerType outputLayer,
+    InitializationRuleType initializeRule) :
     rho(rho),
     outputLayer(outputLayer),
     initializeRule(initializeRule),
@@ -39,14 +38,13 @@ RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-RNN<OutputLayerType,
-    InitializationRuleType
->::RNN(const arma::mat& predictors,
-       const arma::mat& responses,
-       const size_t rho,
-       const bool single,
-       OutputLayerType outputLayer,
-       InitializationRuleType initializeRule) :
+RNN<OutputLayerType, InitializationRuleType>::RNN(
+    const arma::mat& predictors,
+    const arma::mat& responses,
+    const size_t rho,
+    const bool single,
+    OutputLayerType outputLayer,
+    InitializationRuleType initializeRule) :
     rho(rho),
     outputLayer(outputLayer),
     initializeRule(initializeRule),
@@ -72,9 +70,7 @@ RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-RNN<OutputLayerType,
-     InitializationRuleType
->::~RNN()
+RNN<OutputLayerType, InitializationRuleType>::~RNN()
 {
   for (LayerTypes& layer : network)
   {
@@ -84,11 +80,10 @@ RNN<OutputLayerType,
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename> class OptimizerType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Train(const arma::mat& predictors,
-         const arma::mat& responses,
-         OptimizerType<NetworkType>& optimizer)
+void RNN<OutputLayerType, InitializationRuleType>::Train(
+    const arma::mat& predictors,
+    const arma::mat& responses,
+    OptimizerType<NetworkType>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -114,9 +109,38 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Predict(arma::mat& predictors, arma::mat& responses)
+template<template<typename> class OptimizerType>
+void RNN<OutputLayerType, InitializationRuleType>::Train(
+    const arma::mat& predictors, const arma::mat& responses)
+{
+  numFunctions = responses.n_cols;
+
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+
+  this->deterministic = true;
+  ResetDeterministic();
+
+  if (!reset)
+  {
+    ResetParameters();
+    reset = true;
+  }
+
+  OptimizerType<decltype(*this)> optimizer(*this);
+
+  // Train the model.
+  Timer::Start("rnn_optimization");
+  const double out = optimizer.Optimize(parameter);
+  Timer::Stop("rnn_optimization");
+
+  Log::Info << "RNN::RNN(): final objective of trained model is " << out
+      << "." << std::endl;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::Predict(
+    arma::mat& predictors, arma::mat& responses)
 {
   if (parameter.is_empty())
   {
@@ -143,9 +167,8 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::SinglePredict(const arma::mat& predictors, arma::mat& responses)
+void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
+    const arma::mat& predictors, arma::mat& responses)
 {
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -159,11 +182,8 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-double RNN<OutputLayerType,
-         InitializationRuleType
->::Evaluate(const arma::mat& /* parameters */,
-            const size_t i,
-            const bool deterministic)
+double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {
   if (parameter.is_empty())
   {
@@ -221,11 +241,8 @@ double RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Gradient(const arma::mat& parameters,
-            const size_t i,
-            arma::mat& gradient)
+void RNN<OutputLayerType, InitializationRuleType>::Gradient(
+    const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {
   if (gradient.is_empty())
   {
@@ -316,9 +333,8 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetDeterministic()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::ResetGradients(arma::mat& gradient)
+void RNN<OutputLayerType, InitializationRuleType>::ResetGradients(
+    arma::mat& gradient)
 {
   size_t offset = 0;
   for (LayerTypes& layer : network)
@@ -329,9 +345,7 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Forward(arma::mat&& input)
+void RNN<OutputLayerType, InitializationRuleType>::Forward(arma::mat&& input)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, network.front()))),
@@ -347,9 +361,7 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Backward()
+void RNN<OutputLayerType, InitializationRuleType>::Backward()
 {
   boost::apply_visitor(BackwardVisitor(
         std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
@@ -368,9 +380,7 @@ void RNN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType,
-         InitializationRuleType
->::Gradient()
+void RNN<OutputLayerType, InitializationRuleType>::Gradient()
 {
   boost::apply_visitor(GradientVisitor(std::move(currentInput), std::move(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
@@ -386,8 +396,8 @@ void RNN<OutputLayerType,
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename Archive>
-void RNN<OutputLayerType, InitializationRuleType
->::Serialize(Archive& ar, const unsigned int /* version */)
+void RNN<OutputLayerType, InitializationRuleType>::Serialize(
+    Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
   ar & data::CreateNVP(rho, "rho");

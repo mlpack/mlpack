@@ -100,6 +100,24 @@ class RNN
              OptimizerType<NetworkType>& optimizer);
 
   /**
+   * Train the recurrent neural network on the given input data. By default, the
+   * SGD optimization algorithm is used, but others can be specified
+   * (such as mlpack::optimization::RMSprop).
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   */
+  template<
+      template<typename> class OptimizerType = mlpack::optimization::SGD
+  >
+  void Train(const arma::mat& predictors, const arma::mat& responses);
+
+  /**
    * Predict the responses to a given set of predictors. The responses will
    * reflect the output of the given output layer as returned by the
    * output layer function.
