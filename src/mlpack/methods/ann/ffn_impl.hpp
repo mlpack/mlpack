@@ -20,9 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType,
-    InitializationRuleType
->::FFN(OutputLayerType&& outputLayer, InitializationRuleType initializeRule) :
+FFN<OutputLayerType, InitializationRuleType>::FFN(
+    OutputLayerType&& outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(initializeRule),
     width(0),
@@ -33,12 +32,11 @@ FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType,
-    InitializationRuleType
->::FFN(const arma::mat& predictors,
-       const arma::mat& responses,
-       OutputLayerType&& outputLayer,
-       InitializationRuleType initializeRule) :
+FFN<OutputLayerType, InitializationRuleType>::FFN(
+    const arma::mat& predictors,
+    const arma::mat& responses,
+    OutputLayerType&& outputLayer,
+    InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(initializeRule),
     width(0),
@@ -60,9 +58,7 @@ FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType,
-     InitializationRuleType
->::~FFN()
+FFN<OutputLayerType, InitializationRuleType>::~FFN()
 {
   std::for_each(network.begin(), network.end(),
       boost::apply_visitor(deleteVisitor));
@@ -70,11 +66,10 @@ FFN<OutputLayerType,
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename> class OptimizerType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Train(const arma::mat& predictors,
-         const arma::mat& responses,
-         OptimizerType<NetworkType>& optimizer)
+void FFN<OutputLayerType, InitializationRuleType>::Train(
+      const arma::mat& predictors,
+      const arma::mat& responses,
+      OptimizerType<NetworkType>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -99,9 +94,37 @@ void FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Predict(arma::mat& predictors, arma::mat& responses)
+template<template<typename> class OptimizerType>
+void FFN<OutputLayerType, InitializationRuleType>::Train(
+    const arma::mat& predictors, const arma::mat& responses)
+{
+  numFunctions = responses.n_cols;
+
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+
+  this->deterministic = true;
+  ResetDeterministic();
+
+  if (!reset)
+  {
+    ResetParameters();
+  }
+
+  OptimizerType<decltype(*this)> optimizer(*this);
+
+  // Train the model.
+  Timer::Start("ffn_optimization");
+  const double out = optimizer.Optimize(parameter);
+  Timer::Stop("ffn_optimization");
+
+  Log::Info << "FFN::FFN(): final objective of trained model is " << out
+      << "." << std::endl;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void FFN<OutputLayerType, InitializationRuleType>::Predict(
+    arma::mat& predictors, arma::mat& responses)
 {
   if (parameter.is_empty())
   {
@@ -135,11 +158,8 @@ void FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-double FFN<OutputLayerType,
-         InitializationRuleType
->::Evaluate(const arma::mat& /* parameters */,
-            const size_t i,
-            const bool deterministic)
+double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {
   if (parameter.is_empty())
   {
@@ -167,11 +187,8 @@ double FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Gradient(const arma::mat& parameters,
-            const size_t i,
-            arma::mat& gradient)
+void FFN<OutputLayerType, InitializationRuleType>::Gradient(
+    const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {
   if (gradient.is_empty())
   {
@@ -228,9 +245,8 @@ void FFN<OutputLayerType, InitializationRuleType>::ResetDeterministic()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::ResetGradients(arma::mat& gradient)
+void FFN<OutputLayerType, InitializationRuleType>::ResetGradients(
+    arma::mat& gradient)
 {
   size_t offset = 0;
   for (size_t i = 0; i < network.size(); ++i)
@@ -241,9 +257,7 @@ void FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Forward(arma::mat&& input)
+void FFN<OutputLayerType, InitializationRuleType>::Forward(arma::mat&& input)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, network.front()))),
@@ -300,9 +314,7 @@ void FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Backward()
+void FFN<OutputLayerType, InitializationRuleType>::Backward()
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(error), std::move(
@@ -319,9 +331,7 @@ void FFN<OutputLayerType,
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType,
-         InitializationRuleType
->::Gradient()
+void FFN<OutputLayerType, InitializationRuleType>::Gradient()
 {
   boost::apply_visitor(GradientVisitor(std::move(currentInput), std::move(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
@@ -340,8 +350,8 @@ void FFN<OutputLayerType,
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename Archive>
-void FFN<OutputLayerType, InitializationRuleType
->::Serialize(Archive& ar, const unsigned int /* version */)
+void FFN<OutputLayerType, InitializationRuleType>::Serialize(
+    Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
   ar & data::CreateNVP(width, "width");
