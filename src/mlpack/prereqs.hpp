@@ -11,6 +11,10 @@
 #ifndef MLPACK_PREREQS_HPP
 #define MLPACK_PREREQS_HPP
 
+// Defining _USE_MATH_DEFINES should set M_PI.
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
 #pragma message "Armadillo was included before mlpack; this can sometimes cause\
@@ -30,10 +34,6 @@
 #include <stdexcept>
 #include <tuple>
 #include <queue>
-
-// Defining _USE_MATH_DEFINES should set M_PI.
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
