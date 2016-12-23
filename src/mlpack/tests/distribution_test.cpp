@@ -444,6 +444,148 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
 
 /**
  * This test verifies that the fitting procedure for GammaDistribution works
+ * properly when probabilities for each sample is given.
+ */
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
+{
+  double alphaReal = 5.4;
+  double betaReal = 6.7;
+
+  // Create a gamma distribution random generator
+  std::default_random_engine generator;
+  std::gamma_distribution<double> dist(alphaReal, betaReal);
+
+  size_t N = 50000;
+  size_t d = 2;
+  arma::mat rdata(d, N);
+
+  for(size_t j = 0; j < d; j++)
+    for(size_t i = 0; i < N; i++)
+      rdata(j, i) = dist(generator);
+
+  // create a uniform distribution random generator
+  std::uniform_real_distribution<double> prob(0, 1);
+  arma::vec probabilities(N);
+
+  for(size_t i = 0; i < N; i++)
+    probabilities(i) = prob(generator);
+
+  // fit results with probabilities and data
+  GammaDistribution gDist;
+  gDist.Train(rdata, probabilities);
+
+  // fit results with only data
+  GammaDistribution gDist2;
+  gDist2.Train(rdata);
+
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(0), gDist.Alpha(0), 1);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(0), gDist.Beta(0), 1);
+
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1);
+
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 1);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 1);
+
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 1);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 1);
+}
+
+
+// This test ensures that the same result is obtained when
+// trained with probabilities all set to 1 and with no probabilities at all.
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainALLProbabilities1Test)
+{
+  double alphaReal = 5.4;
+  double betaReal = 6.7;
+
+  // Create a gamma distribution random generator
+  std::default_random_engine generator;
+  std::gamma_distribution<double> dist(alphaReal, betaReal);
+
+  size_t N = 1000;
+  size_t d = 2;
+  arma::mat rdata(d, N);
+
+  for(size_t j = 0; j < d; j++)
+    for(size_t i = 0; i < N; i++)
+      rdata(j, i) = dist(generator);
+
+  // fit results with only data
+  GammaDistribution gDist;
+  gDist.Train(rdata);
+
+  // fit results with data and each probability as 1
+  GammaDistribution gDist2;
+  arma::vec allProbabilities1(N, arma::fill::ones);
+  gDist2.Train(rdata, allProbabilities1);
+
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(0), gDist.Alpha(0), 1e-5);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(0), gDist.Beta(0), 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1e-5);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1e-5);
+}
+
+ /** This test draws points from two different gamma distributions,
+  *  sets the probabilities for the points from the first distribution
+  *  to something small and the probabilities for the second to something large. 
+  *  It ensures that the gamma distribution recovered has the
+  *  same parameters as the second gamma distribution with high probabilities.
+  */
+BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
+{
+  double alphaReal = 5.4;
+  double betaReal = 6.7;
+
+  double alphaReal2 = 1.9;
+  double betaReal2 = 8.4;
+
+  // Create two gamma distribution random generators
+  std::default_random_engine generator;
+  std::gamma_distribution<double> dist(alphaReal, betaReal);
+  std::gamma_distribution<double> dist2(alphaReal2, betaReal2);
+
+  std::uniform_real_distribution<double> lowProb(0, 0.02);
+  std::uniform_real_distribution<double> highProb(0.98, 1);
+
+  size_t N = 50000;
+  size_t d = 2;
+  arma::mat rdata(d, N);
+  arma::vec probabilities(N);
+
+  // draws points alternately from the two different distributions.
+  for(size_t j = 0; j < d; j++)
+  {
+    for(size_t i = 0; i < N; i++)
+    {
+      if(i % 2 == 0)
+        rdata(j, i) = dist(generator);
+      else
+        rdata(j, i) = dist2(generator);
+    }
+  }
+
+  for(size_t i = 0; i<N; i++)
+  {
+    if(i % 2 == 0)
+      probabilities(i) = lowProb(generator);
+    else
+      probabilities(i) = highProb(generator);
+  }
+
+  GammaDistribution gDist;
+  gDist.Train(rdata, probabilities);
+
+  BOOST_REQUIRE_CLOSE(alphaReal2, gDist.Alpha(0), 5);
+  BOOST_REQUIRE_CLOSE(betaReal2, gDist.Beta(0), 5);
+
+  BOOST_REQUIRE_CLOSE(alphaReal2, gDist.Alpha(1), 5);
+  BOOST_REQUIRE_CLOSE(betaReal2, gDist.Beta(1), 5);
+}
+
+/**
+ * This test verifies that the fitting procedure for GammaDistribution works
  * properly and converges near the actual gamma parameters. We do this twice
  * with different alpha/beta parameters so we make sure we don't have some weird
  * bug that always converges to the same number.
