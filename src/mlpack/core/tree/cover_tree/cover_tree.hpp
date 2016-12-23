@@ -356,8 +356,9 @@ class CoverTree
   //! Return the maximum distance to another node.
   ElemType MaxDistance(const CoverTree& other) const;
 
-  //Modified Version of MaxDistance function to use improved Evaluate Function
-  ElemType MaxDistanceForFast(const CoverTree& other, const ElemType bestDistance);
+  //!Overloadded and improved distance function
+  ElemType MaxDistanceNew(const CoverTree& other, const ElemType bestDistance);
+
   //! Return the maximum distance to another node given that the point-to-point
   //! distance has already been calculated.
   ElemType MaxDistance(const CoverTree& other, const ElemType distance) const;
@@ -365,9 +366,9 @@ class CoverTree
   //! Return the maximum distance to another point.
   ElemType MaxDistance(const arma::vec& other) const;
 
+  //Overloadded and improved distance function
+  ElemType MaxDistanceNew(const arma::vec& other, const ElemType bestDistance);
 
-  //Modified Version of MaxDistance function to use improved Evaluate Function
-  ElemType MaxDistanceForFast(const arma::vec& other, const ElemType bestDistance);
   //! Return the maximum distance to another point given that the distance from
   //! the center to the point has already been calculated.
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;

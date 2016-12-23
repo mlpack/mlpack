@@ -701,7 +701,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MaxDistanceForFast(point, bestDistance);
+    ElemType distance = children[i]->MaxDistanceNew(point, bestDistance);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -757,7 +757,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t bestIndex = 0;
   for (size_t i = 0; i < children.size(); ++i)
   {
-    ElemType distance = children[i]->MaxDistanceForFast(queryNode, bestDistance);
+    ElemType distance = children[i]->MaxDistanceNew(queryNode, bestDistance);
     if (distance >= bestDistance)
     {
       bestDistance = distance;
@@ -855,7 +855,7 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const CoverTree& other, const ElemType bestDistance, bool forOverload)
+    MaxDistanceNew(const CoverTree& other, const ElemType bestDistance)
 {
   return metric->Evaluate(dataset->col(point),
 			other.Dataset().col(other.Point()),
@@ -903,7 +903,7 @@ template<
 typename CoverTree<MetricType, StatisticType, MatType,
     RootPointPolicy>::ElemType
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& other, const ElemType bestDistance, bool forOverload)
+    MaxDistanceNew(const arma::vec& other, const ElemType bestDistance)
 {
   return metric->Evaluate(dataset->col(point),
 			other,

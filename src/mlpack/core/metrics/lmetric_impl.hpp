@@ -72,6 +72,21 @@ typename VecTypeA::elem_type LMetric<2, false>::Evaluate(
   return accu(arma::square(a - b));
 }
 
+template<typename VecTypeA, typename VecTypeB>
+void RotateVector(const VecTypeA& a, const VecTypeB& b, VecTypeA& vecAout, VecTypeB& vecBout)
+{
+  VecTypeA c = arma::abs(a - b);  		//calculate absolute difference instead of variance between two vectors just for simplicity
+  VecTypeA indices = arma::sort_index(c, 1);	//1 for the 2nd parameter is for decreasing order
+
+  //rearrange two vectors according to stored indices
+  //therefore, we get two modified vectors in decreasing order of difference(or variance) of the corresponding elements
+  arma::umat X = arma::join_rows(a, b);
+  arma::uvec rows = arma::linspace<arma::uvec>(0, X.n_cols - 1, X.n_cols);
+  X = X.submat(indices, rows);
+  vecAout = X.col(0);
+  vecBout = X.col(1);
+}
+
 // L2-metric my own specializations.
 template<>
 template<typename VecTypeA, typename VecTypeB>
@@ -80,7 +95,12 @@ typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
     const VecTypeB& b,
     typename VecTypeA::elem_type bound)
 {
-
+  VecTypeA out1;
+  VecTypeB out2;
+  RotateVector(a, b, out1, out2);
+  //rotate vectors a and b
+  a = out1;
+  b = out2;
   typename VecTypeA::elem_type sum = 0;
   typename VecTypeA::elem_type bound_square = std::pow(bound, 2.0);
   for (size_t i = 0; i < a.n_elem; i++)
@@ -91,6 +111,7 @@ typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
   }
   return sum;
 }
+
 // L3-metric specialization (not very likely to be used, but just in case).
 template<>
 template<typename VecTypeA, typename VecTypeB>
