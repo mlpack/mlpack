@@ -29,8 +29,6 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
-
-// NguyenWidrowInitialization
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
   typename InitializationRuleType = RandomInitialization
