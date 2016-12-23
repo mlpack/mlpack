@@ -160,8 +160,8 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param metric An optional instantiated metric to use.
    */
-  DualTreeBoruvka(Tree* tree,
-                  const MetricType metric = MetricType());
+  mlpack_deprecated DualTreeBoruvka(Tree* tree,
+                                    const MetricType metric = MetricType());
 
   /**
    * Create the DualTreeBoruvka object with an already initialized tree.  This
@@ -183,7 +183,7 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param dataset Dataset corresponding to the pre-built tree.
    */
-  DualTreeBoruvka(Tree& tree,
+  DualTreeBoruvka(const Tree& tree,
                   const MetricType metric = MetricType());
 
   /**
@@ -249,7 +249,7 @@ class DualTreeBoruvka
    * The CleanupHelper() method taking a reference to the tree is preferred.
    *
    */
-  void CleanupHelper(Tree* tree);
+  mlpack_deprecated void CleanupHelper(Tree* tree);
   
   /**
    * This function resets the values in the nodes of the tree nearest neighbor

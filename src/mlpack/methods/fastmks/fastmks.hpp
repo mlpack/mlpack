@@ -122,8 +122,8 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(Tree* referenceTree,
-          const bool singleMode = false);
+  mlpack_deprecated FastMKS(Tree* referenceTree,
+                            const bool singleMode = false);
 
   /**
    * Create the FastMKS object with an already-initialized tree built on the
@@ -139,7 +139,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(Tree& referenceTree,
+  FastMKS(const Tree& referenceTree,
           const bool singleMode = false);
    
   /**
@@ -192,19 +192,18 @@ class FastMKS
    *
    * @param tree Tree to use as reference data.
    */
-  void Train(Tree* referenceTree);
+  mlpack_deprecated void Train(Tree* referenceTree);
   
   /**
-   * Train the FastMKS model on the given reference tree.  This takes ownership
-   * of the tree, so you do not need to delete it!  This will throw an exception
-   * if the model is searching in naive mode (i.e. if Naive() == true).
+   * Train the FastMKS model on the given reference tree. This will throw an
+   * exception if the model is searching in naive mode (i.e. if Naive() == true).
    *
    * This method will copy the given tree. You can avoid this copy by using the
    * Train() method that takes a rvalue reference to the tree.
    *
    * @param tree Tree to use as reference data.
    */
-  void Train(Tree& referenceTree);
+  void Train(const Tree& referenceTree);
   
   /**
    * Train the FastMKS model on the given reference tree.  This takes ownership
@@ -267,10 +266,10 @@ class FastMKS
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
    */
-  void Search(Tree* querySet,
-              const size_t k,
-              arma::Mat<size_t>& indices,
-              arma::mat& kernels);
+  mlpack_deprecated void Search(Tree* querySet,
+                                const size_t k,
+                                arma::Mat<size_t>& indices,
+                                arma::mat& kernels);
 
   /**
    * Search for the points in the reference set with maximum kernel evaluation
@@ -294,7 +293,7 @@ class FastMKS
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
    */
-  void Search(Tree& querySet,
+  void Search(Tree& queryTree,
               const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels);

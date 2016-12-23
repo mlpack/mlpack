@@ -118,7 +118,7 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree& referenceTree,
+FastMKS<KernelType, MatType, TreeType>::FastMKS(const Tree& referenceTree,
                                                 const bool singleMode) :
 	referenceTree(new Tree(referenceTree)),
     referenceSet(&this->referenceTree->Dataset()),
@@ -225,7 +225,7 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void FastMKS<KernelType, MatType, TreeType>::Train(Tree& tree)
+void FastMKS<KernelType, MatType, TreeType>::Train(const Tree& tree)
 {
   if (naive)
     throw std::invalid_argument("cannot call FastMKS::Train() with a tree when "
@@ -372,7 +372,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     arma::Mat<size_t>& indices,
     arma::mat& kernels)
 {
-	Search(*queryTree, k, indices, kernels);
+  Search(*queryTree, k, indices, kernels);
 }
 
 template<typename KernelType,
@@ -505,7 +505,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // Dual-tree implementation.
   Timer::Stop("computing_products");
 
-  Search(std::move(referenceTree), k, indices, kernels);
+  Search(referenceTree, k, indices, kernels);
 }
 
 //! Serialize the model.

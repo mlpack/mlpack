@@ -104,7 +104,7 @@ template<
              typename TreeStatType,
              typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
-    Tree& tree,
+    const Tree& tree,
     const MetricType metric) :
     tree(new Tree(tree)),
     data(&this->tree->Dataset()),
