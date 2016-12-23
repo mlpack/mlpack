@@ -63,6 +63,7 @@ Copyright:
   Copyright 2016, Anuraj Kanodia <akanuraj200@gmail.com>
   Copyright 2016, Ivan Georgiev <ivan@jonan.info>
   Copyright 2016, Shikhar Bhardwaj <shikharbhardwaj68@gmail.com>
+  Copyright 2016, Yashu Seth <yashuseth2503@gmail.com>
 License: BSD-3-clause
   All rights reserved.
   .
