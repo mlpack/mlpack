@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "cosine_tree.hpp"
+#include <mlpack/core/util/log.hpp>
 
 #include <boost/math/distributions/normal.hpp>
 

@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 #define MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

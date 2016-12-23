@@ -16,7 +16,7 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
 #define __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {

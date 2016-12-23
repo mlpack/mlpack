@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "linear_regression.hpp"
+#include <mlpack/core/util/log.hpp>
 
 using namespace mlpack;
 using namespace mlpack::regression;

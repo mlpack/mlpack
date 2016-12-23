@@ -34,7 +34,7 @@
 #ifndef MLPACK_CORE_TREE_CELLBOUND_HPP
 #define MLPACK_CORE_TREE_CELLBOUND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "bound_traits.hpp"

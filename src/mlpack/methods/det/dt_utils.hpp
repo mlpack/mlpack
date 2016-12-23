@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_DET_DT_UTILS_HPP
 #define MLPACK_METHODS_DET_DT_UTILS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "dtree.hpp"
 
 namespace mlpack {

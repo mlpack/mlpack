@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "empty_layer.hpp"
 #include <mlpack/methods/ann/network_util.hpp>

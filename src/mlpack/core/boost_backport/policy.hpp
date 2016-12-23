@@ -6,6 +6,7 @@
 #ifndef BOOST_MATH_POLICY_HPP
 #define BOOST_MATH_POLICY_HPP
 
+#include <mlpack/core.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/if.hpp>
@@ -20,6 +21,8 @@
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
 #include <boost/math/tools/config.hpp>
+//#include <boost/math/policies/policy.hpp>
+//#include <boost/math/tools/precision.hpp>
 #include <limits>
 // Sadly we do need the .h versions of these to be sure of getting
 // FLT_MANT_DIG etc.

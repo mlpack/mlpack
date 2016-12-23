@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_DATA_IMPUTER_HPP
 #define MLPACK_CORE_DATA_IMPUTER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "dataset_mapper.hpp"
 #include "map_policies/missing_policy.hpp"
 #include "map_policies/increment_policy.hpp"

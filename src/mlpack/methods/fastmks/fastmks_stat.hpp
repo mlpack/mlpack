@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {

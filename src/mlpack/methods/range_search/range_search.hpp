@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "range_search_stat.hpp"

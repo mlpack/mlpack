@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
 #define MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace amf {

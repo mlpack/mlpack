@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_SVDWRAPPER_HPP
 #define MLPACK_METHODS_SVDWRAPPER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack
 {

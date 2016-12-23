@@ -26,7 +26,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_GLIMPSE_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_GLIMPSE_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/pooling_rules/mean_pooling.hpp>
 #include <algorithm>
 

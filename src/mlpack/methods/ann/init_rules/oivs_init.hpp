@@ -27,7 +27,7 @@
 #ifndef MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
 #define MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include "random_init.hpp"

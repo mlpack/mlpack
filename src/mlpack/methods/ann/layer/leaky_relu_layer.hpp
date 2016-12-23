@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

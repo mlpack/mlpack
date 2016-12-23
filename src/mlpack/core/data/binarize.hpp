@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_DATA_BINARIZE_HPP
 #define MLPACK_CORE_DATA_BINARIZE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {

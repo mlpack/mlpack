@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "lcc.hpp"
+#include <mlpack/core/math/lin_alg.hpp>
 
 namespace mlpack {
 namespace lcc {

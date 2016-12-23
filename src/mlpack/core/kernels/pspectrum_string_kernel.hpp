@@ -20,7 +20,8 @@
 #include <string>
 #include <vector>
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
 namespace kernel {

@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "bounds.hpp"
 #include "spill_tree/is_spill_tree.hpp"
 #include "spill_tree/spill_tree.hpp"

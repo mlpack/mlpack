@@ -11,6 +11,8 @@
  */
 
 #include "radical.hpp"
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 using namespace std;
 using namespace arma;
