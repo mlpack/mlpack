@@ -358,7 +358,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   Tree queryTree(querySet);
   Timer::Stop("tree_building");
 
-  Search(&queryTree, k, indices, kernels);
+  Search(queryTree, k, indices, kernels);
 }
 
 template<typename KernelType,
@@ -505,7 +505,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   // Dual-tree implementation.
   Timer::Stop("computing_products");
 
-  Search(referenceTree, k, indices, kernels);
+  Search(*referenceTree, k, indices, kernels);
 }
 
 //! Serialize the model.
