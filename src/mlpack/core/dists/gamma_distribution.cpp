@@ -69,7 +69,8 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 }
 
 //Fits an alpha and beta parameter according to observation probabilities.
-void GammaDistribution::Train(const arma::mat& rdata, const arma::vec& probabilities,
+void GammaDistribution::Train(const arma::mat& rdata,
+                              const arma::vec& probabilities,
                               const double tol)
 {
   // If fittingSet is empty, nothing to do.
@@ -80,16 +81,16 @@ void GammaDistribution::Train(const arma::mat& rdata, const arma::vec& probabili
   arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
   arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
 
-  for(size_t i=0; i<rdata.n_cols; i++)
+  for (size_t i = 0; i < rdata.n_cols; i++)
   {
     meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
     meanxVec += probabilities(i) * rdata.col(i);
   }
 
-  double tot_probabilty = arma::accu(probabilities);
+  double totProbability = arma::accu(probabilities);
 
-  meanLogxVec /= tot_probabilty;
-  meanxVec /= tot_probabilty;
+  meanLogxVec /= totProbability;
+  meanxVec /= totProbability;
   logMeanxVec = arma::log(meanxVec);
 
   // Call the statistics-only GammaDistribution::Train() function to fit the
@@ -98,7 +99,7 @@ void GammaDistribution::Train(const arma::mat& rdata, const arma::vec& probabili
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-void GammaDistribution::Train(const arma::vec& logMeanxVec, 
+void GammaDistribution::Train(const arma::vec& logMeanxVec,
                               const arma::vec& meanLogxVec,
                               const arma::vec& meanxVec,
                               const double tol)
