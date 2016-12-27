@@ -11,18 +11,10 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/recurrent_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/lstm_layer.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-
-#include <mlpack/methods/ann/rnn.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
- #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/rnn.hpp>
+#include <mlpack/core/data/binarize.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -78,19 +70,29 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
+  const size_t rho = 10;
 
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    // Generate 12 (2 * 6) noisy sines. A single sine contains 10 points/features.
-    arma::mat input, labels;
-    GenerateNoisySines(input, labels, 10, 6);
+    // Generate 12 (2 * 6) noisy sines. A single sine contains rho points/features.
+    arma::mat input, labelsTemp;
+    GenerateNoisySines(input, labelsTemp, rho, 6);
+
+    arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+    for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+    {
+      const int value = arma::as_scalar(arma::find(
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+      labels.col(i).fill(value);
+    }
 
     /*
-     * Construct a network with 1 input unit, 4 hidden units and 2 output units.
-     * The hidden layer is connected to itself. The network structure looks like:
+     * Construct a network with 1 input unit, 4 hidden units and 10 output
+     * units. The hidden layer is connected to itself. The network structure
+     * looks like:
      *
      *  Input         Hidden        Output
-     * Layer(1)      Layer(4)      Layer(2)
+     * Layer(1)      Layer(4)      Layer(10)
      * +-----+       +-----+       +-----+
      * |     |       |     |       |     |
      * |     +------>|     +------>|     |
@@ -100,38 +102,45 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
      *            .     .
      *            .......
      */
-    LinearLayer<> linearLayer0(1, 4);
-    RecurrentLayer<> recurrentLayer0(4);
-    BaseLayer<LogisticFunction> inputBaseLayer;
+    Add<> add(4);
+    Linear<> lookup(1, 4);
+    SigmoidLayer<> sigmoidLayer;
+    Linear<> linear(4, 4);
+    Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
 
-    LinearLayer<> hiddenLayer(4, 2);
-    BaseLayer<LogisticFunction> hiddenBaseLayer;
+    RNN<> model(rho);
+    model.Add<IdentityLayer<> >();
+    model.Add(recurrent);
+    model.Add<Linear<> >(4, 10);
+    model.Add<LogSoftMax<> >();
 
-    BinaryClassificationLayer classOutputLayer;
-
-    auto modules = std::tie(linearLayer0, recurrentLayer0, inputBaseLayer,
-                            hiddenLayer, hiddenBaseLayer);
-
-    RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
-        MeanSquaredErrorFunction> net(modules, classOutputLayer);
-
-    SGD<decltype(net)> opt(net, 0.5, 500 * input.n_cols, -100);
-
-    net.Train(input, labels, opt);
+    SGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
+    model.Train(input, labels, opt);
 
     arma::mat prediction;
-    net.Predict(input, prediction);
+    model.Predict(input, prediction);
 
     size_t error = 0;
-    for (size_t i = 0; i < labels.n_cols; i++)
+    for (size_t i = 0; i < prediction.n_cols; ++i)
     {
-      if (arma::sum(arma::sum(arma::abs(prediction.col(i) - labels.col(i)))) == 0)
+      arma::mat singlePrediction = prediction.submat((rho - 1) * rho, i,
+          rho * rho - 1, i);
+
+      const int predictionValue = arma::as_scalar(arma::find(
+          arma::max(singlePrediction.col(0)) ==
+          singlePrediction.col(0), 1) + 1);
+
+      const int targetValue = arma::as_scalar(arma::find(
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+
+      if (predictionValue == targetValue)
       {
         error++;
       }
     }
 
-    double classificationError = 1 - double(error) / labels.n_cols;
+    double classificationError = 1 - double(error) / prediction.n_cols;
+
     if (classificationError <= 0.2)
     {
       ++successes;
@@ -279,9 +288,7 @@ void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
-template<typename HiddenLayerType>
-void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
-                             bool embedded = false)
+void ReberGrammarTestNetwork(bool embedded = false)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -346,36 +353,34 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
    * |     |    ..>|     |       |     |
-   * +-----+    .  +--+--+       +-----+
+   * +-----+    .  +--+--+       +-- ---+
    *            .     .
    *            .     .
    *            .......
    */
-  const size_t lstmSize = 4 * 10;
-  LinearLayer<> linearLayer0(7, lstmSize);
-  RecurrentLayer<> recurrentLayer0(10, lstmSize);
+  const size_t outputSize = 7;
+  const size_t inputSize = 7;
+  const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-  LinearLayer<>hiddenLayer(10, 7);
-  BaseLayer<LogisticFunction> hiddenBaseLayer;
+  RNN<MeanSquaredError<> > model(rho);
 
-  BinaryClassificationLayer classOutputLayer;
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(inputSize, 20);
+  model.Add<LSTM<> >(20, 7, rho);
+  model.Add<Linear<> >(7, outputSize);
+  model.Add<SigmoidLayer<> >();
 
-  auto modules = std::tie(linearLayer0, recurrentLayer0, hiddenLayer0,
-                          hiddenLayer, hiddenBaseLayer);
-
-  RNN<decltype(modules), BinaryClassificationLayer, RandomInitialization,
-      MeanSquaredErrorFunction> net(modules, classOutputLayer);
-
-  SGD<decltype(net)> opt(net, 0.5, 2, -200);
+  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 15; i++)
+  for (size_t i = 0; i < 40; i++)
   {
     for (size_t j = 0; j < trainReberGrammarCount; j++)
     {
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
-      net.Train(inputTemp, labelsTemp, opt);
+
+      model.Train(inputTemp, labelsTemp, opt);
     }
   }
 
@@ -384,10 +389,11 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   // Ask the network to predict the next Reber grammar in the given sequence.
   for (size_t i = 0; i < testReberGrammarCount; i++)
   {
-    arma::mat output;
+    arma::mat output, prediction;
     arma::mat input = testInput.at(0, i);
 
-    net.Predict(input, output);
+    model.Predict(input, prediction);
+    data::Binarize(prediction, output, 0.5);
 
     const size_t reberGrammerSize = 7;
     std::string inputReber = "";
@@ -429,8 +435,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
  */
 BOOST_AUTO_TEST_CASE(ReberGrammarTest)
 {
-  LSTMLayer<> hiddenLayerLSTM(10);
-  ReberGrammarTestNetwork(hiddenLayerLSTM);
+  ReberGrammarTestNetwork(false);
 }
 
 /**
@@ -438,8 +443,7 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
 {
-  LSTMLayer<> hiddenLayerLSTM(10);
-  ReberGrammarTestNetwork(hiddenLayerLSTM, true);
+  ReberGrammarTestNetwork(true);
 }
 
 /*
@@ -490,7 +494,6 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
   for (size_t i = 2; i < 8; i++)
     input(2 + rand() % 6, index(i)) = 1;
 
-
   // Set the prompts which direct the network to give an answer.
   input(8, 8) = 1;
   input(9, 9) = 1;
@@ -503,8 +506,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * Train the specified network and the construct distracted sequence recall
  * dataset.
  */
-template<typename HiddenLayerType>
-void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
+void DistractedSequenceRecallTestNetwork()
 {
   const size_t trainDistractedSequenceCount = 1000;
   const size_t testDistractedSequenceCount = 1000;
@@ -538,22 +540,18 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
    *            .     .
    *            .......
    */
-  const size_t lstmSize = 4 * 10;
-  LinearLayer<> linearLayer0(10, lstmSize);
-  RecurrentLayer<> recurrentLayer0(10, lstmSize);
+  const size_t outputSize = 3;
+  const size_t inputSize = 10;
+  const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-  LinearLayer<> hiddenLayer(10, 3);
-  TanHLayer<> hiddenBaseLayer;
+  RNN<MeanSquaredError<> > model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(inputSize, 20);
+  model.Add<LSTM<> >(20, 7, rho);
+  model.Add<Linear<> >(7, outputSize);
+  model.Add<SigmoidLayer<> >();
 
-  BinaryClassificationLayer classOutputLayer;
-
-  auto modules = std::tie(linearLayer0, recurrentLayer0, hiddenLayer0,
-                          hiddenLayer, hiddenBaseLayer);
-
-  RNN<decltype(modules), BinaryClassificationLayer, NguyenWidrowInitialization,
-      MeanSquaredErrorFunction> net(modules, classOutputLayer);
-
-  SGD<decltype(net)> opt(net, 0.04, 2, -200);
+  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 40; i++)
@@ -563,7 +561,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
 
-      net.Train(inputTemp, labelsTemp, opt);
+      model.Train(inputTemp, labelsTemp, opt);
     }
   }
 
@@ -576,7 +574,8 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
     arma::mat output;
     arma::mat input = testInput.at(0, i);
 
-    net.Predict(input, output);
+    model.Predict(input, output);
+    data::Binarize(output, output, 0.5);
 
     if (arma::accu(arma::abs(testLabels.at(0, i) - output)) != 0)
       error += 1;
@@ -597,8 +596,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
  */
 BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
 {
-  LSTMLayer<> hiddenLayerLSTMPeephole(10, true);
-  DistractedSequenceRecallTestNetwork(hiddenLayerLSTMPeephole);
+  DistractedSequenceRecallTestNetwork();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

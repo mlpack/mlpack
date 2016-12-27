@@ -12,21 +12,9 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
-
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/dropout_layer.hpp>
-#include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
-#include <mlpack/methods/ann/layer/dropconnect_layer.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -40,16 +28,12 @@ BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 /**
  * Train and evaluate a vanilla network with the specified structure.
  */
-template<
-    typename PerformanceFunction,
-    typename OutputLayerType,
-    typename PerformanceFunctionType,
-    typename MatType = arma::mat
->
+template<typename MatType = arma::mat>
 void BuildVanillaNetwork(MatType& trainData,
                          MatType& trainLabels,
                          MatType& testData,
                          MatType& testLabels,
+                         const size_t outputSize,
                          const size_t hiddenLayerSize,
                          const size_t maxEpochs,
                          const double classificationErrorThreshold)
@@ -76,35 +60,32 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+
    */
 
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> inputBiasLayer(hiddenLayerSize);
-  BaseLayer<PerformanceFunction> inputBaseLayer;
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<LogSoftMax<> >();
 
-  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
-  BaseLayer<PerformanceFunction> outputLayer;
+  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, -1);
 
-  OutputLayerType classOutputLayer;
+  model.Train(std::move(trainData), std::move(trainLabels), opt);
 
-  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-                          hiddenLayer1, hiddenBiasLayer1, outputLayer);
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
 
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-      PerformanceFunctionType> net(modules, classOutputLayer);
-
-  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, 1e-18);
-
-  net.Train(trainData, trainLabels, opt);
-
-  MatType prediction;
-  net.Predict(testData, prediction);
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
 
   size_t error = 0;
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    if (arma::sum(arma::sum(
-        arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+    if (int(arma::as_scalar(prediction.col(i))) ==
+        int(arma::as_scalar(testLabels.col(i))))
     {
       error++;
     }
@@ -125,23 +106,36 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(arma::find(
+        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
+  }
 
   data::Load("thyroid_test.csv", dataset, true);
 
   arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+
+  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    testLabels(i) = arma::as_scalar(arma::find(
+        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
+  }
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildVanillaNetwork<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-      (trainData, trainLabels, testData, testLabels, 8, 200, 0.1);
+  BuildVanillaNetwork<>
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -151,33 +145,22 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 30, 30, 0.4);
-
-  // Vanilla neural net with tanh activation function.
-  BuildVanillaNetwork<TanhFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-    (dataset, labels, dataset, labels, 10, 30, 0.4);
+  BuildVanillaNetwork<>
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 /**
  * Train and evaluate a Dropout network with the specified structure.
  */
-template<
-    typename PerformanceFunction,
-    typename OutputLayerType,
-    typename PerformanceFunctionType,
-    typename MatType = arma::mat
->
+template<typename MatType = arma::mat>
 void BuildDropoutNetwork(MatType& trainData,
                          MatType& trainLabels,
                          MatType& testData,
                          MatType& testLabels,
+                         const size_t outputSize,
                          const size_t hiddenLayerSize,
                          const size_t maxEpochs,
                          const double classificationErrorThreshold)
@@ -204,35 +187,33 @@ void BuildDropoutNetwork(MatType& trainData,
    * +-----+
    */
 
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> biasLayer(hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0;
-  DropoutLayer<> dropoutLayer0;
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<LogSoftMax<> >();
 
-  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BaseLayer<PerformanceFunction> outputLayer;
+  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, -1);
 
-  OutputLayerType classOutputLayer;
+  model.Train(std::move(trainData), std::move(trainLabels), opt);
 
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, dropoutLayer0,
-                          hiddenLayer1, outputLayer);
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
 
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-      PerformanceFunctionType> net(modules, classOutputLayer);
-
-  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, 1e-18);
-
-  net.Train(trainData, trainLabels, opt);
-
-  MatType prediction;
-  net.Predict(testData, prediction);
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
 
   size_t error = 0;
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    if (arma::sum(arma::sum(
-        arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
+    if (int(arma::as_scalar(prediction.col(i))) ==
+        int(arma::as_scalar(testLabels.col(i))))
     {
       error++;
     }
@@ -253,23 +234,36 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(arma::find(
+        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
+  }
 
   data::Load("thyroid_test.csv", dataset, true);
 
   arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+
+  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    testLabels(i) = arma::as_scalar(arma::find(
+        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
+  }
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildDropoutNetwork<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-      (trainData, trainLabels, testData, testLabels, 4, 100, 0.1);
+  BuildDropoutNetwork<>
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -279,34 +273,23 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildDropoutNetwork<LogisticFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 8, 30, 0.4);
-
-  // Vanilla neural net with tanh activation function.
-  BuildDropoutNetwork<TanhFunction,
-                      BinaryClassificationLayer,
-                      MeanSquaredErrorFunction>
-    (dataset, labels, dataset, labels, 8, 30, 0.4);
+  BuildDropoutNetwork<>
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 /**
  * Train and evaluate a DropConnect network(with a baselayer) with the
  * specified structure.
  */
-template<
-    typename PerformanceFunction,
-    typename OutputLayerType,
-    typename PerformanceFunctionType,
-    typename MatType = arma::mat
->
+template<typename MatType = arma::mat>
 void BuildDropConnectNetwork(MatType& trainData,
                              MatType& trainLabels,
                              MatType& testData,
                              MatType& testLabels,
+                             const size_t outputSize,
                              const size_t hiddenLayerSize,
                              const size_t maxEpochs,
                              const double classificationErrorThreshold)
@@ -334,122 +317,42 @@ void BuildDropConnectNetwork(MatType& trainData,
   *
   *
   */
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> biasLayer(hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0;
 
-  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  DropConnectLayer<decltype(hiddenLayer1)> dropConnectLayer0(hiddenLayer1);
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<SigmoidLayer<> >();
+  model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
+  model.Add<LogSoftMax<> >();
 
-  BaseLayer<PerformanceFunction> outputLayer;
+  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, -1);
 
-  OutputLayerType classOutputLayer;
+  model.Train(std::move(trainData), std::move(trainLabels), opt);
 
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                          dropConnectLayer0, outputLayer);
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
 
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-              PerformanceFunctionType> net(modules, classOutputLayer);
-
-  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, 1e-18);
-
-  net.Train(trainData, trainLabels, opt);
-
-  MatType prediction;
-  net.Predict(testData, prediction);
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
 
   size_t error = 0;
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-      if (arma::sum(arma::sum(
-          arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
-      {
-          error++;
-      }
+    if (int(arma::as_scalar(prediction.col(i))) ==
+        int(arma::as_scalar(testLabels.col(i))))
+    {
+      error++;
+    }
   }
 
   double classificationError = 1 - double(error) / testData.n_cols;
   BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }
 
-/**
- * Train and evaluate a DropConnect network(with a linearlayer) with the
- * specified structure.
- */
-template<
-    typename PerformanceFunction,
-    typename OutputLayerType,
-    typename PerformanceFunctionType,
-    typename MatType = arma::mat
->
-void BuildDropConnectNetworkLinear(MatType& trainData,
-                                   MatType& trainLabels,
-                                   MatType& testData,
-                                   MatType& testLabels,
-                                   const size_t hiddenLayerSize,
-                                   const size_t maxEpochs,
-                                   const double classificationErrorThreshold)
-{
- /*
-  * Construct a feed forward network with trainData.n_rows input nodes,
-  * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-  * network struct that looks like:
-  *
-  * Input         Hidden       DropConnect     Output
-  * Layer         Layer          Layer         Layer
-  * +-----+       +-----+       +-----+       +-----+
-  * |     |       |     |       |     |       |     |
-  * |     +------>|     +------>|     +------>|     |
-  * |     |     +>|     |       |     |       |     |
-  * +-----+     | +--+--+       +-----+       +-----+
-  *             |
-  *  Bias       |
-  *  Layer      |
-  * +-----+     |
-  * |     |     |
-  * |     +-----+
-  * |     |
-  * +-----+
-  *
-  *
-  */
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> biasLayer(hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0;
-
-  DropConnectLayer<> dropConnectLayer0(hiddenLayerSize, trainLabels.n_rows);
-
-  BaseLayer<PerformanceFunction> outputLayer;
-
-  OutputLayerType classOutputLayer;
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0,
-                          dropConnectLayer0, outputLayer);
-
-  FFN<decltype(modules), decltype(classOutputLayer), RandomInitialization,
-              PerformanceFunctionType> net(modules, classOutputLayer);
-
-  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, 1e-18);
-
-  net.Train(trainData, trainLabels, opt);
-
-  MatType prediction;
-  net.Predict(testData, prediction);
-
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-      if (arma::sum(arma::sum(
-          arma::abs(prediction.col(i) - testLabels.col(i)))) == 0)
-      {
-              error++;
-      }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
 /**
  * Train the dropconnect network on a larger dataset.
  */
@@ -461,28 +364,36 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(arma::find(
+        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
+  }
 
   data::Load("thyroid_test.csv", dataset, true);
 
   arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
-  arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
+
+  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
+
+  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    testLabels(i) = arma::as_scalar(arma::find(
+        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
+  }
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildDropConnectNetwork<LogisticFunction,
-                          BinaryClassificationLayer,
-                          MeanSquaredErrorFunction>
-      (trainData, trainLabels, testData, testLabels, 4, 100, 0.1);
-
-  BuildDropConnectNetworkLinear<LogisticFunction,
-                                BinaryClassificationLayer,
-                                MeanSquaredErrorFunction>
-      (trainData, trainLabels, testData, testLabels, 4, 100, 0.1);
+  BuildDropConnectNetwork<>
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -492,18 +403,11 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildDropConnectNetwork<LogisticFunction,
-                          BinaryClassificationLayer,
-                          MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 8, 30, 0.4);
-
-
-  BuildDropConnectNetworkLinear<LogisticFunction,
-                                BinaryClassificationLayer,
-                                MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 8, 30, 0.4);
+  BuildDropConnectNetwork<>
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

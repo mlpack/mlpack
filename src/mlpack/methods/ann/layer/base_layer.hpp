@@ -32,7 +32,6 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *  - ReLULayer
  *  - TanHLayer
- *  - BaseLayer2D
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -64,33 +63,14 @@ class BaseLayer
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output)
+  void Forward(const InputType&& input, OutputType&& output)
   {
     ActivationFunction::fn(input, output);
   }
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename DataType>
-  void Backward(const DataType& input,
-                const DataType& gy,
-                DataType& g)
-  {
-    DataType derivative;
-    ActivationFunction::deriv(input, derivative);
-    g = gy % derivative;
-  }
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
+   * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
    * @param input The propagated input activation.
@@ -98,30 +78,13 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Cube<eT>& g)
+  void Backward(const arma::Mat<eT>&& input,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g)
   {
-    // Generate a cube using the backpropagated error matrix.
-    arma::Cube<eT> mappedError = arma::zeros<arma::cube>(input.n_rows,
-        input.n_cols, input.n_slices);
-
-    for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
-    {
-      for (size_t i = 0; i < gy.n_cols; i++)
-      {
-        arma::Col<eT> temp = gy.col(i).subvec(
-            j * input.n_rows * input.n_cols,
-            (j + 1) * input.n_rows * input.n_cols - 1);
-
-        mappedError.slice(s + i) = arma::Mat<eT>(temp.memptr(),
-            input.n_rows, input.n_cols);
-      }
-    }
-
-    arma::Cube<eT> derivative;
+    arma::Mat<eT> derivative;
     ActivationFunction::deriv(input, derivative);
-    g = mappedError % derivative;
+    g = gy % derivative;
   }
 
   //! Get the input parameter.
@@ -204,18 +167,6 @@ template <
 >
 using TanHLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
-
-/**
- * Standard Base-Layer2D using the logistic activation function.
- */
-template <
-    class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::cube,
-    typename OutputDataType = arma::cube
->
-using BaseLayer2D = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
-
 
 } // namespace ann
 } // namespace mlpack
