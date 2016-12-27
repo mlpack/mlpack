@@ -403,7 +403,6 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   // Create a gamma distribution random generator.
   double alphaReal = 5.3;
   double betaReal = 1.5;
-  std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
 
   // Create a N x d gamma distribution data and fit the results.
@@ -414,7 +413,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(generator);
+      rdata(j, i) = dist(math::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -432,7 +431,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTest)
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d2; ++j)
     for (size_t i = 0; i < N2; ++i)
-      rdata2(j, i) = dist(generator);
+      rdata2(j, i) = dist(math::randGen);
 
   // Fit results using old object.
   gDist.Train(rdata2);
@@ -452,7 +451,6 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   double betaReal = 6.7;
 
   // Create a gamma distribution random generator.
-  std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
 
   size_t N = 50000;
@@ -461,14 +459,10 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
 
   for (size_t j = 0; j < d; j++)
     for (size_t i = 0; i < N; i++)
-      rdata(j, i) = dist(generator);
+      rdata(j, i) = dist(math::randGen);
 
-  // create a uniform distribution random generator
-  std::uniform_real_distribution<double> prob(0, 1);
-  arma::vec probabilities(N);
-
-  for (size_t i = 0; i < N; i++)
-    probabilities(i) = prob(generator);
+  // Fill the probabilities randomly.
+  arma::vec probabilities(N, arma::fill::randu);
 
   // Fit results with probabilities and data.
   GammaDistribution gDist;
@@ -478,17 +472,17 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   GammaDistribution gDist2;
   gDist2.Train(rdata);
 
-  BOOST_REQUIRE_CLOSE(gDist2.Alpha(0), gDist.Alpha(0), 1);
-  BOOST_REQUIRE_CLOSE(gDist2.Beta(0), gDist.Beta(0), 1);
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(0), gDist.Alpha(0), 1.5);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(0), gDist.Beta(0), 1.5);
 
-  BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1);
-  BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1);
+  BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1.5);
+  BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1.5);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 1);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 1);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 2.5);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 2.5);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 1);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 1);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 2.5);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 2.5);
 }
 
 /**
@@ -501,7 +495,6 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
   double betaReal = 6.7;
 
   // Create a gamma distribution random generator.
-  std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
 
   size_t N = 1000;
@@ -510,7 +503,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
 
   for (size_t j = 0; j < d; j++)
     for (size_t i = 0; i < N; i++)
-      rdata(j, i) = dist(generator);
+      rdata(j, i) = dist(math::randGen);
 
   // Fit results with only data.
   GammaDistribution gDist;
@@ -544,12 +537,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
   double betaReal2 = 8.4;
 
   // Create two gamma distribution random generators.
-  std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
   std::gamma_distribution<double> dist2(alphaReal2, betaReal2);
-
-  std::uniform_real_distribution<double> lowProb(0, 0.02);
-  std::uniform_real_distribution<double> highProb(0.98, 1);
 
   size_t N = 50000;
   size_t d = 2;
@@ -562,18 +551,18 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
     for (size_t i = 0; i < N; i++)
     {
       if (i % 2 == 0)
-        rdata(j, i) = dist(generator);
+        rdata(j, i) = dist(math::randGen);
       else
-        rdata(j, i) = dist2(generator);
+        rdata(j, i) = dist2(math::randGen);
     }
   }
 
   for (size_t i = 0; i < N; i++)
   {
     if (i % 2 == 0)
-      probabilities(i) = lowProb(generator);
+      probabilities(i) = 0.02 * math::Random();
     else
-      probabilities(i) = highProb(generator);
+      probabilities(i) = 0.98 + 0.02 * math::Random();
   }
 
   GammaDistribution gDist;
@@ -607,14 +596,13 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   // Create a gamma-random generator and data.
   double alphaReal = 5.3;
   double betaReal = 1.5;
-  std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
 
   // Random generation of gamma-like points.
   arma::mat rdata(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(generator);
+      rdata(j, i) = dist(math::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -629,14 +617,13 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
   // Create a gamma-random generator and data.
   double alphaReal2 = 7.2;
   double betaReal2 = 0.9;
-  std::default_random_engine generator2;
   std::gamma_distribution<double> dist2(alphaReal2, betaReal2);
 
   // Random generation of gamma-like points.
   arma::mat rdata2(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata2(j, i) = dist2(generator2);
+      rdata2(j, i) = dist2(math::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist2;
