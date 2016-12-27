@@ -583,12 +583,13 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
  */
 BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
 {
+  math::RandomSeed(std::time(NULL));
   // Offset from the actual alpha/beta. 10% is quite a relaxed tolerance since
   // the random points we generate are few (for test speed) and might be fitted
   // better by a similar distribution.
   double errorTolerance = 10;
 
-  size_t N = 500;
+  size_t N = 5000;
   size_t d = 1; // Only 1 dimension is required for this.
 
   /** Iteration 1 (first parameter set) **/
