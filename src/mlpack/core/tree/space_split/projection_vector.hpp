@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "../bounds.hpp"
 namespace mlpack {
 namespace tree {

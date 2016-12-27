@@ -15,7 +15,7 @@
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_SPLIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

@@ -15,7 +15,7 @@
 #ifndef MLPACK_CORE_DATA_DATASET_INFO_HPP
 #define MLPACK_CORE_DATA_DATASET_INFO_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <unordered_map>
 #include <boost/bimap.hpp>
 

@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace neighbor {

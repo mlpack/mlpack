@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_HPP
 #define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 
 #include "lrsdp_function.hpp"

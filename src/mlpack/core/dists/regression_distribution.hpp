@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 

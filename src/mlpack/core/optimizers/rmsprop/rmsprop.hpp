@@ -14,7 +14,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
 #define MLPACK_CORE_OPTIMIZERS_RMSPROP_RMSPROP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {

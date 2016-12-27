@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_BASE_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>

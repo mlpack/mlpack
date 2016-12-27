@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_KMEANS_REFINED_START_HPP
 #define MLPACK_METHODS_KMEANS_REFINED_START_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kmeans {

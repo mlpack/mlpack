@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_HMM_HMM_REGRESSION_HPP
 #define MLPACK_METHODS_HMM_HMM_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include "hmm.hpp"
 

@@ -16,7 +16,8 @@
 #ifndef MLPACK_METHODS_PCA_PCA_IMPL_HPP
 #define MLPACK_METHODS_PCA_PCA_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
 #include "pca.hpp"
 
 using namespace std;

@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_STAT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace range {

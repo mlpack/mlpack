@@ -18,7 +18,7 @@
 #ifndef MLPACK_METHODS_AMF_AMF_HPP
 #define MLPACK_METHODS_AMF_AMF_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>

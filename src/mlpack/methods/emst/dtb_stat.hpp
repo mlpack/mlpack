@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_EMST_DTB_STAT_HPP
 #define MLPACK_METHODS_EMST_DTB_STAT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace emst {

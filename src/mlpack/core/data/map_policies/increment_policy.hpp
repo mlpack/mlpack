@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP
 #define MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <unordered_map>
 #include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>

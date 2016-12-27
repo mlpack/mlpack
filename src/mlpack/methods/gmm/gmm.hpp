@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_MOG_MOG_EM_HPP
 #define MLPACK_METHODS_MOG_MOG_EM_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 // This is the default fitting method class.
 #include "em_fit.hpp"

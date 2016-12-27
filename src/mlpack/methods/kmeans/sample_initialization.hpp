@@ -14,7 +14,8 @@
 #ifndef __MLPACK_METHODS_KMEANS_SAMPLE_INITIALIZATION_HPP
 #define __MLPACK_METHODS_KMEANS_SAMPLE_INITIALIZATION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace kmeans {

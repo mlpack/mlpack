@@ -23,7 +23,7 @@
 #ifndef MLPACK_METHODS_RANN_RA_SEARCH_HPP
 #define MLPACK_METHODS_RANN_RA_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 

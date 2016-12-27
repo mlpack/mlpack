@@ -11,6 +11,10 @@
 #ifndef MLPACK_PREREQS_HPP
 #define MLPACK_PREREQS_HPP
 
+// Defining _USE_MATH_DEFINES should set M_PI.
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
 #pragma message "Armadillo was included before mlpack; this can sometimes cause\
@@ -30,10 +34,6 @@
 #include <stdexcept>
 #include <tuple>
 #include <queue>
-
-// Defining _USE_MATH_DEFINES should set M_PI.
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
@@ -82,10 +82,15 @@ using enable_if_t = typename enable_if<B, T>::type;
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
 
 // Ensure that the user isn't doing something stupid with their Armadillo
 // defines.
 #include <mlpack/core/util/arma_config_check.hpp>
+
+// All code should have access to logging
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because

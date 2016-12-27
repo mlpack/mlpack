@@ -30,7 +30,7 @@
 #ifndef MLPACK_METHODS_APPROX_KFN_DRUSILLA_SELECT_HPP
 #define MLPACK_METHODS_APPROX_KFN_DRUSILLA_SELECT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace neighbor {

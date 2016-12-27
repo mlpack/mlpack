@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 #define MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 
 // Include three simple dictionary initializers from sparse coding.

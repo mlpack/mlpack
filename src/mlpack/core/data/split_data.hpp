@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_DATA_SPLIT_DATA_HPP
 #define MLPACK_CORE_DATA_SPLIT_DATA_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {

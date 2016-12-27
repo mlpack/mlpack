@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_CNN_HPP
 #define MLPACK_METHODS_ANN_CNN_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/network_util.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
