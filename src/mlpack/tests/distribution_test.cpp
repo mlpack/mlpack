@@ -451,7 +451,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   double alphaReal = 5.4;
   double betaReal = 6.7;
 
-  // Create a gamma distribution random generator
+  // Create a gamma distribution random generator.
   std::default_random_engine generator;
   std::gamma_distribution<double> dist(alphaReal, betaReal);
 
@@ -512,11 +512,11 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
     for (size_t i = 0; i < N; i++)
       rdata(j, i) = dist(generator);
 
-  // fit results with only data
+  // Fit results with only data.
   GammaDistribution gDist;
   gDist.Train(rdata);
 
-  // fit results with data and each probability as 1
+  // Fit results with data and each probability as 1.
   GammaDistribution gDist2;
   arma::vec allProbabilities1(N, arma::fill::ones);
   gDist2.Train(rdata, allProbabilities1);
@@ -528,12 +528,13 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
   BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1e-5);
 }
 
- /** This test draws points from two different gamma distributions,
-  *  sets the probabilities for the points from the first distribution
-  *  to something small and the probabilities for the second to something large. 
-  *  It ensures that the gamma distribution recovered has the
-  *  same parameters as the second gamma distribution with high probabilities.
-  */
+/**
+ * This test draws points from two different gamma distributions, sets the
+ * probabilities for the points from the first distribution to something small
+ * and the probabilities for the second to something large.  It ensures that the
+ * gamma distribution recovered has the same parameters as the second gamma
+ * distribution with high probabilities.
+ */
 BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
 {
   double alphaReal = 5.4;
@@ -625,7 +626,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
 
   /** Iteration 2 (different parameter set) **/
 
-  // Create a gamma-random generator and data
+  // Create a gamma-random generator and data.
   double alphaReal2 = 7.2;
   double betaReal2 = 0.9;
   std::default_random_engine generator2;
@@ -701,9 +702,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionRandomTest)
   arma::mat data(3, numPoints); // 3-d points.
 
   for (size_t i = 0; i < numPoints; ++i)
-    //std::cout << d1.Random() << "====" << std::endl;
     data.col(i) = d1.Random();
-  
+
   // Distribution to fit points.
   GammaDistribution d2(data);
   for (size_t i = 0; i < 3; ++i)
@@ -737,9 +737,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionProbabilityTest)
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
   arma::mat x3(2, 2);
-  x3
-    << 2.0 << 2.94 << arma::endr
-    << 2.0 << 2.94;
+  x3 << 2.0 << 2.94 << arma::endr
+     << 2.0 << 2.94;
   arma::vec prob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
