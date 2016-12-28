@@ -1,8 +1,11 @@
 /**
- * @file elm.cpp
- * @author Siddharth Agrawal
+ * @file    elm.cpp
+ * @author  Siddharth Agrawal
+ * @mail    siddharthcore@gmail.com
  *
  * Implementation of Basic Extreme Learning Machine
+ * Extreme Learning Machine(ELM) is a single-hidden layer feedforward neural networks(SLFNs) which randomly chooses hidden nodes and  
+ * analytically determines the output weights of SLFNs. 
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,70 +17,57 @@
 using namespace mlpack;
 using namespace mlpack::elm;
 
+ELM::ELM (const arma::mat& x_train,
+           const arma::mat& y_train,
+           const uint16_t act,
+	   const uint16_t Nh,	 //Number of Hidden Neurons
+           const uint16_t N,    //Number of data points
+           const uint16_t D,   //Data Dimension
+	   const double lambda = 0,
+	   const double alpha = 0):
+           act(act),
+           Nh(Nh),
+           N(N),
+           D(D),
+           lambda(lambda),
+           alpha(alpha)
+
+{
+  arma::mat Weight = arma::randu<arma::mat>(Nh);
+  arma::mat bias = arma::randu<arma::mat>(Nh);
+  arma::mat beta = arma::randu<arma::mat>(Nh);
+  //Train(x_train,y_train,act);
+  arma_rng::set_seed_random();   
+  Init_Weight_bias();
+}
+
 void ELM::Init_Weight_bias()
 {
-	bias.randu(N_prime,1);
-
+	bias.randu(Nh,1);
 	std::mt19937 engine(time(0));  // Mersenne twister random number engine
 	std::uniform_real_distribution<double> distr(1.0, 2.0); 
-	Weight.set_size(N_prime, Dim); 
+	Weight.set_size(Nh, D); 
 	Weight.imbue( [&]() { return distr(engine); } );
-
-
-}
-
-void ELM::Set_Dim(uint16_t Nh, uint16_t D, uint16_t N)
-{
-	N_prime = Nh;
-	Dim = D;
-	NI = N;
-
-}
-
-/* Wrapper function for ELM initialization -
-Input : 
----> Number of Hidden Neurons Nh
----> Number of Datapoint N
-*/
-
-void ELM::Config_ELM(uint16_t Nh, uint16_t N, uint16_t D)
-{
-	Set_Dim(Nh, D, N);
-	arma_rng::set_seed_random();  
-	Init_Weight_bias();
-}
+}  
 
 /*
-Train ELM
-Input : 
----> Training Data set x_train and y_train; 
----> Activation function
+ Train ELM
+ Training Data set x_train and y_train; 
+ Activation function
 		0 - Sigmoid Function
 		1 - Sine Function
 		2 - Hardlim Function
 		3 - Triangular Bias Function
 		4 - Radial Basis Function
-Output: Returns 1 in case of successful training
 */
-bool ELM::Train_ELM(mat &x_train, mat &y_train, uint16_t Act)
+void ELM::Train(const arma::mat& x_train,
+            const arma::mat& y_train,
+            const uint16_t act)
 {
-	wall_clock timer;
-	mat param;
-
-	
-
-	timer.tic();
-		param = x_train*Weight.t(); /* (NI x N_prime) = (NI x Dim)*(Dim x N_prime)*/
-
+		mat param = x_train*Weight.t(); 
+		mat H = zeros(N,Nh);
 		
-
-		mat H = zeros(NI,N_prime);
-
-		double alpha = 0.2;
-		double lambda = 5;
-		Activation = Act;
-
-		switch(Activation)
+		switch(act)
 		{
 			case 0 : //Sigmoid Activation Function
 					for(int i=0;i<H.n_rows;++i)
@@ -126,61 +116,41 @@ bool ELM::Train_ELM(mat &x_train, mat &y_train, uint16_t Act)
 						}
 					}
 					break;
-			default : cout<< "Undefined Activation function\n";
-					  return false;
+			default :   Log::Fatal << "Please select a suitable activation function to proceed:" << std::endl;
 
 		}
 
-		mat H_inv = pinv(H);
+		mat H_inv = pinv(H); // Moore-Penrose pseudo-inverse of matrix H
 
-		//cout<<"\n H Pseudoinverse \n"<<H_inv;
+		beta = H_inv * y_train; //Calculate output weights 
 
-		beta = H_inv*y_train;
-
-		//cout<< "\n Beta \n"<<beta;
-
-	Train_time = timer.toc();
-	mat y_out = H*beta;
-
-	vec temp = y_train - y_out;
-
-	double error = stddev(temp);
-	cout<<"\n Train RMSE = "<<error <<"\n";
-
-	cout<<"\n Training Time = "<<Train_time<<" seconds\n";
-	Save_Model();
-
-	return true;
-}
-
-void ELM::Save_Model()
-{  
-	Weight.save("Weight.csv",csv_ascii);
-	bias.save("Bias.csv",csv_ascii);
-	beta.save("Beta.csv",csv_ascii);
-	//y_out.save("y_out.csv",csv_ascii);
-
-}
-
-
-bool ELM::Test_ELM(mat &x_test, mat &y_test)
-{
-	wall_clock timer;
-	mat param;
-
-	//cout<<"\n X_test\n"<<x_test;
-
-	timer.tic();
-		param = x_test*Weight.t(); /* (NI x N_prime) = (NI x Dim)*(Dim x N_prime)*/
-
-		//cout<<"\n Param \n"<<param;
-
-		mat H = zeros(NI,N_prime);
-
-		double alpha = 0.2;
-		double lambda = 5;
+		mat y_out = H * beta;  // Calculate training accuracy
 	
-		switch(Activation)
+		vec temp = y_train - y_out;
+
+		double error = stddev(temp); //calculate training error
+	        Log::Info << "Train RMSE :" << error <<std::endl;
+
+}
+
+/*
+ Test ELM
+ Testing Data set x_test and y_test; 
+ Activation function
+		0 - Sigmoid Function
+		1 - Sine Function
+		2 - Hardlim Function
+		3 - Triangular Bias Function
+		4 - Radial Basis Function
+*/
+void ELM::Test(const arma::mat& x_test,
+            const arma::mat& y_test)
+{
+	
+		mat param = x_test*Weight.t(); 
+		mat H = zeros(N,Nh);
+	 	
+		switch(act)
 		{
 			case 0 : //Sigmoid Activation Function
 					for(int i=0;i<H.n_rows;++i)
@@ -229,23 +199,18 @@ bool ELM::Test_ELM(mat &x_test, mat &y_test)
 						}
 					}
 					break;
-			default : cout<< "Undefined Activation function\n";
-					  return false;
+			default : Log::Fatal << "Please select a suitable activation function to proceed:" << std::endl;
 
 		}
 
-	Test_time = timer.toc();
-
-	mat y_out = H*beta;
-
-	vec temp = y_test - y_out;
-
-	double error = stddev(temp);
-	cout<<"\n Test RMSE = "<<error <<"\n";
-
-	cout<<"\n Testing Time = "<<Test_time<<" seconds\n";
-
-	y_out.save("y_out.csv",csv_ascii);
-	return true;
+		mat y_out = H * beta; // calculate testing accuracy
+		
+		vec temp = y_test - y_out;
+		
+		double error = stddev(temp); //calculate testing error
+		Log::Info << "Test RMSE :" << error <<std::endl;
+        	
+		arma::mat Elm_output = arma::randu<arma::mat>(N);
+        	data::Save("Elm_output.csv", Elm_output);
+		
 }
-
