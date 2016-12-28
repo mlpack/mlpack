@@ -181,10 +181,11 @@ DTree<MatType, TagType>::DTree(const DTree& toBeCopied) :
     ratio(toBeCopied.ratio),
     logVolume(toBeCopied.logVolume),
     bucketTag(toBeCopied.bucketTag),
-    alphaUpper(toBeCopied.alphaUpper),
-    left(toBeCopied.left),
-    right(toBeCopied.right)
-{ /* Nothing to do. */ }
+    alphaUpper(toBeCopied.alphaUpper)
+{
+  left = new DTree(*toBeCopied.left);
+  right = new DTree(*toBeCopied.right);
+}
 
 //Move constructor
 template <typename MatType, typename TagType>
@@ -202,10 +203,11 @@ DTree<MatType, TagType>::DTree(DTree&& toBeMoved) :
     ratio(toBeMoved.ratio),
     logVolume(toBeMoved.logVolume),
     bucketTag(toBeMoved.bucketTag),
-    alphaUpper(toBeMoved.alphaUpper),
-    left(toBeMoved.left),
-    right(toBeMoved.right)
+    alphaUpper(toBeMoved.alphaUpper)
 {
+  left = std::move(toBeMoved.left);
+  right = std::move(toBeMoved.right);
+
   toBeMoved = DTree();
 }
 
@@ -213,30 +215,24 @@ DTree<MatType, TagType>::DTree(DTree&& toBeMoved) :
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree& toBeCopied)
 {
-  if(this != &toBeCopied)
-  {
-    //Freeing the existing resource
-    delete[] left;
-    delete[] right;
+  left = new DTree(*toBeCopied.left);
+  right = new DTree(*toBeCopied.right);
 
-    //Copy the data from source to destination
-    start = toBeCopied.start;
-    end = toBeCopied.end;
-    maxVals = toBeCopied.maxVals;
-    minVals = toBeCopied.minVals;
-    splitDim = toBeCopied.splitDim;
-    splitValue = toBeCopied.splitValue;
-    logNegError = toBeCopied.logNegError;
-    subtreeLeavesLogNegError = toBeCopied.subtreeLeavesLogNegError;
-    subtreeLeaves = toBeCopied.subtreeLeaves;
-    root = toBeCopied.root;
-    ratio = toBeCopied.ratio;
-    logVolume = toBeCopied.logVolume;
-    bucketTag = toBeCopied.bucketTag;
-    alphaUpper = toBeCopied.alphaUpper;
-    left = toBeCopied.left;
-    right = toBeCopied.right;
-  }
+  //Copy the data from source to destination
+  start = toBeCopied.start;
+  end = toBeCopied.end;
+  maxVals = toBeCopied.maxVals;
+  minVals = toBeCopied.minVals;
+  splitDim = toBeCopied.splitDim;
+  splitValue = toBeCopied.splitValue;
+  logNegError = toBeCopied.logNegError;
+  subtreeLeavesLogNegError = toBeCopied.subtreeLeavesLogNegError;
+  subtreeLeaves = toBeCopied.subtreeLeaves;
+  root = toBeCopied.root;
+  ratio = toBeCopied.ratio;
+  logVolume = toBeCopied.logVolume;
+  bucketTag = toBeCopied.bucketTag;
+  alphaUpper = toBeCopied.alphaUpper;
 
   return *this;
 }
