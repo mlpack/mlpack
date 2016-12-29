@@ -25,6 +25,7 @@ set(DIRS
   decision_stump
   det
   emst
+  elm
   fastmks
   gmm
   hmm
