@@ -30,7 +30,7 @@ Download latest mlpack build from here:
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-2.1.0
+$ cd mlpack-2.1.1
 $ mkdir build
 @endcode
 
