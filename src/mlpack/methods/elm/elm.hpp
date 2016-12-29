@@ -16,6 +16,7 @@
 #ifndef MLPACK_METHODS_ELM_HPP
 #define MLPACK_METHODS_ELM_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core.hpp>
 
 namespace mlpack {
@@ -23,52 +24,48 @@ namespace elm {
 
 class ELM
 {
+ public: 
+  ELM(const arma::mat& x_train,
+      const arma::mat& y_train,
+      const uint16_t act=0,
+      const uint16_t Nh=0,	    //Number of Hidden Neurons
+      const uint16_t N=0,          //Number of data points
+      const uint16_t D=0,         //Data Dimension
+      const double lambda = 0,
+      const double alpha = 0);
 
-public: 
-       ELM(const arma::mat& x_train,
-           const arma::mat& y_train,
-           const uint16_t act=0,
-	   const uint16_t Nh=0,	   //Number of Hidden Neurons
-           const uint16_t N=0,    //Number of data points
-           const uint16_t D=0,   //Data Dimension
-	   const double lambda = 0,
-	   const double alpha = 0);
+  void Train(const arma::mat& x_train,
+             const arma::mat& y_train,
+             const uint16_t act);
+ 
+  void Predict(const arma::mat& x_test,
+               const arma::mat& y_test);
 
-        void Train(const arma::mat& x_train,
-            const arma::mat& y_train,
-            const uint16_t act);
-
-	void Test(const arma::mat& x_test,
-            const arma::mat& y_test);
-
+  void Init_Weight_bias();     //Initialise Weights and Biases randomly
 	
-	void Init_Weight_bias(); //Initialise Weights and Biases randomly
-	
-	double Lambda() const { return lambda; }
- 	double& Lambda() { return lambda; }
+  double Lambda() const { return lambda; }
+  double& Lambda() { return lambda; }
 
-	double Alpha() const { return alpha; }
- 	double& Alpha() { return alpha; }
+  double Alpha() const { return alpha; }
+  double& Alpha() { return alpha; }
 
 
-       /**
-   	* Serialize the model.
-   	*/
+  //Serialize the model
 
-        template<typename Archive>
-  	void Serialize(Archive& ar, const unsigned int /* version */)
- 	 {
-    		ar & data::CreateNVP(lambda, "lambda");
-    		ar & data::CreateNVP(alpha, "alpha");
-  	 }
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(lambda, "lambda");
+    ar & data::CreateNVP(alpha, "alpha");
+  }
 
- 	  private:
+ private:
+  double lambda;
+  double alpha;
 
-  		double lambda;
-		double alpha;
 };
 
-}
-}
+} // namespace elm
+} // namespace mlpack
 
 #endif

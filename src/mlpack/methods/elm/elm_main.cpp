@@ -50,44 +50,41 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-        // Handle parameters.
-  	CLI::ParseCommandLine(argc, argv);
+  // Handle parameters.
+  CLI::ParseCommandLine(argc, argv);
 	
-	ELM elm;
+  ELM elm;
+  elm.Lambda() = 5;
+  elm.Alpha() = 0.2;
 
-        elm.Lambda() = 5;
-        elm.Alpha() = 0.2;
-
-
-        /*Load the Train Data*/
-
-	mat trainingData_x = data::Load("training_x.csv",training_x);
-        mat trainingData_y = data::Load("training_y.csv",training_y);
+  /*Load the Train Data*/
+  mat trainingData_x = data::Load("training_x.csv",training_x);
+  mat trainingData_y = data::Load("training_y.csv",training_y);
     
-	/*Load the Test Data*/
-
-	mat testingData_x = data::Load("testing_x.csv",testing_x);
-        mat testingData_y = data::Load("testing_y.csv",testing_y);
+  /*Load the Test Data*/
+  mat testingData_x = data::Load("testing_x.csv",testing_x);
+  mat testingData_y = data::Load("testing_y.csv",testing_y);
 	
-	Log::Info << "Choose the number of hidden neurons" << std::endl;
-	const uint16_t Nh = CLI::GetParam<uint16_t>("Number_of_hidden_neurons");
-        const uint16_t D = trainingData_x.n_cols;
-	const uint16_t N = trainingData_x.n_rows;
+  Log::Info << "Choose the number of hidden neurons" << std::endl;
+  const uint16_t Nh = CLI::GetParam<uint16_t>("Number_of_hidden_neurons");
+  const uint16_t D = trainingData_x.n_cols;
+  const uint16_t N = trainingData_x.n_rows;
 
-	Log::Info << "Choose an activation function" << std::endl;
- 	Log::Info << "0 - Sigmoid Function	1 - Sine Function	2 - Hardlim Function	3 - Triangular Bias Function	4 - Radial Basis Function" << std::endl;
+  Log::Info << "Choose an activation function" << std::endl;
+  Log::Info << "0 - Sigmoid Function	1 - Sine Function	2 - Hardlim Function	3 - Triangular Bias Function	4 - Radial Basis Function" << std::endl;
 		
-	const uint16_t act = CLI::GetParam<uint16_t>("Activation_type");
-        elm.Nh = Nh;
-	elm.D = D;
-	elm.N = N;
-	elm.act = act;
+  const uint16_t act = CLI::GetParam<uint16_t>("Activation_type");
+  
+  elm.Nh = Nh;
+  elm.D = D;
+  elm.N = N;
+  elm.act = act;
 
-         /*Train the Data*/
-	elm.Train(trainingData_x,trainingData_y,act);
+  /*Train the Data*/
+  elm.Train(trainingData_x,trainingData_y,act);
 
-	/*Test the Data*/
-	elm.Test(testingData_x,testingData_y);
+  /*Predict*/
+  elm.Predict(testingData_x,testingData_y);
 
-	return 0;
+  return 0;
 }
