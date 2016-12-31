@@ -13,8 +13,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ELM_HPP
-#define MLPACK_METHODS_ELM_HPP
+#ifndef MLPACK_METHODS_Elm_HPP
+#define MLPACK_METHODS_Elm_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core.hpp>
@@ -22,26 +22,26 @@
 namespace mlpack {
 namespace elm {
 
-class ELM
+class Elm
 {
  public: 
-  ELM(const arma::mat& x_train,
-      const arma::mat& y_train,
-      const uint16_t act=0,
-      const uint16_t Nh=0,	    //Number of Hidden Neurons
-      const uint16_t N=0,          //Number of data points
-      const uint16_t D=0,         //Data Dimension
+  Elm(const arma::mat& predictors,
+      const arma::mat& responses,
+      const size_t act=0,
+      const size_t Nh=0,	    //Number of Hidden Neurons
+      const size_t N=0,          //Number of data points
+      const size_t D=0,         //Data Dimension
       const double lambda = 0,
       const double alpha = 0);
 
-  void Train(const arma::mat& x_train,
-             const arma::mat& y_train,
-             const uint16_t act);
+  void Train(const arma::mat& predictors,
+             const arma::mat& responses,
+             const size_t act);
  
-  void Predict(const arma::mat& x_test,
-               const arma::mat& y_test);
+  void Predict(const arma::mat& points,
+               const arma::mat& predictions);
 
-  void Init_Weight_bias();     //Initialise Weights and Biases randomly
+  void InitWeightbias();     //Initialise Weights and Biases randomly
 	
   double Lambda() const { return lambda; }
   double& Lambda() { return lambda; }

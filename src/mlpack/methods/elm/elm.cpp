@@ -18,12 +18,12 @@
 using namespace mlpack;
 using namespace mlpack::elm;
 
-ELM::ELM(const arma::mat& x_train,
-         const arma::mat& y_train,
-         const uint16_t act,
-	 const uint16_t Nh,	    //Number of Hidden Neurons
-         const uint16_t N,         //Number of data points
-         const uint16_t D,        //Data Dimension
+ELM::ELM(const arma::mat& predictors,
+         const arma::mat& responses,
+         const size_t act,
+	 const size_t Nh,	    //Number of Hidden Neurons
+         const size_t N,           //Number of data points
+         const size_t D,          //Data Dimension
 	 const double lambda = 0,
 	 const double alpha = 0):
     act(act),
@@ -34,26 +34,26 @@ ELM::ELM(const arma::mat& x_train,
     alpha(alpha)
 
 {
-  arma::mat Weight = arma::randu<arma::mat>(Nh);
+  arma::mat weight = arma::randu<arma::mat>(Nh);
   arma::mat bias = arma::randu<arma::mat>(Nh);
   arma::mat beta = arma::randu<arma::mat>(Nh);
-  //Train(x_train,y_train,act);
+  //Train(predictors,responses,act);
   arma_rng::set_seed_random();   
-  Init_Weight_bias();
+  Initweightbias();
 }
 
-void ELM::Init_Weight_bias()
+void ELM::Initweightbias()
 {
   bias.randu(Nh,1);
   std::mt19937 engine(time(0));  // Mersenne twister random number engine
   std::uniform_real_distribution<double> distr(1.0, 2.0); 
-  Weight.set_size(Nh, D); 
-  Weight.imbue( [&]() { return distr(engine); } );
+  weight.set_size(Nh, D); 
+  weight.imbue( [&]() { return distr(engine); } );
 }  
 
 /*
  Train ELM
- Training Data set x_train and y_train; 
+ Training Data set predictors and responses; 
  Activation function
 		0 - Sigmoid Function
 		1 - Sine Function
@@ -62,11 +62,11 @@ void ELM::Init_Weight_bias()
 		4 - Radial Basis Function
 */
 
-void ELM::Train(const arma::mat& x_train,
-                const arma::mat& y_train,
-                const uint16_t act)
+void ELM::Train(const arma::mat& predictors,
+                const arma::mat& responses,
+                const size_t act)
 {
-  mat param = x_train*Weight.t(); 
+  mat param = predictors*weight.t(); 
   mat H = zeros(N,Nh);
 		
   switch(act)
@@ -120,16 +120,16 @@ void ELM::Train(const arma::mat& x_train,
   }
 
   mat H_inv = pinv(H); // Moore-Penrose pseudo-inverse of matrix H
-  beta = H_inv * y_train; //Calculate output weights 
-  mat y_out = H * beta;  // Calculate training accuracy
-  vec temp = y_train - y_out;
-  double error = stddev(temp); //calculate training error
-  Log::Info << "Train RMSE :" << error <<std::endl;
+  beta = H_inv * responses; //Calculate output weights 
+  mat trainingOutput = H * beta;  // Calculate training accuracy
+  vec temp = responses - trainingOutput;
+  double trainError = stddev(temp); //calculate training error
+  Log::Info << "Train RMSE :" << trainError <<std::endl;
 }
 
 /*
  Predict ELM
- Data set x_test and y_test; 
+ Data set points and predictions; 
  Activation function
 		0 - Sigmoid Function
 		1 - Sine Function
@@ -138,10 +138,10 @@ void ELM::Train(const arma::mat& x_train,
 		4 - Radial Basis Function
 */
 
-void ELM::Predict(const arma::mat& x_test,
-                  const arma::mat& y_test)
+void ELM::Predict(const arma::mat& points,
+                  const arma::mat& predictions)
 {
-  mat param = x_test*Weight.t(); 
+  mat param = points*weight.t(); 
   mat H = zeros(N,Nh);
 	 	
   switch(act)
@@ -194,10 +194,8 @@ void ELM::Predict(const arma::mat& x_test,
     default : Log::Fatal << "Please select a suitable activation function to proceed:" << std::endl;
   }
 
-  mat y_out = H * beta; // calculate accuracy of prediction
-  vec temp = y_test - y_out;
-  double error = stddev(temp); //calculate error of prediction
-  Log::Info << "Test RMSE :" << error <<std::endl;
+  mat predictions = H * beta; // predict the output of ELM
   arma::mat Elm_output = arma::randu<arma::mat>(N);
-  data::Save("Elm_output.csv", Elm_output);	
+  Elm_output = predictions;
+  data::Save("Elm_output.csv", predictions);	
 }
