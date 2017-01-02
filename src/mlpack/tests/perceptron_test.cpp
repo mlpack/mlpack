@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
+#include <mlpack/methods/perceptron/learning_policies/simple_weight_update.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -21,6 +22,91 @@ using namespace mlpack::perceptron;
 using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(PerceptronTest);
+
+/**
+ * This test tests whether the SimpleWeightUpdate updates weigths and biases correctly,
+ * without specifying the instance weight.
+ */
+BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
+{
+  SimpleWeightUpdate wip;
+
+  /**
+   * It decreases the weights of the incorrectly classified class
+   * while increasing the weight of the correct class to which it should 
+   * have been classified to.
+   */
+  vec trainingPoint("1 2 3 4 5");
+  mat weights("0 1 6;"
+              "2 3 6;"
+              "4 5 6;"
+              "6 7 6;"
+              "8 9 6");
+  vec biases("2 5 7");
+  size_t incorrectClass = 0;
+  size_t correcClass = 2;
+
+  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass, correcClass);
+
+  BOOST_CHECK_EQUAL(weights(0, 0), -1);
+  BOOST_CHECK_EQUAL(weights(1, 0), 0);
+  BOOST_CHECK_EQUAL(weights(2, 0), 1);
+  BOOST_CHECK_EQUAL(weights(3, 0), 2);
+  BOOST_CHECK_EQUAL(weights(4, 0), 3);
+
+  BOOST_CHECK_EQUAL(weights(0, 2), 7);
+  BOOST_CHECK_EQUAL(weights(1, 2), 8);
+  BOOST_CHECK_EQUAL(weights(2, 2), 9);
+  BOOST_CHECK_EQUAL(weights(3, 2), 10);
+  BOOST_CHECK_EQUAL(weights(4, 2), 11);
+
+  BOOST_CHECK_EQUAL(biases(0), 1);
+  BOOST_CHECK_EQUAL(biases(2), 8);
+}
+
+/**
+ * This test tests whether the SimpleWeightUpdate updates weigths and biases correctly,
+ * with specifying the instance weight.
+ */
+BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
+{
+  SimpleWeightUpdate wip;
+
+  /**
+   * It decreases the weights of the incorrectly classified class
+   * while increasing the weight of the correct class to which it
+   * should have been classified to. The decrease and increase
+   * depends on the specified instance weight.
+   */
+  vec trainingPoint("1 2 3 4 5");
+  mat weights("0 1 6;"
+              "2 3 6;"
+              "4 5 6;"
+              "6 7 6;"
+              "8 9 6");
+  vec biases("2 5 7");
+  size_t incorrectClass = 0;
+  size_t correcClass = 2;
+  double instanceWeight = 3.0;
+
+  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass, correcClass,
+                    instanceWeight);
+
+  BOOST_CHECK_EQUAL(weights(0, 0), -3);
+  BOOST_CHECK_EQUAL(weights(1, 0), -4);
+  BOOST_CHECK_EQUAL(weights(2, 0), -5);
+  BOOST_CHECK_EQUAL(weights(3, 0), -6);
+  BOOST_CHECK_EQUAL(weights(4, 0), -7);
+
+  BOOST_CHECK_EQUAL(weights(0, 2), 9);
+  BOOST_CHECK_EQUAL(weights(1, 2), 12);
+  BOOST_CHECK_EQUAL(weights(2, 2), 15);
+  BOOST_CHECK_EQUAL(weights(3, 2), 18);
+  BOOST_CHECK_EQUAL(weights(4, 2), 21);
+
+  BOOST_CHECK_EQUAL(biases(0), -1);
+  BOOST_CHECK_EQUAL(biases(2), 10);
+}
 
 /**
  * This test tests whether the perceptron converges for the AND gate classifier.
