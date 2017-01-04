@@ -162,7 +162,7 @@ manually).  One way to do this, on Linux, is to ensure that the
 `LD_LIBRARY_PATH` environment variable has the directory that contains
 `libmlpack.so`.  Using bash, this can be set easily:
 
-    export LD_LIBRARY_PATH=/usr/local/lib/
+    export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
 
 (or whatever directory `libmlpack.so` is installed in.)
 
