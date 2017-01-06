@@ -80,8 +80,6 @@ class GockenbachFunction
   arma::mat initialPoint;
 };
 
-
-
 /**
  * This function is the Lovasz-Theta semidefinite program, as implemented in the
  * following paper:
