@@ -258,15 +258,6 @@ class CLI
   static bool HasParam(const std::string& identifier);
 
   /**
-   * Hyphenate a string or split it onto multiple 80-character lines, with some
-   * amount of padding on each line.  This is ued for option output.
-   *
-   * @param str String to hyphenate (splits are on ' ').
-   * @param padding Amount of padding on the left for each new line.
-   */
-  static std::string HyphenateString(const std::string& str, int padding);
-
-  /**
    * Parses the commandline for arguments.
    *
    * @param argc The number of arguments on the commandline.
