@@ -457,6 +457,12 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
     GetSingleton().doc = doc;
 }
 
+// Get the parameters that the CLI object knows about.
+const std::map<std::string, ParamData>& CLI::Parameters()
+{
+  return GetSingleton().parameters;
+}
+
 // Set a particular parameter as passed.
 void CLI::SetPassed(const std::string& name)
 {

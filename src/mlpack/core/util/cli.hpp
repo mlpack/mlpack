@@ -281,6 +281,11 @@ class CLI
   static void RegisterProgramDoc(util::ProgramDoc* doc);
 
   /**
+   * Return the list of parameters that CLI knows about.
+   */
+  static const std::map<std::string, util::ParamData>& Parameters();
+
+  /**
    * Mark a particular parameter as passed.
    *
    * @param name Name of the parameter.
