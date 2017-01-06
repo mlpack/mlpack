@@ -13,6 +13,7 @@ set(SOURCES
   default_param.hpp
   default_param_impl.hpp
   deprecated.hpp
+  hyphenate_string.hpp
   log.hpp
   log.cpp
   nulloutstream.hpp
