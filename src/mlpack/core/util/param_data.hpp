@@ -99,8 +99,11 @@ struct ParamData
   std::string tname;
   //! Alias for this parameter.
   char alias;
-  //! True if the wasPassed value should not be ignored.
+  //! True if this is a flag (boolean) parameter.
   bool isFlag;
+  //! True if the option was passed to the program.  Note that wasPassed may be
+  //! set by either ParseCommandLine() or SetPassed().
+  bool wasPassed;
   //! True if this is a matrix that should not be transposed.  Ignored if the
   //! parameter is not a matrix.
   bool noTranspose;
@@ -161,12 +164,14 @@ std::string MapParameterName(
 
 /**
  * If needed, map 'trueValue' to the right type and return it.  This is called
- * from GetParam().
+ * from GetParam().  If 'cliMode' is true, then the parameter will be loaded
+ * from disk if it is a matrix or a model.
  */
 template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
+    const bool cliMode,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -177,6 +182,7 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
 
 //! This must be overloaded for matrices and dataset info objects.
@@ -184,6 +190,7 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
@@ -192,6 +199,7 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
 //! This will just return the value.

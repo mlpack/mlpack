@@ -152,7 +152,7 @@ bool CLI::HasParam(const std::string& key)
   }
   const std::string& checkKey = usedKey;
 
-  return (vmap.count(parameters.at(checkKey).boostName) > 0);
+  return (parameters.at(checkKey).wasPassed > 0);
 }
 
 // Returns the sole instance of this class.
@@ -228,6 +228,39 @@ void CLI::ParseCommandLine(int argc, char** line)
     Log::Fatal << ex.what() << std::endl;
   }
 
+  // Iterate through vmap, and overwrite default values with anything found on
+  // command line.
+  std::map<std::string, util::ParamData>& parameters =
+      GetSingleton().parameters;
+  po::variables_map::iterator i;
+  for (i = vmap.begin(); i != vmap.end(); ++i)
+  {
+    // There is not a possibility of an unknown option, since
+    // boost::program_options will throw an exception.  Because some names may
+    // be mapped, we have to look through each ParamData object and get its
+    // boost name.
+    std::string identifier;
+    std::map<std::string, util::ParamData>::const_iterator it =
+        parameters.begin();
+    while (it != parameters.end())
+    {
+      if (it->second.boostName == i->first)
+      {
+        identifier = it->first;
+        break;
+      }
+
+      ++it;
+    }
+
+    util::ParamData& param = parameters[identifier];
+    param.wasPassed = true;
+    if (param.isFlag)
+      param.value = boost::any(true);
+    else
+      param.value = vmap[i->first].value();
+  }
+
   // Flush the buffer, make sure changes are propagated to vmap.
   po::notify(vmap);
 
@@ -282,44 +315,12 @@ void CLI::ParseCommandLine(int argc, char** line)
   // Now, warn the user if they missed any required options.
   std::list<std::string>& rOpt = GetSingleton().requiredOptions;
   std::list<std::string>::iterator iter;
-  std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
   for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
   {
     const std::string& boostName = parameters[*iter].boostName;
     if (!vmap.count(parameters[*iter].boostName))
       Log::Fatal << "Required option --" << boostName << " is undefined."
           << std::endl;
-  }
-
-  // Iterate through vmap, and overwrite default values with anything found on
-  // command line.
-  po::variables_map::iterator i;
-  for (i = vmap.begin(); i != vmap.end(); ++i)
-  {
-    // There is not a possibility of an unknown option, since
-    // boost::program_options will throw an exception.  Because some names may
-    // be mapped, we have to look through each ParamData object and get its
-    // boost name.
-    std::string identifier;
-    std::map<std::string, util::ParamData>::const_iterator it =
-        parameters.begin();
-    while (it != parameters.end())
-    {
-      if (it->second.boostName == i->first)
-      {
-        identifier = it->first;
-        break;
-      }
-
-      ++it;
-    }
-
-    util::ParamData& param = parameters[identifier];
-    if (param.isFlag)
-      param.value = boost::any(true);
-    else
-      param.value = vmap[i->first].value();
   }
 }
 
@@ -454,6 +455,17 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
   // beginning of the file (as a default value in case this is never called).
   if (doc != &emptyProgramDoc)
     GetSingleton().doc = doc;
+}
+
+// Set a particular parameter as passed.
+void CLI::SetPassed(const std::string& name)
+{
+  if (GetSingleton().parameters.count(name) == 0)
+    throw std::invalid_argument("CLI::SetPassed(): parameter " + name +
+        " not known!");
+
+  // Set passed to true.
+  GetSingleton().parameters[name].wasPassed = true;
 }
 
 // Add default parameters that are included in every program.

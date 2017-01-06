@@ -281,6 +281,13 @@ class CLI
   static void RegisterProgramDoc(util::ProgramDoc* doc);
 
   /**
+   * Mark a particular parameter as passed.
+   *
+   * @param name Name of the parameter.
+   */
+  static void SetPassed(const std::string& name);
+
+  /**
    * Destructor.
    */
   ~CLI();
@@ -302,6 +309,7 @@ class CLI
   //! Map of parameters.
   std::map<std::string, util::ParamData> parameters;
 
+ private:
   //! The singleton itself.
   static CLI* singleton;
 

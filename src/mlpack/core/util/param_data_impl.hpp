@@ -45,6 +45,7 @@ template<typename T>
 T& HandleParameter(
     typename ParameterType<T>::type& value,
     ParamData& /* d */,
+    const bool /* cliMode */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T,
@@ -58,6 +59,7 @@ template<typename T>
 T& HandleParameter(
     typename ParameterType<T>::type& value,
     ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
   // If the matrix is an input matrix, we have to load the matrix.  'value'
@@ -65,7 +67,7 @@ T& HandleParameter(
   // times, but I am not bothered by that---it shouldn't be something that
   // happens.
   T& matrix = *boost::any_cast<T>(&d.mappedValue);
-  if (d.input && !d.loaded)
+  if (d.input && !d.loaded && cliMode)
   {
     data::Load(value, matrix, true, !d.noTranspose);
     d.loaded = true;
@@ -79,6 +81,7 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
@@ -87,7 +90,7 @@ T& HandleParameter(
   std::tuple<mlpack::data::DatasetInfo, arma::mat>& tuple =
       *boost::any_cast<std::tuple<mlpack::data::DatasetInfo,
       arma::mat>>(&d.mappedValue);
-  if (d.input && !d.loaded)
+  if (d.input && !d.loaded && cliMode)
   {
     data::Load(value, std::get<1>(tuple), std::get<0>(tuple), true,
         !d.noTranspose);
@@ -103,12 +106,13 @@ template<typename T>
 T& HandleParameter(
     typename ParameterType<T>::type& value,
     ParamData& d,
+    const bool cliMode,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
   T& model = *boost::any_cast<T>(&d.mappedValue);
-  if (d.input && !d.loaded)
+  if (d.input && !d.loaded && cliMode)
   {
     data::Load(value, "model", model, true);
     d.loaded = true;

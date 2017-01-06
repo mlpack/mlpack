@@ -90,6 +90,7 @@ void CLI::Add(const T& defaultValue,
   data.tname = TYPENAME(T);
   data.alias = alias;
   data.isFlag = (TYPENAME(T) == TYPENAME(bool));
+  data.wasPassed = false;
   data.noTranspose = noTranspose;
   data.required = required;
   data.input = input;
@@ -191,7 +192,7 @@ T& CLI::GetParam(const std::string& identifier)
   // than what the user wants, we must pass through a utility function.
   typename util::ParameterType<T>::type& v =
       *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
-  return util::HandleParameter<T>(v, d);
+  return util::HandleParameter<T>(v, d, GetSingleton().didParse);
 }
 
 /**
