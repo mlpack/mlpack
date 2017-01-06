@@ -1,5 +1,5 @@
 /**
- * @file quic_svd_impl.hpp
+ * @file quic_svd.cpp
  * @author Siddharth Agrawal
  *
  * An implementation of QUIC-SVD.
