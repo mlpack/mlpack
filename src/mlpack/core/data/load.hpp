@@ -96,6 +96,12 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal = false);
+
 template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
