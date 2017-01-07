@@ -91,6 +91,30 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 
 template<typename eT>
 bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal)
+{
+  arma::mat matrix(vec);
+  Load(filename, matrix, fatal, false);
+  //Check if the returned matrix is vector if yes then 
+  //copy this to our vec else return error
+  if( matrix.is_vec() )
+    vec = matrix;
+  else
+    if( fatal)
+      Log::Fatal << "Loading '" << filename << "'failed "<<
+          ", the data you are tying to load is not a column vector "<< 
+          std::endl; 
+    else
+      Log::Warn << "Loading '" << filename << "'failed " <<
+          ", the data you are trying to load is not a column vector " <<
+          std::endl;
+    return false;
+  return true;
+}
+
+template<typename eT>
+bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose)
