@@ -1,6 +1,7 @@
 /**
  * @file lsh_search.hpp
  * @author Parikshit Ram
+ * @author Yannis Mentekidis
  *
  * Defines the LSHSearch class, which performs an approximate
  * nearest neighbor search for a queries in a query set

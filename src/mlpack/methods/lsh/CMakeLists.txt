@@ -4,6 +4,9 @@ set(SOURCES
   # LSH-search class
   lsh_search.hpp
   lsh_search_impl.hpp
+  # LSH-model class
+  lshmodel.hpp
+  lshmodel_impl.hpp
 )
 
 # Add directory name to sources.
@@ -18,3 +21,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # The code to compute the approximate neighbor for the given query and reference
 # sets with p-stable LSH.
 add_cli_executable(lsh)
+# The code that models LSH to make parameter tuning easier.
+add_cli_executable(lshmodel)
