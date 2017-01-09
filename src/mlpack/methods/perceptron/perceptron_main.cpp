@@ -1,6 +1,6 @@
-/*
- * @file: perceptron_main.cpp
- * @author: Udit Saxena
+/**
+ * @file perceptron_main.cpp
+ * @author Udit Saxena
  *
  * This program runs the Simple Perceptron Classifier.
  *
