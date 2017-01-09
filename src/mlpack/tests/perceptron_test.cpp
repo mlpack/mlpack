@@ -24,7 +24,7 @@ using namespace mlpack::distribution;
 BOOST_AUTO_TEST_SUITE(PerceptronTest);
 
 /**
- * This test tests whether the SimpleWeightUpdate updates weigths and biases correctly,
+ * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
  * without specifying the instance weight.
  */
 BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
@@ -32,9 +32,8 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
   SimpleWeightUpdate wip;
 
   /**
-   * It decreases the weights of the incorrectly classified class
-   * while increasing the weight of the correct class to which it should 
-   * have been classified to.
+   * The weights of the incorrectly classified class should decrease while the
+   * weight of the correct class should increase.
    */
   vec trainingPoint("1 2 3 4 5");
   mat weights("0 1 6;"
@@ -44,9 +43,10 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
               "8 9 6");
   vec biases("2 5 7");
   size_t incorrectClass = 0;
-  size_t correcClass = 2;
+  size_t correctClass = 2;
 
-  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass, correcClass);
+  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
+                    correctClass);
 
   BOOST_CHECK_EQUAL(weights(0, 0), -1);
   BOOST_CHECK_EQUAL(weights(1, 0), 0);
@@ -65,18 +65,17 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
 }
 
 /**
- * This test tests whether the SimpleWeightUpdate updates weigths and biases correctly,
- * with specifying the instance weight.
+ * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
+ * and specifies the instance weight.
  */
 BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
 {
   SimpleWeightUpdate wip;
 
   /**
-   * It decreases the weights of the incorrectly classified class
-   * while increasing the weight of the correct class to which it
-   * should have been classified to. The decrease and increase
-   * depends on the specified instance weight.
+   * The weights of the incorrectly classified class should decrease
+   * while the weights of the correct class should increase.  The decrease and
+   * increase depend on the specified instance weight.
    */
   vec trainingPoint("1 2 3 4 5");
   mat weights("0 1 6;"
@@ -86,11 +85,11 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
               "8 9 6");
   vec biases("2 5 7");
   size_t incorrectClass = 0;
-  size_t correcClass = 2;
+  size_t correctClass = 2;
   double instanceWeight = 3.0;
 
-  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass, correcClass,
-                    instanceWeight);
+  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
+                    correctClass, instanceWeight);
 
   BOOST_CHECK_EQUAL(weights(0, 0), -3);
   BOOST_CHECK_EQUAL(weights(1, 0), -4);
