@@ -503,31 +503,107 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  // Constructing a DTree
-  DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
-  
-  // Constructing copy of DTree using copy constructor and copy operator
-  DTree<arma::mat> tree2(*tree);
-  DTree<arma::mat> tree3 = *tree;
-  
-  //Deleting original DTree
-  delete tree;
+  //Constructing another DTree for testing the children
+  arma::Col<size_t> oTest(5);
+  oTest << 0 << 1 << 2 << 3 << 4;
 
-  //Checking values of DTree made using copy constructor.
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
+  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  testDTree->Grow(testData, oTest, false, 2, 1);
 
-  //Checking values of DTree made using copy assignment operator
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[0], 7);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[0], 3);
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[1], 7);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[1], 0);
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[2], 8);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[2], 1);
+  DTree<arma::mat> testDTree2(*testDTree);
+  DTree<arma::mat> testDTree3 = *testDTree;
+  
+  double maxVals0 = testDTree->maxVals[0];
+  double maxVals1 = testDTree->maxVals[1];
+  double maxVals2 = testDTree->maxVals[2];
+  double minVals0 = testDTree->minVals[0];
+  double minVals1 = testDTree->minVals[1];
+  double minVals2 = testDTree->minVals[2];
+
+  double maxValsL0 = testDTree->Left()->maxVals[0];
+  double maxValsL1 = testDTree->Left()->maxVals[1];
+  double maxValsL2 = testDTree->Left()->maxVals[2];
+  double minValsL0 = testDTree->Left()->minVals[0];
+  double minValsL1 = testDTree->Left()->minVals[1];
+  double minValsL2 = testDTree->Left()->minVals[2];
+
+  double maxValsR0 = testDTree->Right()->maxVals[0];
+  double maxValsR1 = testDTree->Right()->maxVals[1];
+  double maxValsR2 = testDTree->Right()->maxVals[2];
+  double minValsR0 = testDTree->Right()->minVals[0];
+  double minValsR1 = testDTree->Right()->minVals[1];
+  double minValsR2 = testDTree->Right()->minVals[2];
+
+  //Delete the original tree
+  delete testDTree;
+
+  //Test the data of copied tree (using copy constructor)
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[0], maxVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[0], minVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[1], maxVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[1], minVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[2], maxVals2);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[2], minVals2);
+
+  //Test the data of copied tree (using copy operator)
+  BOOST_REQUIRE_EQUAL(testDTree3.maxVals[0], maxVals0);
+  BOOST_REQUIRE_EQUAL(testDTree3.minVals[0], minVals0);
+  BOOST_REQUIRE_EQUAL(testDTree3.maxVals[1], maxVals1);
+  BOOST_REQUIRE_EQUAL(testDTree3.minVals[1], minVals1);
+  BOOST_REQUIRE_EQUAL(testDTree3.maxVals[2], maxVals2);
+  BOOST_REQUIRE_EQUAL(testDTree3.minVals[2], minVals2);
+
+  // Test the structure of the tree copied using copy constructor.
+  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+ 
+  // Test the structure of the tree copied using copy operator. 
+  BOOST_REQUIRE(testDTree3.Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree3.Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree3.Right()->Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree3.Right()->Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree3.Right()->Right()->Left() == NULL);
+  BOOST_REQUIRE(testDTree3.Right()->Right()->Right() == NULL);
+
+  //Test data of tree copied using copy constructor.
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[0], maxValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[1], maxValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[2], maxValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[0], minValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[1], minValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[2], minValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[0], maxValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[1], maxValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[2], maxValsR2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[0], minValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[1], minValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[2], minValsR2);
+  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
+  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
+  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+ 
+  //Test data of tree copied using copy operator.
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->maxVals[0], maxValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->maxVals[1], maxValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->maxVals[2], maxValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->minVals[0], minValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->minVals[1], minValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree3.Left()->minVals[2], minValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->maxVals[0], maxValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->maxVals[1], maxValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->maxVals[2], maxValsR2);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->minVals[0], minValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->minVals[1], minValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree3.Right()->minVals[2], minValsR2);
+  BOOST_REQUIRE(testDTree3.SplitDim() == 2);
+  BOOST_REQUIRE_CLOSE(testDTree3.SplitValue(), 5.5, 1e-5);
+  BOOST_REQUIRE(testDTree3.Right()->SplitDim() == 1);
+  BOOST_REQUIRE_CLOSE(testDTree3.Right()->SplitValue(), 0.5, 1e-5);
 
 }
 
@@ -540,22 +616,74 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  // Constructing a DTree
-  DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
+  //Constructing another DTree for testing the children
+  arma::Col<size_t> oTest(5);
+  oTest << 0 << 1 << 2 << 3 << 4;
 
-  // Moving DTree using move constructor
-  DTree<arma::mat> tree2(std::move(*tree));
+  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  testDTree->Grow(testData, oTest, false, 2, 1);
+ 
+  double maxVals0 = testDTree->maxVals[0];
+  double maxVals1 = testDTree->maxVals[1];
+  double maxVals2 = testDTree->maxVals[2];
+  double minVals0 = testDTree->minVals[0];
+  double minVals1 = testDTree->minVals[1];
+  double minVals2 = testDTree->minVals[2];
 
-  // Deleting original DTree
-  delete tree;
+  double maxValsL0 = testDTree->Left()->maxVals[0];
+  double maxValsL1 = testDTree->Left()->maxVals[1];
+  double maxValsL2 = testDTree->Left()->maxVals[2];
+  double minValsL0 = testDTree->Left()->minVals[0];
+  double minValsL1 = testDTree->Left()->minVals[1];
+  double minValsL2 = testDTree->Left()->minVals[2];
 
-  //Checking maxValues and minValues of DTree made using move constructor.
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
+  double maxValsR0 = testDTree->Right()->maxVals[0];
+  double maxValsR1 = testDTree->Right()->maxVals[1];
+  double maxValsR2 = testDTree->Right()->maxVals[2];
+  double minValsR0 = testDTree->Right()->minVals[0];
+  double minValsR1 = testDTree->Right()->minVals[1];
+  double minValsR2 = testDTree->Right()->minVals[2];
+
+  //Construct new tree using move constructor.
+  DTree<arma::mat> testDTree2(std::move(*testDTree));
+
+  //Delete the original tree
+  delete testDTree;
+
+  //Test the data of copied tree (using copy constructor)
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[0], maxVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[0], minVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[1], maxVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[1], minVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[2], maxVals2);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[2], minVals2);
+
+  // Test the structure of the tree copied using copy constructor.
+  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+ 
+  //Test data of tree copied using copy constructor.
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[0], maxValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[1], maxValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[2], maxValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[0], minValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[1], minValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[2], minValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[0], maxValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[1], maxValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[2], maxValsR2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[0], minValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[1], minValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[2], minValsR2);
+  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
+  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
+  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+ 
 }
 
 // Test the move operator.
@@ -567,23 +695,74 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  // Constructing a DTree
-  DTree<arma::mat>* tree = new DTree<arma::mat>(testData);
-  
-  // Constructing copy of DTree using move operator
-  DTree<arma::mat> tree2 = std::move(*tree);
+  //Constructing another DTree for testing the children
+  arma::Col<size_t> oTest(5);
+  oTest << 0 << 1 << 2 << 3 << 4;
 
-  //Deleting original DTree
-  delete tree;
+  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  testDTree->Grow(testData, oTest, false, 2, 1);
+ 
+  double maxVals0 = testDTree->maxVals[0];
+  double maxVals1 = testDTree->maxVals[1];
+  double maxVals2 = testDTree->maxVals[2];
+  double minVals0 = testDTree->minVals[0];
+  double minVals1 = testDTree->minVals[1];
+  double minVals2 = testDTree->minVals[2];
 
-  //Checking values of DTree made using move constructor.
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[0], 3);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], 7);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[1], 0);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], 8);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[2], 1);
+  double maxValsL0 = testDTree->Left()->maxVals[0];
+  double maxValsL1 = testDTree->Left()->maxVals[1];
+  double maxValsL2 = testDTree->Left()->maxVals[2];
+  double minValsL0 = testDTree->Left()->minVals[0];
+  double minValsL1 = testDTree->Left()->minVals[1];
+  double minValsL2 = testDTree->Left()->minVals[2];
 
+  double maxValsR0 = testDTree->Right()->maxVals[0];
+  double maxValsR1 = testDTree->Right()->maxVals[1];
+  double maxValsR2 = testDTree->Right()->maxVals[2];
+  double minValsR0 = testDTree->Right()->minVals[0];
+  double minValsR1 = testDTree->Right()->minVals[1];
+  double minValsR2 = testDTree->Right()->minVals[2];
+
+  //Construct new tree using move constructor.
+  DTree<arma::mat> testDTree2 = std::move(*testDTree);
+
+  //Delete the original tree
+  delete testDTree;
+
+  //Test the data of copied tree (using copy constructor)
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[0], maxVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[0], minVals0);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[1], maxVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[1], minVals1);
+  BOOST_REQUIRE_EQUAL(testDTree2.maxVals[2], maxVals2);
+  BOOST_REQUIRE_EQUAL(testDTree2.minVals[2], minVals2);
+
+  // Test the structure of the tree copied using copy constructor.
+  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+ 
+  //Test data of tree copied using copy constructor.
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[0], maxValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[1], maxValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->maxVals[2], maxValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[0], minValsL0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[1], minValsL1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Left()->minVals[2], minValsL2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[0], maxValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[1], maxValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->maxVals[2], maxValsR2);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[0], minValsR0);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[1], minValsR1);
+  BOOST_REQUIRE_EQUAL(testDTree2.Right()->minVals[2], minValsR2);
+  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
+  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
+  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+ 
 }
 
 BOOST_AUTO_TEST_SUITE_END();

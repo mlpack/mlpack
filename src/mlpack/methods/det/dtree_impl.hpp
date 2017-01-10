@@ -180,10 +180,18 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
     ratio(obj.ratio),
     logVolume(obj.logVolume),
     bucketTag(obj.bucketTag),
-    alphaUpper(obj.alphaUpper),
-    left(obj.left),
-    right(obj.right)
-{ /* Nothing to do. */ }
+    alphaUpper(obj.alphaUpper)    
+{   
+    //Copying the children
+    if(obj.left != NULL)
+      left = new DTree(*obj.left);
+    else
+      left = NULL;
+    if(obj.right != NULL)
+      right = new DTree(*obj.right);
+    else
+      right = NULL;
+}
 
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType, TagType>& obj)
@@ -203,8 +211,16 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
     logVolume = obj.logVolume;
     bucketTag = obj.bucketTag;
     alphaUpper = obj.alphaUpper;
-    left = obj.left;
-    right = obj.right;
+    
+    //Copying the children   
+    if(obj.left != NULL)
+      left = new DTree(*obj.left);
+    else
+      left = NULL;
+    if(obj.right != NULL)
+      right = new DTree(*obj.right);
+    else
+      right = NULL;
     
     return *this;
 }
@@ -212,8 +228,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(DTree&& obj)
 {   
-	//Moving the values from object
-	start = obj.start;
+	  //Moving the values from object
+	  start = obj.start;
     end = obj.end;
     splitDim = obj.splitDim;
     logNegError = obj.logNegError;
@@ -389,8 +405,8 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::~DTree()
 {
-  delete left;
-  delete right;
+    delete left;
+    delete right;
 }
 
 // This function computes the log-l2-negative-error of a given node from the
