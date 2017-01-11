@@ -54,7 +54,9 @@ DecisionStump<MatType, NoRecursion>::DecisionStump() :
   {
     // Make a fake stump by creating two children.  We create two and not one so
     // that we can be guaranteed that splitOrClassProbs has at least one
-    // element.  The children are identical in functionality though.
+    // element.  The children are identical in functionality though.  These fake
+    // children are necessary, because Predict() depends on a stump having
+    // children.
     children.push_back(new DecisionStump(0, 0, std::move(arma::vec("1.0"))));
     children.push_back(new DecisionStump(0, 0, std::move(arma::vec("1.0"))));
   }
@@ -82,7 +84,22 @@ DecisionStump<MatType, NoRecursion>::DecisionStump(DecisionStump&& other) :
     children(std::move(other.children))
 {
   // Reset the other one.
-  other = DecisionStump();
+  other.classes = 1;
+  other.bucketSize = 0;
+  other.splitDimensionOrLabel = 0;
+  other.splitOrClassProbs.ones(1);
+  if (NoRecursion)
+  {
+    // Make a fake stump by creating two children.  We create two and not one so
+    // that we can be guaranteed that splitOrClassProbs has at least one
+    // element.  The children are identical in functionality though.  These fake
+    // children are necessary, because Predict() depends on a stump having
+    // children.
+    other.children.push_back(new DecisionStump(0, 0,
+        std::move(arma::vec("1.0"))));
+    other.children.push_back(new DecisionStump(0, 0,
+        std::move(arma::vec("1.0"))));
+  }
 }
 
 // Copy assignment operator.
@@ -124,7 +141,22 @@ DecisionStump<MatType, NoRecursion>::operator=(DecisionStump&& other)
   children = std::move(other.children);
 
   // Clear and reinitialize other object.
-  other = DecisionStump();
+  other.classes = 1;
+  other.bucketSize = 0;
+  other.splitDimensionOrLabel = 0;
+  other.splitOrClassProbs.ones(1);
+  if (NoRecursion)
+  {
+    // Make a fake stump by creating two children.  We create two and not one so
+    // that we can be guaranteed that splitOrClassProbs has at least one
+    // element.  The children are identical in functionality though.  These fake
+    // children are necessary, because Predict() depends on a stump having
+    // children.
+    other.children.push_back(new DecisionStump(0, 0,
+        std::move(arma::vec("1.0"))));
+    other.children.push_back(new DecisionStump(0, 0,
+        std::move(arma::vec("1.0"))));
+  }
 
   return *this;
 }
