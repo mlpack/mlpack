@@ -389,12 +389,37 @@ BOOST_AUTO_TEST_CASE(DecisionStumpCopyConstructorTest)
   // Check the objects for similarity.
   BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy.Split().n_elem);
   BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy2.Split().n_elem);
-  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  BOOST_REQUIRE_EQUAL(d.NumChildren(), copy.NumChildren());
+  BOOST_REQUIRE_EQUAL(d.NumChildren(), copy2.NumChildren());
+  for (size_t i = 0; i < d.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy.Child(i).Label());
-    CheckMatrices(d.Child(i).Split(), copy.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
+        copy.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
+        copy.Child(i).Split().n_cols);
+    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], d.Child(i).Split()[j],
+            1e-5);
+    }
+
     BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy2.Child(i).Label());
-    CheckMatrices(d.Child(i).Split(), copy2.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
+        copy2.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
+        copy2.Child(i).Split().n_cols);
+    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(copy2.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(copy2.Child(i).Split()[j], d.Child(i).Split()[j],
+            1e-5);
+    }
   }
 }
 
@@ -427,17 +452,41 @@ BOOST_AUTO_TEST_CASE(DecisionStumpMoveConstructorTest)
   DecisionStump<> empty; // An empty object to compare against.
 
   BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
-  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  BOOST_REQUIRE_EQUAL(d.NumChildren(), empty.NumChildren());
+  for (size_t i = 0; i < d.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
-    CheckMatrices(d.Child(i).Split(), empty.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
+        empty.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
+        empty.Child(i).Split().n_cols);
+    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(empty.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(empty.Child(i).Split()[j], d.Child(i).Split()[j],
+            1e-5);
+    }
   }
 
   BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
-  for (size_t i = 0; i < move.Split().n_elem + 1; ++i)
+  BOOST_REQUIRE_EQUAL(move.NumChildren(), copy.NumChildren());
+  for (size_t i = 0; i < move.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
-    CheckMatrices(move.Child(i).Split(), copy.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_rows,
+        copy.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_cols,
+        copy.Child(i).Split().n_cols);
+    for (size_t j = 0; j < move.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(move.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], move.Child(i).Split()[j],
+            1e-5);
+    }
   }
 }
 
@@ -470,18 +519,50 @@ BOOST_AUTO_TEST_CASE(DecisionStumpMoveOperatorTest)
   DecisionStump<> empty; // An empty object to compare against.
 
   BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
-  for (size_t i = 0; i < d.Split().n_elem + 1; ++i)
+  BOOST_REQUIRE_EQUAL(d.NumChildren(), empty.NumChildren());
+  for (size_t i = 0; i < d.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
-    CheckMatrices(d.Child(i).Split(), empty.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
+        empty.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
+        empty.Child(i).Split().n_cols);
+    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(empty.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(empty.Child(i).Split()[j], d.Child(i).Split()[j],
+            1e-5);
+    }
   }
 
   BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
-  for (size_t i = 0; i < move.Split().n_elem + 1; ++i)
+  BOOST_REQUIRE_EQUAL(move.NumChildren(), copy.NumChildren());
+  for (size_t i = 0; i < move.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
-    CheckMatrices(move.Child(i).Split(), copy.Child(i).Split());
+    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_rows,
+        copy.Child(i).Split().n_rows);
+    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_cols,
+        copy.Child(i).Split().n_cols);
+    for (size_t j = 0; j < move.Child(i).Split().n_elem; ++j)
+    {
+      if (std::abs(move.Child(i).Split()[j]) < 1e-5)
+        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], move.Child(i).Split()[j],
+            1e-5);
+    }
   }
+}
+
+/**
+ * Test that the decision tree outperforms the decision stump.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeVsStumpTest)
+{
+  
 }
 
 BOOST_AUTO_TEST_SUITE_END();
