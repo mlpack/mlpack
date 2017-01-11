@@ -147,6 +147,9 @@ class DecisionStump
   //! Modify the label.
   size_t& Label() { return splitDimensionOrLabel; }
 
+  //! Get the number of children.
+  size_t NumChildren() const { return children.size(); }
+
   //! Access the given child.
   const DecisionStump& Child(const size_t i) const { return *children[i]; }
   //! Modify the given child.
