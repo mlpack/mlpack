@@ -180,18 +180,10 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
     ratio(obj.ratio),
     logVolume(obj.logVolume),
     bucketTag(obj.bucketTag),
-    alphaUpper(obj.alphaUpper)    
-{   
-    //Copying the children
-    if(obj.left != NULL)
-      left = new DTree(*obj.left);
-    else
-      left = NULL;
-    if(obj.right != NULL)
-      right = new DTree(*obj.right);
-    else
-      right = NULL;
-}
+    alphaUpper(obj.alphaUpper),
+    left((obj.left == NULL) ? NULL : new DTree(*obj.left)),
+    right((obj.right == NULL) ? NULL : new DTree(*obj.right))        
+{ /* Noting to do. */ }
 
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType, TagType>& obj)
@@ -212,15 +204,13 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree<MatType,
     bucketTag = obj.bucketTag;
     alphaUpper = obj.alphaUpper;
     
+    //Free the space allocated
+    delete left;
+    delete right;
+
     //Copying the children   
-    if(obj.left != NULL)
-      left = new DTree(*obj.left);
-    else
-      left = NULL;
-    if(obj.right != NULL)
-      right = new DTree(*obj.right);
-    else
-      right = NULL;
+    left = ((obj.left == NULL) ? NULL : new DTree(*obj.left));
+    left = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
     
     return *this;
 }
@@ -241,8 +231,8 @@ DTree<MatType, TagType>::DTree(DTree&& obj):
     logVolume(obj.logVolume),
     bucketTag(std::move(obj.bucketTag)),
     alphaUpper(obj.alphaUpper),  
-    left(std::move(obj.left)),
-    right(std::move(obj.right))
+    left(obj.left),
+    right(obj.right)
 {   
     //Set obj to default values
     obj.start = 0;
@@ -266,7 +256,7 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagType>&& obj)
 {
     //Moving the values from object
-	start = obj.start;
+	  start = obj.start;
     end = obj.end;
     splitDim = obj.splitDim;
     logNegError = obj.logNegError;
@@ -286,8 +276,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(DTree<MatType, TagTy
     delete right;
     
     //Moving children
-    left = std::move(obj.left);
-    right = std::move(obj.right);
+    left = obj.left;
+    right = obj.right;
 
     //Set obj to default values
     obj.start = 0;
