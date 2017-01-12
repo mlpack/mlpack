@@ -49,12 +49,12 @@ BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
 
   DTree<arma::mat> tree(testData);
 
-  BOOST_REQUIRE_EQUAL(tree.maxVals[0], 7);
-  BOOST_REQUIRE_EQUAL(tree.minVals[0], 3);
-  BOOST_REQUIRE_EQUAL(tree.maxVals[1], 7);
-  BOOST_REQUIRE_EQUAL(tree.minVals[1], 0);
-  BOOST_REQUIRE_EQUAL(tree.maxVals[2], 8);
-  BOOST_REQUIRE_EQUAL(tree.minVals[2], 1);
+  BOOST_REQUIRE_EQUAL(tree.MaxVals()[0], 7);
+  BOOST_REQUIRE_EQUAL(tree.MinVals()[0], 3);
+  BOOST_REQUIRE_EQUAL(tree.MaxVals()[1], 7);
+  BOOST_REQUIRE_EQUAL(tree.MinVals()[1], 0);
+  BOOST_REQUIRE_EQUAL(tree.MaxVals()[2], 8);
+  BOOST_REQUIRE_EQUAL(tree.MinVals()[2], 1);
 }
 
 BOOST_AUTO_TEST_CASE(TestComputeNodeError)
