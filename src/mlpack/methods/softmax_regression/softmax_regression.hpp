@@ -74,8 +74,8 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @param fitIntercept add intercept term or not.
    */
-  SoftmaxRegression(const size_t inputSize,
-                    const size_t numClasses,
+  SoftmaxRegression(const size_t inputSize = 0,
+                    const size_t numClasses = 0,
                     const bool fitIntercept = false);
 
   /**

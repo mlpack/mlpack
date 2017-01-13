@@ -11,21 +11,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include "hmm.hpp"
-#include "hmm_util.hpp"
+#include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-
-PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
-    "utility takes an already-trained HMM (--model_file) and evaluates the "
-    "most probably hidden state sequence of a given sequence of observations "
-    "(--input_file), using the Viterbi algorithm.  The computed state sequence "
-    "is saved to the specified output file (--output_file).");
-
-PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
-PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
-PARAM_UMATRIX_OUT("output", "File to save predicted state sequence to.", "o");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -34,6 +25,16 @@ using namespace mlpack::util;
 using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
+
+PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
+    "utility takes an already-trained HMM (--model_file) and evaluates the "
+    "most probably hidden state sequence of a given sequence of observations "
+    "(--input_file), using the Viterbi algorithm.  The computed state sequence "
+    "is saved to the specified output file (--output_file).");
+
+PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
+PARAM_MODEL_IN_REQ(HMMModel, "input_model", "Trained HMM to use.", "m");
+PARAM_UMATRIX_OUT("output", "File to save predicted state sequence to.", "o");
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
@@ -77,6 +78,5 @@ int main(int argc, char** argv)
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 
-  const string modelFile = CLI::GetParam<string>("model_file");
-  LoadHMMAndPerformAction<Viterbi>(modelFile);
+  CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*) NULL);
 }

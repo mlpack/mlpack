@@ -38,6 +38,168 @@ RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
   // Nothing to do.
 }
 
+// Copy constructor.
+template<typename SortPolicy>
+RAModel<SortPolicy>::RAModel(const RAModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRA(NULL),
+    coverTreeRA(NULL),
+    rTreeRA(NULL),
+    rStarTreeRA(NULL),
+    xTreeRA(NULL),
+    hilbertRTreeRA(NULL),
+    rPlusTreeRA(NULL),
+    rPlusPlusTreeRA(NULL),
+    ubTreeRA(NULL),
+    octreeRA(NULL)
+{
+  if (other.kdTreeRA)
+    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
+  if (other.coverTreeRA)
+    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
+  if (other.rTreeRA)
+    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
+  if (other.rStarTreeRA)
+    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
+  if (other.xTreeRA)
+    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
+  if (other.hilbertRTreeRA)
+    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
+  if (other.rPlusTreeRA)
+    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
+  if (other.rPlusPlusTreeRA)
+    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
+  if (other.ubTreeRA)
+    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
+  if (other.octreeRA)
+    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+}
+
+// Move constructor.
+template<typename SortPolicy>
+RAModel<SortPolicy>::RAModel(RAModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRA(other.kdTreeRA),
+    coverTreeRA(other.coverTreeRA),
+    rTreeRA(other.rTreeRA),
+    rStarTreeRA(other.rStarTreeRA),
+    xTreeRA(other.xTreeRA),
+    hilbertRTreeRA(other.hilbertRTreeRA),
+    rPlusTreeRA(other.rPlusTreeRA),
+    rPlusPlusTreeRA(other.rPlusPlusTreeRA),
+    ubTreeRA(other.ubTreeRA),
+    octreeRA(other.octreeRA)
+{
+  // Clear other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.randomBasis = false;
+  other.kdTreeRA = NULL;
+  other.coverTreeRA = NULL;
+  other.rTreeRA = NULL;
+  other.rStarTreeRA = NULL;
+  other.xTreeRA = NULL;
+  other.hilbertRTreeRA = NULL;
+  other.rPlusTreeRA = NULL;
+  other.rPlusPlusTreeRA = NULL;
+  other.ubTreeRA = NULL;
+  other.octreeRA = NULL;
+}
+
+// Copy operator.
+template<typename SortPolicy>
+RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
+{
+  // Clear current model.
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+
+  if (other.kdTreeRA)
+    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
+  if (other.coverTreeRA)
+    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
+  if (other.rTreeRA)
+    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
+  if (other.rStarTreeRA)
+    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
+  if (other.xTreeRA)
+    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
+  if (other.hilbertRTreeRA)
+    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
+  if (other.rPlusTreeRA)
+    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
+  if (other.rPlusPlusTreeRA)
+    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
+  if (other.ubTreeRA)
+    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
+  if (other.octreeRA)
+    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+
+  return *this;
+}
+
+template<typename SortPolicy>
+RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
+{
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  kdTreeRA = other.kdTreeRA;
+  coverTreeRA = other.coverTreeRA;
+  rTreeRA = other.rTreeRA;
+  rStarTreeRA = other.rStarTreeRA;
+  xTreeRA = other.xTreeRA;
+  hilbertRTreeRA = other.hilbertRTreeRA;
+  rPlusTreeRA = other.rPlusTreeRA;
+  rPlusPlusTreeRA = other.rPlusPlusTreeRA;
+  ubTreeRA = other.ubTreeRA;
+  octreeRA = other.octreeRA;
+
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.randomBasis = false;
+  other.kdTreeRA = NULL;
+  other.coverTreeRA = NULL;
+  other.rTreeRA = NULL;
+  other.rStarTreeRA = NULL;
+  other.xTreeRA = NULL;
+  other.hilbertRTreeRA = NULL;
+  other.rPlusTreeRA = NULL;
+  other.rPlusPlusTreeRA = NULL;
+  other.ubTreeRA = NULL;
+  other.octreeRA = NULL;
+
+  return *this;
+}
+
 template<typename SortPolicy>
 RAModel<SortPolicy>::~RAModel()
 {

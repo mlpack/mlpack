@@ -12,6 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
@@ -60,9 +61,9 @@ PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
 PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_STRING_IN("input_model_file", "File containing pre-trained range search "
-    "model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "If specified, the range search model "
+PARAM_MODEL_IN(RSModel, "input_model", "File containing pre-trained range "
+    "search model.", "m");
+PARAM_MODEL_OUT(RSModel, "output_model", "If specified, the range search model "
     "will be saved to the given file.", "M");
 
 // The user may specify a query file of query points and a range to search for.
@@ -88,11 +89,6 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-typedef RangeSearch<> RSType;
-typedef CoverTree<EuclideanDistance, RangeSearchStat> CoverTreeType;
-typedef RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-    RSCoverType;
-
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
@@ -104,16 +100,16 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
     // Notify the user of parameters that will be ignored.
     if (CLI::HasParam("tree_type"))
@@ -132,7 +128,7 @@ int main(int argc, char *argv[])
 
   // The user must give something to do...
   if (!CLI::HasParam("min") && !CLI::HasParam("max") &&
-      !CLI::HasParam("output_model_file"))
+      !CLI::HasParam("output_model"))
     Log::Warn << "Neither --min, --max, nor --output_model_file are specified, "
         << "so no results from this program will be saved!" << endl;
 
@@ -216,10 +212,10 @@ int main(int argc, char *argv[])
   else
   {
     // Load the model from file.
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "rs_model", rs, true); // Fatal on failure.
+    rs = std::move(CLI::GetParam<RSModel>("input_model"));
 
-    Log::Info << "Loaded range search model from '" << inputModelFile << "' ("
+    Log::Info << "Loaded range search model from '"
+        << CLI::GetUnmappedParam<RSModel>("input_model") << "' ("
         << "trained on " << rs.Dataset().n_rows << "x" << rs.Dataset().n_cols
         << " dataset)." << endl;
 
@@ -323,9 +319,8 @@ int main(int argc, char *argv[])
   }
 
   // Save the output model, if desired.
-  if (CLI::HasParam("output_model_file"))
-  {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "rs_model", rs);
-  }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<RSModel>("output_model") = std::move(rs);
+
+  CLI::Destroy();
 }

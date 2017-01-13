@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "gmm.hpp"
 
 using namespace std;
@@ -24,8 +25,8 @@ PROGRAM_INFO("GMM Sample Generator",
     "The output samples are saved in the file specified by --output_file "
     "(-o).");
 
-PARAM_STRING_IN_REQ("input_model_file", "File containing input GMM model.",
-    "m");
+PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM model to generate samples "
+    "from.", "m");
 PARAM_INT_IN_REQ("samples", "Number of samples to generate.", "n");
 
 PARAM_MATRIX_OUT("output", "Matrix to save output samples in.", "o");
@@ -49,8 +50,7 @@ int main(int argc, char** argv)
   if (CLI::GetParam<int>("samples") < 0)
     Log::Fatal << "Parameter to --samples must be greater than 0!" << endl;
 
-  GMM gmm;
-  data::Load(CLI::GetParam<string>("input_model_file"), "gmm", gmm, true);
+  GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
 
   size_t length = (size_t) CLI::GetParam<int>("samples");
   Log::Info << "Generating " << length << " samples..." << endl;

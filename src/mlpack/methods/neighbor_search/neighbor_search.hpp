@@ -203,6 +203,36 @@ class NeighborSearch
                  const MetricType metric = MetricType());
 
   /**
+   * Construct the NeighborSearch object by copying the given NeighborSearch
+   * object.
+   *
+   * @param other NeighborSearch object to copy.
+   */
+  NeighborSearch(const NeighborSearch& other);
+
+  /**
+   * Construct the NeighborSearch object by taking ownership of the given
+   * NeighborSearch object.
+   *
+   * @param other NeighborSearch object to take ownership of.
+   */
+  NeighborSearch(NeighborSearch&& other);
+
+  /**
+   * Copy the given NeighborSearch object.
+   *
+   * @param other NeighborSearch object to copy.
+   */
+  NeighborSearch& operator=(const NeighborSearch& other);
+
+  /**
+   * Take ownership of the given NeighborSearch object.
+   *
+   * @param other NeighborSearch object to take ownership of.
+   */
+  NeighborSearch& operator=(NeighborSearch&& other);
+
+  /**
    * Delete the NeighborSearch object. The tree is the only member we are
    * responsible for deleting.  The others will take care of themselves.
    */

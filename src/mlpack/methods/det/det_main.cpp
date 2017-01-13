@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "dt_utils.hpp"
 
 using namespace mlpack;
@@ -42,10 +42,10 @@ PARAM_MATRIX_IN("training", "The data set on which to build a density "
     "estimation tree.", "t");
 
 // Input or output model.
-PARAM_STRING_IN("input_model_file", "File containing already trained density "
-    "estimation tree.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained density estimation "
-    "tree to.", "M");
+PARAM_MODEL_IN(DTree<arma::mat>, "input_model", "Trained density estimation "
+    "tree to load.", "m");
+PARAM_MODEL_OUT(DTree<arma::mat>, "output_model", "Output to save trained "
+    "density estimation tree to.", "M");
 
 // Output data files.
 PARAM_MATRIX_IN("test", "A set of test points to estimate the density of.",
@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
   CLI::ParseCommandLine(argc, argv);
 
   // Validate input parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
         << "may be specified!" << endl;
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) "
         << "are specified!" << endl;
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
       Log::Warn << "--max_leaf_size (-L) ignored because --training_file (-t) "
           << "is not specified." << endl;
   }
-  else if (!CLI::HasParam("output_model_file") &&
+  else if (!CLI::HasParam("output_model") &&
            !CLI::HasParam("training_set_estimates") &&
            !CLI::HasParam("vi"))
   {
@@ -157,8 +157,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    data::Load(CLI::GetParam<string>("input_model_file"), "det_model", tree,
-        true);
+    tree = &CLI::GetParam<DTree<arma::mat>>("input_model");
   }
 
   // Compute the density at the provided test points and output the density in
@@ -187,9 +186,12 @@ int main(int argc, char *argv[])
   }
 
   // Save the model, if desired.
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "det_model", tree,
-        false);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<DTree<arma::mat>>("output_model") = std::move(*tree);
 
-  delete tree;
+  // Clean up memory, if we need to.
+  if (!CLI::HasParam("input_model") && !CLI::HasParam("output_model"))
+    delete tree;
+
+  CLI::Destroy();
 }

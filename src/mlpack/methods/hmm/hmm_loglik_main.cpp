@@ -10,21 +10,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include "hmm.hpp"
-#include "hmm_util.hpp"
+#include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
-    "utility takes an already-trained HMM (--model_file) and evaluates the "
-    "log-likelihood of a given sequence of observations (--input_file).  The "
-    "computed log-likelihood is given directly to stdout.");
-
-PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
-PARAM_STRING_IN_REQ("model_file", "File containing HMM.", "m");
-
-PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -33,6 +24,16 @@ using namespace mlpack::util;
 using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
+
+PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
+    "utility takes an already-trained HMM (--model_file) and evaluates the "
+    "log-likelihood of a given sequence of observations (--input_file).  The "
+    "computed log-likelihood is given directly to stdout.");
+
+PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
+PARAM_MODEL_IN_REQ(HMMModel, "input_model", "File containing HMM.", "m");
+
+PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
@@ -70,6 +71,5 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Load model, and calculate the log-likelihood of the sequence.
-  const string modelFile = CLI::GetParam<string>("model_file");
-  LoadHMMAndPerformAction<Loglik>(modelFile);
+  CLI::GetParam<HMMModel>("input_model").PerformAction<Loglik>((void*) NULL);
 }

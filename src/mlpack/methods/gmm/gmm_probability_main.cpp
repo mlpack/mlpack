@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "gmm.hpp"
 
 using namespace std;
@@ -23,7 +24,7 @@ PROGRAM_INFO("GMM Probability Calculator",
     "--input_file option.  The output probabilities are stored in the file "
     "specified by the --output_file option.");
 
-PARAM_STRING_IN_REQ("input_model_file", "File containing input GMM.", "m");
+PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM to use as model.", "m");
 PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
     "i");
 
@@ -33,15 +34,12 @@ int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  const string inputModelFile = CLI::GetParam<string>("input_model_file");
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
 
   // Get the GMM and the points.
-  GMM gmm;
-  data::Load(inputModelFile, "gmm", gmm);
+  GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
 
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 

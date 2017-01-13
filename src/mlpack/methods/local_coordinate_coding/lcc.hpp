@@ -114,7 +114,8 @@ class LocalCoordinateCoding
   /**
    * Set the parameters to LocalCoordinateCoding.  This constructor will not
    * train the model, and a subsequent call to Train() will be required before
-   * the model can encode points with Encode().
+   * the model can encode points with Encode().  The default values for atoms
+   * and lambda should be changed if you intend to train the model!
    *
    * @param atoms Number of atoms in dictionary.
    * @param lambda Regularization parameter for weighted l1-norm penalty.
@@ -122,8 +123,8 @@ class LocalCoordinateCoding
    *      until convergence).
    * @param tolerance Tolerance for the objective function.
    */
-  LocalCoordinateCoding(const size_t atoms,
-                        const double lambda,
+  LocalCoordinateCoding(const size_t atoms = 0,
+                        const double lambda = 0.0,
                         const size_t maxIterations = 0,
                         const double tolerance = 0.01);
 

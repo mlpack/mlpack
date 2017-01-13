@@ -10,8 +10,15 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "lcc.hpp"
+
+using namespace arma;
+using namespace std;
+using namespace mlpack;
+using namespace mlpack::math;
+using namespace mlpack::lcc;
+using namespace mlpack::sparse_coding; // For NothingInitializer.
 
 PROGRAM_INFO("Local Coordinate Coding",
     "An implementation of Local Coordinate Coding (LCC), which "
@@ -58,10 +65,9 @@ PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
 PARAM_DOUBLE_IN("tolerance", "Tolerance for objective function.", "o", 0.01);
 
 // Load/save a model.
-PARAM_STRING_IN("input_model_file", "File containing input LCC model.", "m",
-    "");
-PARAM_STRING_OUT("output_model_file", "File to save trained LCC model to.",
-    "M");
+PARAM_MODEL_IN(LocalCoordinateCoding, "input_model", "Input LCC model.", "m");
+PARAM_MODEL_OUT(LocalCoordinateCoding, "output_model", "Output for trained LCC "
+    "model.", "M");
 
 // Test on another dataset.
 PARAM_MATRIX_IN("test", "Test points to encode.", "T");
@@ -69,13 +75,6 @@ PARAM_MATRIX_OUT("dictionary", "Output dictionary matrix.", "d");
 PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-
-using namespace arma;
-using namespace std;
-using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::lcc;
-using namespace mlpack::sparse_coding; // For NothingInitializer.
 
 int main(int argc, char* argv[])
 {
@@ -87,7 +86,7 @@ int main(int argc, char* argv[])
     RandomSeed((size_t) std::time(NULL));
 
   // Check for parameter validity.
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
+  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
     Log::Fatal << "Cannot specify both --input_model_file (-m) and "
         << "--initial_dictionary_file (-i)!" << endl;
 
@@ -95,12 +94,12 @@ int main(int argc, char* argv[])
     Log::Fatal << "If --training_file is specified, the number of atoms in the "
         << "dictionary must be specified with --atoms (-k)!" << endl;
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
         << "be specified!" << endl;
 
   if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
-      !CLI::HasParam("output_model_file"))
+      !CLI::HasParam("output_model"))
     Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
         << "--output_model_file (-M) are specified; no output will be saved."
         << endl;
@@ -133,11 +132,8 @@ int main(int argc, char* argv[])
 
   // Do we have an existing model?
   LocalCoordinateCoding lcc(0, 0.0);
-  if (CLI::HasParam("input_model_file"))
-  {
-    data::Load(CLI::GetParam<string>("input_model_file"), "lcc_model", lcc,
-        true);
-  }
+  if (CLI::HasParam("input_model"))
+    lcc = std::move(CLI::GetParam<LocalCoordinateCoding>("input_model"));
 
   if (CLI::HasParam("training"))
   {
@@ -157,10 +153,10 @@ int main(int argc, char* argv[])
     lcc.Tolerance() = CLI::GetParam<double>("tolerance");
 
     // Inform the user if we are overwriting their model.
-    if (CLI::HasParam("input_model_file"))
+    if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetParam<string>("input_model_file") << "' as initial "
+          << CLI::GetUnmappedParam<string>("input_model") << "' as initial "
           << "dictionary for training." << endl;
       lcc.Train<NothingInitializer>(matX);
     }
@@ -225,7 +221,8 @@ int main(int argc, char* argv[])
     CLI::GetParam<mat>("dictionary") = std::move(lcc.Dictionary());
 
   // Did the user want to save the model?
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "lcc_model", lcc,
-        false); // Non-fatal on failure.
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<LocalCoordinateCoding>("output_model") = std::move(lcc);
+
+  CLI::Destroy();
 }

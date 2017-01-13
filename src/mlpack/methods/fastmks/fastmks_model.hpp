@@ -51,6 +51,15 @@ class FastMKSModel
    */
   FastMKSModel(const int kernelType = LINEAR_KERNEL);
 
+  //! Copy constructor.
+  FastMKSModel(const FastMKSModel& other);
+
+  //! Move constructor.
+  FastMKSModel(FastMKSModel&& other);
+
+  //! Copy assignment operator.
+  FastMKSModel& operator=(const FastMKSModel& other);
+
   /**
    * Clean memory.
    */
