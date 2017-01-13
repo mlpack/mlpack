@@ -148,6 +148,27 @@ namespace details
 };
 
 template <typename MatType, typename TagType>
+void DTree<MatType, TagType>::swap(DTree& other)
+{
+  std::swap(start, other.start);
+  std::swap(end, other.end);
+  std::swap(maxVals, other.maxVals);
+  std::swap(minVals, other.minVals);
+  std::swap(splitDim, other.splitDim);
+  std::swap(splitValue, other.splitValue);
+  std::swap(logNegError, other.logNegError);
+  std::swap(subtreeLeavesLogNegError, other.subtreeLeavesLogNegError);
+  std::swap(subtreeLeaves, other.subtreeLeaves);
+  std::swap(root, other.root);
+  std::swap(ratio, other.ratio);
+  std::swap(logVolume, other.logVolume);
+  std::swap(bucketTag, other.bucketTag);
+  std::swap(alphaUpper, other.alphaUpper);
+  std::swap(left, other.left);
+  std::swap(right, other.right);
+}
+
+template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
     start(0),
     end(0),
@@ -165,6 +186,52 @@ DTree<MatType, TagType>::DTree() :
     right(NULL)
 { /* Nothing to do. */ }
 
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const DTree& other) :
+    start(other.start),
+    end(other.end),
+    maxVals(other.maxVals),
+    minVals(other.minVals),
+    splitDim(other.splitDim),
+    splitValue(other.splitValue),
+    logNegError(other.logNegError),
+    subtreeLeavesLogNegError(other.subtreeLeavesLogNegError),
+    subtreeLeaves(other.subtreeLeaves),
+    root(other.root),
+    ratio(other.ratio),
+    logVolume(other.logVolume),
+    bucketTag(other.bucketTag),
+    alphaUpper(other.alphaUpper),
+    left(other.left),
+    right(other.right)
+{ /* Nothing to do. */ }
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(DTree&& other) :
+    start(0),
+    end(0),
+    splitDim(size_t(-1)),
+    splitValue(std::numeric_limits<ElemType>::max()),
+    logNegError(-DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0),
+    root(true),
+    ratio(1.0),
+    logVolume(-DBL_MAX),
+    bucketTag(-1),
+    alphaUpper(0.0),
+    left(NULL),
+    right(NULL)
+{
+  swap(other);
+}
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::& DTree<MatType, TagType>::operator=(DTree other)
+{
+  swap(other);
+}
 
 // Root node initializers
 
