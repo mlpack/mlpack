@@ -52,11 +52,27 @@ class DTree
   typedef typename MatType::elem_type     ElemType;
   typedef typename MatType::vec_type      VecType;
   typedef typename arma::Col<ElemType>    StatType;
-  
+
   /**
    * Create an empty density estimation tree.
    */
   DTree();
+
+  /**
+   * Create a copied density estimation tree.
+   */
+  DTree(const DTree& toBeCopied);
+
+   /**
+   * Move a density estimation tree into another.
+   */
+  DTree(DTree&& toBeMoved);
+
+  /**
+   * Move a density estimation tree into another using copy assignment operator.
+   */
+  DTree& operator=(const DTree& toBeCopied);
+
 
   /**
    * Create a density estimation tree with the given bounds and the given number
@@ -79,7 +95,7 @@ class DTree
    * @param data Dataset to build tree on.
    */
   DTree(MatType& data);
-  
+
   /**
    * Create a child node of a density estimation tree given the bounding box
    * specified by maxVals and minVals, using the size given in start and end and

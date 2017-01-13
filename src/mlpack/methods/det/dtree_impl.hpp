@@ -165,6 +165,77 @@ DTree<MatType, TagType>::DTree() :
     right(NULL)
 { /* Nothing to do. */ }
 
+//Copy constructor
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const DTree& toBeCopied) :
+    start(toBeCopied.start),
+    end(toBeCopied.end),
+    maxVals(toBeCopied.maxVals),
+    minVals(toBeCopied.minVals),
+    splitDim(toBeCopied.splitDim),
+    splitValue(toBeCopied.splitValue),
+    logNegError(toBeCopied.logNegError),
+    subtreeLeavesLogNegError(toBeCopied.subtreeLeavesLogNegError),
+    subtreeLeaves(toBeCopied.subtreeLeaves),
+    root(toBeCopied.root),
+    ratio(toBeCopied.ratio),
+    logVolume(toBeCopied.logVolume),
+    bucketTag(toBeCopied.bucketTag),
+    alphaUpper(toBeCopied.alphaUpper)
+{
+  left = new DTree(*toBeCopied.left);
+  right = new DTree(*toBeCopied.right);
+}
+
+//Move constructor
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(DTree&& toBeMoved) :
+    start(toBeMoved.start),
+    end(toBeMoved.end),
+    maxVals(toBeMoved.maxVals),
+    minVals(toBeMoved.minVals),
+    splitDim(toBeMoved.splitDim),
+    splitValue(toBeMoved.splitValue),
+    logNegError(toBeMoved.logNegError),
+    subtreeLeavesLogNegError(toBeMoved.subtreeLeavesLogNegError),
+    subtreeLeaves(toBeMoved.subtreeLeaves),
+    root(toBeMoved.root),
+    ratio(toBeMoved.ratio),
+    logVolume(toBeMoved.logVolume),
+    bucketTag(toBeMoved.bucketTag),
+    alphaUpper(toBeMoved.alphaUpper)
+{
+  left = std::move(toBeMoved.left);
+  right = std::move(toBeMoved.right);
+
+  toBeMoved = DTree();
+}
+
+//Copy Assignment operator
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(const DTree& toBeCopied)
+{
+  left = new DTree(*toBeCopied.left);
+  right = new DTree(*toBeCopied.right);
+
+  //Copy the data from source to destination
+  start = toBeCopied.start;
+  end = toBeCopied.end;
+  maxVals = toBeCopied.maxVals;
+  minVals = toBeCopied.minVals;
+  splitDim = toBeCopied.splitDim;
+  splitValue = toBeCopied.splitValue;
+  logNegError = toBeCopied.logNegError;
+  subtreeLeavesLogNegError = toBeCopied.subtreeLeavesLogNegError;
+  subtreeLeaves = toBeCopied.subtreeLeaves;
+  root = toBeCopied.root;
+  ratio = toBeCopied.ratio;
+  logVolume = toBeCopied.logVolume;
+  bucketTag = toBeCopied.bucketTag;
+  alphaUpper = toBeCopied.alphaUpper;
+
+  return *this;
+}
 
 // Root node initializers
 
