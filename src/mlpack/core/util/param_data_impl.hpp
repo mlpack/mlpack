@@ -26,31 +26,16 @@ std::string MapParameterName(
   return identifier;
 }
 
-//! This is called for matrices, which have a different boost name.
+//! This is called for matrices, DatasetInfo objects, and serializable objects,
+//! which have a different boost name.
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
-{
-  return identifier + "_file";
-}
-
-//! This must be overloaded for matrices and dataset info objects
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
-{
-  return identifier + "_file";
-}
-
-//! This is called for serializable mlpack objects, which have a different boost
-//! name.
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename boost::enable_if_c<
+        arma::is_arma_type<T>::value ||
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
+                                   arma::mat>>::value ||
+        data::HasSerialize<T>::value>::type* /* junk */)
 {
   return identifier + "_file";
 }
@@ -126,6 +111,7 @@ T& HandleParameter(
   if (d.input && !d.loaded)
   {
     data::Load(value, "model", model, true);
+    d.loaded = true;
   }
 
   return model;

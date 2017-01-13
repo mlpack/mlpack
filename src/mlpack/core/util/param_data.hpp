@@ -149,6 +149,16 @@ std::string MapParameterName(
     const typename boost::disable_if<std::is_same<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
+//! This must be overloaded for matrices.
+template<typename T>
+std::string MapParameterName(
+    const std::string& identifier,
+    const typename boost::enable_if_c<
+        arma::is_arma_type<T>::value ||
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
+                                   arma::mat>>::value ||
+        data::HasSerialize<T>::value>::type* /* junk */ = 0);
+
 /**
  * If needed, map 'trueValue' to the right type and return it.  This is called
  * from GetParam().
@@ -164,23 +174,10 @@ T& HandleParameter(
 
 //! This must be overloaded for matrices.
 template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
-
-//! This must be overloaded for matrices.
-template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
-
-//! This must be overloaded for matrices and dataset info objects
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
 
 //! This must be overloaded for matrices and dataset info objects.
 template<typename T>
@@ -189,12 +186,6 @@ T& HandleParameter(
     util::ParamData& d,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
-
-//! This must be overloaded for serializable objects.
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
 //! This must be overloaded for serializable objects.
 template<typename T>
