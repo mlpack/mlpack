@@ -40,33 +40,12 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
-
-/**
- * Return the default value of a serializable class option (this returns the
- * default filename, or '' if the default is no file).
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
-
-/**
- * Return the default value of a string option.
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<std::is_same<T, std::string>>::type* = 0);
-
-/**
- * Return the default value of a DatasetInfo+matrix option.
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::enable_if_c<
+        arma::is_arma_type<T>::value ||
+        data::HasSerialize<T>::value ||
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
+                                   arma::mat>>::value ||
+        std::is_same<T, std::string>::value>::type* /* junk */ = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be
@@ -77,7 +56,6 @@ std::string DefaultParam(const ParamData& data)
 {
   return DefaultParamImpl<T>(data);
 }
-
 
 } // namespace util
 } // namespace mlpack

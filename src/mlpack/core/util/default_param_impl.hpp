@@ -55,51 +55,16 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename boost::enable_if_c<
+        arma::is_arma_type<T>::value ||
+        data::HasSerialize<T>::value ||
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
+                                   arma::mat>>::value ||
+        std::is_same<T, std::string>::value>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
   const std::string& filename = boost::any_cast<std::string>(data.value);
   return "'" + filename + "'";
-}
-
-/**
- * Return the default value of a serializable class option (this returns the
- * default filename, or '' if the default is no file).
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
-{
-  // Get the filename and return it, or return an empty string.
-  const std::string& filename = boost::any_cast<std::string>(data.value);
-  return "'" + filename + "'";
-}
-
-/**
- * Return the default value of a DatasetInfo+matrix option.
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
-{
-  // Get the filename and return it, or return an empty string.
-  const std::string& filename = boost::any_cast<std::string>(data.value);
-  return "'" + filename + "'";
-}
-
-/**
- * Return the default value of a string option.
- */
-template<typename T>
-std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<std::is_same<T, std::string>>::type*)
-{
-  // Return the string with single quotes around it.
-  return "'" + boost::any_cast<std::string>(data.value) + "'";
 }
 
 } // namespace util
