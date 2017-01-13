@@ -77,8 +77,6 @@ void OutputParamImpl(
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   // Output the matrix with the mappings.
-//  const data::DatasetInfo& info =
-//      std::get<0>(*boost::any_cast<T>(&data.mappedValue));
   const arma::mat& matrix = std::get<1>(*boost::any_cast<T>(&data.mappedValue));
   const std::string& filename = *boost::any_cast<std::string>(&data.value);
 
