@@ -95,6 +95,10 @@ void CLI::Add(const T& defaultValue,
   data.input = input;
   data.loaded = false;
   data.boostName = util::MapParameterName<T>(identifier);
+  data.outputFunction = input ? NULL : &util::OutputParam<T>;
+  data.printFunction = &util::PrintParam<T>;
+  data.defaultFunction = &util::DefaultParam<T>;
+  data.stringTypeFunction = &util::StringTypeParam<T>;
 
   // Apply default value.
   if (std::is_same<T, typename util::ParameterType<T>::type>::value)
@@ -137,8 +141,8 @@ void CLI::Add(const T& defaultValue,
   if (data.isFlag)
     desc.add_options()(progOptId.c_str(), description.c_str());
   else
-    GetSingleton().AddOption<typename util::ParameterType<T>::type>(progOptId.c_str(),
-        description.c_str());
+    GetSingleton().AddOption<typename util::ParameterType<T>::type>(
+        progOptId.c_str(), description.c_str());
 
   // If the option is required, add it to the required options list.
   if (required)
@@ -222,63 +226,40 @@ typename util::ParameterType<T>::type& CLI::GetUnmappedParam(
   return *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
 }
 
-
-//! This overload is called when nothing special needs to happen to the name of
-//! the parameter.
 template<typename T>
-std::string util::MapParameterName(
-    const std::string& identifier,
-    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* /* junk */)
+T& CLI::GetRawParam(const std::string& identifier)
 {
-  return identifier;
-}
+  // Only use the alias if the parameter does not exist as given.
+  std::string key =
+      (GetSingleton().parameters.count(identifier) == 0 &&
+       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
+      ? GetSingleton().aliases[identifier[0]] : identifier;
 
-//! This overload is called when T == ParameterType<T>::value.  An overload for
-//! matrices is in cli.cpp.
-template<typename T>
-T& util::HandleParameter(
-    typename util::ParameterType<T>::type& value,
-    util::ParamData& /* d */,
-    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* /* junk */)
-{
-  return value;
-}
+  if (GetSingleton().parameters.count(key) == 0)
+    Log::Fatal << "Parameter --" << key << " does not exist in this program!"
+        << std::endl;
 
-//! This is called for matrices, which have a different boost name.
-template<typename T>
-std::string util::MapParameterName(
-    const std::string& identifier,
-    const typename std::enable_if_t<arma::is_arma_type<T>::value>* /* junk */)
-{
-  return identifier + "_file";
-}
+  util::ParamData& d = GetSingleton().parameters[key];
 
-//! This overload is called for matrices, which return a different type.
-template<typename T>
-T& util::HandleParameter(
-    typename util::ParameterType<T>::type& value,
-    util::ParamData& d,
-    const typename std::enable_if_t<arma::is_arma_type<T>::value>* /* junk */)
-{
-  // If the matrix is an input matrix, we have to load the matrix.  'value'
-  // contains the filename.  It's possible we could load empty matrices many
-  // times, but I am not bothered by that---it shouldn't be something that
-  // happens.
-  T& matrix = *boost::any_cast<T>(&d.mappedValue);
-  if (d.input && !d.loaded)
-  {
-    data::Load(value, matrix, true, !d.noTranspose);
-    d.loaded = true;
-  }
+  // Make sure the types are correct.
+  if (TYPENAME(T) != d.tname)
+    Log::Fatal << "Attempted to access parameter --" << key << " as type "
+        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+        << std::endl;
 
-  return matrix;
+  // We already know that required options have been passed, so we have a valid
+  // value to return.  Because the parameters held are sometimes different types
+  // than what the user wants, we must pass through a utility function.
+  typename util::ParameterType<T>::type& v =
+      *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
+  return util::HandleRawParameter<T>(v, d);
 }
 
 template<typename T>
 void CLI::AddOption(
     const char* optId,
     const char* descr,
-    const typename std::enable_if_t<!IsStdVector<T>::value>* /* junk */)
+    const typename std::enable_if_t<!util::IsStdVector<T>::value>* /* junk */)
 {
   desc.add_options()(optId, po::value<T>(), descr);
 }
@@ -287,7 +268,7 @@ template<typename T>
 void CLI::AddOption(
     const char* optId,
     const char* descr,
-    const typename std::enable_if_t<IsStdVector<T>::value>* /* junk */)
+    const typename std::enable_if_t<util::IsStdVector<T>::value>* /* junk */)
 {
   desc.add_options()(optId, po::value<T>()->multitoken(), descr);
 }

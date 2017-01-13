@@ -226,6 +226,164 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   }
 }
 
+// Copy constructor.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+SingleTreeTraversalType>::NeighborSearch(const NeighborSearch& other) :
+    oldFromNewReferences(other.oldFromNewReferences),
+    referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
+    referenceSet(other.referenceTree ? &referenceTree->Dataset() :
+        new MatType(*other.referenceSet)),
+    treeOwner(other.referenceTree),
+    setOwner(!other.referenceTree),
+    searchMode(other.searchMode),
+    epsilon(other.epsilon),
+    metric(other.metric),
+    baseCases(other.baseCases),
+    scores(other.scores),
+    treeNeedsReset(false)
+{
+  // Nothing else to do.
+}
+
+// Move constructor.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
+    oldFromNewReferences(std::move(other.oldFromNewReferences)),
+    referenceTree(other.referenceTree),
+    referenceSet(other.referenceSet),
+    treeOwner(other.treeOwner),
+    setOwner(other.setOwner),
+    searchMode(other.searchMode),
+    epsilon(other.epsilon),
+    metric(std::move(other.metric)),
+    baseCases(other.baseCases),
+    scores(other.scores),
+    treeNeedsReset(other.treeNeedsReset)
+{
+  // Clear the other model.
+  other.referenceSet = new MatType();
+  other.referenceTree = BuildTree<MatType, Tree>(*other.referenceSet,
+      other.oldFromNewReferences);
+  other.treeOwner = true;
+  other.setOwner = true;
+  other.searchMode = DUAL_TREE_MODE,
+  other.epsilon = 0.0;
+  other.baseCases = 0;
+  other.scores = 0;
+  other.treeNeedsReset = false;
+}
+
+// Copy operator.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>&
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::operator=(const NeighborSearch& other)
+{
+  // Clean memory first.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+  if (setOwner && referenceSet)
+    delete referenceSet;
+
+  oldFromNewReferences = other.oldFromNewReferences;
+  referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
+  referenceSet = other.referenceTree ? &referenceTree->Dataset() :
+      new MatType(*other.referenceSet);
+  treeOwner = (other.referenceTree != NULL);
+  setOwner = (other.referenceTree == NULL);
+  searchMode = other.searchMode;
+  epsilon = other.epsilon;
+  metric = other.metric;
+  baseCases = other.baseCases;
+  scores = other.scores;
+  treeNeedsReset = false;
+}
+
+// Move operator.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>&
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::operator=(NeighborSearch&& other)
+{
+  // Clean memory first.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+  if (setOwner && referenceSet)
+    delete referenceSet;
+
+  oldFromNewReferences = std::move(other.oldFromNewReferences);
+  referenceTree = other.referenceTree;
+  referenceSet = other.referenceSet;
+  treeOwner = other.treeOwner;
+  setOwner = other.setOwner;
+  searchMode = other.searchMode;
+  epsilon = other.epsilon;
+  metric = other.metric;
+  baseCases = other.baseCases;
+  scores = other.scores;
+  treeNeedsReset = other.treeNeedsReset;
+
+  // Reset the other object.
+  other.referenceSet = new MatType();
+  other.referenceTree = BuildTree<MatType, Tree>(*other.referenceSet,
+      other.oldFromNewReferences);
+  other.treeOwner = true;
+  other.setOwner = true;
+  other.searchMode = DUAL_TREE_MODE,
+  other.epsilon = 0.0;
+  other.baseCases = 0;
+  other.scores = 0;
+  other.treeNeedsReset = false;
+}
+
 // Clean memory.
 template<typename SortPolicy,
          typename MetricType,

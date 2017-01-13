@@ -99,7 +99,7 @@ class LARS
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
    */
-  LARS(const bool useCholesky,
+  LARS(const bool useCholesky = false,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
        const double tolerance = 1e-16);

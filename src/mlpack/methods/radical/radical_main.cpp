@@ -9,9 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
 

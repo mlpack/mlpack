@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
 PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "

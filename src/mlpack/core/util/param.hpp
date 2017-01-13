@@ -15,7 +15,19 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
-#include <mlpack/core/util/cli.hpp>
+// Required forward declarations.
+namespace mlpack {
+namespace data {
+
+class IncrementPolicy;
+
+template<typename PolicyType>
+class DatasetMapper;
+
+using DatasetInfo = DatasetMapper<IncrementPolicy>;
+
+} // namespace data
+} // namespace mlpack
 
 /**
  * Document an executable.  Only one instance of this macro should be
@@ -525,6 +537,131 @@
     PARAM_OUT(std::vector<T>, ID, DESC, "", std::vector<T>(), false)
 
 /**
+ * Define an input DatasetInfo/matrix parameter.  From the command line, the
+ * user can specify the file that holds the matrix, using the name of the matrix
+ * parameter with "_file" appended (and the same alias).  So for instance, if
+ * the name of the matrix parameter was "matrix", the user could specify that
+ * the "matrix" matrix was held in file.csv by giving the parameter
+ *
+ * @code
+ * --matrix_file file.csv
+ * @endcode
+ *
+ * Then the DatasetInfo and matrix type could be accessed with
+ *
+ * @code
+ * DatasetInfo d = std::move(
+ *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<0>());
+ * arma::mat m = std::move(
+ *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<1>());
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param ALIAS One-character string representing the alias of the parameter.
+ *
+ * @see mlpack::CLI, PROGRAM_INFO()
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
+    PARAM_IN(TUPLE_TYPE, ID, DESC, ALIAS, TUPLE_TYPE(), false)
+
+/**
+ * Define an input model.  From the command line, the user can specify the file
+ * that holds the model, using the name of the model parameter with "_file"
+ * appended (and the same alias).  So for instance, if the name of the model
+ * parameter was "model", the user could specify that the "model" model was held
+ * in model.bin by giving the parameter
+ *
+ * @code
+ * --model_file model.bin
+ * @endcode
+ *
+ * Note that the first parameter of this model is the type (the class name) of
+ * the model to be loaded.  This model type must have a Serialize() function; a
+ * compilation error (a very long and complex one) will result if the model type
+ * does not have the following function:
+ *
+ * @code
+ * template<typename Archive>
+ * void Serialize(Archive& ar, const unsigned int version);
+ * @endcode
+ *
+ * This is the boost::serialization serialize() function, just with a capital s
+ * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
+ *
+ * @param TYPE Type of the model to be loaded.
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_MODEL_IN(TYPE, ID, DESC, ALIAS) \
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, false, true)
+
+/**
+ * Define a required input model.  From the command line, the user can specify
+ * the file that holds the model, using the name of the model parameter with
+ * "_file" appended (and the same alias).  So for instance, if the name of the
+ * model parameter was "model", the user could specify that the "model" model
+ * was held in model.bin by giving the parameter
+ *
+ * @code
+ * --model_file model.bin
+ * @endcode
+ *
+ * Note that the first parameter of this model is the type (the class name) of
+ * the model to be loaded.  This model type must have a Serialize() function; a
+ * compilation error (a very long and complex one) will result if the model type
+ * does not have the following function:
+ *
+ * @code
+ * template<typename Archive>
+ * void Serialize(Archive& ar, const unsigned int version);
+ * @endcode
+ *
+ * This is the boost::serialization serialize() function, just with a capital s
+ * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
+ *
+ * @param TYPE Type of the model to be loaded.
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_MODEL_IN_REQ(TYPE, ID, DESC, ALIAS) \
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, true, true)
+
+/**
+ * Define an output model.  From the command line, the user can specify the file
+ * that should hold the model, using the name of the model parameter with
+ * "_file" appended (and the same alias).  So for instance, if the user desires
+ * to save the model to model.bin and the parameter name is "model", they could
+ * specify
+ *
+ * @code
+ * --model_file model.bin
+ * @endcode
+ *
+ * The model will be saved at the termination of the program.  If you use a
+ * parameter of this type, you must call CLI::Destroy() at the end of your
+ * program.
+ *
+ * @param TYPE Type of the model to be saved.
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_MODEL_OUT(TYPE, ID, DESC, ALIAS) \
+    PARAM_MODEL(TYPE, ID, DESC, ALIAS, false, false)
+
+/**
  * Define a required integer input parameter.
  *
  * The parameter must then be specified on the command line with --ID=value.
@@ -658,6 +795,13 @@
       static mlpack::util::Option<arma::Mat<size_t>> \
       JOIN(cli_option_dummy_umatrix_, __COUNTER__) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+
+  // There are no uses of required models, so that is not an option to this
+  // macro (it would be easy to add).
+  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
+      static mlpack::util::Option<TYPE> \
+      JOIN(cli_option_dummy_model_, __COUNTER__) \
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -682,6 +826,11 @@
       static mlpack::util::Option<arma::Mat<size_t>> \
       JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+
+  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
+      static mlpack::util::Option<TYPE> \
+      JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
 #endif
 
 #endif

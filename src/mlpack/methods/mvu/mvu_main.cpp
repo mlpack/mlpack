@@ -12,6 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "mvu.hpp"
 
 PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "

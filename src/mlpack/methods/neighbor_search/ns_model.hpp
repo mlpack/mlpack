@@ -328,8 +328,40 @@ class NSModel
   /**
    * Initialize the NSModel with the given type and whether or not a random
    * basis should be used.
+   *
+   * @param treeType Type of tree to use.
+   * @param randomBasis Whether or not to project the points onto a random basis
+   *      before searching.
    */
   NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+
+  /**
+   * Copy the given NSModel.
+   *
+   * @param other Model to copy.
+   */
+  NSModel(const NSModel& other);
+
+  /**
+   * Take ownership of the given NSModel.
+   *
+   * @param other Model to take ownership of.
+   */
+  NSModel(NSModel&& other);
+
+  /**
+   * Copy the given NSModel.
+   *
+   * @param other Model to copy.
+   */
+  NSModel& operator=(const NSModel& other);
+
+  /**
+   * Take ownership of the given NSModel.
+   *
+   * @param other Model to take ownership of.
+   */
+  NSModel& operator=(NSModel&& other);
 
   //! Clean memory, if necessary.
   ~NSModel();

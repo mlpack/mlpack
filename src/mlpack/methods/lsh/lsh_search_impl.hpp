@@ -77,6 +77,116 @@ LSHSearch<SortPolicy>::LSHSearch() :
 {
 }
 
+// Copy constructor.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::LSHSearch(const LSHSearch& other) :
+    referenceSet(new arma::mat(*other.referenceSet)),
+    ownsSet(true),
+    numProj(other.numProj),
+    numTables(other.numTables),
+    projections(other.projections),
+    offsets(other.offsets),
+    hashWidth(other.hashWidth),
+    secondHashSize(other.secondHashSize),
+    secondHashWeights(other.secondHashWeights),
+    bucketSize(other.bucketSize),
+    secondHashTable(other.secondHashTable),
+    bucketContentSize(other.bucketContentSize),
+    bucketRowInHashTable(other.bucketRowInHashTable),
+    distanceEvaluations(other.distanceEvaluations)
+{
+  // Nothing to do.
+}
+
+// Move constructor.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::LSHSearch(LSHSearch&& other) :
+    referenceSet(other.referenceSet),
+    ownsSet(other.ownsSet),
+    numProj(other.numProj),
+    numTables(other.numTables),
+    projections(std::move(other.projections)),
+    offsets(std::move(other.offsets)),
+    hashWidth(other.hashWidth),
+    secondHashSize(other.secondHashSize),
+    secondHashWeights(std::move(other.secondHashWeights)),
+    bucketSize(other.bucketSize),
+    secondHashTable(std::move(other.secondHashTable)),
+    bucketContentSize(std::move(other.bucketContentSize)),
+    bucketRowInHashTable(std::move(other.bucketRowInHashTable)),
+    distanceEvaluations(other.distanceEvaluations)
+{
+  // Reset other model to defaults.
+  other.referenceSet = new arma::mat();
+  other.ownsSet = true;
+  other.numProj = 0;
+  other.numTables = 0;
+  other.hashWidth = 0;
+  other.secondHashSize = 99901;
+  other.bucketSize = 500;
+  other.distanceEvaluations = 0;
+}
+
+// Copy operator.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(const LSHSearch& other)
+{
+  if (ownsSet)
+    delete referenceSet;
+
+  referenceSet = new arma::mat(*other.referenceSet);
+  ownsSet = true;
+  numProj = other.numProj;
+  numTables = other.numTables;
+  projections = other.projections;
+  offsets = other.offsets;
+  hashWidth = other.hashWidth;
+  secondHashSize = other.secondHashSize;
+  secondHashWeights = other.secondHashWeights;
+  bucketSize = other.bucketSize;
+  secondHashTable = other.secondHashTable;
+  bucketContentSize = other.bucketContentSize;
+  bucketRowInHashTable = other.bucketRowInHashTable;
+  distanceEvaluations = other.distanceEvaluations;
+
+  return *this;
+}
+
+// Move operator.
+template<typename SortPolicy>
+LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(LSHSearch&& other)
+{
+  if (ownsSet)
+    delete referenceSet;
+
+  referenceSet = other.referenceSet;
+  ownsSet = other.ownsSet;
+  numProj = other.numProj;
+  numTables = other.numTables;
+  projections = std::move(other.projections);
+  offsets = std::move(other.offsets);
+  hashWidth = other.hashWidth;
+  secondHashSize = other.secondHashSize;
+  secondHashWeights = std::move(other.secondHashWeights);
+  bucketSize = other.bucketSize;
+  secondHashTable = std::move(other.secondHashTable);
+  bucketContentSize = std::move(other.bucketContentSize);
+  bucketRowInHashTable = std::move(other.bucketRowInHashTable);
+  distanceEvaluations = other.distanceEvaluations;
+
+  // Reset other model to defaults.
+  other.referenceSet = new arma::mat();
+  other.ownsSet = true;
+  other.numProj = 0;
+  other.numTables = 0;
+  other.hashWidth = 0;
+  other.secondHashSize = 99901;
+  other.bucketSize = 500;
+  other.distanceEvaluations = 0;
+
+  return *this;
+}
+
 // Destructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::~LSHSearch()

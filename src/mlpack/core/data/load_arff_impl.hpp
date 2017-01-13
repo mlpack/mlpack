@@ -15,7 +15,7 @@
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
 
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace mlpack {
 namespace data {
@@ -177,7 +177,10 @@ void LoadARFF(const std::string& filename,
       // What should this token be?
       if (info.Type(col) == Datatype::categorical)
       {
-        matrix(col, row) = info.MapString(*it, col); // We load transposed.
+        // Strip spaces before mapping.
+        std::string token = *it;
+        boost::trim(token);
+        matrix(col, row) = info.MapString(token, col); // We load transposed.
       }
       else if (info.Type(col) == Datatype::numeric)
       {

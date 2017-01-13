@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include "drusilla_select.hpp"
 #include "qdafn.hpp"
@@ -57,10 +58,6 @@ PROGRAM_INFO("Approximate furthest neighbor search",
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");
 
-// Model loading and saving.
-PARAM_STRING_IN("input_model_file", "File containing input model.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save output model to.", "M");
-
 PARAM_INT_IN("k", "Number of furthest neighbors to search for.", "k", 0);
 
 PARAM_INT_IN("num_tables", "Number of hash tables to use.", "t", 5);
@@ -68,8 +65,8 @@ PARAM_INT_IN("num_projections", "Number of projections to use in each hash "
     "table.", "p", 5);
 PARAM_STRING_IN("algorithm", "Algorithm to use: 'ds' or 'qdafn'.", "a", "ds");
 
-PARAM_MATRIX_OUT("neighbors", "Matrix to save neighbor indices to.", "n");
-PARAM_UMATRIX_OUT("distances", "Matrix to save furthest neighbor distances to.",
+PARAM_UMATRIX_OUT("neighbors", "Matrix to save neighbor indices to.", "n");
+PARAM_MATRIX_OUT("distances", "Matrix to save furthest neighbor distances to.",
     "d");
 
 PARAM_FLAG("calculate_error", "If set, calculate the average distance error for"
@@ -105,21 +102,27 @@ class ApproxKFNModel
   }
 };
 
+// Model loading and saving.
+PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
+    "m");
+PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
+    "M");
+
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "Either --reference_file (-r) or --input_model_file (-m) must"
         << " be specified!" << endl;
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " can be specified!" << endl;
-  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("k"))
+  if (!CLI::HasParam("output_model") && !CLI::HasParam("k"))
     Log::Warn << "Neither --output_model_file (-M) nor --k (-k) are specified;"
         << " no task will be performed." << endl;
   if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
-      !CLI::HasParam("output_model_file"))
+      !CLI::HasParam("output_model"))
     Log::Warn << "None of --output_model_file (-M), --neighbors_file (-n), or "
         << "--distances_file (-d) are specified; no output will be saved!"
         << endl;
@@ -186,8 +189,7 @@ int main(int argc, char** argv)
   else
   {
     // We must load the model from file.
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "approx_kfn", m);
+    m = std::move(CLI::GetParam<ApproxKFNModel>("input_model"));
   }
 
   // Now, do we need to do any queries?
@@ -255,11 +257,14 @@ int main(int argc, char** argv)
     // Save results, if desired.
     if (CLI::HasParam("neighbors"))
       CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    if (CLI::HasParam("distances_file"))
+    if (CLI::HasParam("distances"))
       CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   // Should we save the model?
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "approx_kfn", m);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<ApproxKFNModel>("output_model") = std::move(m);
+
+  // Save any output variables.
+  CLI::Destroy();
 }

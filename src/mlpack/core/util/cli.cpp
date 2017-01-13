@@ -49,71 +49,12 @@ CLI::~CLI()
   // anything like that.
   if (!HasParam("help") && !HasParam("info"))
   {
-    // Save any output matrices.
+    // Print any output.
     std::list<std::string>::const_iterator it = outputOptions.begin();
     while (it != outputOptions.end())
     {
       ParamData& d = parameters[*it];
-
-      // It seems there is not a better way to do this, unfortunately.
-      if (d.tname == TYPENAME(arma::mat))
-      {
-        arma::mat& output = *boost::any_cast<arma::mat>(&d.mappedValue);
-        const std::string& filename = *boost::any_cast<std::string>(&d.value);
-
-        if (output.n_elem > 0 && filename != "")
-          data::Save(filename, output, false, !d.noTranspose);
-      }
-      else if (d.tname == TYPENAME(arma::Mat<size_t>))
-      {
-        arma::Mat<size_t>& output =
-            *boost::any_cast<arma::Mat<size_t>>(&d.mappedValue);
-        const std::string& filename = *boost::any_cast<std::string>(&d.value);
-
-        if (output.n_elem > 0 && filename != "")
-          data::Save(filename, output, false, !d.noTranspose);
-      }
-
-      ++it;
-    }
-
-    // Now print any output options.
-    it = outputOptions.begin();
-    while (it != outputOptions.end())
-    {
-      ParamData& d = parameters[*it];
-
-      if (d.tname != TYPENAME(arma::mat) &&
-          d.tname != TYPENAME(arma::Mat<size_t>))
-      {
-        // Don't print any output options with "_file" in the name.
-        if (d.name.substr(d.name.length() - 5, 5) == "_file")
-        {
-          ++it;
-          continue;
-        }
-
-        // Now, we must print it, so figure out what the type is.
-        if (d.tname == TYPENAME(std::string))
-        {
-          std::string value = GetParam<std::string>(d.name);
-          std::cout << d.name << ": " << value << std::endl;
-        }
-        else if (d.tname == TYPENAME(int))
-        {
-          int value = GetParam<int>(d.name);
-          std::cout << d.name << ": " << value << std::endl;
-        }
-        else if (d.tname == TYPENAME(double))
-        {
-          double value = GetParam<double>(d.name);
-          std::cout << d.name << ": " << value << std::endl;
-        }
-        else
-        {
-          std::cout << d.name << ": unknown data type" << std::endl;
-        }
-      }
+      d.outputFunction(d);
 
       ++it;
     }
@@ -147,52 +88,11 @@ CLI::~CLI()
       // Now, figure out what type it is, and print it.
       // We can handle strings, ints, bools, floats, doubles.
       util::ParamData& data = iter->second;
-      if (data.tname == TYPENAME(std::string))
-      {
-        std::string value = GetParam<std::string>(key);
-        if (value == "")
-          Log::Info << "\"\"";
-        Log::Info << value;
-      }
-      else if (data.tname == TYPENAME(int))
-      {
-        int value = GetParam<int>(key);
-        Log::Info << value;
-      }
-      else if (data.tname == TYPENAME(bool))
-      {
-        bool value = HasParam(key);
-        Log::Info << (value ? "true" : "false");
-      }
-      else if (data.tname == TYPENAME(float))
-      {
-        float value = GetParam<float>(key);
-        Log::Info << value;
-      }
-      else if (data.tname == TYPENAME(double))
-      {
-        double value = GetParam<double>(key);
-        Log::Info << value;
-      }
-      else if (data.tname == TYPENAME(arma::mat) ||
-               data.tname == TYPENAME(arma::Mat<size_t>))
-      {
-        // For matrix parameters, print the name of the file.
-        std::string value = *boost::any_cast<std::string>(&data.value);
-        if (value == "")
-          Log::Info << "\"\"";
-        Log::Info << value;
-      }
-      else
-      {
-        // We don't know how to print this.
-        Log::Info << "(Unknown data type - " << data.tname << ")";
-      }
-
+      data.printFunction(data);
       Log::Info << std::endl;
+
       ++iter;
     }
-    Log::Info << std::endl;
 
     Log::Info << "Program timers:" << std::endl;
     std::map<std::string, std::chrono::microseconds>::iterator it;
@@ -234,8 +134,9 @@ void CLI::Destroy()
 bool CLI::HasParam(const std::string& key)
 {
   std::string usedKey = key;
-  po::variables_map vmap = GetSingleton().vmap;
-  std::map<std::string, util::ParamData> parameters = GetSingleton().parameters;
+  const po::variables_map& vmap = GetSingleton().vmap;
+  const std::map<std::string, util::ParamData>& parameters =
+      GetSingleton().parameters;
 
   if (!parameters.count(key))
   {
@@ -248,8 +149,9 @@ bool CLI::HasParam(const std::string& key)
       Log::Fatal << "Parameter '--" << key << "' does not exist in this "
           << "program." << std::endl;
   }
+  const std::string& checkKey = usedKey;
 
-  return (vmap.count(parameters[usedKey].boostName) > 0);
+  return (vmap.count(parameters.at(checkKey).boostName) > 0);
 }
 
 /**
@@ -491,20 +393,7 @@ void CLI::PrintHelp(const std::string& param)
         + std::string(1, data.alias) + ")" : "";
 
     // Figure out the name of the type.
-    std::string type = "";
-    if (data.tname == TYPENAME(std::string))
-      type = " [string]";
-    else if (data.tname == TYPENAME(int))
-      type = " [int]";
-    else if (data.tname == TYPENAME(bool))
-      type = ""; // Nothing to pass for a flag.
-    else if (data.tname == TYPENAME(float))
-      type = " [float]";
-    else if (data.tname == TYPENAME(double))
-      type = " [double]";
-    else if (data.tname == TYPENAME(arma::mat) ||
-             data.tname == TYPENAME(arma::Mat<size_t>))
-      type = " [string]"; // Since we take strings for matrices.
+    std::string type = " [" + data.stringTypeFunction() + "]";
 
     // Now, print the descriptions.
     std::string fullDesc = "  --" + usedParam + alias + type + "  ";
@@ -574,44 +463,10 @@ void CLI::PrintHelp(const std::string& param)
       }
 
       if (pass >= 1) // Append default value to description.
-      {
-        desc += "  Default value ";
-        std::stringstream tmp;
-
-        if (data.tname == TYPENAME(std::string))
-          tmp << "'" << boost::any_cast<std::string>(data.value) << "'.";
-        else if (data.tname == TYPENAME(int))
-          tmp << boost::any_cast<int>(data.value) << '.';
-        else if (data.tname == TYPENAME(bool))
-          desc = data.desc; // No extra output for that.
-        else if (data.tname == TYPENAME(float))
-          tmp << boost::any_cast<float>(data.value) << '.';
-        else if (data.tname == TYPENAME(double))
-          tmp << boost::any_cast<double>(data.value) << '.';
-        else if (data.tname == TYPENAME(arma::mat) ||
-                 data.tname == TYPENAME(arma::Mat<size_t>))
-          tmp << "'" << boost::any_cast<std::string>(data.value) << "'.";
-
-        desc += tmp.str();
-      }
-
-      // Figure out the name of the type.
-      std::string type = "";
-      if (data.tname == TYPENAME(std::string))
-        type = " [string]";
-      else if (data.tname == TYPENAME(int))
-        type = " [int]";
-      else if (data.tname == TYPENAME(bool))
-        type = ""; // Nothing to pass for a flag.
-      else if (data.tname == TYPENAME(float))
-        type = " [float]";
-      else if (data.tname == TYPENAME(double))
-        type = " [double]";
-      else if (data.tname == TYPENAME(arma::mat) ||
-               data.tname == TYPENAME(arma::Mat<size_t>))
-        type = " [string]";
+        desc += "  Default value " + data.defaultFunction(data) + ".";
 
       // Now, print the descriptions.
+      std::string type = " [" + data.stringTypeFunction() + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
 
       if (fullDesc.length() <= 32) // It all fits on one line.

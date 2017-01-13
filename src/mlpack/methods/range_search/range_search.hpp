@@ -133,6 +133,35 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
+   * Construct the RangeSearch model as a copy of the given model.  Note that
+   * this may be computationally intensive!
+   *
+   * @param other RangeSearch model to copy.
+   */
+  RangeSearch(const RangeSearch& other);
+
+  /**
+   * Construct the RangeSearch model by taking ownership of the given model.
+   *
+   * @param other RangeSearch model to take ownership of.
+   */
+  RangeSearch(RangeSearch&& other);
+
+  /**
+   * Copy the given RangeSearch model.
+   *
+   * @param other RangeSearch model to copy.
+   */
+  RangeSearch& operator=(const RangeSearch& other);
+
+  /**
+   * Take ownership of the given RangeSearch model.
+   *
+   * @param other RangeSearch model to take ownership of.
+   */
+  RangeSearch& operator=(RangeSearch&& other);
+
+  /**
    * Destroy the RangeSearch object.  If trees were created, they will be
    * deleted.
    */

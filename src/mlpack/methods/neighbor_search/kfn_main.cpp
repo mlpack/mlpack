@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include <string>
 #include <fstream>
@@ -25,6 +26,9 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+
+// Convenience typedef.
+typedef NSModel<FurthestNeighborSort> KFNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Furthest-Neighbors",
@@ -57,10 +61,9 @@ PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute the "
     "recall (it is printed when -v is specified).", "T");
 
 // The option exists to load or save models.
-PARAM_STRING_IN("input_model_file", "File containing pre-trained kFN model.",
-    "m", "");
-PARAM_STRING_OUT("output_model_file", "If specified, the kFN model will be "
-    "saved to the given file.", "M");
+PARAM_MODEL_IN(KFNModel, "input_model", "Pre-trained kFN model.", "m");
+PARAM_MODEL_OUT(KFNModel, "output_model", "If specified, the kFN model will be "
+    "output here.", "M");
 
 // The user may specify a query file of query points and a number of furthest
 // neighbors to search for.
@@ -95,9 +98,6 @@ PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
     "neighbors will be at least (p*100) % of the distance as the true furthest "
     "neighbor.", "p", 1);
 
-// Convenience typedef.
-typedef NSModel<FurthestNeighborSort> KFNModel;
-
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
@@ -109,16 +109,16 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
     // Notify the user of parameters that will be ignored.
     if (CLI::HasParam("tree_type"))
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
   }
 
   // The user should give something to do...
-  if (!CLI::HasParam("k") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("k") && !CLI::HasParam("output_model"))
     Log::Warn << "Neither -k nor --output_model_file are specified, so no "
         << "results from this program will be saved!" << endl;
 
@@ -286,8 +286,7 @@ int main(int argc, char *argv[])
   else
   {
     // Load the model from file.
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
+    kfn = std::move(CLI::GetParam<KFNModel>("input_model"));
 
     // Adjust search mode.
     kfn.SearchMode() = searchMode;
@@ -299,7 +298,8 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("leaf_size"))
       kfn.LeafSize() = size_t(lsInt);
 
-    Log::Info << "Loaded kFN model from '" << inputModelFile << "' (trained on "
+    Log::Info << "Loaded kFN model from '"
+        << CLI::GetUnmappedParam<KFNModel>("input_model") << "' (trained on "
         << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
         << endl;
   }
@@ -382,9 +382,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  if (CLI::HasParam("output_model_file"))
-  {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "kfn_model", kfn);
-  }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<KFNModel>("output_model") = std::move(kfn);
+
+  CLI::Destroy();
 }

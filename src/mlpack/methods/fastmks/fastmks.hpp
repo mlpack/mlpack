@@ -117,6 +117,21 @@ class FastMKS
   FastMKS(Tree* referenceTree,
           const bool singleMode = false);
 
+  /**
+   * Copy the parameters of the given model.
+   */
+  FastMKS(const FastMKS& other);
+
+  /**
+   * Take ownership of the given model.
+   */
+  FastMKS(FastMKS&& other);
+
+  /**
+   * Assign this model to be a copy of the given model.
+   */
+  FastMKS& operator=(const FastMKS& other);
+
   //! Destructor for the FastMKS object.
   ~FastMKS();
 

@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include "pca.hpp"
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
