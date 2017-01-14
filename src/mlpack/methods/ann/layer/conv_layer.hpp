@@ -142,6 +142,8 @@ class ConvLayer
                             rotatedFilter.n_cols / 2, 
                             rotatedFilter.n_rows / 2 + g.n_rows - 1,
                             rotatedFilter.n_cols / 2 + g.n_cols - 1);
+        else
+          g.slice(outMap) = output;
       }
     }
   }
@@ -277,7 +279,8 @@ class ConvLayer
   }
 
   template<typename eT>
-  void Pad(const arma::Mat<eT>& input, size_t wPad, size_t hPad, arma::Mat<eT>& output)
+  void Pad(const arma::Mat<eT>& input, size_t wPad, 
+              size_t hPad, arma::Mat<eT>& output)
   {
     if (output.n_rows != input.n_rows + wPad * 2 ||
         output.n_cols != input.n_cols + hPad * 2)
@@ -288,9 +291,11 @@ class ConvLayer
   }
 
   template<typename eT>
-  void Pad(const arma::Cube<eT>& input, size_t wPad, size_t hPad, arma::Cube<eT>& output)
+  void Pad(const arma::Cube<eT>& input, size_t wPad, 
+              size_t hPad, arma::Cube<eT>& output)
   {
-    output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2, input.n_slices);
+    output = arma::zeros(input.n_rows + wPad * 2, 
+                input.n_cols + hPad * 2, input.n_slices);
     for (size_t i = 0; i < input.n_slices; ++i)
       Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
     
