@@ -15,6 +15,10 @@ using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ConvLayerTest);
+
+/*
+ * Test whether Matrices m1 and m2 have all values within 0.01.
+ */
 void Test(arma::mat m1, arma::mat m2)
 {
   for (size_t i = 0; i < m1.n_elem; ++i)
@@ -32,6 +36,8 @@ void ConvLayerTest()
 {
   arma::vec a = arma::linspace<arma::vec>(1, 25, 25);
   arma::cube input(5, 5, 4);
+
+  //! Populate a cube with values 1-25.
   for (size_t i = 0; i < input.n_slices; ++i)
   {
     int vecIdx = 0;
@@ -41,12 +47,15 @@ void ConvLayerTest()
       vecIdx += 5;
     }
   }
+  // apply convolution layer with padding 1 in all dimension.
   ConvLayer<> conv3(4, 1, 3, 3, 1, 1, 1, 1);
   arma::cube conv3W = arma::zeros<arma::cube>(3, 3, 4 * 1);
   for (size_t i = 0; i < conv3W.n_slices; ++i) 
     conv3W(1, 1, i) = 1;
+  // filter applied is the identity kernel.
   conv3.Weights() = conv3W;
   
+  // test the forward pass.
   arma::cube output(5, 5, 1);
   output.slice(0) = input.slice(0) * 4;
   arma::cube convOutput;
@@ -54,10 +63,13 @@ void ConvLayerTest()
   conv3.Forward(conv3.InputParameter(), conv3.OutputParameter());
   Test(conv3.OutputParameter(), output);
   
+  // for backward pass, let the error is a matrix of ones.
   arma::cube error = arma::ones(5, 5, 1);
   conv3.Backward(conv3.InputParameter(), error, conv3.Delta());
+  // test the backward pass.
   Test(conv3.Delta(), arma::ones(5, 5, 4));
 
+  // test the gradient update assuming the delta as identity kernel.
   arma::cube delta = arma::zeros<arma::cube>(5, 5, 1);
   delta(2, 2, 0) = 1;
   arma::mat grad = conv3.InputParameter().slice(0).submat(1, 1, 3, 3);
