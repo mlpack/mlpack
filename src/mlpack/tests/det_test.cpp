@@ -648,8 +648,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 
   // Check default values of the original tree.
   BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE_EQUAL(testDTree->Left(), NULL);
-  BOOST_REQUIRE_EQUAL(testDTree->Right(), NULL);
+  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
+  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
 
   // Delete the original tree.
   delete testDTree;
@@ -731,8 +731,8 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 
   // Check default values of the original tree.
   BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE_EQUAL(testDTree->Left(), NULL);
-  BOOST_REQUIRE_EQUAL(testDTree->Right(), NULL);
+  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
+  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
 
   // Delete the original tree.
   delete testDTree;
