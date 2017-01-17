@@ -379,25 +379,25 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
 BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
 {
   arma::mat realData(3, 5);
-  
+
   realData << 4 << 5 << 7 << 3 << 5 << arma::endr
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
-  
+
   arma::sp_mat testData(realData);
-  
+
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
-  
+
   DTree<arma::sp_mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
-  
+
   BOOST_REQUIRE_CLOSE(alpha, numeric_limits<double>::max(), 1e-10);
   BOOST_REQUIRE(testDTree.SubtreeLeaves() == 1);
-  
+
   double rootError = -log(4.0) - log(7.0) - log(7.0);
-  
+
   BOOST_REQUIRE_CLOSE(testDTree.LogNegError(), rootError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.SubtreeLeavesLogNegError(), rootError, 1e-10);
   BOOST_REQUIRE(testDTree.Left() == NULL);
@@ -407,116 +407,44 @@ BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
 BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
 {
   arma::mat realData(3, 5);
-  
+
   realData << 4 << 5 << 7 << 3 << 5 << arma::endr
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
-  
-  arma::vec _q1(3), _q2(3), _q3(3), _q4(3);
-  
-  _q1 << 4 << 2 << 2;
-  _q2 << 5 << 0.25 << 6;
-  _q3 << 5 << 3 << 7;
-  _q4 << 2 << 3 << 3;
-  
+
+  arma::vec q1d(3), q2d(3), q3d(3), q4d(3);
+
+  q1d << 4 << 2 << 2;
+  q2d << 5 << 0.25 << 6;
+  q3d << 5 << 3 << 7;
+  q4d << 2 << 3 << 3;
+
   arma::sp_mat testData(realData);
-  arma::sp_vec q1(_q1), q2(_q2), q3(_q3), q4(_q4);
-  
+  arma::sp_vec q1(q1d), q2(q2d), q3(q3d), q4(q4d);
+
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
-  
+
   DTree<arma::sp_mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
-  
+
   double d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
   double d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
   double d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
-  
+
   BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(q1), 1e-10);
   BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(q2), 1e-10);
   BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(q3), 1e-10);
   BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
-  
+
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
-  
+
   double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
-  
+
   BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q1), 1e-10);
   BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q2), 1e-10);
   BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q3), 1e-10);
   BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
-}
-
-// Test the copy constructor and the copy operator.
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
-{
-  arma::Mat<float> testData(3, 5);
-
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
-
-   DTree<arma::Mat<float>> tree(testData);
-
-  // Copy the genarated DTree
-  DTree<arma::Mat<float>> tree2(tree);
-  DTree<arma::Mat<float>> tree3 = tree;
-
-  double max0, max1, max2, min0, min1, min2;
-
-  // Computing the max and min vals
-  max0 = tree.maxVals[0];
-  max1 = tree.maxVals[1];
-  max2 = tree.maxVals[2];
-  min0 = tree.minVals[0];
-  min1 = tree.minVals[1];
-  min2 = tree.minVals[2];
-
-  // Comparing with the DTree constructed using copy constructor
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[0], max0);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[1], max1);
-  BOOST_REQUIRE_EQUAL(tree2.maxVals[2], max2);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[0], min0);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[1], min1);
-  BOOST_REQUIRE_EQUAL(tree2.minVals[2], min2);
-
-  // Comparing with the DTree constructed using copy operator
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[0], max0);
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[1], max1);
-  BOOST_REQUIRE_EQUAL(tree3.maxVals[2], max2);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[0], min0);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[1], min1);
-  BOOST_REQUIRE_EQUAL(tree3.minVals[2], min2);
-}
-
-// Test the move operator.
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
-{
-  arma::Mat<float> testData(3, 5);
-
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
-
-  DTree<arma::Mat<float>> tree(testData);
-
-  double max0, max1, max2, min0, min1, min2, logNegError;
-
-  // Computing the max and min val and the logNegError that has been calculated
-  max0 = tree.maxVals[0];
-  max1 = tree.maxVals[1];
-  max2 = tree.maxVals[2];
-  min0 = tree.minVals[0];
-  min1 = tree.minVals[1];
-  min2 = tree.minVals[2]; 
-  logNegError = tree.logNegError;
-
-  DTree<arma::Mat<float>> tree2 = std::move(tree); 
-
-  BOOST_REQUIRE_EQUAL(tree2.logNegError, logNegError);
-
-  // Checking for the default values in tree after move is performed
-  BOOST_REQUIRE_EQUAL(tree.logNegError, -DBL_MAX);
 }
 
 /**
@@ -718,6 +646,11 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   // Construct a new tree using the move constructor.
   DTree<arma::mat> testDTree2(std::move(*testDTree));
 
+  // Check default values of the original tree.
+  BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
+  BOOST_REQUIRE_EQUAL(testDTree->Left(), NULL);
+  BOOST_REQUIRE_EQUAL(testDTree->Right(), NULL);
+
   // Delete the original tree.
   delete testDTree;
 
@@ -795,6 +728,11 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 
   // Construct a new tree using the move constructor.
   DTree<arma::mat> testDTree2 = std::move(*testDTree);
+
+  // Check default values of the original tree.
+  BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
+  BOOST_REQUIRE_EQUAL(testDTree->Left(), NULL);
+  BOOST_REQUIRE_EQUAL(testDTree->Right(), NULL);
 
   // Delete the original tree.
   delete testDTree;
