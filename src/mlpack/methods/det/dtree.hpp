@@ -47,34 +47,42 @@ class DTree
 {
  public:
   /**
-   * The actual, underlying type we're working with
+   * The actual, underlying type we're working with.
    */
   typedef typename MatType::elem_type     ElemType;
   typedef typename MatType::vec_type      VecType;
   typedef typename arma::Col<ElemType>    StatType;
-  
+
   /**
    * Create an empty density estimation tree.
    */
   DTree();
 
   /**
-   * Create a copy constructor.
+   * Create a tree that is the copy of the given tree.
+   *
+   * @param obj Tree to copy.
    */
   DTree(const DTree& obj);
 
   /**
-   * Create a copy assignment operator.
+   * Copy the given tree.
+   *
+   * @param obj Tree to copy.
    */
   DTree& operator=(const DTree& obj);
 
   /**
-   * Create a move constructor.
+   * Create a tree by taking ownership of another tree (move constructor).
+   *
+   * @param obj Tree to take ownership of.
    */
   DTree(DTree&& obj);
-  
+
   /**
-   * Create a move assignment operator.
+   * Take ownership of the given tree (move operator).
+   *
+   * @param obj Tree to take ownership of.
    */
   DTree& operator=(DTree&& obj);
 
