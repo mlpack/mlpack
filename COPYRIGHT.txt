@@ -65,6 +65,7 @@ Copyright:
   Copyright 2016, Shikhar Bhardwaj <shikharbhardwaj68@gmail.com>
   Copyright 2016, Yashu Seth <yashuseth2503@gmail.com>
   Copyright 2016, Mike Izbicki <mike@izbicki.me>
+  Copyright 2017, Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
 License: BSD-3-clause
   All rights reserved.
   .
