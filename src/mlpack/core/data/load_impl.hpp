@@ -53,7 +53,7 @@ std::vector<std::string> ToTokens(Tokenizer &lineTok)
 }
 
 inline
-void TransPoseTokens(std::vector<std::vector<std::string>> const &input,
+void TransposeTokens(std::vector<std::vector<std::string>> const &input,
                      std::vector<std::string> &output,
                      size_t index)
 {
@@ -442,7 +442,7 @@ bool Load(const std::string& filename,
       }
       for(size_t i = 0; i != cols; ++i)
       {
-        details::TransPoseTokens(tokensArray, tokens, i);
+        details::TransposeTokens(tokensArray, tokens, i);
         info.MapTokens(tokens, i, matrix);
       }
     }
