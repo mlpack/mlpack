@@ -16,6 +16,7 @@
 #include "load.hpp"
 #include "extension.hpp"
 
+#include<exception>
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
@@ -94,22 +95,16 @@ bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal)
 {
-  arma::mat matrix(vec);
-  Load(filename, matrix, fatal, false);
-  //Check if the returned matrix is vector if yes then 
-  //copy this to our vec else return error
-  if( matrix.is_vec() )
-    vec = matrix;
-  else
-    if( fatal)
-      Log::Fatal << "Loading '" << filename << "'failed "<<
-          ", the data you are tying to load is not a column vector "<< 
-          std::endl; 
-    else
-      Log::Warn << "Loading '" << filename << "'failed " <<
-          ", the data you are trying to load is not a column vector " <<
-          std::endl;
-    return false;
+  Load(filename, vec, fatal, false);
+  return true;
+}
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  Load(filename, rowvec, fatal, false);
   return true;
 }
 
@@ -325,7 +320,9 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   bool success;
   if (loadType != arma::hdf5_binary)
-    success = matrix.load(stream, loadType);
+  {
+      success = matrix.load(stream, loadType);
+  }
   else
     success = matrix.load(filename, loadType);
 

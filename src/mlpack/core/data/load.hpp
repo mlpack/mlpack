@@ -102,6 +102,11 @@ bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal = false);
 
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal = false);
+
 template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
