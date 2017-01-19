@@ -172,14 +172,10 @@ double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
     ResetDeterministic();
   }
 
-  currentInput = std::move(arma::mat(predictors.colptr(i),
-      predictors.n_rows, 1, false, true));
+  currentInput = predictors.unsafe_col(i);
+  currentTarget = responses.unsafe_col(i);
 
   Forward(std::move(currentInput));
-
-  currentTarget = arma::mat(responses.colptr(i), responses.n_rows,
-      1, false, true);
-
   double res = outputLayer.Forward(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(currentTarget));
 
