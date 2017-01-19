@@ -405,6 +405,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(inputSize, "inputSize");
   ar & data::CreateNVP(outputSize, "outputSize");
   ar & data::CreateNVP(targetSize, "targetSize");
+  ar & data::CreateNVP(currentInput, "currentInput");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

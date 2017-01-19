@@ -356,6 +356,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(parameter, "parameter");
   ar & data::CreateNVP(width, "width");
   ar & data::CreateNVP(height, "height");
+  ar & data::CreateNVP(currentInput, "currentInput");
+  ar & data::CreateNVP(currentTarget, "currentTarget");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
