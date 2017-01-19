@@ -20,7 +20,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const size_t minimumLeafSize,
     arma::Col<typename VecType::elem_type>& classProbabilities,
-    AllCategoricalSplit::AuxiliarySplitInfo<typename VecType::elem_type>& aux)
+    AllCategoricalSplit::AuxiliarySplitInfo<typename VecType::elem_type>&
+        /* aux */)
 {
   // Count the number of elements in each potential child.
   arma::Col<size_t> counts(numCategories);
@@ -35,8 +36,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
-  arma::uvec childPositions(numCategories);
-  std::vector<arma::Row<size_t>> childLabels;
+  arma::uvec childPositions(numCategories, arma::fill::zeros);
+  std::vector<arma::Row<size_t>> childLabels(numCategories);
   for (size_t i = 0; i < numCategories; ++i)
     childLabels[i].zeros(counts[i]);
 
@@ -83,10 +84,10 @@ template<typename FitnessFunction>
 template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::Col<ElemType>& classProbabilities,
+    const arma::Col<ElemType>& /* classProbabilities */,
     const AllCategoricalSplit::AuxiliarySplitInfo<ElemType>& /* aux */)
 {
-  return point;
+  return (size_t) point;
 }
 
 } // namespace tree
