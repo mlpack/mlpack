@@ -19,13 +19,20 @@ namespace tree {
 /**
  * This class implements a generic decision tree learner.  Its behavior can be
  * controlled via its template arguments.
+ *
+ * The class inherits from the auxiliary split information in order to prevent
+ * an empty auxiliary split information struct from taking any extra size.
  */
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename ElemType = double,
          bool NoRecursion = false>
-class DecisionTree
+class DecisionTree :
+    public NumericSplitType<FitnessFunction>::template
+        AuxiliarySplitInfo<ElemType>,
+    public CategoricalSplitType<FitnessFunction>::template
+        AuxiliarySplitInfo<ElemType>
 {
  public:
   //! Allow access to the numeric split type.
@@ -190,16 +197,26 @@ class DecisionTree
    */
   arma::vec classProbabilities;
 
-  //! Auxiliary information in case this is a numeric split.  This class may be
-  //! empty.
-  typename NumericSplit::template AuxiliarySplitInfo<ElemType> numericAux;
-  //! Auxiliary information in case this is a categorical split.  This class may
-  //! be empty.
-  typename CategoricalSplit::template AuxiliarySplitInfo<ElemType>
-      categoricalAux;
+  //! Note that this class will also hold the members of the NumericSplit and
+  //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
+  //! We'll define some convenience typedefs here.
+  typedef typename NumericSplit::template AuxiliarySplitInfo<ElemType>
+      NumericAuxiliarySplitInfo;
+  typedef typename CategoricalSplit::template AuxiliarySplitInfo<ElemType>
+      CategoricalAuxiliarySplitInfo;
+
+  /**
+   * Calculate the class probabilities of the given labels.
+   */
+  template<typename RowType>
+  void CalculateClassProbabilities(const RowType& labels,
+                                   const size_t numClasses);
 };
 
 } // namespace tree
 } // namespace mlpack
+
+// Include implementation.
+#include "decision_tree_impl.hpp"
 
 #endif
