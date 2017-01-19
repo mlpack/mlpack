@@ -38,7 +38,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Add<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */,
-    const  arma::Mat<eT>&& gy,
+    const arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
   g = gy;
