@@ -20,7 +20,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     BestBinaryNumericSplit::AuxiliarySplitInfo<typename VecType::elem_type>&
-        aux)
+        /* aux */)
 {
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -30,13 +30,18 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   arma::uvec sortedIndices = arma::sort_index(data);
   arma::Row<size_t> sortedLabels(labels.n_elem);
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-    sortedLabels[i] = labels[sortedIndices[i]];
+    sortedLabels[sortedIndices[i]] = labels[i];
 
-  // Loop through all possible split points, choosing the best one.
+  // Loop through all possible split points, choosing the best one.  Also, force
+  // a minimum leaf size of 1 (empty children don't make sense).
   double bestFoundGain = bestGain;
-  for (size_t index = minimumLeafSize; index < data.n_elem - minimumLeafSize;
-      ++index)
+  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+  for (size_t index = minimum; index < data.n_elem - minimum; ++index)
   {
+    // Make sure that the value has changed.
+    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+      continue;
+
     // Calculate the gain for the left and right child.
     const double leftGain = FitnessFunction::Evaluate(sortedLabels.subvec(0,
         index - 1), numClasses);
@@ -44,14 +49,14 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
         index, sortedLabels.n_elem - 1), numClasses);
 
     // Calculate the fraction of points in the left and right children.
-    const double leftRatio = double(index) / double(sortedLabels.n_elem);
-    const double rightRatio = 1.0 - leftRatio;
+    const double rightRatio = double(index) / double(sortedLabels.n_elem);
+    const double leftRatio = 1.0 - rightRatio;
 
     // Calculate the gain at this split point.
     const double gain = leftRatio * leftGain + rightRatio * rightGain;
 
     // Corner case: is this the best possible split?
-    if (gain == FitnessFunction::BestGain(numClasses))
+    if (gain == 0.0)
     {
       // We can take a shortcut: no split will be better than this, so just take
       // this one.
