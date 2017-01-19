@@ -47,8 +47,6 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -84,8 +82,6 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -134,8 +130,6 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
@@ -168,8 +162,6 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -199,8 +191,6 @@ class FFTConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
