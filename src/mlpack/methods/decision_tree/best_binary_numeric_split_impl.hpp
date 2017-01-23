@@ -36,7 +36,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // a minimum leaf size of 1 (empty children don't make sense).
   double bestFoundGain = bestGain;
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
-  for (size_t index = minimum; index < data.n_elem - minimum; ++index)
+  for (size_t index = minimum; index < data.n_elem - (minimum - 1); ++index)
   {
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
