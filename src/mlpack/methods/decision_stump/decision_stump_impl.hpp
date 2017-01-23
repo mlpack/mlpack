@@ -233,7 +233,7 @@ void DecisionStump<MatType, NoRecursion>::Train(
   splitDimensionOrLabel = bestDim;
 
   // Once the splitting column/dimension has been decided, train on it.
-  TrainOnDim(data.row(splitDimensionOrLabel), labels);
+  TrainOnDim(data, splitDimensionOrLabel, labels);
 }
 
 /**
@@ -447,25 +447,30 @@ double DecisionStump<MatType, NoRecursion>::SetupSplitDimension(
  *      which we now train the decision stump.
  */
 template<typename MatType, bool NoRecursion>
-template<typename VecType>
 void DecisionStump<MatType, NoRecursion>::TrainOnDim(
-    const VecType& dimension,
+    const MatType& data,
+    const size_t dimension,
     const arma::Row<size_t>& labels)
 {
   size_t i, count, begin, end;
 
-  typename MatType::row_type sortedSplitDim = arma::sort(dimension);
-  arma::uvec sortedSplitIndexDim = arma::stable_sort_index(dimension.t());
-  arma::Row<size_t> sortedLabels(dimension.n_elem);
-  sortedLabels.fill(0);
+  typename MatType::row_type sortedSplitDim = arma::sort(data.row(dimension));
+  arma::uvec sortedSplitIndexDim =
+      arma::stable_sort_index(data.row(dimension).t());
+  arma::Row<size_t> sortedLabels(data.n_cols);
   arma::Col<size_t> binLabels;
 
-  for (i = 0; i < dimension.n_elem; i++)
+  for (i = 0; i < data.n_cols; i++)
     sortedLabels(i) = labels(sortedSplitIndexDim(i));
 
+  /**
+   * Loop through the points, splitting when it is advantageous.  We check to
+   * see if we can split at index i, and then if we can, the split will take the
+   * value that's the midpoint between index i and index i + 1.
+   */
   arma::rowvec subCols;
   double mostFreq;
-  i = 0;
+  i = bucketSize;
   count = 0;
   while (i < sortedLabels.n_elem)
   {
@@ -506,7 +511,7 @@ void DecisionStump<MatType, NoRecursion>::TrainOnDim(
       mostFreq = CountMostFreq(sortedLabels.cols(begin, end));
 
       splitOrClassProbs.resize(splitOrClassProbs.n_elem + 1);
-      splitOrClassProbs(splitOrClassProbs.n_elem - 1) = sortedSplitDim(begin);
+      splitOrClassProbs(splitOrClassProbs.n_elem - 1) = sortedSplitDim(end + 1);
       binLabels.resize(binLabels.n_elem + 1);
       binLabels(binLabels.n_elem - 1) = mostFreq;
 
@@ -576,6 +581,24 @@ void DecisionStump<MatType, NoRecursion>::TrainOnDim(
   else
   {
     // Do recursion.
+    size_t begin = 0;
+    for (size_t i = 0; i < splitOrClassProbs.n_elem; ++i)
+    {
+      // Determine how many points are in this child.
+      size_t lastBegin = begin;
+      while (sortedSplitDim(++begin) < splitOrClassProbs[i]) { }
+      size_t numPoints = (lastBegin - begin);
+
+      // Allocate memory for child data and fill it.
+      MatType childData(data.n_rows, numPoints);
+      for (size_t i = lastBegin; i < begin; ++i)
+        childData.col(i - lastBegin) = data.col(sortedSplitIndexDim[i]);
+      arma::Row<size_t> childLabels = sortedLabels.subvec(lastBegin, begin - 1);
+
+      // Create the child recursively.
+      children.push_back(new DecisionStump(childData, childLabels, classes,
+          bucketSize));
+    }
   }
 }
 

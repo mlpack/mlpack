@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
