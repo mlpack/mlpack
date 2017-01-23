@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_SPARSE_OUTPUT_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {

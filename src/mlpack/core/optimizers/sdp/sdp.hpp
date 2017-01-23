@@ -11,7 +11,8 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
 #define MLPACK_CORE_OPTIMIZERS_SDP_SDP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
 
 namespace mlpack {
 namespace optimization {

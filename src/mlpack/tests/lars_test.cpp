@@ -13,6 +13,7 @@
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/core/data/load.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

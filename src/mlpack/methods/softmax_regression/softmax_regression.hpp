@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include "softmax_regression_function.hpp"
@@ -74,8 +74,8 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @param fitIntercept add intercept term or not.
    */
-  SoftmaxRegression(const size_t inputSize,
-                    const size_t numClasses,
+  SoftmaxRegression(const size_t inputSize = 0,
+                    const size_t numClasses = 0,
                     const bool fitIntercept = false);
 
   /**

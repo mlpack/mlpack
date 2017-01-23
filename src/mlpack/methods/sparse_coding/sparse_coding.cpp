@@ -11,6 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "sparse_coding.hpp"
+#include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/util/param.hpp>
 
 namespace mlpack {
 namespace sparse_coding {

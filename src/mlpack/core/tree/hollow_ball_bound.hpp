@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_HPP
 #define MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "bound_traits.hpp"
 

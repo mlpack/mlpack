@@ -12,7 +12,8 @@
 #ifndef MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/range.hpp>
 
 #include "../statistic.hpp"
 #include "first_point_is_root.hpp"

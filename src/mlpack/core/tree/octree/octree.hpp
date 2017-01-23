@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_OCTREE_OCTREE_HPP
 #define MLPACK_CORE_TREE_OCTREE_OCTREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "../hrectbound.hpp"
 #include "../statistic.hpp"
 

@@ -9,32 +9,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <iostream>
-#include <sstream>
-
-#ifndef _WIN32
-  #include <sys/time.h>
-#endif
-
-// For Sleep().
-#ifdef _WIN32
-  #include <windows.h>
-#endif
-
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
-#define BASH_RED "\033[0;31m"
-#define BASH_GREEN "\033[0;32m"
-#define BASH_YELLOW "\033[0;33m"
-#define BASH_CYAN "\033[0;36m"
-#define BASH_CLEAR "\033[0m"
-
 using namespace mlpack;
 using namespace mlpack::util;
+using namespace mlpack::kernel;
+using namespace mlpack::data;
+using namespace std;
 
 // When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
@@ -53,7 +37,7 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
 void AddRequiredCLIOptions()
 {
   CLI::Add<bool>(false, "help", "Default help info.", 'h');
-  CLI::Add<std::string>("", "info", "Get help on a specific module or option.");
+  CLI::Add<string>("", "info", "Get help on a specific module or option.");
   CLI::Add<bool>(false, "verbose", "Display informational messages and the full"
       " list of parameters and timers at the end of execution.", 'v');
   CLI::Add<bool>(false, "version", "Display the version of mlpack.", 'V');
@@ -79,38 +63,6 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
       CLI::HasParam("a"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"),
       CLI::GetParam<bool>("a"));
-
-  CLI::Destroy();
-}
-
-/**
- * Test the output of CLI.  We will pass bogus input to a stringstream so that
- * none of it gets to the screen.
- */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
-{
-  std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
-
-  pss << "This shouldn't break anything" << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "This shouldn't break anything\n");
-
-  ss.str("");
-  pss << "Test the new lines...";
-  pss << "shouldn't get 'Info' here." << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR
-      "Test the new lines...shouldn't get 'Info' here.\n");
-
-  pss << "But now I should." << std::endl << std::endl;
-  pss << "";
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR
-      "Test the new lines...shouldn't get 'Info' here.\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "But now I should.\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "");
 }
 
 /**
@@ -125,8 +77,6 @@ BOOST_AUTO_TEST_CASE(TestOption)
   PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), 42);
-
-  CLI::Destroy();
 }
 
 /**
@@ -166,7 +116,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
-      std::runtime_error);
+      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -197,8 +147,6 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   delete[] argv[0];
   delete[] argv[1];
-
-  CLI::Destroy();
 }
 
 /**
@@ -224,7 +172,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
 
   BOOST_REQUIRE(CLI::HasParam("test_vec"));
 
-  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test_vec");
+  vector<size_t> v = CLI::GetParam<vector<size_t>>("test_vec");
 
   BOOST_REQUIRE_EQUAL(v.size(), 3);
   BOOST_REQUIRE_EQUAL(v[0], 1);
@@ -257,176 +205,12 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
 
   BOOST_REQUIRE(CLI::HasParam("test2_vec"));
 
-  std::vector<size_t> v = CLI::GetParam<std::vector<size_t>>("test2_vec");
+  vector<size_t> v = CLI::GetParam<vector<size_t>>("test2_vec");
 
   BOOST_REQUIRE_EQUAL(v.size(), 3);
   BOOST_REQUIRE_EQUAL(v[0], 1);
   BOOST_REQUIRE_EQUAL(v[1], 2);
   BOOST_REQUIRE_EQUAL(v[2], 4);
-
-}
-
-/**
- * Test that we can correctly output Armadillo objects to PrefixedOutStream
- * objects.
- */
-BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
-{
-  // We will test this with both a vector and a matrix.
-  arma::vec test("1.0 1.5 2.0 2.5 3.0 3.5 4.0");
-
-  std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
-
-  pss << test;
-  // This should result in nothing being on the current line (since it clears
-  // it).
-  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.5000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.0000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   3.0000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   3.5000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000\n");
-
-  ss.str("");
-  pss << trans(test);
-  // This should result in there being stuff on the line.
-  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR
-      "   1.0000   1.5000   2.0000   2.5000   3.0000   3.5000   4.0000\n");
-
-  arma::mat test2("1.0 1.5 2.0; 2.5 3.0 3.5; 4.0 4.5 4.99999");
-  ss.str("");
-  pss << test2;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
-
-  // Try and throw a curveball by not clearing the line before outputting
-  // something else.  The PrefixedOutStream should not force Armadillo objects
-  // onto their own lines.
-  ss.str("");
-  pss << "hello" << test2;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
-}
-
-/**
- * Test that we can correctly output things in general.
- */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStream)
-{
-  std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
-
-  pss << "hello world I am ";
-  pss << 7;
-
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7");
-
-  pss << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7\n");
-
-  ss.str("");
-  pss << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR "\n");
-}
-
-/**
- * Test format modifiers.
- */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
-{
-  std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
-
-  pss << "I have a precise number which is ";
-  pss << std::setw(6) << std::setfill('0') << (int)156;
-
-  BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR
-      "I have a precise number which is 000156");
-}
-
-/**
- * We should be able to start and then stop a timer multiple times and it should
- * save the value.
- */
-BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
-{
-  AddRequiredCLIOptions();
-
-  Timer::Start("test_timer");
-
-  // On Windows (or, at least, in Windows not using VS2010) we cannot use
-  // usleep() because it is not provided.  Instead we will use Sleep() for a
-  // number of milliseconds.
-  #ifdef _WIN32
-  Sleep(10);
-  #else
-  usleep(10000);
-  #endif
-
-  Timer::Stop("test_timer");
-
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 10000);
-
-  // Restart it.
-  Timer::Start("test_timer");
-
-  #ifdef _WIN32
-  Sleep(10);
-  #else
-  usleep(10000);
-  #endif
-
-  Timer::Stop("test_timer");
-
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 20000);
-
-  // Just one more time, for good measure...
-  Timer::Start("test_timer");
-
-  #ifdef _WIN32
-  Sleep(20);
-  #else
-  usleep(20000);
-  #endif
-
-  Timer::Stop("test_timer");
-
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
-
-  CLI::Destroy();
-}
-
-BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
-{
-  AddRequiredCLIOptions();
-
-  Timer::Start("test_timer");
-
-  BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
-
-  CLI::Destroy();
-}
-
-BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
-{
-  AddRequiredCLIOptions();
-
-  Timer::Start("test_timer");
-  Timer::Stop("test_timer");
-
-  BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
-
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
@@ -455,7 +239,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = CLI::GetParam<arma::mat>("matrix");
@@ -468,9 +252,6 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
 
   for (size_t i = 0; i < dataset.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
-
-  // Clean it up.
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
@@ -497,7 +278,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = CLI::GetParam<arma::mat>("matrix");
@@ -510,9 +291,6 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
 
   for (size_t i = 0; i < dataset.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
-
-  // Clean it up.
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
@@ -538,7 +316,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -561,7 +339,6 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
 
   // Remove the file.
   remove("test.csv");
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
@@ -587,7 +364,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), std::runtime_error);
+  BOOST_REQUIRE_THROW(CLI::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -610,7 +387,6 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
 
   // Remove the file.
   remove("test.csv");
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(IntParamTest)
@@ -630,15 +406,13 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 
   BOOST_REQUIRE(CLI::HasParam("int"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("int"), 3);
-
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(StringParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<std::string>("", "string", "Test string", 's', false, true, false);
+  CLI::Add<string>("", "string", "Test string", 's', false, true, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -650,9 +424,7 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE(CLI::HasParam("string"));
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<std::string>("string"), std::string("3"));
-
-  CLI::Destroy();
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<string>("string"), string("3"));
 }
 
 BOOST_AUTO_TEST_CASE(DoubleParamTest)
@@ -672,8 +444,6 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 
   BOOST_REQUIRE(CLI::HasParam("double"));
   BOOST_REQUIRE_CLOSE(CLI::GetParam<double>("double"), 3.12, 1e-10);
-
-  CLI::Destroy();
 }
 
 BOOST_AUTO_TEST_CASE(RequiredOptionTest)
@@ -690,7 +460,7 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
-      std::runtime_error);
+      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -706,7 +476,7 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
-      std::runtime_error);
+      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -723,8 +493,12 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
       true);
   CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
   CLI::Add<double>(0.0, "double2", "Test double", 'D', false, true, false);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, true, true);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel2", "Test kernel", 'K',
+      false, false, true);
 
-  const char* argv[7];
+  const char* argv[11];
   argv[0] = "./test";
   argv[1] = "--matrix_file";
   argv[2] = "file1.csv";
@@ -732,8 +506,12 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   argv[4] = "file2.csv";
   argv[5] = "-d";
   argv[6] = "1.334";
+  argv[7] = "-k";
+  argv[8] = "kernel.txt";
+  argv[9] = "-K";
+  argv[10] = "kernel2.txt";
 
-  int argc = 7;
+  int argc = 11;
 
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
@@ -742,12 +520,257 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file2.csv");
   BOOST_REQUIRE_CLOSE(CLI::GetUnmappedParam<double>("double"), 1.334, 1e-10);
   BOOST_REQUIRE_SMALL(CLI::GetUnmappedParam<double>("double2"), 1e-10);
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel"),
+      "kernel.txt");
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
+      "kernel2.txt");
 
   // Can we assign an unmapped parameter?
   CLI::GetUnmappedParam<arma::mat>("matrix2") =
       CLI::GetUnmappedParam<arma::mat>("matrix");
+  CLI::GetUnmappedParam<GaussianKernel>("kernel2") =
+      CLI::GetUnmappedParam<GaussianKernel>("kernel");
 
   BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
+      "kernel.txt");
+
+  remove("kernel.txt");
+}
+
+/**
+ * Test that we can serialize a model and then deserialize it through the CLI
+ * interface.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, false);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--kernel_file";
+  argv[2] = "kernel.txt";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Create the kernel we'll save.
+  GaussianKernel gk(0.5);
+
+  CLI::GetParam<GaussianKernel>("kernel") = move(gk);
+
+  // Save it.
+  CLI::Destroy();
+
+  // Now create a new CLI object and load it.
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+      false, true);
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Load the kernel from file.
+  GaussianKernel gk2 = move(CLI::GetParam<GaussianKernel>("kernel"));
+
+  BOOST_REQUIRE_CLOSE(gk2.Bandwidth(), 0.5, 1e-5);
+
+  // Now remove the file we made.
+  remove("kernel.txt");
+}
+
+/**
+ * Test that an exception is thrown when a required model is not specified.
+ */
+BOOST_AUTO_TEST_CASE(RequiredModelTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k', true,
+      true);
+
+  // Don't specify any input parameters.
+  const char* argv[1];
+  argv[0] = "./test";
+
+  int argc = 1;
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+      runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Test that we can load both a dataset and its associated info.
+ */
+BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
+{
+  AddRequiredCLIOptions();
+
+  // Write test file to load.
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one STRING" << endl;
+  f << "@attribute two REAL" << endl;
+  f << endl;
+  f << "@attribute three STRING" << endl;
+  f << endl;
+  f << "\% a comment line " << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "hello, 1, moo" << endl;
+  f << "cheese, 2.34, goodbye" << endl;
+  f << "seven, 1.03e+5, moo" << endl;
+  f << "hello, -1.3, goodbye" << endl;
+  f.close();
+
+  // Add options.
+  typedef tuple<DatasetInfo, arma::mat> TupleType;
+  CLI::Add<TupleType>(TupleType(), "dataset", "Test dataset", 'd', false,
+      true);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--dataset_file";
+  argv[2] = "test.arff";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Get the dataset and info.
+  DatasetInfo info = move(get<0>(CLI::GetParam<TupleType>("dataset")));
+  arma::mat dataset = move(get<1>(CLI::GetParam<TupleType>("dataset")));
+
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+
+  // The first dimension must all be different (except the ones that are the
+  // same).
+  BOOST_REQUIRE_EQUAL(dataset(0, 0), dataset(0, 3));
+  BOOST_REQUIRE_NE(dataset(0, 0), dataset(0, 1));
+  BOOST_REQUIRE_NE(dataset(0, 1), dataset(0, 2));
+  BOOST_REQUIRE_NE(dataset(0, 2), dataset(0, 0));
+
+  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+
+  BOOST_REQUIRE_EQUAL(dataset(2, 0), dataset(2, 2));
+  BOOST_REQUIRE_EQUAL(dataset(2, 1), dataset(2, 3));
+  BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
+
+  remove("test.arff");
+}
+
+/**
+ * Test that we can access a parameter before we load it.
+ */
+BOOST_AUTO_TEST_CASE(RawIntegralParameter)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true);
+
+  const char* argv[1];
+  argv[0] = "./test";
+  int argc = 1;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Set the double.
+  CLI::GetRawParam<double>("double") = 3.0;
+
+  // Now when we get it, it should be what we just set it to.
+  BOOST_REQUIRE_CLOSE(CLI::GetParam<double>("double"), 3.0, 1e-5);
+}
+
+/**
+ * Test that we can load a dataset with a pre-set mapping through
+ * CLI::GetRawParam().
+ */
+BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
+{
+  AddRequiredCLIOptions();
+
+  // Create the ARFF that we will read.
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one STRING" << endl;
+  f << "@attribute two REAL" << endl;
+  f << endl;
+  f << "@attribute three STRING" << endl;
+  f << endl;
+  f << "\% a comment line " << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "hello, 1, moo" << endl;
+  f << "cheese, 2.34, goodbye" << endl;
+  f << "seven, 1.03e+5, moo" << endl;
+  f << "hello, -1.3, goodbye" << endl;
+  f.close();
+
+  CLI::Add<tuple<DatasetInfo, arma::mat>>(tuple<DatasetInfo, arma::mat>(),
+      "tuple", "Test tuple", 't', false, true);
+
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--tuple_file";
+  argv[2] = "test.arff";
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // Create a pre-filled DatasetInfo object.
+  DatasetInfo info(3);
+  info.Type(0) = Datatype::categorical;
+  info.Type(2) = Datatype::categorical;
+  info.MapString("seven", 0); // This will have mapped value 0.
+  info.MapString("cheese", 0); // This will have mapped value 1.
+  info.MapString("hello", 0); // This will have mapped value 2.
+  info.MapString("goodbye", 2); // This will have mapped value 0.
+  info.MapString("moo", 2); // This will have mapped value 1.
+
+  // Now set the dataset info.
+  std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;
+
+  // Now load the dataset.
+  arma::mat dataset =
+      std::get<1>(CLI::GetParam<tuple<DatasetInfo, arma::mat>>("tuple"));
+
+  // Check the values.
+  BOOST_REQUIRE_CLOSE(dataset(0, 0), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 1), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(2, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(0, 2), 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e+5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 3), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+  BOOST_REQUIRE_SMALL(dataset(2, 3), 1e-5);
+
+  remove("test.arff");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

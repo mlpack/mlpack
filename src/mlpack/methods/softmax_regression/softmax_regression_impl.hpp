@@ -33,11 +33,12 @@ SoftmaxRegression(const size_t inputSize,
 }
 
 template<template<typename> class OptimizerType>
-SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
-                                                    const arma::Row<size_t>& labels,
-                                                    const size_t numClasses,
-                                                    const double lambda,
-                                                    const bool fitIntercept) :
+SoftmaxRegression<OptimizerType>::SoftmaxRegression(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)

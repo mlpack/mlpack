@@ -412,9 +412,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
 {
   // Very simple HMM.  4 emissions with equal probability and 2 states with
-  // equal probability.  The default transition and emission matrices satisfy
-  // this property.
+  // equal probability.
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
+  hmm.Initial() = arma::ones<arma::vec>(2) / 2.0;
+  hmm.Transition() = arma::ones<arma::mat>(2, 2) / 2.0;
 
   // Now generate a really, really long sequence.
   arma::mat dataSeq;

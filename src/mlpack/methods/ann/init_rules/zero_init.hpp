@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_INIT_RULES_ZERO_INIT_HPP
 #define MLPACK_METHODS_ANN_INIT_RULES_ZERO_INIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
 #define MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace tree {

@@ -15,7 +15,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 #define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include "aug_lagrangian_function.hpp"

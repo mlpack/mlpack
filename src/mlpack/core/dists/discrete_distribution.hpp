@@ -13,7 +13,9 @@
 #ifndef MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace distribution /** Probability distributions. */ {

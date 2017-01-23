@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_SORT_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_SORT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace neighbor {

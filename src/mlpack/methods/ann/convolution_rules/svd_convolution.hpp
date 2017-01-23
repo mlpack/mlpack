@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "border_modes.hpp"
 #include "fft_convolution.hpp"
 #include "naive_convolution.hpp"

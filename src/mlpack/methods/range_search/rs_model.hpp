@@ -106,6 +106,34 @@ class RSModel
           const bool randomBasis = false);
 
   /**
+   * Copy the given RSModel.
+   *
+   * @param other RSModel to copy.
+   */
+  RSModel(const RSModel& other);
+
+  /**
+   * Take ownership of the given RSModel.
+   *
+   * @param other RSModel to take ownership of.
+   */
+  RSModel(RSModel&& other);
+
+  /**
+   * Copy the given RSModel.
+   *
+   * @param other RSModel to copy.
+   */
+  RSModel& operator=(const RSModel& other);
+
+  /**
+   * Take ownership of the given RSModel.
+   *
+   * @param other RSModel to take ownership of.
+   */
+  RSModel& operator=(RSModel&& other);
+
+  /**
    * Clean memory, if necessary.
    */
   ~RSModel();

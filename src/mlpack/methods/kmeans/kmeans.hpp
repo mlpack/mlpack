@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_KMEANS_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_KMEANS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "sample_initialization.hpp"

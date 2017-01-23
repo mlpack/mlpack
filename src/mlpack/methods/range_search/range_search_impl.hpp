@@ -171,6 +171,129 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    const RangeSearch& other) :
+    oldFromNewReferences(other.oldFromNewReferences),
+    referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
+    referenceSet(other.referenceTree ? &referenceTree->Dataset() :
+        new MatType(*other.referenceSet)),
+    treeOwner(other.referenceTree),
+    setOwner(!other.referenceTree),
+    naive(other.naive),
+    singleMode(other.singleMode),
+    metric(other.metric),
+    baseCases(other.baseCases),
+    scores(other.scores)
+{
+  // Nothing to do.
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
+    oldFromNewReferences(std::move(other.oldFromNewReferences)),
+    referenceTree(other.referenceTree),
+    referenceSet(other.referenceSet),
+    treeOwner(other.treeOwner),
+    setOwner(other.setOwner),
+    naive(other.naive),
+    singleMode(other.singleMode),
+    metric(std::move(other.metric)),
+    baseCases(other.baseCases),
+    scores(other.scores)
+{
+  // Clear other object.
+  other.referenceSet = new MatType();
+  other.referenceTree =
+      BuildTree<Tree>(const_cast<MatType&>(*other.referenceSet),
+      other.oldFromNewReferences);
+  other.treeOwner = true;
+  other.setOwner = true;
+  other.naive = false;
+  other.singleMode = false;
+  other.baseCases = 0;
+  other.scores = 0;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>&
+RangeSearch<MetricType, MatType, TreeType>::operator=(const RangeSearch& other)
+{
+  // Clean memory first.
+  if (treeOwner)
+    delete referenceTree;
+  if (setOwner)
+    delete referenceSet;
+
+  // Copy the other model.
+  oldFromNewReferences = other.oldFromNewReferences;
+  referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
+  referenceSet = other.referenceTree ? &referenceTree->Dataset() :
+      new MatType(*other.referenceSet);
+  treeOwner = other.referenceTree;
+  setOwner = !other.referenceTree;
+  naive = other.naive;
+  singleMode = other.singleMode;
+  metric = other.metric;
+  baseCases = other.baseCases;
+  scores = other.scores;
+
+  return *this;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>&
+RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch&& other)
+{
+  // Clean memory first.
+  if (treeOwner)
+    delete referenceTree;
+  if (setOwner)
+    delete referenceSet;
+
+  // Move the other model.
+  oldFromNewReferences = std::move(other.oldFromNewReferences);
+  referenceTree = other.referenceTree;
+  referenceSet = other.referenceSet;
+  treeOwner = other.treeOwner;
+  setOwner = other.setOwner;
+  naive = other.naive;
+  singleMode = other.singleMode;
+  metric = std::move(other.metric);
+  baseCases = other.baseCases;
+  scores = other.scores;
+
+  // Clean other model.
+  other.referenceSet = new MatType();
+  other.referenceTree =
+      BuildTree<Tree>(const_cast<MatType&>(*other.referenceSet),
+      other.oldFromNewReferences);
+  other.treeOwner = true;
+  other.setOwner = true;
+  other.naive = false;
+  other.singleMode = false;
+  other.baseCases = 0;
+  other.scores = 0;
+
+  return *this;
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)

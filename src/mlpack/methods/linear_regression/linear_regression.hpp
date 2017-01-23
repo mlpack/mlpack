@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP
 #define MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace regression /** Regression methods. */ {

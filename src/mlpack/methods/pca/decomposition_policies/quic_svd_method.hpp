@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_QUIC_SVD_METHOD_HPP
 #define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_QUIC_SVD_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/quic_svd/quic_svd.hpp>
 
 namespace mlpack {

@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 /**
  * Test that the move constructor works.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+BOOST_AUTO_TEST_CASE(MoveConstructorMatrixTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
   arma::mat copy(dataset);
@@ -1442,5 +1442,258 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   BOOST_REQUIRE_EQUAL(distances.size(), 50);
 }
 
+/**
+ * Test copy constructor and copy operator.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<> rs(std::move(dataset));
+
+  // Copy constructor and operator.
+  RangeSearch<> rs2(rs);
+  RangeSearch<> rs3 = rs;
+
+  // Get results.
+  vector<vector<double>> distances, distances2, distances3;
+  vector<vector<size_t>> neighbors, neighbors2, neighbors3;
+
+  rs.Search(math::Range(0.2, 0.3), neighbors, distances);
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+  rs3.Search(math::Range(0.2, 0.3), neighbors3, distances3);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), distances3.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors3.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances3[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors3[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors3[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances3[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2(std::move(*rs));
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move operator.
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2 = std::move(*rs);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test copy constructor and copy operator in naive mode (so there are no
+ * trees).
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<> rs(std::move(dataset), true);
+
+  // Copy constructor and operator.
+  RangeSearch<> rs2(rs);
+  RangeSearch<> rs3 = rs;
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+  BOOST_REQUIRE_EQUAL(rs3.Naive(), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2, distances3;
+  vector<vector<size_t>> neighbors, neighbors2, neighbors3;
+
+  rs.Search(math::Range(0.2, 0.3), neighbors, distances);
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+  rs3.Search(math::Range(0.2, 0.3), neighbors3, distances3);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), distances3.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors3.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances3[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors3[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors3[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances3[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2(std::move(*rs));
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move operator.
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2 = std::move(*rs);
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();

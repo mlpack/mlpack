@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
 #define MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <boost/heap/priority_queue.hpp>
 
 namespace mlpack {

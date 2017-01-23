@@ -29,115 +29,20 @@
 
 #include <mlpack/prereqs.hpp>
 
-/**
- * The TYPENAME macro is used internally to convert a type into a string.
- */
-#define TYPENAME(x) (std::string(typeid(x).name()))
+#include "param_data.hpp"
+#include "print_param.hpp"
+#include "output_param.hpp"
+#include "default_param.hpp"
+#include "string_type_param.hpp"
 
 namespace po = boost::program_options;
 
 namespace mlpack {
-
 namespace util {
 
 // Externally defined in option.hpp, this class holds information about the
 // program being run.
 class ProgramDoc;
-
-/**
- * Utility struct to return the type that boost::program_options should accept
- * for a given input type.  In general, there is no change from the input type.
- */
-template<typename T>
-struct ParameterType
-{
-  typedef T type;
-};
-
-/**
- * For matrix types, boost::program_options will accept a std::string, not an
- * arma::mat (since it is not clear how to specify a matrix on the
- * command-line).
- */
-template<typename eT>
-struct ParameterType<arma::Mat<eT>>
-{
-  typedef std::string type;
-};
-
-/**
- * This structure holds all of the information about a single parameter,
- * including its value (which is set when ParseCommandLine() is called).  It
- * does not hold any information about whether or not it was passed---that is
- * handled elsewhere.  A ParamData struct is only useful in order to get
- * "static" information about a parameter.
- */
-struct ParamData
-{
-  //! Name of this parameter.  This is the name used for HasParam() and
-  //! GetParam().
-  std::string name;
-  //! Description of this parameter, if any.
-  std::string desc;
-  //! Type information of this parameter.  Note that this is TYPENAME() of the
-  //! user-visible parameter type, not whatever is given by ParameterType<>.
-  std::string tname;
-  //! Alias for this parameter.
-  char alias;
-  //! True if the wasPassed value should not be ignored.
-  bool isFlag;
-  //! True if this is a matrix that should not be transposed.  Ignored if the
-  //! parameter is not a matrix.
-  bool noTranspose;
-  //! True if this option is required.
-  bool required;
-  //! True if this option is an input option (otherwise, it is output).
-  bool input;
-  //! If this is an input parameter that needs extra loading, this indicates
-  //! whether or not it has been loaded.
-  bool loaded;
-  //! The actual value that is held, as passed from the user (so the type could
-  //! be different than the type of the parameter).
-  boost::any value;
-  //! The value that the user interacts with, if the type is different than the
-  //! type of the parameter.  This is used to store matrices, for instance,
-  //! because 'value' must hold the string name that the user passed.
-  boost::any mappedValue;
-  //! The name of the parameter, as seen by boost::program_options.
-  std::string boostName;
-};
-
-/**
- * If needed, map the parameter name to the name that is used by boost.  This
- * is generally the same as the name, but for matrices it may be different.
- */
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* = 0);
-
-/**
- * If needed, map 'trueValue' to the right type and return it.  This is called
- * from GetParam().
- */
-template<typename T>
-T& HandleParameter(
-    typename util::ParameterType<T>::type& value,
-    util::ParamData& d,
-    const typename std::enable_if_t<!arma::is_arma_type<T>::value>* = 0);
-
-//! This must be overloaded for matrices.
-template<typename T>
-std::string MapParameterName(
-    const std::string& identifier,
-    const typename std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
-
-//! This must be overloaded for matrices.
-template<typename T>
-T& HandleParameter(
-    typename util::ParameterType<T>::type& value,
-    util::ParamData& d,
-    const typename std::enable_if_t<arma::is_arma_type<T>::value>* = 0);
 
 } // namespace util
 
@@ -308,7 +213,7 @@ class CLI
 
   /**
    * Get the unmapped (i.e. what the user specifies on the command-line) value
-   * of type ParameterType<T>::value found while parsing.  You cans et the value
+   * of type ParameterType<T>::value found while parsing.  You can set the value
    * using this reference safely.  You should not need to use this function
    * unless you are doing something tricky (like getting the filename a user
    * specified for a matrix parameter or something).
@@ -318,6 +223,18 @@ class CLI
   template<typename T>
   static typename util::ParameterType<T>::type& GetUnmappedParam(
       const std::string& identifier);
+
+  /**
+   * Get the raw value of the parameter before the processing that GetParam()
+   * would normally do.  Note that this does not perform any data loading or
+   * manipulation like GetParam() does.  So if you want to access a matrix or
+   * model (or similar) parameter before it is loaded, this is the method to
+   * use.
+   *
+   * @param identifier The name of the parameter in question.
+   */
+  template<typename T>
+  static T& GetRawParam(const std::string& identifier);
 
   /**
    * Retrieve the singleton.
@@ -440,14 +357,6 @@ class CLI
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
 
-  //! Metaprogramming structure for vector detection.
-  template<typename T>
-  struct IsStdVector { const static bool value = false; };
-
-  //! Metaprogramming structure for vector detection.
-  template<typename T, typename A>
-  struct IsStdVector<std::vector<T, A>> { const static bool value = true; };
-
   /**
    * Add an option if it is not a vector type.  This is a utility function used
    * by CLI::Add.
@@ -460,7 +369,8 @@ class CLI
   void AddOption(
       const char* optId,
       const char* descr,
-      const typename std::enable_if_t<!IsStdVector<T>::value>* /* junk */ = 0);
+      const typename std::enable_if_t<!util::IsStdVector<T>::value>*
+          /* junk */ = 0);
 
   /**
    * Add an option if it is a vector type.  This is a utility function used by
@@ -474,7 +384,8 @@ class CLI
   void AddOption(
       const char* optId,
       const char* descr,
-      const typename std::enable_if_t<IsStdVector<T>::value>* /* junk */ = 0);
+      const typename std::enable_if_t<util::IsStdVector<T>::value>*
+          /* junk */ = 0);
 };
 
 } // namespace mlpack
