@@ -12,6 +12,9 @@
 namespace mlpack {
 namespace dbscan {
 
+/**
+ * Construct the DBSCAN object with the given parameters.
+ */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
     const double epsilon,
@@ -26,6 +29,10 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
   // Nothing to do.
 }
 
+/**
+ * Performs DBSCAN clustering on the data, returning number of clusters 
+ * and also the centroid of each cluster.
+ */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
@@ -40,6 +47,10 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   return Cluster(data, assignments, centroids);
 }
 
+/**
+ * Performs DBSCAN clustering on the data, returning number of clusters, 
+ * the centroid of each cluster and also the list of cluster assignments.
+ */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
@@ -52,9 +63,11 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   // Now calculate the centroids.
   centroids.zeros(data.n_rows, numClusters);
 
+  //Stores the number of points in each cluster
   arma::Row<size_t> counts;
   counts.zeros(numClusters);
 
+  //Caluclate number of points in each cluster.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (assignments[i] != SIZE_MAX)
@@ -72,17 +85,24 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   return numClusters;
 }
 
+/**
+ * Performs DBSCAN clustering on the data, returning number of clusters 
+ * and also the list of cluster assignments.
+ */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
 {
+  //Stores cluster assigned to each point.
   assignments.set_size(data.n_cols);
   assignments.fill(SIZE_MAX);
 
   size_t currentCluster = 0;
 
+  //For each point find the points in epsilon-nighborhood
+  //and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
   Log::Info << "Performing range search." << std::endl;
@@ -95,6 +115,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   unvisited.set();
   while (unvisited.any())
   {
+    //Randomly select an unvisited point.
     const size_t nextIndex = pointSelector.Select(unvisited, data);
     Log::Info << "Inspect point " << nextIndex << "; " << unvisited.count()
         << " unvisited points remain." << std::endl;
@@ -107,6 +128,11 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   return currentCluster;
 }
 
+/**
+ * This function processes the point at index. It  marks the point 
+ * as visited, checks if the given point is core or non-core.
+ * If its a core point, it expands the cluster else returns.
+ */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
