@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include "logistic_regression_function.hpp"
@@ -84,7 +84,7 @@ class LogisticRegression
    * @param dimensionality Dimensionality of the data.
    * @param lambda L2-regularization parameter.
    */
-  LogisticRegression(const size_t dimensionality,
+  LogisticRegression(const size_t dimensionality = 0,
                      const double lambda = 0);
 
   /**

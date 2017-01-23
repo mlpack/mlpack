@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {

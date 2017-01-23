@@ -469,7 +469,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType CellBound<MetricType, ElemType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -607,7 +607,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType maxSum = std::numeric_limits<ElemType>::lowest();
 
@@ -782,7 +782,7 @@ template<typename VecType>
 inline math::RangeType<ElemType>
 CellBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType minLoSum = std::numeric_limits<ElemType>::max();
   ElemType maxHiSum = std::numeric_limits<ElemType>::lowest();

@@ -10,18 +10,28 @@ set(SOURCES
   cli_deleter.hpp
   cli_deleter.cpp
   cli_impl.hpp
+  default_param.hpp
+  default_param_impl.hpp
   deprecated.hpp
   log.hpp
   log.cpp
   nulloutstream.hpp
   option.hpp
   option.cpp
+  output_param.hpp
+  output_param_impl.hpp
+  param_data.hpp
+  param_data_impl.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
+  print_param.hpp
+  print_param_impl.hpp
   sfinae_utility.hpp
   singletons.hpp
   singletons.cpp
+  string_type_param.hpp
+  string_type_param_impl.hpp
   timers.hpp
   timers.cpp
   version.hpp

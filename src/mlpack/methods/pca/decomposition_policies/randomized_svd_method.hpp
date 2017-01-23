@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
 #define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 

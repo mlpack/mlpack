@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_HPP
 #define MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/kernel_pca/kernel_rules/naive_method.hpp>
 
 namespace mlpack {

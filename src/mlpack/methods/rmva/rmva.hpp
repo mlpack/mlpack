@@ -13,7 +13,7 @@
 #ifndef __MLPACK_METHODS_RMVA_RMVA_HPP
 #define __MLPACK_METHODS_RMVA_RMVA_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/network_util.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>

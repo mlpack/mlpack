@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
 #define MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace math {

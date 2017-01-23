@@ -150,7 +150,8 @@ template<typename TreeElemType>
 template<typename VecType>
 arma::Col<typename DiscreteHilbertValue<TreeElemType>::HilbertElemType>
 DiscreteHilbertValue<TreeElemType>::
-CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
+CalculateValue(const VecType& pt,
+               typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   typedef typename VecType::elem_type VecElemType;
   arma::Col<HilbertElemType> res(pt.n_rows);
@@ -281,8 +282,8 @@ template<typename VecType1, typename VecType2>
 int DiscreteHilbertValue<TreeElemType>::
 ComparePoints(const VecType1& pt1,
               const VecType2& pt2,
-              typename boost::enable_if<IsVector<VecType1>>*,
-              typename boost::enable_if<IsVector<VecType2>>*)
+              typename std::enable_if_t<IsVector<VecType1>::value>*,
+              typename std::enable_if_t<IsVector<VecType2>::value>*)
 {
   arma::Col<HilbertElemType> val1 = CalculateValue(pt1);
   arma::Col<HilbertElemType> val2 = CalculateValue(pt2);
@@ -317,7 +318,7 @@ template<typename TreeElemType>
 template<typename VecType>
 int DiscreteHilbertValue<TreeElemType>::
 CompareWith(const VecType& pt,
-            typename boost::enable_if<IsVector<VecType>>*) const
+            typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   arma::Col<HilbertElemType> val = CalculateValue(pt);
 
@@ -331,7 +332,7 @@ template<typename TreeElemType>
 template<typename VecType>
 int DiscreteHilbertValue<TreeElemType>::
 CompareWithCachedPoint(const VecType& ,
-            typename boost::enable_if<IsVector<VecType>>*) const
+            typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   if (numValues == 0)
     return -1;
@@ -344,7 +345,7 @@ template<typename TreeType, typename VecType>
 size_t DiscreteHilbertValue<TreeElemType>::
 InsertPoint(TreeType *node,
             const VecType& pt,
-            typename boost::enable_if<IsVector<VecType>>*)
+            typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   size_t i = 0;
 

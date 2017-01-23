@@ -175,27 +175,14 @@ LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges(edges),
 {
   // Calculate V by finding the maximum index in the edges matrix.
   vertices = max(max(edges)) + 1;
-//  Log::Debug << vertices << " vertices in graph." << std::endl;
 }
 
 double LovaszThetaSDP::Evaluate(const arma::mat& coordinates)
 {
   // The objective is equal to -Tr(ones * X) = -Tr(ones * (R^T * R)).
   // This can be simplified into the negative sum of (R^T * R).
-//  Log::Debug << "Evaluting objective function with coordinates:" << std::endl;
-//  std::cout << coordinates << std::endl;
-//  Log::Debug << "trans(coord) * coord:" << std::endl;
-//  std::cout << (trans(coordinates) * coordinates) << std::endl;
-
-
   arma::mat x = trans(coordinates) * coordinates;
   double obj = -accu(x);
-
-//  double obj = 0;
-//  for (size_t i = 0; i < coordinates.n_cols; i++)
-//    obj -= dot(coordinates.col(i), coordinates.col(i));
-
-//  Log::Debug << "Objective function is " << obj << "." << std::endl;
 
   return obj;
 }
@@ -203,7 +190,6 @@ double LovaszThetaSDP::Evaluate(const arma::mat& coordinates)
 void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
                               arma::mat& gradient)
 {
-
   // The gradient is equal to (2 S' R^T)^T, with R being coordinates.
   // S' = C - sum_{i = 1}^{m} [ y_i - sigma (Tr(A_i * (R^T R)) - b_i)] * A_i
   // We will calculate it in a not very smart way, but it should work.
@@ -225,10 +211,6 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
           (accu(trans(coordinates) % coordinates) - 1);
 
       arma::mat zz = (inner * arma::eye<arma::mat>(n, n));
-
-//      Log::Debug << "Constraint " << i << " matrix to add is " << std::endl;
-//      Log::Debug << zz << std::endl;
-
       s -= zz;
     }
     else
@@ -247,23 +229,12 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
           (accu(a % (trans(coordinates) * coordinates)));
 
       arma::mat zz = (inner * a);
-
-//      Log::Debug << "Constraint " << i << " matrix to add is " << std::endl;
-//      Log::Debug << zz << std::endl;
-
       s -= zz;
     }
   }
 
+  // The gradient of -Tr(ones * X) is equal to -2 * ones * R.
   gradient = trans(2 * s * trans(coordinates));
-
-  // The gradient of -Tr(ones * X) is equal to -2 * ones * R
-//  arma::mat ones;
-//  ones.ones(coordinates.n_rows, coordinates.n_rows);
-//  gradient = -2 * ones * coordinates;
-
-//  Log::Debug << "Done with gradient." << std::endl;
-//  std::cout << gradient;
 }
 
 size_t LovaszThetaSDP::NumConstraints() const
@@ -281,15 +252,11 @@ double LovaszThetaSDP::EvaluateConstraint(const size_t index,
     for (size_t i = 0; i < coordinates.n_cols; i++)
       sum += std::abs(dot(coordinates.col(i), coordinates.col(i)));
 
-//    Log::Debug << "Constraint " << index << " evaluates to " << sum << std::endl;
     return sum;
   }
 
   size_t i = edges(0, index - 1);
   size_t j = edges(1, index - 1);
-
-//  Log::Debug << "Constraint " << index << " evaluates to " <<
-//    dot(coordinates.col(i), coordinates.col(j)) << "." << std::endl;
 
   // The constraint itself is X_ij, or (R^T R)_ij.
   return std::abs(dot(coordinates.col(i), coordinates.col(j)));
@@ -299,18 +266,14 @@ void LovaszThetaSDP::GradientConstraint(const size_t index,
                                         const arma::mat& coordinates,
                                         arma::mat& gradient)
 {
-//  Log::Debug << "Gradient of constraint " << index << " is " << std::endl;
   if (index == 0) // This is the constraint Tr(X) = 1.
   {
     gradient = 2 * coordinates; // d/dR (Tr(R R^T)) = 2 R.
-//    std::cout << gradient;
     return;
   }
 
-//  Log::Debug << "Evaluating gradient of constraint " << index << " with ";
   size_t i = edges(0, index - 1);
   size_t j = edges(1, index - 1);
-//  Log::Debug << "i = " << i << " and j = " << j << "." << std::endl;
 
   // Since the constraint is (R^T R)_ij, the gradient for (x, y) will be (I
   // derived this for one of the MVU constraints):
@@ -325,16 +288,12 @@ void LovaszThetaSDP::GradientConstraint(const size_t index,
 
   gradient.col(i) = coordinates.col(j);
   gradient.col(j) += coordinates.col(i); // In case j = i (shouldn't happen).
-
-//  std::cout << gradient;
 }
 
 const arma::mat& LovaszThetaSDP::GetInitialPoint()
 {
   if (initialPoint.n_rows != 0 && initialPoint.n_cols != 0)
     return initialPoint; // It has already been calculated.
-
-//  Log::Debug << "Calculating initial point." << std::endl;
 
   // First, we must calculate the correct value of r.  The matrix we return, R,
   // will be r x V, because X = R^T R is of dimension V x V.

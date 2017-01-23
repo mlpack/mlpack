@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {

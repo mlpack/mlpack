@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_BALLBOUND_HPP
 #define MLPACK_CORE_TREE_BALLBOUND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "bound_traits.hpp"
 
@@ -123,9 +123,9 @@ class BallBound
    * Calculates minimum bound-to-point squared distance.
    */
   template<typename OtherVecType>
-  ElemType MinDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
-      const;
+  ElemType MinDistance(
+      const OtherVecType& point,
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -136,9 +136,9 @@ class BallBound
    * Computes maximum distance.
    */
   template<typename OtherVecType>
-  ElemType MaxDistance(const OtherVecType& point,
-                       typename boost::enable_if<IsVector<OtherVecType>>* = 0)
-      const;
+  ElemType MaxDistance(
+      const OtherVecType& point,
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -151,7 +151,7 @@ class BallBound
   template<typename OtherVecType>
   math::RangeType<ElemType> RangeDistance(
       const OtherVecType& other,
-      typename boost::enable_if<IsVector<OtherVecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.

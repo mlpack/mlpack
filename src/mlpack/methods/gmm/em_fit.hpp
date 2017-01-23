@@ -14,7 +14,8 @@
 #ifndef MLPACK_METHODS_GMM_EM_FIT_HPP
 #define MLPACK_METHODS_GMM_EM_FIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/dists/gaussian_distribution.hpp>
 
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>

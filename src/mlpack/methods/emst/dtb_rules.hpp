@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_EMST_DTB_RULES_HPP
 #define MLPACK_METHODS_EMST_DTB_RULES_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/core/tree/traversal_info.hpp>
 

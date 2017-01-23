@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 #define MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "range_search_stat.hpp"
@@ -131,6 +131,35 @@ class RangeSearch
   RangeSearch(const bool naive = false,
               const bool singleMode = false,
               const MetricType metric = MetricType());
+
+  /**
+   * Construct the RangeSearch model as a copy of the given model.  Note that
+   * this may be computationally intensive!
+   *
+   * @param other RangeSearch model to copy.
+   */
+  RangeSearch(const RangeSearch& other);
+
+  /**
+   * Construct the RangeSearch model by taking ownership of the given model.
+   *
+   * @param other RangeSearch model to take ownership of.
+   */
+  RangeSearch(RangeSearch&& other);
+
+  /**
+   * Copy the given RangeSearch model.
+   *
+   * @param other RangeSearch model to copy.
+   */
+  RangeSearch& operator=(const RangeSearch& other);
+
+  /**
+   * Take ownership of the given RangeSearch model.
+   *
+   * @param other RangeSearch model to take ownership of.
+   */
+  RangeSearch& operator=(RangeSearch&& other);
 
   /**
    * Destroy the RangeSearch object.  If trees were created, they will be

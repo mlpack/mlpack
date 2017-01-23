@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
 #define MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
 #include <mlpack/methods/nystroem_method/nystroem_method.hpp>
 

@@ -6,7 +6,7 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
-**Download [current stable version (2.1.0)](http://www.mlpack.org/files/mlpack-2.1.0.tar.gz).**
+**Download [current stable version (2.1.1)](http://www.mlpack.org/files/mlpack-2.1.1.tar.gz).**
 
 [![Build Status](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/) <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://ci.appveyor.com/api/projects/status/lmbfc78wi16agx4q?svg=true" alt="Build status" height="18"></a> [![Coverage Status](https://coveralls.io/repos/github/mlpack/mlpack/badge.svg?branch=master)](https://coveralls.io/github/mlpack/mlpack?branch=master)
 
@@ -162,7 +162,7 @@ manually).  One way to do this, on Linux, is to ensure that the
 `LD_LIBRARY_PATH` environment variable has the directory that contains
 `libmlpack.so`.  Using bash, this can be set easily:
 
-    export LD_LIBRARY_PATH=/usr/local/lib/
+    export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
 
 (or whatever directory `libmlpack.so` is installed in.)
 
@@ -227,10 +227,10 @@ development team will try to quickly resolve your issue.
 In addition, mailing lists are available.  The mlpack discussion list is
 available at
 
-  [mlpack discussion list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack)
+  [mlpack discussion list](https://lists.mlpack.org/mailman/listinfo/mlpack)
 
 and the git commit list is available at
 
-  [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-git)
+  [commit list](https://lists.mlpack.org/mailman/listinfo/mlpack-git)
 
 Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.

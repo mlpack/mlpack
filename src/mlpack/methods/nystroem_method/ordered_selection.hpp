@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
 #define MLPACK_METHODS_NYSTROEM_METHOD_ORDERED_SELECTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kernel {

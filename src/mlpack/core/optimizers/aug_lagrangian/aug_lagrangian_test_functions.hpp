@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 #define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -79,8 +79,6 @@ class GockenbachFunction
  private:
   arma::mat initialPoint;
 };
-
-
 
 /**
  * This function is the Lovasz-Theta semidefinite program, as implemented in the

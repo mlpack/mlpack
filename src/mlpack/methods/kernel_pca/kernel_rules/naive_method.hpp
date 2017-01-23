@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
 #define MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kpca {

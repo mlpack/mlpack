@@ -16,6 +16,6 @@ script:
   - travis_wait 30 ./bin/mlpack_test -p
 notifications:
   email:
-    - mlpack-git@cc.gatech.edu
+    - mlpack-git@lists.mlpack.org
   irc:
     - "chat.freenode.net#mlpack"

@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
 #define MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

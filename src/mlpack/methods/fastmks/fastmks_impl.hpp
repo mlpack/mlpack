@@ -117,6 +117,85 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(const FastMKS& other) :
+    referenceSet(NULL),
+    referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
+    treeOwner(other.referenceTree != NULL),
+    setOwner(other.referenceTree == NULL),
+    singleMode(other.singleMode),
+    naive(other.naive),
+    metric(other.metric)
+{
+  // Set reference set correctly.
+  if (referenceTree)
+    referenceSet = &referenceTree->Dataset();
+  else
+    referenceSet = new MatType(*other.referenceSet);
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(FastMKS&& other) :
+    referenceSet(other.referenceSet),
+    referenceTree(other.referenceTree),
+    treeOwner(other.treeOwner),
+    setOwner(other.setOwner),
+    singleMode(other.singleMode),
+    naive(other.naive),
+    metric(std::move(other.metric))
+{
+  // Clear information from the other.
+  other.referenceSet = NULL;
+  other.referenceTree = NULL;
+  other.treeOwner = false;
+  other.setOwner = false;
+  other.singleMode = false;
+  other.naive = false;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>&
+FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
+{
+  // Clear anything we currently have.
+  if (treeOwner)
+    delete referenceTree;
+  if (setOwner)
+    delete referenceSet;
+
+  referenceTree = NULL;
+  referenceSet = NULL;
+
+  if (other.referenceTree)
+  {
+    referenceTree = new Tree(*other.referenceTree);
+    referenceSet = &referenceTree->Dataset();
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    referenceSet = new MatType(*other.referenceSet);
+    treeOwner = false;
+    setOwner = true;
+  }
+
+  singleMode = other.singleMode;
+  naive = other.naive;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 {
   // If we created the trees, we must delete them.

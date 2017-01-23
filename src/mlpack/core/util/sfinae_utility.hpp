@@ -15,9 +15,6 @@
 #ifndef MLPACK_CORE_SFINAE_UTILITY
 #define MLPACK_CORE_SFINAE_UTILITY
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-
 /*
  * Constructs a template supporting the SFINAE pattern.
  *
@@ -25,8 +22,7 @@
  * a method if the template class passed in contains a member function matching
  * a given signature with a specified name.
  *
- * The generated struct should be used in conjunction with boost::disable_if and
- * boost::enable_if. Here is an example usage:
+ * The generated struct should be used in conjunction with std::enable_if_t.
  *
  * For general references, see:
  * http://stackoverflow.com/a/264088/391618

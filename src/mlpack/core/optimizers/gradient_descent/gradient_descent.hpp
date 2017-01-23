@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {

@@ -16,7 +16,7 @@
 #ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_EXACT_SVD_METHOD_HPP
 #define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_EXACT_SVD_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace pca {
