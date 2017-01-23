@@ -236,7 +236,7 @@ void DecisionTree<FitnessFunction,
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
-    double dimGain;
+    double dimGain = -DBL_MAX;
     if (datasetInfo.Type(i) == data::Datatype::categorical)
       dimGain = CategoricalSplit::SplitIfBetter(bestGain, data.row(i),
           datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize,
@@ -307,8 +307,12 @@ void DecisionTree<FitnessFunction,
       }
 
       // Now build the child recursively.
-      children.push_back(new DecisionTree(childPoints, childLabels, numClasses,
-          minimumLeafSize));
+      if (NoRecursion)
+        children.push_back(new DecisionTree(childPoints, datasetInfo,
+            childLabels, numClasses, childPoints.n_cols));
+      else
+        children.push_back(new DecisionTree(childPoints, datasetInfo,
+            childLabels, numClasses, minimumLeafSize));
     }
   }
   else
@@ -318,7 +322,7 @@ void DecisionTree<FitnessFunction,
     CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
     // Calculate class probabilities because we are a leaf.
-    CalculateClassProbabilities(labels);
+    CalculateClassProbabilities(labels, numClasses);
   }
 }
 
@@ -406,8 +410,12 @@ void DecisionTree<FitnessFunction,
       }
 
       // Now build the child recursively.
-      children.push_back(new DecisionTree(childPoints, childLabels, numClasses,
-          minimumLeafSize));
+      if (NoRecursion)
+        children.push_back(new DecisionTree(childPoints, childLabels,
+            numClasses, childPoints.n_cols));
+      else
+        children.push_back(new DecisionTree(childPoints, childLabels,
+            numClasses, minimumLeafSize));
     }
   }
   else
