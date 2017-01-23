@@ -558,11 +558,27 @@ BOOST_AUTO_TEST_CASE(DecisionStumpMoveOperatorTest)
 }
 
 /**
- * Test that the decision tree outperforms the decision stump.
+ * Test that the decision tree can be reasonably built.
  */
-BOOST_AUTO_TEST_CASE(DecisionTreeVsStumpTest)
+BOOST_AUTO_TEST_CASE(DecisionTreeBuildTest)
 {
-  
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Construct a full decision tree.
+  DecisionStump<arma::mat, false> tree(inputData, labels.row(0), 3);
+
+  // Ensure that it has some children.
+  BOOST_REQUIRE_GT(tree.NumChildren(), 0);
+
+  // Ensure that its children have some children.
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
+    BOOST_REQUIRE_GT(tree.Child(i).NumChildren(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -415,6 +415,47 @@ BOOST_AUTO_TEST_CASE(ClassProbabilityTest)
 }
 
 /**
+ * Test that the decision tree generalizes reasonably.
+ */
+BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Build decision tree.
+  DecisionTree<> d(inputData, labels, 3, 10); // Leaf size of 10.
+
+  // Load testing data.
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+
+  arma::Mat<size_t> trueTestLabels;
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+
+  // Get the predicted test labels.
+  arma::Row<size_t> predictions;
+  d.Classify(testData, predictions);
+
+  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+
+  // Figure out the accuracy.
+  double correct = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++correct;
+  correct /= predictions.n_elem;
+
+  BOOST_REQUIRE_GT(correct, 0.75);
+}
+
+/**
 - aux split info is empty
 - basic construction test
 - build on sparse test on dense

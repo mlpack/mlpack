@@ -205,8 +205,8 @@ class DecisionStump
    * @tparam dimension dimension is the dimension decided by the constructor
    *      on which we now train the decision stump.
    */
-  template<typename VecType>
-  void TrainOnDim(const VecType& dimension,
+  void TrainOnDim(const MatType& data,
+                  const size_t dimension,
                   const arma::Row<size_t>& labels);
 
   /**
