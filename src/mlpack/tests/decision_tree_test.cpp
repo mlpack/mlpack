@@ -368,11 +368,22 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
   DecisionTree<> d(dataset, labels, 3, 1); // Minimum leaf size of 1.
 
   // Make sure that we can get perfect accuracy on the training set.
-  arma::Row<size_t> predictions;
-  d.Classify(dataset, predictions);
-
   for (size_t i = 0; i < 1000; ++i)
-    BOOST_REQUIRE_EQUAL(predictions[i], labels[i]);
+  {
+    size_t prediction;
+    arma::vec probabilities;
+    d.Classify(dataset.col(i), prediction, probabilities);
+
+    BOOST_REQUIRE_EQUAL(prediction, labels[i]);
+    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
+    for (size_t j = 0; j < 3; ++j)
+    {
+      if (labels[i] == j)
+        BOOST_REQUIRE_CLOSE(probabilities[j], 1.0, 1e-5);
+      else
+        BOOST_REQUIRE_SMALL(probabilities[j], 1e-5);
+    }
+  }
 }
 
 /**
