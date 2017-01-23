@@ -213,6 +213,19 @@ class DecisionTree :
                                    const size_t numClasses);
 };
 
+/**
+ * Convenience typedef for decision stumps (single level decision trees).
+ */
+template<typename FitnessFunction = GiniGain,
+         template<typename> class NumericSplitType = BestBinaryNumericSplit,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         typename ElemType = double>
+using DecisionStump = DecisionTree<FitnessFunction,
+                                   NumericSplitType,
+                                   CategoricalSplitType,
+                                   ElemType,
+                                   false>;
+
 } // namespace tree
 } // namespace mlpack
 
