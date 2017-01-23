@@ -24,6 +24,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
         /* aux */)
 {
   // Count the number of elements in each potential child.
+  const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories);
   counts.zeros();
   for (size_t i = 0; i < data.n_elem; ++i)
@@ -59,7 +60,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     overallGain += childPct * childGain;
   }
 
-  if (overallGain > bestGain)
+  if (overallGain > bestGain + epsilon)
   {
     // This is better, so set up the class probabilities vector and return.
     classProbabilities.set_size(1);
