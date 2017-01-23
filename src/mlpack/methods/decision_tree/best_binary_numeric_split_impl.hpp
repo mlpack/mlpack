@@ -49,8 +49,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
         index, sortedLabels.n_elem - 1), numClasses);
 
     // Calculate the fraction of points in the left and right children.
-    const double rightRatio = double(index) / double(sortedLabels.n_elem);
-    const double leftRatio = 1.0 - rightRatio;
+    const double leftRatio = double(index) / double(sortedLabels.n_elem);
+    const double rightRatio = 1.0 - leftRatio;
 
     // Calculate the gain at this split point.
     const double gain = leftRatio * leftGain + rightRatio * rightGain;
