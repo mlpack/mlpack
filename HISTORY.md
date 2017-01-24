@@ -2,6 +2,9 @@
 ###### ????-??-??
   * Bugfix for mlpack_knn program (#816).
 
+  * Add decision tree implementation in methods/decision_tree/.  This is very
+    similar to a C4.5 tree learner.
+
 ### mlpack 2.1.1
 ###### 2016-12-22
   * HMMs now use random initialization; this should fix some convergence issues
