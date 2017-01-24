@@ -1,0 +1,33 @@
+#!/usr/bin/python
+"""
+A file to generate a setup.py.
+"""
+from distutils.core import setup
+from distutils.extension import Extension
+from Cython.Distutils import build_ext
+
+pyxs='${MLPACK_PYXS}'.split(';')
+
+modules=[\
+    Extension('mlpack.' + name.split('.')[0],
+              ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' + name],
+              language='c++',
+              include_dirs=[ \
+                  '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
+                  '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
+              libraries=['mlpack'],
+              library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
+              # CMAKE_CXX_FLAGS seems to have an extra space.
+              extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
+                  '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
+              undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
+                  else ['${DISABLE_CFLAGS}']) \
+    for name in pyxs]
+
+setup(name='mlpack',
+      version='${PACKAGE_VERSION}',
+      package_dir={ '': '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/' },
+      packages=['mlpack'],
+      cmdclass={ 'build_ext': build_ext },
+      ext_modules = modules,
+      setup_requires=['cython'])

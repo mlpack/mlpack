@@ -1,0 +1,41 @@
+/**
+ * @file generate_pyx_${PROGRAM_NAME}.cpp
+ * @author Ryan Curtin
+ *
+ * This is an automatically-generated file that is used to generate the .pyx
+ * files that are used for the Python bindings.  This program will print the
+ * .pyx file on stdout when run and doesn't need any input parameters.
+ *
+ * The CMake variables ${PROGRAM_MAIN_FILE} and ${PROGRAM_NAME} must be set for
+ * this to configure correctly.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#define BINDING_TYPE BINDING_TYPE_PYX
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/bindings/python/print_pyx.hpp>
+
+// This will include the ParamData options that are a part of the program.
+#include <${PROGRAM_MAIN_FILE}>
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::python;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int argc, char** argv)
+{
+  // Collect all of the parameters and put them into a vector instead of a map.
+  const map<string, ParamData>& p = CLI::Parameters();
+
+  vector<ParamData> v;
+  for (map<string, ParamData>::const_iterator i = p.begin(); i != p.end(); ++i)
+    v.push_back(i->second);
+
+  PrintPYX(v, *CLI::GetSingleton().doc, "${PROGRAM_MAIN_FILE}",
+      "${PROGRAM_NAME}");
+}
