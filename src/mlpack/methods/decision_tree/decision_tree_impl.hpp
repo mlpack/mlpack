@@ -62,8 +62,8 @@ DecisionTree<FitnessFunction,
              CategoricalSplitType,
              ElemType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
-    classProbabilities(numClasses),
-    dimensionTypeOrMajorityClass(0)
+    dimensionTypeOrMajorityClass(0),
+    classProbabilities(numClasses)
 {
   // Initialize utility vector.
   classProbabilities.fill(1.0 / (double) numClasses);
@@ -529,10 +529,13 @@ void DecisionTree<FitnessFunction,
   DecisionTree* node = children[0];
   while (node->NumChildren() != 0)
     node = &node->Child(0);
-  probabilities.set_size(node.classProbabilities.n_elem, data.n_cols);
+  probabilities.set_size(node->classProbabilities.n_elem, data.n_cols);
 
   for (size_t i = 0; i < data.n_cols; ++i)
-    Classify(data.col(i), predictions[i], probabilities.unsafe_col(i));
+  {
+    arma::vec v = probabilities.unsafe_col(i); // Alias of column.
+    Classify(data.col(i), predictions[i], v);
+  }
 }
 
 //! Serialize the tree.
