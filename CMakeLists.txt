@@ -456,6 +456,7 @@ if (UNIX)
           mlpack_krann
           mlpack_cf
           mlpack_decision_stump
+          mlpack_decision_tree
           mlpack_det
           mlpack_emst
           mlpack_fastmks
