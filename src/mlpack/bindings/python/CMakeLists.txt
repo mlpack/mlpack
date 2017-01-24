@@ -1,0 +1,120 @@
+# Nothing in this directory will be compiled into mlpack, but 
+set(BINDING_SOURCES
+  generate_pyx.hpp
+  generate_pyx.cpp
+  print_functions.hpp
+  print_functions.cpp
+  type_names.hpp
+  mlpack/arma_util.hpp
+)
+
+# These are all the files we need to compile Cython bindings for mlpack that are
+# not a part of mlpack itself.
+set(CYTHON_SOURCES
+  mlpack/__init__.py
+  mlpack/arma_numpy.pxd
+  mlpack/arma_numpy.pyx
+  mlpack/arma.pxd
+  mlpack/arma_util.hpp
+  mlpack/cli.pxd
+  mlpack/cli_util.hpp
+)
+
+# Add directory name to sources.
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+# Append sources (with directory name) to list of all mlpack sources (used at
+# the parent scope).
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# Handle Cython.
+#include(UseCython)
+
+#add_subdirectory(cython/)
+
+# Generate Python setuptools file.
+find_program(PYTHON "python")
+
+# Also we need to check for Cython and distutils.
+
+if (PYTHON)
+  set (MLPACK_PYXS "arma_numpy.pyx" PARENT_SCOPE)
+  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      PROPERTY INCLUDE_DIRECTORIES)
+  set (CYTHON_INCLDIRS "${CYTHON_INCLUDE_DIRECTORIES}")
+
+  # By default, Python appears to compile with -DNDEBUG, but if we are in debug
+  # mode we don't want that.
+  if (DEBUG)
+    set(DISABLE_CFLAGS "NDEBUG")
+  endif ()
+
+  add_custom_target(python ALL DEPENDS mlpack)
+
+  # Copy necessary files after making the mlpack/ directory.
+  add_custom_command(TARGET python PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  foreach(cython_file ${CYTHON_SOURCES})
+    add_custom_command(TARGET python PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy
+            ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  endforeach()
+
+  add_custom_command(TARGET python PRE_BUILD
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_pca
+          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/pca.pyx
+          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
+
+  # Then do the actual build.
+  add_custom_command(TARGET python POST_BUILD
+      COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+          build
+      DEPENDS mlpack/arma_numpy.pxd
+              mlpack/arma_numpy.pyx
+              mlpack/arma.pxd
+              mlpack/arma_util.hpp
+              mlpack/cli.pxd
+              mlpack/cli_util.hpp
+              mlpack)
+
+  install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install
+      --prefix=${CMAKE_INSTALL_PREFIX})")
+endif ()
+
+# Add a macro to build a python binding.
+macro (add_python_binding name)
+if (BUILD_PYTHON_BINDINGS)
+  set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx" PARENT_SCOPE)
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_NAME=${name}
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGeneratePYX.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in)
+
+  add_executable(generate_pyx_${name}
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_functions.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_functions.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/type_names.hpp)
+  target_link_libraries(generate_pyx_${name} mlpack ${MLPACK_LIBRARIES})
+  set_target_properties(generate_pyx_${name} PROPERTIES COMPILE_FLAGS
+      -DBINDING_TYPE=BINDING_TYPE_PYX)
+  add_custom_command(TARGET generate_pyx_${name} POST_BUILD
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
+          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
+
+  add_dependencies(python generate_pyx_${name})
+endif ()
+endmacro ()

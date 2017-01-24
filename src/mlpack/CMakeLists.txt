@@ -95,3 +95,13 @@ install(TARGETS mlpack
   ARCHIVE DESTINATION lib)
 
 add_dependencies(mlpack mlpack_headers)
+
+# If we are building Python bindings, we have to configure setup.py but only
+# after we've recursed into methods/.
+if (BUILD_PYTHON_BINDINGS)
+  message(STATUS "pyxs: ${MLPACK_PYXS}")
+  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      PROPERTY INCLUDE_DIRECTORIES)
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
+endif ()
