@@ -135,7 +135,6 @@ void CLI::Destroy()
 bool CLI::HasParam(const std::string& key)
 {
   std::string usedKey = key;
-  const po::variables_map& vmap = GetSingleton().vmap;
   const std::map<std::string, util::ParamData>& parameters =
       GetSingleton().parameters;
 
