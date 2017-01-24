@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -146,10 +147,8 @@ double StandardError(const size_t size, const double& fStd)
    return fStd / sqrt(size);
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
   const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
   const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));

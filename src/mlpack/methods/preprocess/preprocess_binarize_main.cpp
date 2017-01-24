@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
 PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
@@ -46,10 +47,8 @@ using namespace mlpack;
 using namespace arma;
 using namespace std;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
   const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   const double threshold = CLI::GetParam<double>("threshold");
 

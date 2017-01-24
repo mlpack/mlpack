@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "kmeans.hpp"
 #include "allow_empty_clusters.hpp"
@@ -116,10 +117,8 @@ template<typename InitialPartitionPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

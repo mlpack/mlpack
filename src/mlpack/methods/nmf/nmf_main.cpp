@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/amf/amf.hpp>
 
@@ -63,11 +64,8 @@ PARAM_DOUBLE_IN("min_residue", "The minimum root mean square residue allowed "
 PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
     "multdiv | als ).", "u", "multdist");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line.
-  CLI::ParseCommandLine(argc, argv);
-
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/nystroem_method/ordered_selection.hpp>
 #include <mlpack/methods/nystroem_method/random_selection.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
@@ -67,13 +68,13 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "options --bandwidth, --kernel_scale, --offset, or --degree (or a "
     "combination of those options)."
     "\n\n"
-    "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed up"
-    " kernel machines\", 2001) can be used to calculate the kernel matrix by "
+    "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed "
+    "up kernel machines\", 2001) can be used to calculate the kernel matrix by "
     "specifying the --nystroem_method (-n) option. This approach works by using"
     " a subset of the data as basis to reconstruct the kernel matrix; to "
     "specify the sampling scheme, the --sampling parameter is used, the "
-    "sampling scheme for the nystr\u00F6m method can be chosen from the following"
-    " list: kmeans, random, ordered.");
+    "sampling scheme for the nystr\u00F6m method can be chosen from the "
+    "following list: kmeans, random, ordered.");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
@@ -144,11 +145,8 @@ void RunKPCA(arma::mat& dataset,
   }
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be saved!"
         << endl;

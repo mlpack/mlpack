@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include "mean_shift.hpp"
 
@@ -46,10 +47,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("input"))
     Log::Fatal << "--input_file must be specified!" << endl;
 

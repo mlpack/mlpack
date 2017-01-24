@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "radical.hpp"
 
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
@@ -42,11 +42,8 @@ using namespace mlpack::math;
 using namespace std;
 using namespace arma;
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters.
-  CLI::ParseCommandLine(argc, argv);
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));

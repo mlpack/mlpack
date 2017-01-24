@@ -24,9 +24,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "dtb.hpp"
-
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "dtb.hpp"
 
 PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
     "the Euclidean minimum spanning tree of a set of input points using the "
@@ -50,10 +51,8 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace std;
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified, so no output will be saved!"
         << endl;

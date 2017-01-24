@@ -2,7 +2,7 @@
  * @file preprocess_split_main.cpp
  * @author Keon Kim
  *
- * split data CLI executable
+ * A CLI executable to split a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
 PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
@@ -61,10 +62,9 @@ using namespace mlpack;
 using namespace arma;
 using namespace std;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
   // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
   // Make sure the user specified output filenames.

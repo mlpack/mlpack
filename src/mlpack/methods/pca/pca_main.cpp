@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "pca.hpp"
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
@@ -73,11 +74,8 @@ void RunPCA(arma::mat& dataset,
 
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse commandline.
-  CLI::ParseCommandLine(argc, argv);
-
   // Load input dataset.
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
