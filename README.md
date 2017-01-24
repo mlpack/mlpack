@@ -208,7 +208,7 @@ documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
