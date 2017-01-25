@@ -177,6 +177,9 @@ void CLI::ParseCommandLine(int argc, char** line)
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
+  // Mark didParse so that we know we're in command-line mode.
+  GetSingleton().didParse = true;
+
   // Parse the command line, place the options & values into vmap.
   try
   {
