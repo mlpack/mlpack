@@ -62,6 +62,12 @@ using enable_if_t = typename enable_if<B, T>::type;
 #endif
 #endif
 
+// Increase the number of template arguments for the boost list class.
+#undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#undef BOOST_MPL_LIMIT_LIST_SIZE
+#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#define BOOST_MPL_LIMIT_LIST_SIZE 40
+
 // We'll need the necessary boost::serialization features, as well as what we
 // use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
 // defined, but we still need to define it (as nothing) so that the mlpack
