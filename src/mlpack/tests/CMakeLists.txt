@@ -14,6 +14,7 @@ add_executable(mlpack_test
   cli_test.cpp
   convolution_test.cpp
   convolutional_network_test.cpp
+  conv_layer_test.cpp
   cosine_tree_test.cpp
   decision_stump_test.cpp
   det_test.cpp
