@@ -32,6 +32,7 @@ namespace mlpack {
  * @param identifier The name of the parameter, eg foo.
  * @param description A string description of the parameter.
  * @param alias Short name of the parameter.
+ * @param cppType C++ type name of the parameter (i.e. "int").
  * @param required If required, the program will refuse to run unless the
  *     parameter is specified.
  * @param input If true, the parameter is an input parameter (not an output
@@ -43,6 +44,7 @@ template<typename T>
 void CLI::Add(const T& defaultValue,
               const std::string& identifier,
               const std::string& description,
+              const std::string& cppType,
               const char alias,
               const bool required,
               const bool input,
@@ -100,6 +102,7 @@ void CLI::Add(const T& defaultValue,
   data.printFunction = &util::PrintParam<T>;
   data.defaultFunction = &util::DefaultParam<T>;
   data.stringTypeFunction = &util::StringTypeParam<T>;
+  data.cppType = cppType;
 
   // Apply default value.
   if (std::is_same<T, typename util::ParameterType<T>::type>::value)

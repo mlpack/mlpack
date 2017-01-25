@@ -138,6 +138,8 @@ struct ParamData
   //! When the CLI object is asked to print parameter types, output a string
   //! version of this parameter's type.
   std::string (*stringTypeFunction)();
+  //! The true name of the type, as it would be written in C++.
+  std::string cppType;
 };
 
 /**

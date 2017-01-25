@@ -181,6 +181,7 @@ class CLI
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
    * @param alias An alias for the parameter, defaults to '\0' (no alias).
+   * @param cppType C++ type of the parameter (i.e. "int").
    * @param required Indicates if parameter must be set on command line.
    * @param input If true, the parameter is an input (not output) parameter.
    * @param noTranspose If the parameter is a matrix and this is true, then the
@@ -190,6 +191,7 @@ class CLI
   static void Add(const T& defaultValue,
                   const std::string& identifier,
                   const std::string& description,
+                  const std::string& cppType,
                   const char alias = '\0',
                   const bool required = false,
                   const bool input = true,

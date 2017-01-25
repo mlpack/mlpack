@@ -54,11 +54,13 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
  */
 void AddRequiredCLIOptions()
 {
-  CLI::Add<bool>(false, "help", "Default help info.", 'h');
-  CLI::Add<string>("", "info", "Get help on a specific module or option.");
+  CLI::Add<bool>(false, "help", "Default help info.", "bool", 'h');
+  CLI::Add<string>("", "info", "Get help on a specific module or option.",
+      "string");
   CLI::Add<bool>(false, "verbose", "Display informational messages and the full"
-      " list of parameters and timers at the end of execution.", 'v');
-  CLI::Add<bool>(false, "version", "Display the version of mlpack.", 'V');
+      " list of parameters and timers at the end of execution.", "bool", 'v');
+  CLI::Add<bool>(false, "version", "Display the version of mlpack.", "bool",
+      'V');
 }
 
 /**
@@ -71,7 +73,7 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
 
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLI::Add<bool>(false, "global/bool", "True or False", 'a');
+  CLI::Add<bool>(false, "global/bool", "True or False", "bool", 'a');
 
   // CLI::HasParam should return false here.
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
@@ -436,8 +438,8 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an input parameter; it won't be transposed.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      false);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat", 'm',
+      false, true, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -480,8 +482,8 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is a non-transposed input parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      true);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat",
+      'm', false, true, true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -522,8 +524,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
-      false);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat", 'm',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -571,8 +573,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
-      true);
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat", 'm',
+      false, false, true);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -619,7 +621,7 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<int>(0, "int", "Test int", 'i', false, true, false);
+  CLI::Add<int>(0, "int", "Test int", "int", 'i', false, true, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -640,7 +642,8 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<string>("", "string", "Test string", 's', false, true, false);
+  CLI::Add<string>("", "string", "Test string", "string", 's', false, true,
+      false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -661,7 +664,8 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
+  CLI::Add<double>(0.0, "double", "Test double", "double", 'd', false, true,
+      false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -682,8 +686,8 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Required test double", 'd', true, true,
-      false);
+  CLI::Add<double>(0.0, "double", "Required test double", "double", 'd', true,
+      true, false);
 
   const char* argv[1];
   argv[0] = "./test";
@@ -719,16 +723,18 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      true);
-  CLI::Add<arma::mat>(arma::mat(), "matrix2", "Test matrix", 'M', false, false,
-      true);
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
-  CLI::Add<double>(0.0, "double2", "Test double", 'D', false, true, false);
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat", 'm',
       false, true, true);
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel2", "Test kernel", 'K',
+  CLI::Add<arma::mat>(arma::mat(), "matrix2", "Test matrix", "arma::mat", 'M',
       false, false, true);
+  CLI::Add<double>(0.0, "double", "Test double", "double", 'd', false, true,
+      false);
+  CLI::Add<double>(0.0, "double2", "Test double", "double", 'D', false, true,
+      false);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel",
+      "GaussianKernel", 'k', false, true, true);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel2", "Test kernel",
+      "GaussianKernel", 'K', false, false, true);
 
   const char* argv[11];
   argv[0] = "./test";
@@ -780,8 +786,8 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, false);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel",
+      "GaussianKernel", 'k', false, false);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -803,8 +809,8 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   // Now create a new CLI object and load it.
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, true);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel",
+      "GaussianKernel", 'k', false, true);
 
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
@@ -825,8 +831,8 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k', true,
-      true);
+  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel",
+      "GaussianKernel", 'k', true, true);
 
   // Don't specify any input parameters.
   const char* argv[1];
@@ -868,8 +874,8 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
 
   // Add options.
   typedef tuple<DatasetInfo, arma::mat> TupleType;
-  CLI::Add<TupleType>(TupleType(), "dataset", "Test dataset", 'd', false,
-      true);
+  CLI::Add<TupleType>(TupleType(), "dataset", "Test dataset", "TupleType", 'd',
+      false, true);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -923,7 +929,7 @@ BOOST_AUTO_TEST_CASE(RawIntegralParameter)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true);
+  CLI::Add<double>(0.0, "double", "Test double", "double", 'd', false, true);
 
   const char* argv[1];
   argv[0] = "./test";
@@ -968,7 +974,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f.close();
 
   CLI::Add<tuple<DatasetInfo, arma::mat>>(tuple<DatasetInfo, arma::mat>(),
-      "tuple", "Test tuple", 't', false, true);
+      "tuple", "Test tuple", "tuple<DatasetInfo, arma::mat>", 't', false, true);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -1010,6 +1016,27 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   BOOST_REQUIRE_SMALL(dataset(2, 3), 1e-5);
 
   remove("test.arff");
+  CLI::Destroy();
+}
+
+/**
+ * Make sure typenames are properly stored.
+ */
+BOOST_AUTO_TEST_CASE(CppNameTest)
+{
+  AddRequiredCLIOptions();
+
+  // Add a few parameters.
+  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", "arma::mat", 'm',
+      false, true, false);
+  CLI::Add<double>(0.0, "double", "Test double", "double", 'd', false, true,
+      false);
+
+  // Check that the C++ typenames are right.
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("matrix").cppType, "arma::mat");
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("help").cppType, "bool");
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("double").cppType, "double");
+
   CLI::Destroy();
 }
 

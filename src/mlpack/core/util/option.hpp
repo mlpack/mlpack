@@ -42,6 +42,7 @@ class Option
    *      we would pass "help").
    * @param description A short string describing the option.
    * @param alias Short name of the parameter. "" for no alias.
+   * @param cppName Name of the C++ type of this parameter (i.e. "int").
    * @param required Whether or not the option is required at runtime.
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
@@ -51,12 +52,13 @@ class Option
          const std::string& identifier,
          const std::string& description,
          const std::string& alias,
+         const std::string& cppName,
          const bool required = false,
          const bool input = true,
          const bool noTranspose = false)
   {
-    CLI::Add<N>(defaultValue, identifier, description, alias[0], required,
-        input, noTranspose);
+    CLI::Add<N>(defaultValue, identifier, description, cppName, alias[0],
+        required, input, noTranspose);
   }
 };
 
