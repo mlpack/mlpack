@@ -41,7 +41,16 @@ class DecisionTree :
   typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
 
   /**
-   * Construct the decision tree on the given data and labels.
+   * Construct the decision tree on the given data and labels, where the data
+   * can be both numeric and categorical.  Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType>
   DecisionTree(const MatType& data,
@@ -52,7 +61,14 @@ class DecisionTree :
 
   /**
    * Construct the decision tree on the given data and labels, assuming that the
-   * data is all of the numeric type.
+   * data is all of the numeric type.  Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType>
   DecisionTree(const MatType& data,
@@ -63,6 +79,8 @@ class DecisionTree :
   /**
    * Construct a decision tree without training it.  It will be a leaf node with
    * equal probabilities for each class.
+   *
+   * @param numClasses Number of classes in the dataset.
    */
   DecisionTree(const size_t numClasses = 1);
 
@@ -103,7 +121,15 @@ class DecisionTree :
 
   /**
    * Train the decision tree on the given data.  This will overwrite the
-   * existing model.
+   * existing model.  The data may have numeric and categorical types, specified
+   * by the datasetInfo parameter.  Setting minimumLeafSize too small may cause
+   * the tree to overfit, but setting it too large may cause it to underfit.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType>
   void Train(const MatType& data,
@@ -114,7 +140,14 @@ class DecisionTree :
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
-   * numeric.  This will overwrite the given model.
+   * numeric.  This will overwrite the given model.  Setting minimumLeafSize too
+   * small may cause the tree to overfit, but setting it too large may cause it
+   * to underfit.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType>
   void Train(const MatType& data,
@@ -125,6 +158,8 @@ class DecisionTree :
   /**
    * Classify the given point, using the entire tree.  The predicted label is
    * returned.
+   *
+   * @param point Point to classify.
    */
   template<typename VecType>
   size_t Classify(const VecType& point) const;
@@ -132,6 +167,11 @@ class DecisionTree :
   /**
    * Classify the given point and also return estimates of the probability for
    * each class in the given vector.
+   *
+   * @param point Point to classify.
+   * @param prediction This will be set to the predicted class of the point.
+   * @param probabilities This will be filled with class probabilities for the
+   *      point.
    */
   template<typename VecType>
   void Classify(const VecType& point,
@@ -141,6 +181,9 @@ class DecisionTree :
   /**
    * Classify the given points, using the entire tree.  The predicted labels for
    * each point are stored in the given vector.
+   *
+   * @param data Set of points to classify.
+   * @param predictions This will be filled with predictions for each point.
    */
   template<typename MatType>
   void Classify(const MatType& data,
@@ -150,6 +193,11 @@ class DecisionTree :
    * Classify the given points and also return estimates of the probabilities
    * for each class in the given matrix.  The predicted labels for each point
    * are stored in the given vector.
+   *
+   * @param data Set of points to classify.
+   * @param predictions This will be filled with predictions for each point.
+   * @param probabilities This will be filled with class probabilities for each
+   *      point.
    */
   template<typename MatType>
   void Classify(const MatType& data,

@@ -2,7 +2,7 @@
  * @file gini_gain.hpp
  * @author Ryan Curtin
  *
- * The GiniImpurity class, which is a fitness function (FitnessFunction) for
+ * The GiniGain class, which is a fitness function (FitnessFunction) for
  * decision trees.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -32,6 +32,7 @@ class GiniGain
    * an Armadillo vector that holds size_t objects.
    *
    * @param labels Set of labels to evaluate Gini impurity on.
+   * @param numClasses Number of classes in the dataset.
    */
   template<typename RowType>
   static double Evaluate(const RowType& labels,
@@ -61,6 +62,8 @@ class GiniGain
    * Return the range of the Gini impurity for the given number of classes.
    * (That is, the difference between the maximum possible value and the minimum
    * possible value.)
+   *
+   * @param numClasses Number of classes in the dataset.
    */
   static double Range(const size_t numClasses)
   {

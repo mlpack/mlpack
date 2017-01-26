@@ -13,6 +13,12 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The AllCategoricalSplit is a splitting function that will split categorical
+ * features into many children: one child for each category.
+ *
+ * @tparam FitnessFunction Fitness function to evaluate gain with.
+ */
 template<typename FitnessFunction>
 class AllCategoricalSplit
 {
@@ -27,6 +33,19 @@ class AllCategoricalSplit
    * return the value 'bestGain'.  If a split is made, then classProbabilities
    * and aux may be modified.  For this particular split type, aux will be empty
    * and classProbabilities will hold one element---the number of children.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param numCategories Number of categories in the categorical data.
+   * @param labels Labels for each point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param classProbabilities Class probabilities vector, which may be filled
+   *      with split information a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
    */
   template<typename VecType>
   static double SplitIfBetter(
@@ -41,11 +60,20 @@ class AllCategoricalSplit
 
   /**
    * Return the number of children in the split.
+   *
+   * @param classProbabilities Auxiliary information for the split.
+   * @param aux (Unused) auxiliary information for the split.
    */
   template<typename ElemType>
   static size_t NumChildren(const arma::Col<ElemType>& classProbabilities,
                             const AuxiliarySplitInfo<ElemType>& /* aux */);
 
+  /**
+   * Calculate the direction a point should percolate to.
+   *
+   * @param classProbabilities Auxiliary information for the split.
+   * @param aux (Unused) auxiliary information for the split.
+   */
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,

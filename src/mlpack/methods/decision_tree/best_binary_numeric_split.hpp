@@ -12,6 +12,12 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The BestBinaryNumericSplit is a splitting function for decision trees that
+ * will exhaustively search a numeric dimension for the best binary split.
+ *
+ * @tparam FitnessFunction Fitness function to use to calculate gain.
+ */
 template<typename FitnessFunction>
 class BestBinaryNumericSplit
 {
@@ -25,6 +31,19 @@ class BestBinaryNumericSplit
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
    * return the value 'bestGain'.  If a split is made, then classProbabilities
    * and aux may be modified.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param numCategories Number of categories in the categorical data.
+   * @param labels Labels for each point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param classProbabilities Class probabilities vector, which may be filled
+   *      with split information a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
    */
   template<typename VecType>
   static double SplitIfBetter(
@@ -46,6 +65,13 @@ class BestBinaryNumericSplit
     return 2;
   }
 
+  /**
+   * Given a point, calculate which child it should go to (left or right).
+   *
+   * @param point Point to calculate direction of.
+   * @param classProbabilities Auxiliary information for the split.
+   * @param aux (Unused) auxiliary information for the split.
+   */
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
