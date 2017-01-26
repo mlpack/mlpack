@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_CONCAT_HPP
 #define MLPACK_METHODS_ANN_LAYER_CONCAT_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include <boost/ptr_container/ptr_vector.hpp>
 

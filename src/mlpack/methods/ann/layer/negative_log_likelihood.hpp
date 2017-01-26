@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_HPP
 #define MLPACK_METHODS_ANN_LAYER_NEGATIVE_LOG_LIKELIHOOD_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_ADD_HPP
 #define MLPACK_METHODS_ANN_LAYER_ADD_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {

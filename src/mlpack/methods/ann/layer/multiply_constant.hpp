@@ -8,7 +8,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

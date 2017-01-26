@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPOUT_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPOUT_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

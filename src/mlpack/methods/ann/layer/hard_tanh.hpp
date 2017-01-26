@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
 #define MLPACK_METHODS_ANN_LAYER_HARD_TANH_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

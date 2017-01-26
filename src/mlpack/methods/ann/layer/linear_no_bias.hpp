@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LINEAR_NO_BIAS_HPP
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_NO_BIAS_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include "layer_types.hpp"
 

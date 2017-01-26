@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "layer_types.hpp"
