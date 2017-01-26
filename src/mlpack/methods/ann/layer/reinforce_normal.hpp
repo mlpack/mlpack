@@ -8,7 +8,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_HPP
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

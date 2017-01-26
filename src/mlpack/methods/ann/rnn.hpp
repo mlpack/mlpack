@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_RNN_HPP
 #define MLPACK_METHODS_ANN_RNN_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer_visitor.hpp>

@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_SEQUENTIAL_HPP
 #define MLPACK_METHODS_ANN_LAYER_SEQUENTIAL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <boost/ptr_container/ptr_vector.hpp>
 

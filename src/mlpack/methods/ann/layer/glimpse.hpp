@@ -21,7 +21,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_GLIMPSE_HPP
 #define MLPACK_METHODS_ANN_LAYER_GLIMPSE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
 #include <algorithm>

@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_CONVOLUTION_HPP
 #define MLPACK_METHODS_ANN_LAYER_CONVOLUTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>

@@ -8,7 +8,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
 #define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
 #include "layer_visitor.hpp"

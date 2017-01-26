@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_SELECT_HPP
 #define MLPACK_METHODS_ANN_LAYER_SELECT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
