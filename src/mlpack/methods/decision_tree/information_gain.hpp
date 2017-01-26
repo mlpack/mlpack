@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini
- * impurity.
+ * gain.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,17 +18,18 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The standard information gain criterion, used for calculating gain in
+ * decision trees.
+ */
 class InformationGain
 {
  public:
   /**
-   * Given the sufficient statistics of a proposed split, calculate the
-   * information gain if that split was to be used.  The 'counts' matrix should
-   * contain the number of points in each class in each column, so the size of
-   * 'counts' is children x classes, where 'children' is the number of child
-   * nodes in the proposed split.
+   * Given a set of labels, calculate the information gain of those labels.
    *
-   * @param counts Matrix of sufficient statistics.
+   * @param labels Labels of the dataset.
+   * @param numClasses Number of classes in the dataset.
    */
   static double Evaluate(const arma::Row<size_t>& labels,
                          const size_t numClasses)
@@ -59,6 +60,8 @@ class InformationGain
    * Return the range of the information gain for the given number of classes.
    * (That is, the difference between the maximum possible value and the minimum
    * possible value.)
+   *
+   * @param numClasses Number of classes in the dataset.
    */
   static double Range(const size_t numClasses)
   {
