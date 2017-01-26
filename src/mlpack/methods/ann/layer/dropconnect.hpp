@@ -14,7 +14,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
