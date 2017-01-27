@@ -409,15 +409,15 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   
   arma::mat rdata(d, N);
   
-  for(size_t i = 0;i < d; i++)
-    for(size_t j = 0;j < N;j++)
+  for (size_t i = 0; i < d; i++)
+    for (size_t j = 0; j < N; j++)
       rdata(i,j) = dist(generator);
 
   //Creates a uniform distribution generator
   std::uniform_real_distribution<double> prob(0, 1);
   arma::vec probabilities(N);
   
-  for(size_t i = 0;i < N;i++)
+  for (size_t i = 0; i < N; i++)
     probabilities(i) = prob(generator);
   
   //Fits result with probabilities and data.
@@ -453,8 +453,8 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 
   arma::mat rdata(d, N);
 
-  for(size_t i = 0; i < d; i++)
-    for(size_t j = 0; j < N ; j++)
+  for (size_t i = 0; i < d; i++)
+    for (size_t j = 0; j < N ; j++)
       rdata(i,j) = dist(generator);
 
   arma::vec probabilities(N, arma::fill::ones);
@@ -501,20 +501,20 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
   arma::vec probabilities(N);
 
   //draws point alternatily from the two different distributions.
-  for(size_t i = 0 ; i < d; i++)
+  for (size_t i = 0 ; i < d; i++)
   {
-    for(size_t j = 0; j < N; j++)
+    for (size_t j = 0; j < N; j++)
     {
-      if(j%2 == 0)
+      if (j%2 == 0)
         rdata(i,j) = dist1(generator);
       else
         rdata(i,j) = dist2(generator);
     }
   }
 
-  for(size_t i = 0 ; i < N ; i++)
+  for (size_t i = 0 ; i < N ; i++)
   {
-    if(i%2 == 0)
+    if (i%2 == 0)
       probabilities(i) = highProb(generator);
     else
       probabilities(i) = lowProb(generator);
