@@ -406,13 +406,14 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   
   arma::mat rdata(d, N);
   
-  for (size_t i = 0; i < N; i++)
-    rdata.col(i) = dist.Random();
+  for (size_t i = 0; i < d; i++)
+    for (size_t j = 0; j < N; j++)
+      rdata(i,j) = dist(generator);
 
   arma::vec probabilities(N);
   
   for (size_t i = 0; i < N; i++)
-    probabilities(i) = Random();
+    probabilities(i) = prob(generator);
   
   //Fits result with probabilities and data.
   GaussianDistribution guDist;
@@ -443,8 +444,9 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 
   arma::mat rdata(d, N);
 
-  for (size_t i = 0; i < N; i++)
-      rdata.col(i) = Random();
+  for (size_t i = 0; i < d; i++)
+    for (size_t j = 0; j < N ; j++)
+      rdata(i,j) = dist(generator);
 
   arma::vec probabilities(N, arma::fill::ones);
 
@@ -485,24 +487,22 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
   arma::mat rdata(d, N);
   arma::vec probabilities(N);
 
-  //Fills even numbered columns with Random numbers 
-  //from GaussianDistribution1 and odd numbered 
-  //columns with Random numbers from GaussianDistribution2
-  for (size_t j = 0; j < N; j++)
+  //draws point alternatily from the two different distributions.
+  for (size_t i = 0 ; i < d; i++)
   {
-    if (j%2 == 0)
-      rdata.col(j) = dist1.Random();
-    else
-      rdata.col(j) = dist2.Random();
+    for (size_t j = 0; j < N; j++)
+    {
+      if (j%2 == 0)
+        rdata(i,j) = dist1(generator);
+      else
+        rdata(i,j) = dist2(generator);
+    }
   }
 
-  //Assigns high probabilities to numbers drawn from 
-  //GaussianDistribution1 and low probabilities to
-  //numbers drawn from GaussianDistribution2
   for (size_t i = 0 ; i < N ; i++)
   {
     if (i%2 == 0)
-      probabilities(i) = Random(0.98, 1);
+      probabilities(i) = highProb(generator);
     else
       probabilities(i) = Random(0, 0.02);
   }
