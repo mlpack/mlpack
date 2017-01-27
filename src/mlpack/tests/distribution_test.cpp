@@ -390,10 +390,145 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
       BOOST_REQUIRE_SMALL(d.Covariance()(i, j) - actualCov(i, j), 1e-5);
 }
 
+/**
+  * This test verifies the fitting of GaussianDistribution
+  works properly when probabilities for each sample is given.
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
+{
+  double mean = 5.0;
+  double stddeviation = 2.0;
+
+  //Creates a normal distribution generator.
+  std::default_random_engine generator;
+  generator.seed(std::time(NULL));
+  std::normal_distribution<double> dist(mean, stddeviation);
+  
+  size_t N = 50000;
+  size_t d =1;
+  
+  arma::mat rdata(d, N);
+  
+  for(size_t i = 0;i < d; i++)
+    for(size_t j = 0;j < N;j++)
+      rdata(i,j) = dist(generator);
+
+  //Creates a uniform distribution generator
+  std::uniform_real_distribution<double> prob(0, 1);
+  arma::vec probabilities(N);
+  
+  for(size_t i = 0;i < N;i++)
+    probabilities(i) = prob(generator);
+  
+  //Fits result with probabilities and data.
+  GaussianDistribution guDist;
+  guDist.Train(rdata, probabilities);
+  
+  //Fits result only with data
+  GaussianDistribution guDist2;
+  guDist2.Train(rdata);
+  
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 5);
+  
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean, 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], stddeviation*stddeviation, 5);
+}
+/**
+  *This test ensures that the same result is obtained when trained
+  with probabilities all set to 1 and with no probabilities at all
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
+{
+  double mean = 5.0;
+  double stddeviation = 4.0;
+
+  //Create a normal distribution random generator
+  std::default_random_engine generator;
+  generator.seed(std::time(NULL));
+  std::normal_distribution<double> dist(mean, stddeviation);
+
+  size_t N = 50000;
+  size_t d = 1;
+
+  arma::mat rdata(d, N);
+
+  for(size_t i = 0; i < d; i++)
+    for(size_t j = 0; j < N ; j++)
+      rdata(i,j) = dist(generator);
+
+  arma::vec probabilities(N, arma::fill::ones);
+
+  //fits data with only data
+  GaussianDistribution guDist;
+  guDist.Train(rdata);
+
+  //fits result with data and each probability as 1
+  GaussianDistribution guDist2;
+  guDist2.Train(rdata, probabilities);
+
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 1e-15);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 1e-2);
+}
+/** This test draes points from two different normal distributions,
+  * stes the probabilities for points from the first distribution
+  * to something small and the probabilities for the second to
+  * something large
+  *It ensures that the normal distribution recovered the same
+  *parameters as the second normal distribution with high probabilities
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
+{
+  double mean1 = 5.0;
+  double stddeviation1 = 4.0;
+
+  double mean2 = 3.0;
+  double stddeviation2 = 1.0;
+
+  //Create two gaussian distribution random generator
+  std::default_random_engine generator;
+  generator.seed(std::time(NULL));
+  std::normal_distribution<double> dist1(mean1, stddeviation1);
+  std::normal_distribution<double> dist2(mean2, stddeviation2);
+
+  std::uniform_real_distribution<double> lowProb(0, 0.02);
+  std::uniform_real_distribution<double> highProb(0.98, 1);
+
+  size_t N = 50000;
+  size_t d = 1;
+
+  arma::mat rdata(d, N);
+  arma::vec probabilities(N);
+
+  //draws point alternatily from the two different distributions.
+  for(size_t i = 0 ; i < d; i++)
+  {
+    for(size_t j = 0; j < N; j++)
+    {
+      if(j%2 == 0)
+        rdata(i,j) = dist1(generator);
+      else
+        rdata(i,j) = dist2(generator);
+    }
+  }
+
+  for(size_t i = 0 ; i < N ; i++)
+  {
+    if(i%2 == 0)
+      probabilities(i) = highProb(generator);
+    else
+      probabilities(i) = lowProb(generator);
+  }
+
+  GaussianDistribution guDist;
+  guDist.Train(rdata, probabilities);
+
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean1, 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], stddeviation1*stddeviation1, 5);
+}
 /******************************/
 /** Gamma Distribution Tests **/
 /******************************/
-
 /**
  * Make sure that using an object to fit one reference set and then asking
  * to fit another works properly.
