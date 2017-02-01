@@ -273,6 +273,54 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 }
 
 /**
+ * Perform dropout x times using ones as input, sum the number of ones and
+ * validate that the layer is is producing approximately the right number of
+ * ones.
+ */
+BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  const size_t iterations = 10;
+
+  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  for (size_t trail = 0; trail < 5; ++trail)
+  {
+    double nonzeroCount = 0;
+    for (size_t i = 0; i < iterations; ++i)
+    {
+      Dropout<> module(probability[trail]);
+      module.Deterministic() = false;
+
+      arma::mat output;
+      module.Forward(std::move(input), std::move(output));
+
+      arma::vec nonzero = arma::nonzeros(output);
+      nonzeroCount += nonzero.n_elem;
+    }
+    const double expected = input.n_elem * (1 - probability[trail]) *
+        iterations;
+    const double error = fabs(nonzeroCount - expected) / expected;
+
+    BOOST_REQUIRE_LE(error, 0.15);
+  }
+}
+
+/*
+ * Perform dropout with probability 1 - p where p = 0, means no dropout.
+ */
+BOOST_AUTO_TEST_CASE(NoDropoutTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  Dropout<> module(0);
+  module.Deterministic() = false;
+
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+}
+
+/**
  * Simple linear module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
