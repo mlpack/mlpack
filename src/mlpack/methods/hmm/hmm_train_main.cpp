@@ -368,7 +368,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetUnmappedParam<std::string>("input_model") << "' will be "
+        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
 
   if (CLI::HasParam("input_model") && CLI::HasParam("type"))

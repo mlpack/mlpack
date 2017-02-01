@@ -4,20 +4,21 @@
  *
  * Return the default value of a parameter, depending on its type.
  */
-#ifndef MLPACK_CORE_UTIL_DEFAULT_PARAM_IMPL_HPP
-#define MLPACK_CORE_UTIL_DEFAULT_PARAM_IMPL_HPP
+#ifndef MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
+#define MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
 
 #include "default_param.hpp"
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace cli {
 
 /**
  * Return the default value of an option.
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -35,7 +36,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
@@ -54,7 +55,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
         data::HasSerialize<T>::value ||
@@ -67,7 +68,8 @@ std::string DefaultParamImpl(
   return "'" + filename + "'";
 }
 
-} // namespace util
+} // namespace cli
+} // namespace bindings
 } // namespace mlpack
 
 #endif

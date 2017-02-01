@@ -23,7 +23,7 @@ void PrintExtraDefinitions(
     const util::ParamData& d,
     const std::enable_if_c<!HasSerialize<T>::value>::type* = 0)
 {
-  
+  // Don't do anything.
 }
 
 /**
@@ -47,7 +47,15 @@ void PrintExtraDefinitions(
    *   def __dealloc__(self):
    *     del self.modelptr
    */
-  std::cout << "cdef class " << 
+  std::cout << "cdef class " << d.cppType << "Type:" << std::endl;
+  std::cout << "  cdef " << d.cppType << "* modelptr" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def __init__(self):" << std::endl;
+  std::cout << "    self.modelptr = new " << d.cppType << "()" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def __dealloc__(self):" << std::endl;
+  std::cout << "    del self.modelptr" << std::endl;
+  std::cout << std::endl;
 }
 
 } // namespace bindings

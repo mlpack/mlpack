@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "cli.hpp"
-#include "option.hpp"
+#include "program_doc.hpp"
 
 #include <string>
 

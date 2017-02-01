@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     kfn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
       kfn.LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kFN model from '"
-        << CLI::GetUnmappedParam<KFNModel>("input_model") << "' (trained on "
+        << CLI::GetPrintableParam<KFNModel>("input_model") << "' (trained on "
         << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
         << endl;
   }
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 

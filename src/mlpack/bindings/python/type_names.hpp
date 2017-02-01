@@ -15,6 +15,54 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
+template<typename T>
+std::string Typename(const ParamData& /* data */)
+{
+  return "unknown";
+}
+
+template<>
+std::string Typename<int>(const ParamData& /* data */)
+{
+  return "int";
+}
+
+template<>
+std::string Typename<float>(const ParamData& /* data */)
+{
+  return "float";
+}
+
+template<>
+std::string Typename<double>(const ParamData& /* data */)
+{
+  return "double";
+}
+
+template<>
+std::string Typename<std::string>(const ParamData& /* data */)
+{
+  return "string";
+}
+
+template<typename T>
+std::string Typename<std::vector<T>>(const ParamData& /* data */)
+{
+  return "array";
+}
+
+template<>
+std::string Typename<size_t>(const ParamData& /* data */)
+{
+  return "size_t";
+}
+
+template<typename T>
+std::string Typename<arma::Mat<T>>(const ParamData& data)
+{
+  return "arma.Mat[" + Typename<T>(data) + "]";
+}
+
 /**
  * Get the Python typename.
  */
@@ -47,7 +95,7 @@ inline std::string Typename(const util::ParamData& data)
 //  else if (TYPENAME(std::tuple<data::DatasetInfo, arma::mat>) == data.tname)
 //    return "tuple";
   else
-    return "unknown"; // Let's hope this never happens.
+    return data.cppType; // Try just returning the typename itself.
 }
 
 /**

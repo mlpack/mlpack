@@ -57,38 +57,8 @@ class Option
          const bool input = true,
          const bool noTranspose = false)
   {
-    CLI::Add<N>(defaultValue, identifier, description, cppName, alias[0],
-        required, input, noTranspose);
+    // Do nothing!
   }
-};
-
-/**
- * A static object whose constructor registers program documentation with the
- * CLI class.  This should not be used outside of CLI itself, and you should use
- * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
- * object should ever exist.
- *
- * @see core/util/cli.hpp, mlpack::CLI
- */
-class ProgramDoc
-{
- public:
-  /**
-   * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CLI.
-   *
-   * @param programName Short string representing the name of the program.
-   * @param documentation Long string containing documentation on how to use the
-   *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by CLI later.
-   */
-  ProgramDoc(const std::string& programName,
-             const std::string& documentation);
-
-  //! The name of the program.
-  std::string programName;
-  //! Documentation for what the program does.
-  std::string documentation;
 };
 
 } // namespace util

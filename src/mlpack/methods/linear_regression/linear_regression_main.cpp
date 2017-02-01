@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
     {
       Log::Fatal << "The model was trained on " << lr.Parameters().n_elem - 1
           << "-dimensional data, but the test points in '"
-          << CLI::GetUnmappedParam<mat>("test") << "' are " << points.n_rows
+          << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
           << "-dimensional!" << endl;
     }
 

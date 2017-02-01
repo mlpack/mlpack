@@ -74,6 +74,10 @@ void PrintPYX(const vector<ParamData>& parameters,
   cout << "  cdef int mlpackMain() nogil" << endl;
   cout << endl;
 
+  // Print any extra class definitions we might need.
+  for (size_t i = 0; i < inputOptions.size(); ++i)
+    PrintExtraDefinitions(
+
   // Print the definition.
   cout << "def " << functionName << "(";
   size_t indent = 4 /* 'def ' */ + functionName.size() + 1 /* '(' */;

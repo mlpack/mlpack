@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
   {
     Log::Info << "Performing LSH-based approximate nearest neighbor search on "
         << "the reference dataset in the model stored in '"
-        << CLI::GetUnmappedParam<LSHSearch<>>("input_model") << "'." << endl;
+        << CLI::GetPrintableParam<LSHSearch<>>("input_model") << "'." << endl;
   }
 
   if (!CLI::HasParam("k") && CLI::HasParam("neighbors"))
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
   {
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceData.n_rows << " x " << referenceData.n_cols << ")."
         << endl;
 
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
       allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
     arma::Mat<size_t> trueNeighbors =
         std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
     Log::Info << "Loaded true neighbor indices from '"
-        << CLI::GetUnmappedParam<arma::Mat<size_t>>("true_neighbors") << "'."
+        << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
         << endl;
 
     // Compute recall and print it.

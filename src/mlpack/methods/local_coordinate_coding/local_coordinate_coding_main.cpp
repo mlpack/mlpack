@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetUnmappedParam<string>("input_model") << "' as initial "
+          << CLI::GetPrintableParam<string>("input_model") << "' as initial "
           << "dictionary for training." << endl;
       lcc.Train<NothingInitializer>(matX);
     }
@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
     if (matY.n_rows != lcc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
           << lcc.Dictionary().n_rows << ", but data in test file "
-          << CLI::GetUnmappedParam<mat>("test") << " has a dimensionality of "
+          << CLI::GetPrintableParam<mat>("test") << " has a dimensionality of "
           << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.

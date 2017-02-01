@@ -1,0 +1,112 @@
+/**
+ * @file get_param.hpp
+ * @author Ryan Curtin
+ *
+ * Use template metaprogramming to get the right type of parameter.
+ */
+#ifndef MLPACK_BINDINGS_CLI_SET_PARAM_HPP
+#define MLPACK_BINDINGS_CLI_SET_PARAM_HPP
+
+#include <mlpack/prereqs.hpp>
+#include "parameter_type.hpp"
+
+namespace mlpack {
+namespace bindings {
+namespace cli {
+
+/**
+ * This overload is called when nothing special needs to happen to the name of
+ * the parameter.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& value,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0,
+    const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
+{
+  // No mapping is needed.
+  d.value = value;
+}
+
+/**
+ * This overload is called to set a boolean.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& /* value */,
+    const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
+{
+  // Force set to default of false.
+  d.value = boost::any(false);
+}
+
+/**
+ * Return a matrix parameter.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& value,
+    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+{
+  // We're setting the string filename.
+  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = boost::any_cast<std::string>(value);
+}
+
+/**
+ * Return a matrix/dataset info parameter.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& value,
+    const typename boost::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+{
+  // We're setting the string filename.
+  typedef std::tuple<T, std::string> TupleType;
+  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = boost::any_cast<std::string>(value);
+}
+
+/**
+ * Return a serializable object.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& value,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+{
+  // We're setting the string filename.
+  typedef std::tuple<T, std::string> TupleType;
+  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = boost::any_cast<std::string>(value);
+}
+
+/**
+ * Return a parameter casted to the given type.  Type checking does not happen
+ * here!
+ *
+ * @param d Parameter information.
+ * @param input Unused parameter.
+ * @param output Place to store pointer to value.
+ */
+template<typename T>
+void SetParam(const util::ParamData& d, const void* input, void* /* output */)
+{
+  SetParam<T>(const_cast<util::ParamData&>(d), *((boost::any*) input));
+}
+
+} // namespace cli
+} // namespace bindings
+} // namespace mlpack
+
+#endif

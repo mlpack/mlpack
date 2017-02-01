@@ -4,20 +4,23 @@
  *
  * Return the default value of a parameter, depending on its type.
  */
-#ifndef MLPACK_CORE_UTIL_DEFAULT_PARAM_HPP
-#define MLPACK_CORE_UTIL_DEFAULT_PARAM_HPP
+#ifndef MLPACK_BINDINGS_CLI_DEFAULT_PARAM_HPP
+#define MLPACK_BINDINGS_CLI_DEFAULT_PARAM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/param_data.hpp>
+#include "is_std_vector.hpp"
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace cli {
 
 /**
- * Return the default value of an option.
+ * Return the default value of an option.  This is for regular types.
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -30,16 +33,17 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<IsStdVector<T>>::type* = 0);
 
 /**
- * Return the default value of a matrix option (this returns the default
- * filename, or '' if the default is no file).
+ * Return the default value of a matrix option, a tuple option, a
+ * serializable option, or a string option (this returns the default filename,
+ * or '' if the default is no file).
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
         data::HasSerialize<T>::value ||
@@ -49,15 +53,17 @@ std::string DefaultParamImpl(
 
 /**
  * Return the default value of an option.  This is the function that will be
- * called by the CLI module.
+ * placed into the CLI functionMap.
  */
 template<typename T>
-std::string DefaultParam(const ParamData& data)
+void DefaultParam(const util::ParamData& data, const void* /* input */, void* output)
 {
-  return DefaultParamImpl<T>(data);
+  std::string* outstr = (std::string*) output;
+  *outstr = DefaultParamImpl<T>(data);
 }
 
-} // namespace util
+} // namespace cli
+} // namespace bindings
 } // namespace mlpack
 
 // Include implementation.

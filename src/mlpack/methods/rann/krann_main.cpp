@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
     rann = std::move(CLI::GetParam<RANNModel>("input_model"));
 
     Log::Info << "Loaded rank-approximate kNN model from '"
-        << CLI::GetUnmappedParam<RANNModel>("input_model") << "' (trained on "
+        << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
         << rann.Dataset().n_rows << "x" << rann.Dataset().n_cols << " dataset)."
         << endl;
 
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 

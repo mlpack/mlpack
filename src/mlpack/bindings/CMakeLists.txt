@@ -1,5 +1,6 @@
 # All we have to do is recurse into the subdirectories.
 set(DIRS
+  cli
   python
 )
 

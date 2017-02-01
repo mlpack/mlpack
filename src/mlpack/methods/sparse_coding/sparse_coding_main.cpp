@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetUnmappedParam<SparseCoding>("input_model")
+          << CLI::GetPrintableParam<SparseCoding>("input_model")
           << "' as initial dictionary for training." << endl;
       sc.Train<NothingInitializer>(matX);
     }
@@ -218,8 +218,8 @@ int main(int argc, char* argv[])
     if (matY.n_rows != sc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
           << sc.Dictionary().n_rows << ", but data in test file '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << " has a dimensionality"
-          << " of " << matY.n_rows << "!" << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << " has a "
+          << "dimensionality of " << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))

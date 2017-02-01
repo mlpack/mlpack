@@ -11,12 +11,13 @@
 #include <mlpack/core/data/save.hpp>
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace cli {
 
 //! Output an option.
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -30,7 +31,7 @@ void OutputParamImpl(
 //! Output a vector option.
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
 {
   std::cout << data.name << ": ";
@@ -43,11 +44,13 @@ void OutputParamImpl(
 //! Output a matrix option (this saves it to file).
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
-  const T& output = *boost::any_cast<T>(&data.mappedValue);
-  const std::string& filename = *boost::any_cast<std::string>(&data.value);
+  typedef std::tuple<T, std::string> TupleType;
+  const T& output = std::get<0>(*boost::any_cast<TupleType>(&data.value));
+  const std::string& filename =
+      std::get<1>(*boost::any_cast<TupleType>(&data.value));
 
   if (output.n_elem > 0 && filename != "")
     data::Save(filename, output, false, !data.noTranspose);
@@ -56,14 +59,17 @@ void OutputParamImpl(
 //! Output a model option (this saves it to file).
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
   // not loading.
-  T& output = const_cast<T&>(*boost::any_cast<T>(&data.mappedValue));
-  const std::string& filename = *boost::any_cast<std::string>(&data.value);
+  typedef std::tuple<T, std::string> TupleType;
+  T& output = const_cast<T&>(std::get<0>(*boost::any_cast<TupleType>(
+      &data.value)));
+  const std::string& filename =
+      std::get<1>(*boost::any_cast<TupleType>(&data.value));
 
   if (filename != "")
     data::Save(filename, "model", output);
@@ -72,13 +78,15 @@ void OutputParamImpl(
 //! Output a mapped dataset.
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   // Output the matrix with the mappings.
-  const arma::mat& matrix = std::get<1>(*boost::any_cast<T>(&data.mappedValue));
-  const std::string& filename = *boost::any_cast<std::string>(&data.value);
+  typedef std::tuple<T, std::string> TupleType;
+  const T& matrix = std::get<0>(*boost::any_cast<TupleType>(&data.value));
+  const std::string& filename =
+      std::get<1>(*boost::any_cast<TupleType>(&data.value));
 
   // The mapping isn't taken into account.  We should write a data::Save()
   // overload for this.
@@ -86,7 +94,8 @@ void OutputParamImpl(
     data::Save(filename, matrix, false, !data.noTranspose);
 }
 
-} // namespace util
+} // namespace cli
+} // namespace bindings
 } // namespace mlpack
 
 #endif

@@ -82,6 +82,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
+// Use a forward declaration of the class.
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
  * identifier for options declared using the PARAM_*() macros. However, not all
  * compilers have this support--most notably, gcc < 4.3. In that case, the

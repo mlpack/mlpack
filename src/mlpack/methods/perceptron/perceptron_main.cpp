@@ -138,7 +138,7 @@ int main(int argc, char** argv)
   if (CLI::HasParam("input_model"))
   {
     Log::Info << "Loading saved perceptron from model file '"
-        << CLI::GetUnmappedParam<PerceptronModel>("input_model") << "'."
+        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "'."
         << endl;
 
     p = std::move(CLI::GetParam<PerceptronModel>("input_model"));
@@ -148,10 +148,10 @@ int main(int argc, char** argv)
   if (CLI::HasParam("training"))
   {
     Log::Info << "Training perceptron on dataset '"
-        << CLI::GetUnmappedParam<mat>("training");
+        << CLI::GetPrintableParam<mat>("training");
     if (CLI::HasParam("labels"))
       Log::Info << "' with labels in '"
-          << CLI::GetUnmappedParam<Mat<size_t>>("labels") << "'";
+          << CLI::GetPrintableParam<Mat<size_t>>("labels") << "'";
     else
       Log::Info << "'";
     Log::Info << " for a maximum of " << maxIterations << " iterations."
@@ -201,10 +201,10 @@ int main(int argc, char** argv)
       if (p.P().Weights().n_rows != trainingData.n_rows)
       {
         Log::Fatal << "Perceptron from '"
-            << CLI::GetUnmappedParam<PerceptronModel>("input_model")
+            << CLI::GetPrintableParam<PerceptronModel>("input_model")
             << "' is built on data with " << p.P().Weights().n_rows
             << " dimensions, but data in '"
-            << CLI::GetUnmappedParam<arma::mat>("training") << "' has "
+            << CLI::GetPrintableParam<arma::mat>("training") << "' has "
             << trainingData.n_rows << "dimensions!" << endl;
       }
 
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
       if (max(labels) + 1 > p.P().Weights().n_cols)
       {
         Log::Fatal << "Perceptron from '"
-            << CLI::GetUnmappedParam<PerceptronModel>("input_model") << "' has "
+            << CLI::GetPrintableParam<PerceptronModel>("input_model") << "' has "
             << p.P().Weights().n_cols << " classes, but the training data has "
             << max(labels) + 1 << " classes!" << endl;
       }
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
   if (CLI::HasParam("test"))
   {
     Log::Info << "Classifying dataset '"
-        << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+        << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
     mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (testData.n_rows != p.P().Weights().n_rows)

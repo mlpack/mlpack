@@ -279,7 +279,7 @@ int main(int argc, char** argv)
     if (CLI::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model.Classify(testSet, predictions, decisionBoundary);
 
       CLI::GetParam<arma::Mat<size_t>>("output") = std::move(predictions);
@@ -288,7 +288,7 @@ int main(int argc, char** argv)
     if (CLI::HasParam("output_probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model.Classify(testSet, probabilities);
 
@@ -300,7 +300,7 @@ int main(int argc, char** argv)
   if (CLI::HasParam("output_model"))
   {
     Log::Info << "Saving model to '"
-        << CLI::GetUnmappedParam<LogisticRegression<>>("output_model") << "'."
+        << CLI::GetPrintableParam<LogisticRegression<>>("output_model") << "'."
         << endl;
     CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
   }

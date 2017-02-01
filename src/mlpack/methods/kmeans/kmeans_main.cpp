@@ -277,8 +277,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 
       // Save the dataset.  We have to do a little trickery to get it to save
       // the input file correctly.
-      CLI::GetUnmappedParam<arma::mat>("output") =
-          CLI::GetUnmappedParam<arma::mat>("input");
+      CLI::GetPrintableParam<arma::mat>("output") =
+          CLI::GetPrintableParam<arma::mat>("input");
       CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
@@ -292,9 +292,9 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         // option to what the user passed for 'output'.
         CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
             "Labels for input dataset.", '\0', false, false, false);
-        CLI::GetUnmappedParam<arma::Mat<size_t>>("output_labels") =
-            CLI::GetUnmappedParam<arma::mat>("output");
-        CLI::GetUnmappedParam<arma::mat>("output") = "";
+        CLI::GetPrintableParam<arma::Mat<size_t>>("output_labels") =
+            CLI::GetPrintableParam<arma::mat>("output");
+        CLI::GetPrintableParam<arma::mat>("output") = "";
 
         CLI::GetParam<arma::Mat<size_t>>("output_labels") =
             std::move(assignments);

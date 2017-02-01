@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     const size_t leafSize = size_t(lsInt);
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
     rs = std::move(CLI::GetParam<RSModel>("input_model"));
 
     Log::Info << "Loaded range search model from '"
-        << CLI::GetUnmappedParam<RSModel>("input_model") << "' ("
+        << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
         << "trained on " << rs.Dataset().n_rows << "x" << rs.Dataset().n_cols
         << " dataset)." << endl;
 
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 

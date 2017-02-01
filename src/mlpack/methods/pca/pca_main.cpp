@@ -58,7 +58,7 @@ void RunPCA(arma::mat& dataset,
 
   if (varToRetain != 0)
   {
-    if (newDimension != 0)
+    if (CLI::HasParam("new_dimensionality"))
       Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
           << "(-r) was specified." << endl;
 

@@ -109,8 +109,8 @@ void mlpackMain()
     // Save the dataset.  This takes a little trickery, because we have to set
     // the output matrix parameter to have the same filename associated with it
     // as the input.
-    CLI::GetUnmappedParam<arma::mat>("output") =
-        CLI::GetUnmappedParam<arma::mat>("input");
+    CLI::GetPrintableParam<arma::mat>("output") =
+        CLI::GetPrintableParam<arma::mat>("input");
     CLI::GetParam<arma::mat>("output") = std::move(dataset);
   }
   else if (CLI::HasParam("output"))
@@ -133,8 +133,8 @@ void mlpackMain()
       // labels as the right type.
       CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
           "Labels for input dataset.", '\0', false, false, true);
-      CLI::GetUnmappedParam<arma::Mat<size_t>>("output_labels") =
-          CLI::GetUnmappedParam<arma::mat>("output");
+      CLI::GetPrintableParam<arma::Mat<size_t>>("output_labels") =
+          CLI::GetPrintableParam<arma::mat>("output");
       CLI::GetParam<arma::Mat<size_t>>("output_labels") =
           std::move(assignments);
     }
