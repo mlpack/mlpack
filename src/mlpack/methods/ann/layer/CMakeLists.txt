@@ -26,8 +26,6 @@ set(SOURCES
   join_impl.hpp
   layer.hpp
   layer_traits.hpp
-  layer_visitor.hpp
-  layer_visitor_impl.hpp
   layer_types.hpp
   leaky_relu.hpp
   leaky_relu_impl.hpp

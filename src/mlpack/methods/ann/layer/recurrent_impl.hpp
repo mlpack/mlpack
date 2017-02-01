@@ -16,6 +16,11 @@
 // In case it hasn't yet been included.
 #include "recurrent.hpp"
 
+#include "../visitor/add_visitor.hpp"
+#include "../visitor/backward_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+#include "../visitor/gradient_zero_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

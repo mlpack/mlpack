@@ -17,6 +17,13 @@
 // In case it hasn't yet been included.
 #include "dropconnect.hpp"
 
+#include "../visitor/delete_visitor.hpp"
+#include "../visitor/forward_visitor.hpp"
+#include "../visitor/backward_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+#include "../visitor/parameters_set_visitor.hpp"
+#include "../visitor/parameters_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

@@ -11,7 +11,6 @@
 #include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
-#include "layer_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
