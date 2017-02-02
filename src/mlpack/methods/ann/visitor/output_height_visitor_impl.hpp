@@ -2,9 +2,7 @@
  * @file output_height_visitor_impl.hpp
  * @author Marcus Edel
  *
- * This file provides an easy way to serialize a layer, abstracts away the
- * different types of layers, and also automatically directs any function to the
- * right layer type.
+ * Implementation of the OutputHeight() function layer abstraction.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

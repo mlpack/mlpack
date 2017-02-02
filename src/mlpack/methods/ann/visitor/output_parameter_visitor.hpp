@@ -2,9 +2,8 @@
  * @file output_parameter_visitor.hpp
  * @author Marcus Edel
  *
- * This file provides an easy way to serialize a layer, abstracts away the
- * different types of layers, and also automatically directs any function to the
- * right layer type.
+ * This file provides an abstraction for the OutputParameter() function for
+ * different layers and automatically directs any parameter to the right layer type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
