@@ -64,7 +64,9 @@ std::string DefaultParamImpl(
         std::is_same<T, std::string>::value>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
-  const std::string& filename = boost::any_cast<std::string>(data.value);
+  typedef std::tuple<T, std::string> TupleType;
+  const TupleType& tuple = *boost::any_cast<TupleType>(&data.value);
+  const std::string& filename = std::get<1>(tuple);
   return "'" + filename + "'";
 }
 

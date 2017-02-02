@@ -76,7 +76,7 @@ T& GetParam(
     d.loaded = true;
   }
 
-  return tuple;
+  return t;
 }
 
 /**

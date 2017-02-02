@@ -84,9 +84,10 @@ void OutputParamImpl(
 {
   // Output the matrix with the mappings.
   typedef std::tuple<T, std::string> TupleType;
-  const T& matrix = std::get<0>(*boost::any_cast<TupleType>(&data.value));
+  const T& tuple = std::get<0>(*boost::any_cast<TupleType>(&data.value));
   const std::string& filename =
       std::get<1>(*boost::any_cast<TupleType>(&data.value));
+  const arma::mat& matrix = std::get<1>(tuple);
 
   // The mapping isn't taken into account.  We should write a data::Save()
   // overload for this.
