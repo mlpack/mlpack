@@ -200,7 +200,7 @@ class CLI
    * @param identifier The name of the parameter in question.
    */
   template<typename T>
-  static const std::string& GetPrintableParam(const std::string& identifier);
+  static std::string GetPrintableParam(const std::string& identifier);
 
   /**
    * Stop all of the timers.

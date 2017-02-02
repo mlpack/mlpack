@@ -75,13 +75,13 @@ T& CLI::GetParam(const std::string& identifier)
  * @param identifier The name of the parameter in question.
  */
 template<typename T>
-const std::string& CLI::GetPrintableParam(const std::string& identifier)
+std::string CLI::GetPrintableParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
-  std::string key =
-      (GetSingleton().parameters.count(identifier) == 0 &&
-       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+  std::string key = ((GetSingleton().parameters.count(identifier) == 0) &&
+      (identifier.length() == 1) &&
+      (GetSingleton().aliases.count(identifier[0]) > 0)) ?
+      GetSingleton().aliases[identifier[0]] : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
@@ -98,16 +98,17 @@ const std::string& CLI::GetPrintableParam(const std::string& identifier)
   // Do we have a special mapped function?
   if (CLI::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
   {
-    T* output = NULL;
+    std::string output;
     CLI::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
         (void*) &output);
-    return *output;
+    return output;
   }
   else
   {
     std::ostringstream oss;
-    oss << *boost::any_cast<T>(&d.value);
-    return oss.str();
+    oss << "no GetPrintableParam function handler registered for type "
+        << d.cppType;
+    throw std::runtime_error(oss.str());
   }
 }
 
