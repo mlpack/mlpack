@@ -129,14 +129,10 @@ void mlpackMain()
     }
     else
     {
-      // We have to add an unsigned matrix output parameter so we can save the
-      // labels as the right type.
-      CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
-          "Labels for input dataset.", '\0', false, false, true);
-      CLI::GetPrintableParam<arma::Mat<size_t>>("output_labels") =
-          CLI::GetPrintableParam<arma::mat>("output");
-      CLI::GetParam<arma::Mat<size_t>>("output_labels") =
-          std::move(assignments);
+      // TODO: figure out how to output as an arma::Mat<size_t> so that files
+      // aren't way larger than needed.
+      CLI::GetParam<arma::mat>("output") =
+          arma::conv_to<arma::mat>::from(assignments);
     }
   }
 

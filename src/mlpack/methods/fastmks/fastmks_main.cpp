@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "fastmks.hpp"
 #include "fastmks_model.hpp"
@@ -75,10 +76,8 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Validate command-line parameters.
   if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --reference_file (-r) and "
@@ -245,6 +244,4 @@ int main(int argc, char** argv)
   // Save the model, if requested.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<FastMKSModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

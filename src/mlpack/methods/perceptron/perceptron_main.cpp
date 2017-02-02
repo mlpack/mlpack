@@ -1,6 +1,6 @@
 /*
- * @file: perceptron_main.cpp
- * @author: Udit Saxena
+ * @file perceptron_main.cpp
+ * @author Udit Saxena
  *
  * This program runs the Simple Perceptron Classifier.
  *
@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "perceptron.hpp"
 
 using namespace mlpack;
@@ -106,10 +106,8 @@ PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UMATRIX_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // First, get all parameters and validate them.
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
@@ -257,6 +255,4 @@ int main(int argc, char** argv)
   // Lastly, do we need to save the output model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<PerceptronModel>("output_model") = std::move(p);
-
-  CLI::Destroy();
 }

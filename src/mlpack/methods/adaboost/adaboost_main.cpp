@@ -31,8 +31,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -90,10 +90,8 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
@@ -241,6 +239,4 @@ int main(int argc, char *argv[])
   // Should we save the model, too?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<AdaBoostModel>("output_model") = std::move(m);
-
-  CLI::Destroy();
 }

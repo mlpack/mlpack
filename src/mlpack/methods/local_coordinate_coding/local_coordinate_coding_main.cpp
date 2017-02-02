@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "lcc.hpp"
 
 using namespace arma;
@@ -75,10 +76,8 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -222,6 +221,4 @@ int main(int argc, char* argv[])
   // Did the user want to save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LocalCoordinateCoding>("output_model") = std::move(lcc);
-
-  CLI::Destroy();
 }

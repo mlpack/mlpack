@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "linear_regression.hpp"
 
 using namespace mlpack;
@@ -56,11 +57,8 @@ PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters.
-  CLI::ParseCommandLine(argc, argv);
-
   const double lambda = CLI::GetParam<double>("lambda");
 
   if (!CLI::HasParam("test") && CLI::HasParam("output_predictions"))
@@ -197,6 +195,4 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("output_predictions"))
       CLI::GetParam<mat>("output_predictions") = std::move(predictions);
   }
-
-  CLI::Destroy();
 }

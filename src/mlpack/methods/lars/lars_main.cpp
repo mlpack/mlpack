@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "lars.hpp"
 
@@ -71,11 +72,8 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters,
-  CLI::ParseCommandLine(argc, argv);
-
   double lambda1 = CLI::GetParam<double>("lambda1");
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::HasParam("use_cholesky");
@@ -168,6 +166,4 @@ int main(int argc, char* argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LARS>("output_model") = std::move(lars);
-
-  CLI::Destroy();
 }

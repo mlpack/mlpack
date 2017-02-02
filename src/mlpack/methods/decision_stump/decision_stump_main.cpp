@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_stump.hpp"
 
 using namespace mlpack;
@@ -95,10 +96,8 @@ PARAM_MODEL_OUT(DSModel, "output_model", "Output decision stump model to save.",
 PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
     "decision stump bucket.", "b", 6);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check that the parameters are reasonable.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
   {
@@ -194,6 +193,4 @@ int main(int argc, char *argv[])
   // Save the model, if desired.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<DSModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

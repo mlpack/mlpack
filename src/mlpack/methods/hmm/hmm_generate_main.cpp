@@ -12,6 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -74,11 +75,8 @@ struct Generate
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output") && !CLI::HasParam("state"))
     Log::Warn << "Neither --output_file nor --state_file are specified; no "
         << "output will be saved!" << endl;

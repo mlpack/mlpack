@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "dt_utils.hpp"
 
 using namespace mlpack;
@@ -71,10 +72,8 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Validate input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
@@ -191,6 +190,4 @@ int main(int argc, char *argv[])
   // Clean up memory, if we need to.
   if (!CLI::HasParam("input_model") && !CLI::HasParam("output_model"))
     delete tree;
-
-  CLI::Destroy();
 }

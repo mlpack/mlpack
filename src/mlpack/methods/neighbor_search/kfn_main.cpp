@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include <string>
 #include <fstream>
@@ -97,11 +98,8 @@ PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
     "neighbors will be at least (p*100) % of the distance as the true furthest "
     "neighbor.", "p", 1);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -383,6 +381,4 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<KFNModel>("output_model") = std::move(kfn);
-
-  CLI::Destroy();
 }

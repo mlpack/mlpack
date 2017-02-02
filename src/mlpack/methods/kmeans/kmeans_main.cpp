@@ -285,19 +285,10 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
     {
       if (CLI::HasParam("labels_only"))
       {
-        // Save only the labels.  But the labels are a different type so we need
-        // to do a bit of trickery to get them to save as the right type: we'll
-        // add another option with type Mat<size_t> called 'output_labels', then
-        // set the 'output' option to nothing, and set the 'output_labels'
-        // option to what the user passed for 'output'.
-        CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
-            "Labels for input dataset.", '\0', false, false, false);
-        CLI::GetPrintableParam<arma::Mat<size_t>>("output_labels") =
-            CLI::GetPrintableParam<arma::mat>("output");
-        CLI::GetPrintableParam<arma::mat>("output") = "";
-
-        CLI::GetParam<arma::Mat<size_t>>("output_labels") =
-            std::move(assignments);
+        // Save only the labels.  TODO: figure out how to get this to output an
+        // arma::Mat<size_t> instead of an arma::mat.
+        CLI::GetParam<arma::mat>("output") =
+            arma::conv_to<arma::mat>::from(assignments);
       }
       else
       {

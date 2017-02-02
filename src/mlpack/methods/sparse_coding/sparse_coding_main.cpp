@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "sparse_coding.hpp"
 
 using namespace arma;
@@ -87,10 +88,8 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -243,6 +242,4 @@ int main(int argc, char* argv[])
   // Did the user want to save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<SparseCoding>("output_model") = std::move(sc);
-
-  CLI::Destroy();
 }

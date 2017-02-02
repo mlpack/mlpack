@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -64,11 +65,8 @@ struct Loglik
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   // Load model, and calculate the log-likelihood of the sequence.
   CLI::GetParam<HMMModel>("input_model").PerformAction<Loglik>((void*) NULL);
 }

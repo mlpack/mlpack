@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
 using namespace std;
@@ -32,10 +33,8 @@ PARAM_MATRIX_OUT("output", "Matrix to save output samples in.", "o");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Parameter sanity checks.
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "

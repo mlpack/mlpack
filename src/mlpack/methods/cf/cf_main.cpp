@@ -9,9 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/core.hpp>
-
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
@@ -242,11 +241,8 @@ void AssembleFactorizerType(const std::string& algorithm,
   }
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
   else
@@ -320,6 +316,4 @@ int main(int argc, char** argv)
 
     PerformAction(c);
   }
-
-  CLI::Destroy();
 }

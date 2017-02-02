@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -68,11 +69,8 @@ struct Viterbi
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;

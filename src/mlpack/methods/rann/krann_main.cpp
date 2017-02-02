@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "ra_search.hpp"
 #include "ra_model.hpp"
@@ -93,15 +94,14 @@ PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
 PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
     "samples (and hence the largest node you can approximate).", "z", 20);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
- // A user cannot specify both reference data and a model.
+
+  // A user cannot specify both reference data and a model.
   if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
@@ -276,6 +276,4 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<RANNModel>("output_model") = std::move(rann);
-
-  CLI::Destroy();
 }

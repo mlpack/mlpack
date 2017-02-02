@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -333,11 +334,8 @@ struct Train
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
@@ -451,6 +449,4 @@ int main(int argc, char** argv)
   // If necessary, save the output.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<HMMModel>("output_model") = std::move(hmm);
-
-  CLI::Destroy();
 }

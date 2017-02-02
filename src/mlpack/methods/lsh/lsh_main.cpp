@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "lsh_search.hpp"
@@ -73,11 +74,8 @@ PARAM_INT_IN("bucket_size", "The size of a bucket in the second level hash.",
     "B", 500);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -217,6 +215,4 @@ int main(int argc, char *argv[])
     CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LSHSearch<>>("output_model") = std::move(allkann);
-
-  CLI::Destroy();
 }

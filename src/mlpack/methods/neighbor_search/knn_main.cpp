@@ -12,6 +12,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include <string>
 #include <fstream>
@@ -101,11 +102,8 @@ PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -402,6 +400,4 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<KNNModel>("output_model") = std::move(knn);
-
-  CLI::Destroy();
 }

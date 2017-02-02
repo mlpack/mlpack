@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "drusilla_select.hpp"
 #include "qdafn.hpp"
 
@@ -107,10 +108,8 @@ PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
 PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
     "M");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "Either --reference_file (-r) or --input_model_file (-m) must"
         << " be specified!" << endl;
@@ -263,7 +262,4 @@ int main(int argc, char** argv)
   // Should we save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<ApproxKFNModel>("output_model") = std::move(m);
-
-  // Save any output variables.
-  CLI::Destroy();
 }

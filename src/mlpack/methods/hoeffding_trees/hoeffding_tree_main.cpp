@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
@@ -88,10 +89,8 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters for validity.
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
@@ -280,6 +279,4 @@ int main(int argc, char** argv)
   // Check the accuracy on the training set.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<HoeffdingTreeModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

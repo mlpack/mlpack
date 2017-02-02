@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "logistic_regression.hpp"
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -109,10 +110,8 @@ PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Collect command-line options.
   const double lambda = CLI::GetParam<double>("lambda");
   const string optimizerType = CLI::GetParam<string>("optimizer");
@@ -304,6 +303,4 @@ int main(int argc, char** argv)
         << endl;
     CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
   }
-
-  CLI::Destroy();
 }

@@ -9,6 +9,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
@@ -90,10 +91,8 @@ void TestPredictAcc(const size_t numClasses, const Model& model);
 template<typename Model>
 unique_ptr<Model> TrainSoftmax(const size_t maxIterations);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
@@ -122,8 +121,6 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<SM>("output_model") = std::move(*sm);
-
-  CLI::Destroy();
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,

@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
 using namespace std;
@@ -29,10 +30,8 @@ PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
 
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;

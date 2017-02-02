@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "gmm.hpp"
 #include "no_constraint.hpp"
@@ -77,10 +78,8 @@ PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
     "with.", "m");
 PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check parameters and load data.
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
@@ -200,6 +199,4 @@ int main(int argc, char* argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<GMM>("output_model") = std::move(gmm);
-
-  CLI::Destroy();
 }
