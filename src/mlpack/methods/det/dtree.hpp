@@ -161,6 +161,20 @@ class DTree
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
   TagType TagTree(const TagType& tag = 0);
+  
+  
+  /**
+   * Traverses all nodes of the tree, including the inner ones. On each node
+   * two methods of the `enumer` are called:
+   *
+   * Enter(DTree* node, DTree* parent);
+   * Leave(Dtree* node, DTree* parent);
+   *
+   * @param walker An instance of custom class, receiver of the enumeration.
+   */
+  template <class Walker>
+  void EnumerateTree(Walker& walker) const;
+  
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for

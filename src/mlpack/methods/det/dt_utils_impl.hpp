@@ -18,15 +18,15 @@
 namespace mlpack {
 namespace det {
 
-template <typename MatType, typename TagType>
-void PrintLeafMembership(DTree<MatType, TagType>* dtree,
+template <typename MatType>
+void PrintLeafMembership(DTree<MatType, int>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
                          const size_t numClasses,
-                         const std::string leafClassMembershipFile)
+                         const std::string& leafClassMembershipFile)
 {
   // Tag the leaves with numbers.
-  TagType numLeaves = dtree->TagTree();
+  int numLeaves = dtree->TagTree();
 
   arma::Mat<size_t> table(numLeaves, (numClasses + 1));
   table.zeros();
@@ -34,7 +34,7 @@ void PrintLeafMembership(DTree<MatType, TagType>* dtree,
   for (size_t i = 0; i < data.n_cols; i++)
   {
     const typename MatType::vec_type testPoint = data.unsafe_col(i);
-    const TagType leafTag = dtree->FindBucket(testPoint);
+    const int leafTag = dtree->FindBucket(testPoint);
     const size_t label = labels[i];
     table(leafTag, label) += 1;
   }
@@ -65,7 +65,7 @@ void PrintLeafMembership(DTree<MatType, TagType>* dtree,
 
   return;
 }
-
+    
 template <typename MatType, typename TagType>
 void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                              const std::string viFile)

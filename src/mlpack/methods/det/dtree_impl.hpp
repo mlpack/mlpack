@@ -760,13 +760,47 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
   }
 }
 
+// Enumerate the nodes of the tree.
+template <typename MatType, typename TagType>
+template <class Walker>
+void DTree<MatType, TagType>::EnumerateTree(Walker& walker) const
+{
+  if (root == 1)
+    walker.Enter(this, (const DTree<MatType, TagType>*)nullptr);
+  
+  if (subtreeLeaves > 1)
+  {
+    // walk the left ...
+    walker.Enter(left, this);
+    left->EnumerateTree(walker);
+    walker.Leave(left, this);
+    
+    // ... and the right.
+    walker.Enter(right, this);
+    right->EnumerateTree(walker);
+    walker.Leave(right, this);
+  }
+
+  if (root == 1)
+    walker.Leave(this, (const DTree<MatType, TagType>*)nullptr);
+
+}
+
 
 template <typename MatType, typename TagType>
 TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
-  if (subtreeLeaves == 1) // If we are a leaf...
+  if (root == 1) // If we are the root...
+  {
+    // Check if the query is within range.
+    if (!WithinRange(query))
+      return bucketTag;
+  }
+  
+  // If we are a leaf...
+  if (subtreeLeaves == 1)
   {
     return bucketTag;
   }

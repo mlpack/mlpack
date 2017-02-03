@@ -35,8 +35,8 @@ void PrintLeafMembership(DTree<MatType, TagType>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
                          const size_t numClasses,
-                         const std::string leafClassMembershipFile = "");
-
+                         const std::string& leafClassMembershipFile = "");
+  
 /**
  * Print the variable importance of each dimension of a density estimation tree.
  * Optionally, pass the name of a file to print this information to (otherwise
