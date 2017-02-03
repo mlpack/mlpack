@@ -61,7 +61,7 @@ PARAM_STRING_OUT("vi_file", "The file to output the variable importance values "
 PARAM_STRING_IN("path_format", "The format of path printing - lr|idlr|ldid",
                 "p", "lr");
 
-PARAM_STRING_IN("tag_counters", "The file to output tag counters.", "c", "");
+PARAM_STRING_OUT("tag_counters", "The file to output tag counters.", "c");
 
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths) "
                  " for each sample in the test set.", "g");
