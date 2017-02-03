@@ -215,8 +215,18 @@ int main(int argc, char *argv[])
       // Compute test set densities.
       Timer::Start("det_test_set_estimation");
       arma::rowvec testDensities(testData.n_cols);
+      
+#ifdef _WIN32
+      #pragma omp parallel for default(shared)
+      for (intmax_t i = 0; i < testData.n_cols; i++)
+#else
+      #pragma omp parallel for default(shared)
       for (size_t i = 0; i < testData.n_cols; i++)
+#endif
+      {
         testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
+      }
+      
       Timer::Stop("det_test_set_estimation");
 
       if (CLI::GetParam<string>("test_set_estimates_file") != "")
@@ -244,12 +254,20 @@ int main(int argc, char *argv[])
         PathCacher path(PathCacher::FormatLR, tree);
         counters.zeros(path.NumLeaves());
         
-        for (size_t i = 0; i < testData.n_cols; ++i)
+#ifdef _WIN32
+        #pragma omp parallel for default(shared)
+        for (intmax_t i = 0; i < testData.n_cols; i++)
+#else
+        #pragma omp parallel for default(shared)
+        for (size_t i = 0; i < testData.n_cols; i++)
+#endif
         {
-          int tag = tree->FindBucket(testData.unsafe_col(i));
-          counters(tag) += 1;
+          const int tag = tree->FindBucket(testData.unsafe_col(i));
           
           ofs << tag << " " << path.PathFor(tag) << std::endl;
+          
+          #pragma omp critical (DTreeCounterUpdate)
+          counters(tag) += 1;
         }
       }
       else
@@ -257,11 +275,19 @@ int main(int argc, char *argv[])
         int numLeaves = tree->TagTree();
         counters.zeros(numLeaves);
         
-        for (size_t i = 0; i < testData.n_cols; ++i)
+#ifdef _WIN32
+        #pragma omp parallel for default(shared)
+        for (intmax_t i = 0; i < testData.n_cols; i++)
+#else
+        #pragma omp parallel for default(shared)
+        for (size_t i = 0; i < testData.n_cols; i++)
+#endif
         {
-          int tag = tree->FindBucket(testData.unsafe_col(i));
-          counters(tag) += 1;
+          const int tag = tree->FindBucket(testData.unsafe_col(i));
           ofs << tag << std::endl;
+          
+          #pragma omp critical (DTreeCounterUpdate)
+          counters(tag) += 1;
         }
       }
 
