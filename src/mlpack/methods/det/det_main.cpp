@@ -216,16 +216,8 @@ int main(int argc, char *argv[])
       Timer::Start("det_test_set_estimation");
       arma::rowvec testDensities(testData.n_cols);
       
-#ifdef _WIN32
-      #pragma omp parallel for default(shared)
-      for (intmax_t i = 0; i < testData.n_cols; i++)
-#else
-      #pragma omp parallel for default(shared)
       for (size_t i = 0; i < testData.n_cols; i++)
-#endif
-      {
         testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
-      }
       
       Timer::Stop("det_test_set_estimation");
 
@@ -254,20 +246,12 @@ int main(int argc, char *argv[])
         PathCacher path(PathCacher::FormatLR, tree);
         counters.zeros(path.NumLeaves());
         
-#ifdef _WIN32
-        #pragma omp parallel for default(shared)
-        for (intmax_t i = 0; i < testData.n_cols; i++)
-#else
-        #pragma omp parallel for default(shared)
         for (size_t i = 0; i < testData.n_cols; i++)
-#endif
         {
           const int tag = tree->FindBucket(testData.unsafe_col(i));
           
-          ofs << tag << " " << path.PathFor(tag) << std::endl;
-          
-          #pragma omp critical (DTreeCounterUpdate)
           counters(tag) += 1;
+          ofs << tag << " " << path.PathFor(tag) << std::endl;
         }
       }
       else
@@ -275,18 +259,11 @@ int main(int argc, char *argv[])
         int numLeaves = tree->TagTree();
         counters.zeros(numLeaves);
         
-#ifdef _WIN32
-        #pragma omp parallel for default(shared)
-        for (intmax_t i = 0; i < testData.n_cols; i++)
-#else
-        #pragma omp parallel for default(shared)
         for (size_t i = 0; i < testData.n_cols; i++)
-#endif
         {
           const int tag = tree->FindBucket(testData.unsafe_col(i));
-          ofs << tag << std::endl;
           
-          #pragma omp critical (DTreeCounterUpdate)
+          ofs << tag << std::endl;
           counters(tag) += 1;
         }
       }
