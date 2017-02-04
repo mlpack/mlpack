@@ -14,7 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer_visitor.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -139,6 +139,41 @@ double JacobianPerformanceTest(ModuleType& module,
   return arma::max(arma::max(arma::abs(centralDifference - delta)));
 }
 
+// Simple numerical gradient checker.
+template<class FunctionType>
+double CheckGradient(FunctionType& function, const double eps = 1e-7)
+{
+  // Get gradients for the current parameters.
+  arma::mat orgGradient, gradient, estGradient;
+  function.Gradient(orgGradient);
+
+  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+
+  // compute numeric approximations to gradient.
+  for (size_t i = 0; i < orgGradient.n_elem; ++i)
+  {
+    double tmp = function.Parameters()(i);
+
+    // Perturb parameter with a positive constant and get costs.
+    function.Parameters()(i) += eps;
+    double costPlus = function.Gradient(gradient);
+
+    // Perturb parameter with a negative constant and get costs.
+    function.Parameters()(i) -= (2 * eps);
+    double costMinus = function.Gradient(gradient);
+
+    // Restore the parameter value.
+    function.Parameters()(i) = tmp;
+
+    // Compute numerical gradients using the costs calculated above.
+    estGradient(i) = (costPlus - costMinus) / (2 * eps);
+  }
+
+  // Estimate error of gradient.
+  return arma::norm(orgGradient - estGradient) /
+      arma::norm(orgGradient + estGradient);
+}
+
 /**
  * Simple add module test.
  */
@@ -184,6 +219,48 @@ BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * Add layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
+          input, target);
+      model->Add<IdentityLayer<> >();
+      model->Add<Add<> >(10);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
@@ -364,6 +441,48 @@ BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
 }
 
 /**
+ * Linear layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
+          input, target);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple linear no bias module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
@@ -402,6 +521,48 @@ BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * LinearNoBias layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLinearNoBiadLayerTest)
+{
+  // LinearNoBias function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+            model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
+          input, target);
+      model->Add<IdentityLayer<> >();
+      model->Add<LinearNoBias<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
