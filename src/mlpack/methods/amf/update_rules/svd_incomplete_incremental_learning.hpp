@@ -3,6 +3,11 @@
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
 #define MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
@@ -168,7 +173,7 @@ inline void SVDIncompleteIncrementalLearning::
     size_t i = it.row();
     deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
                                          arma::trans(H.col(currentUserIndex));
-    if(kw != 0) deltaW.row(i) -= kw * W.row(i);
+    if (kw != 0) deltaW.row(i) -= kw * W.row(i);
   }
 
   W += u*deltaW;
@@ -188,11 +193,11 @@ inline void SVDIncompleteIncrementalLearning::
   {
     double val = *it;
     size_t i = it.row();
-    if((val = V(i, currentUserIndex)) != 0)
+    if ((val = V(i, currentUserIndex)) != 0)
       deltaH += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
                                                     arma::trans(W.row(i));
   }
-  if(kh != 0) deltaH -= kh * H.col(currentUserIndex);
+  if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
   H.col(currentUserIndex++) += u * deltaH;
   currentUserIndex = currentUserIndex % V.n_cols;

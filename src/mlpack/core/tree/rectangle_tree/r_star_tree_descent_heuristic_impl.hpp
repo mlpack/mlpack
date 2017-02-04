@@ -4,6 +4,11 @@
  *
  * Implementation of RStarTreeDescentHeuristic, a class that chooses the best child of a node in
  * an R tree when inserting a new point.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_DESCENT_HEURISTIC_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_DESCENT_HEURISTIC_IMPL_HPP
@@ -16,7 +21,7 @@ namespace tree {
 template<typename TreeType>
 inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
-    const arma::vec& point)
+    const size_t point)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -25,7 +30,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   std::vector<ElemType> originalScores(node->NumChildren());
   ElemType origMinScore = std::numeric_limits<ElemType>::max();
 
-  if (node->Children()[0]->IsLeaf())
+  if (node->Child(0).IsLeaf())
   {
     // If its children are leaf nodes, use minimum overlap to choose.
     size_t bestIndex = 0;
@@ -41,12 +46,23 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
           ElemType newOverlap = 1.0;
           for (size_t k = 0; k < node->Bound().Dim(); k++)
           {
-            ElemType newHigh = std::max(point[k],
-                node->Children()[i]->Bound()[k].Hi());
-            ElemType newLow = std::min(point[k],
-                node->Children()[i]->Bound()[k].Lo());
-            overlap *= node->Children()[i]->Bound()[k].Hi() < node->Children()[j]->Bound()[k].Lo() || node->Children()[i]->Bound()[k].Lo() > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(node->Children()[i]->Bound()[k].Hi(), node->Children()[j]->Bound()[k].Hi()) - std::max(node->Children()[i]->Bound()[k].Lo(), node->Children()[j]->Bound()[k].Lo());
-            newOverlap *= newHigh < node->Children()[j]->Bound()[k].Lo() || newLow > node->Children()[j]->Bound()[k].Hi() ? 0 : std::min(newHigh, node->Children()[j]->Bound()[k].Hi()) - std::max(newLow, node->Children()[j]->Bound()[k].Lo());
+            ElemType newHigh = std::max(node->Dataset().col(point)[k],
+                node->Child(i).Bound()[k].Hi());
+            ElemType newLow = std::min(node->Dataset().col(point)[k],
+                node->Child(i).Bound()[k].Lo());
+            overlap *= node->Child(i).Bound()[k].Hi() <
+                node->Child(j).Bound()[k].Lo() ||
+                node->Child(i).Bound()[k].Lo() >
+                node->Child(j).Bound()[k].Hi() ? 0 :
+                  std::min(node->Child(i).Bound()[k].Hi(),
+                           node->Child(j).Bound()[k].Hi()) -
+                  std::max(node->Child(i).Bound()[k].Lo(),
+                           node->Child(j).Bound()[k].Lo());
+
+            newOverlap *= newHigh < node->Child(j).Bound()[k].Lo() ||
+                newLow > node->Child(j).Bound()[k].Hi() ? 0 :
+                std::min(newHigh, node->Child(j).Bound()[k].Hi()) -
+                std::max(newLow, node->Child(j).Bound()[k].Lo());
           }
           sc += newOverlap - overlap;
         }
@@ -90,9 +106,13 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
       ElemType v2 = 1.0;
       for (size_t j = 0; j < node->Bound().Dim(); j++)
       {
-        v1 *= node->Children()[i]->Bound()[j].Width();
-        v2 *= node->Children()[i]->Bound()[j].Contains(point[j]) ? node->Children()[i]->Bound()[j].Width() : (node->Children()[i]->Bound()[j].Hi() < point[j] ? (point[j] - node->Children()[i]->Bound()[j].Lo()) :
-            (node->Children()[i]->Bound()[j].Hi() - point[j]));
+        v1 *= node->Child(i).Bound()[j].Width();
+        v2 *= node->Child(i).Bound()[j].Contains(
+            node->Dataset().col(point)[j]) ?
+            node->Child(i).Bound()[j].Width() :
+            (node->Child(i).Bound()[j].Hi() < node->Dataset().col(point)[j] ?
+              (node->Dataset().col(point)[j] - node->Child(i).Bound()[j].Lo()) :
+              (node->Child(i).Bound()[j].Hi() - node->Dataset().col(point)[j]));
       }
 
       assert(v2 - v1 >= 0);
@@ -157,11 +177,16 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Children()[i]->Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
-      v1 *= node->Children()[i]->Bound()[j].Width();
-      v2 *= node->Children()[i]->Bound()[j].Contains(insertedNode->Bound()[j]) ? node->Children()[i]->Bound()[j].Width() :
-              (insertedNode->Bound()[j].Contains(node->Children()[i]->Bound()[j]) ? insertedNode->Bound()[j].Width() : (insertedNode->Bound()[j].Lo() < node->Children()[i]->Bound()[j].Lo() ? (node->Children()[i]->Bound()[j].Hi() - insertedNode->Bound()[j].Lo()) : (insertedNode->Bound()[j].Hi() - node->Children()[i]->Bound()[j].Lo())));
+      v1 *= node->Child(i).Bound()[j].Width();
+      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?
+          node->Child(i).Bound()[j].Width() :
+          (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j]) ?
+            insertedNode->Bound()[j].Width() :
+            (insertedNode->Bound()[j].Lo() < node->Child(i).Bound()[j].Lo() ?
+            (node->Child(i).Bound()[j].Hi() - insertedNode->Bound()[j].Lo()) :
+            (insertedNode->Bound()[j].Hi() - node->Child(i).Bound()[j].Lo())));
     }
 
     assert(v2 - v1 >= 0);

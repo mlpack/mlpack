@@ -53,10 +53,6 @@
 
 namespace arma {
   // u64/s64
-  #include "typedef.hpp"
-  #include "traits.hpp"
-  #include "promote_type.hpp"
-  #include "restrictors.hpp"
   #include "hdf5_misc.hpp"
 
   // ccov()
@@ -66,6 +62,8 @@ namespace arma {
   #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
 
+  // index to subscript and vice versa
+  #include "fn_ind2sub.hpp"
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
 

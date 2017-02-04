@@ -3,9 +3,21 @@
  * @author Nishant Mehta
  *
  * Executable for Sparse Coding.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "sparse_coding.hpp"
+
+using namespace arma;
+using namespace std;
+using namespace mlpack;
+using namespace mlpack::math;
+using namespace mlpack::sparse_coding;
 
 PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "Dictionary Learning, which achieves sparsity via an l1-norm regularizer on"
@@ -45,44 +57,36 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "$ sparse_coding -m model.xml -T otherdata.csv -c codes.csv");
 
 // Train the model.
-PARAM_STRING("training_file", "Filename of the training data (X).", "t", "");
-PARAM_INT("atoms", "Number of atoms in the dictionary.", "k", 0);
+PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
+PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 0);
 
-PARAM_DOUBLE("lambda1", "Sparse coding l1-norm regularization parameter.", "l",
-    0);
-PARAM_DOUBLE("lambda2", "Sparse coding l2-norm regularization parameter.", "L",
-    0);
-PARAM_INT("max_iterations", "Maximum number of iterations for sparse coding (0 "
-    "indicates no limit).", "n", 0);
-PARAM_STRING("initial_dictionary", "Filename for optional initial dictionary.",
-    "i", "");
+PARAM_DOUBLE_IN("lambda1", "Sparse coding l1-norm regularization parameter.",
+    "l", 0);
+PARAM_DOUBLE_IN("lambda2", "Sparse coding l2-norm regularization parameter.",
+    "L", 0);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations for sparse coding "
+    "(0 indicates no limit).", "n", 0);
+PARAM_MATRIX_IN("initial_dictionary", "Optional initial dictionary matrix.",
+    "i");
 PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
     "before coding.", "N");
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_DOUBLE("objective_tolerance", "Tolerance for convergence of the objective"
-    " function.", "o", 0.01);
-PARAM_DOUBLE("newton_tolerance", "Tolerance for convergence of Newton method.",
-    "w", 1e-6);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_DOUBLE_IN("objective_tolerance", "Tolerance for convergence of the "
+    "objective function.", "o", 0.01);
+PARAM_DOUBLE_IN("newton_tolerance", "Tolerance for convergence of Newton "
+    "method.", "w", 1e-6);
 
 // Load/save a model.
-PARAM_STRING("input_model_file", "File containing input sparse coding model.",
-    "m", "");
-PARAM_STRING("output_model_file", "File to save trained sparse coding model "
-    "to.", "M", "");
+PARAM_MODEL_IN(SparseCoding, "input_model", "File containing input sparse "
+    "coding model.", "m");
+PARAM_MODEL_OUT(SparseCoding, "output_model", "File to save trained sparse "
+    "coding model to.", "M");
 
-PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
-    "d", "");
-PARAM_STRING("codes_file", "Filename to save the output sparse codes to.", "c",
-    "");
+PARAM_MATRIX_OUT("dictionary", "Matrix to save the output dictionary to.", "d");
+PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
+    "matrix (--test_file) to.", "c");
 
-PARAM_STRING("test_file", "File containing data matrix to be encoded by trained"
-    " model.", "T", "");
-
-using namespace arma;
-using namespace std;
-using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::sparse_coding;
+PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
 int main(int argc, char* argv[])
 {
@@ -94,29 +98,29 @@ int main(int argc, char* argv[])
     RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
-  if (CLI::HasParam("input_model_file") && CLI::HasParam("initial_dictionary"))
+  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
     Log::Fatal << "Cannot specify both --input_model_file (-m) and "
         << "--initial_dictionary (-i)!" << endl;
 
-  if (CLI::HasParam("training_file") && !CLI::HasParam("atoms"))
+  if (CLI::HasParam("training") && !CLI::HasParam("atoms"))
     Log::Fatal << "If --training_file is specified, the number of atoms in the "
         << "dictionary must be specified with --atoms (-k)!" << endl;
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
         << "be specified!" << endl;
 
-  if (!CLI::HasParam("codes_file") && !CLI::HasParam("dictionary_file") &&
-      !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
+      !CLI::HasParam("output_model"))
     Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
         << "--output_model_file (-M) are specified; no output will be saved."
         << endl;
 
-  if (CLI::HasParam("codes_file") && !CLI::HasParam("test_file"))
+  if (CLI::HasParam("codes") && !CLI::HasParam("test"))
     Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
         << "specified with --test_file or -T) is given to encode!" << endl;
 
-  if (!CLI::HasParam("training_file"))
+  if (!CLI::HasParam("training"))
   {
     if (CLI::HasParam("atoms"))
       Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
@@ -146,16 +150,12 @@ int main(int argc, char* argv[])
 
   // Do we have an existing model?
   SparseCoding sc(0, 0.0);
-  if (CLI::HasParam("input_model_file"))
-  {
-    data::Load(CLI::GetParam<string>("input_model_file"), "sparse_coding_model",
-        sc, true);
-  }
+  if (CLI::HasParam("input_model"))
+    sc = std::move(CLI::GetParam<SparseCoding>("input_model"));
 
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    mat matX;
-    data::Load(CLI::GetParam<string>("training_file"), matX, true);
+    mat matX = std::move(CLI::GetParam<arma::mat>("training"));
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
@@ -173,18 +173,18 @@ int main(int argc, char* argv[])
     sc.NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
 
     // Inform the user if we are overwriting their model.
-    if (CLI::HasParam("input_model_file"))
+    if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetParam<string>("input_model_file") << "' as initial "
-          << "dictionary for training." << endl;
+          << CLI::GetUnmappedParam<SparseCoding>("input_model")
+          << "' as initial dictionary for training." << endl;
       sc.Train<NothingInitializer>(matX);
     }
     else if (CLI::HasParam("initial_dictionary"))
     {
       // Load initial dictionary directly into sparse coding object.
-      data::Load(CLI::GetParam<string>("initial_dictionary"), sc.Dictionary(),
-          true);
+      sc.Dictionary() =
+          std::move(CLI::GetParam<arma::mat>("initial_dictionary"));
 
       // Validate size of initial dictionary.
       if (sc.Dictionary().n_cols != sc.Atoms())
@@ -212,16 +212,15 @@ int main(int argc, char* argv[])
   }
 
   // Now, de we have any matrix to encode?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
-    mat matY;
-    data::Load(CLI::GetParam<string>("test_file"), matY, true);
+    mat matY = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (matY.n_rows != sc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
           << sc.Dictionary().n_rows << ", but data in test file '"
-          << CLI::GetParam<string>("test_file") << " has a dimensionality of "
-          << matY.n_rows << "!" << endl;
+          << CLI::GetUnmappedParam<arma::mat>("test") << " has a dimensionality"
+          << " of " << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
@@ -234,16 +233,17 @@ int main(int argc, char* argv[])
     mat codes;
     sc.Encode(matY, codes);
 
-    if (CLI::HasParam("codes_file"))
-      data::Save(CLI::GetParam<string>("codes_file"), codes);
+    if (CLI::HasParam("codes"))
+      CLI::GetParam<arma::mat>("codes") = std::move(codes);
   }
 
   // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary_file"))
-    data::Save(CLI::GetParam<string>("dictionary_file"), sc.Dictionary());
+  if (CLI::HasParam("dictionary"))
+    CLI::GetParam<arma::mat>("dictionary") = std::move(sc.Dictionary());
 
   // Did the user want to save the model?
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"),
-        "sparse_coding_model", sc, false); // Non-fatal on failure.
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<SparseCoding>("output_model") = std::move(sc);
+
+  CLI::Destroy();
 }

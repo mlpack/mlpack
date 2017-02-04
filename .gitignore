@@ -1,8 +1,5 @@
 build*
-
-*~
-.*.swp
-.*.swo
-*.bak
+xcode*
+.DS_Store
 src/mlpack/core/util/gitversion.hpp
 src/mlpack/core/util/arma_config.hpp

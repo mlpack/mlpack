@@ -4,6 +4,11 @@
  *
  * Template typedefs for the BinarySpaceTree class that satisfy the requirements
  * of the TreeType policy class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_TYPEDEF_HPP
@@ -134,6 +139,166 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           MatType,
                                           bound::BallBound,
                                           MeanSplit>;
+
+/**
+ * The vantage point tree (which is also called the metric tree. Vantage point
+ * trees and metric trees were invented independently by Yianilos an Uhlmann) is
+ * a kind of the binary space tree. When recursively splitting nodes, the VPTree
+ * class selects the vantage point and splits the node according to the distance
+ * to this point. Thus, points that are closer to the vantage point form the
+ * inner subtree. Other points form the outer subtree. The vantage point is
+ * contained in the first (inner) node.
+ *
+ * This implementation differs from the original algorithms. Namely, vantage
+ * points are not contained in intermediate nodes. The tree has points only in
+ * the leaves of the tree.
+ *
+ * For more information, see the following papers.
+ *
+ * @code
+ * @inproceedings{yianilos1993vptrees,
+ *   author = {Yianilos, Peter N.},
+ *   title = {Data Structures and Algorithms for Nearest Neighbor Search in
+ *       General Metric Spaces},
+ *   booktitle = {Proceedings of the Fourth Annual ACM-SIAM Symposium on
+ *       Discrete Algorithms},
+ *   series = {SODA '93},
+ *   year = {1993},
+ *   isbn = {0-89871-313-7},
+ *   pages = {311--321},
+ *   numpages = {11},
+ *   publisher = {Society for Industrial and Applied Mathematics},
+ *   address = {Philadelphia, PA, USA}
+ * }
+ *
+ * @article{uhlmann1991metrictrees,
+ *   author = {Jeffrey K. Uhlmann},
+ *   title = {Satisfying general proximity / similarity queries with metric
+ *       trees},
+ *   journal = {Information Processing Letters},
+ *   volume = {40},
+ *   number = {4},
+ *   pages = {175 - 179},
+ *   year = {1991},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, VantagePointTree, VPTree
+ */
+template<typename BoundType,
+         typename MatType = arma::mat>
+using VPTreeSplit = VantagePointSplit<BoundType, MatType, 100>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using VPTree = BinarySpaceTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               bound::HollowBallBound,
+                               VPTreeSplit>;
+
+/**
+ * A max-split random projection tree. When recursively splitting nodes, the
+ * MaxSplitRPTree class selects a random hyperplane and splits a node by the
+ * hyperplane. The tree holds points in leaf nodes. In contrast to the k-d tree,
+ * children of a MaxSplitRPTree node may overlap.
+ *
+ * @code
+ * @inproceedings{dasgupta2008,
+ *   author = {Dasgupta, Sanjoy and Freund, Yoav},
+ *   title = {Random Projection Trees and Low Dimensional Manifolds},
+ *   booktitle = {Proceedings of the Fortieth Annual ACM Symposium on Theory of
+ *       Computing},
+ *   series = {STOC '08},
+ *   year = {2008},
+ *   pages = {537--546},
+ *   numpages = {10},
+ *   publisher = {ACM},
+ *   address = {New York, NY, USA},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
+ */
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using MaxRPTree = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMaxSplit>;
+
+/**
+ * A mean-split random projection tree. When recursively splitting nodes, the
+ * RPTree class may perform one of two different kinds of split.
+ * Depending on the diameter and the average distance between points, the node
+ * may be split by a random hyperplane or according to the distance from the
+ * mean point. The tree holds points in leaf nodes. In contrast to the k-d tree,
+ * children of a MaxSplitRPTree node may overlap.
+ *
+ * @code
+ * @inproceedings{dasgupta2008,
+ *   author = {Dasgupta, Sanjoy and Freund, Yoav},
+ *   title = {Random Projection Trees and Low Dimensional Manifolds},
+ *   booktitle = {Proceedings of the Fortieth Annual ACM Symposium on Theory of
+ *       Computing},
+ *   series = {STOC '08},
+ *   year = {2008},
+ *   pages = {537--546},
+ *   numpages = {10},
+ *   publisher = {ACM},
+ *   address = {New York, NY, USA},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using RPTree = BinarySpaceTree<MetricType,
+                                  StatisticType,
+                                  MatType,
+                                  bound::HRectBound,
+                                  RPTreeMeanSplit>;
+
+/**
+ * The Universal B-tree. When recursively splitting nodes, the class
+ * calculates addresses of all points and splits each node according to the
+ * median address. Children may overlap since the implementation
+ * of a tighter bound requires a lot of arithmetic operations. In order to get
+ * a tighter bound increase the CellBound::maxNumBounds constant.
+ *
+ * @code
+ * @inproceedings{bayer1997,
+ *   author = {Bayer, Rudolf},
+ *   title = {The Universal B-Tree for Multidimensional Indexing: General
+ *       Concepts},
+ *   booktitle = {Proceedings of the International Conference on Worldwide
+ *       Computing and Its Applications},
+ *   series = {WWCA '97},
+ *   year = {1997},
+ *   isbn = {3-540-63343-X},
+ *   pages = {198--209},
+ *   numpages = {12},
+ *   publisher = {Springer-Verlag},
+ *   address = {London, UK, UK},
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the TreeType policy API.
+ *
+ * @see @ref trees, BinarySpaceTree, BallTree, MeanSplitKDTree
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
+using UBTree = BinarySpaceTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               bound::CellBound,
+                               UBTreeSplit>;
 
 } // namespace tree
 } // namespace mlpack

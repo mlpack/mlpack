@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of DualTreeKMeansRules.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_IMPL_HPP
@@ -216,7 +221,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
       {
         // If this might affect the lower bound, make it more exact.
         queryNode.Stat().LowerBound() = std::min(queryNode.Stat().LowerBound(),
-            queryNode.MinDistance(&referenceNode));
+            queryNode.MinDistance(referenceNode));
         ++scores;
       }
 
@@ -228,7 +233,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-    const math::Range distances = queryNode.RangeDistance(&referenceNode);
+    const math::Range distances = queryNode.RangeDistance(referenceNode);
 
     score = distances.Lo();
     ++scores;

@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * An implementation of Greg Hamerly's algorithm for k-means clustering.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
@@ -132,8 +137,6 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     if (counts(c) > 0)
       newCentroids.col(c) /= counts(c);
-    else
-      newCentroids.col(c).fill(DBL_MAX); // Empty cluster.
 
     // Calculate movement.
     const double movement = metric.Evaluate(centroids.col(c),

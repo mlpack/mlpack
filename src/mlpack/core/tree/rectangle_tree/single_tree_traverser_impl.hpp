@@ -1,11 +1,16 @@
 /**
-  * @file single_tree_traverser_impl.hpp
-  * @author Andrew Wells
-  *
-  * A class for traversing rectangle type trees with a given set of rules
-  * which indicate the branches to prune and the order in which to recurse.
-  * This is a depth-first traverser.
-  */
+ * @file single_tree_traverser_impl.hpp
+ * @author Andrew Wells
+ *
+ * A class for traversing rectangle type trees with a given set of rules
+ * which indicate the branches to prune and the order in which to recurse.
+ * This is a depth-first traverser.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
 
@@ -20,10 +25,12 @@ namespace tree {
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
@@ -32,10 +39,12 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename> class SplitType,
-         typename DescentType>
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+                   AuxiliaryInformationType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
     const RectangleTree& referenceNode)
@@ -45,7 +54,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   if (referenceNode.IsLeaf())
   {
     for (size_t i = 0; i < referenceNode.Count(); i++)
-      rule.BaseCase(queryIndex, referenceNode.Points()[i]);
+      rule.BaseCase(queryIndex, referenceNode.Point(i));
 
     return;
   }
@@ -55,7 +64,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
   for (size_t i = 0; i < referenceNode.NumChildren(); i++)
   {
-    nodesAndScores[i].node = referenceNode.Children()[i];
+    nodesAndScores[i].node = &(referenceNode.Child(i));
     nodesAndScores[i].score = rule.Score(queryIndex, *nodesAndScores[i].node);
   }
 

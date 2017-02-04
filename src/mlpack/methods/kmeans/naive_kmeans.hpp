@@ -5,6 +5,11 @@
  * An implementation of a naively-implemented step of the Lloyd algorithm for
  * k-means clustering.  This may still be the best choice for small datasets or
  * datasets with very high dimensionality.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
@@ -35,10 +40,13 @@ class NaiveKMeans
 
   /**
    * Run a single iteration of the Lloyd algorithm, updating the given centroids
-   * into the newCentroids matrix.
+   * into the newCentroids matrix.  If any cluster is empty (that is, if any
+   * cluster has no points assigned to it), then the centroid associated with
+   * that cluster may be filled with invalid data (it will be corrected later).
    *
    * @param centroids Current cluster centroids.
    * @param newCentroids New cluster centroids.
+   * @param counts Number of points in each cluster at the end of the iteration.
    */
   double Iterate(const arma::mat& centroids,
                  arma::mat& newCentroids,

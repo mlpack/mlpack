@@ -3,11 +3,18 @@
  * @author Ryan Curtin
  *
  * A command-line executable that can build a streaming decision tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
 #include <queue>
 
 using namespace std;
@@ -41,220 +48,180 @@ PROGRAM_INFO("Hoeffding trees",
     "probabilities for each predictions will be stored in the file specified by"
     " the --probabilities_file (-P) option.");
 
-PARAM_STRING("training_file", "Training dataset file.", "t", "");
-PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
+PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
+    "t");
+PARAM_UMATRIX_IN("labels", "Labels for training dataset.", "l");
 
-PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
+PARAM_DOUBLE_IN("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
-PARAM_INT("max_samples", "Maximum number of samples before splitting.", "n",
+PARAM_INT_IN("max_samples", "Maximum number of samples before splitting.", "n",
     5000);
-PARAM_INT("min_samples", "Minimum number of samples before splitting.", "I",
+PARAM_INT_IN("min_samples", "Minimum number of samples before splitting.", "I",
     100);
 
-PARAM_STRING("input_model_file", "File to load trained tree from.", "m", "");
-PARAM_STRING("output_model_file", "File to save trained tree to.", "M", "");
+PARAM_MODEL_IN(HoeffdingTreeModel, "input_model", "Input trained Hoeffding tree"
+    " model.", "m");
+PARAM_MODEL_OUT(HoeffdingTreeModel, "output_model", "Output for trained "
+    "Hoeffding tree model.", "M");
 
-PARAM_STRING("test_file", "File of testing data.", "T", "");
-PARAM_STRING("test_labels_file", "Labels of test data.", "L", "");
-PARAM_STRING("predictions_file", "File to output label predictions for test "
-    "data into.", "p", "");
-PARAM_STRING("probabilities_file", "In addition to predicting labels, provide "
-    "prediction probabilities in this file.", "P", "");
+PARAM_MATRIX_AND_INFO_IN("test", "Testing dataset (may be categorical).", "T");
+PARAM_UMATRIX_IN("test_labels", "Labels of test data.", "L");
+PARAM_UMATRIX_OUT("predictions", "Matrix to output label predictions for test "
+    "data into.", "p");
+PARAM_MATRIX_OUT("probabilities", "In addition to predicting labels, provide "
+    "rediction probabilities in this matrix.", "P");
 
-PARAM_STRING("numeric_split_strategy", "The splitting strategy to use for "
+PARAM_STRING_IN("numeric_split_strategy", "The splitting strategy to use for "
     "numeric features: 'domingos' or 'binary'.", "N", "binary");
 PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
     "of as a stream.  This generally results in better trees but at the cost of"
     " memory usage and runtime.", "b");
 PARAM_FLAG("info_gain", "If set, information gain is used instead of Gini "
     "impurity for calculating Hoeffding bounds.", "i");
-PARAM_INT("passes", "Number of passes to take over the dataset.", "s", 1);
+PARAM_INT_IN("passes", "Number of passes to take over the dataset.", "s", 1);
 
-PARAM_INT("bins", "If the 'domingos' split strategy is used, this specifies "
+PARAM_INT_IN("bins", "If the 'domingos' split strategy is used, this specifies "
     "the number of bins for each numeric split.", "B", 10);
-PARAM_INT("observations_before_binning", "If the 'domingos' split strategy is "
-    "used, this specifies the number of samples observed before binning is "
+PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
+    "is used, this specifies the number of samples observed before binning is "
     "performed.", "o", 100);
 
-// Helper function for once we have chosen a tree type.
-template<typename TreeType>
-void PerformActions(const typename TreeType::NumericSplit& numericSplit =
-    typename TreeType::NumericSplit(0));
+// Convenience typedef.
+typedef tuple<DatasetInfo, arma::mat> TupleType;
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
   // Check input parameters for validity.
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
-  const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile = CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((!predictionsFile.empty() || !probabilitiesFile.empty()) &&
-      testFile.empty())
+  if ((CLI::HasParam("predictions") || CLI::HasParam("probabilities")) &&
+       !CLI::HasParam("test"))
     Log::Fatal << "--test_file must be specified if --predictions_file or "
         << "--probabilities_file is specified." << endl;
 
-  if (trainingFile.empty() && inputModelFile.empty())
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "One of --training_file or --input_model_file must be "
         << "specified!" << endl;
 
-  if (!trainingFile.empty() && labelsFile.empty())
+  if (CLI::HasParam("training") && !CLI::HasParam("labels"))
     Log::Fatal << "If --training_file is specified, --labels_file must be "
         << "specified too!" << endl;
 
-  if (trainingFile.empty() && CLI::HasParam("batch_mode"))
+  if (!CLI::HasParam("training") && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
 
   if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
     Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
         << endl;
 
-  if (CLI::HasParam("info_gain"))
+  if (CLI::HasParam("test") && !CLI::HasParam("predictions") &&
+      !CLI::HasParam("probabilities") && !CLI::HasParam("test_labels"))
+    Log::Warn << "--test_file (-T) is specified, but none of "
+        << "--predictions_file (-p), --probabilities_file (-P), or "
+        << "--test_labels_file (-L) are specified, so no output will be given!"
+        << endl;
+
+  if ((numericSplitStrategy != "domingos") &&
+      (numericSplitStrategy != "binary"))
   {
-    if (numericSplitStrategy == "domingos")
-    {
-      const size_t bins = (size_t) CLI::GetParam<int>("bins");
-      const size_t observationsBeforeBinning = (size_t)
-          CLI::GetParam<int>("observations_before_binning");
-      HoeffdingDoubleNumericSplit<InformationGain> ns(0, bins,
-          observationsBeforeBinning);
-      PerformActions<HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>(ns);
-    }
-    else if (numericSplitStrategy == "binary")
-    {
-      PerformActions<HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>();
-    }
-    else
-    {
-      Log::Fatal << "Unrecognized numeric split strategy ("
-          << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
-          << endl;
-    }
+    Log::Fatal << "Unrecognized numeric split strategy ("
+        << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
+        << endl;
+  }
+
+  // Do we need to load a model or do we already have one?
+  HoeffdingTreeModel model;
+  DatasetInfo datasetInfo;
+  arma::mat trainingSet;
+  arma::Mat<size_t> labels;
+  if (CLI::HasParam("input_model"))
+  {
+    model = std::move(CLI::GetParam<HoeffdingTreeModel>("input_model"));
   }
   else
   {
-    if (numericSplitStrategy == "domingos")
-    {
-      const size_t bins = (size_t) CLI::GetParam<int>("bins");
-      const size_t observationsBeforeBinning = (size_t)
-          CLI::GetParam<int>("observations_before_binning");
-      HoeffdingDoubleNumericSplit<GiniImpurity> ns(0, bins,
-          observationsBeforeBinning);
-      PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>(ns);
-    }
-    else if (numericSplitStrategy == "binary")
-    {
-      PerformActions<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
-          HoeffdingCategoricalSplit>>();
-    }
-    else
-    {
-      Log::Fatal << "Unrecognized numeric split strategy ("
-          << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
-          << endl;
-    }
+    // Initialize a model.
+    if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
+      model = HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
+    else if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
+      model = HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
+    else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
+      model = HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
+    else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
+      model = HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
   }
-}
 
-template<typename TreeType>
-void PerformActions(const typename TreeType::NumericSplit& numericSplit)
-{
-  // Load necessary parameters.
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
-  const double confidence = CLI::GetParam<double>("confidence");
-  const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
-  const size_t minSamples = (size_t) CLI::GetParam<int>("min_samples");
-  const string inputModelFile = CLI::GetParam<string>("input_model_file");
-  const string outputModelFile = CLI::GetParam<string>("output_model_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string predictionsFile = CLI::GetParam<string>("predictions_file");
-  const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
-  bool batchTraining = CLI::HasParam("batch_mode");
-  const size_t passes = (size_t) CLI::GetParam<int>("passes");
-  if (passes > 1)
-    batchTraining = false; // We already warned about this earlier.
-
-  TreeType* tree = NULL;
-  DatasetInfo datasetInfo;
-  if (inputModelFile.empty())
+  // Now, do we need to train?
+  if (CLI::HasParam("training"))
   {
-    arma::mat trainingSet;
-    data::Load(trainingFile, trainingSet, datasetInfo, true);
+    // Load necessary parameters for training.
+    const double confidence = CLI::GetParam<double>("confidence");
+    const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
+    const size_t minSamples = (size_t) CLI::GetParam<int>("min_samples");
+    bool batchTraining = CLI::HasParam("batch_mode");
+    const size_t bins = (size_t) CLI::GetParam<int>("bins");
+    const size_t observationsBeforeBinning = (size_t)
+        CLI::GetParam<int>("observations_before_binning");
+    size_t passes = (size_t) CLI::GetParam<int>("passes");
+    if (passes > 1)
+      batchTraining = false; // We already warned about this earlier.
+
+    // We need to train the model.  First, load the data.
+    datasetInfo = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
+    trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
     for (size_t i = 0; i < trainingSet.n_rows; ++i)
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    arma::Col<size_t> labelsIn;
-    data::Load(labelsFile, labelsIn, true, false);
-    arma::Row<size_t> labels = labelsIn.t();
+    labels = CLI::GetParam<arma::Mat<size_t>>("labels");
 
-    // Now create the decision tree.
+    if (labels.n_rows > 1)
+      labels = labels.t();
+    if (labels.n_rows > 1)
+      Log::Fatal << "Labels must be one-dimensional!" << endl;
+
+    // Next, create the model with the right type.  Then build the tree with the
+    // appropriate type of instantiated numeric split type.  This is a little
+    // bit ugly.  Maybe there is a nicer way to get this numeric split
+    // information to the trees, but this is ok for now.
     Timer::Start("tree_training");
-    if (passes > 1)
-      Log::Info << "Taking " << passes << " passes over the dataset." << endl;
 
-    tree = new TreeType(trainingSet, datasetInfo, labels, max(labels) + 1,
-        batchTraining, confidence, maxSamples, 100, minSamples,
-        typename TreeType::CategoricalSplit(0, 0), numericSplit);
+    // Do we need to initialize a model?
+    if (!CLI::HasParam("input_model"))
+    {
+      // Build the model.
+      model.BuildModel(trainingSet, datasetInfo, labels.row(0),
+          arma::max(labels.row(0)) + 1, batchTraining, confidence, maxSamples,
+          100, minSamples, bins, observationsBeforeBinning);
+      --passes; // This model-building takes one pass.
+    }
 
-    for (size_t i = 1; i < passes; ++i)
-      tree->Train(trainingSet, labels, false);
+    // Now pass over the trees as many times as we need to.
+    if (batchTraining)
+    {
+      // We only need to do batch training if we've not already called
+      // BuildModel.
+      if (CLI::HasParam("input_model"))
+        model.Train(trainingSet, labels.row(0), true);
+    }
+    else
+    {
+      for (size_t p = 0; p < passes; ++p)
+        model.Train(trainingSet, labels.row(0), false);
+    }
+
     Timer::Stop("tree_training");
   }
-  else
-  {
-    tree = new TreeType(datasetInfo, 1, 1);
-    data::Load(inputModelFile, "streamingDecisionTree", *tree, true);
 
-    if (!trainingFile.empty())
-    {
-      arma::mat trainingSet;
-      data::Load(trainingFile, trainingSet, datasetInfo, true);
-      for (size_t i = 0; i < trainingSet.n_rows; ++i)
-        Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
-            << i << "." << endl;
-
-      arma::Col<size_t> labelsIn;
-      data::Load(labelsFile, labelsIn, true, false);
-      arma::Row<size_t> labels = labelsIn.t();
-
-      // Now create the decision tree.
-      Timer::Start("tree_training");
-      if (passes > 1)
-      {
-        Log::Info << "Taking " << passes << " passes over the dataset." << endl;
-        for (size_t i = 0; i < passes; ++i)
-          tree->Train(trainingSet, labels, false);
-      }
-      else
-      {
-        tree->Train(trainingSet, labels, batchTraining);
-      }
-      Timer::Stop("tree_training");
-    }
-  }
-
-  if (!trainingFile.empty())
+  // Do we need to evaluate the training set error?
+  if (CLI::HasParam("training"))
   {
     // Get training error.
-    arma::mat trainingSet;
-    data::Load(trainingFile, trainingSet, datasetInfo, true);
     arma::Row<size_t> predictions;
-    tree->Classify(trainingSet, predictions);
-
-    arma::Col<size_t> labelsIn;
-    data::Load(labelsFile, labelsIn, true, false);
-    arma::Row<size_t> labels = labelsIn.t();
+    model.Classify(trainingSet, predictions);
 
     size_t correct = 0;
     for (size_t i = 0; i < labels.n_elem; ++i)
@@ -266,40 +233,32 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
         100.0 << ")." << endl;
   }
 
-  // Get the number of nods in the tree.
-  std::queue<TreeType*> queue;
-  queue.push(tree);
-  size_t nodes = 0;
-  while (!queue.empty())
-  {
-    TreeType* node = queue.front();
-    queue.pop();
-    ++nodes;
-
-    for (size_t i = 0; i < node->NumChildren(); ++i)
-      queue.push(&node->Child(i));
-  }
-  Log::Info << nodes << " nodes in the tree." << endl;
+  // Get the number of nodes in the tree.
+  Log::Info << model.NumNodes() << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
-  if (!testFile.empty())
+  if (CLI::HasParam("test"))
   {
-    arma::mat testSet;
-    data::Load(testFile, testSet, datasetInfo, true);
+    // Before loading, pre-set the dataset info by getting the raw parameter
+    // (that doesn't call data::Load()).
+    std::get<0>(CLI::GetRawParam<TupleType>("test")) = datasetInfo;
+    arma::mat testSet = std::get<1>(CLI::GetParam<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
 
     Timer::Start("tree_testing");
-    tree->Classify(testSet, predictions, probabilities);
+    model.Classify(testSet, predictions, probabilities);
     Timer::Stop("tree_testing");
 
-    if (CLI::HasParam("test_labels_file"))
+    if (CLI::HasParam("test_labels"))
     {
-      string testLabelsFile = CLI::GetParam<string>("test_labels_file");
-      arma::Col<size_t> testLabelsIn;
-      data::Load(testLabelsFile, testLabelsIn, true, false);
-      arma::Row<size_t> testLabels = testLabelsIn.t();
+      arma::Mat<size_t> testLabels =
+          std::move(CLI::GetParam<arma::Mat<size_t>>("test_labels"));
+      if (testLabels.n_rows > 1)
+        testLabels = testLabels.t();
+      if (testLabels.n_rows > 1)
+        Log::Fatal << "Test labels must be one-dimensional!" << endl;
 
       size_t correct = 0;
       for (size_t i = 0; i < testLabels.n_elem; ++i)
@@ -312,17 +271,16 @@ void PerformActions(const typename TreeType::NumericSplit& numericSplit)
           100.0 << ")." << endl;
     }
 
-    if (!predictionsFile.empty())
-      data::Save(predictionsFile, predictions);
+    if (CLI::HasParam("predictions"))
+      CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictions);
 
-    if (!probabilitiesFile.empty())
-      data::Save(probabilitiesFile, probabilities);
+    if (CLI::HasParam("probabilities"))
+      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   // Check the accuracy on the training set.
-  if (!outputModelFile.empty())
-    data::Save(outputModelFile, "streamingDecisionTree", *tree, true);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<HoeffdingTreeModel>("output_model") = std::move(model);
 
-  // Clean up memory.
-  delete tree;
+  CLI::Destroy();
 }

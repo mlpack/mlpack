@@ -1,0 +1,135 @@
+#!/bin/bash
+# This script gets the test coverage for mlpack_test.
+test_case="ALL"
+gcov_loc=""
+token=""
+clean=true
+current_log_file=`date +'%Y.%h.%d:%H:%M:%S-coverage.log'`
+current_coverage_file=`date +'%Y.%h.%d:%H:%M:%S-coverage.info'`
+max_cov_count=50000
+
+# default directories
+root_dir="../"
+
+# Extract arguments.
+for i in "$@"
+do
+case $i in
+    -h|--help)
+    echo "Usage: mlpack_coverage --help|-h"
+    echo "       mlpack_coverage [-r=test_suite] [-g=gcov_tool_location]"
+    echo "                       [--token=coveralls_token]"
+    echo "Optional parameters:"
+    echo "    -n|--no_test               Do not run test before coverage computation"
+    echo "    -r|--run_test              Run tests with specific test suite"
+    echo "       --no_clean              Do not remove existing gcda file"
+    echo "    -g|--gcov_tool_location    Gcov location if not default"
+    echo "    -t|--token                 Upload to coveralls with given token"
+    echo "       --max_cov_count         Max line coverage count (default 50000)"
+    echo "       --root_dir              Set the root directory from which gcov will be called. (default ../)"
+    exit 0
+    shift
+    ;;
+    -n|--no_test)
+    test_case=""
+    shift
+    ;;
+    -r=*|--run_test=*)
+    test_case="${i#*=}"
+    shift # past argument=value
+    ;;
+    --no_clean)
+    clean=false
+    shift
+    ;;
+    -g=*|--gcov_tool_location=*)
+    gcov_loc="${i#*=}"
+    shift # past argument=value
+    ;;
+    -t=*|--token=*)
+    token="${i#*=}"
+    shift # past argument=value
+    ;;
+    --max_cov_count)
+    max_cov_count="${i#*=}"
+    shift
+    ;;
+    --root_dir=*)
+    root_dir="${i#*=}"
+    shift
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+done
+
+if [ "$clean" = true ]; then
+  echo "Deleting existing coverage data..."
+  find ./ -name "*.gcda" -type f -delete
+fi
+
+# Initial pass.
+echo "Generating primary coverage report."
+[[ -d ./coveragehistory/ ]] || mkdir coveragehistory
+lcov -b . -c -i -d ./ -o .coverage.wtest.base > ./coveragehistory/$current_log_file
+
+# Run the tests.
+if [ "$test_case" = "ALL" ]; then
+  echo "Running all the tests..."
+  @CMAKE_BINARY_DIR@/bin/mlpack_test
+elif ! [ "$test_case" = "" ]; then
+  echo "Running test suite: $test_case"
+  @CMAKE_BINARY_DIR@/bin/mlpack_test --run_test=$test_case
+fi
+
+# Generate coverage based on executed tests.
+echo "Computing coverage..."
+if [ "$gcov_loc" = "" ];
+then lcov -b . -c -d ./ -o .coverage.wtest.run >> ./coveragehistory/$current_log_file
+else
+  lcov -b . -c -d ./ -o .coverage.wtest.run --gcov-tool=$gcov_loc >> ./coveragehistory/$current_log_file
+fi
+
+echo "Filtering coverage files..."
+# Clear negative entries in coverage file
+sed -E 's/-([0-9]+)/$max_cov_count/g' -i .coverage.wtest.run
+# Merge coverage tracefiles.
+lcov -a .coverage.wtest.base -a .coverage.wtest.run  -o .coverage.total >> ./coveragehistory/$current_log_file
+
+# Filtering, extracting project files.
+lcov -e .coverage.total "@CMAKE_CURRENT_SOURCE_DIR@/src/mlpack/*" -o .coverage.total.filtered >> ./coveragehistory/$current_log_file
+
+# Filtering, removing test-files and main.cpp.
+lcov -r .coverage.total.filtered "@CMAKE_CURRENT_SOURCE_DIR@/src/mlpack/*/*_main.cpp" -o .coverage.total.filtered >> ./coveragehistory/$current_log_file
+lcov -r .coverage.total.filtered "@CMAKE_CURRENT_SOURCE_DIR@/src/mlpack/tests/*" -o .coverage.total.filtered >> ./coveragehistory/$current_log_file
+
+# Remove untestable files.
+lcov -r .coverage.total.filtered "@CMAKE_CURRENT_SOURCE_DIR@/src/mlpack/core/util/gitversion.hpp" -o .coverage.total.filtered >> ./coveragehistory/$current_log_file
+lcov -r .coverage.total.filtered "@CMAKE_CURRENT_SOURCE_DIR@/src/mlpack/core/util/arma_config.hpp" -o .coverage.total.filtered >> ./coveragehistory/$current_log_file
+
+# Extra:  Replace /build/ with /src/ to unify directories.
+cat .coverage.total.filtered > .coverage.total
+
+# Extra: Clear up previous data, create html folder.
+if [[ -d ./coverage/ ]] ; then
+    rm -rf ./coverage/*
+else
+    mkdir coverage
+fi
+
+# Step 9: Generate webpage.
+genhtml -o ./coverage/ .coverage.total
+
+# Extra: Preserve coverage file in coveragehistory folder.
+coverage_file=$current_coverage_file
+cp .coverage.total ./coveragehistory/$current_coverage_file
+
+# Clean temporary coverage files.
+#rm .coverage.*
+
+# Upload the result to coveralls if token is provided.
+if ! [ "$token" = "" ]; then
+  cpp-coveralls -n -r $root_dir -b $root_dir -l ./coveragehistory/$current_coverage_file -t "$token" --max-cov-count $max_cov_count
+fi
+

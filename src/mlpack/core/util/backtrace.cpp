@@ -4,9 +4,7 @@
  *
  * Implementation of the Backtrace class.
  *
- * This file is part of mlpack 2.0.1.
- *
- * mlpack is free software; you may redstribute it and/or modify it under the
+ * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
@@ -98,7 +96,7 @@ void Backtrace::GetAddress(int maxDepth)
     Dl_info addressHandler;
 
     //No backtrace will be printed if no compile flags: -g -rdynamic
-    if(TRACE_CONDITION_1)
+    if (TRACE_CONDITION_1)
     {
       return ;
     }
@@ -148,7 +146,7 @@ void Backtrace::DecodeAddress(long addr)
     if (FIND_LINE)
     {
       DemangleFunction();
-      // Save retrieved informations.
+      // Save retrieved information.
       stack.push_back(frame);
     }
   }
@@ -180,7 +178,7 @@ std::string Backtrace::ToString()
   std::ostringstream lineOss;
   std::ostringstream it;
 
-  if(stack.size() <= 0)
+  if (stack.size() <= 0)
   {
     stackStr = "Cannot give backtrace because program was compiled";
     stackStr += " without: -g -rdynamic\nFor a backtrace,";

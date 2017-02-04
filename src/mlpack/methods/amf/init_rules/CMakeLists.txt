@@ -4,6 +4,7 @@ set(SOURCES
   random_init.hpp
   random_acol_init.hpp
   average_init.hpp
+  given_init.hpp
 )
 
 # Add directory name to sources.

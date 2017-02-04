@@ -4,6 +4,11 @@
  *
  * Implementation of the LogisticRegression class.  This implementation supports
  * L2-regularization.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
@@ -41,7 +46,7 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(dimensionality + 1 /* include intercept term */),
+    parameters(arma::zeros<arma::vec>(dimensionality + 1)),
     lambda(lambda)
 {
   // No training to do here.

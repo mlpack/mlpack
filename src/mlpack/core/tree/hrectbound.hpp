@@ -5,11 +5,16 @@
  *
  * This file describes the interface for the HRectBound class, which implements
  * a hyperrectangle bound.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "bound_traits.hpp"
@@ -117,7 +122,8 @@ class HRectBound
    */
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+      const;
 
   /**
    * Calculates minimum bound-to-bound distance.
@@ -133,7 +139,8 @@ class HRectBound
    */
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+      const;
 
   /**
    * Computes maximum distance.
@@ -159,7 +166,7 @@ class HRectBound
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Expands this region to include new points.
@@ -181,6 +188,26 @@ class HRectBound
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
+
+  /**
+   * Determines if this bound partially contains a bound.
+   */
+  bool Contains(const HRectBound& bound) const;
+
+  /**
+   * Returns the intersection of this bound and another.
+   */
+  HRectBound operator&(const HRectBound& bound) const;
+
+  /**
+   * Intersects this bound with another.
+   */
+  HRectBound& operator&=(const HRectBound& bound);
+
+  /**
+   * Returns the volume of overlap of this bound and another.
+   */
+  ElemType Overlap(const HRectBound& bound) const;
 
   /**
    * Returns the diameter of the hyperrectangle (that is, the longest diagonal).

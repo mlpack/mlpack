@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of the IPMetric.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
 #define MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
@@ -44,8 +49,9 @@ IPMetric<KernelType>::~IPMetric()
 
 template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
-inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
-                                             const Vec2Type& b)
+inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
+    const Vec1Type& a,
+    const Vec2Type& b)
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
@@ -71,8 +77,9 @@ void IPMetric<KernelType>::Serialize(Archive& ar,
 // the Euclidean distance.
 template<>
 template<typename Vec1Type, typename Vec2Type>
-inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
-                                                       const Vec2Type& b)
+inline typename Vec1Type::elem_type IPMetric<kernel::LinearKernel>::Evaluate(
+    const Vec1Type& a,
+    const Vec2Type& b)
 {
   return metric::LMetric<2, true>::Evaluate(a, b);
 }

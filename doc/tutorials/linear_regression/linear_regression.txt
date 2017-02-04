@@ -198,7 +198,7 @@ dataset used to create the model, one.  If the model generating dataset has
 @subsection cli_ex3_lrtut Prediction using a precomputed model
 
 @code
-$ linear_regression --input_model_file lr.xml --test_file predict.csv -v
+$ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv -v
 [INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
 [INFO ]

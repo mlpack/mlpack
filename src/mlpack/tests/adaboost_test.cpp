@@ -3,12 +3,17 @@
  * @author Udit Saxena
  *
  * Tests for AdaBoost class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/adaboost/adaboost.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 #include "serialization.hpp"
 
 using namespace arma;
@@ -186,7 +191,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
-    if(labels(i) != predictedLabels(i))
+    if (labels(i) != predictedLabels(i))
       countError++;
   double error = (double) countError / labels.n_cols;
 
@@ -555,7 +560,6 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");

@@ -5,6 +5,11 @@
  * @author Michael Fox
  *
  * Implementation of template-based GMM methods.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_GMM_GMM_IMPL_HPP
 #define MLPACK_METHODS_GMM_GMM_IMPL_HPP
@@ -154,7 +159,7 @@ double GMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
+      fitter.Estimate(observations, probabilities, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,

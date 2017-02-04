@@ -3,6 +3,11 @@
  * @author Bill March (march@gatech.edu)
  *
  * Tree traverser rules for the DualTreeBoruvka algorithm.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 #define MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
@@ -93,31 +98,6 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
 }
 
 template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
-                                             TreeType& referenceNode,
-                                             const double baseCaseResult)
-{
-  // I don't really understand the last argument here
-  // It just gets passed in the distance call, otherwise this function
-  // is the same as the one above.
-  size_t queryComponentIndex = connections.Find(queryIndex);
-
-  // If the query belongs to the same component as all of the references,
-  // then prune.
-  if (queryComponentIndex == referenceNode.Stat().ComponentMembership())
-    return DBL_MAX;
-
-  const arma::vec queryPoint = dataSet.unsafe_col(queryIndex);
-  const double distance = referenceNode.MinDistance(queryPoint,
-                                                    baseCaseResult);
-
-  // If all the points in the reference node are farther than the candidate
-  // nearest neighbor for the query's component, we prune.
-  return (neighborsDistances[queryComponentIndex] < distance) ? DBL_MAX :
-      distance;
-}
-
-template<typename MetricType, typename TreeType>
 double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
                                                TreeType& /* referenceNode */,
                                                const double oldScore)
@@ -140,28 +120,7 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
     return DBL_MAX;
 
   ++scores;
-  const double distance = queryNode.MinDistance(&referenceNode);
-  const double bound = CalculateBound(queryNode);
-
-  // If all the points in the reference node are farther than the candidate
-  // nearest neighbor for all queries in the node, we prune.
-  return (bound < distance) ? DBL_MAX : distance;
-}
-
-template<typename MetricType, typename TreeType>
-double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
-                                             TreeType& referenceNode,
-                                             const double baseCaseResult)
-{
-  // If all the queries belong to the same component as all the references
-  // then we prune.
-  if ((queryNode.Stat().ComponentMembership() >= 0) &&
-      (queryNode.Stat().ComponentMembership() ==
-           referenceNode.Stat().ComponentMembership()))
-    return DBL_MAX;
-
-  ++scores;
-  const double distance = queryNode.MinDistance(referenceNode, baseCaseResult);
+  const double distance = queryNode.MinDistance(referenceNode);
   const double bound = CalculateBound(queryNode);
 
   // If all the points in the reference node are farther than the candidate

@@ -3,13 +3,18 @@
  * @author Ryan Curtin
  *
  * Test file for RangeSearch<> class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/methods/range_search/rs_model.hpp>
 #include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::range;
@@ -1162,7 +1167,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 /**
  * Test that the move constructor works.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+BOOST_AUTO_TEST_CASE(MoveConstructorMatrixTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
   arma::mat copy(dataset);
@@ -1244,14 +1249,12 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
 
 BOOST_AUTO_TEST_CASE(RSModelTest)
 {
-  math::RandomSeed(std::time(NULL));
-
   // Ensure that we can build an RSModel and get correct results.
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[12];
+  RSModel models[28];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1264,6 +1267,22 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
   models[9] = RSModel(RSModel::TreeTypes::X_TREE, false);
   models[10] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
   models[11] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
+  models[12] = RSModel(RSModel::TreeTypes::HILBERT_R_TREE, true);
+  models[13] = RSModel(RSModel::TreeTypes::HILBERT_R_TREE, false);
+  models[14] = RSModel(RSModel::TreeTypes::R_PLUS_TREE, true);
+  models[15] = RSModel(RSModel::TreeTypes::R_PLUS_TREE, false);
+  models[16] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, true);
+  models[17] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, false);
+  models[18] = RSModel(RSModel::TreeTypes::VP_TREE, true);
+  models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
+  models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
+  models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[24] = RSModel(RSModel::TreeTypes::UB_TREE, true);
+  models[25] = RSModel(RSModel::TreeTypes::UB_TREE, false);
+  models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
+  models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1277,7 +1296,7 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 12; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have std::move() constructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1321,7 +1340,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  RSModel models[12];
+  RSModel models[28];
   models[0] = RSModel(RSModel::TreeTypes::KD_TREE, true);
   models[1] = RSModel(RSModel::TreeTypes::KD_TREE, false);
   models[2] = RSModel(RSModel::TreeTypes::COVER_TREE, true);
@@ -1334,6 +1353,22 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
   models[9] = RSModel(RSModel::TreeTypes::X_TREE, false);
   models[10] = RSModel(RSModel::TreeTypes::BALL_TREE, true);
   models[11] = RSModel(RSModel::TreeTypes::BALL_TREE, false);
+  models[12] = RSModel(RSModel::TreeTypes::HILBERT_R_TREE, true);
+  models[13] = RSModel(RSModel::TreeTypes::HILBERT_R_TREE, false);
+  models[14] = RSModel(RSModel::TreeTypes::R_PLUS_TREE, true);
+  models[15] = RSModel(RSModel::TreeTypes::R_PLUS_TREE, false);
+  models[16] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, true);
+  models[17] = RSModel(RSModel::TreeTypes::R_PLUS_PLUS_TREE, false);
+  models[18] = RSModel(RSModel::TreeTypes::VP_TREE, true);
+  models[19] = RSModel(RSModel::TreeTypes::VP_TREE, false);
+  models[20] = RSModel(RSModel::TreeTypes::RP_TREE, true);
+  models[21] = RSModel(RSModel::TreeTypes::RP_TREE, false);
+  models[22] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[23] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[24] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, true);
+  models[25] = RSModel(RSModel::TreeTypes::MAX_RP_TREE, false);
+  models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
+  models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1346,7 +1381,7 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
 
-    for (size_t i = 0; i < 12; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have std::move() cosntructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1407,5 +1442,258 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   BOOST_REQUIRE_EQUAL(distances.size(), 50);
 }
 
+/**
+ * Test copy constructor and copy operator.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<> rs(std::move(dataset));
+
+  // Copy constructor and operator.
+  RangeSearch<> rs2(rs);
+  RangeSearch<> rs3 = rs;
+
+  // Get results.
+  vector<vector<double>> distances, distances2, distances3;
+  vector<vector<size_t>> neighbors, neighbors2, neighbors3;
+
+  rs.Search(math::Range(0.2, 0.3), neighbors, distances);
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+  rs3.Search(math::Range(0.2, 0.3), neighbors3, distances3);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), distances3.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors3.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances3[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors3[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors3[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances3[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2(std::move(*rs));
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move operator.
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2 = std::move(*rs);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test copy constructor and copy operator in naive mode (so there are no
+ * trees).
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<> rs(std::move(dataset), true);
+
+  // Copy constructor and operator.
+  RangeSearch<> rs2(rs);
+  RangeSearch<> rs3 = rs;
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+  BOOST_REQUIRE_EQUAL(rs3.Naive(), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2, distances3;
+  vector<vector<size_t>> neighbors, neighbors2, neighbors3;
+
+  rs.Search(math::Range(0.2, 0.3), neighbors, distances);
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+  rs3.Search(math::Range(0.2, 0.3), neighbors3, distances3);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), distances3.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors3.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances3[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors3[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors3[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances3[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2(std::move(*rs));
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
+
+/**
+ * Test move operator.
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+
+  // Get results.
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  rs->Search(math::Range(0.2, 0.3), neighbors, distances);
+
+  RangeSearch<> rs2 = std::move(*rs);
+
+  BOOST_REQUIRE_EQUAL(rs2.Naive(), true);
+
+  delete rs;
+
+  rs2.Search(math::Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  BOOST_REQUIRE_EQUAL(distances.size(), distances2.size());
+  BOOST_REQUIRE_EQUAL(neighbors.size(), neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(distances[i].size(), distances2[i].size());
+    BOOST_REQUIRE_EQUAL(neighbors[i].size(), neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(neighbors[i][j], neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      BOOST_REQUIRE_CLOSE(distances[i][j], distances2[i][j], 1e-5);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();

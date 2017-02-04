@@ -1,5 +1,59 @@
+### mlpack ?.?.?
+###### ????-??-??
+  * Bugfix for mlpack_knn program (#816).
+
+### mlpack 2.1.1
+###### 2016-12-22
+  * HMMs now use random initialization; this should fix some convergence issues
+    (#828).
+
+  * HMMs now initialize emissions according to the distribution of observations
+    (#833).
+
+  * Minor fix for formatted output (#814).
+
+  * Fix DecisionStump to properly work with any input type.
+
+### mlpack 2.1.0
+###### 2016-10-31
+  * Fixed CoverTree to properly handle single-point datasets.
+
+  * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
+    some datasets (#717).
+
+  * Added mlpack_preprocess_describe program, which can be used to print
+    statistics on a given dataset (#742).
+
+  * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
+    KFN class), leading to orders-of-magnitude speedups in some cases.
+
+  * Bump minimum required version of Armadillo to 4.200.0.
+
+  * Added simple Gradient Descent optimizer, found in
+    src/mlpack/core/optimizers/gradient_descent/ (#792).
+
+  * Added approximate furthest neighbor search algorithms QDAFN and
+    DrusillaSelect in src/mlpack/methods/approx_kfn/, with command-line program
+    mlpack_approx_kfn.
+
+### mlpack 2.0.3
+###### 2016-07-21
+  * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
+    now be used to control the number of extra bins that are probed, as can the
+    -T (--num_probes) option to mlpack_lsh.
+
+  * Added the Hilbert R tree to src/mlpack/core/tree/rectangle_tree/ (#664).  It
+    can be used as the typedef HilbertRTree, and it is now an option in the
+    mlpack_knn, mlpack_kfn, mlpack_range_search, and mlpack_krann command-line
+    programs.
+
+  * Added the mlpack_preprocess_split and mlpack_preprocess_binarize programs,
+    which can be used for preprocessing code (#650, #666).
+
+  * Added OpenMP support to LSHSearch and mlpack_lsh (#700).
+
 ### mlpack 2.0.2
-###### 2016-??-??
+###### 2016-06-20
   * Added the function LSHSearch::Projections(), which returns an arma::cube
     with each projection table in a slice (#663).  Instead of Projection(i), you
     should now use Projections().slice(i).
@@ -25,12 +79,15 @@
     and MLPACK_VERSION_PATCH.  The old names will remain in place until
     mlpack 3.0.0.
 
-  * Renamed mlpack_allknn and mlpack_allkfn to mlpack_knn and mlpack_kfn.  The
-    mlpack_allknn and mlpack_allkfn programs will remain as copies until mlpack
-    3.0.0.
+  * Renamed mlpack_allknn, mlpack_allkfn, and mlpack_allkrann to mlpack_knn,
+    mlpack_kfn, and mlpack_krann.  The mlpack_allknn, mlpack_allkfn, and
+    mlpack_allkrann programs will remain as copies until mlpack 3.0.0.
 
   * Add --random_initialization option to mlpack_hmm_train, for use when no
     labels are provided.
+
+  * Add --kill_empty_clusters option to mlpack_kmeans and KillEmptyClusters
+    policy for the KMeans class (#595, #596).
 
 ### mlpack 2.0.1
 ###### 2016-02-04

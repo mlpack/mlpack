@@ -3,11 +3,16 @@
  * @author Ryan Curtin
  *
  * Implementation of HMM utilities to load arbitrary HMM types.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
 #define MLPACK_METHODS_HMM_HMM_UTIL_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
