@@ -15,8 +15,11 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "../visitor/delete_visitor.hpp"
+#include "../visitor/delta_visitor.hpp"
+#include "../visitor/output_parameter_visitor.hpp"
+
 #include "layer_types.hpp"
-#include "layer_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

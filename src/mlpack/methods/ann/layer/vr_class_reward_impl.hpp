@@ -11,6 +11,8 @@
 // In case it hasn't yet been included.
 #include "vr_class_reward.hpp"
 
+#include "../visitor/reward_set_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

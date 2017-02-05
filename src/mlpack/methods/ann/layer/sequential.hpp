@@ -17,9 +17,14 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include "../visitor/delete_visitor.hpp"
+#include "../visitor/delta_visitor.hpp"
+#include "../visitor/output_height_visitor.hpp"
+#include "../visitor/output_parameter_visitor.hpp"
+#include "../visitor/output_width_visitor.hpp"
+
 #include "layer_types.hpp"
 #include "add_merge.hpp"
-#include "layer_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

@@ -16,6 +16,12 @@
 // In case it hasn't yet been included.
 #include "sequential.hpp"
 
+#include "../visitor/forward_visitor.hpp"
+#include "../visitor/backward_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+#include "../visitor/set_input_height_visitor.hpp"
+#include "../visitor/set_input_width_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
