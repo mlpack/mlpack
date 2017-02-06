@@ -24,7 +24,7 @@ void MonoSearchVisitor::operator()(RSType *rs) const
 {
   if (rs)
     return rs->Search(range, neighbors, distances);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Save parameters for bichromatic range search.
@@ -49,7 +49,7 @@ void BiSearchVisitor::operator()(RSTypeT<TreeType>* rs) const
 {
   if (rs)
     return rs->Search(querySet, range, neighbors, distances);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Bichromatic range search on the given RSType specialized for KDTrees.
@@ -57,7 +57,7 @@ void BiSearchVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Bichromatic range search on the given RSType specialized for BallTrees.
@@ -65,7 +65,7 @@ void BiSearchVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Bichromatic range search specialized for Ocrees.
@@ -73,7 +73,7 @@ void BiSearchVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Bichromatic range search on the given RSType considering the leafSize.
@@ -127,7 +127,7 @@ void TrainVisitor::operator()(RSTypeT<TreeType>* rs) const
 {
   if (rs)
     return rs->Train(std::move(referenceSet));
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Train on the given RSType specialized for KDTrees.
@@ -135,7 +135,7 @@ void TrainVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Train on the given RSType specialized for BallTrees.
@@ -143,7 +143,7 @@ void TrainVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Train specialized for Octrees.
@@ -151,7 +151,7 @@ void TrainVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Train on the given RSType considering the leafSize.
@@ -183,7 +183,7 @@ const arma::mat& ReferenceSetVisitor::operator()(RSType* rs) const
 {
   if (rs)
     return rs->ReferenceSet();
-  throw std::runtime_error("no neighbor search model initialized");
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! For cleaning memory
@@ -216,7 +216,7 @@ template<typename RSType>
  {
    if (rs)
      return rs->SingleMode();
-   throw std::runtime_error("no neighbor search model initialized");
+   throw std::runtime_error("no range search model initialized");
  }
 
 //! Exposes Naive() function of given RSType
@@ -225,7 +225,7 @@ template<typename RSType>
  {
    if (rs)
      return rs->Naive();
-   throw std::runtime_error("no neighbor search model initialized");
+   throw std::runtime_error("no range search model initialized");
  }
  
 // Serialize the model.
