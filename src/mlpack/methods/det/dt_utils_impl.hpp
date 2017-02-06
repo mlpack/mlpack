@@ -116,6 +116,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   // Initialize the tree.
   DTree<MatType, TagType> dtree(dataset);
 
+  Timer::Start("tree_growing");
   // Prepare to grow the tree...
   arma::Col<size_t> oldFromNew(dataset.n_cols);
   for (size_t i = 0; i < oldFromNew.n_elem; i++)
@@ -129,6 +130,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   double alpha = dtree.Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
       minLeafSize);
 
+  Timer::Stop("tree_growing");
   Log::Info << dtree.SubtreeLeaves() << " leaf nodes in the tree using full "
       << "dataset; minimum alpha: " << alpha << "." << std::endl;
 
@@ -154,6 +156,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     outfile.close();
   }
 
+  Timer::Start("prunning_sequence");
+  
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
   std::vector<std::pair<double, double> > prunedSequence;
   while (dtree.SubtreeLeaves() > 1)
@@ -175,6 +179,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   std::pair<double, double> treeSeq(oldAlpha, dtree.SubtreeLeavesLogNegError());
   prunedSequence.push_back(treeSeq);
 
+  Timer::Stop("prunning_sequence");
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 

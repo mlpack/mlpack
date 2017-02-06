@@ -67,7 +67,7 @@ namespace details
                      const size_t minLeafSize)
   {
     typedef std::pair<ElemType, size_t> SplitItem;
-    arma::vec dimVec = data(dim, arma::span(start, end - 1));
+    arma::rowvec dimVec = data(dim, arma::span(start, end - 1));
     
     // We sort these, in-place (it's a copy of the data, anyways).
     std::sort(dimVec.begin(), dimVec.end());
@@ -164,6 +164,27 @@ DTree<MatType, TagType>::DTree() :
     left(NULL),
     right(NULL)
 { /* Nothing to do. */ }
+
+template <typename MatType, typename TagType>
+DTree<MatType, TagType>::DTree(const DTree<MatType, TagType>& src) :
+    start(src.start),
+    end(src.end),
+    splitDim(src.splitDim),
+    splitValue(src.splitValue),
+    logNegError(src.logNegError),
+    subtreeLeavesLogNegError(src.subtreeLeavesLogNegError),
+    subtreeLeaves(src.subtreeLeaves),
+    root(src.root),
+    ratio(src.ratio),
+    logVolume(src.logVolume),
+    bucketTag(src.bucketTag),
+    alphaUpper(src.alphaUpper)
+{
+  if (!!src.left)
+    left = new DTree(*src.left);
+  if (!!src.right)
+    right = new DTree(*src.right);
+}
 
 
 // Root node initializers

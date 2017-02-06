@@ -57,6 +57,11 @@ class DTree
    * Create an empty density estimation tree.
    */
   DTree();
+  
+  /**
+   * Create a copy of an existing tree.
+   */
+  DTree(const DTree<MatType, TagType>& tree);
 
   /**
    * Create a density estimation tree with the given bounds and the given number
