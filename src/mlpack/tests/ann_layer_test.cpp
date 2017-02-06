@@ -15,6 +15,7 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer_visitor.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/rnn.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -536,7 +537,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiadLayerTest)
       input = arma::randu(10, 1);
       target = arma::mat("1");
 
-            model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
           input, target);
       model->Add<IdentityLayer<> >();
       model->Add<LinearNoBias<> >(10, 2);
@@ -728,6 +729,49 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
     module.Backward(std::move(input), std::move(output), std::move(delta));
     BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
   }
+}
+
+/**
+ * LSTM layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
+{
+  // LSTM function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<LSTM<> >(10, 3, rho);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
