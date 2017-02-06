@@ -40,7 +40,7 @@ struct RSModelName
 };
 
 /**
- * MonoSearchVisitor executes a monochromatic neighbor search on the given
+ * MonoSearchVisitor executes a monochromatic range search on the given
  * RSType. Range Search is performed on the reference set itself, no querySet.
  */
 class MonoSearchVisitor : public  boost::static_visitor<void>
@@ -65,9 +65,9 @@ class MonoSearchVisitor : public  boost::static_visitor<void>
 };
 
 /**
- * BiSearchVisitor executes a bichromatic neighbor search on the given RSType.
+ * BiSearchVisitor executes a bichromatic range search on the given RSType.
  * We use template specialization to differentiate those tree types that
- * accept leafSize as a parameter. In these cases, before doing neighbor search,
+ * accept leafSize as a parameter. In these cases, before doing range search,
  * a query tree with proper leafSize is built from the querySet.
  */
 class BiSearchVisitor : public boost::static_visitor<void>
@@ -84,7 +84,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! The number of points in a leaf (for BinarySpaceTrees).
   const size_t leafSize;
 
-  //! Bichromatic neighbor search on the given RSType considering the leafSize.
+  //! Bichromatic range search on the given RSType considering the leafSize.
   template<typename RSType>
   void SearchLeaf(RSType* rs) const;
 
@@ -95,19 +95,19 @@ class BiSearchVisitor : public boost::static_visitor<void>
                     typename TreeMatType> class TreeType>
  using RSTypeT = RSType<TreeType>;
 
-  //! Default Bichromatic neighbor search on the given RSType instance.
+  //! Default Bichromatic range search on the given RSType instance.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(RSTypeT<TreeType>* rs) const;
 
-  //! Bichromatic neighbor search on the given RSType specialized for KDTrees.
+  //! Bichromatic range search on the given RSType specialized for KDTrees.
   void operator()(RSTypeT<tree::KDTree>* rs) const;
 
-  //! Bichromatic neighbor search on the given RSType specialized for BallTrees.
+  //! Bichromatic range search on the given RSType specialized for BallTrees.
   void operator()(RSTypeT<tree::BallTree>* rs) const;
 
-  //! Bichromatic neighbor search specialized for octrees.
+  //! Bichromatic range search specialized for octrees.
   void operator()(RSTypeT<tree::Octree>* rs) const;
 
   //! Construct the BiSearchVisitor.
@@ -211,8 +211,8 @@ template<typename Archive>
  class SingleModeVisitor : public boost::static_visitor<bool&>
  {
   public:
-    template<typename NSType>
-    bool& operator()(NSType *ns) const;
+    template<typename RSType>
+    bool& operator()(RSType *ns) const;
  };
 
 /**
@@ -221,8 +221,8 @@ template<typename Archive>
  class NaiveVisitor : public boost::static_visitor<bool&>
  {
   public:
-    template<typename NSType>
-    bool& operator()(NSType *ns) const;
+    template<typename RSType>
+    bool& operator()(RSType *ns) const;
  };
 
 class RSModel
