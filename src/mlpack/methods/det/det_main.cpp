@@ -61,13 +61,13 @@ PARAM_STRING_OUT("vi_file", "The file to output the variable importance values "
 PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
                 "p", "lr");
 
-PARAM_STRING_OUT("tag_counters", "The file to output tag counters.", "c");
+PARAM_STRING_OUT("tag_counters_file", "The file to output tag counters.", "c");
+
+PARAM_STRING_OUT("raw_estimates_file", "The file to output the estimations from "
+                 "the unpruned tree.", "u");
 
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths) "
                  " for each sample in the test set.", "g");
-
-PARAM_STRING_OUT("unpruned_estimates", "The file to output the estimations from "
-                 "the unpruned tree.", "u");
 
 PARAM_FLAG("skip_pruning", "Whether to bypass the pruning process and output "
               "the unpruned tree only", "s");
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     Timer::Start("det_training");
     tree = Trainer<arma::mat, int>(trainingData, folds, regularization, 
                                    maxLeafSize, minLeafSize,
-                                   CLI::GetParam<string>("unpruned_estimates"),
+                                   CLI::GetParam<string>("raw_estimates_file"),
                                    skipPruning);
     Timer::Stop("det_training");
     
@@ -285,8 +285,8 @@ int main(int argc, char *argv[])
         }
       }
 
-      if (CLI::GetParam<string>("tag_counters") != "")
-        data::Save(CLI::GetParam<string>("tag_counters"), counters);
+      if (CLI::GetParam<string>("tag_counters_file") != "")
+        data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
 
       Timer::Stop("det_test_set_tagging");
       ofs.close();
