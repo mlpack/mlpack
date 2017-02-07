@@ -137,8 +137,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
 
   if (unprunedModel != "")
   {
-    Log::Info << "Saving unprunned tree in: " << unprunedModel << std::endl;
     data::Save(unprunedModel, "det_model", dtree, false);
+    Log::Info << "Saved unprunned tree in: " << unprunedModel << std::endl;
   }
 
   // Compute densities for the training points in the full tree, if we were
