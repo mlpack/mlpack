@@ -107,7 +107,7 @@ void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
 // folds.
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>* Trainer(MatType& dataset,
-                                 size_t folds,
+                                 const size_t folds,
                                  const bool useVolumeReg,
                                  const size_t maxLeafSize,
                                  const size_t minLeafSize,
@@ -160,15 +160,10 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   if (skipPruning)
     return dtree;
 
-  if (folds == 0)
-  {
-    folds = dataset.n_cols;
+  if (folds == dataset.n_cols)
     Log::Info << "Performing leave-one-out cross validation." << std::endl;
-  }
   else
-  {
     Log::Info << "Performing " << folds << "-fold cross validation." << std::endl;
-  }
   
   Timer::Start("prunning_sequence");
   

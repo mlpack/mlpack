@@ -172,11 +172,15 @@ int main(int argc, char *argv[])
     const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
     const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
     const bool skipPruning = CLI::HasParam("skip_pruning");
+    size_t folds = CLI::GetParam<int>("folds");
+    
+    if (folds == 0)
+        folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, int>(trainingData, CLI::GetParam<int>("folds"),
-                                   regularization, maxLeafSize, minLeafSize,
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization, 
+                                   maxLeafSize, minLeafSize,
                                    CLI::GetParam<string>("unpruned_estimates"),
                                    skipPruning);
     Timer::Stop("det_training");
