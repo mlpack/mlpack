@@ -190,7 +190,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 
-  MatType cvData(dataset);
+  const MatType cvData(dataset);
   const size_t testSize = dataset.n_cols / folds;
 
   arma::vec regularizationConstants(prunedSequence.size());

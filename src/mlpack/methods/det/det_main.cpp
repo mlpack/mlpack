@@ -248,7 +248,22 @@ int main(int argc, char *argv[])
       }
       else if (CLI::HasParam("path_format"))
       {
-        PathCacher path(PathCacher::FormatLR, tree);
+        const string pathFormat = CLI::GetParam<string>("path_format");
+        PathCacher::PathFormat theFormat;
+        if (pathFormat == "lr" || pathFormat == "LR")
+          theFormat = PathCacher::FormatLR;
+        else if (pathFormat == "lr-id" || pathFormat == "LR-ID")
+          theFormat = PathCacher::FormatLR_ID;
+        else if (pathFormat == "id-lr" || pathFormat == "ID-LR")
+          theFormat = PathCacher::FormatID_LR;
+        else
+        {
+          Log::Warn << "Unknown path format specified: '" << pathFormat
+            << "'. Valid are: lr | lr-id | id-lr. Defaults to 'lr'" << endl;
+          theFormat = PathCacher::FormatLR;
+        }
+        
+        PathCacher path(theFormat, tree);
         counters.zeros(path.NumLeaves());
         
         for (size_t i = 0; i < testData.n_cols; i++)
@@ -297,7 +312,7 @@ int main(int argc, char *argv[])
 template <typename MatType>
 PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) : format(fmt)
 {
-  numLeaves = dtree->TagTree();
+  numLeaves = dtree->TagTree(0, true);
   pathCache = new std::string [numLeaves];
   assert(!!pathCache);
   dtree->EnumerateTree(*this);
@@ -335,9 +350,15 @@ std::string PathCacher::BuildString()
   {
     switch (format)
     {
-      case FormatLR: str += it->first ? "L" : "R"; break;
-      default:
-        assert(0);
+      case FormatLR:
+        str += it->first ? "L" : "R";
+        break;
+      case FormatLR_ID:
+        str += (it->first ? "L" : "R") + std::to_string(it->second);
+        break;
+      case FormatID_LR:
+        str += std::to_string(it->second) + (it->first ? "L" : "R");
+        break;
     }
   }
   

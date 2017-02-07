@@ -746,7 +746,7 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 
 // Index the buckets for possible usage later.
 template <typename MatType, typename TagType>
-TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
+TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool internal)
 {
   if (subtreeLeaves == 1)
   {
@@ -754,10 +754,17 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
     bucketTag = tag;
     return (tag + 1);
   }
-  else
+  
+  TagType nextTag;
+  if (internal)
   {
-    return right->TagTree(left->TagTree(tag));
+    bucketTag = tag;
+    nextTag = tag + 1;
   }
+  else
+    nextTag = tag;
+  
+  return right->TagTree(left->TagTree(nextTag, internal), internal);
 }
 
 // Enumerate the nodes of the tree.
@@ -796,7 +803,7 @@ TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
   {
     // Check if the query is within range.
     if (!WithinRange(query))
-      return bucketTag;
+      return -1;
   }
   
   // If we are a leaf...

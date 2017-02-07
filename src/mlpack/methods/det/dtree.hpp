@@ -160,7 +160,7 @@ class DTree
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
-  TagType TagTree(const TagType& tag = 0);
+  TagType TagTree(const TagType& tag = 0, bool internal = false);
   
   
   /**
@@ -287,7 +287,7 @@ class DTree
   //! Return the upper part of the alpha sum.
   double AlphaUpper() const { return alphaUpper; }
   //! Return the current bucket's ID, if leaf, or -1 otherwise
-  TagType BucketTag() const { return subtreeLeaves == 1 ? bucketTag : -1; }
+  TagType BucketTag() const { return bucketTag; }
 
   //! Return the maximum values.
   const StatType& MaxVals() const { return maxVals; }
