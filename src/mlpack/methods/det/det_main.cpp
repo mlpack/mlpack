@@ -58,7 +58,7 @@ PARAM_STRING_OUT("vi_file", "The file to output the variable importance values "
     "for each feature.", "i");
 
 // Tagging and path printing options
-PARAM_STRING_IN("path_format", "The format of path printing - lr|idlr|ldid",
+PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
                 "p", "lr");
 
 PARAM_STRING_OUT("tag_counters", "The file to output tag counters.", "c");
@@ -66,8 +66,11 @@ PARAM_STRING_OUT("tag_counters", "The file to output tag counters.", "c");
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths) "
                  " for each sample in the test set.", "g");
 
-PARAM_STRING_OUT("unpruned_tree", "The file to output the unpruned model to.",
-                 "u");
+PARAM_STRING_OUT("unpruned_estimates", "The file to output the estimations from "
+                 "the unpruned tree.", "u");
+
+PARAM_FLAG("skip_pruning", "Whether to bypass the pruning process and output "
+              "the unpruned tree only", "s");
 
 // Parameters for the training algorithm.
 PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for the "
@@ -164,28 +167,18 @@ int main(int argc, char *argv[])
     arma::mat trainingData;
     data::Load(trainSetFile, trainingData, true);
 
-    // Cross-validation here.
-    size_t folds = CLI::GetParam<int>("folds");
-    if (folds == 0)
-    {
-      folds = trainingData.n_cols;
-      Log::Info << "Performing leave-one-out cross validation." << endl;
-    }
-    else
-    {
-      Log::Info << "Performing " << folds << "-fold cross validation." << endl;
-    }
-
     const bool regularization = false;
 //    const bool regularization = CLI::HasParam("volume_regularization");
     const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
     const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
+    const bool skipPruning = CLI::HasParam("skip_pruning");
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
-                                   maxLeafSize, minLeafSize, "",
-                                   CLI::GetParam<string>("unpruned_tree"));
+    tree = Trainer<arma::mat, int>(trainingData, CLI::GetParam<int>("folds"),
+                                   regularization, maxLeafSize, minLeafSize,
+                                   CLI::GetParam<string>("unpruned_estimates"),
+                                   skipPruning);
     Timer::Stop("det_training");
     
     // Compute training set estimates, if desired.

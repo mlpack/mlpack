@@ -67,7 +67,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool useVolumeReg = false,
                                  const size_t maxLeafSize = 10,
                                  const size_t minLeafSize = 5,
-                                 const std::string unprunedTreeOutput = "");
+                                 const std::string unprunedTreeOutput = "",
+                                 const bool skipPruning = false);
 
 } // namespace det
 } // namespace mlpack
