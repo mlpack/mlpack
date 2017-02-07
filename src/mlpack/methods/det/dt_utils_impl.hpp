@@ -111,7 +111,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool useVolumeReg,
                                  const size_t maxLeafSize,
                                  const size_t minLeafSize,
-                                 const std::string unprunedTreeOutput)
+                                 const std::string unprunedTreeOutput,
+                                 const std::string unprunedModel)
 {
   // Initialize the tree.
   DTree<MatType, TagType> dtree(dataset);
@@ -133,6 +134,12 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   Timer::Stop("tree_growing");
   Log::Info << dtree.SubtreeLeaves() << " leaf nodes in the tree using full "
       << "dataset; minimum alpha: " << alpha << "." << std::endl;
+
+  if (unprunedModel != "")
+  {
+    Log::Info << "Saving unprunned tree in: " << unprunedModel << std::endl;
+    data::Save(unprunedModel, "det_model", dtree, false);
+  }
 
   // Compute densities for the training points in the full tree, if we were
   // asked for this.

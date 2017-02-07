@@ -165,27 +165,6 @@ DTree<MatType, TagType>::DTree() :
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const DTree<MatType, TagType>& src) :
-    start(src.start),
-    end(src.end),
-    splitDim(src.splitDim),
-    splitValue(src.splitValue),
-    logNegError(src.logNegError),
-    subtreeLeavesLogNegError(src.subtreeLeavesLogNegError),
-    subtreeLeaves(src.subtreeLeaves),
-    root(src.root),
-    ratio(src.ratio),
-    logVolume(src.logVolume),
-    bucketTag(src.bucketTag),
-    alphaUpper(src.alphaUpper)
-{
-  if (!!src.left)
-    left = new DTree(*src.left);
-  if (!!src.right)
-    right = new DTree(*src.right);
-}
-
 
 // Root node initializers
 
@@ -864,6 +843,29 @@ DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
 }
 
 template <typename MatType, typename TagType>
+void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
+                                         const StatType& maxs)
+{
+  if (!root)
+  {
+    minVals = mins;
+    maxVals = maxs;
+  }
+  
+  if (left && right)
+  {
+    StatType maxValsL(maxs);
+    StatType maxValsR(maxs);
+    StatType minValsL(mins);
+    StatType minValsR(mins);
+    
+    maxValsL[splitDim] = minValsR[splitDim] = splitValue;
+    left->FillMinMax(minValsL, maxValsL);
+    right->FillMinMax(minValsR, maxValsR);
+  }
+}
+
+template <typename MatType, typename TagType>
 template <typename Archive>
 void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
 {
@@ -871,8 +873,6 @@ void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* versi
   
   ar & CreateNVP(start, "start");
   ar & CreateNVP(end, "end");
-  ar & CreateNVP(maxVals, "maxVals");
-  ar & CreateNVP(minVals, "minVals");
   ar & CreateNVP(splitDim, "splitDim");
   ar & CreateNVP(splitValue, "splitValue");
   ar & CreateNVP(logNegError, "logNegError");
@@ -894,5 +894,14 @@ void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* versi
   
   ar & CreateNVP(left, "left");
   ar & CreateNVP(right, "right");
+  
+  if (root)
+  {
+    ar & CreateNVP(maxVals, "maxVals");
+    ar & CreateNVP(minVals, "minVals");
+
+    if (Archive::is_loading::value && left && right)
+      FillMinMax(minVals, maxVals);
+  }
 }
 

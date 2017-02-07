@@ -57,11 +57,6 @@ class DTree
    * Create an empty density estimation tree.
    */
   DTree();
-  
-  /**
-   * Create a copy of an existing tree.
-   */
-  DTree(const DTree<MatType, TagType>& tree);
 
   /**
    * Create a density estimation tree with the given bounds and the given number
@@ -327,6 +322,9 @@ class DTree
                    const size_t splitDim,
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
+  
+  void  FillMinMax(const StatType& mins,
+                   const StatType& maxs);
 
 };
 

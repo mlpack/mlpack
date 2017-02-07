@@ -66,6 +66,9 @@ PARAM_STRING_OUT("tag_counters", "The file to output tag counters.", "c");
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths) "
                  " for each sample in the test set.", "g");
 
+PARAM_STRING_OUT("unpruned_tree", "The file to output the unpruned model to.",
+                 "u");
+
 // Parameters for the training algorithm.
 PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for the "
     "estimation (0 is LOOCV)", "f", 10);
@@ -180,9 +183,11 @@ int main(int argc, char *argv[])
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, int>(trainingData, folds, regularization, maxLeafSize, minLeafSize, "");
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
+                                   maxLeafSize, minLeafSize, "",
+                                   CLI::GetParam<string>("unpruned_tree"));
     Timer::Stop("det_training");
-
+    
     // Compute training set estimates, if desired.
     if (CLI::HasParam("training_set_estimates_file"))
     {
