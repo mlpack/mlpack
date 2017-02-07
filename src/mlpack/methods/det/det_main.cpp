@@ -101,26 +101,25 @@ public:
   template <typename MatType>
   PathCacher(PathFormat fmt, DTree<MatType, int>* tree);
   
-  ~PathCacher();
-  
   template <typename MatType>
   void  Enter(const DTree<MatType, int>* node, const DTree<MatType, int>* parent);
 
   template <typename MatType>
   void  Leave(const DTree<MatType, int>* node, const DTree<MatType, int>* parent);
   
-  const std::string& PathFor(int tag) const;
+  const std::string&  PathFor(int tag) const;
   
-  size_t NumLeaves() const { return numLeaves; }
+  int                 ParentOf(int tag) const;
   
-private:
-  typedef std::list<std::pair<bool, int> >  PathType;
+  size_t              NumNodes() const { return pathCache.size(); }
+  
+protected:
+  typedef std::list<std::pair<bool, int> >      PathType;
+  typedef std::vector<std::pair<int, string> >  PathCacheType;
   
   PathType      path;
   PathFormat    format;
-
-  int           numLeaves;
-  std::string*  pathCache;
+  PathCacheType pathCache;
   
   std::string   BuildString();
 };
@@ -245,7 +244,9 @@ int main(int argc, char *argv[])
       }
       else if (CLI::HasParam("path_format"))
       {
+        const bool reqCounters = CLI::HasParam("tag_counters_file");
         const string pathFormat = CLI::GetParam<string>("path_format");
+
         PathCacher::PathFormat theFormat;
         if (pathFormat == "lr" || pathFormat == "LR")
           theFormat = PathCacher::FormatLR;
@@ -261,14 +262,30 @@ int main(int argc, char *argv[])
         }
         
         PathCacher path(theFormat, tree);
-        counters.zeros(path.NumLeaves());
+        counters.zeros(path.NumNodes());
         
         for (size_t i = 0; i < testData.n_cols; i++)
         {
-          const int tag = tree->FindBucket(testData.unsafe_col(i));
-          
-          counters(tag) += 1;
+          int tag = tree->FindBucket(testData.unsafe_col(i));
+
           ofs << tag << " " << path.PathFor(tag) << std::endl;
+          for (;tag >= 0 && reqCounters; tag = path.ParentOf(tag))
+            counters(tag) += 1;
+        }
+        
+        ofs.close();
+        
+        if (reqCounters)
+        {
+          ofs.open(CLI::GetParam<string>("tag_counters_file"),
+                   std::ofstream::out);
+          
+          for (size_t j = 0;j < counters.n_elem; ++j)
+            ofs << j << " "
+                << counters(j) << " "
+                << path.PathFor(j) << endl;
+          
+          ofs.close();
         }
       }
       else
@@ -283,10 +300,11 @@ int main(int argc, char *argv[])
           ofs << tag << std::endl;
           counters(tag) += 1;
         }
+        
+        if (CLI::HasParam("tag_counters_file"))
+          data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
       }
 
-      if (CLI::GetParam<string>("tag_counters_file") != "")
-        data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
 
       Timer::Stop("det_test_set_tagging");
       ofs.close();
@@ -309,19 +327,14 @@ int main(int argc, char *argv[])
 template <typename MatType>
 PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) : format(fmt)
 {
-  numLeaves = dtree->TagTree(0, true);
-  pathCache = new std::string [numLeaves];
-  assert(!!pathCache);
+  pathCache.resize(dtree->TagTree(0, true));
+  pathCache[0] = PathCacheType::value_type(-1, "");
   dtree->EnumerateTree(*this);
 }
 
-PathCacher::~PathCacher()
-{
-  delete[] pathCache;
-}
-
 template <typename MatType>
-void  PathCacher::Enter(const DTree<MatType, int>* node, const DTree<MatType, int>* parent)
+void  PathCacher::Enter(const DTree<MatType, int>* node,
+                        const DTree<MatType, int>* parent)
 {
   if (parent == nullptr)
     return;
@@ -329,8 +342,10 @@ void  PathCacher::Enter(const DTree<MatType, int>* node, const DTree<MatType, in
   int tag = node->BucketTag();
 
   path.push_back(PathType::value_type(parent->Left() == node, tag));
-  if (tag >= 0)
-    pathCache[tag] = BuildString();
+  pathCache[tag] = PathCacheType::value_type(parent->BucketTag(),
+                                             (node->SubtreeLeaves() > 1) ?
+                                              "" : BuildString()
+                                             );
 }
 
 template <typename MatType>
@@ -362,8 +377,12 @@ std::string PathCacher::BuildString()
   return str;
 }
 
+int PathCacher::ParentOf(int tag) const
+{
+  return pathCache[tag].first;
+}
+
 const std::string& PathCacher::PathFor(int tag) const
 {
-  assert(tag >= 0 && tag < numLeaves );
-  return pathCache[tag];
+  return pathCache[tag].second;
 }
