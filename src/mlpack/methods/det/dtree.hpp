@@ -188,7 +188,21 @@ class DTree
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
-  TagType TagTree(const TagType& tag = 0);
+  TagType TagTree(const TagType& tag = 0, bool internal = false);
+  
+  
+  /**
+   * Traverses all nodes of the tree, including the inner ones. On each node
+   * two methods of the `enumer` are called:
+   *
+   * Enter(DTree* node, DTree* parent);
+   * Leave(Dtree* node, DTree* parent);
+   *
+   * @param walker An instance of custom class, receiver of the enumeration.
+   */
+  template <class Walker>
+  void EnumerateTree(Walker& walker) const;
+  
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for
@@ -301,7 +315,7 @@ class DTree
   //! Return the upper part of the alpha sum.
   double AlphaUpper() const { return alphaUpper; }
   //! Return the current bucket's ID, if leaf, or -1 otherwise
-  TagType BucketTag() const { return subtreeLeaves == 1 ? bucketTag : -1; }
+  TagType BucketTag() const { return bucketTag; }
 
   //! Return the maximum values.
   const StatType& MaxVals() const { return maxVals; }
@@ -336,6 +350,9 @@ class DTree
                    const size_t splitDim,
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
+  
+  void  FillMinMax(const StatType& mins,
+                   const StatType& maxs);
 
 };
 

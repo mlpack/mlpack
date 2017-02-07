@@ -35,8 +35,8 @@ void PrintLeafMembership(DTree<MatType, TagType>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
                          const size_t numClasses,
-                         const std::string leafClassMembershipFile = "");
-
+                         const std::string& leafClassMembershipFile = "");
+  
 /**
  * Print the variable importance of each dimension of a density estimation tree.
  * Optionally, pass the name of a file to print this information to (otherwise
@@ -67,7 +67,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool useVolumeReg = false,
                                  const size_t maxLeafSize = 10,
                                  const size_t minLeafSize = 5,
-                                 const std::string unprunedTreeOutput = "");
+                                 const std::string unprunedTreeOutput = "",
+                                 const bool skipPruning = false);
 
 } // namespace det
 } // namespace mlpack

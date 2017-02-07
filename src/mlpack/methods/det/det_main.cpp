@@ -57,6 +57,21 @@ PARAM_MATRIX_OUT("test_set_estimates", "The output estimates on the test set "
 PARAM_MATRIX_OUT("vi", "The output variable importance values for each "
     "feature.", "i");
 
+// Tagging and path printing options
+PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
+                "p", "lr");
+
+PARAM_STRING_OUT("tag_counters_file", "The file to output tag counters.", "c");
+
+PARAM_STRING_OUT("raw_estimates_file", "The file to output the estimations from "
+                 "the unpruned tree.", "u");
+
+PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths) "
+                 " for each sample in the test set.", "g");
+
+PARAM_FLAG("skip_pruning", "Whether to bypass the pruning process and output "
+              "the unpruned tree only", "s");
+
 // Parameters for the training algorithm.
 PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for "
     "the estimation (0 is LOOCV)", "f", 10);
@@ -71,6 +86,44 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "on the sum of the inverse of the volume of the leaves (meaning you "
     "penalize low volume leaves.", "R");
 */
+
+
+class PathCacher
+{
+public:
+  enum PathFormat
+  {
+    FormatLR,
+    FormatLR_ID,
+    FormatID_LR
+  };
+  
+  template <typename MatType>
+  PathCacher(PathFormat fmt, DTree<MatType, int>* tree);
+  
+  template <typename MatType>
+  void  Enter(const DTree<MatType, int>* node, const DTree<MatType, int>* parent);
+
+  template <typename MatType>
+  void  Leave(const DTree<MatType, int>* node, const DTree<MatType, int>* parent);
+  
+  const std::string&  PathFor(int tag) const;
+  
+  int                 ParentOf(int tag) const;
+  
+  size_t              NumNodes() const { return pathCache.size(); }
+  
+protected:
+  typedef std::list<std::pair<bool, int> >      PathType;
+  typedef std::vector<std::pair<int, string> >  PathCacheType;
+  
+  PathType      path;
+  PathFormat    format;
+  PathCacheType pathCache;
+  
+  std::string   BuildString();
+};
+
 
 int main(int argc, char *argv[])
 {
@@ -118,29 +171,24 @@ int main(int argc, char *argv[])
   {
     arma::mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
-    // Cross-validation here.
-    size_t folds = CLI::GetParam<int>("folds");
-    if (folds == 0)
-    {
-      folds = trainingData.n_cols;
-      Log::Info << "Performing leave-one-out cross validation." << endl;
-    }
-    else
-    {
-      Log::Info << "Performing " << folds << "-fold cross validation." << endl;
-    }
-
     const bool regularization = false;
 //    const bool regularization = CLI::HasParam("volume_regularization");
     const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
     const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
+    const bool skipPruning = CLI::HasParam("skip_pruning");
+    size_t folds = CLI::GetParam<int>("folds");
+    
+    if (folds == 0)
+        folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
-        maxLeafSize, minLeafSize, "");
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization, 
+                                   maxLeafSize, minLeafSize,
+                                   CLI::GetParam<string>("raw_estimates_file"),
+                                   skipPruning);
     Timer::Stop("det_training");
-
+    
     // Compute training set estimates, if desired.
     if (CLI::HasParam("training_set_estimates"))
     {
@@ -165,16 +213,102 @@ int main(int argc, char *argv[])
   if (CLI::HasParam("test"))
   {
     arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+    data::Load(testFile, testData, true);
+    if (CLI::HasParam("test_set_estimates_file"))
+    {
+      // Compute test set densities.
+      Timer::Start("det_test_set_estimation");
+      arma::rowvec testDensities(testData.n_cols);
+      
+      for (size_t i = 0; i < testData.n_cols; i++)
+        testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
+      
+      Timer::Stop("det_test_set_estimation");
 
-    // Compute test set densities.
-    Timer::Start("det_test_set_estimation");
-    arma::rowvec testDensities(testData.n_cols);
-    for (size_t i = 0; i < testData.n_cols; i++)
-      testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
-    Timer::Stop("det_test_set_estimation");
-
-    if (CLI::HasParam("test_set_estimates"))
       CLI::GetParam<arma::mat>("test_set_estimates") = std::move(testDensities);
+    }
+    
+    if (CLI::HasParam("tag_file"))
+    {
+      const string tagFile = CLI::GetParam<string>("tag_file");
+      std::ofstream ofs;
+      ofs.open(tagFile, std::ofstream::out);
+      
+      arma::Row<size_t> counters;
+
+      Timer::Start("det_test_set_tagging");
+      if (!ofs.is_open())
+      {
+        Log::Warn << "Unable to open file '" << tagFile
+          << "' to save tag membership info."
+          << std::endl;
+      }
+      else if (CLI::HasParam("path_format"))
+      {
+        const bool reqCounters = CLI::HasParam("tag_counters_file");
+        const string pathFormat = CLI::GetParam<string>("path_format");
+
+        PathCacher::PathFormat theFormat;
+        if (pathFormat == "lr" || pathFormat == "LR")
+          theFormat = PathCacher::FormatLR;
+        else if (pathFormat == "lr-id" || pathFormat == "LR-ID")
+          theFormat = PathCacher::FormatLR_ID;
+        else if (pathFormat == "id-lr" || pathFormat == "ID-LR")
+          theFormat = PathCacher::FormatID_LR;
+        else
+        {
+          Log::Warn << "Unknown path format specified: '" << pathFormat
+            << "'. Valid are: lr | lr-id | id-lr. Defaults to 'lr'" << endl;
+          theFormat = PathCacher::FormatLR;
+        }
+        
+        PathCacher path(theFormat, tree);
+        counters.zeros(path.NumNodes());
+        
+        for (size_t i = 0; i < testData.n_cols; i++)
+        {
+          int tag = tree->FindBucket(testData.unsafe_col(i));
+
+          ofs << tag << " " << path.PathFor(tag) << std::endl;
+          for (;tag >= 0 && reqCounters; tag = path.ParentOf(tag))
+            counters(tag) += 1;
+        }
+        
+        ofs.close();
+        
+        if (reqCounters)
+        {
+          ofs.open(CLI::GetParam<string>("tag_counters_file"),
+                   std::ofstream::out);
+          
+          for (size_t j = 0;j < counters.n_elem; ++j)
+            ofs << j << " "
+                << counters(j) << " "
+                << path.PathFor(j) << endl;
+          
+          ofs.close();
+        }
+      }
+      else
+      {
+        int numLeaves = tree->TagTree();
+        counters.zeros(numLeaves);
+        
+        for (size_t i = 0; i < testData.n_cols; i++)
+        {
+          const int tag = tree->FindBucket(testData.unsafe_col(i));
+          
+          ofs << tag << std::endl;
+          counters(tag) += 1;
+        }
+        
+        if (CLI::HasParam("tag_counters_file"))
+          data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
+      }
+
+      Timer::Stop("det_test_set_tagging");
+      ofs.close();
+    }
   }
 
   // Print variable importance.
@@ -194,4 +328,68 @@ int main(int argc, char *argv[])
     delete tree;
 
   CLI::Destroy();
+}
+
+
+template <typename MatType>
+PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) : format(fmt)
+{
+  pathCache.resize(dtree->TagTree(0, true));
+  pathCache[0] = PathCacheType::value_type(-1, "");
+  dtree->EnumerateTree(*this);
+}
+
+template <typename MatType>
+void  PathCacher::Enter(const DTree<MatType, int>* node,
+                        const DTree<MatType, int>* parent)
+{
+  if (parent == nullptr)
+    return;
+  
+  int tag = node->BucketTag();
+
+  path.push_back(PathType::value_type(parent->Left() == node, tag));
+  pathCache[tag] = PathCacheType::value_type(parent->BucketTag(),
+                                             (node->SubtreeLeaves() > 1) ?
+                                              "" : BuildString()
+                                             );
+}
+
+template <typename MatType>
+void  PathCacher::Leave(const DTree<MatType, int>* , const DTree<MatType, int>* parent)
+{
+  if (parent != nullptr)
+    path.pop_back();
+}
+
+std::string PathCacher::BuildString()
+{
+  std::string str("");
+  for (PathType::iterator it = path.begin(); it != path.end(); it++)
+  {
+    switch (format)
+    {
+      case FormatLR:
+        str += it->first ? "L" : "R";
+        break;
+      case FormatLR_ID:
+        str += (it->first ? "L" : "R") + std::to_string(it->second);
+        break;
+      case FormatID_LR:
+        str += std::to_string(it->second) + (it->first ? "L" : "R");
+        break;
+    }
+  }
+  
+  return str;
+}
+
+int PathCacher::ParentOf(int tag) const
+{
+  return pathCache[tag].first;
+}
+
+const std::string& PathCacher::PathFor(int tag) const
+{
+  return pathCache[tag].second;
 }
