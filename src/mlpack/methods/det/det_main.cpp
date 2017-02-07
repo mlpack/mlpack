@@ -213,8 +213,7 @@ int main(int argc, char *argv[])
   if (CLI::HasParam("test"))
   {
     arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
-    data::Load(testFile, testData, true);
-    if (CLI::HasParam("test_set_estimates_file"))
+    if (CLI::HasParam("test_set_estimates"))
     {
       // Compute test set densities.
       Timer::Start("det_test_set_estimation");
@@ -316,7 +315,7 @@ int main(int argc, char *argv[])
   {
     arma::vec importances;
     tree->ComputeVariableImportance(importances);
-    CLI::GetParam<arma::mat>("vi") = std::move(importances.t());
+    CLI::GetParam<arma::mat>("vi") = importances.t();
   }
 
   // Save the model, if desired.
