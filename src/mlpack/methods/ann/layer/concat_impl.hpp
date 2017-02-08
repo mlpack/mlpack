@@ -133,14 +133,13 @@ void Concat<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Concat<InputDataType, OutputDataType>::Gradient(
-    arma::Mat<eT>&& /* input */,
+    arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
 {
   for (size_t i = 0; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i])), std::move(error)), network[i]);
+    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)), network[i]);
   }
 }
 
