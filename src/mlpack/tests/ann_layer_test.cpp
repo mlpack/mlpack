@@ -774,4 +774,88 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/**
+ * Simple concat module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
+{
+  arma::mat output, input, delta, error;
+
+  Linear<> moduleA(10, 10);
+  moduleA.Parameters().randu();
+  moduleA.Reset();
+
+  Linear<> moduleB(10, 10);
+  moduleB.Parameters().randu();
+  moduleB.Reset();
+
+  Concat<> module;
+  module.Add(moduleA);
+  module.Add(moduleB);
+
+  // Test the Forward function.
+  input = arma::zeros(10, 1);
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_CLOSE(arma::accu(
+      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)),
+      arma::accu(output.col(0)), 1e-3);
+
+  BOOST_REQUIRE_CLOSE(arma::accu(
+      moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
+      arma::accu(output.col(1)), 1e-3);
+
+  // Test the Backward function.
+  error = arma::zeros(10, 2);
+  module.Backward(std::move(input), std::move(error), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Concat layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
+{
+  // Concat function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
+          input, target);
+      model->Add<IdentityLayer<> >();
+
+      concat = new Concat<>();
+      concat->Add<Linear<> >(10, 2);
+      model->Add(concat);
+
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    Concat<>* concat;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
