@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -875,15 +875,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
                   abText.WeakLearner(i).Split(),
                   abBinary.WeakLearner(i).Split());
 
-    for (size_t j = 0; j < ab.WeakLearner(i).Split().n_elem + 1; ++j)
-    {
-      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
-                          abXml.WeakLearner(i).Child(j).Label());
-      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
-                          abText.WeakLearner(i).Child(j).Label());
-      BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).Child(j).Label(),
-                          abBinary.WeakLearner(i).Child(j).Label());
-    }
+    CheckMatrices(ab.WeakLearner(i).BinLabels(),
+                  abXml.WeakLearner(i).BinLabels(),
+                  abText.WeakLearner(i).BinLabels(),
+                  abBinary.WeakLearner(i).BinLabels());
   }
 }
 

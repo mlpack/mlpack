@@ -307,9 +307,9 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   for (size_t i = 0; i < ds.Split().n_elem; ++i)
   {
     if (ds.Split()[i] <= -3.0)
-      BOOST_CHECK_EQUAL(ds.Child(i).Label(), 0);
+      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 0);
     else if (ds.Split()[i] >= 3.0)
-      BOOST_CHECK_EQUAL(ds.Child(i).Label(), 1);
+      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 1);
   }
 }
 
@@ -359,226 +359,37 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
 }
 
 /**
- * Test the copy constructor for a stump.
+ * Ensure that a matrix holding ints can be trained.  The bigger issue here is
+ * just compilation.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpCopyConstructorTest)
+BOOST_AUTO_TEST_CASE(IntTest)
 {
-  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
-  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
-  // found on page 176 (and a description of the correct splitting dimension is
-  // given below that).
-  mat trainingData;
-  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
-               << 2  << 2  << 2  << 2  << 2  << endr
-               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
-               << 80 << 70 << 80 << 80 << 96 << endr
-               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
-               << 1  << 1  << 0  << 0  << 0  << endr;
+  // Train on a dataset and make sure something kind of makes sense.
+  imat trainingData;
+  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1
+               << 2  << 3  << 4  << 5  << 6  << 7  << 8  << 9 << 10;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
-           << 0 << 1 << 1 << 0 << 0 << 0;
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
+           << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
 
-  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
+  DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 4, 3);
 
-  // Make a copy.
-  DecisionStump<> copy(d);
-  DecisionStump<> copy2 = d;
+  imat testingData;
+  testingData << -6 << -6 << -2 << -1 << 3 << 5 << 7 << 9;
 
-  // Check the objects for similarity.
-  BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(d.Split().n_elem, copy2.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), copy.NumChildren());
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), copy2.NumChildren());
-  for (size_t i = 0; i < d.NumChildren(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
-        copy.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
-        copy.Child(i).Split().n_cols);
-    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], d.Child(i).Split()[j],
-            1e-5);
-    }
+  arma::Row<size_t> predictedLabels;
+  ds.Classify(testingData, predictedLabels);
 
-    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), copy2.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
-        copy2.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
-        copy2.Child(i).Split().n_cols);
-    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(copy2.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(copy2.Child(i).Split()[j], d.Child(i).Split()[j],
-            1e-5);
-    }
-  }
-}
-
-/**
- * Test the move constructor for a stump.
- */
-BOOST_AUTO_TEST_CASE(DecisionStumpMoveConstructorTest)
-{
-  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
-  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
-  // found on page 176 (and a description of the correct splitting dimension is
-  // given below that).
-  mat trainingData;
-  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
-               << 2  << 2  << 2  << 2  << 2  << endr
-               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
-               << 80 << 70 << 80 << 80 << 96 << endr
-               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
-               << 1  << 1  << 0  << 0  << 0  << endr;
-
-  // No need to normalize labels here.
-  Mat<size_t> labelsIn;
-  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
-           << 0 << 1 << 1 << 0 << 0 << 0;
-
-  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
-  DecisionStump<> copy(d); // A copy to compare against.
-
-  DecisionStump<> move(std::move(d));
-  DecisionStump<> empty; // An empty object to compare against.
-
-  BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), empty.NumChildren());
-  for (size_t i = 0; i < d.NumChildren(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
-        empty.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
-        empty.Child(i).Split().n_cols);
-    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(empty.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(empty.Child(i).Split()[j], d.Child(i).Split()[j],
-            1e-5);
-    }
-  }
-
-  BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(move.NumChildren(), copy.NumChildren());
-  for (size_t i = 0; i < move.NumChildren(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_rows,
-        copy.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_cols,
-        copy.Child(i).Split().n_cols);
-    for (size_t j = 0; j < move.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(move.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], move.Child(i).Split()[j],
-            1e-5);
-    }
-  }
-}
-
-/**
- * Test the move operator.
- */
-BOOST_AUTO_TEST_CASE(DecisionStumpMoveOperatorTest)
-{
-  // This dataset comes from Chapter 6 of the book "Data Mining: Concepts,
-  // Models, Methods, and Algorithms" (2nd Edition) by Mehmed Kantardzic.  It is
-  // found on page 176 (and a description of the correct splitting dimension is
-  // given below that).
-  mat trainingData;
-  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
-               << 2  << 2  << 2  << 2  << 2  << endr
-               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
-               << 80 << 70 << 80 << 80 << 96 << endr
-               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
-               << 1  << 1  << 0  << 0  << 0  << endr;
-
-  // No need to normalize labels here.
-  Mat<size_t> labelsIn;
-  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
-           << 0 << 1 << 1 << 0 << 0 << 0;
-
-  DecisionStump<> d(trainingData, labelsIn.row(0), 2);
-  DecisionStump<> copy(d); // A copy to compare against.
-
-  DecisionStump<> move = std::move(d);
-  DecisionStump<> empty; // An empty object to compare against.
-
-  BOOST_REQUIRE_EQUAL(d.Split().n_elem, empty.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), empty.NumChildren());
-  for (size_t i = 0; i < d.NumChildren(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(d.Child(i).Label(), empty.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_rows,
-        empty.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(d.Child(i).Split().n_cols,
-        empty.Child(i).Split().n_cols);
-    for (size_t j = 0; j < d.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(d.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(empty.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(empty.Child(i).Split()[j], d.Child(i).Split()[j],
-            1e-5);
-    }
-  }
-
-  BOOST_REQUIRE_EQUAL(move.Split().n_elem, copy.Split().n_elem);
-  BOOST_REQUIRE_EQUAL(move.NumChildren(), copy.NumChildren());
-  for (size_t i = 0; i < move.NumChildren(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(move.Child(i).Label(), copy.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_rows,
-        copy.Child(i).Split().n_rows);
-    BOOST_REQUIRE_EQUAL(move.Child(i).Split().n_cols,
-        copy.Child(i).Split().n_cols);
-    for (size_t j = 0; j < move.Child(i).Split().n_elem; ++j)
-    {
-      if (std::abs(move.Child(i).Split()[j]) < 1e-5)
-        BOOST_REQUIRE_SMALL(copy.Child(i).Split()[j], 1e-5);
-      else
-        BOOST_REQUIRE_CLOSE(copy.Child(i).Split()[j], move.Child(i).Split()[j],
-            1e-5);
-    }
-  }
-}
-
-/**
- * Test that the decision tree can be reasonably built.
- */
-BOOST_AUTO_TEST_CASE(DecisionTreeBuildTest)
-{
-  arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
-
-  arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-
-  // Construct a full decision tree.
-  DecisionStump<arma::mat, false> tree(inputData, labels.row(0), 3);
-
-  // Ensure that it has some children.
-  BOOST_REQUIRE_GT(tree.NumChildren(), 0);
-
-  // Ensure that its children have some children.
-  for (size_t i = 0; i < tree.NumChildren(); ++i)
-    BOOST_REQUIRE_GT(tree.Child(i).NumChildren(), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

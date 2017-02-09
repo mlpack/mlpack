@@ -9,6 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 #define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 
@@ -26,12 +27,11 @@ namespace decision_stump {
  * @param classes Number of distinct classes in labels.
  * @param bucketSize Minimum size of bucket when splitting.
  */
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t classes,
-    const size_t bucketSize) :
+template<typename MatType>
+DecisionStump<MatType>::DecisionStump(const MatType& data,
+                                      const arma::Row<size_t>& labels,
+                                      const size_t classes,
+                                      const size_t bucketSize) :
     classes(classes),
     bucketSize(bucketSize)
 {
@@ -42,143 +42,26 @@ DecisionStump<MatType, NoRecursion>::DecisionStump(
 /**
  * Empty constructor.
  */
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump() :
+template<typename MatType>
+DecisionStump<MatType>::DecisionStump() :
     classes(1),
     bucketSize(0),
-    splitDimensionOrLabel(0),
-    splitOrClassProbs(1)
+    splitDimension(0),
+    split(1),
+    binLabels(1)
 {
-  splitOrClassProbs[0] = 1.0;
-  if (NoRecursion)
-  {
-    // Make a fake stump by creating two children.  We create two and not one so
-    // that we can be guaranteed that splitOrClassProbs has at least one
-    // element.  The children are identical in functionality though.  These fake
-    // children are necessary, because Predict() depends on a stump having
-    // children.
-    children.push_back(new DecisionStump(0, 0, std::move(arma::vec("1.0"))));
-    children.push_back(new DecisionStump(0, 0, std::move(arma::vec("1.0"))));
-  }
-}
-
-// Copy constructor.
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump(const DecisionStump& other) :
-    classes(other.classes),
-    bucketSize(other.bucketSize),
-    splitDimensionOrLabel(other.splitDimensionOrLabel),
-    splitOrClassProbs(other.splitOrClassProbs)
-{
-  for (size_t i = 0; i < other.children.size(); ++i)
-    children.push_back(new DecisionStump(*other.children[i]));
-}
-
-// Move constructor.
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump(DecisionStump&& other) :
-    classes(other.classes),
-    bucketSize(other.bucketSize),
-    splitDimensionOrLabel(other.splitDimensionOrLabel),
-    splitOrClassProbs(std::move(other.splitOrClassProbs)),
-    children(std::move(other.children))
-{
-  // Reset the other one.
-  other.classes = 1;
-  other.bucketSize = 0;
-  other.splitDimensionOrLabel = 0;
-  other.splitOrClassProbs.ones(1);
-  if (NoRecursion)
-  {
-    // Make a fake stump by creating two children.  We create two and not one so
-    // that we can be guaranteed that splitOrClassProbs has at least one
-    // element.  The children are identical in functionality though.  These fake
-    // children are necessary, because Predict() depends on a stump having
-    // children.
-    other.children.push_back(new DecisionStump(0, 0,
-        std::move(arma::vec("1.0"))));
-    other.children.push_back(new DecisionStump(0, 0,
-        std::move(arma::vec("1.0"))));
-  }
-}
-
-// Copy assignment operator.
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>&
-DecisionStump<MatType, NoRecursion>::operator=(const DecisionStump& other)
-{
-  // Clear existing memory.
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
-  children.clear();
-
-  classes = other.classes;
-  bucketSize = other.bucketSize;
-  splitDimensionOrLabel = other.splitDimensionOrLabel;
-  splitOrClassProbs = other.splitOrClassProbs;
-
-  // Create copies of the children.
-  for (size_t i = 0; i < other.children.size(); ++i)
-    children.push_back(new DecisionStump(*other.children[i]));
-
-  return *this;
-}
-
-// Move assignment operator.
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>&
-DecisionStump<MatType, NoRecursion>::operator=(DecisionStump&& other)
-{
-  // Clear existing memory.
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
-  children.clear();
-
-  classes = other.classes;
-  bucketSize = other.bucketSize;
-  splitDimensionOrLabel = other.splitDimensionOrLabel;
-  splitOrClassProbs = std::move(other.splitOrClassProbs);
-  children = std::move(other.children);
-
-  // Clear and reinitialize other object.
-  other.classes = 1;
-  other.bucketSize = 0;
-  other.splitDimensionOrLabel = 0;
-  other.splitOrClassProbs.ones(1);
-  if (NoRecursion)
-  {
-    // Make a fake stump by creating two children.  We create two and not one so
-    // that we can be guaranteed that splitOrClassProbs has at least one
-    // element.  The children are identical in functionality though.  These fake
-    // children are necessary, because Predict() depends on a stump having
-    // children.
-    other.children.push_back(new DecisionStump(0, 0,
-        std::move(arma::vec("1.0"))));
-    other.children.push_back(new DecisionStump(0, 0,
-        std::move(arma::vec("1.0"))));
-  }
-
-  return *this;
-}
-
-// Destructor.
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::~DecisionStump()
-{
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
-  children.clear();
+  split[0] = DBL_MAX;
+  binLabels[0] = 0;
 }
 
 /**
  * Train on the given data and labels.
  */
-template<typename MatType, bool NoRecursion>
-void DecisionStump<MatType, NoRecursion>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t classes,
-    const size_t bucketSize)
+template<typename MatType>
+void DecisionStump<MatType>::Train(const MatType& data,
+                                   const arma::Row<size_t>& labels,
+                                   const size_t classes,
+                                   const size_t bucketSize)
 {
   this->classes = classes;
   this->bucketSize = bucketSize;
@@ -195,12 +78,11 @@ void DecisionStump<MatType, NoRecursion>::Train(
  * @param labels Labels for dataset.
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<bool UseWeights>
-void DecisionStump<MatType, NoRecursion>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const arma::rowvec& weights)
+void DecisionStump<MatType>::Train(const MatType& data,
+                                   const arma::Row<size_t>& labels,
+                                   const arma::rowvec& weights)
 {
   // If classLabels are not all identical, proceed with training.
   size_t bestDim = 0;
@@ -230,10 +112,10 @@ void DecisionStump<MatType, NoRecursion>::Train(
       }
     }
   }
-  splitDimensionOrLabel = bestDim;
+  splitDimension = bestDim;
 
   // Once the splitting column/dimension has been decided, train on it.
-  TrainOnDim(data, splitDimensionOrLabel, labels);
+  TrainOnDim(data.row(splitDimension), labels);
 }
 
 /**
@@ -244,10 +126,9 @@ void DecisionStump<MatType, NoRecursion>::Train(
  * @param predictedLabels Vector to store the predicted classes after
  *      classifying test
  */
-template<typename MatType, bool NoRecursion>
-void DecisionStump<MatType, NoRecursion>::Classify(
-    const MatType& test,
-    arma::Row<size_t>& predictedLabels)
+template<typename MatType>
+void DecisionStump<MatType>::Classify(const MatType& test,
+                                      arma::Row<size_t>& predictedLabels)
 {
   predictedLabels.set_size(test.n_cols);
   for (size_t i = 0; i < test.n_cols; i++)
@@ -256,20 +137,17 @@ void DecisionStump<MatType, NoRecursion>::Classify(
     // Assume first that it falls into the first bin, then proceed through the
     // bins until it is known which bin it falls into.
     size_t bin = 0;
-    const double val = test(splitDimensionOrLabel, i);
+    const double val = test(splitDimension, i);
 
-    while (bin < splitOrClassProbs.n_elem - 1)
+    while (bin < split.n_elem - 1)
     {
-      if (val < splitOrClassProbs(bin + 1))
+      if (val < split(bin + 1))
         break;
 
       ++bin;
     }
 
-    if (NoRecursion)
-      predictedLabels(i) = children[bin]->Label();
-    else
-      children[bin]->Classify(test, predictedLabels);
+    predictedLabels(i) = binLabels(bin);
   }
 }
 
@@ -285,12 +163,11 @@ void DecisionStump<MatType, NoRecursion>::Classify(
  * @param labels The labels of data.
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump(
-    const DecisionStump<>& other,
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const arma::rowvec& weights) :
+template<typename MatType>
+DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
+                                      const MatType& data,
+                                      const arma::Row<size_t>& labels,
+                                      const arma::rowvec& weights) :
     classes(other.classes),
     bucketSize(other.bucketSize)
 {
@@ -300,11 +177,10 @@ DecisionStump<MatType, NoRecursion>::DecisionStump(
 /**
  * Serialize the decision stump.
  */
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<typename Archive>
-void DecisionStump<MatType, NoRecursion>::Serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void DecisionStump<MatType>::Serialize(Archive& ar,
+                                       const unsigned int /* version */)
 {
   using data::CreateNVP;
 
@@ -312,40 +188,9 @@ void DecisionStump<MatType, NoRecursion>::Serialize(
   // None need special handling.
   ar & CreateNVP(classes, "classes");
   ar & CreateNVP(bucketSize, "bucketSize");
-  ar & CreateNVP(splitDimensionOrLabel, "splitDimensionOrLabel");
-  ar & CreateNVP(splitOrClassProbs, "splitOrClassProbs");
-
-  size_t numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
-  if (Archive::is_loading::value)
-  {
-    // Clear memory and prepare for loading children.
-    for (size_t i = 0; i < children.size(); ++i)
-      delete children[i];
-    children.clear();
-    children.resize(numChildren);
-  }
-
-  for (size_t i = 0; i < numChildren; ++i)
-  {
-    std::ostringstream oss;
-    oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
-  }
-}
-
-/**
- * Create a leaf manually.
- */
-template<typename MatType, bool NoRecursion>
-DecisionStump<MatType, NoRecursion>::DecisionStump(const size_t bucketSize,
-                                                   const size_t label,
-                                                   arma::vec&& probabilities) :
-    bucketSize(bucketSize),
-    splitDimensionOrLabel(label),
-    splitOrClassProbs(std::move(probabilities))
-{
-  // Nothing else to do.
+  ar & CreateNVP(splitDimension, "splitDimension");
+  ar & CreateNVP(split, "split");
+  ar & CreateNVP(binLabels, "binLabels");
 }
 
 /**
@@ -356,9 +201,9 @@ DecisionStump<MatType, NoRecursion>::DecisionStump(const size_t bucketSize,
  *      the splitting dimension.
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<bool UseWeights, typename VecType>
-double DecisionStump<MatType, NoRecursion>::SetupSplitDimension(
+double DecisionStump<MatType>::SetupSplitDimension(
     const VecType& dimension,
     const arma::Row<size_t>& labels,
     const arma::rowvec& weights)
@@ -446,31 +291,24 @@ double DecisionStump<MatType, NoRecursion>::SetupSplitDimension(
  * @param dimension Dimension is the dimension decided by the constructor on
  *      which we now train the decision stump.
  */
-template<typename MatType, bool NoRecursion>
-void DecisionStump<MatType, NoRecursion>::TrainOnDim(
-    const MatType& data,
-    const size_t dimension,
-    const arma::Row<size_t>& labels)
+template<typename MatType>
+template<typename VecType>
+void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
+                                        const arma::Row<size_t>& labels)
 {
   size_t i, count, begin, end;
 
-  typename MatType::row_type sortedSplitDim = arma::sort(data.row(dimension));
-  arma::uvec sortedSplitIndexDim =
-      arma::stable_sort_index(data.row(dimension).t());
-  arma::Row<size_t> sortedLabels(data.n_cols);
-  arma::Col<size_t> binLabels;
+  typename MatType::row_type sortedSplitDim = arma::sort(dimension);
+  arma::uvec sortedSplitIndexDim = arma::stable_sort_index(dimension.t());
+  arma::Row<size_t> sortedLabels(dimension.n_elem);
+  sortedLabels.fill(0);
 
-  for (i = 0; i < data.n_cols; i++)
+  for (i = 0; i < dimension.n_elem; i++)
     sortedLabels(i) = labels(sortedSplitIndexDim(i));
 
-  /**
-   * Loop through the points, splitting when it is advantageous.  We check to
-   * see if we can split at index i, and then if we can, the split will take the
-   * value that's the midpoint between index i and index i + 1.
-   */
   arma::rowvec subCols;
   double mostFreq;
-  i = bucketSize;
+  i = 0;
   count = 0;
   while (i < sortedLabels.n_elem)
   {
@@ -482,8 +320,8 @@ void DecisionStump<MatType, NoRecursion>::TrainOnDim(
 
       mostFreq = CountMostFreq(sortedLabels.cols(begin, end));
 
-      splitOrClassProbs.resize(splitOrClassProbs.n_elem + 1);
-      splitOrClassProbs(splitOrClassProbs.n_elem - 1) = sortedSplitDim(begin);
+      split.resize(split.n_elem + 1);
+      split(split.n_elem - 1) = sortedSplitDim(begin);
       binLabels.resize(binLabels.n_elem + 1);
       binLabels(binLabels.n_elem - 1) = mostFreq;
 
@@ -510,8 +348,8 @@ void DecisionStump<MatType, NoRecursion>::TrainOnDim(
       // the bucket of subCols.
       mostFreq = CountMostFreq(sortedLabels.cols(begin, end));
 
-      splitOrClassProbs.resize(splitOrClassProbs.n_elem + 1);
-      splitOrClassProbs(splitOrClassProbs.n_elem - 1) = sortedSplitDim(end + 1);
+      split.resize(split.n_elem + 1);
+      split(split.n_elem - 1) = sortedSplitDim(begin);
       binLabels.resize(binLabels.n_elem + 1);
       binLabels(binLabels.n_elem - 1) = mostFreq;
 
@@ -524,88 +362,32 @@ void DecisionStump<MatType, NoRecursion>::TrainOnDim(
 
   // Now trim the split matrix so that buckets one after the after which point
   // to the same classLabel are merged as one big bucket.
-  for (size_t i = 1; i < splitOrClassProbs.n_rows; i++)
+  MergeRanges();
+}
+
+/**
+ * After the "split" matrix has been set up, merge ranges with identical class
+ * labels.
+ */
+template<typename MatType>
+void DecisionStump<MatType>::MergeRanges()
+{
+  for (size_t i = 1; i < split.n_rows; i++)
   {
     if (binLabels(i) == binLabels(i - 1))
     {
       // Remove this row, as it has the same label as the previous bucket.
       binLabels.shed_row(i);
-      splitOrClassProbs.shed_row(i);
+      split.shed_row(i);
       // Go back to previous row.
       i--;
     }
   }
-
-  // Now create the children, either recursively (if we are not a tree) or not
-  // (if we are a stump).
-  if (NoRecursion)
-  {
-    size_t begin = 0;
-    for (size_t i = 0; i < splitOrClassProbs.n_elem; ++i)
-    {
-      // Calculate class probabilities for children.
-      arma::vec childClassProbs(classes);
-      childClassProbs.zeros();
-
-      size_t lastBegin = begin;
-      do
-      {
-        childClassProbs[sortedLabels[begin]]++;
-      } while (sortedSplitDim(++begin) < splitOrClassProbs[i]);
-
-      // Normalize probabilities.
-      childClassProbs /= (begin - lastBegin);
-
-      // Create child.
-      children.push_back(new DecisionStump(bucketSize, binLabels[i],
-          std::move(childClassProbs)));
-    }
-
-    // Create the last child.
-    arma::vec childClassProbs(classes);
-    childClassProbs.zeros();
-
-    size_t lastBegin = begin;
-    do
-    {
-      childClassProbs[sortedLabels[begin]]++;
-    } while (++begin < sortedSplitDim.n_elem);
-
-    // Normalize probabilities.
-    childClassProbs /= (begin - lastBegin);
-
-    // Create child.
-    children.push_back(new DecisionStump(bucketSize,
-        binLabels[binLabels.n_elem - 1], std::move(childClassProbs)));
-  }
-  else
-  {
-    // Do recursion.
-    size_t begin = 0;
-    for (size_t i = 0; i < splitOrClassProbs.n_elem; ++i)
-    {
-      // Determine how many points are in this child.
-      size_t lastBegin = begin;
-      while (sortedSplitDim(++begin) < splitOrClassProbs[i]) { }
-      size_t numPoints = (lastBegin - begin);
-
-      // Allocate memory for child data and fill it.
-      MatType childData(data.n_rows, numPoints);
-      for (size_t i = lastBegin; i < begin; ++i)
-        childData.col(i - lastBegin) = data.col(sortedSplitIndexDim[i]);
-      arma::Row<size_t> childLabels = sortedLabels.subvec(lastBegin, begin - 1);
-
-      // Create the child recursively.
-      children.push_back(new DecisionStump(childData, childLabels, classes,
-          bucketSize));
-    }
-  }
 }
 
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<typename VecType>
-double DecisionStump<MatType, NoRecursion>::CountMostFreq(
-    const VecType& subCols)
+double DecisionStump<MatType>::CountMostFreq(const VecType& subCols)
 {
   // We'll create a map of elements and the number of times that each element is
   // seen.
@@ -642,9 +424,9 @@ double DecisionStump<MatType, NoRecursion>::CountMostFreq(
  *
  * @param featureRow The dimension which is checked for identical values.
  */
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<typename VecType>
-int DecisionStump<MatType, NoRecursion>::IsDistinct(const VecType& featureRow)
+int DecisionStump<MatType>::IsDistinct(const VecType& featureRow)
 {
   typename VecType::elem_type val = featureRow(0);
   for (size_t i = 1; i < featureRow.n_elem; ++i)
@@ -659,9 +441,9 @@ int DecisionStump<MatType, NoRecursion>::IsDistinct(const VecType& featureRow)
  * @param labels Corresponding labels of the dimension.
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
-template<typename MatType, bool NoRecursion>
+template<typename MatType>
 template<bool UseWeights, typename VecType, typename WeightVecType>
-double DecisionStump<MatType, NoRecursion>::CalculateEntropy(
+double DecisionStump<MatType>::CalculateEntropy(
     const VecType& labels,
     const WeightVecType& weights)
 {

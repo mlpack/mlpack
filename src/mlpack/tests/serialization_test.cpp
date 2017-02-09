@@ -1275,12 +1275,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
   BOOST_REQUIRE_EQUAL(ds.SplitDimension(), binaryDs.SplitDimension());
 
   CheckMatrices(ds.Split(), xmlDs.Split(), textDs.Split(), binaryDs.Split());
-  for (size_t i = 0; i < ds.Split().n_elem; ++i)
-  {
-    BOOST_REQUIRE_EQUAL(ds.Child(i).Label(), xmlDs.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(ds.Child(i).Label(), textDs.Child(i).Label());
-    BOOST_REQUIRE_EQUAL(ds.Child(i).Label(), binaryDs.Child(i).Label());
-  }
+  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), textDs.BinLabels(),
+      binaryDs.BinLabels());
 }
 
 // Make sure serialization works for LARS.
