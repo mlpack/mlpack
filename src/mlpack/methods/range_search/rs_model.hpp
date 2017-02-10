@@ -33,7 +33,6 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
 
-
 struct RSModelName
 {
   static const std::string Name() { return "range_search_model"; }
@@ -45,23 +44,27 @@ struct RSModelName
  */
 class MonoSearchVisitor : public  boost::static_visitor<void>
 {
-  private:
-    const math::Range& range;
-    std::vector<std::vector<size_t>>& neighbors;
-    std::vector<std::vector<double>>& distances;
+ private:
+  //! The range to search for.
+  const math::Range& range;
+  //! Output neighbors.
+  std::vector<std::vector<size_t>>& neighbors;
+  //! Output distances.
+  std::vector<std::vector<double>>& distances;
 
-  public:
-    template<typename RSType>
-    void operator()(RSType* rs) const;
+ public:
+  //! Perform monochromatic search with the given RangeSearch object.
+  template<typename RSType>
+  void operator()(RSType* rs) const;
 
-    MonoSearchVisitor(const math::Range& range,
-                      std::vector<std::vector<size_t>>& neighbors,
-                      std::vector<std::vector<double>>& distances):
-        range(range),
-        neighbors(neighbors),
-        distances(distances)
-    {};      
-
+  //! Construct the MonoSearchVisitor with the given parameters.
+  MonoSearchVisitor(const math::Range& range,
+                    std::vector<std::vector<size_t>>& neighbors,
+                    std::vector<std::vector<double>>& distances):
+      range(range),
+      neighbors(neighbors),
+      distances(distances)
+  {};
 };
 
 /**
@@ -185,41 +188,52 @@ class DeleteVisitor : public boost::static_visitor<void>
 };
 
 /**
- * Exposes the seralize method of the given RSType
+ * Exposes the seralize method of the given RSType.
  */
 template<typename Archive>
- class SerializeVisitor : public boost::static_visitor<void>
- {
-  private:
-    Archive& ar;
-    const std::string& name;
- 
-  public:
-    template<typename RSType>
-    void operator()(RSType* rs) const;
- 
-    SerializeVisitor(Archive& ar, const std::string& name);
- };
+class SerializeVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Archive to serialize to.
+  Archive& ar;
+  //! Name of the model to serialize.
+  const std::string& name;
+
+ public:
+  //! Serialize the given model.
+  template<typename RSType>
+  void operator()(RSType* rs) const;
+
+  //! Construct the SerializeVisitor with the given archive and name.
+  SerializeVisitor(Archive& ar, const std::string& name);
+};
 
 /**
- * SearchModeVisitor exposes the SearchMode() method of the given RSType.
+ * SingleModeVisitor exposes the SingleMode() method of the given RSType.
  */
- class SingleModeVisitor : public boost::static_visitor<bool&>
- {
-  public:
-    template<typename RSType>
-    bool& operator()(RSType* rs) const;
- };
+class SingleModeVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  /**
+   * Get a reference to the singleMode parameter of the given RangeSeach
+   * object.
+   */
+  template<typename RSType>
+  bool& operator()(RSType* rs) const;
+};
 
 /**
  * NaiveVisitor exposes the Naive() method of the given RSType.
  */
- class NaiveVisitor : public boost::static_visitor<bool&>
- {
-  public:
-    template<typename RSType>
-    bool& operator()(RSType* rs) const;
- };
+class NaiveVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  /**
+   * Get a reference to the naive parameter of the given RangeSearch object.
+   */
+  template<typename RSType>
+  bool& operator()(RSType* rs) const;
+};
 
 class RSModel
 {
@@ -251,7 +265,7 @@ class RSModel
   //! Random projection matrix.
   arma::mat q;
 
- /**
+  /**
    * rSearch holds an instance of the RangeSearch class for the current
    * treeType. It is initialized every time BuildModel is executed.
    * We access to the contained value through the visitor classes defined above.
@@ -270,7 +284,7 @@ class RSModel
                  RSType<tree::MaxRPTree>*,
                  RSType<tree::UBTree>*,
                  RSType<tree::Octree>*> rSearch;
-                 
+
  public:
   /**
    * Initialize the RSModel with the given type and whether or not a random
