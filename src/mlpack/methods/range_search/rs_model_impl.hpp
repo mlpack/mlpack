@@ -79,32 +79,32 @@ void BiSearchVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 template<typename RSType>
 void BiSearchVisitor::SearchLeaf(RSType* rs) const
 {
-   if (!rs->Naive() && !rs->SingleMode())
-   {
-      // Build a second tree and search.
-      Timer::Start("tree_building");
-      Log::Info << "Building query tree..." << std::endl;
-      std::vector<size_t> oldFromNewQueries;
-      typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-          leafSize);
-      Log::Info << "Tree built." << std::endl;
-      Timer::Stop("tree_building");
+  if (!rs->Naive() && !rs->SingleMode())
+  {
+    // Build a second tree and search.
+    Timer::Start("tree_building");
+    Log::Info << "Building query tree..." << std::endl;
+    std::vector<size_t> oldFromNewQueries;
+    typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
+        leafSize);
+    Log::Info << "Tree built." << std::endl;
+    Timer::Stop("tree_building");
 
-      std::vector<std::vector<size_t>> neighborsOut;
-      std::vector<std::vector<double>> distancesOut;
-      rs->Search(&queryTree, range, neighborsOut, distancesOut);
+    std::vector<std::vector<size_t>> neighborsOut;
+    std::vector<std::vector<double>> distancesOut;
+    rs->Search(&queryTree, range, neighborsOut, distancesOut);
 
-      // Remap the query points.
-      neighbors.resize(queryTree.Dataset().n_cols);
-      distances.resize(queryTree.Dataset().n_cols);
-      for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
-      {
-        neighbors[oldFromNewQueries[i]] = neighborsOut[i];
-        distances[oldFromNewQueries[i]] = distancesOut[i];
-      }
+    // Remap the query points.
+    neighbors.resize(queryTree.Dataset().n_cols);
+    distances.resize(queryTree.Dataset().n_cols);
+    for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
+    {
+      neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+      distances[oldFromNewQueries[i]] = distancesOut[i];
     }
-   else
-     rs->Search(querySet, range, neighbors, distances);
+  }
+  else
+    rs->Search(querySet, range, neighbors, distances);
 }
 
 //! Save parameters for Train.
@@ -153,22 +153,21 @@ void TrainVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 template<typename RSType>
 void TrainVisitor::TrainLeaf(RSType* rs) const
 {
-   if (rs->Naive())
-      rs->Train(std::move(referenceSet));
-   else
-   {
-      std::vector<size_t> oldFromNewReferences;
-      typename RSType::Tree* tree =
-                  new typename RSType::Tree(std::move(referenceSet),
-                  oldFromNewReferences, leafSize);
-      rs->Train(tree);
+  if (rs->Naive())
+    rs->Train(std::move(referenceSet));
+  else
+  {
+    std::vector<size_t> oldFromNewReferences;
+    typename RSType::Tree* tree =
+        new typename RSType::Tree(std::move(referenceSet), oldFromNewReferences,
+        leafSize);
+    rs->Train(tree);
 
-      // Give the model ownership of the tree and the mappings.
-      rs->treeOwner = true;
-      rs->oldFromNewReferences = std::move(oldFromNewReferences);
+    // Give the model ownership of the tree and the mappings.
+    rs->treeOwner = true;
+    rs->oldFromNewReferences = std::move(oldFromNewReferences);
   }
 }
-
 
 //! Expose the referenceSet of the given RSType.
 template<typename RSType>
@@ -194,14 +193,14 @@ SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
     ar(ar),
     name(name)
 {}
- 
- //! Serializes the given RSType instance
- template<typename Archive>
- template<typename RSType>
- void SerializeVisitor<Archive>::operator()(RSType* rs) const
- {
-   ar & data::CreateNVP(rs, name);
- }
+
+//! Serializes the given RSType instance.
+template<typename Archive>
+template<typename RSType>
+void SerializeVisitor<Archive>::operator()(RSType* rs) const
+{
+  ar & data::CreateNVP(rs, name);
+}
 
 //! Return whether single mode enabled
 template<typename RSType>
@@ -220,7 +219,7 @@ bool& NaiveVisitor::operator()(RSType* rs) const
    return rs->Naive();
  throw std::runtime_error("no range search model initialized");
 }
- 
+
 // Serialize the model.
 template<typename Archive>
 void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
