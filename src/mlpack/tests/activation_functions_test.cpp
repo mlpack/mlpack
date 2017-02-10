@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
+#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -314,5 +315,23 @@ BOOST_AUTO_TEST_CASE(HardTanHFunctionTest)
   CheckHardTanHDerivativeCorrect(activationData, desiredDerivatives);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Basic test of the softplus function.
+ */
+BOOST_AUTO_TEST_CASE(SoftplusFunctionTest)
+{
+  const arma::colvec desiredActivations("0.12692801 3.23995333 4.51104774 \
+                                         0 1.31326168 0.31326168 2.12692801 \
+                                         0.69314718");
 
+  const arma::colvec desiredDerivatives("0.53168946 0.96231041 0.98913245 \
+                                         0.5 0.78805844 0.57768119 0.89349302\
+                                         0.66666666");
+
+  CheckActivationCorrect<SoftplusFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<SoftplusFunction>(desiredActivations,
+      desiredDerivatives);
+  CheckInverseCorrect<SoftplusFunction>(desiredActivations);
+}
+
+BOOST_AUTO_TEST_SUITE_END();
