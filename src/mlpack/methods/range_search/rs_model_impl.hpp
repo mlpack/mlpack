@@ -20,7 +20,7 @@ namespace range {
 
 //! Monochromatic range search on the given RSType instance.
 template<typename RSType>
-void MonoSearchVisitor::operator()(RSType *rs) const
+void MonoSearchVisitor::operator()(RSType* rs) const
 {
   if (rs)
     return rs->Search(range, neighbors, distances);
@@ -29,11 +29,10 @@ void MonoSearchVisitor::operator()(RSType *rs) const
 
 //! Save parameters for bichromatic range search.
 BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
-                                                        const math::Range& range,
-                                                        std::vector<std::vector<size_t>>& neighbors,
-                                                        std::vector<std::vector<double>>& distances,
-                                                        const size_t leafSize
-                                                        ) :
+                                 const math::Range& range,
+                                 std::vector<std::vector<size_t>>& neighbors,
+                                 std::vector<std::vector<double>>& distances,
+                                 const size_t leafSize):
     querySet(querySet),
     range(range),
     neighbors(neighbors),
@@ -81,42 +80,38 @@ template<typename RSType>
 void BiSearchVisitor::SearchLeaf(RSType* rs) const
 {
    if (!rs->Naive() && !rs->SingleMode())
-      {
-        // // Build a second tree and search.
-        // Timer::Start("tree_building");
-        // Log::Info << "Building query tree..." << endl;
-        std::vector<size_t> oldFromNewQueries;
-        typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-            leafSize);
-        // Log::Info << "Tree built." << endl;
-        // Timer::Stop("tree_building");
+   {
+      // Build a second tree and search.
+      Timer::Start("tree_building");
+      Log::Info << "Building query tree..." << std::endl;
+      std::vector<size_t> oldFromNewQueries;
+      typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
+          leafSize);
+      Log::Info << "Tree built." << std::endl;
+      Timer::Stop("tree_building");
 
-        std::vector<std::vector<size_t>> neighborsOut;
-        std::vector<std::vector<double>> distancesOut;
-        rs->Search(&queryTree, range, neighborsOut, distancesOut);
+      std::vector<std::vector<size_t>> neighborsOut;
+      std::vector<std::vector<double>> distancesOut;
+      rs->Search(&queryTree, range, neighborsOut, distancesOut);
 
-        // Remap the query points.
-        neighbors.resize(queryTree.Dataset().n_cols);
-        distances.resize(queryTree.Dataset().n_cols);
-        for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
-        {
-          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
-          distances[oldFromNewQueries[i]] = distancesOut[i];
-        }
-      }
-      else
+      // Remap the query points.
+      neighbors.resize(queryTree.Dataset().n_cols);
+      distances.resize(queryTree.Dataset().n_cols);
+      for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
       {
-        // Search without building a second tree.
-        rs->Search(querySet, range, neighbors, distances);
+        neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+        distances[oldFromNewQueries[i]] = distancesOut[i];
       }
+    }
+   else
+     rs->Search(querySet, range, neighbors, distances);
 }
 
 //! Save parameters for Train.
 TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
-                                       const size_t leafSize
-                                       ) :
-      referenceSet(std::move(referenceSet)),
-      leafSize(leafSize)
+                           const size_t leafSize) :
+    referenceSet(std::move(referenceSet)),
+    leafSize(leafSize)
 {}
 
 //! Default Train on the given RSType instance.
@@ -159,22 +154,20 @@ template<typename RSType>
 void TrainVisitor::TrainLeaf(RSType* rs) const
 {
    if (rs->Naive())
-      {
-        rs->Train(std::move(referenceSet));
-      }
-      else
-      {
-       std::vector<size_t> oldFromNewReferences;
-       typename RSType::Tree* tree =
-                    new typename RSType::Tree(std::move(referenceSet),
-                    oldFromNewReferences, leafSize);
-       rs->Train(tree);
- 
-     // Give the model ownership of the tree and the mappings.
-     rs->treeOwner = true;
-     rs->oldFromNewReferences = std::move(oldFromNewReferences);
+      rs->Train(std::move(referenceSet));
+   else
+   {
+      std::vector<size_t> oldFromNewReferences;
+      typename RSType::Tree* tree =
+                  new typename RSType::Tree(std::move(referenceSet),
+                  oldFromNewReferences, leafSize);
+      rs->Train(tree);
+
+      // Give the model ownership of the tree and the mappings.
+      rs->treeOwner = true;
+      rs->oldFromNewReferences = std::move(oldFromNewReferences);
   }
-      }
+}
 
 
 //! Expose the referenceSet of the given RSType.
@@ -196,37 +189,37 @@ void DeleteVisitor::operator()(RSType* rs) const
 
 //! Save parameters for serializing
 template<typename Archive>
- SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
-                                             const std::string& name) :
-                            ar(ar),
-                            name(name)
- {}
+SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
+                                            const std::string& name) :
+    ar(ar),
+    name(name)
+{}
  
  //! Serializes the given RSType instance
  template<typename Archive>
  template<typename RSType>
- void SerializeVisitor<Archive>::operator()(RSType *rs) const
+ void SerializeVisitor<Archive>::operator()(RSType* rs) const
  {
    ar & data::CreateNVP(rs, name);
  }
 
 //! Return whether single mode enabled
 template<typename RSType>
- bool& SingleModeVisitor::operator()(RSType *rs) const
- {
-   if (rs)
-     return rs->SingleMode();
-   throw std::runtime_error("no range search model initialized");
- }
+bool& SingleModeVisitor::operator()(RSType* rs) const
+{
+ if (rs)
+   return rs->SingleMode();
+ throw std::runtime_error("no range search model initialized");
+}
 
 //! Exposes Naive() function of given RSType
 template<typename RSType>
- bool& NaiveVisitor::operator()(RSType *rs) const
- {
-   if (rs)
-     return rs->Naive();
-   throw std::runtime_error("no range search model initialized");
- }
+bool& NaiveVisitor::operator()(RSType* rs) const
+{
+ if (rs)
+   return rs->Naive();
+ throw std::runtime_error("no range search model initialized");
+}
  
 // Serialize the model.
 template<typename Archive>

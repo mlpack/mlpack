@@ -29,8 +29,8 @@ namespace range {
  * Alias template for Range Search.
  */
 template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
 
 
@@ -60,7 +60,7 @@ class MonoSearchVisitor : public  boost::static_visitor<void>
         range(range),
         neighbors(neighbors),
         distances(distances)
-      {};      
+    {};      
 
 };
 
@@ -93,7 +93,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
- using RSTypeT = RSType<TreeType>;
+  using RSTypeT = RSType<TreeType>;
 
   //! Default Bichromatic range search on the given RSType instance.
   template<template<typename TreeMetricType,
@@ -115,8 +115,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
                   const math::Range& range,
                   std::vector<std::vector<size_t>>& neighbors,
                   std::vector<std::vector<double>>& distances,
-                  const size_t leafSize
-                  );
+                  const size_t leafSize);
 };
 
 /**
@@ -159,12 +158,9 @@ class TrainVisitor : public boost::static_visitor<void>
   void operator()(RSTypeT<tree::Octree>* rs) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
-  //! for BinarySpaceTrees, and tau and rho for spill trees.
   TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize
-               );
+               const size_t leafSize);
 };
-
 
 /**
  * ReferenceSetVisitor exposes the referenceSet of the given RSType.
@@ -174,7 +170,7 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
  public:
   //! Return the reference set.
   template<typename RSType>
-  const arma::mat& operator()(RSType *rs) const;
+  const arma::mat& operator()(RSType* rs) const;
 };
 
 /**
@@ -185,12 +181,12 @@ class DeleteVisitor : public boost::static_visitor<void>
  public:
   //! Delete the RSType object.
   template<typename RSType>
-  void operator()(RSType *rs) const;
+  void operator()(RSType* rs) const;
 };
 
 /**
-  * Exposes the seralize method of the given RSType
-  */
+ * Exposes the seralize method of the given RSType
+ */
 template<typename Archive>
  class SerializeVisitor : public boost::static_visitor<void>
  {
@@ -200,7 +196,7 @@ template<typename Archive>
  
   public:
     template<typename RSType>
-    void operator()(RSType *rs) const;
+    void operator()(RSType* rs) const;
  
     SerializeVisitor(Archive& ar, const std::string& name);
  };
@@ -212,7 +208,7 @@ template<typename Archive>
  {
   public:
     template<typename RSType>
-    bool& operator()(RSType *ns) const;
+    bool& operator()(RSType* rs) const;
  };
 
 /**
@@ -222,7 +218,7 @@ template<typename Archive>
  {
   public:
     template<typename RSType>
-    bool& operator()(RSType *ns) const;
+    bool& operator()(RSType* rs) const;
  };
 
 class RSModel
@@ -260,20 +256,20 @@ class RSModel
    * treeType. It is initialized every time BuildModel is executed.
    * We access to the contained value through the visitor classes defined above.
    */
-  boost::variant<RSType<tree::KDTree> *,
-                 RSType<tree::StandardCoverTree> *,
-                 RSType<tree::RTree> *,
-                 RSType<tree::RStarTree> *,
-                 RSType<tree::BallTree> *,
-                 RSType<tree::XTree> *,
-                 RSType<tree::HilbertRTree> *,
-                 RSType<tree::RPlusTree> *,
-                 RSType<tree::RPlusPlusTree> *,
-                 RSType<tree::VPTree> *,
-                 RSType<tree::RPTree> *,
-                 RSType<tree::MaxRPTree> *,
-                 RSType<tree::UBTree> *,
-                 RSType<tree::Octree> *> rSearch;
+  boost::variant<RSType<tree::KDTree>*,
+                 RSType<tree::StandardCoverTree>*,
+                 RSType<tree::RTree>*,
+                 RSType<tree::RStarTree>*,
+                 RSType<tree::BallTree>*,
+                 RSType<tree::XTree>*,
+                 RSType<tree::HilbertRTree>*,
+                 RSType<tree::RPlusTree>*,
+                 RSType<tree::RPlusPlusTree>*,
+                 RSType<tree::VPTree>*,
+                 RSType<tree::RPTree>*,
+                 RSType<tree::MaxRPTree>*,
+                 RSType<tree::UBTree>*,
+                 RSType<tree::Octree>*> rSearch;
                  
  public:
   /**
