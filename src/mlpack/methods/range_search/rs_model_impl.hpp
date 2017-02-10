@@ -247,7 +247,7 @@ inline const arma::mat& RSModel::Dataset() const
 
 inline bool RSModel::SingleMode() const
 {
- return boost::apply_visitor(SingleModeVisitor(), rSearch);
+  return boost::apply_visitor(SingleModeVisitor(), rSearch);
 }
 
 inline bool& RSModel::SingleMode()
