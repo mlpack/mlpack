@@ -858,4 +858,45 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/**
+ * Simple lookup module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
+{
+  arma::mat output, input, delta, gradient;
+  Lookup<> module(10, 5);
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(2, 1);
+  input(0) = 1;
+  input(1) = 3;
+
+  module.Forward(std::move(input), std::move(output));
+
+  // The Lookup module uses index - 1 for the cols.
+  const double outputSum = arma::accu(module.Parameters().col(0)) +
+      arma::accu(module.Parameters().col(2));
+
+  BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output), 1e-3);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
+
+  // Test the Gradient function.
+  arma::mat error = arma::ones(2, 5);
+  error = error.t();
+  error.col(1) *= 0.5;
+
+  module.Gradient(std::move(input), std::move(error), std::move(gradient));
+
+  // The Lookup module uses index - 1 for the cols.
+  const double gradientSum = arma::accu(gradient.col(0)) +
+      arma::accu(gradient.col(2));
+
+  BOOST_REQUIRE_CLOSE(gradientSum, arma::accu(error), 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
