@@ -899,4 +899,24 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
 }
 
+/**
+ * Simple LogSoftMax module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
+{
+  arma::mat output, input, error, delta;
+  LogSoftMax<> module;
+
+  // Test the Forward function.
+  input = arma::mat("0.5 0.5");
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("-0.6931 -0.6931") - output)), 1e-3);
+
+  // Test the Backward function.
+  error = arma::zeros(input.n_rows, input.n_cols);
+  module.Backward(std::move(input), std::move(error), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
