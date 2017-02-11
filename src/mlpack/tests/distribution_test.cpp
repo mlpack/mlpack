@@ -20,6 +20,7 @@
 
 using namespace mlpack;
 using namespace mlpack::distribution;
+using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(DistributionTest);
 
@@ -388,6 +389,129 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
   for (size_t i = 0; i < 4; i++)
     for (size_t j = 0; j < 4; j++)
       BOOST_REQUIRE_SMALL(d.Covariance()(i, j) - actualCov(i, j), 1e-5);
+}
+
+/**
+  * This test verifies the fitting of GaussianDistribution
+  works properly when probabilities for each sample is given.
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
+{
+  arma::vec mean = ("5.0");
+  arma::vec cov = ("2.0");
+
+  GaussianDistribution dist(mean, cov);
+  size_t N = 5000;
+  size_t d = 1;
+  
+  arma::mat rdata(d, N);
+  
+  for (size_t i = 0; i < N; i++)
+    rdata.col(i) = dist.Random();
+
+  arma::vec probabilities(N);
+  
+  for (size_t i = 0; i < N; i++)
+    probabilities(i) = Random();
+  
+  //Fits result with probabilities and data.
+  GaussianDistribution guDist;
+  guDist.Train(rdata, probabilities);
+  
+  //Fits result only with data
+  GaussianDistribution guDist2;
+  guDist2.Train(rdata);
+  
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 5);
+  
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 5);
+}
+/**
+  *This test ensures that the same result is obtained when trained
+  with probabilities all set to 1 and with no probabilities at all
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
+{
+  arma::vec mean = ("5.0");
+  arma::vec cov  = ("4.0");
+
+  GaussianDistribution dist(mean, cov);
+  size_t N = 50000;
+  size_t d = 1;
+
+  arma::mat rdata(d, N);
+
+  for (size_t i = 0; i < N; i++)
+      rdata.col(i) = Random();
+
+  arma::vec probabilities(N, arma::fill::ones);
+
+  //Fits data with only data
+  GaussianDistribution guDist;
+  guDist.Train(rdata);
+
+  //Fits result with data and each probability as 1
+  GaussianDistribution guDist2;
+  guDist2.Train(rdata, probabilities);
+
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 1e-15);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 1e-2);
+}
+/** This test draes points from two different normal distributions,
+  * stes the probabilities for points from the first distribution
+  * to something small and the probabilities for the second to
+  * something large
+  *It ensures that the normal distribution recovered the same
+  *parameters as the second normal distribution with high probabilities
+**/
+BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
+{
+  arma::vec mean1 = ("5.0");
+  arma::vec cov1 = ("4.0");
+
+  arma::vec mean2 = ("3.0");
+  arma::vec cov2 = ("1.0");
+
+  //Creates two GaussianDistribution 
+  GaussianDistribution dist1(mean1, cov1);
+  GaussianDistribution dist2(mean2, cov2);
+
+
+  size_t N = 50000;
+  size_t d = 1;
+
+  arma::mat rdata(d, N);
+  arma::vec probabilities(N);
+
+  //Fills even numbered columns with Random numbers 
+  //from GaussianDistribution1 and odd numbered 
+  //columns with Random numbers from GaussianDistribution2
+  for (size_t j = 0; j < N; j++)
+  {
+    if (j%2 == 0)
+      rdata.col(j) = dist1.Random();
+    else
+      rdata.col(j) = dist2.Random();
+  }
+
+  //Assigns high probabilities to numbers drawn from 
+  //GaussianDistribution1 and low probabilities to
+  //numbers drawn from GaussianDistribution2
+  for (size_t i = 0 ; i < N ; i++)
+  {
+    if (i%2 == 0)
+      probabilities(i) = Random(0.98, 1);
+    else
+      probabilities(i) = Random(0, 0.02);
+  }
+
+  GaussianDistribution guDist;
+  guDist.Train(rdata, probabilities);
+
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean1[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov1[0], 5);
 }
 
 /******************************/
