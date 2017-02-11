@@ -20,6 +20,7 @@
 
 using namespace mlpack;
 using namespace mlpack::distribution;
+using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(DistributionTest);
 
@@ -396,29 +397,22 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 **/
 BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
 {
-  double mean = 5.0;
-  double stddeviation = 2.0;
+  arma::vec mean = ("5.0");
+  arma::vec cov = ("2.0");
 
-  //Creates a normal distribution generator.
-  std::default_random_engine generator;
-  generator.seed(std::time(NULL));
-  std::normal_distribution<double> dist(mean, stddeviation);
-  
-  size_t N = 50000;
-  size_t d =1;
+  GaussianDistribution dist(mean, cov);
+  size_t N = 5000;
+  size_t d = 1;
   
   arma::mat rdata(d, N);
   
-  for (size_t i = 0; i < d; i++)
-    for (size_t j = 0; j < N; j++)
-      rdata(i,j) = dist(generator);
+  for (size_t i = 0; i < N; i++)
+    rdata.col(i) = dist.Random();
 
-  //Creates a uniform distribution generator
-  std::uniform_real_distribution<double> prob(0, 1);
   arma::vec probabilities(N);
   
   for (size_t i = 0; i < N; i++)
-    probabilities(i) = prob(generator);
+    probabilities(i) = Random();
   
   //Fits result with probabilities and data.
   GaussianDistribution guDist;
@@ -431,8 +425,8 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 5);
   BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 5);
   
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean, 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], stddeviation*stddeviation, 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 5);
 }
 /**
   *This test ensures that the same result is obtained when trained
@@ -440,30 +434,25 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
 **/
 BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 {
-  double mean = 5.0;
-  double stddeviation = 4.0;
+  arma::vec mean = ("5.0");
+  arma::vec cov  = ("4.0");
 
-  //Create a normal distribution random generator
-  std::default_random_engine generator;
-  generator.seed(std::time(NULL));
-  std::normal_distribution<double> dist(mean, stddeviation);
-
+  GaussianDistribution dist(mean, cov);
   size_t N = 50000;
   size_t d = 1;
 
   arma::mat rdata(d, N);
 
-  for (size_t i = 0; i < d; i++)
-    for (size_t j = 0; j < N ; j++)
-      rdata(i,j) = dist(generator);
+  for (size_t i = 0; i < N; i++)
+      rdata.col(i) = Random();
 
   arma::vec probabilities(N, arma::fill::ones);
 
-  //fits data with only data
+  //Fits data with only data
   GaussianDistribution guDist;
   guDist.Train(rdata);
 
-  //fits result with data and each probability as 1
+  //Fits result with data and each probability as 1
   GaussianDistribution guDist2;
   guDist2.Train(rdata, probabilities);
 
@@ -479,20 +468,16 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 **/
 BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
 {
-  double mean1 = 5.0;
-  double stddeviation1 = 4.0;
+  arma::vec mean1 = ("5.0");
+  arma::vec cov1 = ("4.0");
 
-  double mean2 = 3.0;
-  double stddeviation2 = 1.0;
+  arma::vec mean2 = ("3.0");
+  arma::vec cov2 = ("1.0");
 
-  //Create two gaussian distribution random generator
-  std::default_random_engine generator;
-  generator.seed(std::time(NULL));
-  std::normal_distribution<double> dist1(mean1, stddeviation1);
-  std::normal_distribution<double> dist2(mean2, stddeviation2);
+  //Creates two GaussianDistribution 
+  GaussianDistribution dist1(mean1, cov1);
+  GaussianDistribution dist2(mean2, cov2);
 
-  std::uniform_real_distribution<double> lowProb(0, 0.02);
-  std::uniform_real_distribution<double> highProb(0.98, 1);
 
   size_t N = 50000;
   size_t d = 1;
@@ -500,31 +485,33 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
   arma::mat rdata(d, N);
   arma::vec probabilities(N);
 
-  //draws point alternatily from the two different distributions.
-  for (size_t i = 0 ; i < d; i++)
+  //Fills even numbered columns with Random numbers 
+  //from GaussianDistribution1 and odd numbered 
+  //columns with Random numbers from GaussianDistribution2
+  for (size_t j = 0; j < N; j++)
   {
-    for (size_t j = 0; j < N; j++)
-    {
-      if (j%2 == 0)
-        rdata(i,j) = dist1(generator);
-      else
-        rdata(i,j) = dist2(generator);
-    }
+    if (j%2 == 0)
+      rdata.col(j) = dist1.Random();
+    else
+      rdata.col(j) = dist2.Random();
   }
 
+  //Assigns high probabilities to numbers drawn from 
+  //GaussianDistribution1 and low probabilities to
+  //numbers drawn from GaussianDistribution2
   for (size_t i = 0 ; i < N ; i++)
   {
     if (i%2 == 0)
-      probabilities(i) = highProb(generator);
+      probabilities(i) = Random(0.98, 1);
     else
-      probabilities(i) = lowProb(generator);
+      probabilities(i) = Random(0, 0.02);
   }
 
   GaussianDistribution guDist;
   guDist.Train(rdata, probabilities);
 
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean1, 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], stddeviation1*stddeviation1, 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean1[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov1[0], 5);
 }
 /******************************/
 /** Gamma Distribution Tests **/
