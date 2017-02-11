@@ -33,7 +33,7 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
   output = (maxInput - input);
 
   // Approximation of the hyperbolic tangent. The acuracy however is
-  // about 0.00001 lower as using tanh. Credits go to Leon Bottou.
+  // about 0.00001 lower as using tanh. Credits goes to Leon Bottou.
   output.transform( [](double x)
   {
     //! Fast approximation of exp(-x) for x positive.
