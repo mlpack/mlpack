@@ -13,6 +13,7 @@
  *   Nadeau, Claude and Garcia, Rene},
  *   title = {Incorporating Second-Order Functional Knowledge for Better Option
  *   Pricing},
+ *   booktitle = {Advances in Neural Information Processing Systems},
  *   year = {2001}
  * }
  * @endcode
