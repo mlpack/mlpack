@@ -205,6 +205,51 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
+/*
+ * Implementation of the ELU activation function test. The function is
+ * implemented as ELU layer in the file elu.hpp
+ *
+ * @param input Input data used for evaluating the ELU activation function.
+ * @param target Target data used to evaluate the ELU activation.
+ */
+void CheckELUActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  ELU<> lrf;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  lrf.Forward(std::move(input), std::move(activations));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the ELU activation function derivative test. The function
+ * is implemented as ELU layer in the file elu.hpp
+ *
+ * @param input Input data used for evaluating the ELU activation function.
+ * @param target Target data used to evaluate the ELU activation.
+ */
+void CheckELUDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  ELU<> lrf;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  lrf.Backward(std::move(input), std::move(error), std::move(derivatives));
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
 /**
  * Basic test of the tanh function.
  */
@@ -314,5 +359,19 @@ BOOST_AUTO_TEST_CASE(HardTanHFunctionTest)
   CheckHardTanHDerivativeCorrect(activationData, desiredDerivatives);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Basic test of the ELU function.
+ */
+BOOST_AUTO_TEST_CASE(ELUFunctionTest)
+{
+  const arma::colvec desiredActivations("-0.86466471 3.2 4.5 -1.0 \
+                                         1 -0.63212055 2 0");
 
+  const arma::colvec desiredDerivatives("0.13533529 1 1 0 \
+                                         1 0.36787945 1 1");
+
+  CheckELUActivationCorrect(activationData, desiredActivations);
+  CheckELUDerivativeCorrect(desiredActivations, desiredDerivatives);
+}
+
+BOOST_AUTO_TEST_SUITE_END();
