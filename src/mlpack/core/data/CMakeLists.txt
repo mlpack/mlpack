@@ -6,8 +6,10 @@ set(SOURCES
   extension.hpp
   format.hpp
   load_csv.hpp
+  load_csv.cpp
   load.hpp  
   load_impl.hpp
+  load.cpp
   load_arff.hpp
   load_arff_impl.hpp
   normalize_labels.hpp

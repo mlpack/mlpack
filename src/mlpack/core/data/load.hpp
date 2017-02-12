@@ -18,6 +18,7 @@
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
+#include "load.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "load_csv.hpp"
@@ -167,6 +168,18 @@ bool Load(const std::string& filename,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
+
+/*extern template bool Load<int, IncrementPolicy>(std::string const&, arma::Mat<int>&, DatasetMapper<IncrementPolicy>&,
+const bool fatal, const bool transpose);
+
+extern template bool Load<size_t, IncrementPolicy>(std::string const&, arma::Mat<size_t>&, DatasetMapper<IncrementPolicy>&,
+const bool fatal, const bool transpose);
+
+extern template bool Load<float, IncrementPolicy>(std::string const&, arma::Mat<float>&, DatasetMapper<IncrementPolicy>&,
+const bool fatal, const bool transpose);
+
+extern template bool Load<double, IncrementPolicy>(std::string const&, arma::Mat<double>&, DatasetMapper<IncrementPolicy>&,
+const bool fatal, const bool transpose);//*/
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,

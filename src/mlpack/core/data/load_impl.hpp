@@ -21,6 +21,10 @@
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
+#include "load_csv.hpp"
+#include "load.hpp"
+#include "extension.hpp"
+
 #include <boost/serialization/serialization.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/archive/xml_iarchive.hpp>
@@ -66,7 +70,7 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
   }
 }
 
-}
+} //namespace details
 
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
