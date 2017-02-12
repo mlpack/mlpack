@@ -2,7 +2,21 @@
  * @file softplus_function.hpp
  * @author Vivek Pal
  *
- * Definition and implementation of the softplus function.
+ * Definition and implementation of the softplus function as described by
+ * Charles Dugas, Yoshua Bengio, Franc¸ois Belisle, Claude Nadeau & Rene Garcia.
+ *
+ * For more information, please see the following paper:
+ *
+ * @code
+ * @INPROCEEDINGS{secondorder:2001:nips,
+ *   author = {Dugas, Charles and Bengio, Yoshua and Belisle, Francois and
+ *   Nadeau, Claude and Garcia, Rene},
+ *   title = {Incorporating Second-Order Functional Knowledge for Better Option
+ *   Pricing},
+ *   year = {2001},
+ *   url = {http://www.iro.umontreal.ca/~lisa/pointeurs/nips00-convex.ps}
+ * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
