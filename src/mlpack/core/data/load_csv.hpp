@@ -17,10 +17,10 @@
 
 #include "extension.hpp"
 #include "format.hpp"
-#include "dataset_info.hpp"
+#include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data /** Functions to load and save matrices and models. */ {
+namespace data {
 
 /**
  *Load the csv file.This class use boost::spirit
@@ -30,25 +30,16 @@ namespace data /** Functions to load and save matrices and models. */ {
 class LoadCSV
 {
 public:
-  explicit LoadCSV(std::string file, bool fatal = false)  :
-    extension(Extension(file)),
-    fatalIfOpenFail(fatal),
-    fileName(std::move(file)),
-    inFile(fileName)
-  {
-    CanOpen();
-  }
+  explicit LoadCSV(std::string file, bool fatal = false);
 
-  template<typename T>
-  void Load(arma::Mat<T> &inout, DatasetInfo &infoSet, bool transpose = true)
+  template<typename T, typename PolicyType>
+  void Load(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet, bool transpose = true)
   {
     if(!CanOpen())
     {
       return;
     }
 
-    //please refer to the comments of ColSize if you do not familiar
-    //with boost::spirit yet
     if(transpose)
     {
       TranposeParse(inout, infoSet);
@@ -59,56 +50,8 @@ public:
     }
   }
 
-  size_t ColSize()
-  {
-    //boost tokenizer or strtok can do the same thing, I use
-    //spirit at here because I think this is a nice example
-    using namespace boost::spirit;
-    using bsi_type = boost::spirit::istream_iterator;
-    using iter_type = boost::iterator_range<bsi_type>;
-
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-    //spirit::qi requires iterators to be atleast forward iterators,
-    //but std::istream_iterator is input iteraotr, so we use
-    //boost::spirit::istream_iterator to overcome this problem
-    bsi_type begin(inFile);
-    bsi_type end;
-    size_t col = 0;
-
-    //the parser of boost spirit can work with "actions"(functor)
-    //when the parser find match target, this functor will be executed
-    auto findColSize = [&col](iter_type){ ++col; };
-
-    //qi::char_ bite an character
-    //qi::char_(",\r\n") only bite a "," or "\r" or "\n" character
-    //* means the parser(ex : qi::char_) can bite [0, any size] of characters
-    //~ means negate, so ~qi::char_(",\r\n") means I want to bite anything except of ",\r\n"
-    //parse % "," means you want to parse string like "1,2,3,apple"(noticed it without last comma)
-
-    //qi::raw restrict the automatic conversion of boost::spirit, without it, spirit parser
-    //will try to convert the string to std::string, this may cause memory allocation(if small string
-    //optimization fail).
-    //After we wrap the parser with qi::raw, the attribute(the data accepted by functor) will
-    //become boost::iterator_range, this could save a tons of memory allocations
-    qi::parse(begin, end, qi::raw[*~qi::char_(",\r\n")][findColSize] % ",");
-
-    return col;
-  }
-
-  size_t RowSize()
-  {
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-    size_t row = 0;
-    std::string line;
-    while(std::getline(inFile, line))
-    {
-      ++row;
-    }
-
-    return row;
-  }
+  size_t ColSize();
+  size_t RowSize();
 
 private:
   using iter_type = boost::iterator_range<std::string::iterator>;
@@ -134,34 +77,16 @@ private:
     }
   };
 
-  bool CanOpen()
-  {
-    if(!inFile.is_open())
-    {
-      if(fatalIfOpenFail)
-      {
-        Log::Fatal << "Cannot open file '" << fileName << "'. " << std::endl;
-      }
-      else
-      {
-        Log::Warn << "Cannot open file '" << fileName << "'; load failed."
-                  << std::endl;
-      }
-      return false;
-    }
-    inFile.unsetf(std::ios::skipws);
+  bool CanOpen();
 
-    return true;
-  }
-
-  template<typename T>
-  void NonTranposeParse(arma::Mat<T> &inout, DatasetInfo &infoSet)
+  template<typename T, typename PolicyType>
+  void NonTranposeParse(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet)
   {
     using namespace boost::spirit;
 
     size_t row = 0;
     size_t col = 0;
-    infoSet = DatasetInfo(RowSize());
+    infoSet = DatasetMapper<PolicyType>(RowSize());
     std::string line;
     inout.set_size(infoSet.Dimensionality(), ColSize());
     inFile.clear();
@@ -208,18 +133,17 @@ private:
     }
   }
 
-  template<typename T>
-  void TranposeParse(arma::Mat<T> &inout, DatasetInfo &infoSet)
+  template<typename T, typename PolicyType>
+  void TranposeParse(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet)
   {
-    infoSet = DatasetInfo(ColSize());
+    infoSet = DatasetMapper<PolicyType>(ColSize());
     inout.set_size(infoSet.Dimensionality(), RowSize());
     size_t parseTime = 0;
     std::set<size_t> mapCols;
     while(!TranposeParseImpl(inout, infoSet, mapCols))
-    {
-      //avoid infinite loop
-      ++parseTime;
-      infoSet = DatasetInfo(inout.n_rows);
+    {      
+      ++parseTime; //avoid infinite loop
+      infoSet = DatasetMapper<PolicyType>(inout.n_rows);
       if(parseTime == inout.n_rows)
       {
         return;
@@ -227,8 +151,8 @@ private:
     }
   }
 
-  template<typename T>
-  bool TranposeParseImpl(arma::Mat<T> &inout, DatasetInfo &infoSet,
+  template<typename T, typename PolicyType>
+  bool TranposeParseImpl(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet,
                          std::set<size_t> &mapCols)
   {
     using namespace boost::spirit;
@@ -310,7 +234,7 @@ private:
     auto elemParser = ElemParser::Parser<T>();
     //qi::skip can specify which characters you want to skip,
     //in this example, elemParser will parse int or double value,
-    //but we do not want space to intefere it, so we skip it by qi::skip
+    //we use qi::skip to skip space
 
     //qi::omit can omit the attributes of spirit, every parser of spirit
     //has attribute(the type will pass into actions(functor))
@@ -333,19 +257,7 @@ private:
   }
 
   boost::spirit::qi::rule<std::string::iterator, iter_type(), boost::spirit::ascii::space_type>
-  CreateCharRule() const
-  {
-    using namespace boost::spirit;
-
-    if(extension == "csv" || extension == "txt")
-    {
-      return qi::raw[*~qi::char_(",\r\n")];
-    }
-    else
-    {
-      return qi::raw[*~qi::char_("\t\r\n")];
-    }
-  }
+  CreateCharRule() const;
 
   std::string extension;
   bool fatalIfOpenFail;
