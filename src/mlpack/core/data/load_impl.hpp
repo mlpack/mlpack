@@ -13,11 +13,13 @@
 #define MLPACK_CORE_DATA_LOAD_IMPL_HPP
 
 // In case it hasn't already been included.
-#include "load.hpp"
-#include "extension.hpp"
 
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
+
+#include "load_csv.hpp"
+#include "load.hpp"
+#include "extension.hpp"
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -64,7 +66,7 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
   }
 }
 
-}
+} //namespace details
 
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
@@ -369,95 +371,8 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    // True if we're looking for commas; if false, we're looking for spaces.
-    bool commas = (extension == "csv");
-
-    std::string type;
-    if (extension == "csv")
-      type = "CSV data";
-    else
-      type = "raw ASCII-formatted data";
-
-    Log::Info << "Loading '" << filename << "' as " << type << ".  "
-        << std::flush;
-    std::string separators;
-    if (commas)
-      separators = ",";
-    else
-      separators = " \t";
-
-    // We'll load this as CSV (or CSV with spaces or tabs) according to
-    // RFC4180.  So the first thing to do is determine the size of the matrix.
-    std::string buffer;
-    size_t cols = 0;
-
-    std::getline(stream, buffer, '\n');
-    // Count commas and whitespace in the line, ignoring anything inside
-    // quotes.
-    typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-    boost::escaped_list_separator<char> sep("\\", separators, "\"");
-    Tokenizer tok(buffer, sep);
-    for (Tokenizer::iterator i = tok.begin(); i != tok.end(); ++i)
-      ++cols;
-
-    // Now count the number of lines in the file.  We've already counted the
-    // first one.
-    size_t rows = 1;
-    while (!stream.eof() && !stream.bad() && !stream.fail())
-    {
-      std::getline(stream, buffer, '\n');
-      if (!stream.fail())
-        ++rows;
-    }
-
-    // Now we have the size.  So resize our matrix.
-    if (transpose)
-    {
-      matrix.set_size(cols, rows);
-      info = DatasetMapper<PolicyType>(info.Policy(), cols);
-    }
-    else
-    {
-      matrix.set_size(rows, cols);
-      info = DatasetMapper<PolicyType>(info.Policy(), rows);
-    }
-
-    stream.close();
-    stream.open(filename, std::fstream::in);
-
-    if (transpose)
-    {
-      std::vector<std::vector<std::string>> tokensArray;
-      std::vector<std::string> tokens;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        tokens = details::ToTokens(lineTok);
-        if (tokens.size() == cols)
-        {
-          tokensArray.emplace_back(std::move(tokens));
-        }
-      }
-      for(size_t i = 0; i != cols; ++i)
-      {
-        details::TransposeTokens(tokensArray, tokens, i);
-        info.MapTokens(tokens, i, matrix);
-      }
-    }
-    else
-    {
-      size_t row = 0;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        info.MapTokens(details::ToTokens(lineTok), row, matrix);
-        ++row;
-      }
-    }
+    LoadCSV loader(filename, fatal);
+    loader.Load(matrix, info, transpose);
   }
   else if (extension == "arff")
   {
