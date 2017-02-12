@@ -13,8 +13,7 @@
  *   Nadeau, Claude and Garcia, Rene},
  *   title = {Incorporating Second-Order Functional Knowledge for Better Option
  *   Pricing},
- *   year = {2001},
- *   url = {http://www.iro.umontreal.ca/~lisa/pointeurs/nips00-convex.ps}
+ *   year = {2001}
  * }
  * @endcode
  *
