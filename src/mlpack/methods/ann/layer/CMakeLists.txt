@@ -18,6 +18,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   hard_tanh.hpp

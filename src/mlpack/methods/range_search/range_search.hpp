@@ -22,7 +22,7 @@ namespace mlpack {
 namespace range /** Range-search routines. */ {
 
 //! Forward declaration.
-class RSModel;
+class TrainVisitor;
 
 /**
  * The RangeSearch class is a template class for performing range searches.  It
@@ -352,7 +352,7 @@ class RangeSearch
   size_t scores;
 
   //! For access to mappings when building models.
-  friend RSModel;
+  friend class TrainVisitor;
 };
 
 } // namespace range
