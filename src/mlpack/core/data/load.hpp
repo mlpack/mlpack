@@ -14,11 +14,10 @@
 #ifndef MLPACK_CORE_DATA_LOAD_HPP
 #define MLPACK_CORE_DATA_LOAD_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
-#include "load.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 
