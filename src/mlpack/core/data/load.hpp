@@ -65,6 +65,12 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+extern template bool Load<int>(const std::string&, arma::Mat<int>&, const bool, const bool);
+extern template bool Load<size_t>(const std::string&, arma::Mat<size_t>&, const bool, const bool);
+extern template bool Load<float>(const std::string&, arma::Mat<float>&, const bool, const bool);
+extern template bool Load<double>(const std::string&, arma::Mat<double>&, const bool, const bool);
+extern template bool Load<unsigned long long>(const std::string&, arma::Mat<unsigned long long>&, const bool, const bool);
+
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
  *
@@ -168,7 +174,7 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
-/*extern template bool Load<int, IncrementPolicy>(std::string const&, arma::Mat<int>&, DatasetMapper<IncrementPolicy>&,
+extern template bool Load<int, IncrementPolicy>(std::string const&, arma::Mat<int>&, DatasetMapper<IncrementPolicy>&,
 const bool fatal, const bool transpose);
 
 extern template bool Load<size_t, IncrementPolicy>(std::string const&, arma::Mat<size_t>&, DatasetMapper<IncrementPolicy>&,
@@ -178,7 +184,10 @@ extern template bool Load<float, IncrementPolicy>(std::string const&, arma::Mat<
 const bool fatal, const bool transpose);
 
 extern template bool Load<double, IncrementPolicy>(std::string const&, arma::Mat<double>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);//*/
+const bool fatal, const bool transpose);
+
+extern template bool Load<unsigned long long, IncrementPolicy>(std::string const&, arma::Mat<unsigned long long>&, DatasetMapper<IncrementPolicy>&,
+const bool fatal, const bool transpose);
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
@@ -215,7 +224,7 @@ bool Load(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
-// Include implementation.
-#include "load_impl.hpp"
+// Include implementation of model-loading Load() overload.
+#include "load_model_impl.hpp"
 
 #endif

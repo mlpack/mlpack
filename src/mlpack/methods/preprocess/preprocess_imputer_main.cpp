@@ -14,6 +14,8 @@
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/data/load_impl.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>

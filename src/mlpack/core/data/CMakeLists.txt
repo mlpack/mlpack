@@ -7,7 +7,8 @@ set(SOURCES
   format.hpp
   load_csv.hpp
   load_csv.cpp
-  load.hpp  
+  load.hpp
+  load_model_impl.hpp
   load_impl.hpp
   load.cpp
   load_arff.hpp
