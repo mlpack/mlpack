@@ -68,6 +68,7 @@ Copyright:
   Copyright 2017, Sudhanshu Ranjan <sranjan.sud@gmail.com>
   Copyright 2017, Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
   Copyright 2017, Dinesh Raj <dinu.iota@gmail.com>
+  Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
 License: BSD-3-clause
   All rights reserved.
   .
