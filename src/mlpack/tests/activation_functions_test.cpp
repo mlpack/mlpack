@@ -299,6 +299,31 @@ void CheckPerametricReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
+/*
+ * Implementation of the PerametricReLU activation function gradient test.
+ * The function is implemented as PerametricReLU layer in the file
+ * perametric_relu.hpp
+ *
+ * @param input Input data used for evaluating the PerametricReLU activation
+ *   function.
+ * @param target Target data used to evaluate the PerametricReLU gradient.
+ */
+void CheckPerametricReLUGradientCorrect(const arma::colvec input,
+                                        const arma::colvec target)
+{
+  PerametricReLU<> prelu;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec gradient;
+
+  // This error vector will be set to 1 to get the gradient.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  prelu.Gradient(std::move(input), std::move(error), std::move(gradient));
+  BOOST_REQUIRE_EQUAL(gradient.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(gradient.n_cols, 1);
+  BOOST_REQUIRE_CLOSE(gradient(0), target(0), 1e-3);
+}
+
 /**
  * Basic test of the tanh function.
  */
@@ -452,9 +477,11 @@ BOOST_AUTO_TEST_CASE(PerametricReLUFunctionTest)
 
   const arma::colvec desiredDerivatives("0.03 1 1 0.03 \
                                          1 0.03 1 1");
+  const arma::colvec desiredGradient("-103.2");
 
   CheckPerametricReLUActivationCorrect(activationData, desiredActivations);
   CheckPerametricReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
+  CheckPerametricReLUGradientCorrect(activationData, desiredGradient);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

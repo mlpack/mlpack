@@ -60,6 +60,10 @@ void PerametricReLU<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
+  if (gradient.n_elem == 0) {
+    gradient = arma::zeros<arma::mat>(1, 1);
+  }
+
   arma::mat zeros = arma::zeros<arma::mat>(input.n_rows, input.n_cols);
   gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
 }
