@@ -18,6 +18,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   hard_tanh.hpp
@@ -26,8 +28,6 @@ set(SOURCES
   join_impl.hpp
   layer.hpp
   layer_traits.hpp
-  layer_visitor.hpp
-  layer_visitor_impl.hpp
   layer_types.hpp
   leaky_relu.hpp
   leaky_relu_impl.hpp

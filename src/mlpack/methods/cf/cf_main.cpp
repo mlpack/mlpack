@@ -199,7 +199,7 @@ void AssembleFactorizerType(const std::string& algorithm,
           FactorizerType;
       PerformAction(FactorizerType(mit), dataset, rank);
     }
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
     {
       typedef AMF<MaxIterationTermination, RandomInitialization,
           SVDBatchLearning> FactorizerType;
@@ -231,7 +231,7 @@ void AssembleFactorizerType(const std::string& algorithm,
     SimpleResidueTermination srt(minResidue, maxIterations);
     if (algorithm == "NMF")
       PerformAction(NMFALSFactorizer(srt), dataset, rank);
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
       PerformAction(SVDBatchFactorizer(srt), dataset, rank);
     else if (algorithm == "SVDIncompleteIncremental")
       PerformAction(SparseSVDIncompleteIncrementalFactorizer(srt), dataset,
@@ -295,12 +295,12 @@ int main(int argc, char** argv)
 
     // Issue an error if an invalid factorizer is used.
     if (algo != "NMF" &&
-        algo != "SVDBatch" &&
+        algo != "BatchSVD" &&
         algo != "SVDIncompleteIncremental" &&
         algo != "SVDCompleteIncremental" &&
         algo != "RegSVD")
       Log::Fatal << "Invalid decomposition algorithm.  Choices are 'NMF', "
-          << "'SVDBatch', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
+          << "'BatchSVD', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
           << " and 'RegSVD'." << endl;
 
     // Issue a warning if the user provided a minimum residue but it will be
