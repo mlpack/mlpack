@@ -57,6 +57,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   nystroem_method
+  hdbscan
 )
 
 foreach(dir ${DIRS})

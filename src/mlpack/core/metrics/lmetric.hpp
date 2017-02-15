@@ -111,6 +111,10 @@ typedef LMetric<2, true> EuclideanDistance;
  */
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
 
+/**
+ * The HDBSCAN metric.
+ */
+typedef LMetric<3, false> HdbscanDistance;
 
 } // namespace metric
 } // namespace mlpack

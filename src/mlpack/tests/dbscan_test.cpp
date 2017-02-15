@@ -7,6 +7,9 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/dbscan/dbscan.hpp>
 
+#include <mlpack/methods/hdbscan/hdbscan.hpp>
+
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -14,7 +17,22 @@ using namespace mlpack;
 using namespace mlpack::dbscan;
 using namespace mlpack::distribution;
 
+using namespace mlpack::hdbscan;
+
+
 BOOST_AUTO_TEST_SUITE(DBSCANTest);
+
+BOOST_AUTO_TEST_CASE(try1)
+{
+  arma::mat points(10, 200, arma::fill::randu);
+
+  HDBSCAN<> d(10);
+
+  arma::Row<size_t> assignments;
+  const size_t clusters = d.Cluster(points, assignments );
+
+  BOOST_REQUIRE_EQUAL(clusters, 1);
+}
 
 BOOST_AUTO_TEST_CASE(OneClusterTest)
 {
