@@ -2,8 +2,10 @@
  * @file maxout_impl.hpp
  * @author Prasanna Patil
  *
- * Implementation of the Maxout layer class also known as fully-connected layer
- * or affine transformation.
+ * Definition of Maxout layer first introduced in the Maxout Networks,
+ * Ian J. Goodfellow, David Warde-Farley, Mehdi Mirza, Aaron Courville,
+ * Yoshua Bengio
+ * "Maxout Networks", 2013
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
