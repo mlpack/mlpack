@@ -4,11 +4,16 @@
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
  * and hilbert_r_tree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "../hrectbound.hpp"
 #include "../statistic.hpp"
@@ -168,7 +173,16 @@ class RectangleTree
    * @param other The tree to be copied.
    * @param deepCopy If false, the children are not recursively copied.
    */
-  RectangleTree(const RectangleTree& other, const bool deepCopy = true);
+  RectangleTree(const RectangleTree& other,
+                const bool deepCopy = true,
+                RectangleTree* newParent = NULL);
+
+  /**
+   * Create a rectangle tree by moving the other tree.
+   *
+   * @param other The tree to be copied.
+   */
+  RectangleTree(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.
@@ -176,7 +190,7 @@ class RectangleTree
   template<typename Archive>
   RectangleTree(
       Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -343,6 +357,36 @@ class RectangleTree
   size_t& NumChildren() { return numChildren; }
 
   /**
+   * Return the index of the nearest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetNearestChild(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
+
+  /**
+   * Return the index of the furthest child node to the given query point.  If
+   * this is a leaf node, it will return NumChildren() (invalid index).
+   */
+  template<typename VecType>
+  size_t GetFurthestChild(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
+
+  /**
+   * Return the index of the nearest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetNearestChild(const RectangleTree& queryNode);
+
+  /**
+   * Return the index of the furthest child node to the given query node.  If it
+   * can't decide, it will return NumChildren() (invalid index).
+   */
+  size_t GetFurthestChild(const RectangleTree& queryNode);
+
+  /**
    * Return the furthest distance to a point held in this node.  If this is not
    * a leaf node, then the distance is 0 because the node holds no points.
    */
@@ -424,27 +468,27 @@ class RectangleTree
   size_t& Point(const size_t index) { return points[index]; }
 
   //! Return the minimum distance to another node.
-  ElemType MinDistance(const RectangleTree* other) const
+  ElemType MinDistance(const RectangleTree& other) const
   {
-    return bound.MinDistance(other->Bound());
+    return bound.MinDistance(other.Bound());
   }
 
   //! Return the maximum distance to another node.
-  ElemType MaxDistance(const RectangleTree* other) const
+  ElemType MaxDistance(const RectangleTree& other) const
   {
-    return bound.MaxDistance(other->Bound());
+    return bound.MaxDistance(other.Bound());
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const RectangleTree* other) const
+  math::RangeType<ElemType> RangeDistance(const RectangleTree& other) const
   {
-    return bound.RangeDistance(other->Bound());
+    return bound.RangeDistance(other.Bound());
   }
 
   //! Return the minimum distance to another point.
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const
   {
     return bound.MinDistance(point);
@@ -453,7 +497,7 @@ class RectangleTree
   //! Return the maximum distance to another point.
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType> >::type* = 0)
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
       const
   {
     return bound.MaxDistance(point);
@@ -463,7 +507,7 @@ class RectangleTree
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.RangeDistance(point);
   }
@@ -488,9 +532,6 @@ class RectangleTree
   size_t Count() const { return count; }
   //! Modify the number of points in this subset.
   size_t& Count() { return count; }
-
-  //! Returns false: this tree type does not have self children.
-  static bool HasSelfChildren() { return false; }
 
  private:
   /**

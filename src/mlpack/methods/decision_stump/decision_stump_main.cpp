@@ -3,8 +3,15 @@
  * @author Udit Saxena
  *
  * Main executable for the decision stump.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/data/normalize_labels.hpp>
 #include "decision_stump.hpp"
 
 using namespace mlpack;
@@ -51,25 +58,14 @@ PROGRAM_INFO("Decision Stump",
     "program (or others).");
 
 // Datasets we might load.
-PARAM_STRING_IN("training_file", "A file containing the training set.", "t",
-    "");
-PARAM_STRING_IN("labels_file", "A file containing labels for the training set."
-    "If not specified, the labels are assumed to be the last row of the "
-    "training data.", "l", "");
-PARAM_STRING_IN("test_file", "A file containing the test set.", "T", "");
+PARAM_MATRIX_IN("training", "The dataset to train on.", "t");
+PARAM_UMATRIX_IN("labels", "Labels for the training set. If not specified, the "
+    "labels are assumed to be the last row of the training data.", "l");
+PARAM_MATRIX_IN("test", "A dataset to calculate predictions for.", "T");
 
 // Output.
-PARAM_STRING_OUT("predictions_file", "The file in which the predicted labels "
-    "for the test set will be written.", "p");
-
-// We may load or save a model.
-PARAM_STRING_IN("input_model_file", "File containing decision stump model to "
-    "load.", "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained decision stump "
-    "model to.", "M");
-
-PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
-    "decision stump bucket.", "b", 6);
+PARAM_UMATRIX_OUT("predictions", "The output matrix that will hold the "
+    "predicted labels for the test set.", "p");
 
 /**
  * This is the structure that actually saves to disk.  We have to save the
@@ -92,25 +88,34 @@ struct DSModel
   }
 };
 
+// We may load or save a model.
+PARAM_MODEL_IN(DSModel, "input_model", "Decision stump model to "
+    "load.", "m");
+PARAM_MODEL_OUT(DSModel, "output_model", "Output decision stump model to save.",
+    "M");
+
+PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
+    "decision stump bucket.", "b", 6);
+
 int main(int argc, char *argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
   // Check that the parameters are reasonable.
-  if (CLI::HasParam("training_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
   {
     Log::Fatal << "Both --training_file and --input_model_file are specified, "
         << "but a trained model cannot be retrained.  Only one of these options"
         << " may be specified." << endl;
   }
 
-  if (!CLI::HasParam("training_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
   {
     Log::Fatal << "Neither --training_file nor --input_model_file are given; "
         << "one must be specified." << endl;
   }
 
-  if (!CLI::HasParam("output_model_file") && !CLI::HasParam("predictions_file"))
+  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
   {
     Log::Warn << "Neither --output_model_file nor --predictions_file are "
         << "specified; no results will be saved!" << endl;
@@ -118,23 +123,21 @@ int main(int argc, char *argv[])
 
   // We must either load a model, or train a new stump.
   DSModel model;
-  if (CLI::HasParam("training_file"))
+  if (CLI::HasParam("training"))
   {
-    const string trainingDataFilename = CLI::GetParam<string>("training_file");
-    mat trainingData;
-    data::Load(trainingDataFilename, trainingData, true);
+    mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     // Load labels, if necessary.
     Mat<size_t> labelsIn;
-    if (CLI::HasParam("labels_file"))
+    if (CLI::HasParam("labels"))
     {
-      const string labelsFilename = CLI::GetParam<string>("labels_file");
-      // Load labels.
-      data::Load(labelsFilename, labelsIn, true);
+      labelsIn = std::move(CLI::GetParam<Mat<size_t>>("labels"));
 
       // Do the labels need to be transposed?
       if (labelsIn.n_cols == 1)
         labelsIn = labelsIn.t();
+      if (labelsIn.n_cols == 1)
+        Log::Fatal << "Labels must be one-dimensional!" << endl;
     }
     else
     {
@@ -160,17 +163,14 @@ int main(int argc, char *argv[])
   }
   else
   {
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "decision_stump_model", model, true);
+    model = std::move(CLI::GetParam<DSModel>("input_model"));
   }
 
   // Now, do we need to do any testing?
-  if (CLI::HasParam("test_file"))
+  if (CLI::HasParam("test"))
   {
     // Load the test file.
-    const string testingDataFilename = CLI::GetParam<std::string>("test_file");
-    mat testingData;
-    data::Load(testingDataFilename, testingData, true);
+    mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows <= model.stump.SplitDimension())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -183,19 +183,19 @@ int main(int argc, char *argv[])
     Timer::Stop("testing");
 
     // Denormalize predicted labels, if we want to save them.
-    if (CLI::HasParam("predictions_file"))
+    if (CLI::HasParam("predictions"))
     {
       Row<size_t> actualLabels;
       data::RevertLabels(predictedLabels, model.mappings, actualLabels);
 
       // Save the predicted labels in a transposed form as output.
-      const string predictionsFile = CLI::GetParam<string>("predictions_file");
-      data::Save(predictionsFile, actualLabels, true);
+      CLI::GetParam<Mat<size_t>>("predictions") = std::move(actualLabels);
     }
   }
 
   // Save the model, if desired.
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"),
-        "decision_stump_model", model);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<DSModel>("output_model") = std::move(model);
+
+  CLI::Destroy();
 }

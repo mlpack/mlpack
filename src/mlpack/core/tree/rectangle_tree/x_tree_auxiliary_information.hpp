@@ -4,6 +4,11 @@
  *
  * Definition of the XTreeAuxiliaryInformation class, a class that provides
  * some x-tree specific information about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP
@@ -26,7 +31,7 @@ class XTreeAuxiliaryInformation
   { };
 
   /**
-   * Construct this whith the specified node.
+   * Construct this with the specified node.
    *
    * @param node The node that stores this auxiliary information.
    */
@@ -38,15 +43,45 @@ class XTreeAuxiliaryInformation
   { };
 
   /**
-   * Create an auxiliary information object by copying from the other node.
+   * Create an auxiliary information object by copying from another object.
+   *
+   * @param other Another auxiliary information object from which the
+   *    information will be copied.
+   * @param tree The node that holds the auxiliary information.
+   * @param deepCopy If false, the new object uses the same memory
+   *    (not used here).
+   */
+  XTreeAuxiliaryInformation(const XTreeAuxiliaryInformation& other,
+                            TreeType* /* tree */ = NULL,
+                            bool /* deepCopy */ = true) :
+      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+      splitHistory(other.SplitHistory())
+  { };
+
+  /**
+   * Copy the auxiliary information object.
    *
    * @param other The node from which the information will be copied.
    */
-  XTreeAuxiliaryInformation(const TreeType& other) :
-      normalNodeMaxNumChildren(
-          other.AuxiliaryInfo().NormalNodeMaxNumChildren()),
-      splitHistory(other.AuxiliaryInfo().SplitHistory())
-  { };
+  XTreeAuxiliaryInformation& operator=(const XTreeAuxiliaryInformation& other)
+  {
+    normalNodeMaxNumChildren = other.NormalNodeMaxNumChildren();
+    splitHistory = other.SplitHistory();
+
+    return *this;
+  }
+
+  /**
+   * Create an auxiliary information object by moving from the other node.
+   *
+   * @param other The object from which the information will be moved.
+   */
+  XTreeAuxiliaryInformation(XTreeAuxiliaryInformation&& other) :
+      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+      splitHistory(std::move(other.splitHistory))
+  {
+    other.normalNodeMaxNumChildren = 0;
+  };
 
   /**
    * Some tree types require to save some properties at the insertion process.
@@ -113,7 +148,7 @@ class XTreeAuxiliaryInformation
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
-   * returned, the update will be propogated upward.
+   * returned, the update will be propagated upward.
    * @param node The node in which the auxiliary information being update.
    */
   bool UpdateAuxiliaryInfo(TreeType* )
@@ -142,6 +177,25 @@ class XTreeAuxiliaryInformation
         history[i] = false;
     }
 
+    SplitHistoryStruct(const SplitHistoryStruct& other) :
+        lastDimension(other.lastDimension),
+        history(other.history)
+    { }
+
+    SplitHistoryStruct& operator=(const SplitHistoryStruct& other)
+    {
+      lastDimension = other.lastDimension;
+      history = other.history;
+      return *this;
+    }
+
+    SplitHistoryStruct(SplitHistoryStruct&& other) :
+        lastDimension(other.lastDimension),
+        history(std::move(other.history))
+    {
+      other.lastDimension = 0;
+    }
+
     template<typename Archive>
     void Serialize(Archive& ar, const unsigned int /* version */)
     {
@@ -161,9 +215,9 @@ class XTreeAuxiliaryInformation
   size_t NormalNodeMaxNumChildren() const { return normalNodeMaxNumChildren; }
   //! Modify the maximum number of a normal node's children.
   size_t& NormalNodeMaxNumChildren() { return normalNodeMaxNumChildren; }
-  //! Return the split history of the node assosiated with this object.
+  //! Return the split history of the node associated with this object.
   const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
-  //! Modify the split history of the node assosiated with this object.
+  //! Modify the split history of the node associated with this object.
   SplitHistoryStruct& SplitHistory() { return splitHistory; }
 
   /**

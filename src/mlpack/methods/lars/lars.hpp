@@ -15,11 +15,16 @@
  *
  * Although this option currently is not implemented, it will be implemented
  * very soon.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_LARS_LARS_HPP
 #define MLPACK_METHODS_LARS_LARS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace regression {
@@ -94,7 +99,7 @@ class LARS
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
    */
-  LARS(const bool useCholesky,
+  LARS(const bool useCholesky = false,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
        const double tolerance = 1e-16);

@@ -6,6 +6,11 @@
  * search as a black box.  The conditions under which this will perform best are
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
@@ -23,9 +28,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     const typename TreeType::Mat& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of two.
@@ -37,9 +42,9 @@ template<typename TreeType>
 TreeType* BuildTree(
     const typename TreeType::Mat& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename boost::enable_if_c<
-        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
-    >::type = 0)
+    const typename std::enable_if_t<
+        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+    >* = 0)
 {
   return new TreeType(dataset);
 }
@@ -101,16 +106,16 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   Tree* centroidTree = BuildTree<Tree>(centroids, oldFromNewCentroids);
 
+  // Find the nearest neighbors of each of the clusters.  We have to make our
+  // own TreeType, which is a little bit abuse, but we know for sure the
+  // TreeStatType we have will work.
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
+      NNSTreeType> nns(std::move(*centroidTree));
+
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
     Timer::Start("knn");
-
-    // Find the nearest neighbors of each of the clusters.  We have to make our
-    // own TreeType, which is a little bit abuse, but we know for sure the
-    // TreeStatType we have will work.
-    neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
-        NNSTreeType> nns(centroidTree);
 
     // If the tree maps points, we need an intermediate result matrix.
     arma::mat* interclusterDistancesTemp =
@@ -148,8 +153,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
-  RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,
-      lowerBounds, metric, prunedPoints, oldFromNewCentroids, visited);
+  RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
+      upperBounds, lowerBounds, metric, prunedPoints, oldFromNewCentroids,
+      visited);
 
   typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
@@ -160,7 +166,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
-  traverser.Traverse(*tree, *centroidTree);
+  traverser.Traverse(*tree, nns.ReferenceTree());
   distanceCalculations += rules.BaseCases() + rules.Scores();
 
   Timer::Start("tree_mod");
@@ -627,8 +633,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(Tree& node)
 template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
-               const typename boost::disable_if_c<
-                   tree::TreeTraits<TreeType>::BinaryTree>::type*)
+               const typename std::enable_if_t<
+                   !tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   // We're going to assume we have a Children() function open to us.  If we
   // don't, then this won't work, I guess...
@@ -639,8 +645,8 @@ void HideChild(TreeType& node,
 template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
-               const typename boost::enable_if_c<
-                   tree::TreeTraits<TreeType>::BinaryTree>::type*)
+               const typename std::enable_if_t<
+                   tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   // If we're hiding the left child, then take the right child as the new left
   // child.
@@ -658,8 +664,8 @@ void HideChild(TreeType& node,
 //! Utility function for restoring children in a non-binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename boost::disable_if_c<
-                         tree::TreeTraits<TreeType>::BinaryTree>::type*)
+                     const typename std::enable_if_t<
+                         !tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   node.Children().clear();
   node.Children().resize(node.Stat().NumTrueChildren());
@@ -670,8 +676,8 @@ void RestoreChildren(TreeType& node,
 //! Utility function for restoring children in a binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename boost::enable_if_c<
-                         tree::TreeTraits<TreeType>::BinaryTree>::type*)
+                     const typename std::enable_if_t<
+                         tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   if (node.Stat().NumTrueChildren() > 0)
   {

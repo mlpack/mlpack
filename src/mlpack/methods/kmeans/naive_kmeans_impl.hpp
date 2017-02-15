@@ -5,6 +5,11 @@
  * An implementation of a naively-implemented step of the Lloyd algorithm for
  * k-means clustering.  This may still be the best choice for small datasets or
  * datasets with very high dimensionality.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_IMPL_HPP

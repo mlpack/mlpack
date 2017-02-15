@@ -2,8 +2,13 @@
  * @file discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the DiscreteHilbertValue class, a class that calculates
+ * Definition of the DiscreteHilbertValue class, a class that calculates
  * the ordering of points using the Hilbert curve.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_IMPL_HPP
@@ -60,22 +65,93 @@ DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue(const TreeType* tree) :
 }
 
 template<typename TreeElemType>
+template<typename TreeType>
 DiscreteHilbertValue<TreeElemType>::
-DiscreteHilbertValue(const DiscreteHilbertValue& other) :
-    localHilbertValues(
-        const_cast<arma::Mat<HilbertElemType>*>(other.LocalHilbertValues())),
+DiscreteHilbertValue(const DiscreteHilbertValue& other,
+                     TreeType* tree,
+                     bool deepCopy) :
+    localHilbertValues(NULL),
     ownsLocalHilbertValues(other.ownsLocalHilbertValues),
     numValues(other.NumValues()),
-    valueToInsert(
-        const_cast<arma::Col<HilbertElemType>*>(other.ValueToInsert())),
-    ownsValueToInsert(false)
-{ }
+    valueToInsert(NULL),
+    ownsValueToInsert(other.ownsValueToInsert)
+{
+  if (deepCopy)
+  {
+    // Only leaf nodes own the localHilbertValues dataset.
+    // Intermediate nodes store the pointer to the corresponding dataset.
+    if (ownsLocalHilbertValues)
+      localHilbertValues = new arma::Mat<HilbertElemType>(
+          *other.LocalHilbertValues());
+    else
+      localHilbertValues = NULL;
+
+    // Only the root owns ownsValueToInsert. Other nodes the pointer.
+    if (ownsValueToInsert)
+      valueToInsert = new arma::Col<HilbertElemType>(
+          *other.ValueToInsert());
+    else
+    {
+      assert(tree->Parent() != NULL);
+      // Copy the pointer from the parent node.
+      valueToInsert = const_cast<arma::Col<HilbertElemType>*>
+        (tree->Parent()->AuxiliaryInfo().HilbertValue().ValueToInsert());
+    }
+
+    if (tree->NumChildren() == 0)
+    {
+      // We have to update pointers to the localHilbertValues dataset in
+      // intermediate nodes.
+      TreeType* node = tree;
+
+      while (node->Parent() != NULL)
+      {
+        if (node->Parent()->NumChildren() > 1)
+        {
+          const std::vector<TreeType*> parentChildren =
+              node->AuxiliaryInfo().Children(node->Parent());
+          // If node is not the last child of its parent, we shouldn't copy
+          // the localHilbertValues pointer.
+          if (parentChildren[node->Parent()->NumChildren() - 2] == NULL)
+            break;
+        }
+        node->Parent()->AuxiliaryInfo().HilbertValue().LocalHilbertValues() =
+          localHilbertValues;
+        node = node->Parent();
+      }
+    }
+  }
+  else
+  {
+    localHilbertValues = const_cast<arma::Mat<HilbertElemType>*>
+        (other.LocalHilbertValues());
+    valueToInsert = const_cast<arma::Col<HilbertElemType>*>
+        (other.ValueToInsert());
+  }
+}
+
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>::
+DiscreteHilbertValue(DiscreteHilbertValue&& other) :
+    localHilbertValues(other.localHilbertValues),
+    ownsLocalHilbertValues(other.ownsLocalHilbertValues),
+    numValues(other.numValues),
+    valueToInsert(other.valueToInsert),
+    ownsValueToInsert(other.ownsValueToInsert)
+{
+  other.localHilbertValues = NULL;
+  other.ownsLocalHilbertValues = false;
+  other.numValues = 0;
+  other.valueToInsert = NULL;
+  other.ownsValueToInsert = false;
+}
 
 template<typename TreeElemType>
 template<typename VecType>
 arma::Col<typename DiscreteHilbertValue<TreeElemType>::HilbertElemType>
 DiscreteHilbertValue<TreeElemType>::
-CalculateValue(const VecType& pt,typename boost::enable_if<IsVector<VecType>>*)
+CalculateValue(const VecType& pt,
+               typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   typedef typename VecType::elem_type VecElemType;
   arma::Col<HilbertElemType> res(pt.n_rows);
@@ -206,8 +282,8 @@ template<typename VecType1, typename VecType2>
 int DiscreteHilbertValue<TreeElemType>::
 ComparePoints(const VecType1& pt1,
               const VecType2& pt2,
-              typename boost::enable_if<IsVector<VecType1>>*,
-              typename boost::enable_if<IsVector<VecType2>>*)
+              typename std::enable_if_t<IsVector<VecType1>::value>*,
+              typename std::enable_if_t<IsVector<VecType2>::value>*)
 {
   arma::Col<HilbertElemType> val1 = CalculateValue(pt1);
   arma::Col<HilbertElemType> val2 = CalculateValue(pt2);
@@ -242,7 +318,7 @@ template<typename TreeElemType>
 template<typename VecType>
 int DiscreteHilbertValue<TreeElemType>::
 CompareWith(const VecType& pt,
-            typename boost::enable_if<IsVector<VecType>>*) const
+            typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   arma::Col<HilbertElemType> val = CalculateValue(pt);
 
@@ -256,7 +332,7 @@ template<typename TreeElemType>
 template<typename VecType>
 int DiscreteHilbertValue<TreeElemType>::
 CompareWithCachedPoint(const VecType& ,
-            typename boost::enable_if<IsVector<VecType>>*) const
+            typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   if (numValues == 0)
     return -1;
@@ -269,7 +345,7 @@ template<typename TreeType, typename VecType>
 size_t DiscreteHilbertValue<TreeElemType>::
 InsertPoint(TreeType *node,
             const VecType& pt,
-            typename boost::enable_if<IsVector<VecType>>*)
+            typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   size_t i = 0;
 

@@ -4,11 +4,17 @@
  *
  * This implements the cosine distance (or cosine similarity) between two
  * vectors, which is a measure of the angle between the two vectors.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 #define MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
 namespace kernel {

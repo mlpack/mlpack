@@ -5,6 +5,11 @@
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does
  * not transpose matrices on input, and it allows us to give better error
  * output.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_LOAD_HPP
 #define MLPACK_CORE_DATA_LOAD_HPP
@@ -14,7 +19,7 @@
 #include <string>
 
 #include "format.hpp"
-#include "dataset_info.hpp"
+#include "dataset_mapper.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -61,10 +66,10 @@ bool Load(const std::string& filename,
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and
- * mapping categorical features with a DatasetInfo object.  This will transpose
- * the matrix (unless the transpose parameter is set to false).  This particular
- * overload of Load() can only load text-based formats, such as those given
- * below:
+ * mapping categorical features with a DatasetMapper object.  This will
+ * transpose the matrix (unless the transpose parameter is set to false).
+ * This particular overload of Load() can only load text-based formats, such as
+ * those given below:
  *
  * - CSV (csv_ascii), denoted by .csv, or optionally .txt
  * - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
@@ -81,20 +86,20 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * The DatasetInfo object passed to this function will be re-created, so any
+ * The DatasetMapper object passed to this function will be re-created, so any
  * mappings from previous loads will be lost.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
- * @param info DatasetInfo object to populate with mappings and data types.
+ * @param info DatasetMapper object to populate with mappings and data types.
  * @param fatal If an error should be reported as fatal (default false).
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetInfo& info,
+          DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
 

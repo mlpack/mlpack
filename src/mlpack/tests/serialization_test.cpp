@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test serialization of mlpack objects.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -806,7 +811,7 @@ BOOST_AUTO_TEST_CASE(KNNTest)
   using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  KNN knn(dataset, false, false);
+  KNN knn(dataset, DUAL_TREE_MODE);
 
   KNN knnXml, knnText, knnBinary;
 
@@ -853,18 +858,19 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
 BOOST_AUTO_TEST_CASE(DETTest)
 {
   using det::DTree;
+  typedef DTree<arma::mat>   DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);
 
-  DTree tree(dataset);
+  DTreeX tree(dataset);
 
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-  DTree xmlTree, binaryTree, textTree(otherDataset);
+  DTreeX xmlTree, binaryTree, textTree(otherDataset);
 
   SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
-  std::stack<DTree*> stack, xmlStack, binaryStack, textStack;
+  std::stack<DTreeX*> stack, xmlStack, binaryStack, textStack;
   stack.push(&tree);
   xmlStack.push(&xmlTree);
   binaryStack.push(&binaryTree);
@@ -873,10 +879,10 @@ BOOST_AUTO_TEST_CASE(DETTest)
   while (!stack.empty())
   {
     // Get the top node from the stack.
-    DTree* node = stack.top();
-    DTree* xmlNode = xmlStack.top();
-    DTree* binaryNode = binaryStack.top();
-    DTree* textNode = textStack.top();
+    DTreeX* node = stack.top();
+    DTreeX* xmlNode = xmlStack.top();
+    DTreeX* binaryNode = binaryStack.top();
+    DTreeX* textNode = textStack.top();
 
     stack.pop();
     xmlStack.pop();

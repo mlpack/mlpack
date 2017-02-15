@@ -5,6 +5,11 @@
  * @author Michael Fox
  *
  * Implementation of HMM class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_HMM_HMM_IMPL_HPP
 #define MLPACK_METHODS_HMM_HMM_IMPL_HPP
@@ -24,11 +29,16 @@ HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
     emission(states, /* default distribution */ emissions),
-    transition(arma::ones<arma::mat>(states, states) / (double) states),
-    initial(arma::ones<arma::vec>(states) / (double) states),
+    transition(arma::randu<arma::mat>(states, states)),
+    initial(arma::randu<arma::vec>(states) / (double) states),
     dimensionality(emissions.Dimensionality()),
     tolerance(tolerance)
-{ /* nothing to do */ }
+{
+  // Normalize the transition probabilities and initial state probabilities.
+  initial /= arma::accu(initial);
+  for (size_t i = 0; i < transition.n_cols; ++i)
+    transition.col(i) /= arma::accu(transition.col(i));
+}
 
 /**
  * Create the Hidden Markov Model with the given transition matrix and the given
