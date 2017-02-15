@@ -28,6 +28,7 @@
 #include <mlpack/methods/ann/layer/mean_squared_error.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/negative_log_likelihood.hpp>
+#include <mlpack/methods/ann/layer/maxout.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
@@ -99,6 +100,7 @@ using LayerTypes = boost::variant<
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
+    Maxout<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MeanSquaredError<arma::mat, arma::mat>*,
