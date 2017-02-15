@@ -166,7 +166,7 @@ class PerametricReLU
   }
 
   /**
-   * Computes the first derivative of the LeakyReLU function.
+   * Computes the first derivative of the PerametricReLU function.
    *
    * @param y Input activations.
    * @param x The resulting derivatives.

@@ -26,6 +26,7 @@ PerametricReLU<InputDataType, OutputDataType>::PerametricReLU(
     const double user_alpha) : user_alpha(user_alpha)
 {
   alpha.set_size(1,1);
+  alpha(0) = user_alpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
