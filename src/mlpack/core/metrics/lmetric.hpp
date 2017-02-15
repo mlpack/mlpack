@@ -15,7 +15,7 @@
 #ifndef MLPACK_CORE_METRICS_LMETRIC_HPP
 #define MLPACK_CORE_METRICS_LMETRIC_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace metric {

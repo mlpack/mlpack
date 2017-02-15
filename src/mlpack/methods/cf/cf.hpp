@@ -16,7 +16,7 @@
 #ifndef MLPACK_METHODS_CF_CF_HPP
 #define MLPACK_METHODS_CF_CF_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>

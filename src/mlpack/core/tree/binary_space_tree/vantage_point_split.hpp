@@ -13,8 +13,9 @@
 #ifndef MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
 #define MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/perform_split.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

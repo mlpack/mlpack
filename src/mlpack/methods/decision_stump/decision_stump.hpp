@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
 #define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace decision_stump {

@@ -15,6 +15,7 @@
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1142,6 +1143,248 @@ BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
   for (size_t i = 0; i < deepPredictions.n_elem; ++i)
   {
     BOOST_REQUIRE_EQUAL(shallowPredictions[i], deepPredictions[i]);
+  }
+}
+
+// Test the Hoeffding tree model.
+BOOST_AUTO_TEST_CASE(HoeffdingTreeModelTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 3000);
+  arma::Row<size_t> labels(3000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 3000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Train a model on a simple dataset, for all four types of models, and make
+  // sure we get reasonable results.
+  for (size_t i = 0; i < 4; ++i)
+  {
+    HoeffdingTreeModel m;
+    switch (i)
+    {
+      case 0:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
+        break;
+
+      case 1:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
+        break;
+
+      case 2:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
+        break;
+
+      case 3:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
+        break;
+    }
+
+    // We'll take 5 passes over the data.
+    m.BuildModel(dataset, info, labels, 3, false, 0.99, 1000, 100, 100, 4, 100);
+    for (size_t j = 0; j < 4; ++j)
+      m.Train(dataset, labels, false);
+
+    // Now make sure the performance is reasonable.
+    arma::Row<size_t> predictions, predictions2;
+    arma::rowvec probabilities;
+    m.Classify(dataset, predictions);
+    m.Classify(dataset, predictions2, probabilities);
+
+    size_t correct = 0;
+    for (size_t i = 0; i < 3000; ++i)
+    {
+      // Check consistency of predictions.
+      BOOST_REQUIRE_EQUAL(predictions[i], predictions2[i]);
+
+      if (labels[i] == predictions[i])
+        ++correct;
+    }
+
+    // Require at least 95% accuracy.
+    BOOST_REQUIRE_GT(correct, 2850);
+  }
+}
+
+// Test the Hoeffding tree model in batch mode.
+BOOST_AUTO_TEST_CASE(HoeffdingTreeModelBatchTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 3000);
+  arma::Row<size_t> labels(3000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 3000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Train a model on a simple dataset, for all four types of models, and make
+  // sure we get reasonable results.
+  for (size_t i = 0; i < 4; ++i)
+  {
+    HoeffdingTreeModel m;
+    switch (i)
+    {
+      case 0:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
+        break;
+
+      case 1:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
+        break;
+
+      case 2:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
+        break;
+
+      case 3:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
+        break;
+    }
+
+    // Train in batch.
+    m.BuildModel(dataset, info, labels, 3, true, 0.99, 1000, 100, 100, 4, 100);
+
+    // Now make sure the performance is reasonable.
+    arma::Row<size_t> predictions, predictions2;
+    arma::rowvec probabilities;
+    m.Classify(dataset, predictions);
+    m.Classify(dataset, predictions2, probabilities);
+
+    size_t correct = 0;
+    for (size_t i = 0; i < 3000; ++i)
+    {
+      // Check consistency of predictions.
+      BOOST_REQUIRE_EQUAL(predictions[i], predictions2[i]);
+
+      if (labels[i] == predictions[i])
+        ++correct;
+    }
+
+    // Require at least 95% accuracy.
+    BOOST_REQUIRE_GT(correct, 2850);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
+{
+  // Generate data.
+  arma::mat dataset(4, 3000);
+  arma::Row<size_t> labels(3000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString("0", 3);
+  for (size_t i = 0; i < 3000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+
+    dataset(0, i + 1) = mlpack::math::Random();
+    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
+    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    dataset(0, i + 2) = mlpack::math::Random();
+    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
+    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Train a model on a simple dataset, for all four types of models, and make
+  // sure we get reasonable results.
+  for (size_t i = 0; i < 4; ++i)
+  {
+    HoeffdingTreeModel m, xmlM, textM, binaryM;
+    switch (i)
+    {
+      case 0:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
+        break;
+
+      case 1:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
+        break;
+
+      case 2:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
+        break;
+
+      case 3:
+        m = HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
+        break;
+    }
+
+    // Train in batch.
+    m.BuildModel(dataset, info, labels, 3, true, 0.99, 1000, 100, 100, 4, 100);
+    // False training of XML model.
+    xmlM.BuildModel(dataset, info, labels, 3, false, 0.5, 100, 100, 100, 2,
+        100);
+
+    // Now make sure the performance is reasonable.
+    arma::Row<size_t> predictions, predictionsXml, predictionsText,
+        predictionsBinary;
+    arma::rowvec probabilities, probabilitiesXml, probabilitiesText,
+        probabilitiesBinary;
+
+    SerializeObjectAll(m, xmlM, textM, binaryM);
+
+    // Get predictions for all.
+    m.Classify(dataset, predictions, probabilities);
+    xmlM.Classify(dataset, predictionsXml, probabilitiesXml);
+    textM.Classify(dataset, predictionsText, probabilitiesText);
+    binaryM.Classify(dataset, predictionsBinary, probabilitiesBinary);
+
+    for (size_t i = 0; i < 3000; ++i)
+    {
+      // Check consistency of predictions and probabilities.
+      BOOST_REQUIRE_EQUAL(predictions[i], predictionsXml[i]);
+      BOOST_REQUIRE_EQUAL(predictions[i], predictionsText[i]);
+      BOOST_REQUIRE_EQUAL(predictions[i], predictionsBinary[i]);
+
+      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesXml[i], 1e-5);
+      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesText[i], 1e-5);
+      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesBinary[i], 1e-5);
+    }
   }
 }
 

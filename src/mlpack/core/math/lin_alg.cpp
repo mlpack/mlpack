@@ -10,7 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "lin_alg.hpp"
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 
 using namespace mlpack;
 using namespace math;

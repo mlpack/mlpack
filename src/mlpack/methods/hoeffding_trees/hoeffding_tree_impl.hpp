@@ -175,7 +175,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 {
   // Copy each of the children.
   for (size_t i = 0; i < other.children.size(); ++i)
-    children.push_back(new HoeffdingTree(other.children[i]));
+    children.push_back(new HoeffdingTree(*other.children[i]));
 }
 
 template<typename FitnessFunction,

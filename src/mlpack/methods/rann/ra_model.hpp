@@ -102,6 +102,34 @@ class RAModel
    */
   RAModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
+  /**
+   * Copy the given RAModel.
+   *
+   * @param other RAModel to copy.
+   */
+  RAModel(const RAModel& other);
+
+  /**
+   * Take ownership of the given RAModel.
+   *
+   * @param other RAModel to take ownership of.
+   */
+  RAModel(RAModel&& other);
+
+  /**
+   * Copy the given RAModel.
+   *
+   * @param other RAModel to copy.
+   */
+  RAModel& operator=(const RAModel& other);
+
+  /**
+   * Take ownership of the given RAModel.
+   *
+   * @param other RAModel to take ownership of.
+   */
+  RAModel& operator=(RAModel&& other);
+
   //! Clean memory, if necessary.
   ~RAModel();
 

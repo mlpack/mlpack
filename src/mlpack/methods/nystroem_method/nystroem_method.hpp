@@ -15,7 +15,7 @@
 #ifndef MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_HPP
 #define MLPACK_METHODS_NYSTROEM_METHOD_NYSTROEM_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "kmeans_selection.hpp"
 
 namespace mlpack {

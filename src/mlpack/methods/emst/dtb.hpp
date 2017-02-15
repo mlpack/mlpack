@@ -28,7 +28,7 @@
 #include "dtb_stat.hpp"
 #include "edge_pair.hpp"
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include <mlpack/core/tree/binary_space_tree.hpp>

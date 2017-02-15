@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_DET_DTREE_HPP
 #define MLPACK_METHODS_DET_DTREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace det /** Density Estimation Trees */ {
@@ -47,16 +47,44 @@ class DTree
 {
  public:
   /**
-   * The actual, underlying type we're working with
+   * The actual, underlying type we're working with.
    */
   typedef typename MatType::elem_type     ElemType;
   typedef typename MatType::vec_type      VecType;
   typedef typename arma::Col<ElemType>    StatType;
-  
+
   /**
    * Create an empty density estimation tree.
    */
   DTree();
+
+  /**
+   * Create a tree that is the copy of the given tree.
+   *
+   * @param obj Tree to copy.
+   */
+  DTree(const DTree& obj);
+
+  /**
+   * Copy the given tree.
+   *
+   * @param obj Tree to copy.
+   */
+  DTree& operator=(const DTree& obj);
+
+  /**
+   * Create a tree by taking ownership of another tree (move constructor).
+   *
+   * @param obj Tree to take ownership of.
+   */
+  DTree(DTree&& obj);
+
+  /**
+   * Take ownership of the given tree (move operator).
+   *
+   * @param obj Tree to take ownership of.
+   */
+  DTree& operator=(DTree&& obj);
 
   /**
    * Create a density estimation tree with the given bounds and the given number
@@ -79,7 +107,7 @@ class DTree
    * @param data Dataset to build tree on.
    */
   DTree(MatType& data);
-  
+
   /**
    * Create a child node of a density estimation tree given the bounding box
    * specified by maxVals and minVals, using the size given in start and end and

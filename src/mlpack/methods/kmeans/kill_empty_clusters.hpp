@@ -13,7 +13,7 @@
 #ifndef __MLPACK_METHODS_KMEANS_KILL_EMPTY_CLUSTERS_HPP
 #define __MLPACK_METHODS_KMEANS_KILL_EMPTY_CLUSTERS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kmeans {

@@ -82,7 +82,7 @@ template<
     typename MatType
 >
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
-    const Perceptron<>& other,
+    const Perceptron& other,
     const MatType& data,
     const arma::Row<size_t>& labels,
     const arma::rowvec& instanceWeights) :

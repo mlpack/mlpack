@@ -10,8 +10,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/core.hpp>
-
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
@@ -79,9 +80,8 @@ PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
     " (lower values generally mean better fits).", "r", 1e-5);
 
 // Load/save a model.
-PARAM_STRING_IN("input_model_file", "File to load trained CF model from.", "m",
-    "");
-PARAM_STRING_OUT("output_model_file", "File to save trained CF model to.", "M");
+PARAM_MODEL_IN(CF, "input_model", "Trained CF model to load.", "m");
+PARAM_MODEL_OUT(CF, "output_model", "Output for trained CF model.", "M");
 
 // Query settings.
 PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
@@ -167,8 +167,8 @@ void PerformAction(CF& c)
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "cf_model", c);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<CF>("output_model") = std::move(c);
 }
 
 template<typename Factorizer>
@@ -199,7 +199,7 @@ void AssembleFactorizerType(const std::string& algorithm,
           FactorizerType;
       PerformAction(FactorizerType(mit), dataset, rank);
     }
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
     {
       typedef AMF<MaxIterationTermination, RandomInitialization,
           SVDBatchLearning> FactorizerType;
@@ -231,7 +231,7 @@ void AssembleFactorizerType(const std::string& algorithm,
     SimpleResidueTermination srt(minResidue, maxIterations);
     if (algorithm == "NMF")
       PerformAction(NMFALSFactorizer(srt), dataset, rank);
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
       PerformAction(SVDBatchFactorizer(srt), dataset, rank);
     else if (algorithm == "SVDIncompleteIncremental")
       PerformAction(SparseSVDIncompleteIncrementalFactorizer(srt), dataset,
@@ -254,11 +254,11 @@ int main(int argc, char** argv)
     math::RandomSeed(CLI::GetParam<int>("seed"));
 
   // Validate parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
         << "may be specified!" << endl;
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
     Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
         << " specified!" << endl;
 
@@ -267,11 +267,11 @@ int main(int argc, char** argv)
     Log::Fatal << "Both --query_file and --all_user_recommendations are given, "
         << "but only one is allowed!" << endl;
 
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model"))
     Log::Warn << "Neither --output_file nor --output_model_file are specified; "
         << "no output will be saved." << endl;
 
-  if (CLI::HasParam("output") && (!CLI::HasParam("query") ||
+  if (CLI::HasParam("output") && !(CLI::HasParam("query") ||
       CLI::HasParam("all_user_recommendations")))
     Log::Warn << "--output_file is ignored because neither --query_file nor "
         << "--all_user_recommendations are specified." << endl;
@@ -295,12 +295,12 @@ int main(int argc, char** argv)
 
     // Issue an error if an invalid factorizer is used.
     if (algo != "NMF" &&
-        algo != "SVDBatch" &&
+        algo != "BatchSVD" &&
         algo != "SVDIncompleteIncremental" &&
         algo != "SVDCompleteIncremental" &&
         algo != "RegSVD")
       Log::Fatal << "Invalid decomposition algorithm.  Choices are 'NMF', "
-          << "'SVDBatch', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
+          << "'BatchSVD', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
           << " and 'RegSVD'." << endl;
 
     // Issue a warning if the user provided a minimum residue but it will be
@@ -317,9 +317,10 @@ int main(int argc, char** argv)
   else
   {
     // Load an input model.
-    CF c;
-    data::Load(CLI::GetParam<string>("input_model_file"), "cf_model", c, true);
+    CF c = std::move(CLI::GetParam<CF>("input_model"));
 
     PerformAction(c);
   }
+
+  CLI::Destroy();
 }

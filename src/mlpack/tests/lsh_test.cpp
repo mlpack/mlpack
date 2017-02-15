@@ -836,4 +836,75 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
 }
 #endif
 
+// Test the copy constructor and the copy operator.
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<> lsh(dataset, 10, 10);
+
+  // Copy the model.
+  LSHSearch<> lsh2(lsh);
+  LSHSearch<> lsh3 = lsh;
+
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+  arma::mat distances, distances2, distances3;
+
+  lsh.Search(5, neighbors, distances);
+  lsh2.Search(5, neighbors2, distances2);
+  lsh3.Search(5, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+// Test the move constructor.
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<>* lsh = new LSHSearch<>(dataset, 10, 10);
+
+  // Get results.
+  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2;
+
+  lsh->Search(5, neighbors, distances);
+
+  LSHSearch<> lsh2(std::move(*lsh));
+  delete lsh;
+
+  lsh2.Search(5, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
+// Test the move operator.
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<>* lsh = new LSHSearch<>(dataset, 10, 10);
+
+  // Get results.
+  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2;
+
+  lsh->Search(5, neighbors, distances);
+
+  LSHSearch<> lsh2 = std::move(*lsh);
+  delete lsh;
+
+  lsh2.Search(5, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -26,7 +26,7 @@
 #ifndef MLPACK_METHODS_ANN_INIT_RULES_NGUYEN_WIDROW_INIT_HPP
 #define MLPACK_METHODS_ANN_INIT_RULES_NGUYEN_WIDROW_INIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "random_init.hpp"
 

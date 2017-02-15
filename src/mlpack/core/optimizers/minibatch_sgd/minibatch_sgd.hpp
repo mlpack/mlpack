@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_MINIBATCH_SGD_HPP
 #define MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_MINIBATCH_SGD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace optimization {

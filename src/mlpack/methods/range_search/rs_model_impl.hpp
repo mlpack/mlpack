@@ -18,6 +18,208 @@
 namespace mlpack {
 namespace range {
 
+//! Monochromatic range search on the given RSType instance.
+template<typename RSType>
+void MonoSearchVisitor::operator()(RSType* rs) const
+{
+  if (rs)
+    return rs->Search(range, neighbors, distances);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Save parameters for bichromatic range search.
+BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
+                                 const math::Range& range,
+                                 std::vector<std::vector<size_t>>& neighbors,
+                                 std::vector<std::vector<double>>& distances,
+                                 const size_t leafSize):
+    querySet(querySet),
+    range(range),
+    neighbors(neighbors),
+    distances(distances),
+    leafSize(leafSize)
+{}
+
+//! Default Bichromatic range search on the given RSType instance.
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void BiSearchVisitor::operator()(RSTypeT<TreeType>* rs) const
+{
+  if (rs)
+    return rs->Search(querySet, range, neighbors, distances);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Bichromatic range search on the given RSType specialized for KDTrees.
+void BiSearchVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
+{
+  if (rs)
+    return SearchLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Bichromatic range search on the given RSType specialized for BallTrees.
+void BiSearchVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
+{
+  if (rs)
+    return SearchLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Bichromatic range search specialized for Ocrees.
+void BiSearchVisitor::operator()(RSTypeT<tree::Octree>* rs) const
+{
+  if (rs)
+    return SearchLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Bichromatic range search on the given RSType considering the leafSize.
+template<typename RSType>
+void BiSearchVisitor::SearchLeaf(RSType* rs) const
+{
+  if (!rs->Naive() && !rs->SingleMode())
+  {
+    // Build a second tree and search.
+    Timer::Start("tree_building");
+    Log::Info << "Building query tree..." << std::endl;
+    std::vector<size_t> oldFromNewQueries;
+    typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
+        leafSize);
+    Log::Info << "Tree built." << std::endl;
+    Timer::Stop("tree_building");
+
+    std::vector<std::vector<size_t>> neighborsOut;
+    std::vector<std::vector<double>> distancesOut;
+    rs->Search(&queryTree, range, neighborsOut, distancesOut);
+
+    // Remap the query points.
+    neighbors.resize(queryTree.Dataset().n_cols);
+    distances.resize(queryTree.Dataset().n_cols);
+    for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
+    {
+      neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+      distances[oldFromNewQueries[i]] = distancesOut[i];
+    }
+  }
+  else
+    rs->Search(querySet, range, neighbors, distances);
+}
+
+//! Save parameters for Train.
+TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
+                           const size_t leafSize) :
+    referenceSet(std::move(referenceSet)),
+    leafSize(leafSize)
+{}
+
+//! Default Train on the given RSType instance.
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void TrainVisitor::operator()(RSTypeT<TreeType>* rs) const
+{
+  if (rs)
+    return rs->Train(std::move(referenceSet));
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Train on the given RSType specialized for KDTrees.
+void TrainVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
+{
+  if (rs)
+    return TrainLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Train on the given RSType specialized for BallTrees.
+void TrainVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
+{
+  if (rs)
+    return TrainLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Train specialized for Octrees.
+void TrainVisitor::operator()(RSTypeT<tree::Octree>* rs) const
+{
+  if (rs)
+    return TrainLeaf(rs);
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! Train on the given RSType considering the leafSize.
+template<typename RSType>
+void TrainVisitor::TrainLeaf(RSType* rs) const
+{
+  if (rs->Naive())
+    rs->Train(std::move(referenceSet));
+  else
+  {
+    std::vector<size_t> oldFromNewReferences;
+    typename RSType::Tree* tree =
+        new typename RSType::Tree(std::move(referenceSet), oldFromNewReferences,
+        leafSize);
+    rs->Train(tree);
+
+    // Give the model ownership of the tree and the mappings.
+    rs->treeOwner = true;
+    rs->oldFromNewReferences = std::move(oldFromNewReferences);
+  }
+}
+
+//! Expose the referenceSet of the given RSType.
+template<typename RSType>
+const arma::mat& ReferenceSetVisitor::operator()(RSType* rs) const
+{
+  if (rs)
+    return rs->ReferenceSet();
+  throw std::runtime_error("no range search model initialized");
+}
+
+//! For cleaning memory
+template<typename RSType>
+void DeleteVisitor::operator()(RSType* rs) const
+{
+  if (rs)
+    delete rs;
+}
+
+//! Save parameters for serializing
+template<typename Archive>
+SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
+                                            const std::string& name) :
+    ar(ar),
+    name(name)
+{}
+
+//! Serializes the given RSType instance.
+template<typename Archive>
+template<typename RSType>
+void SerializeVisitor<Archive>::operator()(RSType* rs) const
+{
+  ar & data::CreateNVP(rs, name);
+}
+
+//! Return whether single mode enabled
+template<typename RSType>
+bool& SingleModeVisitor::operator()(RSType* rs) const
+{
+ if (rs)
+   return rs->SingleMode();
+ throw std::runtime_error("no range search model initialized");
+}
+
+//! Exposes Naive() function of given RSType
+template<typename RSType>
+bool& NaiveVisitor::operator()(RSType* rs) const
+{
+ if (rs)
+   return rs->Naive();
+ throw std::runtime_error("no range search model initialized");
+}
+
 // Serialize the model.
 template<typename Archive>
 void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
@@ -30,237 +232,37 @@ void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
 
   // This should never happen, but just in case...
   if (Archive::is_loading::value)
-    CleanMemory();
+    boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
-  switch (treeType)
-  {
-    case KD_TREE:
-      ar & CreateNVP(kdTreeRS, "range_search_model");
-      break;
-
-    case COVER_TREE:
-      ar & CreateNVP(coverTreeRS, "range_search_model");
-      break;
-
-    case R_TREE:
-      ar & CreateNVP(rTreeRS, "range_search_model");
-      break;
-
-    case R_STAR_TREE:
-      ar & CreateNVP(rStarTreeRS, "range_search_model");
-      break;
-
-    case BALL_TREE:
-      ar & CreateNVP(ballTreeRS, "range_search_model");
-      break;
-
-    case X_TREE:
-      ar & CreateNVP(xTreeRS, "range_search_model");
-      break;
-
-    case HILBERT_R_TREE:
-      ar & CreateNVP(hilbertRTreeRS, "range_search_model");
-      break;
-
-    case R_PLUS_TREE:
-      ar & CreateNVP(rPlusTreeRS, "range_search_model");
-      break;
-
-    case R_PLUS_PLUS_TREE:
-      ar & CreateNVP(rPlusPlusTreeRS, "range_search_model");
-      break;
-
-    case VP_TREE:
-      ar & CreateNVP(vpTreeRS, "range_search_model");
-      break;
-
-    case RP_TREE:
-      ar & CreateNVP(rpTreeRS, "range_search_model");
-      break;
-
-    case MAX_RP_TREE:
-      ar & CreateNVP(maxRPTreeRS, "range_search_model");
-      break;
-
-    case UB_TREE:
-      ar & CreateNVP(ubTreeRS, "range_search_model");
-      break;
-
-    case OCTREE:
-      ar & CreateNVP(octreeRS, "range_search_model");
-      break;
-  }
+  const std::string& name = RSModelName::Name();
+  SerializeVisitor<Archive> s(ar, name);
+  boost::apply_visitor(s, rSearch);
 }
 
 inline const arma::mat& RSModel::Dataset() const
 {
-  if (kdTreeRS)
-    return kdTreeRS->ReferenceSet();
-  else if (coverTreeRS)
-    return coverTreeRS->ReferenceSet();
-  else if (rTreeRS)
-    return rTreeRS->ReferenceSet();
-  else if (rStarTreeRS)
-    return rStarTreeRS->ReferenceSet();
-  else if (ballTreeRS)
-    return ballTreeRS->ReferenceSet();
-  else if (xTreeRS)
-    return xTreeRS->ReferenceSet();
-  else if (hilbertRTreeRS)
-    return hilbertRTreeRS->ReferenceSet();
-  else if (rPlusTreeRS)
-    return rPlusTreeRS->ReferenceSet();
-  else if (rPlusPlusTreeRS)
-    return rPlusPlusTreeRS->ReferenceSet();
-  else if (vpTreeRS)
-    return vpTreeRS->ReferenceSet();
-  else if (rpTreeRS)
-    return rpTreeRS->ReferenceSet();
-  else if (maxRPTreeRS)
-    return maxRPTreeRS->ReferenceSet();
-  else if (ubTreeRS)
-    return ubTreeRS->ReferenceSet();
-  else if (octreeRS)
-    return octreeRS->ReferenceSet();
-
-  throw std::runtime_error("no range search model initialized");
+  return boost::apply_visitor(ReferenceSetVisitor(), rSearch);
 }
 
 inline bool RSModel::SingleMode() const
 {
-  if (kdTreeRS)
-    return kdTreeRS->SingleMode();
-  else if (coverTreeRS)
-    return coverTreeRS->SingleMode();
-  else if (rTreeRS)
-    return rTreeRS->SingleMode();
-  else if (rStarTreeRS)
-    return rStarTreeRS->SingleMode();
-  else if (ballTreeRS)
-    return ballTreeRS->SingleMode();
-  else if (xTreeRS)
-    return xTreeRS->SingleMode();
-  else if (hilbertRTreeRS)
-    return hilbertRTreeRS->SingleMode();
-  else if (rPlusTreeRS)
-    return rPlusTreeRS->SingleMode();
-  else if (rPlusPlusTreeRS)
-    return rPlusPlusTreeRS->SingleMode();
-  else if (vpTreeRS)
-    return vpTreeRS->SingleMode();
-  else if (rpTreeRS)
-    return rpTreeRS->SingleMode();
-  else if (maxRPTreeRS)
-    return maxRPTreeRS->SingleMode();
-  else if (ubTreeRS)
-    return ubTreeRS->SingleMode();
-  else if (octreeRS)
-    return octreeRS->SingleMode();
-
-  throw std::runtime_error("no range search model initialized");
+  return boost::apply_visitor(SingleModeVisitor(), rSearch);
 }
 
 inline bool& RSModel::SingleMode()
 {
-  if (kdTreeRS)
-    return kdTreeRS->SingleMode();
-  else if (coverTreeRS)
-    return coverTreeRS->SingleMode();
-  else if (rTreeRS)
-    return rTreeRS->SingleMode();
-  else if (rStarTreeRS)
-    return rStarTreeRS->SingleMode();
-  else if (ballTreeRS)
-    return ballTreeRS->SingleMode();
-  else if (xTreeRS)
-    return xTreeRS->SingleMode();
-  else if (hilbertRTreeRS)
-    return hilbertRTreeRS->SingleMode();
-  else if (rPlusTreeRS)
-    return rPlusTreeRS->SingleMode();
-  else if (rPlusPlusTreeRS)
-    return rPlusPlusTreeRS->SingleMode();
-  else if (vpTreeRS)
-    return vpTreeRS->SingleMode();
-  else if (rpTreeRS)
-    return rpTreeRS->SingleMode();
-  else if (maxRPTreeRS)
-    return maxRPTreeRS->SingleMode();
-  else if (ubTreeRS)
-    return ubTreeRS->SingleMode();
-  else if (octreeRS)
-    return octreeRS->SingleMode();
-
-  throw std::runtime_error("no range search model initialized");
+  return boost::apply_visitor(SingleModeVisitor(), rSearch);
 }
 
 inline bool RSModel::Naive() const
 {
-  if (kdTreeRS)
-    return kdTreeRS->Naive();
-  else if (coverTreeRS)
-    return coverTreeRS->Naive();
-  else if (rTreeRS)
-    return rTreeRS->Naive();
-  else if (rStarTreeRS)
-    return rStarTreeRS->Naive();
-  else if (ballTreeRS)
-    return ballTreeRS->Naive();
-  else if (xTreeRS)
-    return xTreeRS->Naive();
-  else if (hilbertRTreeRS)
-    return hilbertRTreeRS->Naive();
-  else if (rPlusTreeRS)
-    return rPlusTreeRS->Naive();
-  else if (rPlusPlusTreeRS)
-    return rPlusPlusTreeRS->Naive();
-  else if (vpTreeRS)
-    return vpTreeRS->Naive();
-  else if (rpTreeRS)
-    return rpTreeRS->Naive();
-  else if (maxRPTreeRS)
-    return maxRPTreeRS->Naive();
-  else if (ubTreeRS)
-    return ubTreeRS->Naive();
-  else if (octreeRS)
-    return octreeRS->Naive();
-
-  throw std::runtime_error("no range search model initialized");
+  return boost::apply_visitor(NaiveVisitor(), rSearch);
 }
 
 inline bool& RSModel::Naive()
 {
-  if (kdTreeRS)
-    return kdTreeRS->Naive();
-  else if (coverTreeRS)
-    return coverTreeRS->Naive();
-  else if (rTreeRS)
-    return rTreeRS->Naive();
-  else if (rStarTreeRS)
-    return rStarTreeRS->Naive();
-  else if (ballTreeRS)
-    return ballTreeRS->Naive();
-  else if (xTreeRS)
-    return xTreeRS->Naive();
-  else if (hilbertRTreeRS)
-    return hilbertRTreeRS->Naive();
-  else if (rPlusTreeRS)
-    return rPlusTreeRS->Naive();
-  else if (rPlusPlusTreeRS)
-    return rPlusPlusTreeRS->Naive();
-  else if (vpTreeRS)
-    return vpTreeRS->Naive();
-  else if (rpTreeRS)
-    return rpTreeRS->Naive();
-  else if (maxRPTreeRS)
-    return maxRPTreeRS->Naive();
-  else if (ubTreeRS)
-    return ubTreeRS->Naive();
-  else if (octreeRS)
-    return octreeRS->Naive();
-
-  throw std::runtime_error("no range search model initialized");
+  return boost::apply_visitor(NaiveVisitor(), rSearch);
 }
 
 } // namespace range
