@@ -252,17 +252,17 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the PerametricReLU activation function test. The function
- * is implemented as PerametricReLU layer in the file perametric_relu.hpp
+ * Implementation of the PReLU activation function test. The function
+ * is implemented as PReLU layer in the file perametric_relu.hpp
  *
- * @param input Input data used for evaluating the PerametricReLU activation
+ * @param input Input data used for evaluating the PReLU activation
  *   function.
- * @param target Target data used to evaluate the PerametricReLU activation.
+ * @param target Target data used to evaluate the PReLU activation.
  */
-void CheckPerametricReLUActivationCorrect(const arma::colvec input,
+void CheckPReLUActivationCorrect(const arma::colvec input,
                                           const arma::colvec target)
 {
-  PerametricReLU<> prelu;
+  PReLU<> prelu;
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
@@ -274,18 +274,18 @@ void CheckPerametricReLUActivationCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the PerametricReLU activation function derivative test.
- * The function is implemented as PerametricReLU layer in the file
+ * Implementation of the PReLU activation function derivative test.
+ * The function is implemented as PReLU layer in the file
  * perametric_relu.hpp
  *
- * @param input Input data used for evaluating the PerametricReLU activation
+ * @param input Input data used for evaluating the PReLU activation
  *   function.
- * @param target Target data used to evaluate the PerametricReLU activation.
+ * @param target Target data used to evaluate the PReLU activation.
  */
-void CheckPerametricReLUDerivativeCorrect(const arma::colvec input,
+void CheckPReLUDerivativeCorrect(const arma::colvec input,
                                           const arma::colvec target)
 {
-  PerametricReLU<> prelu;
+  PReLU<> prelu;
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
@@ -300,18 +300,18 @@ void CheckPerametricReLUDerivativeCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the PerametricReLU activation function gradient test.
- * The function is implemented as PerametricReLU layer in the file
+ * Implementation of the PReLU activation function gradient test.
+ * The function is implemented as PReLU layer in the file
  * perametric_relu.hpp
  *
- * @param input Input data used for evaluating the PerametricReLU activation
+ * @param input Input data used for evaluating the PReLU activation
  *   function.
- * @param target Target data used to evaluate the PerametricReLU gradient.
+ * @param target Target data used to evaluate the PReLU gradient.
  */
-void CheckPerametricReLUGradientCorrect(const arma::colvec input,
+void CheckPReLUGradientCorrect(const arma::colvec input,
                                         const arma::colvec target)
 {
-  PerametricReLU<> prelu;
+  PReLU<> prelu;
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec gradient;
@@ -468,9 +468,9 @@ BOOST_AUTO_TEST_CASE(SoftplusFunctionTest)
 }
 
 /**
- * Basic test of the PerametricReLU function.
+ * Basic test of the PReLU function.
  */
-BOOST_AUTO_TEST_CASE(PerametricReLUFunctionTest)
+BOOST_AUTO_TEST_CASE(PReLUFunctionTest)
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
                                          1 -0.03 2 0");
@@ -479,9 +479,9 @@ BOOST_AUTO_TEST_CASE(PerametricReLUFunctionTest)
                                          1 0.03 1 1");
   const arma::colvec desiredGradient("-103.2");
 
-  CheckPerametricReLUActivationCorrect(activationData, desiredActivations);
-  CheckPerametricReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
-  CheckPerametricReLUGradientCorrect(activationData, desiredGradient);
+  CheckPReLUActivationCorrect(activationData, desiredActivations);
+  CheckPReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
+  CheckPReLUGradientCorrect(activationData, desiredGradient);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

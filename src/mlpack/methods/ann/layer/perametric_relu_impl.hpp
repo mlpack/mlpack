@@ -2,7 +2,7 @@
  * @file perametric_relu_impl.hpp
  * @author Prasanna Patil
  *
- * Definition of PerametricReLU layer first introduced in the,
+ * Definition of PReLU layer first introduced in the,
  * Kaiming He, Xiangyu Zhang, Shaoqing, Ren Jian Sun,
  * "Delving Deep into Rectifiers:
  * Surpassing Human-Level Performance on ImageNet Classification", 2014
@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_PERAMETRICRELU_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_PERAMETRICRELU_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_PReLU_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_PReLU_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "perametric_relu.hpp"
@@ -22,7 +22,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-PerametricReLU<InputDataType, OutputDataType>::PerametricReLU(
+PReLU<InputDataType, OutputDataType>::PReLU(
     const double user_alpha) : user_alpha(user_alpha)
 {
   alpha.set_size(1,1);
@@ -30,7 +30,7 @@ PerametricReLU<InputDataType, OutputDataType>::PerametricReLU(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void PerametricReLU<InputDataType, OutputDataType>::Reset()
+void PReLU<InputDataType, OutputDataType>::Reset()
 {
   //! Set value of alpha to the one given by user.
   alpha(0) = user_alpha;
@@ -38,7 +38,7 @@ void PerametricReLU<InputDataType, OutputDataType>::Reset()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void PerametricReLU<InputDataType, OutputDataType>::Forward(
+void PReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
@@ -46,7 +46,7 @@ void PerametricReLU<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void PerametricReLU<InputDataType, OutputDataType>::Backward(
+void PReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
@@ -56,7 +56,7 @@ void PerametricReLU<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void PerametricReLU<InputDataType, OutputDataType>::Gradient(
+void PReLU<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
@@ -70,7 +70,7 @@ void PerametricReLU<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PerametricReLU<InputDataType, OutputDataType>::Serialize(
+void PReLU<InputDataType, OutputDataType>::Serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

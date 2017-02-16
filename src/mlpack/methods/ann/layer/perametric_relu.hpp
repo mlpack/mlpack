@@ -2,7 +2,7 @@
  * @file perametric_relu.hpp
  * @author Prasanna Patil
  *
- * Definition of PerametricReLU layer first introduced in the,
+ * Definition of PReLU layer first introduced in the,
  * Kaiming He, Xiangyu Zhang, Shaoqing, Ren Jian Sun,
  * "Delving Deep into Rectifiers:
  * Surpassing Human-Level Performance on ImageNet Classification", 2014
@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_PERAMETRICRELU_HPP
-#define MLPACK_METHODS_ANN_LAYER_PERAMETRICRELU_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_PReLU_HPP
+#define MLPACK_METHODS_ANN_LAYER_PReLU_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -21,7 +21,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The PerametricReLU activation function, defined by (where alpha is trainable)
+ * The PReLU activation function, defined by (where alpha is trainable)
  *
  * @f{eqnarray*}{
  * f(x) &=& \max(x, alpha*x) \\
@@ -42,18 +42,18 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class PerametricReLU
+class PReLU
 {
  public:
   /**
-   * Create the PerametricReLU object using the specified parameters.
+   * Create the PReLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying tha parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03). This parameter
    * is trainable.
    *
    * @param alpha Non zero gradient
    */
-  PerametricReLU(const double user_alpha = 0.03);
+  PReLU(const double user_alpha = 0.03);
 
   /*
    * Reset the layer parameter.
@@ -151,7 +151,9 @@ class PerametricReLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = arma::max(x, alpha(0) * x);
+    y = x;
+    arma::uvec negative = arma::find(x < 0);
+    y(negative) = x(negative) * alpha(0);
   }
 
   /**
@@ -166,7 +168,7 @@ class PerametricReLU
   }
 
   /**
-   * Computes the first derivative of the PerametricReLU function.
+   * Computes the first derivative of the PReLU function.
    *
    * @param y Input activations.
    * @param x The resulting derivatives.
@@ -201,7 +203,7 @@ class PerametricReLU
   //! Leakyness Parameter given by user in the range 0 < alpha < 1.
   double user_alpha;
 
-}; // class PerametricReLU
+}; // class PReLU
 
 } // namespace ann
 } // namespace mlpack

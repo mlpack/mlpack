@@ -105,7 +105,7 @@ using LayerTypes = boost::variant<
     MeanSquaredError<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
-    PerametricReLU<arma::mat, arma::mat>*,
+    PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
