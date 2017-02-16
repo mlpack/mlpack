@@ -74,7 +74,8 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    // Generate 12 (2 * 6) noisy sines. A single sine contains rho points/features.
+    // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+    // points/features.
     arma::mat input, labelsTemp;
     GenerateNoisySines(input, labelsTemp, rho, 6);
 
