@@ -1,5 +1,5 @@
 /**
- * @file perametric_relu.hpp
+ * @file parametric_relu.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -132,7 +132,7 @@ class PReLU
 
  private:
   /**
-   * Computes the Perametric ReLU function.
+   * Computes the parametric ReLU function.
    *
    * @param x Input data.
    * @return f(x).
@@ -143,7 +143,7 @@ class PReLU
   }
 
   /**
-   * Computes the Perametric ReLU function using a dense matrix as input.
+   * Computes the parametric ReLU function using a dense matrix as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
@@ -157,7 +157,7 @@ class PReLU
   }
 
   /**
-   * Computes the first derivative of the Perametric ReLU function.
+   * Computes the first derivative of the parametric ReLU function.
    *
    * @param x Input data.
    * @return f'(x)
@@ -209,6 +209,6 @@ class PReLU
 } // namespace mlpack
 
 // Include implementation.
-#include "perametric_relu_impl.hpp"
+#include "parametric_relu_impl.hpp"
 
 #endif

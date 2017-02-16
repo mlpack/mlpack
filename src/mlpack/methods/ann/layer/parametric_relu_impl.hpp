@@ -1,5 +1,5 @@
 /**
- * @file perametric_relu_impl.hpp
+ * @file parametric_relu_impl.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -16,7 +16,7 @@
 #define MLPACK_METHODS_ANN_LAYER_PReLU_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "perametric_relu.hpp"
+#include "parametric_relu.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

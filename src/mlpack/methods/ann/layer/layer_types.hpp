@@ -30,7 +30,7 @@
 #include <mlpack/methods/ann/layer/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
-#include <mlpack/methods/ann/layer/perametric_relu.hpp>
+#include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 
