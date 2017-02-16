@@ -372,7 +372,9 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
       arma::mat output;
       module.Forward(std::move(input), std::move(output));
 
-      arma::vec nonzero = arma::nonzeros(output);
+      // Return a column vector containing the indices of elements of X that
+      // are non-zero, we just need the number of non-zero values.
+      arma::uvec nonzero = arma::find(output);
       nonzeroCount += nonzero.n_elem;
     }
     const double expected = input.n_elem * (1 - probability[trail]) *
