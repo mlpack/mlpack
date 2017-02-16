@@ -13,7 +13,7 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/layer/layer_visitor.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
