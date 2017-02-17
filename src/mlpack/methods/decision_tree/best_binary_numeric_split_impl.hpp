@@ -19,8 +19,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const size_t minimumLeafSize,
     arma::Col<typename VecType::elem_type>& classProbabilities,
-    BestBinaryNumericSplit::AuxiliarySplitInfo<typename VecType::elem_type>&
-        /* aux */)
+    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -85,8 +84,7 @@ template<typename ElemType>
 size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
     const arma::Col<ElemType>& classProbabilities,
-    const BestBinaryNumericSplit<FitnessFunction>::AuxiliarySplitInfo<ElemType>&
-        /* aux */)
+    const AuxiliarySplitInfo<ElemType>& /* aux */)
 {
   if (point <= classProbabilities[0])
     return 0; // Go left.
