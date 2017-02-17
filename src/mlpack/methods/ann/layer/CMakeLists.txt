@@ -51,6 +51,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  parametric_relu.hpp
+  parametric_relu_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp
