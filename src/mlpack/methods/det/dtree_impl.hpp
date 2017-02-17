@@ -297,6 +297,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
   obj.alphaUpper = 0.0;
   obj.left = NULL;
   obj.right = NULL;
+
+  return *this;
 }
 
 
