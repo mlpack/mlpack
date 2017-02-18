@@ -118,6 +118,73 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTrainProbTest)
   BOOST_REQUIRE_CLOSE(d.Probability("2"), 0.5, 1e-5);
 }
 
+/**
+ * Achieve multidimensional probability distribution
+ */
+BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProbTest)
+{
+  DiscreteDistribution d("10 10 10");
+
+  arma::mat obs("0 1 1 1 2 2 2 2 2 2;"
+                "0 0 0 1 1 1 2 2 2 2;"
+                "0 0 0 1 1 2 2 2 2 2;");
+ 
+  d.Train(obs);
+  BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.009, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0 1 2"), 0.015, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.054, 1e-5);
+}
+
+/**
+ * Make sure we initialize multidimensional probability distribution 
+ * correctly.
+ */
+BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionConstructorTest)
+{
+  DiscreteDistribution d("4 4 4 4");
+
+  BOOST_REQUIRE_EQUAL(d.Probabilities(0).size(), 4);
+  BOOST_REQUIRE_EQUAL(d.Dimensionality(), 4);
+  BOOST_REQUIRE_CLOSE(d.Probability("0 0 0 0"), 0.00390625, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0 1 2 3"), 0.00390625, 1e-5);
+}
+
+/**
+ * Achieve multidimensional probability distribution
+ */
+BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainTest)
+{
+  std::vector<arma::vec> pro{{0.1, 0.3, 0.6},
+                             {0.3, 0.3, 0.3},
+                             {0.25, 0.25, 0.5}};
+
+  DiscreteDistribution d(pro);
+
+  BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.0083333, 1e-3);
+  BOOST_REQUIRE_CLOSE(d.Probability("0 1 2"), 0.0166666, 1e-3);
+  BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.05, 1e-5);
+}
+
+/**
+ * Estimate multidimensional probability distribution from observations with probabilities.
+ */
+BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
+{
+  DiscreteDistribution d("5 5 5");
+
+  arma::mat obs("0 0 1 1 2;"
+                "0 1 1 2 2;"
+                "0 1 1 2 2");
+
+  arma::vec prob("0.25 0.25 0.25 0.25 1");
+
+  d.Train(obs, prob);
+
+  BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.00390625, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1 0 1"), 0.0078125, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.015625, 1e-5);
+}
+
 /*********************************/
 /** Gaussian Distribution Tests **/
 /*********************************/
