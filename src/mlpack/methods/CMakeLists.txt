@@ -21,6 +21,7 @@ set(DIRS
   approx_kfn
   amf
   ann
+  block_krylov_svd
   cf
   decision_stump
   det
