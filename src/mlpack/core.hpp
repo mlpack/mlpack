@@ -59,6 +59,7 @@
  * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
+ * - mlpack_decision_tree
  * - mlpack_det
  * - mlpack_emst
  * - mlpack_fastmks
