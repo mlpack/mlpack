@@ -170,15 +170,16 @@ bool Load(const std::string& filename,
 
     // This is taken from load_auto_detect() in diskio_meat.hpp
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
-    char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
+    //char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
+    std::string rawHeader(ARMA_MAT_TXT.length());
     std::streampos pos = stream.tellg();
 
-    stream.read(rawHeader, std::streamsize(ARMA_MAT_TXT.length()));
-    rawHeader[ARMA_MAT_TXT.length()] = '\0';
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_TXT.length()));
+    //rawHeader[ARMA_MAT_TXT.length()] = '\0';
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(rawHeader) == ARMA_MAT_TXT)
+    if (rawHeader == ARMA_MAT_TXT)
     {
       loadType = arma::arma_ascii;
       stringType = "Armadillo ASCII formatted data";
@@ -193,9 +194,7 @@ bool Load(const std::string& filename,
         stringType = "CSV data";
       else // Unknown .txt... we will throw an error.
         unknownType = true;
-    }
-
-    delete[] rawHeader;
+    }    
   }
   else if (extension == "bin")
   {
