@@ -174,20 +174,25 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
-extern template bool Load<int, IncrementPolicy>(std::string const&, arma::Mat<int>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);
+extern template bool Load<int, IncrementPolicy>(const std::string&, arma::Mat<int>&,
+                                                DatasetMapper<IncrementPolicy>&,
+                                                const bool, const bool);
 
-extern template bool Load<size_t, IncrementPolicy>(std::string const&, arma::Mat<size_t>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);
+extern template bool Load<size_t, IncrementPolicy>(const std::string&, arma::Mat<size_t>&,
+                                                   DatasetMapper<IncrementPolicy>&,
+                                                   const bool, const bool);
 
-extern template bool Load<float, IncrementPolicy>(std::string const&, arma::Mat<float>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);
+extern template bool Load<float, IncrementPolicy>(const std::string&, arma::Mat<float>&,
+                                                  DatasetMapper<IncrementPolicy>&,
+                                                  const bool, const bool);
 
-extern template bool Load<double, IncrementPolicy>(std::string const&, arma::Mat<double>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);
+extern template bool Load<double, IncrementPolicy>(const std::string&, arma::Mat<double>&,
+                                                   DatasetMapper<IncrementPolicy>&,
+                                                   const bool, const bool);
 
-extern template bool Load<unsigned long long, IncrementPolicy>(std::string const&, arma::Mat<unsigned long long>&, DatasetMapper<IncrementPolicy>&,
-const bool fatal, const bool transpose);
+extern template bool Load<unsigned long long, IncrementPolicy>(const std::string&, arma::Mat<unsigned long long>&,
+                                                               DatasetMapper<IncrementPolicy>&,
+                                                               const bool, const bool);
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
