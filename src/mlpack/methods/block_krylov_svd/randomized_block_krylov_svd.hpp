@@ -39,8 +39,6 @@ namespace svd {
  * }
  * @endcode
  *
- * @code
- *
  * An example of how to use the interface is shown below:
  *
  * @code
