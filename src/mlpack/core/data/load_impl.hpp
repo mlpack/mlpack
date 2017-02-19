@@ -193,11 +193,10 @@ bool Load(const std::string& filename,
     // This is taken from load_auto_detect() in diskio_meat.hpp
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
     //char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
-    std::string rawHeader(ARMA_MAT_TXT.length());
+    std::string rawHeader(ARMA_MAT_TXT.length(), '\0');
     std::streampos pos = stream.tellg();
 
     stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_TXT.length()));
-    //rawHeader[ARMA_MAT_TXT.length()] = '\0';
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
@@ -222,17 +221,16 @@ bool Load(const std::string& filename,
   {
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
-    const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
-    char *rawHeader = new char[ARMA_MAT_BIN.length() + 1];
+    const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";    
+    std::string rawHeader(ARMA_MAT_BIN.length(), '\0');
 
     std::streampos pos = stream.tellg();
 
-    stream.read(rawHeader, std::streamsize(ARMA_MAT_BIN.length()));
-    rawHeader[ARMA_MAT_BIN.length()] = '\0';
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_BIN.length()));
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(rawHeader) == ARMA_MAT_BIN)
+    if (rawHeader == ARMA_MAT_BIN)
     {
       stringType = "Armadillo binary formatted data";
       loadType = arma::arma_binary;
@@ -241,9 +239,7 @@ bool Load(const std::string& filename,
     {
       stringType = "raw binary formatted data";
       loadType = arma::raw_binary;
-    }
-
-    delete[] rawHeader;
+    }    
   }
   else if (extension == "pgm")
   {
