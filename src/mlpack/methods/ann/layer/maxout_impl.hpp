@@ -53,20 +53,13 @@ template<typename eT>
 void Maxout<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  if (hiddenParameter.n_elem == 0) {
-    hiddenParameter = arma::zeros<arma::mat>(outSize * hiddenSize,
-        input.n_cols);
-  }
-
-  if (output.n_elem == 0) {
+  if (output.n_elem == 0)
     output = arma::zeros<arma::mat>(outSize, input.n_cols);
-  }
 
   hiddenParameter = (weight * input) + bias;
 
-  for (int i = 0, j = 0; j < outSize; i+=hiddenSize, j++) {
+  for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
     output.row(j) = arma::max(hiddenParameter.rows(i, i + hiddenSize - 1), 0);
-  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -78,10 +71,12 @@ void Maxout<InputDataType, OutputDataType>::Backward(
       hiddenParameter.n_cols);
   arma::mat hiddenParameterSubset;
 
-  for (int i = 0, j = 0; j < outSize; i+=hiddenSize, j++) {
+  for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
+  {
     hiddenParameterSubset = hiddenParameter.rows(i, i + hiddenSize - 1);
     
-    for (int k = 0; k < hiddenParameterSubset.n_cols; k++) {
+    for (int k = 0; k < hiddenParameterSubset.n_cols; k++)
+    {
       int ind = arma::as_scalar(arma::find(arma::max(
           hiddenParameterSubset.col(k)) == hiddenParameterSubset.col(k)));
       hiddenGradient(i + ind, k) = gy(j, k);
@@ -102,10 +97,12 @@ void Maxout<InputDataType, OutputDataType>::Gradient(
       hiddenParameter.n_cols);
   arma::mat hiddenParameterSubset;
 
-  for (int i = 0, j = 0; j < outSize; i+=hiddenSize, j++) {
+  for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
+  {
     hiddenParameterSubset = hiddenParameter.rows(i, i + hiddenSize - 1);
     
-    for (int k = 0; k < hiddenParameterSubset.n_cols; k++) {
+    for (int k = 0; k < hiddenParameterSubset.n_cols; k++)
+    {
       int ind = arma::as_scalar(arma::find(arma::max(
           hiddenParameterSubset.col(k)) == hiddenParameterSubset.col(k)));
       hiddenGradient(i + ind, k) = error(j, k);

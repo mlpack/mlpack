@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(MaxoutNetworkTest)
         arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
   }
 
-  // Maxout neural net with logistic activation function.
+  // Maxout neural net with maxout hidden layer.
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   BuildMaxoutNetwork<>
@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(MaxoutNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
-  // Maxout neural net with logistic activation function.
+  // Maxout neural net with maxout hidden layer.
   BuildMaxoutNetwork<>
       (dataset, labels, dataset, labels, 2, 5, 10, 50, 0.2);
 }
