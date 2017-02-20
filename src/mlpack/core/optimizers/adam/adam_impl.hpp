@@ -119,6 +119,11 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
     const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
 
+    /**
+     * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
+     * following expression is an approximation of the following actual term;
+     * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
+     */
     iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
                 m / (arma::sqrt(v) + eps);
 
