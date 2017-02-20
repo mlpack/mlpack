@@ -3,18 +3,7 @@
  * @author Vivek Pal
  *
  * Implementation of the ELU activation function as descibed by Djork-Arne
- * Clevert, Thomas Unterthiner & Sepp Hochreiter.
- *
- * For more information, read the following paper:
- * 
- * @code
- * @conference{ICLR2016,
- *   author = {Djork-Arne Clevert, Thomas Unterthiner & Sepp Hochreiter},
- *   title = {Fast and Accurate Deep Network Learning by Exponential Linear
- *   Units (ELUs},
- *   year = {2015}
- * }
- * @endcode
+ * Clevert, Thomas Unterthiner and Sepp Hochreiter.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

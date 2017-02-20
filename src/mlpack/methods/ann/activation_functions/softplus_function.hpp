@@ -8,13 +8,13 @@
  * For more information, please see the following paper:
  *
  * @code
- * @INPROCEEDINGS{secondorder:2001:nips,
- *   author = {Dugas, Charles and Bengio, Yoshua and Belisle, Francois and
- *   Nadeau, Claude and Garcia, Rene},
- *   title = {Incorporating Second-Order Functional Knowledge for Better Option
- *   Pricing},
+ * @inproceedings{Dugas2001,
+ *   author    = {Dugas, Charles and Bengio, Yoshua and Belisle, Francois and
+ *                Nadeau, Claude and Garcia, Rene},
+ *   title     = {Incorporating Second-Order Functional Knowledge for Better
+ *                Option Pricing},
  *   booktitle = {Advances in Neural Information Processing Systems},
- *   year = {2001}
+ *   year      = {2001}
  * }
  * @endcode
  *

@@ -3,16 +3,18 @@
  * @author Vivek Pal
  *
  * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
- * Thomas Unterthiner & Sepp Hochreiter.
+ * Thomas Unterthiner and Sepp Hochreiter.
  *
  * For more information, read the following paper:
- * 
+ *
  * @code
- * @conference{ICLR2016,
- *   author = {Djork-Arne Clevert, Thomas Unterthiner & Sepp Hochreiter},
- *   title = {Fast and Accurate Deep Network Learning by Exponential Linear
- *   Units (ELUs},
- *   year = {2015}
+ * @article{Clevert2015,
+ *   author  = {Djork{-}Arn{\'{e}} Clevert and Thomas Unterthiner and
+ *              Sepp Hochreiter},
+ *   title   = {Fast and Accurate Deep Network Learning by Exponential Linear
+ *              Units (ELUs)},
+ *   journal = {CoRR},
+ *   year    = {2015}
  * }
  * @endcode
  *
@@ -62,9 +64,9 @@ class ELU
   /**
    * Create the ELU object using the specified parameters. The non zero
    * gradient for negative inputs can be adjusted by specifying the ELU
-   * hyperparameter alpha (alpha > 0). Default alpha = 1.0
+   * hyperparameter alpha (alpha > 0).
    *
-   * @param alpha Non zero gradient
+   * @param alpha Scale parameter for the negative factor (Default alpha = 1.0).
    */
   ELU(const double alpha = 1.0);
 
