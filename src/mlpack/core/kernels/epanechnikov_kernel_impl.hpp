@@ -14,6 +14,7 @@
 
 // In case it hasn't already been included.
 #include "epanechnikov_kernel.hpp"
+#include <mlpack/core/util/log.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 

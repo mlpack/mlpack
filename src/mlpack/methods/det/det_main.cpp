@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "dt_utils.hpp"
 
@@ -42,10 +43,10 @@ PARAM_MATRIX_IN("training", "The data set on which to build a density "
     "estimation tree.", "t");
 
 // Input or output model.
-PARAM_MODEL_IN(DTree, "input_model", "Trained density estimation tree to load.",
-    "m");
-PARAM_MODEL_OUT(DTree, "output_model", "Output to save trained density "
-    "estimation tree to.", "M");
+PARAM_MODEL_IN(DTree<arma::mat>, "input_model", "Trained density estimation "
+    "tree to load.", "m");
+PARAM_MODEL_OUT(DTree<arma::mat>, "output_model", "Output to save trained "
+    "density estimation tree to.", "M");
 
 // Output data files.
 PARAM_MATRIX_IN("test", "A set of test points to estimate the density of.",
@@ -111,7 +112,7 @@ void mlpackMain()
         << "(-T) is not specified." << endl;
 
   // Are we training a DET or loading from file?
-  DTree* tree;
+  DTree<arma::mat, int>* tree;
   if (CLI::HasParam("training"))
   {
     arma::mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
@@ -135,8 +136,8 @@ void mlpackMain()
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
-    tree = Trainer(trainingData, folds, regularization, maxLeafSize,
-        minLeafSize, "");
+    tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
+        maxLeafSize, minLeafSize, "");
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
@@ -155,7 +156,7 @@ void mlpackMain()
   }
   else
   {
-    tree = &CLI::GetParam<DTree>("input_model");
+    tree = &CLI::GetParam<DTree<arma::mat>>("input_model");
   }
 
   // Compute the density at the provided test points and output the density in
@@ -185,7 +186,7 @@ void mlpackMain()
 
   // Save the model, if desired.
   if (CLI::HasParam("output_model"))
-    CLI::GetParam<DTree>("output_model") = std::move(*tree);
+    CLI::GetParam<DTree<arma::mat>>("output_model") = std::move(*tree);
 
   // Clean up memory, if we need to.
   if (!CLI::HasParam("input_model") && !CLI::HasParam("output_model"))

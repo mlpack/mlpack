@@ -433,7 +433,7 @@ template<typename Archive>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BinarySpaceTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     BinarySpaceTree() // Create an empty BinarySpaceTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
@@ -509,7 +509,7 @@ template<typename VecType>
 size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
     SplitType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf() || !left || !right)
     return 0;
@@ -533,7 +533,7 @@ template<typename VecType>
 size_t BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
     SplitType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf() || !left || !right)
     return 0;

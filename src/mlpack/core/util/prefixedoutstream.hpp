@@ -19,10 +19,6 @@
 #include <streambuf>
 #include <stdexcept>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-
 #include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {

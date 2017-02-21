@@ -9,7 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
@@ -197,7 +199,7 @@ void AssembleFactorizerType(const std::string& algorithm,
           FactorizerType;
       PerformAction(FactorizerType(mit), dataset, rank);
     }
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
     {
       typedef AMF<MaxIterationTermination, RandomInitialization,
           SVDBatchLearning> FactorizerType;
@@ -229,7 +231,7 @@ void AssembleFactorizerType(const std::string& algorithm,
     SimpleResidueTermination srt(minResidue, maxIterations);
     if (algorithm == "NMF")
       PerformAction(NMFALSFactorizer(srt), dataset, rank);
-    else if (algorithm == "SVDBatch")
+    else if (algorithm == "BatchSVD")
       PerformAction(SVDBatchFactorizer(srt), dataset, rank);
     else if (algorithm == "SVDIncompleteIncremental")
       PerformAction(SparseSVDIncompleteIncrementalFactorizer(srt), dataset,
@@ -290,12 +292,12 @@ void mlpackMain()
 
     // Issue an error if an invalid factorizer is used.
     if (algo != "NMF" &&
-        algo != "SVDBatch" &&
+        algo != "BatchSVD" &&
         algo != "SVDIncompleteIncremental" &&
         algo != "SVDCompleteIncremental" &&
         algo != "RegSVD")
       Log::Fatal << "Invalid decomposition algorithm.  Choices are 'NMF', "
-          << "'SVDBatch', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
+          << "'BatchSVD', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
           << " and 'RegSVD'." << endl;
 
     // Issue a warning if the user provided a minimum residue but it will be

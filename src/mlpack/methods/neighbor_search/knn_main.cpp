@@ -10,7 +10,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -305,7 +307,7 @@ void mlpackMain()
     knn = std::move(CLI::GetParam<KNNModel>("input_model"));
 
     // Adjust search mode.
-    knn.SetSearchMode(searchMode);
+    knn.SearchMode() = searchMode;
     knn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the

@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
 #define MLPACK_METHODS_ANN_CONVOLUTION_RULES_SVD_CONVOLUTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "border_modes.hpp"
 #include "fft_convolution.hpp"
 #include "naive_convolution.hpp"
@@ -49,6 +49,8 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -113,6 +115,8 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
@@ -142,6 +146,8 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -170,6 +176,8 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,

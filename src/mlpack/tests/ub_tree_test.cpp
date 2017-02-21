@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
 
   // Nearest neighbor search with the UB tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset);
+      UBTree> knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

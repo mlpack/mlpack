@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_PROJECTION_VECTOR_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "../bounds.hpp"
 namespace mlpack {
 namespace tree {
@@ -43,7 +43,7 @@ class AxisParallelProjVector
    */
   template<typename VecType>
   double Project(const VecType& point,
-                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return point[dim];
   };
@@ -117,7 +117,7 @@ class ProjVector
    */
   template<typename VecType>
   double Project(const VecType& point,
-                 typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return arma::dot(point, projVect);
   };

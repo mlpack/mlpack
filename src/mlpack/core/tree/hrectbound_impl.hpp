@@ -163,7 +163,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -281,7 +281,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType sum = 0;
 
@@ -430,7 +430,7 @@ template<typename VecType>
 inline math::RangeType<ElemType>
 HRectBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType loSum = 0;
   ElemType hiSum = 0;

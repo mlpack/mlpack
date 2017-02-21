@@ -52,8 +52,8 @@ bool GetInitialAssignmentsOrCentroids(
     const size_t clusters,
     arma::Row<size_t>& assignments,
     arma::mat& /* centroids */,
-    const typename boost::disable_if_c<
-        GivesCentroids<InitialPartitionPolicy>::value == true>::type* = 0)
+    const typename std::enable_if_t<
+        !GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, assignments);
 
@@ -70,8 +70,8 @@ bool GetInitialAssignmentsOrCentroids(
     const size_t clusters,
     arma::Row<size_t>& /* assignments */,
     arma::mat& centroids,
-    const typename boost::enable_if_c<
-        GivesCentroids<InitialPartitionPolicy>::value == true>::type* = 0)
+    const typename std::enable_if_t<
+        GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, centroids);
 

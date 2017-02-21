@@ -2,7 +2,7 @@
  * @file serialization_shim.hpp
  * @author Ryan Curtin
  *
- * This file contains the necessary shims to make boost.serialization work with
+ * This file contains the necessary shims to make boost::serialization work with
  * classes that have a Serialize() method (instead of a serialize() method).
  *
  * This allows our mlpack naming conventions to remain intact, and only costs a
@@ -19,6 +19,7 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <type_traits>
 
 namespace mlpack {
 namespace data {
@@ -50,8 +51,8 @@ struct HasSerialize
   template<typename U, typename V, typename W> struct check;
   template<typename U> static yes& chk( // This matches classes.
       check<U,
-            typename boost::enable_if<boost::is_class<U>>::type*,
-            typename boost::enable_if<HasSerializeFunction<U>>::type*>*);
+            typename std::enable_if_t<std::is_class<U>::value>*,
+            typename std::enable_if_t<HasSerializeFunction<U>::value>*>*);
   template<typename  > static no&  chk(...); // This matches non-classes.
 
   static const bool value = (sizeof(chk<T>(0)) == sizeof(yes));
@@ -71,7 +72,7 @@ template<typename T> struct PointerShim;
  * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
  * Serialize() function (or contain a type that has a Serialize() function)
  * instead of a serialize() function.  The template type should be automatically
- * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * deduced, and the two std::enable_if_t<> parameters are automatically deduced
  * too.  So usage looks like
  *
  * @code
@@ -93,7 +94,7 @@ template<typename T>
 inline FirstShim<T> CreateNVP(
     T& t,
     const std::string& name,
-    typename boost::enable_if<HasSerialize<T>>::type* = 0)
+    typename std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return FirstShim<T>(t, name);
 }
@@ -103,7 +104,7 @@ inline FirstShim<T> CreateNVP(
  * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
  * Serialize() function (or contain a type that has a Serialize() function)
  * instead of a serialize() function.  The template type should be automatically
- * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * deduced, and the two std::enable_if<> parameters are automatically deduced
  * too.  So usage looks like
  *
  * @code
@@ -127,8 +128,8 @@ const // Imitate the boost::serialization make_nvp() function.
 boost::serialization::nvp<T> CreateNVP(
     T& t,
     const std::string& name,
-    typename boost::disable_if<HasSerialize<T>>::type* = 0,
-    typename boost::disable_if<boost::is_pointer<T>>::type* = 0)
+    typename std::enable_if_t<!HasSerialize<T>::value>* = 0,
+    typename std::enable_if_t<!std::is_pointer<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(), t);
 }
@@ -138,7 +139,7 @@ boost::serialization::nvp<T> CreateNVP(
  * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
  * Serialize() function (or contain a type that has a Serialize() function)
  * instead of a serialize() function.  The template type should be automatically
- * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * deduced, and the two std::enable_if_t<> parameters are automatically deduced
  * too.  So usage looks like
  *
  * @code
@@ -162,7 +163,7 @@ const
 boost::serialization::nvp<PointerShim<T>*> CreateNVP(
     T*& t,
     const std::string& name,
-    typename boost::enable_if<HasSerialize<T>>::type* = 0)
+    typename std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(),
       reinterpret_cast<PointerShim<T>*&>(t));
@@ -173,7 +174,7 @@ boost::serialization::nvp<PointerShim<T>*> CreateNVP(
  * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
  * Serialize() function (or contain a type that has a Serialize() function)
  * instead of a serialize() function.  The template type should be automatically
- * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * deduced, and the two std::enable_if_t<> parameters are automatically deduced
  * too.  So usage looks like
  *
  * @code
@@ -197,7 +198,7 @@ const
 boost::serialization::nvp<T*> CreateNVP(
     T*& t,
     const std::string& name,
-    typename boost::disable_if<HasSerialize<T>>::type* = 0)
+    typename std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(), t);
 }
@@ -214,7 +215,7 @@ inline FirstArrayShim<T> CreateArrayNVP(
     T* t,
     const size_t len,
     const std::string& name,
-    typename boost::enable_if<HasSerialize<T>>::type* = 0)
+    typename std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return FirstArrayShim<T>(t, len, name);
 }
@@ -231,7 +232,7 @@ inline FirstNormalArrayShim<T> CreateArrayNVP(
     T* t,
     const size_t len,
     const std::string& name,
-    typename boost::disable_if<HasSerialize<T>>::type* = 0)
+    typename std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   return FirstNormalArrayShim<T>(t, len, name);
 }

@@ -134,8 +134,8 @@ class DualTreeKMeans
 template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
-               const typename boost::disable_if_c<
-                   tree::TreeTraits<TreeType>::BinaryTree>::type* junk = 0);
+               const typename std::enable_if_t<
+                   !tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for hiding children.  This is called when the tree is a
 //! binary tree, and does nothing, because we don't hide binary children in this
@@ -143,20 +143,20 @@ void HideChild(TreeType& node,
 template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
-               const typename boost::enable_if_c<
-                   tree::TreeTraits<TreeType>::BinaryTree>::type* junk = 0);
+               const typename std::enable_if_t<
+                   tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for restoring children to a non-binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename boost::disable_if_c<tree::TreeTraits<
-                         TreeType>::BinaryTree>::type* junk = 0);
+                     const typename std::enable_if_t<!tree::TreeTraits<
+                         TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for restoring children to a binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename boost::enable_if_c<tree::TreeTraits<
-                         TreeType>::BinaryTree>::type* junk = 0);
+                     const typename std::enable_if_t<tree::TreeTraits<
+                         TreeType>::BinaryTree>* junk = 0);
 
 //! A template typedef for the DualTreeKMeans algorithm with the default tree
 //! type (a kd-tree).

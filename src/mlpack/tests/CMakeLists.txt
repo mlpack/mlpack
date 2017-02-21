@@ -6,6 +6,7 @@ add_executable(mlpack_test
   ada_delta_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  ann_layer_test.cpp
   arma_extend_test.cpp
   armadillo_svd_test.cpp
   aug_lagrangian_test.cpp
@@ -16,6 +17,7 @@ add_executable(mlpack_test
   convolutional_network_test.cpp
   cosine_tree_test.cpp
   decision_stump_test.cpp
+  decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
@@ -56,7 +58,6 @@ add_executable(mlpack_test
   mlpack_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  network_util_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
@@ -95,6 +96,8 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   ub_tree_test.cpp
   vantage_point_tree_test.cpp
+  prefixedoutstream_test.cpp
+  timer_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

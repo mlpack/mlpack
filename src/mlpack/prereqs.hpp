@@ -11,6 +11,10 @@
 #ifndef MLPACK_PREREQS_HPP
 #define MLPACK_PREREQS_HPP
 
+// Defining _USE_MATH_DEFINES should set M_PI.
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
 #pragma message "Armadillo was included before mlpack; this can sometimes cause\
@@ -31,13 +35,6 @@
 #include <tuple>
 #include <queue>
 
-// Defining _USE_MATH_DEFINES should set M_PI.
-#define _USE_MATH_DEFINES
-#include <cmath>
-
-// For tgamma().
-#include <boost/math/special_functions/gamma.hpp>
-
 // But if it's not defined, we'll do it.
 #ifndef M_PI
   #define M_PI 3.141592653589793238462643383279
@@ -53,6 +50,24 @@
   #define force_inline __forceinline
 #endif
 
+// Backport this functionality from C++14, if it doesn't exist.
+#if __cplusplus <= 201103L
+#if !defined(_MSC_VER) || _MSC_VER <= 1800
+namespace std {
+
+template<bool B, class T = void>
+using enable_if_t = typename enable_if<B, T>::type;
+
+}
+#endif
+#endif
+
+// Increase the number of template arguments for the boost list class.
+#undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#undef BOOST_MPL_LIMIT_LIST_SIZE
+#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#define BOOST_MPL_LIMIT_LIST_SIZE 40
+
 // We'll need the necessary boost::serialization features, as well as what we
 // use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
 // defined, but we still need to define it (as nothing) so that the mlpack
@@ -62,7 +77,7 @@
 #include <boost/serialization/map.hpp>
 // boost_backport.hpp handles the version and backporting of serialization (and
 // other) features.
-#include "mlpack/core/boost_backport/boost_backport.hpp"
+#include "mlpack/core/boost_backport/boost_backport_serialization.hpp"
 // Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
 // any issue by setting BOOST_PFTO to nothing.
 #ifndef BOOST_PFTO
@@ -73,10 +88,15 @@
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
 
 // Ensure that the user isn't doing something stupid with their Armadillo
 // defines.
 #include <mlpack/core/util/arma_config_check.hpp>
+
+// All code should have access to logging
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because

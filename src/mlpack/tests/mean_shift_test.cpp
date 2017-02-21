@@ -120,8 +120,6 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
   BOOST_REQUIRE_EQUAL(centroids.n_cols, 4);
   BOOST_REQUIRE_EQUAL(centroids.n_rows, 3);
 
-  std::cout << centroids.t();
-
   // Check that each centroid is close to only one mean.
   arma::vec centroidDistances(4);
   arma::uvec minIndices(4);

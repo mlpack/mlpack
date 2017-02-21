@@ -43,7 +43,7 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
@@ -293,10 +293,6 @@ class LSHSearch
     Train(*referenceSet, numProj, numTables, hashWidth, secondHashSize,
         bucketSize, projTables);
   }
-
-  //! Get a single projection matrix.  This function is deprecated and will be
-  //! removed in mlpack 2.1.0!
-  const arma::mat& Projection(size_t i) { return projections.slice(i); }
 
  private:
   /**

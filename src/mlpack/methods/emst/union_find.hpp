@@ -15,7 +15,7 @@
 #ifndef MLPACK_METHODS_EMST_UNION_FIND_HPP
 #define MLPACK_METHODS_EMST_UNION_FIND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace emst {

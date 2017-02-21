@@ -17,7 +17,7 @@
 #ifndef MLPACK_METHODS_MVU_MVU_HPP
 #define MLPACK_METHODS_MVU_MVU_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace mvu {

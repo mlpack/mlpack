@@ -15,6 +15,7 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
+// Required forward declarations.
 namespace mlpack {
 namespace data {
 

@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -39,9 +40,9 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
     "provided.  The tolerance of the Baum-Welch algorithm can be set with the "
-    "--tolerance option.  In general it is a good idea to use random "
-    "initialization in this case, which can be specified with the "
-    "--random_initialization (-r) option."
+    "--tolerance option.  By default, the transition matrix is randomly "
+    "initialized and the emission distributions are initialized to fit the "
+    "extent of the data."
     "\n\n"
     "Optionally, a pre-created HMM model can be used as a guess for the "
     "transition matrix and emission probabilities; this is specifiable with "
@@ -65,8 +66,6 @@ PARAM_MODEL_OUT(HMMModel, "output_model", "Output for trained HMM.", "M");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
     1e-5);
-PARAM_FLAG("random_initialization", "Initialize emissions and transition "
-    "matrices with a uniform random distribution.", "r");
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
@@ -81,17 +80,9 @@ struct Init
     // Create the initialized-to-zero model.
     Create(hmm, *trainSeq, states, tolerance);
 
-    // Initialize the transition matrix and emission distributions, if needed.
-    if (CLI::HasParam("random_initialization"))
-    {
-      hmm.Transition().randu();
-      for (size_t c = 0; c < hmm.Transition().n_cols; ++c)
-        hmm.Transition().col(c) /= arma::accu(hmm.Transition().col(c));
-
-      // Initializing the emission distribution depends on the distribution.
-      // Therefore we have to use the helper functions.
-      RandomInitialize(hmm.Emission());
-    }
+    // Initializing the emission distribution depends on the distribution.
+    // Therefore we have to use the helper functions.
+    RandomInitialize(hmm.Emission());
   }
 
   //! Helper function to create discrete HMM.

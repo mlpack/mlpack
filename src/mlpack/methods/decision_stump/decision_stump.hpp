@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
 #define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace decision_stump {
@@ -136,8 +136,8 @@ class DecisionStump
    *     candidate for the splitting dimension.
    * @tparam UseWeights Whether we need to run a weighted Decision Stump.
    */
-  template<bool UseWeights>
-  double SetupSplitDimension(const arma::rowvec& dimension,
+  template<bool UseWeights, typename VecType>
+  double SetupSplitDimension(const VecType& dimension,
                              const arma::Row<size_t>& labels,
                              const arma::rowvec& weightD);
 

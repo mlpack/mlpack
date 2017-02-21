@@ -64,8 +64,8 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 # necessary with clang.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
-    # detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
-    # extract V from '10.V.x'.)
+    # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
+    # extract V from '10.V.x'.
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
@@ -457,6 +457,7 @@ if (UNIX)
           mlpack_krann
           mlpack_cf
           mlpack_decision_stump
+          mlpack_decision_tree
           mlpack_det
           mlpack_emst
           mlpack_fastmks

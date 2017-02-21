@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
 #define MLPACK_METHODS_GMM_NO_CONSTRAINT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace gmm {

@@ -576,7 +576,7 @@ template<
 template<typename Archive>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
@@ -662,7 +662,7 @@ template<typename MetricType,
 template<typename VecType>
 size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetNearestChild(const VecType& point,
-                    typename boost::enable_if<IsVector<VecType> >::type*)
+                    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;
@@ -692,7 +692,7 @@ template<typename MetricType,
 template<typename VecType>
 size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetFurthestChild(const VecType& point,
-                     typename boost::enable_if<IsVector<VecType> >::type*)
+                     typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf())
     return 0;

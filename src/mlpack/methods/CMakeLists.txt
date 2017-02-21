@@ -27,6 +27,7 @@ set(DIRS
   ann
   cf
   decision_stump
+  decision_tree
   det
   emst
   fastmks

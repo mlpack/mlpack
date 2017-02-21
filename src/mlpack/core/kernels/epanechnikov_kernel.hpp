@@ -12,7 +12,8 @@
 #ifndef MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
 #define MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
 namespace kernel {

@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 #define MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "initialization_methods/zero_init.hpp"
 #include "initialization_methods/random_init.hpp"

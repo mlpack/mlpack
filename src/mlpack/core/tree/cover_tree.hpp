@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_TREE_COVER_TREE_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "cover_tree/first_point_is_root.hpp"
 #include "cover_tree/cover_tree.hpp"
 #include "cover_tree/single_tree_traverser.hpp"

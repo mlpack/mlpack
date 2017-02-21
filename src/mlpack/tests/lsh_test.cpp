@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
  * the bar very low (recall >= 50%) to make sure that a test fail means bad
  * implementation.
  * Second, a very cheap LSH search, with parameters that should cause recall
- * to be very low. Set the threshhold very high (recall <= 25%) to make sure
+ * to be very low. Set the threshold very high (recall <= 25%) to make sure
  * that a test fail means bad implementation.
  */
 BOOST_AUTO_TEST_CASE(RecallTest)

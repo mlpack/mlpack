@@ -61,15 +61,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        kfn.Naive() = false;
-        kfn.SingleMode() = false;
+        kfn.SearchMode() = DUAL_TREE_MODE;
         break;
       case 1: // Use the single-tree method.
-        kfn.Naive() = false;
-        kfn.SingleMode() = true;
+        kfn.SearchMode() = SINGLE_TREE_MODE;
         break;
       case 2: // Use the naive method.
-        kfn.Naive() = true;
+        kfn.SearchMode() = NAIVE_MODE;
         break;
     }
 
