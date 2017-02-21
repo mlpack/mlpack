@@ -1,3 +1,13 @@
+# If we are not supposed to make Python bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_PYTHON_BINDINGS)
+  macro (add_python_binding name)
+    # Do nothing.
+  endmacro ()
+
+  return()
+endif ()
+
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
   generate_pyx.hpp
