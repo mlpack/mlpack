@@ -17,3 +17,4 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(softmax_regression)
+add_python_binding(softmax_regression)

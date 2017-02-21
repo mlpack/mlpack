@@ -1,6 +1,6 @@
-/*
- * @file: adaboost_main.cpp
- * @author: Udit Saxena
+/**
+ * @file adaboost_main.cpp
+ * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
  *
