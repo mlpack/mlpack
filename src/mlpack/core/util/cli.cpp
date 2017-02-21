@@ -184,3 +184,42 @@ void CLI::SetPassed(const std::string& name)
   // Set passed to true.
   GetSingleton().parameters[name].wasPassed = true;
 }
+
+// Store settings.
+void CLI::StoreSettings(const std::string& name)
+{
+  // Take all of the parameters and put them in the map.  Clear anything old
+  // first.
+  std::get<0>(GetSingleton().storageMap[name]) = GetSingleton().parameters;
+  std::get<1>(GetSingleton().storageMap[name]) = GetSingleton().aliases;
+  std::get<2>(GetSingleton().storageMap[name]) = GetSingleton().functionMap;
+
+  ClearSettings();
+}
+
+// Restore settings.
+void CLI::RestoreSettings(const std::string& name, const bool fatal)
+{
+  if (GetSingleton().storageMap.count(name) == 0 && fatal)
+    throw std::invalid_argument("no settings stored under the name '" + name
+        + "'");
+  else if (GetSingleton().storageMap.count(name) == 0 && !fatal)
+  {
+    // Nothing to do, just clear what's there.
+    ClearSettings();
+  }
+  else
+  {
+    GetSingleton().parameters = std::get<0>(GetSingleton().storageMap[name]);
+    GetSingleton().aliases = std::get<1>(GetSingleton().storageMap[name]);
+    GetSingleton().functionMap = std::get<2>(GetSingleton().storageMap[name]);
+  }
+}
+
+// Clear settings.
+void CLI::ClearSettings()
+{
+  GetSingleton().parameters.clear();
+  GetSingleton().aliases.clear();
+  GetSingleton().functionMap.clear();
+}

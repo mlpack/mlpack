@@ -263,6 +263,32 @@ class CLI
    */
   static void SetPassed(const std::string& name);
 
+  /**
+   * Take all parameters and function mappings and store them, under the given
+   * name.  This can later be restored with RestoreSettings().  If settings have
+   * already been saved under the given name, they will be overwritten.  This
+   * also clears the current parameters and function map.
+   *
+   * @param name Name of settings to save.
+   */
+  static void StoreSettings(const std::string& name);
+
+  /**
+   * Restore all of the parameters and function mappings of the given name, if
+   * they exist.  A std::invalid_argument exception will be thrown if fatal is
+   * true and no settings with the given name have been stored (with
+   * StoreSettings()).
+   *
+   * @param name Name of settings to restore.
+   * @param fatal Whether to throw an exception on an unknown name.
+   */
+  static void RestoreSettings(const std::string& name, const bool fatal = true);
+
+  /**
+   * Clear all of the settings, removing all parameters and function mappings.
+   */
+  static void ClearSettings();
+
  private:
   //! Convenience map from alias values to names.
   std::map<char, std::string> aliases;
@@ -272,8 +298,14 @@ class CLI
  public:
   //! Map for functions and types.
   //! Use as functionMap["typename"]["functionName"].
-  std::map<std::string, std::map<std::string,
-      void (*)(const util::ParamData&, const void*, void*)>> functionMap;
+  typedef std::map<std::string, std::map<std::string,
+      void (*)(const util::ParamData&, const void*, void*)>> FunctionMapType;
+  FunctionMapType functionMap;
+
+ private:
+  //! Storage map for parameters.
+  std::map<std::string, std::tuple<std::map<std::string, util::ParamData>,
+      std::map<char, std::string>, FunctionMapType>> storageMap;
 
  private:
   //! The singleton itself.
