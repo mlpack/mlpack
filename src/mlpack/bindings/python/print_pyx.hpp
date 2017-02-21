@@ -24,8 +24,7 @@ namespace python {
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const std::vector<util::ParamData>& parameters,
-              const util::ProgramDoc& programInfo,
+void PrintPYX(const util::ProgramDoc& programInfo,
               const std::string& mainFilename,
               const std::string& functionName);
 

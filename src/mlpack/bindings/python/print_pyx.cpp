@@ -6,8 +6,9 @@
  * for the function.
  */
 #include "print_pyx.hpp"
-#include "print_functions.hpp"
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include <set>
 
 using namespace mlpack::util;
 using namespace std;
@@ -26,34 +27,43 @@ namespace python {
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const vector<ParamData>& parameters,
-              const ProgramDoc& programInfo,
+void PrintPYX(const ProgramDoc& programInfo,
               const string& mainFilename,
               const string& functionName)
 {
+  // Restore parameters.
+  CLI::RestoreSettings(programInfo.programName);
+
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
+
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.
-  vector<size_t> inputOptions, outputOptions;
-  for (size_t i = 0; i < parameters.size(); ++i)
+  vector<string> inputOptions, outputOptions;
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (parameters[i].input && parameters[i].required)
+    const util::ParamData& d = it->second;
+    if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (parameters[i].name != "help" && parameters[i].name != "info" &&
-          parameters[i].name != "version")
-        inputOptions.push_back(i);
+      if (d.name != "help" && d.name != "info" &&
+          d.name != "version")
+        inputOptions.push_back(it->first);
     }
-    else if (!parameters[i].input)
+    else if (!d.input)
     {
-      outputOptions.push_back(i);
+      outputOptions.push_back(it->first);
     }
   }
 
-  for (size_t i = 0; i < parameters.size(); ++i)
-    if (parameters[i].input && !parameters[i].required &&
-        parameters[i].name != "help" && parameters[i].name != "info" &&
-        parameters[i].name != "version")
-      inputOptions.push_back(i);
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    const util::ParamData& d = it->second;
+    if (d.input && !d.required &&
+        d.name != "help" && d.name != "info" &&
+        d.name != "version")
+      inputOptions.push_back(it->first);
+  }
 
   // First, we must generate the header comment.
 
@@ -62,6 +72,8 @@ void PrintPYX(const vector<ParamData>& parameters,
   cout << "cimport arma_numpy" << endl;
   cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam" << endl;
+  cout << "from cli cimport EnableVerbose" << endl;
+  cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << endl;
   cout << "from libcpp.string cimport string" << endl;
   cout << "from libcpp cimport bool" << endl;
@@ -72,23 +84,47 @@ void PrintPYX(const vector<ParamData>& parameters,
   // Import the program we will be using.
   cout << "cdef extern from \"<" << mainFilename << ">\" nogil:" << endl;
   cout << "  cdef int mlpackMain() nogil" << endl;
+  cout << "  " << endl;
+  // Print any class definitions we need to have.
+  std::set<std::string> classes;
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    const util::ParamData& d = it->second;
+    if (classes.count(d.cppType) == 0)
+    {
+      const size_t indent = 2;
+      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+          NULL);
+
+      // Make sure we don't double-print the definition.
+      classes.insert(d.cppType);
+    }
+  }
+
   cout << endl;
 
   // Print any extra class definitions we might need.
-  for (size_t i = 0; i < inputOptions.size(); ++i)
-    PrintExtraDefinitions(
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    const util::ParamData& d = it->second;
+    if (d.input)
+      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+  }
 
   // Print the definition.
   cout << "def " << functionName << "(";
   size_t indent = 4 /* 'def ' */ + functionName.size() + 1 /* '(' */;
-  for (size_t i = 0; i < inputOptions.size() - 1; ++i)
+  for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    PrintDefinition(parameters[inputOptions[i]]);
-    cout << "," << endl << std::string(indent, ' ');
+    const util::ParamData& d = parameters.at(inputOptions[i]);
+
+    if (i != 0)
+      cout << "," << endl << std::string(indent, ' ');
+
+    CLI::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
-  // Print last option.
-  if (inputOptions.size() >= 1)
-    PrintDefinition(parameters[inputOptions[inputOptions.size() - 1]]);
+
+  // Print closing brace for function definition.
   cout << "):" << endl;
 
   // Print the comment describing the function and its parameters.
@@ -99,33 +135,45 @@ void PrintPYX(const vector<ParamData>& parameters,
   cout << endl << endl;
   cout << "  Parameters:" << endl;
   cout << endl;
-  for (size_t i = 0; i < parameters.size(); ++i)
+  for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    if (parameters[i].input)
-    {
-      cout << "    ";
-      PrintDocumentation(parameters[i], 4);
-      cout << endl;
-    }
+    const util::ParamData& d = parameters.at(inputOptions[i]);
+
+    cout << "    ";
+    size_t indent = 4;
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+        NULL);
+    cout << endl;
   }
   cout << "  \"\"\"" << endl;
 
+  // Restore the parameters.
+  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")";
+
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
-    PrintInputProcessing(parameters[inputOptions[i]], 2);
+  {
+    const util::ParamData& d = parameters.at(inputOptions[i]);
+
+    size_t indent = 2;
+    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+        (void*) &indent, NULL);
+  }
 
   // Set all output options as passed.
   cout << "  # Mark all output options as passed." << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
-    cout << "  CLI.SetPassed(<const string> '"
-        << parameters[outputOptions[i]].name << "')" << endl;
+  {
+    const util::ParamData& d = parameters.at(outputOptions[i]);
+    cout << "  CLI.SetPassed(<const string> '" << d.name << "')" << endl;
+  }
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;
   cout << "  mlpackMain()" << endl;
 
   // Do any output processing and return.
-  if (outputOptions.size() > 1)
+//  if (outputOptions.size() > 1)
   {
     cout << "  # Initialize result dictionary." << endl;
     cout << "  result = {}" << endl;
@@ -133,10 +181,20 @@ void PrintPYX(const vector<ParamData>& parameters,
   cout << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
-    PrintOutputProcessing(parameters[outputOptions[i]], 2,
-        outputOptions.size() == 1);
+  {
+    const util::ParamData& d = parameters.at(outputOptions[i]);
 
-  if (outputOptions.size() > 1)
+    std::tuple<size_t, bool> t = std::make_tuple(2, false);
+    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+        (void*) &t, NULL);
+  }
+
+  // Clear the parameters.
+  cout << endl;
+  cout << "  CLI.ClearSettings()" << endl;
+  cout << endl;
+
+//  if (outputOptions.size() > 1)
   {
     cout << "  return result" << endl;
   }
