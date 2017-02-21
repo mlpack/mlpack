@@ -63,7 +63,7 @@ class GaussianInitialization
     distribution::GaussianDistribution dist(mean, covariance);
     if (mean.n_elem == 1 && covariance.n_elem == 1)
     {
-      W = arma::randn(size(W));
+      W = arma::randn(rows, cols);
     }
     else
     {
