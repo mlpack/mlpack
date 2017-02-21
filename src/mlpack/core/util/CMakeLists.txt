@@ -10,7 +10,6 @@ set(SOURCES
   cli_deleter.hpp
   cli_deleter.cpp
   cli_impl.hpp
-  cli_extra_param_data.hpp
   deprecated.hpp
   hyphenate_string.hpp
   log.hpp
