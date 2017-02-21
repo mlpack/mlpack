@@ -4,7 +4,9 @@
  *
  * A command-line program to build a decision tree.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_tree.hpp"
 
 using namespace std;
@@ -82,10 +84,8 @@ PARAM_MODEL_IN(DecisionTreeModel, "input_model", "Pre-trained decision tree, "
 PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
@@ -198,6 +198,4 @@ int main(int argc, char** argv)
   // Do we need to save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<DecisionTreeModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }
