@@ -1,10 +1,21 @@
-# Nothing in this directory will be compiled into mlpack, but 
+# Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
   generate_pyx.hpp
   generate_pyx.cpp
-  print_functions.hpp
-  print_functions.cpp
-  type_names.hpp
+  get_numpy_type_char.hpp
+  get_param.hpp
+  get_printable_param.hpp
+  get_python_type.hpp
+  import_decl.hpp
+  print_class_defn.hpp
+  print_defn.hpp
+  print_doc.hpp
+  print_input_processing.hpp
+  print_output_processing.hpp
+  print_pyx.hpp
+  print_pyx.cpp
+  py_option.hpp
+  strip_type.hpp
   mlpack/arma_util.hpp
 )
 
@@ -18,21 +29,8 @@ set(CYTHON_SOURCES
   mlpack/arma_util.hpp
   mlpack/cli.pxd
   mlpack/cli_util.hpp
+  mlpack/move.hpp
 )
-
-# Add directory name to sources.
-set(DIR_SRCS)
-foreach(file ${SOURCES})
-  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
-# Append sources (with directory name) to list of all mlpack sources (used at
-# the parent scope).
-set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# Handle Cython.
-#include(UseCython)
-
-#add_subdirectory(cython/)
 
 # Generate Python setuptools file.
 find_program(PYTHON "python")
@@ -63,12 +61,6 @@ if (PYTHON)
             ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
             ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
   endforeach()
-
-  add_custom_command(TARGET python PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_pca
-          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/pca.pyx
-          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
 
   # Then do the actual build.
   add_custom_command(TARGET python POST_BUILD
@@ -101,11 +93,8 @@ if (BUILD_PYTHON_BINDINGS)
 
   add_executable(generate_pyx_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_functions.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_functions.cpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/type_names.hpp)
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.cpp)
   target_link_libraries(generate_pyx_${name} mlpack ${MLPACK_LIBRARIES})
   set_target_properties(generate_pyx_${name} PROPERTIES COMPILE_FLAGS
       -DBINDING_TYPE=BINDING_TYPE_PYX)
