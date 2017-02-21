@@ -22,6 +22,24 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
     @staticmethod
     void SetPassed(string) nogil
 
+    @staticmethod
+    void Destroy() nogil
+
+    @staticmethod
+    void StoreSettings(string) nogil
+
+    @staticmethod
+    void RestoreSettings(string) nogil
+
+    @staticmethod
+    void ClearSettings() nogil
+
 cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](string, const T&) nogil
+  void EnableVerbose() nogil
+
+cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \
+    namespace "mlpack::util" nogil:
+  void MoveFromPtr[T](T&, T*) nogil
+  void MoveToPtr[T](T*, T&) nogil

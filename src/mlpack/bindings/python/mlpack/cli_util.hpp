@@ -33,6 +33,14 @@ inline void SetParam(const std::string& identifier, const T& value)
   CLI::GetParam<T>(identifier) = value;
 }
 
+/**
+ * Turn verbose output on.
+ */
+inline void EnableVerbose()
+{
+  Log::Info.ignoreInput = false;
+}
+
 } // namespace util
 } // namespace mlpack
 
