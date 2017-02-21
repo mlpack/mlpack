@@ -43,9 +43,9 @@ PARAM_MATRIX_IN("training", "The data set on which to build a density "
     "estimation tree.", "t");
 
 // Input or output model.
-PARAM_MODEL_IN(DTree<arma::mat>, "input_model", "Trained density estimation "
+PARAM_MODEL_IN(DTree<>, "input_model", "Trained density estimation "
     "tree to load.", "m");
-PARAM_MODEL_OUT(DTree<arma::mat>, "output_model", "Output to save trained "
+PARAM_MODEL_OUT(DTree<>, "output_model", "Output to save trained "
     "density estimation tree to.", "M");
 
 // Output data files.
