@@ -17,7 +17,6 @@
     <a href="http://www.mlpack.org/files/mlpack-2.1.1.tar.gz">current stable version (2.1.1)</a>
   </em>
 </p>
-<br>
 
 **mlpack** is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
