@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
@@ -119,6 +120,21 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
   arma::mat weights;
   OivsInitialization<> oivsInit;
   oivsInit.Initialize(weights, 100, 100);
+
+  BOOST_REQUIRE_EQUAL(1, 1);
+}
+
+// Test the GaussianInitialization class.
+BOOST_AUTO_TEST_CASE(GaussianInitTest)
+{
+  arma::mat weights;
+  arma::cube weights3d;
+  const size_t row = 2;
+  const size_t col = 2;
+  const size_t slice = 2;
+  GaussianInitialization t(weights, row, col);
+  t.Initialize(weights, row, col);
+  t.Initialize(weights3d, row, col, slice);
 
   BOOST_REQUIRE_EQUAL(1, 1);
 }
