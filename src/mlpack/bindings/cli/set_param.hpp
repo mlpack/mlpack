@@ -41,8 +41,8 @@ void SetParam(
     const boost::any& /* value */,
     const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  // Force set to default of false.
-  d.value = boost::any(false);
+  // Force set to the value of whether or not this was passed.
+  d.value = d.wasPassed;
 }
 
 /**
