@@ -16,6 +16,31 @@
 namespace mlpack {
 namespace dbscan {
 
+/**
+ * DBSCAN (Density-Based Spatial Clustering of Applications with Noise) is a
+ * clustering technique described in the following paper:
+ *
+ * @code
+ * @inproceedings{ester1996density,
+ *   title={A density-based algorithm for discovering clusters in large spatial
+ *       databases with noise.},
+ *   author={Ester, M. and Kriegel, H.-P. and Sander, J. and Xu, X.},
+ *   booktitle={Proceedings of the Second International Conference on Knowledge
+ *       Discovery and Data Mining (KDD '96)},
+ *   pages={226--231},
+ *   year={1996}
+ * }
+ * @endcode
+ *
+ * The DBSCAN algorithm iteratively clusters points using range searches with a
+ * specified radius parameter.  This implementation allows configuration of the
+ * range search technique used and the point selection strategy by means of
+ * template parameters.
+ *
+ * @tparam RangeSearchType Class to use for range searching.
+ * @tparam PointSelectionPolicy Strategy for selecting next point to cluster
+ *      with.
+ */
 template<typename RangeSearchType = range::RangeSearch<>,
          typename PointSelectionPolicy = RandomPointSelection>
 class DBSCAN
@@ -26,6 +51,8 @@ class DBSCAN
    *
    * @param epsilon Size of range query.
    * @param minPoints Minimum number of points for each cluster.
+   * @param rangeSearch Optional instantiated RangeSearch object.
+   * @param pointSelector OptionL instantiated PointSelectionPolicy object.
    */
   DBSCAN(const double epsilon,
          const size_t minPoints,
@@ -36,7 +63,7 @@ class DBSCAN
    * Performs DBSCAN clustering on the data, returning number of clusters 
    * and also the centroid of each cluster.
    *
-   * @param MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param centroids Matrix in which centroids are stored.
    */
@@ -48,7 +75,7 @@ class DBSCAN
    * Performs DBSCAN clustering on the data, returning number of clusters 
    * and also the list of cluster assignments.
    *
-   * @param MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    */
@@ -59,10 +86,10 @@ class DBSCAN
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters, 
    * the centroid of each cluster and also the list of cluster assignments.
-   * !If assignments[i] == assignments.n_elem - 1, then the point is considered
-   * !"noise".
+   * If assignments[i] == assignments.n_elem - 1, then the point is considered
+   * "noise".
    *
-   * @param MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    * @param centroids Matrix in which centroids are stored.
@@ -87,24 +114,23 @@ class DBSCAN
   PointSelectionPolicy pointSelector;
 
   /**
-   * This function processes the point at index. It  marks the point 
-   * as visited, checks if the given point is core or non-core.
-   * If its a core point, it expands the cluster else returns.
-   * 
+   * This function processes the point at index. It  marks the point as visited,
+   * checks if the given point is core or non-core.  If it is a core point, it
+   * expands the cluster, otherwise it returns.
    *
-   * @param MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param unvisited Remembers if a point has been visited.
    * @param index Index of point to be visited now.
    * @param assignments Vector to store cluster assignments.
-   * @param currentCluster Index of cluster which will be  
-   *                       assigned to points in current cluster.
-   * @param neighbor Matrix containing list of neighbors for each point
-   *                 which fall in its epsilon-neighborhood.
-   * @param distances Matrix containing list of distances for each point
-   *                  which fall in its epsilon-neighborhood.  
-   * @param topLevel If true, then current point is the first point in  
-   *                 the current cluster, helps in detecting noise.
+   * @param currentCluster Index of cluster which will be  assigned to points in
+   *     current cluster.
+   * @param neighbors Matrix containing list of neighbors for each point which
+   *     fall in its epsilon-neighborhood.
+   * @param distances Matrix containing list of distances for each point which
+   *     fall in its epsilon-neighborhood.
+   * @param topLevel If true, then current point is the first point in the
+   *     current cluster, helps in detecting noise.
    */
   template<typename MatType>
   size_t ProcessPoint(const MatType& data,
