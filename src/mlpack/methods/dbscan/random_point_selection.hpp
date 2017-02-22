@@ -13,11 +13,17 @@
 namespace mlpack {
 namespace dbscan {
 
+/**
+ * This class can be used to randomly select the next point to use for DBSCAN.
+ */
 class RandomPointSelection
 {
  public:
   /**
    * Select the next point to use, randomly.
+   *
+   * @param unvisited Bitset indicating which points are unvisited.
+   * @param data Unused data.
    */
   template<typename MatType>
   static size_t Select(const boost::dynamic_bitset<>& unvisited,
