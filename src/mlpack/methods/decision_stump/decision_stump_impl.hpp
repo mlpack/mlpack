@@ -72,6 +72,25 @@ void DecisionStump<MatType>::Train(const MatType& data,
 }
 
 /**
+ * Train the decision stump on the given data, with the given weights.  This
+ * completely overwrites any previous training data, so after training the
+ * stump may be completely different.
+ */
+template<typename MatType>
+void DecisionStump<MatType>::Train(const MatType& data,
+                                   const arma::Row<size_t>& labels,
+                                   const arma::rowvec& weights,
+                                   const size_t classes,
+                                   const size_t bucketSize)
+{
+  this->classes = classes;
+  this->bucketSize = bucketSize;
+
+  // Pass to weighted training function.
+  Train<true>(data, labels, weights);
+}
+
+/**
  * Train the decision stump on the given data and labels.
  *
  * @param data Dataset to train on.
