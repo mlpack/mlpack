@@ -5,8 +5,8 @@
  * An implementation of the DBSCAN clustering method, which is flexible enough
  * to support other algorithms for finding nearest neighbors.
  */
-#ifndef __MLPACK_METHODS_DBSCAN_DBSCAN_HPP
-#define __MLPACK_METHODS_DBSCAN_DBSCAN_HPP
+#ifndef MLPACK_METHODS_DBSCAN_DBSCAN_HPP
+#define MLPACK_METHODS_DBSCAN_DBSCAN_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
