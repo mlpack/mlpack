@@ -100,17 +100,17 @@ class DBSCAN
                  arma::mat& centroids);
 
  private:
-  // Maximum distance between two points to be part of same cluster. 
+  //! Maximum distance between two points to be part of same cluster.
   double epsilon;
 
-  // Minimum number of points to be in the epsilon-neighborhood(including
-  // itself) for the point to be a core-point.
+  //! Minimum number of points to be in the epsilon-neighborhood (including
+  //! itself) for the point to be a core-point.
   size_t minPoints;
 
-  // Instantiated range search policy.
+  //! Instantiated range search policy.
   RangeSearchType rangeSearch;
 
-  // Instantiated point selection policy.
+  //! Instantiated point selection policy.
   PointSelectionPolicy pointSelector;
 
   /**
