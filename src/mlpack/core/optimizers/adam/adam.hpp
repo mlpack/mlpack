@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
  * @author Marcus Edel
+ * @author Vivek Pal
  *
  * Adam optimizer. Adam is an an algorithm for first-order gradient-based
  * optimization of stochastic objective functions, based on adaptive estimates
@@ -89,7 +90,8 @@ class Adam
       const double eps = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true);
+      const bool shuffle = true,
+      const bool adaMax = false);
 
   /**
    * Optimize the given function using Adam. The given starting point will be
@@ -141,6 +143,11 @@ class Adam
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the AdaMax optimizer is specified.
+  bool AdaMax() const { return adaMax; }
+  //! Modify wehther or not the AdaMax optimizer is to be used.
+  bool& AdaMax() { return adaMax; }
+
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
@@ -166,6 +173,9 @@ class Adam
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Specifies whether or not the AdaMax optimizer is to be used.
+  bool adaMax;
 };
 
 } // namespace optimization
