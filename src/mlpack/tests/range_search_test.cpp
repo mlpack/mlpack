@@ -1426,7 +1426,7 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 
   // Build the tree ourselves.
-  std::vector<size_t> oldFromNewReferences;
+  vector<size_t> oldFromNewReferences;
   RangeSearch<>::Tree tree(dataset);
   RangeSearch<> ra(&tree);
 
