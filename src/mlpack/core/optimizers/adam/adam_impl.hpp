@@ -121,17 +121,9 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
     if (adaMax)
     {
-      u *= beta2;
-      arma::mat absGradient = arma::abs(gradient);
       // Update the exponentially weighted infinity norm.
-      for (size_t row = 0; row != iterate.n_rows; ++row)
-      {
-        for (size_t col = 0; col != iterate.n_cols; ++col)
-        {
-          if (u.at(row, col) < absGradient.at(row, col))
-            u.at(row, col) = absGradient.at(row, col);
-        }
-      }
+      u *= beta2;
+      u = arma::max(u, arma::abs(gradient));
     }
     else
     {
