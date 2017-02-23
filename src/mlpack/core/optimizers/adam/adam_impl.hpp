@@ -145,7 +145,7 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     if (adaMax)
     {
       if (biasCorrection1 != 0.0)
-        iterate -= ((stepSize / biasCorrection1) * (m / u));
+        iterate -= ((stepSize / biasCorrection1) * (m / (u + eps)));
     }
     else
     {
