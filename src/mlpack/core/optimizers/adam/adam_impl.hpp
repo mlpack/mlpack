@@ -3,8 +3,9 @@
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
  * @author Marcus Edel
+ * @author Vivek Pal
  *
- * Implementation of the Adam optimizer.
+ * Implementation of the Adam and AdaMax optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -28,7 +29,8 @@ Adam<DecomposableFunctionType>::Adam(DecomposableFunctionType& function,
                                      const double eps,
                                      const size_t maxIterations,
                                      const double tolerance,
-                                     const bool shuffle) :
+                                     const bool shuffle,
+                                     const bool adaMax) :
     function(function),
     stepSize(stepSize),
     beta1(beta1),
@@ -36,7 +38,8 @@ Adam<DecomposableFunctionType>::Adam(DecomposableFunctionType& function,
     eps(eps),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    adaMax(adaMax)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -66,6 +69,9 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
   // Exponential moving average of gradient values.
   arma::mat m = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+
+  // Initialize the exponentially weighted infinity norm for AdaMax optimizer.
+  arma::mat u = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
   // Exponential moving average of squared gradient values.
   arma::mat v = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
@@ -113,19 +119,44 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     m *= beta1;
     m += (1 - beta1) * gradient;
 
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
+    if (adaMax)
+    {
+      u *= beta2;
+      arma::mat absGradient = arma::abs(gradient);
+      // Update the exponentially weighted infinity norm.
+      for (size_t row = 0; row != iterate.n_rows; ++row)
+      {
+        for (size_t col = 0; col != iterate.n_cols; ++col)
+        {
+          if (u.at(row, col) < absGradient.at(row, col))
+            u.at(row, col) = absGradient.at(row, col);
+        }
+      }
+    }
+    else
+    {
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
+    }
 
     const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
     const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
 
-    /**
-     * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
-     * following expression is an approximation of the following actual term;
-     * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
-     */
-    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                m / (arma::sqrt(v) + eps);
+    if (adaMax)
+    {
+      if (biasCorrection1 != 0.0)
+        iterate -= ((stepSize / biasCorrection1) * (m / u));
+    }
+    else
+    {
+      /**
+       * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
+       * following expression is an approximation of the following actual term;
+       * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
+       */
+      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
+                  m / (arma::sqrt(v) + eps);
+    }
 
     // Now add that to the overall objective function.
     if (shuffle)
