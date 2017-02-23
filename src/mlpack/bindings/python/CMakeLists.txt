@@ -43,50 +43,54 @@ set(CYTHON_SOURCES
 )
 
 # Generate Python setuptools file.
-find_program(PYTHON "python")
+# We can probably use FindPythonInterp when we require CMake 3.0.
+find_program(PYTHON "python" REQUIRED)
 
-# Also we need to check for Cython and distutils.
+# Import find_python_module.
+include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
+find_python_module(distutils REQUIRED)
+find_python_module(Cython REQUIRED)
+find_python_module(numpy REQUIRED)
 
-if (PYTHON)
-  set (MLPACK_PYXS "arma_numpy.pyx" PARENT_SCOPE)
-  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      PROPERTY INCLUDE_DIRECTORIES)
-  set (CYTHON_INCLDIRS "${CYTHON_INCLUDE_DIRECTORIES}")
+# Configure the .pyx files that are needed.
+set (MLPACK_PYXS "arma_numpy.pyx" PARENT_SCOPE)
+get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    PROPERTY INCLUDE_DIRECTORIES)
+set (CYTHON_INCLDIRS "${CYTHON_INCLUDE_DIRECTORIES}")
 
-  # By default, Python appears to compile with -DNDEBUG, but if we are in debug
-  # mode we don't want that.
-  if (DEBUG)
-    set(DISABLE_CFLAGS "NDEBUG")
-  endif ()
-
-  add_custom_target(python ALL DEPENDS mlpack)
-
-  # Copy necessary files after making the mlpack/ directory.
-  add_custom_command(TARGET python PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E make_directory
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
-  foreach(cython_file ${CYTHON_SOURCES})
-    add_custom_command(TARGET python PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} ARGS -E copy
-            ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
-  endforeach()
-
-  # Then do the actual build.
-  add_custom_command(TARGET python POST_BUILD
-      COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          build
-      DEPENDS mlpack/arma_numpy.pxd
-              mlpack/arma_numpy.pyx
-              mlpack/arma.pxd
-              mlpack/arma_util.hpp
-              mlpack/cli.pxd
-              mlpack/cli_util.hpp
-              mlpack)
-
-  install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install
-      --prefix=${CMAKE_INSTALL_PREFIX})")
+# By default, Python appears to compile with -DNDEBUG, but if we are in debug
+# mode we don't want that.
+if (DEBUG)
+  set(DISABLE_CFLAGS "NDEBUG")
 endif ()
+
+add_custom_target(python ALL DEPENDS mlpack)
+
+# Copy necessary files after making the mlpack/ directory.
+add_custom_command(TARGET python PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+foreach(cython_file ${CYTHON_SOURCES})
+  add_custom_command(TARGET python PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E copy
+          ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+endforeach()
+
+# Then do the actual build.
+add_custom_command(TARGET python POST_BUILD
+    COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+        build
+    DEPENDS mlpack/arma_numpy.pxd
+            mlpack/arma_numpy.pyx
+            mlpack/arma.pxd
+            mlpack/arma_util.hpp
+            mlpack/cli.pxd
+            mlpack/cli_util.hpp
+            mlpack)
+
+install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install
+    --prefix=${CMAKE_INSTALL_PREFIX})")
 
 # Add a macro to build a python binding.
 macro (add_python_binding name)
