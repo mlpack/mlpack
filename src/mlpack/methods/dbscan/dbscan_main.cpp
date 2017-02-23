@@ -4,11 +4,13 @@
  *
  * Implementation of program to run DBSCAN.
  */
-#include "dbscan.hpp"
-
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+
+#include "dbscan.hpp"
 
 using namespace mlpack;
 using namespace mlpack::range;
@@ -45,10 +47,10 @@ PROGRAM_INFO("DBSCAN clustering",
     "  $ mlpack_dbscan -i input.csv -e 0.5 -m 5");
 
 
-PARAM_STRING_IN_REQ("input_file", "Input dataset to cluster.", "i");
-PARAM_STRING_OUT("assignments_file", "Output file for assignments of each "
+PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
+PARAM_UMATRIX_OUT("assignments", "Output matrix for assignments of each "
     "point.", "a");
-PARAM_STRING_OUT("centroids_file", "File to save output centroids to.", "C");
+PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 
 PARAM_DOUBLE_IN("epsilon", "Radius of each range search.", "e", 1.0);
 PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
@@ -97,10 +99,8 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
         false); // No transpose.
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("assignments_file") && !CLI::HasParam("centroids_file"))
     Log::Warn << "Neither --assignments_file nor --centroids_file are "
         << "specified; no output will be saved!" << endl;
