@@ -420,6 +420,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     throw std::invalid_argument(oss.str());
   }
 
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
+
   Timer::Start("range_search/computing_neighbors");
 
   // This will hold mappings for query points, if necessary.
@@ -592,6 +596,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
+
   Timer::Start("range_search/computing_neighbors");
 
   // Get a reference to the query set.
@@ -658,6 +666,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
+  // If there are no points, there is no search to be done.
+  if (referenceSet->n_cols == 0)
+    return;
+
   Timer::Start("range_search/computing_neighbors");
 
   // Here, we will use the query set as the reference set.
