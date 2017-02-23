@@ -63,11 +63,9 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   // Now calculate the centroids.
   centroids.zeros(data.n_rows, numClusters);
 
-  //Stores the number of points in each cluster
+  // Calculate number of points in each cluster.
   arma::Row<size_t> counts;
   counts.zeros(numClusters);
-
-  //Caluclate number of points in each cluster.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (assignments[i] != SIZE_MAX)
@@ -95,29 +93,27 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
 {
-  //Stores cluster assigned to each point.
   assignments.set_size(data.n_cols);
   assignments.fill(SIZE_MAX);
 
   size_t currentCluster = 0;
 
-  //For each point find the points in epsilon-nighborhood
-  //and their distances.
+  // For each point, find the points in epsilon-nighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
-  Log::Info << "Performing range search." << std::endl;
+  Log::Debug << "Performing range search." << std::endl;
   rangeSearch.Train(data);
   rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
-  Log::Info << "Range search complete." << std::endl;
+  Log::Debug << "Range search complete." << std::endl;
 
   // Initialize to all true; false means it's been visited.
   boost::dynamic_bitset<> unvisited(data.n_cols);
   unvisited.set();
   while (unvisited.any())
   {
-    //Randomly select an unvisited point.
+    // Select the next unvisited point.
     const size_t nextIndex = pointSelector.Select(unvisited, data);
-    Log::Info << "Inspect point " << nextIndex << "; " << unvisited.count()
+    Log::Debug << "Inspect point " << nextIndex << "; " << unvisited.count()
         << " unvisited points remain." << std::endl;
 
     // currentCluster will only be incremented if a cluster was created.
@@ -129,9 +125,9 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 }
 
 /**
- * This function processes the point at index. It  marks the point 
- * as visited, checks if the given point is core or non-core.
- * If its a core point, it expands the cluster else returns.
+ * This function processes the point at index. It marks the point as visited,
+ * checks if the given point is core or non-core. If it is a core point, it
+ * expands the cluster, otherwise it returns.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
