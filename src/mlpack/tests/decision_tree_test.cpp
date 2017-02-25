@@ -461,19 +461,25 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
  */
 BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
 {
-  math::RandomSeed(std::time(NULL));
-
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
   // discrete distributions).
   DiscreteDistribution c1[5];
   // The distribution will be automatically normalized.
   for (size_t i = 0; i < 5; ++i)
-    c1[i] = DiscreteDistribution(arma::vec(4, arma::fill::randu));
+  {
+    std::vector<arma::vec> probs;
+    probs.push_back(arma::vec(4, arma::fill::randu));
+    c1[i] = DiscreteDistribution(probs);
+  }
 
   DiscreteDistribution c2[5];
   for (size_t i = 0; i < 5; ++i)
-    c2[i] = DiscreteDistribution(arma::vec(2, arma::fill::randu));
+  {
+    std::vector<arma::vec> probs;
+    probs.push_back(arma::vec(2, arma::fill::randu));
+    c2[i] = DiscreteDistribution(probs);
+  }
 
   arma::mat spiralDataset(4, 10000);
   arma::Row<size_t> labels(10000);
