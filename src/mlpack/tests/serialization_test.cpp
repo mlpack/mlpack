@@ -156,7 +156,8 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
   // straightforward.
   vec prob;
   prob.randu(12);
-  DiscreteDistribution t(prob);
+  std::vector<arma::vec> prob_vector = std::vector<arma::vec>(1, prob);
+  DiscreteDistribution t(prob_vector);
 
   DiscreteDistribution xmlT, textT, binaryT;
 
