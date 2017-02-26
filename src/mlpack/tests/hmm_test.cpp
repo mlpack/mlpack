@@ -2,6 +2,11 @@
  * @file hmm_test.cpp
  *
  * Test file for HMMs.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
@@ -407,9 +412,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
 {
   // Very simple HMM.  4 emissions with equal probability and 2 states with
-  // equal probability.  The default transition and emission matrices satisfy
-  // this property.
+  // equal probability.
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
+  hmm.Initial() = arma::ones<arma::vec>(2) / 2.0;
+  hmm.Transition() = arma::ones<arma::mat>(2, 2) / 2.0;
 
   // Now generate a really, really long sequence.
   arma::mat dataSeq;

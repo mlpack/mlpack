@@ -34,11 +34,16 @@
  *  pages={950--961}
  * }
  *
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
@@ -116,6 +121,34 @@ class LSHSearch
    * Search(); otherwise, an exception will be thrown when Search() is called.
    */
   LSHSearch();
+
+  /**
+   * Copy the given LSH model.
+   *
+   * @param other Other LSH model to copy.
+   */
+  LSHSearch(const LSHSearch& other);
+
+  /**
+   * Take ownership of the given LSH model.
+   *
+   * @param other Other LSH model to take ownership of.
+   */
+  LSHSearch(LSHSearch&& other);
+
+  /**
+   * Copy the given LSH model.
+   *
+   * @param other Other LSH model to copy.
+   */
+  LSHSearch& operator=(const LSHSearch& other);
+
+  /**
+   * Take ownership of the given LSH model.
+   *
+   * @param other Other LSH model to take ownership of.
+   */
+  LSHSearch& operator=(LSHSearch&& other);
 
   /**
    * Clean memory.
@@ -261,10 +294,6 @@ class LSHSearch
         bucketSize, projTables);
   }
 
-  //! Get a single projection matrix.  This function is deprecated and will be
-  //! removed in mlpack 2.1.0!
-  const arma::mat& Projection(size_t i) { return projections.slice(i); }
-
  private:
   /**
    * This function takes a query and hashes it into each of the hash tables to
@@ -357,31 +386,32 @@ class LSHSearch
                            const arma::vec& scores) const;
 
   /**
-   * Inline function used by GetAdditionalProbingBins. The vector shift operation
-   * replaces the largest element of a vector A with (largest element) + 1.
-   * Returns true if resulting vector is valid, otherwise false.
+   * Inline function used by GetAdditionalProbingBins. The vector shift
+   * operation replaces the largest element of a vector A with (largest element)
+   * + 1.  Returns true if resulting vector is valid, otherwise false.
+   *
    * @param A perturbation set to shift.
-  */
+   */
   bool PerturbationShift(std::vector<bool>& A) const;
 
   /**
    * Inline function used by GetAdditionalProbingBins. The vector expansion
    * operation adds the element [1 + (largest_element)] to a vector A, where
-   * largest_element is the largest element of A. Returns true if resulting vector
-   * is valid, otherwise false.
+   * largest_element is the largest element of A. Returns true if resulting
+   * vector is valid, otherwise false.
+   *
    * @param A perturbation set to expand.
-  */
+   */
   bool PerturbationExpand(std::vector<bool>& A) const;
 
   /**
-   * Return true if perturbation set A is valid. A perturbation set is invalid if
-   * it contains two (or more) actions for the same dimension or dimensions that
-   * are larger than the queryCode's dimensions.
+   * Return true if perturbation set A is valid. A perturbation set is invalid
+   * if it contains two (or more) actions for the same dimension or dimensions
+   * that are larger than the queryCode's dimensions.
+   *
    * @param A perturbation set to validate.
-  */
+   */
   bool PerturbationValid(const std::vector<bool>& A) const;
-
-
 
   //! Reference dataset.
   const arma::mat* referenceSet;

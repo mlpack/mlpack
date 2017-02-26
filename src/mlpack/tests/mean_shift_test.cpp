@@ -1,6 +1,11 @@
 /**
  * @file mean_shift_test.cpp
  * @author Shangtong Zhang
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include <mlpack/core.hpp>
@@ -114,8 +119,6 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
 
   BOOST_REQUIRE_EQUAL(centroids.n_cols, 4);
   BOOST_REQUIRE_EQUAL(centroids.n_rows, 3);
-
-  std::cout << centroids.t();
 
   // Check that each centroid is close to only one mean.
   arma::vec centroidDistances(4);

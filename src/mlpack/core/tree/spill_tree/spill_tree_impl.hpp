@@ -2,6 +2,11 @@
  * @file spill_tree_impl.hpp
  *
  * Implementation of generalized hybrid spill tree (SpillTree).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_IMPL_HPP
 #define MLPACK_CORE_TREE_SPILL_TREE_SPILL_TREE_IMPL_HPP
@@ -243,7 +248,7 @@ template<typename Archive>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     SpillTree() // Create an empty SpillTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
@@ -322,7 +327,7 @@ template<typename VecType>
 size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetNearestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf() || !left || !right)
     return 0;
@@ -348,7 +353,7 @@ template<typename VecType>
 size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     SplitType>::GetFurthestChild(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >::type*)
+    typename std::enable_if_t<IsVector<VecType>::value>*)
 {
   if (IsLeaf() || !left || !right)
     return 0;

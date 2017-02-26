@@ -12,6 +12,8 @@ set(SOURCES
   hoeffding_numeric_split_impl.hpp
   hoeffding_tree.hpp
   hoeffding_tree_impl.hpp
+  hoeffding_tree_model.hpp
+  hoeffding_tree_model.cpp
   information_gain.hpp
   numeric_split_info.hpp
   typedef.hpp

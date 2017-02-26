@@ -2,6 +2,11 @@
  * @file lsh_test.cpp
  *
  * Unit tests for the 'LSHSearch' class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -289,7 +294,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
  * the bar very low (recall >= 50%) to make sure that a test fail means bad
  * implementation.
  * Second, a very cheap LSH search, with parameters that should cause recall
- * to be very low. Set the threshhold very high (recall <= 25%) to make sure
+ * to be very low. Set the threshold very high (recall <= 25%) to make sure
  * that a test fail means bad implementation.
  */
 BOOST_AUTO_TEST_CASE(RecallTest)
@@ -830,5 +835,76 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 #endif
+
+// Test the copy constructor and the copy operator.
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<> lsh(dataset, 10, 10);
+
+  // Copy the model.
+  LSHSearch<> lsh2(lsh);
+  LSHSearch<> lsh3 = lsh;
+
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+  arma::mat distances, distances2, distances3;
+
+  lsh.Search(5, neighbors, distances);
+  lsh2.Search(5, neighbors2, distances2);
+  lsh3.Search(5, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+// Test the move constructor.
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<>* lsh = new LSHSearch<>(dataset, 10, 10);
+
+  // Get results.
+  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2;
+
+  lsh->Search(5, neighbors, distances);
+
+  LSHSearch<> lsh2(std::move(*lsh));
+  delete lsh;
+
+  lsh2.Search(5, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
+// Test the move operator.
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(10, 1000);
+
+  // Use default parameters.
+  LSHSearch<>* lsh = new LSHSearch<>(dataset, 10, 10);
+
+  // Get results.
+  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2;
+
+  lsh->Search(5, neighbors, distances);
+
+  LSHSearch<> lsh2 = std::move(*lsh);
+  delete lsh;
+
+  lsh2.Search(5, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of the FastMKS class (fast max-kernel search).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
@@ -105,6 +110,85 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
     metric(referenceTree->Metric())
 {
   // Nothing to do.
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(const FastMKS& other) :
+    referenceSet(NULL),
+    referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
+    treeOwner(other.referenceTree != NULL),
+    setOwner(other.referenceTree == NULL),
+    singleMode(other.singleMode),
+    naive(other.naive),
+    metric(other.metric)
+{
+  // Set reference set correctly.
+  if (referenceTree)
+    referenceSet = &referenceTree->Dataset();
+  else
+    referenceSet = new MatType(*other.referenceSet);
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(FastMKS&& other) :
+    referenceSet(other.referenceSet),
+    referenceTree(other.referenceTree),
+    treeOwner(other.treeOwner),
+    setOwner(other.setOwner),
+    singleMode(other.singleMode),
+    naive(other.naive),
+    metric(std::move(other.metric))
+{
+  // Clear information from the other.
+  other.referenceSet = NULL;
+  other.referenceTree = NULL;
+  other.treeOwner = false;
+  other.setOwner = false;
+  other.singleMode = false;
+  other.naive = false;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>&
+FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
+{
+  // Clear anything we currently have.
+  if (treeOwner)
+    delete referenceTree;
+  if (setOwner)
+    delete referenceSet;
+
+  referenceTree = NULL;
+  referenceSet = NULL;
+
+  if (other.referenceTree)
+  {
+    referenceTree = new Tree(*other.referenceTree);
+    referenceSet = &referenceTree->Dataset();
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    referenceSet = new MatType(*other.referenceSet);
+    treeOwner = false;
+    setOwner = true;
+  }
+
+  singleMode = other.singleMode;
+  naive = other.naive;
 }
 
 template<typename KernelType,

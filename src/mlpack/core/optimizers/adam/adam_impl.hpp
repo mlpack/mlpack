@@ -5,6 +5,11 @@
  * @author Marcus Edel
  *
  * Implementation of the Adam optimizer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_IMPL_HPP
 #define __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_IMPL_HPP
@@ -60,10 +65,10 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
 
   // Exponential moving average of gradient values.
-  arma::mat mean = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  arma::mat m = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
   // Exponential moving average of squared gradient values.
-  arma::mat variance = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  arma::mat v = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
@@ -105,17 +110,22 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(iterate, currentFunction, gradient);
 
     // And update the iterate.
-    mean *= beta1;
-    mean += (1 - beta1) * gradient;
+    m *= beta1;
+    m += (1 - beta1) * gradient;
 
-    variance *= beta2;
-    variance += (1 - beta2) * (gradient % gradient);
+    v *= beta2;
+    v += (1 - beta2) * (gradient % gradient);
 
     const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
     const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
 
+    /**
+     * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
+     * following expression is an approximation of the following actual term;
+     * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
+     */
     iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-        mean / (arma::sqrt(variance) + eps);
+                m / (arma::sqrt(v) + eps);
 
     // Now add that to the overall objective function.
     if (shuffle)

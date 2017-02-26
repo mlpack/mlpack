@@ -25,11 +25,16 @@
  *   address = {London, UK, UK},
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_CELLBOUND_HPP
 #define MLPACK_CORE_TREE_CELLBOUND_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "bound_traits.hpp"
@@ -151,7 +156,8 @@ class CellBound
    */
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+      const;
 
   /**
    * Calculates minimum bound-to-bound distance.
@@ -167,7 +173,8 @@ class CellBound
    */
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
-                       typename boost::enable_if<IsVector<VecType>>* = 0) const;
+                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+      const;
 
   /**
    * Computes maximum distance.
@@ -193,7 +200,7 @@ class CellBound
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
       const VecType& point,
-      typename boost::enable_if<IsVector<VecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Expands this region to include new points.

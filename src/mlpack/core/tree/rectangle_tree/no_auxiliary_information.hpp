@@ -4,6 +4,11 @@
  *
  * Definition of the NoAuxiliaryInformation class, a class that provides
  * no additional information about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
@@ -99,7 +104,7 @@ class NoAuxiliaryInformation
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
-   * returned, the update will be propogated upward.
+   * returned, the update will be propagated upward.
    *
    * @param node The node in which the auxiliary information being update.
    */

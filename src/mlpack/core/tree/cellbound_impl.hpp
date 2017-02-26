@@ -4,6 +4,11 @@
  *
  * Implementation of the CellBound class. The class describes a bound that
  * consists of a number of hyperrectangles.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_CELLBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_CELLBOUND_IMPL_HPP
@@ -464,7 +469,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType CellBound<MetricType, ElemType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -602,7 +607,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType maxSum = std::numeric_limits<ElemType>::lowest();
 
@@ -777,7 +782,7 @@ template<typename VecType>
 inline math::RangeType<ElemType>
 CellBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType minLoSum = std::numeric_limits<ElemType>::max();
   ElemType maxHiSum = std::numeric_limits<ElemType>::lowest();

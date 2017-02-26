@@ -4,8 +4,14 @@
  *
  * Implementation of the KFN executable.  Allows some number of standard
  * options.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include <string>
 #include <fstream>
@@ -20,6 +26,9 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+
+// Convenience typedef.
+typedef NSModel<FurthestNeighborSort> KFNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Furthest-Neighbors",
@@ -42,36 +51,33 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
-PARAM_STRING_IN("reference_file", "File containing the reference dataset.", "r",
-    "");
-PARAM_STRING_OUT("distances_file", "File to output distances into.", "d");
-PARAM_STRING_OUT("neighbors_file", "File to output neighbors into.", "n");
-PARAM_STRING_IN("true_distances_file", "File of true distances to compute "
+PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
+PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
+PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
+PARAM_MATRIX_IN("true_distances", "Matrix of true distances to compute "
     "the effective error (average relative error) (it is printed when -v is "
-    "specified).", "D", "");
-PARAM_STRING_IN("true_neighbors_file", "File of true neighbors to compute the "
-    "recall (it is printed when -v is specified).", "T", "");
+    "specified).", "D");
+PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute the "
+    "recall (it is printed when -v is specified).", "T");
 
 // The option exists to load or save models.
-PARAM_STRING_IN("input_model_file", "File containing pre-trained kFN model.",
-    "m", "");
-PARAM_STRING_OUT("output_model_file", "If specified, the kFN model will be "
-    "saved to the given file.", "M");
+PARAM_MODEL_IN(KFNModel, "input_model", "Pre-trained kFN model.", "m");
+PARAM_MODEL_OUT(KFNModel, "output_model", "If specified, the kFN model will be "
+    "output here.", "M");
 
 // The user may specify a query file of query points and a number of furthest
 // neighbors to search for.
-PARAM_STRING_IN("query_file", "File containing query points (optional).", "q",
-    "");
+PARAM_MATRIX_IN("query", "Matrix containing query points (optional).", "q");
 PARAM_INT_IN("k", "Number of furthest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few pararmeters for tree
 // building.
 PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
-    "'r-plus-plus'.", "t", "kd");
+    "'r-plus-plus', 'oct'.", "t", "kd");
 PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
     "vp trees, random projection trees, UB trees, R trees, R* trees, X trees, "
-    "Hilbert R trees, R+ trees and R++ trees).", "l", 20);
+    "Hilbert R trees, R+ trees, R++ trees, and octrees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -92,9 +98,6 @@ PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
     "neighbors will be at least (p*100) % of the distance as the true furthest "
     "neighbor.", "p", 1);
 
-// Convenience typedef.
-typedef NSModel<FurthestNeighborSort> KFNModel;
-
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
@@ -106,16 +109,16 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference_file") && CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;
 
   // A user must specify one of them...
-  if (!CLI::HasParam("reference_file") && !CLI::HasParam("input_model_file"))
+  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "No model specified (--input_model_file) and no reference "
         << "data specified (--reference_file)!  One must be provided." << endl;
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
     // Notify the user of parameters that will be ignored.
     if (CLI::HasParam("tree_type"))
@@ -132,29 +135,29 @@ int main(int argc, char *argv[])
   }
 
   // The user should give something to do...
-  if (!CLI::HasParam("k") && !CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("k") && !CLI::HasParam("output_model"))
     Log::Warn << "Neither -k nor --output_model_file are specified, so no "
         << "results from this program will be saved!" << endl;
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k") &&
-      !(CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")))
+      !(CLI::HasParam("neighbors") || CLI::HasParam("distances")))
     Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
         << "so the furthest neighbor search results will not be saved!" << endl;
 
   // If the user specifies output files but no k, they should be warned.
-  if ((CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")) &&
+  if ((CLI::HasParam("neighbors") || CLI::HasParam("distances")) &&
       !CLI::HasParam("k"))
     Log::Warn << "An output file for furthest neighbor search is given ("
         << "--neighbors_file or --distances_file), but furthest neighbor search"
         << " is not being performed because k (--k) is not specified!  No "
         << "results will be saved." << endl;
 
-  if (!CLI::HasParam("k") && CLI::HasParam("true_neighbors_file"))
+  if (!CLI::HasParam("k") && CLI::HasParam("true_neighbors"))
     Log::Warn << "--true_neighbors_file (-T) ignored because no search is being"
         << " performed (--k is not specified)." << endl;
 
-  if (!CLI::HasParam("k") && CLI::HasParam("true_distances_file"))
+  if (!CLI::HasParam("k") && CLI::HasParam("true_distances"))
     Log::Warn << "--true_distances_file (-D) ignored because no search is being"
         << " performed (--k is not specified)." << endl;
 
@@ -228,10 +231,9 @@ int main(int argc, char *argv[])
       Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
 
-  if (CLI::HasParam("reference_file"))
+  if (CLI::HasParam("reference"))
   {
     // Get all the parameters.
-    const string referenceFile = CLI::GetParam<string>("reference_file");
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
@@ -262,18 +264,21 @@ int main(int argc, char *argv[])
       tree = KFNModel::MAX_RP_TREE;
     else if (treeType == "ub")
       tree = KFNModel::UB_TREE;
+    else if (treeType == "oct")
+      tree = KFNModel::OCTREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
           << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus' and 'r-plus-plus'." << endl;
+          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', and 'oct'."
+          << endl;
 
     kfn.TreeType() = tree;
     kfn.RandomBasis() = randomBasis;
 
-    arma::mat referenceSet;
-    data::Load(referenceFile, referenceSet, true);
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+    Log::Info << "Loaded reference data from '"
+        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     kfn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
@@ -281,11 +286,10 @@ int main(int argc, char *argv[])
   else
   {
     // Load the model from file.
-    const string inputModelFile = CLI::GetParam<string>("input_model_file");
-    data::Load(inputModelFile, "kfn_model", kfn, true); // Fatal on failure.
+    kfn = std::move(CLI::GetParam<KFNModel>("input_model"));
 
     // Adjust search mode.
-    kfn.SetSearchMode(searchMode);
+    kfn.SearchMode() = searchMode;
     kfn.Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
@@ -294,7 +298,8 @@ int main(int argc, char *argv[])
     if (CLI::HasParam("leaf_size"))
       kfn.LeafSize() = size_t(lsInt);
 
-    Log::Info << "Loaded kFN model from '" << inputModelFile << "' (trained on "
+    Log::Info << "Loaded kFN model from '"
+        << CLI::GetUnmappedParam<KFNModel>("input_model") << "' (trained on "
         << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
         << endl;
   }
@@ -302,14 +307,14 @@ int main(int argc, char *argv[])
   // Perform search, if desired.
   if (CLI::HasParam("k"))
   {
-    const string queryFile = CLI::GetParam<string>("query_file");
     const size_t k = (size_t) CLI::GetParam<int>("k");
 
     arma::mat queryData;
-    if (queryFile != "")
+    if (CLI::HasParam("query"))
     {
-      data::Load(queryFile, queryData, true);
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Loaded query data from '"
+          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -327,29 +332,27 @@ int main(int argc, char *argv[])
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    if (CLI::HasParam("query_file"))
+    if (CLI::HasParam("query"))
       kfn.Search(std::move(queryData), k, neighbors, distances);
     else
       kfn.Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output, if desired.
-    if (CLI::HasParam("neighbors_file"))
-      data::Save(CLI::GetParam<string>("neighbors_file"), neighbors);
-    if (CLI::HasParam("distances_file"))
-      data::Save(CLI::GetParam<string>("distances_file"), distances);
+    if (CLI::HasParam("neighbors"))
+      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    if (CLI::HasParam("distances"))
+      CLI::GetParam<arma::mat>("distances") = std::move(distances);
 
     // Calculate the effective error, if desired.
-    if (CLI::HasParam("true_distances_file"))
+    if (CLI::HasParam("true_distances"))
     {
       if (kfn.Epsilon() == 0)
         Log::Warn << "--true_distances_file (-D) specified, but the search is "
             << "exact, so there is no need to calculate the error!" << endl;
 
-      const string trueDistancesFile = CLI::GetParam<string>(
-          "true_distances_file");
-      arma::mat trueDistances;
-      data::Load(trueDistancesFile, trueDistances, true);
+      arma::mat trueDistances =
+          std::move(CLI::GetParam<arma::mat>("true_distances"));
 
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
@@ -361,16 +364,14 @@ int main(int argc, char *argv[])
     }
 
     // Calculate the recall, if desired.
-    if (CLI::HasParam("true_neighbors_file"))
+    if (CLI::HasParam("true_neighbors"))
     {
       if (kfn.Epsilon() == 0)
         Log::Warn << "--true_neighbors_file (-T) specified, but the search is "
             << "exact, so there is no need to calculate the recall!" << endl;
 
-      const string trueNeighborsFile = CLI::GetParam<string>(
-          "true_neighbors_file");
-      arma::Mat<size_t> trueNeighbors;
-      data::Load(trueNeighborsFile, trueNeighbors, true);
+      arma::Mat<size_t> trueNeighbors =
+          std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
 
       if (trueNeighbors.n_rows != neighbors.n_rows ||
           trueNeighbors.n_cols != neighbors.n_cols)
@@ -381,9 +382,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  if (CLI::HasParam("output_model_file"))
-  {
-    const string outputModelFile = CLI::GetParam<string>("output_model_file");
-    data::Save(outputModelFile, "kfn_model", kfn);
-  }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<KFNModel>("output_model") = std::move(kfn);
+
+  CLI::Destroy();
 }

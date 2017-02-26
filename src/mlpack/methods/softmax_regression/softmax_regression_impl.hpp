@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
@@ -28,11 +33,12 @@ SoftmaxRegression(const size_t inputSize,
 }
 
 template<template<typename> class OptimizerType>
-SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
-                                                    const arma::Row<size_t>& labels,
-                                                    const size_t numClasses,
-                                                    const double lambda,
-                                                    const bool fitIntercept) :
+SoftmaxRegression<OptimizerType>::SoftmaxRegression(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)

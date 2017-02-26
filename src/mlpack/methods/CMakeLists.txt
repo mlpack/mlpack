@@ -18,10 +18,13 @@ endmacro ()
 set(DIRS
   preprocess
   adaboost
+  approx_kfn
   amf
   ann
   cf
+  dbscan
   decision_stump
+  decision_tree
   det
   emst
   fastmks
@@ -50,7 +53,6 @@ set(DIRS
   randomized_svd
   range_search
   rann
-  rmva
   regularized_svd
   softmax_regression
   sparse_autoencoder

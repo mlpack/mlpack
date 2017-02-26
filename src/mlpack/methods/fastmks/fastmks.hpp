@@ -4,11 +4,16 @@
  *
  * Definition of the FastMKS class, which implements fast exact max-kernel
  * search.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include "fastmks_stat.hpp"
 #include <mlpack/core/tree/cover_tree.hpp>
@@ -111,6 +116,21 @@ class FastMKS
    */
   FastMKS(Tree* referenceTree,
           const bool singleMode = false);
+
+  /**
+   * Copy the parameters of the given model.
+   */
+  FastMKS(const FastMKS& other);
+
+  /**
+   * Take ownership of the given model.
+   */
+  FastMKS(FastMKS&& other);
+
+  /**
+   * Assign this model to be a copy of the given model.
+   */
+  FastMKS& operator=(const FastMKS& other);
 
   //! Destructor for the FastMKS object.
   ~FastMKS();

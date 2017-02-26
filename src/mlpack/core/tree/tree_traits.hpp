@@ -5,6 +5,11 @@
  * This file implements the basic, unspecialized TreeTraits class, which
  * provides information about tree types.  If you create a tree class, you
  * should specialize this class with the characteristics of your tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_TREE_TRAITS_HPP
 #define MLPACK_CORE_TREE_TREE_TRAITS_HPP
@@ -38,8 +43,8 @@ namespace tree {
  * @code
  * template<typename TreeType>
  * void Compute(TreeType& node,
- *              boost::enable_if<
- *                  TreeTraits<TreeType>::RearrangesDataset>::type*)
+ *              std::enable_if_t<
+ *                  TreeTraits<TreeType>::RearrangesDataset>*)
  * {
  *   // Computation where special dataset-rearranging tree constructor is
  *   // called.
@@ -47,14 +52,14 @@ namespace tree {
  *
  * template<typename TreeType>
  * void Compute(TreeType& node,
- *              boost::enable_if<
- *                  !TreeTraits<TreeType>::RearrangesDataset>::type*)
+ *              std::enable_if_t<
+ *                  !TreeTraits<TreeType>::RearrangesDataset>*)
  * {
  *   // Computation where normal tree constructor is called.
  * }
  * @endcode
  *
- * In those two examples, the boost::enable_if<> class takes a boolean template
+ * In those two examples, the std::enable_if_t<> class takes a boolean template
  * parameter which allows that function to be called when the boolean is true.
  *
  * Each trait must be a static const value and not a function; only const values

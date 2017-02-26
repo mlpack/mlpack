@@ -5,6 +5,11 @@
  * Definition of the HilbertRTreeAuxiliaryInformation class,
  * a class that provides some Hilbert r-tree specific information
  * about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
@@ -106,7 +111,7 @@ class HilbertRTreeAuxiliaryInformation
 
   /**
    * Update the auxiliary information in the node. The method returns true if
-   * the update should be propogated downward.
+   * the update should be propagated downward.
    *
    * @param node The node in which the auxiliary information being update.
    */
