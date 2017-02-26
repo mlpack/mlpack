@@ -10,7 +10,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
+#include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
 
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -29,6 +29,7 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
+using namespace std;
 
 BOOST_AUTO_TEST_SUITE(KSInitialization);
 
@@ -107,12 +108,12 @@ void BuildVanillaNetwork(MatType& trainData,
  
 	// Calculating the mean squared error on the training data.
 	net.Predict(trainData, prediction);
-	arma::mat squarederror = arma::square(prediction*1.0 - trainLabels);
+	arma::mat squarederror = arma::square(prediction * 1.0 - trainLabels);
 	trainError = arma::sum(arma::sum(squarederror)) / trainData.n_cols;
 
 	// Calculating the mean squared error on the test data
 	net.Predict(testData, prediction);
-	squarederror = arma::square(prediction*1.0 - testLabels);
+	squarederror = arma::square(prediction * 1.0 - testLabels);
 	testError = arma::sum(arma::sum(squarederror)) / testData.n_cols;
 
 	
@@ -125,8 +126,8 @@ void BuildVanillaNetwork(MatType& trainData,
 */
 struct Error
 {
-	double trainErrorAvg;
-	long double validationErrorAvg;
+	double trainError;
+	double validationError;
 };
 
 /* CrossValidation function runs a k-fold cross validation on the training data
@@ -161,9 +162,9 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
   @params validationTestLabels The labels corresponding to the validation data.
 
 */
-	size_t validationDataSize = (int) trainData.n_cols/k;
+	size_t validationDataSize = (int) trainData.n_cols / k;
 
-	long double validationErrorAvg;
+	double validationErrorAvg;
 	double trainErrorAvg;
 
 	for (size_t i=0; i < trainData.n_cols; i = i + validationDataSize)
@@ -179,10 +180,11 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
 			validationDataSize = trainData.n_cols - i;
 
 		validationTestData = 
-        trainData.submat(0,i,trainData.n_rows-1, i + validationDataSize - 1);
+        trainData.submat(0, i, trainData.n_rows - 1, i + validationDataSize - 1);
 		
-   		validationTestLabels = 
-        	trainLabels.submat(0, i, trainLabels.n_rows-1, i+validationDataSize-1);
+   	validationTestLabels = 
+        trainLabels.submat(0, i, trainLabels.n_rows - 1, 
+                           i + validationDataSize - 1);
 
 		validationTrainData = trainData;
 		validationTrainData.shed_cols(i, i + validationDataSize - 1);
@@ -193,9 +195,9 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
 		
 		double trainError, validationError;
 
-		BuildVanillaNetwork<IdentityFunction,
-											MulticlassClassificationLayer,
-											MeanSquaredErrorFunction>
+		BuildVanillaNetwork<SoftsignFunction, 
+				MulticlassClassificationLayer,
+				MeanSquaredErrorFunction>
       	(validationTrainData, validationTrainLabels, 
          validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs, 
          trainError, validationError);
@@ -208,13 +210,71 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
 	trainErrorAvg /= k;
 	validationErrorAvg  /= k;
 
-	Error E;
+	Error e;
 
-	E.trainErrorAvg = trainErrorAvg;
-	E.validationErrorAvg = validationErrorAvg;
+	e.trainError = trainErrorAvg;
+	e.validationError = validationErrorAvg;
 
-	return E;
+	return e;
 
+}
+
+/*
+  AvgCrossValidation function takes a dataset and runs CrossValidation "iter"
+  number of times and then return the average training and validation error.
+  It shuffles the dataset in every iteration.
+
+*/
+
+Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
+                         const size_t hiddenLayerSize, const size_t maxEpochs)
+{
+
+/*
+  @params dataset The dataset inclusive of the labels. Assuming the last 
+                  "numLabels" number of rows are the labels which the model
+                  has to predict. 
+  @params numLabels number of rows which are the output labels in the dataset.
+
+  @params iter The number of times Cross Validation has to be run.
+
+  @params hiddenLayerSize The number of nodes in the hidden layer.
+
+  @params maxEpochs The maximum number of epochs for the training.
+
+  @params avgError Returns the train and validation error averaged over "iter"
+                   number of Cross Validation results.
+
+*/
+  Error avgError = {0.0, 0.0};
+
+  for (int i = 0; i < iter;)
+  {
+    dataset = arma::shuffle(dataset, 1);
+
+    arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 1 - numLabels, 
+                                         dataset.n_cols - 1);
+    arma::mat trainLabels = dataset.submat(dataset.n_rows - numLabels, 0, 
+                                           dataset.n_rows - 1, 
+                                           dataset.n_cols - 1); 
+    
+    Error e = CrossValidation(trainData, trainLabels, 10, hiddenLayerSize, 
+                              maxEpochs);
+
+    // The check is to prevent nan values from affecting the result.
+    if (arma::is_finite(e.trainError) && arma::is_finite(e.validationError))
+    {
+      avgError.trainError += e.trainError;
+      avgError.validationError += e.validationError;
+      ++i;
+    }
+    
+  }
+
+  avgError.trainError /= iter;
+  avgError.validationError /= iter;
+
+  return avgError;
 }
 
 
@@ -222,31 +282,60 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
 
 BOOST_AUTO_TEST_CASE(IrisDataset)
 {
-	double trainErrorThreshold = 0.0007;
-	double validationErrorThreshold = 0.0007;
+	arma::arma_rng::set_seed_random();
+
+	double trainErrorThreshold = 0.0008;
+	double validationErrorThreshold = 0.0008;
 
 	arma::mat dataset, trainData, trainLabels;
 
 	data::Load("iris.csv", dataset, true);
 
-	arma::mat bias(1, dataset.n_cols, arma::fill::ones);
+  dataset /= 10; // Normalization used in the paper.
 
-	dataset.insert_rows(0, bias);
+	Error avgError = AvgCrossValidation(dataset, 1, 10, 3, 52); //Runs CV 10 times
 
-	dataset /= 10; // Normalization used in the paper.
-
-	trainData = dataset.submat(0, 0, dataset.n_rows-2, dataset.n_cols-1);
-	trainLabels = 
-      dataset.submat(dataset.n_rows-1, 0, dataset.n_rows-1, dataset.n_cols-1);
-
-
-	Error E = CrossValidation(trainData, trainLabels, 10, 3, 52);
-
-	BOOST_REQUIRE_LE(E.trainErrorAvg, trainErrorThreshold);
-	BOOST_REQUIRE_LE(E.validationErrorAvg, validationErrorThreshold);
+	BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
+	BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
 
 }
 
+BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
+{
+	arma::arma_rng::set_seed_random();
+
+	double trainErrorThreshold = 0.0035;
+	double validationErrorThreshold = 0.0035;
+
+	arma::mat dataset(11, 500, arma::fill::randu);
+
+  // Eqn 13.1 as given in the paper
+	dataset.row(8) = dataset.row(0) % dataset.row(1);
+
+  for (int i = 2; i <= 6; i = i + 2)
+    dataset.row(8) += dataset.row(i) % dataset.row(i+1);
+
+  dataset.row(8) /= 4;
+
+  // Eqn 13.2
+	dataset.row(9) = dataset.row(0);
+  
+  for (int i = 1; i <= 7; ++i)
+    dataset.row(9) += dataset.row(i);
+
+  dataset.row(9) /= 8;
+
+  // Eqn 13.3
+  dataset.row(10) = arma::sqrt(1 - dataset.row(0));
+	
+
+  Error avgError = AvgCrossValidation(dataset, 3, 10, 10, 500);
+	
+
+	BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
+	BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
+
+}
 
 BOOST_AUTO_TEST_SUITE_END();
 
