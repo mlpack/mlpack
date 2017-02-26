@@ -1,7 +1,7 @@
 /*
-	@file ksinit.cpp
+  @file ksinit.cpp
   @author Praveen Ch
-	
+  
 
   Tests the working of Kathirvalavakumar Subavathi Initialization for a 
   Feed forward neural network.
@@ -38,85 +38,85 @@ BOOST_AUTO_TEST_SUITE(KSInitialization);
    procedure.
  */
 template<
-		typename PerformanceFunction,
-		typename OutputLayerType,
-		typename PerformanceFunctionType,
-		typename MatType = arma::mat
+    typename PerformanceFunction,
+    typename OutputLayerType,
+    typename PerformanceFunctionType,
+    typename MatType = arma::mat
 >
 
 
 void BuildVanillaNetwork(MatType& trainData,
-						 MatType& trainLabels,
-						 MatType& testData,
-						 MatType& testLabels,
-						 const size_t hiddenLayerSize,
-						 const size_t maxEpochs,
-						 double& trainError,
-						 double& testError)
+             MatType& trainLabels,
+             MatType& testData,
+             MatType& testLabels,
+             const size_t hiddenLayerSize,
+             const size_t maxEpochs,
+             double& trainError,
+             double& testError)
 {
-	/*
-	@param trainError mean squared error of predictions on training data.
-	@param testError  mean squared error of predictions on test data.
-	 * Construct a feed forward network with trainData.n_rows input nodes,
-	 * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-	 * network structure looks like:
-	 *
-	 *  Input         Hidden        Output
-	 *  Layer         Layer         Layer
-	 * +-----+       +-----+       +-----+
-	 * |     |       |     |       |     |
-	 * |     +------>|     +------>|     |
-	 * |     |     +>|     |     +>|     |
-	 * +-----+     | +--+--+     | +-----+
-	 *             |             |
-	 *  Bias       |  Bias       |
-	 *  Layer      |  Layer      |
-	 * +-----+     | +-----+     |
-	 * |     |     | |     |     |
-	 * |     +-----+ |     +-----+
-	 * |     |       |     |
-	 * +-----+       +-----+
-	 */
+  /*
+  @param trainError mean squared error of predictions on training data.
+  @param testError  mean squared error of predictions on test data.
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
 
-	LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-	BiasLayer<> inputBiasLayer(hiddenLayerSize);
-	BaseLayer<PerformanceFunction> inputBaseLayer;
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> inputBiasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> inputBaseLayer;
 
-	LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-	BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
-	BaseLayer<PerformanceFunction> outputLayer;
+  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer;
 
-	OutputLayerType classOutputLayer;
+  OutputLayerType classOutputLayer;
 
-	auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-							hiddenLayer1, hiddenBiasLayer1, outputLayer);
+  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
+              hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
 
     //4.59 is a constant used in the paper.
-	KathirvalavakumarSubavathiInitialization init(trainData, 4.59); 
+  KathirvalavakumarSubavathiInitialization init(trainData, 4.59); 
 
-	FFN<decltype(modules), decltype(classOutputLayer), 
+  FFN<decltype(modules), decltype(classOutputLayer), 
       KathirvalavakumarSubavathiInitialization,
-			PerformanceFunctionType> net(modules, classOutputLayer, init);
+      PerformanceFunctionType> net(modules, classOutputLayer, init);
 
-	RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
-			maxEpochs * trainData.n_cols, 1e-18);
+  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+      maxEpochs * trainData.n_cols, 1e-18);
 
-	net.Train(trainData, trainLabels, opt);
+  net.Train(trainData, trainLabels, opt);
 
-	MatType prediction;
+  MatType prediction;
  
-	// Calculating the mean squared error on the training data.
-	net.Predict(trainData, prediction);
-	arma::mat squarederror = arma::square(prediction * 1.0 - trainLabels);
-	trainError = arma::sum(arma::sum(squarederror)) / trainData.n_cols;
+  // Calculating the mean squared error on the training data.
+  net.Predict(trainData, prediction);
+  arma::mat squarederror = arma::square(prediction * 1.0 - trainLabels);
+  trainError = arma::sum(arma::sum(squarederror)) / trainData.n_cols;
 
-	// Calculating the mean squared error on the test data
-	net.Predict(testData, prediction);
-	squarederror = arma::square(prediction * 1.0 - testLabels);
-	testError = arma::sum(arma::sum(squarederror)) / testData.n_cols;
+  // Calculating the mean squared error on the test data
+  net.Predict(testData, prediction);
+  squarederror = arma::square(prediction * 1.0 - testLabels);
+  testError = arma::sum(arma::sum(squarederror)) / testData.n_cols;
 
-	
+  
 }
 
 /* Error is a structure which has the MSE of Training data and MSE of 
@@ -126,8 +126,8 @@ void BuildVanillaNetwork(MatType& trainData,
 */
 struct Error
 {
-	double trainError;
-	double validationError;
+  double trainError;
+  double validationError;
 };
 
 /* CrossValidation function runs a k-fold cross validation on the training data
@@ -162,60 +162,60 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
   @params validationTestLabels The labels corresponding to the validation data.
 
 */
-	size_t validationDataSize = (int) trainData.n_cols / k;
+  size_t validationDataSize = (int) trainData.n_cols / k;
 
-	double validationErrorAvg;
-	double trainErrorAvg;
+  double validationErrorAvg;
+  double trainErrorAvg;
 
-	for (size_t i=0; i < trainData.n_cols; i = i + validationDataSize)
-	{
-		validationDataSize = (int) trainData.n_cols/k;
-		
-		arma::mat validationTrainData(trainData.n_rows, trainData.n_cols);
-		arma::mat validationTrainLabels(trainLabels.n_rows, trainLabels.n_cols);
-		arma::mat validationTestData(trainData.n_rows, validationDataSize);
-		arma::mat validationTestLabels(trainLabels.n_rows, validationDataSize);
+  for (size_t i=0; i < trainData.n_cols; i = i + validationDataSize)
+  {
+    validationDataSize = (int) trainData.n_cols/k;
+    
+    arma::mat validationTrainData(trainData.n_rows, trainData.n_cols);
+    arma::mat validationTrainLabels(trainLabels.n_rows, trainLabels.n_cols);
+    arma::mat validationTestData(trainData.n_rows, validationDataSize);
+    arma::mat validationTestLabels(trainLabels.n_rows, validationDataSize);
 
-		if (i + validationDataSize > trainData.n_cols)
-			validationDataSize = trainData.n_cols - i;
+    if (i + validationDataSize > trainData.n_cols)
+      validationDataSize = trainData.n_cols - i;
 
-		validationTestData = 
+    validationTestData = 
         trainData.submat(0, i, trainData.n_rows - 1, i + validationDataSize - 1);
-		
-   	validationTestLabels = 
+    
+    validationTestLabels = 
         trainLabels.submat(0, i, trainLabels.n_rows - 1, 
                            i + validationDataSize - 1);
 
-		validationTrainData = trainData;
-		validationTrainData.shed_cols(i, i + validationDataSize - 1);
-		
+    validationTrainData = trainData;
+    validationTrainData.shed_cols(i, i + validationDataSize - 1);
+    
 
-		validationTrainLabels = trainLabels;
-		validationTrainLabels.shed_cols(i, i + validationDataSize - 1);
-		
-		double trainError, validationError;
+    validationTrainLabels = trainLabels;
+    validationTrainLabels.shed_cols(i, i + validationDataSize - 1);
+    
+    double trainError, validationError;
 
-		BuildVanillaNetwork<SoftsignFunction, 
-				MulticlassClassificationLayer,
-				MeanSquaredErrorFunction>
-      	(validationTrainData, validationTrainLabels, 
+    BuildVanillaNetwork<SoftsignFunction, 
+        MulticlassClassificationLayer,
+        MeanSquaredErrorFunction>
+        (validationTrainData, validationTrainLabels, 
          validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs, 
          trainError, validationError);
 
-		trainErrorAvg += trainError;
-		validationErrorAvg +=	validationError;
+    trainErrorAvg += trainError;
+    validationErrorAvg += validationError;
 
-	}
+  }
 
-	trainErrorAvg /= k;
-	validationErrorAvg  /= k;
+  trainErrorAvg /= k;
+  validationErrorAvg  /= k;
 
-	Error e;
+  Error e;
 
-	e.trainError = trainErrorAvg;
-	e.validationError = validationErrorAvg;
+  e.trainError = trainErrorAvg;
+  e.validationError = validationErrorAvg;
 
-	return e;
+  return e;
 
 }
 
@@ -282,35 +282,35 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
 
 BOOST_AUTO_TEST_CASE(IrisDataset)
 {
-	arma::arma_rng::set_seed_random();
+  arma::arma_rng::set_seed_random();
 
-	double trainErrorThreshold = 0.0008;
-	double validationErrorThreshold = 0.0008;
+  double trainErrorThreshold = 0.0008;
+  double validationErrorThreshold = 0.0008;
 
-	arma::mat dataset, trainData, trainLabels;
+  arma::mat dataset, trainData, trainLabels;
 
-	data::Load("iris.csv", dataset, true);
+  data::Load("iris.csv", dataset, true);
 
   dataset /= 10; // Normalization used in the paper.
 
-	Error avgError = AvgCrossValidation(dataset, 1, 10, 3, 52); //Runs CV 10 times
+  Error avgError = AvgCrossValidation(dataset, 1, 10, 3, 52); //Runs CV 10 times
 
-	BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
-	BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
+  BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
+  BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
 
 }
 
 BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
 {
-	arma::arma_rng::set_seed_random();
+  arma::arma_rng::set_seed_random();
 
-	double trainErrorThreshold = 0.0035;
-	double validationErrorThreshold = 0.0035;
+  double trainErrorThreshold = 0.0035;
+  double validationErrorThreshold = 0.0035;
 
-	arma::mat dataset(11, 500, arma::fill::randu);
+  arma::mat dataset(11, 500, arma::fill::randu);
 
   // Eqn 13.1 as given in the paper
-	dataset.row(8) = dataset.row(0) % dataset.row(1);
+  dataset.row(8) = dataset.row(0) % dataset.row(1);
 
   for (int i = 2; i <= 6; i = i + 2)
     dataset.row(8) += dataset.row(i) % dataset.row(i+1);
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
   dataset.row(8) /= 4;
 
   // Eqn 13.2
-	dataset.row(9) = dataset.row(0);
+  dataset.row(9) = dataset.row(0);
   
   for (int i = 1; i <= 7; ++i)
     dataset.row(9) += dataset.row(i);
@@ -327,13 +327,13 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
 
   // Eqn 13.3
   dataset.row(10) = arma::sqrt(1 - dataset.row(0));
-	
+  
 
   Error avgError = AvgCrossValidation(dataset, 3, 10, 10, 500);
-	
+  
 
-	BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
-	BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
+  BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
+  BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
 
 }
 
