@@ -49,7 +49,7 @@ class DiscreteDistribution
    * Default constructor, which creates a distribution that has no observations.
    */
   DiscreteDistribution() :
-   probabilities(std::vector<arma::vec>(1)){ /* nothing to do */ }
+      probabilities(std::vector<arma::vec>(1)){ /* Nothing to do. */ }
 
   /**
    * Define the discrete distribution as having numObservations possible
@@ -60,8 +60,9 @@ class DiscreteDistribution
    *    can have.
    */
   DiscreteDistribution(const size_t numObservations) :
-     probabilities(std::vector<arma::vec>(1, arma::ones<arma::vec>(numObservations)/numObservations))
-  { /* nothing to do */ }
+      probabilities(std::vector<arma::vec>(1,
+          arma::ones<arma::vec>(numObservations) / numObservations))
+  { /* Nothing to do. */ }
 
   /**
    * Define the multidimensional discrete distribution as having numObservations possible
@@ -93,7 +94,7 @@ class DiscreteDistribution
    */
   DiscreteDistribution(const std::vector<arma::vec>& probabilities)
   {
-    for (size_t i=0; i<probabilities.size(); i++)
+    for (size_t i = 0; i < probabilities.size(); i++)
     {
       arma::vec temp = probabilities[i];
       double sum = accu(temp);
@@ -101,7 +102,8 @@ class DiscreteDistribution
         this->probabilities.push_back(temp / sum);
       else
       {
-        this->probabilities.push_back(arma::ones<arma::vec>(temp.n_elem)/temp.n_elem);
+        this->probabilities.push_back(arma::ones<arma::vec>(temp.n_elem)
+            / temp.n_elem);
       }
     }
   }
@@ -159,7 +161,7 @@ class DiscreteDistribution
    */
   double LogProbability(const arma::vec& observation) const
   {
-    // TODO: consider storing log_probabilities instead
+    // TODO: consider storing log probabilities instead?
     return log(Probability(observation));
   }
 
@@ -193,11 +195,11 @@ class DiscreteDistribution
   void Train(const arma::mat& observations,
              const arma::vec& probabilities);
 
-  //! Return the vector of probabilities.
-  arma::vec& Probabilities(const size_t dim = 0) { return probabilities[dim];}
-
-  //! Modify the vector of probabilities.
-  const arma::vec& Probabilities(const size_t dim = 0) const { return probabilities[dim];}
+  //! Return the vector of probabilities for the given dimension.
+  arma::vec& Probabilities(const size_t dim = 0) { return probabilities[dim]; }
+  //! Modify the vector of probabilities for the given dimension.
+  const arma::vec& Probabilities(const size_t dim = 0) const
+  { return probabilities[dim]; }
 
   /**
    * Serialize the distribution.
@@ -226,8 +228,8 @@ class DiscreteDistribution
   }
 
  private:
-  // The Probability Martix which each column represent one dimension and 
-  // the row represent the observations in that dimension. 
+  //! The probabilities for each dimension; each arma::vec represents the
+  //! probabilities for the observations in each dimension.
   std::vector<arma::vec> probabilities;
 };
 

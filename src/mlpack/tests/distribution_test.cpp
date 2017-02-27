@@ -64,18 +64,18 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionProbabilityTest)
  */
 BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
 {
-  DiscreteDistribution d(3);
+  DiscreteDistribution d(arma::Col<size_t>("3"));
 
   d.Probabilities() = "0.3 0.6 0.1";
 
   arma::vec actualProb(3);
+
   actualProb.zeros();
 
   for (size_t i = 0; i < 50000; i++)
     actualProb((size_t) (d.Random()[0] + 0.5))++;
 
   // Normalize.
-  Log::Debug << actualProb.t();
   actualProb /= accu(actualProb);
 
   // 8% tolerance, because this can be a noisy process.
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTrainProbTest)
 }
 
 /**
- * Achieve multidimensional probability distribution
+ * Achieve multidimensional probability distribution.
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProbTest)
 {
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionConstructorTest)
 }
 
 /**
- * Achieve multidimensional probability distribution
+ * Achieve multidimensional probability distribution.
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainTest)
 {
@@ -167,7 +167,8 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainTest)
 }
 
 /**
- * Estimate multidimensional probability distribution from observations with probabilities.
+ * Estimate multidimensional probability distribution from observations with
+ * probabilities.
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
 {
