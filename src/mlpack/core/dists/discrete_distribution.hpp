@@ -72,17 +72,19 @@ class DiscreteDistribution
    * @param numObservations Number of possible observations this distribution
    *    can have.
    */
-  DiscreteDistribution(const arma::vec& numObservations)
+  DiscreteDistribution(const arma::Col<size_t>& numObservations)
   {
-    for (size_t i=0; i<numObservations.n_elem; i++)
+    for (size_t i = 0; i < numObservations.n_elem; i++)
     {
       const size_t numObs = size_t(numObservations[i]);
       if (numObs <= 0)
       {
-        Log::Debug << "The number of observation in each dimension must greater than 0"
-            << "but the given observation number in"<< i <<" dimension is "<< numObs << std::endl;
+        std::ostringstream oss;
+        oss << "number of observations for dimension " << i << " is 0, but "
+            << "must be greater than 0";
+        throw std::invalid_argument(oss.str());
       }
-      probabilities.push_back(arma::ones<arma::vec>(numObs)/numObs);
+      probabilities.push_back(arma::ones<arma::vec>(numObs) / numObs);
     }
   }
 
