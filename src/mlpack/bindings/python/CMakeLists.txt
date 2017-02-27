@@ -89,7 +89,8 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/cli_util.hpp
             mlpack)
 
-install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install
+install(CODE "execute_process(COMMAND ${PYTHON}
+    ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
     --prefix=${CMAKE_INSTALL_PREFIX})")
 
 # Add a macro to build a python binding.
