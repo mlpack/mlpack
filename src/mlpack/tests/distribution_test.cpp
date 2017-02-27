@@ -155,9 +155,10 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionConstructorTest)
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainTest)
 {
-  std::vector<arma::vec> pro{{0.1, 0.3, 0.6},
-                             {0.3, 0.3, 0.3},
-                             {0.25, 0.25, 0.5}};
+  std::vector<arma::vec> pro;
+  pro.push_back(arma::vec("0.1, 0.3, 0.6"));
+  pro.push_back(arma::vec("0.3, 0.3, 0.3"));
+  pro.push_back(arma::vec("0.25, 0.25, 0.5"));
 
   DiscreteDistribution d(pro);
 
