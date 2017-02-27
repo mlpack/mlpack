@@ -51,14 +51,14 @@ arma::vec DiscreteDistribution::Random() const
  */
 void DiscreteDistribution::Train(const arma::mat& observations)
 {
-  // Make sure the observations have same dimension with the probabilities
-  if(observations.n_rows != probabilities.size())
+  // Make sure the observations have same dimension as the probabilities.
+  if (observations.n_rows != probabilities.size())
   {
-    Log::Debug << "the obversation must has the same dimension with the probabilities"
-        << "the observation's dimension is" << observations.n_cols << "but the dimension of "
-        << "probabilities is" << probabilities.size() << std::endl;
+    throw std::invalid_argument("observations must have same dimensionality as "
+        "the DiscreteDistribution object");
   }
-  // Get the dimension size of the distribution
+
+  // Get the dimension size of the distribution.
   const size_t dimensions = probabilities.size();
 
   // Iterate all the probabilities in each dimension
@@ -69,16 +69,18 @@ void DiscreteDistribution::Train(const arma::mat& observations)
     for (size_t r=0; r < observations.n_cols; r++)
       {
       // Add the probability of each observation.  The addition of 0.5 to the
-      // observation is to turn the default flooring operation of the size_t cast
-      // into a rounding observation.
+      // observation is to turn the default flooring operation of the size_t
+      // cast into a rounding observation.
       const size_t obs = size_t(observations(i, r) + 0.5);
 
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[i].n_elem)
       {
-        Log::Debug << "DiscreteDistribution::Train(): observation " << i
-            << " (" << obs << ") is invalid; observation must be in [0, "
-            << probabilities[i].n_elem << "] for this distribution." << std::endl;       
+        std::ostringstream oss;
+        oss << "observation " << r << " in dimension " << i << " ("
+            << observations(i, r) << ") is invalid; must be in [0, "
+            << probabilities[i].n_elem << "] for this distribution";
+        throw std::invalid_argument(oss.str());
       }
       probabilities[i][obs]++;
       }
@@ -97,17 +99,16 @@ void DiscreteDistribution::Train(const arma::mat& observations)
  * given probabilities that each observation is from this distribution.
  */
 void DiscreteDistribution::Train(const arma::mat& observations,
-                                    const arma::vec& probObs)
+                                 const arma::vec& probObs)
 {
-  // Make sure the observations have same dimension with the probabilities
-  if(observations.n_rows != probabilities.size())
-    {
-      Log::Debug << "the obversation must has the same dimension with the probabilities"
-          << "the observation's dimension is" << observations.n_rows<< "but the dimension of "
-          << "probabilities is" << probabilities.size() << std::endl;
-    }
+  // Make sure the observations have same dimension as the probabilities.
+  if (observations.n_rows != probabilities.size())
+  {
+    throw std::invalid_argument("observations must have same dimensionality as "
+        "the DiscreteDistribution object");
+  }
 
-  // Get the dimension size of the distribution
+  // Get the dimension size of the distribution.
   size_t dimensions = probabilities.size();
   for (size_t i=0; i < dimensions; i++)
   {
@@ -120,15 +121,16 @@ void DiscreteDistribution::Train(const arma::mat& observations,
       // Add the probability of each observation.  The addition of 0.5 to the
       // observation is to turn the default flooring operation of the size_t cast
       // into a rounding observation.
-
-      const size_t obs = size_t(observations(i, r)+ 0.5);
+      const size_t obs = size_t(observations(i, r) + 0.5);
 
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[i].n_elem)
       {
-        Log::Debug << "DiscreteDistribution::Train(): observation " << i
-            << " (" << obs << ") is invalid; observation must be in [0, "
-            << probabilities[i].n_elem << "] for this distribution." << std::endl;       
+        std::ostringstream oss;
+        oss << "observation " << r << " in dimension " << i << " ("
+            << observations(i, r) << ") is invalid; must be in [0, "
+            << probabilities[i].n_elem << "] for this distribution";
+        throw std::invalid_argument(oss.str());
       }
 
       probabilities[i][obs] += probObs[r];
