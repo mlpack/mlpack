@@ -44,9 +44,9 @@ PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
     "(and label sequences).", "b");
 PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
-    "model_file is specified.", "n", 0);
+    "model_file is specified).", "n", 0);
 PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
-    " is 'gmm'.", "g", 0);
+    " is 'gmm').", "g", 0);
 PARAM_STRING_IN("model_file", "Pre-existing HMM model file.", "m", "");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
@@ -63,6 +63,142 @@ using namespace mlpack::gmm;
 using namespace mlpack::math;
 using namespace arma;
 using namespace std;
+
+// Because we don't know what the type of our HMM is, we need to write a
+// function that can take arbitrary HMM types.
+struct Init
+{
+  template<typename HMMType>
+  static void Apply(HMMType& hmm, vector<mat>* trainSeq)
+  {
+    const size_t states = CLI::GetParam<int>("states");
+    const double tolerance = CLI::GetParam<double>("tolerance");
+
+    // Create the initialized-to-zero model.
+    Create(hmm, *trainSeq, states, tolerance);
+
+    // Initializing the emission distribution depends on the distribution.
+    // Therefore we have to use the helper functions.
+    RandomInitialize(hmm.Emission());
+  }
+
+  //! Helper function to create discrete HMM.
+  static void Create(HMM<DiscreteDistribution>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance)
+  {
+    // Maximum observation is necessary so we know how to train the discrete
+    // distribution.
+    arma::Col<size_t> maxEmissions(trainSeq[0].n_rows);
+    maxEmissions.zeros();
+    for (vector<mat>::iterator it = trainSeq.begin(); it != trainSeq.end();
+         ++it)
+    {
+      arma::Col<size_t> maxSeqs =
+          arma::conv_to<arma::Col<size_t>>::from(arma::max(*it, 1)) + 1;
+      maxEmissions = arma::max(maxEmissions, maxSeqs);
+    }
+
+    hmm = HMM<DiscreteDistribution>(size_t(states),
+        DiscreteDistribution(maxEmissions), tolerance);
+  }
+
+  //! Helper function to create Gaussian HMM.
+  static void Create(HMM<GaussianDistribution>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance)
+  {
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+
+    // Verify dimensionality of data.
+    for (size_t i = 0; i < trainSeq.size(); ++i)
+      if (trainSeq[i].n_rows != dimensionality)
+        Log::Fatal << "Observation sequence " << i << " dimensionality ("
+            << trainSeq[i].n_rows << " is incorrect (should be "
+            << dimensionality << ")!" << endl;
+
+    // Get the model and initialize it.
+    hmm = HMM<GaussianDistribution>(size_t(states),
+        GaussianDistribution(dimensionality), tolerance);
+  }
+
+  //! Helper function to create GMM HMM.
+  static void Create(HMM<GMM>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance)
+  {
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+    const int gaussians = CLI::GetParam<int>("gaussians");
+
+    if (gaussians == 0)
+      Log::Fatal << "Number of gaussians for each GMM must be specified (-g) "
+          << "when type = 'gmm'!" << endl;
+
+    if (gaussians < 0)
+      Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
+          << "be greater than or equal to 1." << endl;
+
+    // Create HMM object.
+    hmm = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality),
+        tolerance);
+
+    // Issue a warning if the user didn't give labels.
+    if (!CLI::HasParam("labels_file"))
+      Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
+          << "going to produce good results!" << endl;
+  }
+
+  //! Helper function for discrete emission distributions.
+  static void RandomInitialize(vector<DiscreteDistribution>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      e[i].Probabilities().randu();
+      e[i].Probabilities() /= arma::accu(e[i].Probabilities());
+    }
+  }
+
+  //! Helper function for Gaussian emission distributions.
+  static void RandomInitialize(vector<GaussianDistribution>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      const size_t dimensionality = e[i].Mean().n_rows;
+      e[i].Mean().randu();
+      // Generate random covariance.
+      arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
+      e[i].Covariance(r * r.t());
+    }
+  }
+
+  //! Helper function for GMM emission distributions.
+  static void RandomInitialize(vector<GMM>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      // Random weights.
+      e[i].Weights().randu();
+      e[i].Weights() /= arma::accu(e[i].Weights());
+
+      // Random means and covariances.
+      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      {
+        const size_t dimensionality = e[i].Component(g).Mean().n_rows;
+        e[i].Component(g).Mean().randu();
+
+        // Generate random covariance.
+        arma::mat r = arma::randu<arma::mat>(dimensionality,
+            dimensionality);
+        e[i].Component(g).Covariance(r * r.t());
+      }
+    }
+  }
+};
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
