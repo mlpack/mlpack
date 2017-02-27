@@ -5,6 +5,10 @@
   * Add decision tree implementation in methods/decision_tree/.  This is very
     similar to a C4.5 tree learner.
 
+  * Add DBSCAN implementation in methods/dbscan/.
+
+  * Add support for multidimensional discrete distributions (#810, #830).
+
 ### mlpack 2.1.1
 ###### 2016-12-22
   * HMMs now use random initialization; this should fix some convergence issues
