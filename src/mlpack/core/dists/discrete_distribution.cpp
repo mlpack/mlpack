@@ -64,13 +64,15 @@ void DiscreteDistribution::Train(const arma::mat& observations)
   // Get the dimension size of the distribution.
   const size_t dimensions = probabilities.size();
 
-  // Iterate all the probabilities in each dimension
-  for (size_t i=0; i < dimensions; i++)
-  {
-    // Clear the old probabilities
+  // Clear the old probabilities.
+  for (size_t i = 0; i < dimensions; i++)
     probabilities[i].zeros();
-    for (size_t r=0; r < observations.n_cols; r++)
-      {
+
+  // Iterate all the probabilities in each dimension
+  for (size_t r = 0; r < observations.n_cols; ++r)
+  {
+    for (size_t i = 0; i < dimensions; ++i)
+    {
       // Add the probability of each observation.  The addition of 0.5 to the
       // observation is to turn the default flooring operation of the size_t
       // cast into a rounding observation.
@@ -86,14 +88,17 @@ void DiscreteDistribution::Train(const arma::mat& observations)
         throw std::invalid_argument(oss.str());
       }
       probabilities[i][obs]++;
-      }
+    }
+  }
 
-    // Now normailze the distribution.
+  // Now normalize the distributions.
+  for (size_t i = 0; i < dimensions; ++i)
+  {
     double sum = accu(probabilities[i]);
     if (sum > 0)
       probabilities[i] /= sum;
-    else
-      probabilities[i].fill(1.0 / probabilities[i].n_elem); // Force normalization.
+    else // Force normalization.
+      probabilities[i].fill(1.0 / probabilities[i].n_elem);
   }
 }
 
@@ -113,13 +118,15 @@ void DiscreteDistribution::Train(const arma::mat& observations,
 
   // Get the dimension size of the distribution.
   size_t dimensions = probabilities.size();
-  for (size_t i=0; i < dimensions; i++)
-  {
-    // Clear the old probabilities
+
+  // Clear the old probabilities.
+  for (size_t i = 0; i < dimensions; i++)
     probabilities[i].zeros();
 
-    // Ensure that the observation is within the bounds.
-    for (size_t r=0; r < observations.n_cols; r++)
+  // Ensure that the observation is within the bounds.
+  for (size_t r = 0; r < observations.n_cols; r++)
+  {
+    for (size_t i = 0; i < dimensions; i++)
     {
       // Add the probability of each observation.  The addition of 0.5 to the
       // observation is to turn the default flooring operation of the size_t cast
@@ -138,12 +145,15 @@ void DiscreteDistribution::Train(const arma::mat& observations,
 
       probabilities[i][obs] += probObs[r];
     }
+  }
 
-    // Now normailze the distribution.
+  // Now normalize the distributions.
+  for (size_t i = 0; i < dimensions; ++i)
+  {
     double sum = accu(probabilities[i]);
     if (sum > 0)
       probabilities[i] /= sum;
-    else
-      probabilities[i].fill(1.0 / probabilities[i].n_elem); // Force normalization.
+    else // Force normalization.
+      probabilities[i].fill(1.0 / probabilities[i].n_elem);
   }
 }
