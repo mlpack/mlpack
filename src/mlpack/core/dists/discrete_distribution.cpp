@@ -39,10 +39,13 @@ arma::vec DiscreteDistribution::Random() const
       }
     }
 
-    if (sumProb >= randObs != true)
+    if (sumProb > 1.0)
+    {
       // This shouldn't happen.
       result[d] = probabilities[d].n_elem - 1;
+    }
   }
+
   return result;
 }
 
