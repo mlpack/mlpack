@@ -37,7 +37,7 @@ namespace cli {
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/io/cli.hpp, mlpack::CLI
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 template<typename N>
 class CLIOption
