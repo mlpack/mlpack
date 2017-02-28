@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="http://mlpack.org"><img src="http://kurg.org/media/mlpack-icon-white-version-12.svg" height=280 alt="mlpack: a scalable C++ machine learning library"></a>
+  <a href="http://mlpack.org"><img src="http://kurg.org/media/mlpack-icon-white-version-12.svg" style="background-color:rgba(0,0,0,0);" height=280 alt="mlpack: a scalable C++ machine learning library"></a>
   <br>
   a scalable C++ machine learning library
   <br>
