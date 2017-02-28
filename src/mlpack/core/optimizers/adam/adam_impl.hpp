@@ -70,11 +70,20 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Exponential moving average of gradient values.
   arma::mat m = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
-  // Initialize the exponentially weighted infinity norm for AdaMax optimizer.
-  arma::mat u = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
-
-  // Exponential moving average of squared gradient values.
-  arma::mat v = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  /**
+   * Initialize  either the exponentially weighted infinity norm for AdaMax
+   * optimizer (u) or exponential moving average of squared gradient values
+   * for Adam optimizer (v).
+   */
+  arma::mat u, v;
+  if (adaMax)
+  {
+    u = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  }
+  else
+  {
+    v = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  }
 
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
