@@ -1,5 +1,5 @@
 /*
-  @file ksinit.cpp
+  @file ksinit_test.cpp
   @author Praveen Ch
   
 
@@ -10,26 +10,19 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
-
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 
-#include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/linear_layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/layer/multiclass_classification_layer.hpp>
-
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/performance_functions/mse_function.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
-using namespace std;
 
 BOOST_AUTO_TEST_SUITE(KSInitialization);
 
@@ -37,22 +30,16 @@ BOOST_AUTO_TEST_SUITE(KSInitialization);
  * Train and evaluate a vanilla network with the specified initialisation 
    procedure.
  */
-template<
-    typename PerformanceFunction,
-    typename OutputLayerType,
-    typename PerformanceFunctionType,
-    typename MatType = arma::mat
->
-
-
+template<typename MatType = arma::mat>
 void BuildVanillaNetwork(MatType& trainData,
-             MatType& trainLabels,
-             MatType& testData,
-             MatType& testLabels,
-             const size_t hiddenLayerSize,
-             const size_t maxEpochs,
-             double& trainError,
-             double& testError)
+                         MatType& trainLabels,
+                         MatType& testData,
+                         MatType& testLabels,
+                         const size_t hiddenLayerSize,
+                         const size_t maxEpochs,
+                         const size_t outputSize,
+                         double& trainError,
+                         double& testError)
 {
   /*
   @param trainError mean squared error of predictions on training data.
@@ -78,44 +65,30 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+
    */
 
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> inputBiasLayer(hiddenLayerSize);
-  BaseLayer<PerformanceFunction> inputBaseLayer;
+  //4.59 is a constant used in the paper.
+  KathirvalavakumarSubavathiInitialization init(trainData, 4.59);
 
-  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
-  BaseLayer<PerformanceFunction> outputLayer;
+  FFN<MeanSquaredError<>, KathirvalavakumarSubavathiInitialization> 
+      model(MeanSquaredError<>(), init);
+  
+  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<LeakyReLU<> >();
+  model.Add<Linear<> >(hiddenLayerSize, outputSize);
 
-  OutputLayerType classOutputLayer;
-
-  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
-              hiddenLayer1, hiddenBiasLayer1, outputLayer);
-
-
-    //4.59 is a constant used in the paper.
-  KathirvalavakumarSubavathiInitialization init(trainData, 4.59); 
-
-  FFN<decltype(modules), decltype(classOutputLayer), 
-      KathirvalavakumarSubavathiInitialization,
-      PerformanceFunctionType> net(modules, classOutputLayer, init);
-
-  RMSprop<decltype(net)> opt(net, 0.01, 0.88, 1e-8,
+  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, 1e-18);
 
-  net.Train(trainData, trainLabels, opt);
+  model.Train(std::move(trainData), std::move(trainLabels), opt);
 
   MatType prediction;
  
   // Calculating the mean squared error on the training data.
-  net.Predict(trainData, prediction);
-  arma::mat squarederror = arma::square(prediction * 1.0 - trainLabels);
-  trainError = arma::sum(arma::sum(squarederror)) / trainData.n_cols;
+  model.Predict(trainData, prediction);
 
+  trainError = arma::mean(arma::mean(arma::square(prediction - trainLabels)));
   // Calculating the mean squared error on the test data
-  net.Predict(testData, prediction);
-  squarederror = arma::square(prediction * 1.0 - testLabels);
-  testError = arma::sum(arma::sum(squarederror)) / testData.n_cols;
-
+  model.Predict(testData, prediction);
+  testError = arma::mean(arma::mean(arma::square(prediction - testLabels)));
   
 }
 
@@ -195,12 +168,9 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
     
     double trainError, validationError;
 
-    BuildVanillaNetwork<SoftsignFunction, 
-        MulticlassClassificationLayer,
-        MeanSquaredErrorFunction>
-        (validationTrainData, validationTrainLabels, 
+    BuildVanillaNetwork(validationTrainData, validationTrainLabels, 
          validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs, 
-         trainError, validationError);
+         validationTrainLabels.n_rows, trainError, validationError);
 
     trainErrorAvg += trainError;
     validationErrorAvg += validationError;
@@ -248,7 +218,7 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
 */
   Error avgError = {0.0, 0.0};
 
-  for (int i = 0; i < iter;)
+  for (size_t i = 0; i < iter;)
   {
     dataset = arma::shuffle(dataset, 1);
 
@@ -257,7 +227,6 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
     arma::mat trainLabels = dataset.submat(dataset.n_rows - numLabels, 0, 
                                            dataset.n_rows - 1, 
                                            dataset.n_cols - 1); 
-    
     Error e = CrossValidation(trainData, trainLabels, 10, hiddenLayerSize, 
                               maxEpochs);
 
@@ -284,12 +253,15 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
 {
   arma::arma_rng::set_seed_random();
 
-  double trainErrorThreshold = 0.0008;
-  double validationErrorThreshold = 0.0008;
+  double trainErrorThreshold = 0.001;
+  double validationErrorThreshold = 0.001;
 
-  arma::mat dataset, trainData, trainLabels;
+  arma::mat dataset, labels;
 
   data::Load("iris.csv", dataset, true);
+  data::Load("iris_labels.txt", labels, true);
+
+  dataset.insert_rows(dataset.n_rows, labels);
 
   dataset /= 10; // Normalization used in the paper.
 
@@ -300,12 +272,14 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
 
 }
 
+// Test case for the Non Linear Function Approximation Problem.
+
 BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
 {
   arma::arma_rng::set_seed_random();
 
-  double trainErrorThreshold = 0.0035;
-  double validationErrorThreshold = 0.0035;
+  double trainErrorThreshold = 0.0045;
+  double validationErrorThreshold = 0.0045;
 
   arma::mat dataset(11, 500, arma::fill::randu);
 
@@ -328,7 +302,7 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
   // Eqn 13.3
   dataset.row(10) = arma::sqrt(1 - dataset.row(0));
   
-
+  //Run CV 10 times
   Error avgError = AvgCrossValidation(dataset, 3, 10, 10, 500);
   
 
