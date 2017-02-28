@@ -19,11 +19,7 @@
 #include <streambuf>
 #include <stdexcept>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-
-#include <mlpack/core/util/sfinae_utility.hpp>
+#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo
 
 namespace mlpack {
 namespace util {
@@ -128,11 +124,19 @@ class PrefixedOutStream
    * Conducts the base logic required in all the operator << overloads.  Mostly
    * just a good idea to reduce copy-pasta.
    *
+   * Calls 2 different overloads to be able to output arma objects with custom
+   * precision
+   *
    * @tparam T The type of the data to output.
    * @param val The The data to be output.
    */
   template<typename T>
-  void BaseLogic(const T& val);
+  typename std::enable_if<!arma::is_arma_type<T>::value, void>::type
+  BaseLogic(const T& val);
+
+  template<typename T>
+  typename std::enable_if<arma::is_arma_type<T>::value, void>::type
+  BaseLogic(const T& val);
 
   /**
    * Output the prefix, but only if we need to and if we are allowed to.
