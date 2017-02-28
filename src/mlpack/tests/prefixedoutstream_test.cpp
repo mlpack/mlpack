@@ -104,6 +104,43 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
+
+  // Try to print armadillo objects with custom precision
+  ss << std::fixed;
+  ss << std::setprecision(6);
+  ss.str("");
+
+  pss << test;
+
+  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR "1.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "1.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "2.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "2.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "3.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "3.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "4.000000\n");
+
+  // Try printing a matrix, with higher precision
+  ss << std::setprecision(8);
+  ss.str("");
+
+  pss << test2;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "1.00000000 1.50000000 2.00000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "2.50000000 3.00000000 3.50000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "4.00000000 4.50000000 4.99999000\n");
+
+  // Test stream after reset
+  ss << std::setprecision(6);
+  ss.unsetf(std::ios::floatfield);
+  ss.str("");
+
+  pss << test2;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
 }
 
 /**
