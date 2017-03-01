@@ -28,6 +28,17 @@ namespace optimization {
  * momentum \f$ mu \in (0,1] \f$. Common values of \f$ mu \f$ include 0.5, 0.9 and 0.99.
  * Typically it begins with a small value and later raised.
  *
+ * For more information, please refer to the Section 8.3.2 of the following book
+ *
+ * @code
+ * @book{Goodfellow-et-al-2016,
+ *  title={Deep Learning},
+ *  author={Ian Goodfellow and Yoshua Bengio and Aaron Courville},
+ *  publisher={MIT Press},
+ *  note={\url{http://www.deeplearningbook.org}},
+ *  year={2016}
+ * }
+ *
  * SGD is a technique for minimizing a function which can be expressed as a
  * sum of other functions.  That is, suppose we have
  *
