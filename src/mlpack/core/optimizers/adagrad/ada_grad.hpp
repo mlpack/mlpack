@@ -80,7 +80,7 @@ class AdaGrad
    */
   AdaGrad(DecomposableFunctionType& function,
       const double stepSize = 0.01,
-      const double eps = 1e-6,
+      const double eps = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true);
