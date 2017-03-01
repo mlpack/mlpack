@@ -1,6 +1,5 @@
 /**
  * @file ada_grad_test.cpp
- * @author Marcus Edel
  * @author Abhinav Moudgil
  *
  * Tests the AdaGrad optimizer

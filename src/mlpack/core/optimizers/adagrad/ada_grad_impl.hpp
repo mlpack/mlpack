@@ -1,6 +1,5 @@
 /**
  * @file ada_grad_impl.hpp
- * @author Ryan Curtin
  * @author Abhinav Moudgil
  *
  * Implementation of the Adagrad optimizer.
