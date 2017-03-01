@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  * @author Arun Reddy
  *
- * Stochastic Gradient Descent(SGD) with Momentum update (MomentumSGD) is an approach
+ * Stochastic Gradient Descent(SGD) with Momentum update(MomentumSGD) is an approach
  * that enjoys accelerated convergence rates compared to vanilla SGD.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,11 +21,11 @@ namespace optimization {
 
 /**
  * Learning with SGD can sometimes be slow. Using momentum update for parameter
- * learning can accelerate the rate of convergence in cases the surface curves
- * much more steeply(a steep hilly terrain with high curvature). The momentum
- * algorithm introduces a new velocity vector \f$ v \f$ with the same dimension
- * as the paramater \f$ A \f$. Also it introduces a new hyperparameter momentum
- * \f$ mu \in (0,1] \f$. Common values of \f$ mu \f$ include 0.5, 0.9 and 0.99.
+ * learning can accelerate the rate of convergence, specifically in the cases
+ * where the surface curves much more steeply(a steep hilly terrain with high curvature)
+ * . The momentum algorithm introduces a new velocity vector \f$ v \f$ with the
+ * same dimension as the paramater \f$ A \f$. Also it introduces a new hyperparameter
+ * momentum \f$ mu \in (0,1] \f$. Common values of \f$ mu \f$ include 0.5, 0.9 and 0.99.
  * Typically it begins with a small value and later raised.
  *
  * SGD is a technique for minimizing a function which can be expressed as a
