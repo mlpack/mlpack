@@ -9,9 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "singletons.hpp"
-#include "log.hpp"
 #include "cli.hpp"
+#include "log.hpp"
+#include "singletons.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
