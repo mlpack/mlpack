@@ -42,7 +42,6 @@
   #include <dlfcn.h>
 #endif
 
-#include "prefixedoutstream.hpp"
 #include "backtrace.hpp"
 #include "log.hpp"
 
