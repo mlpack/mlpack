@@ -153,18 +153,30 @@ PrefixedOutStream::BaseLogic(const T& val)
   PrefixIfNeeded();
 
   std::ostringstream convert;
-  // Sync flags and precision with destination stream
-  convert.setf(destination.flags());
-  convert.precision(destination.precision());
 
   // Check if the stream is in the default state
-  if(convert.flags() == 4098 && convert.precision() == 6)
+  if(destination.flags() == convert.flags() && 
+     destination.precision() == convert.precision())
   {
     convert << val;
   }
   else
   {
-    val.raw_print(convert);
+    // Sync flags and precision with destination stream
+    convert.setf(destination.flags());
+    convert.precision(destination.precision());
+
+    // Set width of the convert stream
+    double maxVal = arma::abs(val).max();
+    if(maxVal == 0.f) {
+        maxVal = 1;
+    }
+    int maxLog = log10(maxVal);
+    maxLog = (maxLog > 0) ? floor(maxLog) + 1 : 1;
+
+    const int padding = 4;
+    convert.width(convert.precision() + maxLog + padding);
+    arma::arma_ostream::print(convert, val, false);
   }
 
   if (convert.fail())
