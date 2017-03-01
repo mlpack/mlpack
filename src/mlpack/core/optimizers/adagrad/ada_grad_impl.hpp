@@ -58,8 +58,8 @@ double AdaGrad<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
 
-  // Leaky sum of squares of parameter gradient.
-  arma::mat meanSquaredGradient = arma::zeros<arma::mat>(iterate.n_rows,
+  // sum of squares of parameter gradient.
+  arma::mat squaredGradient = arma::zeros<arma::mat>(iterate.n_rows,
       iterate.n_cols);
 
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
@@ -102,11 +102,10 @@ double AdaGrad<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(iterate, currentFunction, gradient);
 
     // Accumulate gradient.
-    meanSquaredGradient += (gradient % gradient);
+    squaredGradient += (gradient % gradient);
 
     // Apply update.
-    iterate -= (stepSize * gradient) /
-        (arma::sqrt(meanSquaredGradient) + eps);
+    iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + eps);
 
     // Now add that to the overall objective function.
     if (shuffle)
