@@ -11,6 +11,7 @@
  */
 
 #include "regularized_svd_function.hpp"
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -128,8 +129,8 @@ void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
 namespace mlpack {
 namespace optimization {
 
-template<>
-double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
+template<typename DecomposableFunctionType=mlpack::svd::RegularizedSVDFunction, typename UpdatePolicyType=mlpack::optimization::EmptyUpdate>
+double SGD<DecomposableFunctionType,UpdatePolicyType>::Optimize(arma::mat& parameters)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

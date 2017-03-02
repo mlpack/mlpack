@@ -110,8 +110,8 @@ namespace optimization {
    * affects only a small number of parameters per example, and thus the normal
    * abstraction does not work as fast as we might like it to.
    */
-  template<>
-  double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+  template<typename DecomposableFunctionType = mlpack::svd::RegularizedSVDFunction, typename UpdatePolicyType = mlpack::optimization::EmptyUpdate>
+  double SGD<DecomposableFunctionType,UpdatePolicyType>::Optimize(
       arma::mat& parameters);
 
 } // namespace optimization

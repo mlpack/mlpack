@@ -13,19 +13,23 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 
 #include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/empty_update.hpp>
+
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType>
-SGD<DecomposableFunctionType>::SGD(DecomposableFunctionType& function,
-                                   const double stepSize,
-                                   const size_t maxIterations,
-                                   const double tolerance,
-                                   const bool shuffle) :
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(DecomposableFunctionType& function,
+                                                     UpdatePolicyType updatePolicyType,
+                                                     const double stepSize,
+                                                     const size_t maxIterations,
+                                                     const double tolerance,
+                                                     const bool shuffle) :
     function(function),
+    updatePolicyType(updatePolicyType),
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
@@ -33,8 +37,8 @@ SGD<DecomposableFunctionType>::SGD(DecomposableFunctionType& function,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType>
-double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+double SGD<DecomposableFunctionType,UpdatePolicyType>::Optimize(arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -53,6 +57,9 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
     overallObjective += function.Evaluate(iterate, i);
+
+  // Initialize the update policy.
+  updatePolicyType.Initialize(iterate.n_rows,iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -95,7 +102,7 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       function.Gradient(iterate, currentFunction, gradient);
 
     // And update the iterate.
-    iterate -= stepSize * gradient;
+    iterate += updatePolicyType.Update(stepSize, &gradient);
 
     // Now add that to the overall objective function.
     if (shuffle)

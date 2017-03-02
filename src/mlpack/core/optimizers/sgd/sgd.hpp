@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/empty_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -72,7 +73,8 @@ namespace optimization {
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
  */
-template<typename DecomposableFunctionType>
+template<typename DecomposableFunctionType,
+         typename UpdatePolicyType = EmptyUpdate>
 class SGD
 {
  public:
@@ -93,6 +95,7 @@ class SGD
    *     function is visited in linear order.
    */
   SGD(DecomposableFunctionType& function,
+      UpdatePolicyType updatePolicyType = UpdatePolicyType(),
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
@@ -112,6 +115,14 @@ class SGD
   const DecomposableFunctionType& Function() const { return function; }
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return function; }
+
+//  //! Get the instantiated update policy type.
+//  const UpdatePolicyType UpdatePolicyType() const
+//  { return updatePolicyType; }
+//
+//  //! Modify the instantiated update policy type.
+//  UpdatePolicyType& UpdatePolicyType()
+//  { return updatePolicyType; }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -136,6 +147,9 @@ class SGD
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicyType;
 
   //! The step size for each example.
   double stepSize;
