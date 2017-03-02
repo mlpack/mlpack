@@ -70,7 +70,7 @@ class AdaGrad
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param eps Value used to initialise the squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -104,9 +104,9 @@ class AdaGrad
   //! Modify the step size.
   double& StepSize() { return stepSize; }
 
-  //! Get the value used to initialise the mean squared gradient parameter.
+  //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return eps; }
-  //! Modify the value used to initialise the mean squared gradient parameter.
+  //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return eps; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
@@ -131,7 +131,7 @@ class AdaGrad
   //! The step size for each example.
   double stepSize;
 
-  //! The value used to initialise the mean squared gradient parameter.
+  //! The value used to initialise the squared gradient parameter.
   double eps;
 
   //! The maximum number of allowed iterations.
