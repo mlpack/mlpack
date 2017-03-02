@@ -163,8 +163,8 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
 
 template<typename MatType>
 void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
-                                             arma::Row<size_t>& results,
-                                             arma::mat& testProbs)
+                                             arma::Row<size_t>& results)
+                                             
 {
   // Check that the number of features in the test data is same as in the
   // training data.
