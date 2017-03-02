@@ -99,7 +99,7 @@ void CheckInverseCorrect(const arma::colvec input)
     // Test the calculation of the inverse using a single value as input.
   for (size_t i = 0; i < input.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::inv(ActivationFunction::Fn(
+    BOOST_REQUIRE_CLOSE(ActivationFunction::Inv(ActivationFunction::Fn(
         input.at(i))), input.at(i), 1e-3);
   }
 
