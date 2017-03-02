@@ -123,7 +123,7 @@ class NaiveBayesClassifier
    * @param data List of data points.
    * @param results Vector that class predictions will be placed into.
    */
-  void Classify(const MatType& data, arma::Row<size_t>& results, arma::mat& testProbs);
+  void Classify(const MatType& data, arma::Row<size_t>& results);
 
   //! Get the sample means for each class.
   const MatType& Means() const { return means; }
@@ -139,7 +139,8 @@ class NaiveBayesClassifier
   const arma::vec& Probabilities() const { return probabilities; }
   //! Modify the prior probabilities for each class.
   arma::vec& Probabilities() { return probabilities; }
-
+ //! To return the confidence scores of each class 
+  arma::mat& ConfidenceScores() { return testProbs;  }
   //! Serialize the classifier.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -153,6 +154,8 @@ class NaiveBayesClassifier
   arma::vec probabilities;
   //! Number of training points seen so far.
   size_t trainingPoints;
+ //for confidence scores of each class
+  arma::mat testProbs;
 };
 
 } // namespace naive_bayes
