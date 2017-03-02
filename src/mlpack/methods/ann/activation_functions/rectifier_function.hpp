@@ -79,7 +79,7 @@ class RectifierFunction
   {
     y = x;
     for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
+      Fn(x.slice(s), y.slice(s));
   }
 
   /**
