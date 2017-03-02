@@ -83,7 +83,7 @@ class BaseLayer
                 arma::Mat<eT>&& g)
   {
     arma::Mat<eT> derivative;
-    ActivationFunction::deriv(input, derivative);
+    ActivationFunction::Deriv(input, derivative);
     g = gy % derivative;
   }
 
