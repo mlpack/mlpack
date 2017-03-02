@@ -118,7 +118,7 @@ double SMORMS3<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     arma::mat lRateMat(x.n_rows, x.n_cols);
     lRateMat.fill(lRate);
 
-    iterate -= gradient * arma::min(x, lRate) / (arma::sqrt(g2) + eps);
+    iterate -= gradient * arma::min(x, lRateMat) / (arma::sqrt(g2) + eps);
 
     mem *= (1 - x);
     mem += 1;
