@@ -57,9 +57,7 @@ double SMORMS3<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
   // Initialise the parameters mem, g and g2.
   arma::mat mem = arma::ones<arma::mat>(iterate.n_rows, iterate.n_cols);
-
   arma::mat g = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
-
   arma::mat g2 = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
