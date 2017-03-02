@@ -70,8 +70,8 @@ class OivsInitialization
                      const int k = 5,
                      const double gamma = 0.9) :
       k(k), gamma(gamma),
-      b(std::abs(ActivationFunction::inv(1 - epsilon) -
-                 ActivationFunction::inv(epsilon)))
+      b(std::abs(ActivationFunction::Inv(1 - epsilon) -
+                 ActivationFunction::Inv(epsilon)))
   {
   }
 
