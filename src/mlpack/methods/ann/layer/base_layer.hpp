@@ -65,7 +65,7 @@ class BaseLayer
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output)
   {
-    ActivationFunction::fn(input, output);
+    ActivationFunction::Fn(input, output);
   }
 
   /**
