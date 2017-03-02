@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(SimpleAdaGradTestFunction)
 /**
  * Run AdaGrad on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
