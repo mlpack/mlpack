@@ -45,7 +45,7 @@ void CheckActivationCorrect(const arma::colvec input, const arma::colvec target)
   // Test the activation function using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::Fn(input.at(i)),
+    BOOST_REQUIRE_CLOSE(ActivationFunction::fn(input.at(i)),
         target.at(i), 1e-3);
   }
 
