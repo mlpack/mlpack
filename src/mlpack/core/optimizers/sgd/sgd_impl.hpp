@@ -23,6 +23,20 @@ namespace optimization {
 
 template<typename DecomposableFunctionType, typename UpdatePolicyType>
 SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(DecomposableFunctionType& function,
+                                                     const double stepSize,
+                                                     const size_t maxIterations,
+                                                     const double tolerance,
+                                                     const bool shuffle) :
+    function(function),
+    updatePolicyType(EmptyUpdate()),
+    stepSize(stepSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    shuffle(shuffle)
+{ /* Nothing to do. */ }
+
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(DecomposableFunctionType& function,
                                                      UpdatePolicyType updatePolicyType,
                                                      const double stepSize,
                                                      const size_t maxIterations,
@@ -102,7 +116,7 @@ double SGD<DecomposableFunctionType,UpdatePolicyType>::Optimize(arma::mat& itera
       function.Gradient(iterate, currentFunction, gradient);
 
     // And update the iterate.
-    iterate += updatePolicyType.Update(stepSize, &gradient);
+    iterate += updatePolicyType.Update(stepSize, gradient);
 
     // Now add that to the overall objective function.
     if (shuffle)

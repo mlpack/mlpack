@@ -40,8 +40,8 @@ class EmptyUpdate {
     in_cols = n_cols;
   }
 
-  arma::mat Update(const double stepSize,
-              arma::mat& gradient)
+  arma::mat Update(double stepSize,
+              arma::mat gradient)
   {
     // performs the vanilla SGD update.
     return - stepSize * gradient;

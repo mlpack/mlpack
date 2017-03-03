@@ -508,7 +508,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
   LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
   // Create a logistic regression object using custom SGD with a much smaller
   // tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
   LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
@@ -693,7 +693,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 
   // Now do the same with SGD.
-  SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
+  StandardSGD<LogisticRegressionFunction<>> sgdOpt(lrf);
   sgdOpt.StepSize() = 0.15;
   sgdOpt.Tolerance() = 1e-75;
   LogisticRegression<> lr2(sgdOpt);
@@ -744,13 +744,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDTrainTest)
     labels[i] = math::RandInt(0, 2);
 
   LogisticRegressionFunction<> lrf(dataset, labels, 0.3);
-  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf);
   sgd.Shuffle() = false;
   LogisticRegression<> lr(sgd);
   LogisticRegression<> lr2(dataset.n_rows, 0.3);
 
   LogisticRegressionFunction<> lrf2(dataset, labels, 0.3);
-  SGD<LogisticRegressionFunction<>> sgd2(lrf2);
+  StandardSGD<LogisticRegressionFunction<>> sgd2(lrf2);
   sgd2.Shuffle() = false;
   lr2.Train(sgd2);
 
@@ -797,13 +797,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
 
   LogisticRegression<> lr(10, 0.3);
   LogisticRegressionFunction<> lrf(denseDataset, labels, 0.3);
-  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf);
   sgd.Shuffle() = false;
   lr.Train(sgd);
 
   LogisticRegression<arma::sp_mat> lrSparse(10, 0.3);
   LogisticRegressionFunction<arma::sp_mat> lrfSparse(dataset, labels, 0.3);
-  SGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
+  StandardSGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
   sgdSparse.Shuffle() = false;
   lrSparse.Train(sgdSparse);
 

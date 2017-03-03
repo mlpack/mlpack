@@ -95,7 +95,13 @@ class SGD
    *     function is visited in linear order.
    */
   SGD(DecomposableFunctionType& function,
-      UpdatePolicyType updatePolicyType = UpdatePolicyType(),
+      const double stepSize = 0.01,
+      const size_t maxIterations = 100000,
+      const double tolerance = 1e-5,
+      const bool shuffle = true);
+
+  SGD(DecomposableFunctionType& function,
+      UpdatePolicyType updatePolicyType,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
@@ -164,6 +170,9 @@ class SGD
   //! iterating.
   bool shuffle;
 };
+
+template<typename DecomposableFunctionType>
+using StandardSGD = SGD<DecomposableFunctionType, EmptyUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

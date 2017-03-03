@@ -32,9 +32,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
     Log::Fatal << "LogisticRegressionFunction::LogisticRegressionFunction(): "
-        << "predictors matrix has " << predictors.n_cols << " points, but "
-        << "responses vector has " << responses.n_elem << " elements (should be"
-        << " " << predictors.n_cols << ")!" << std::endl;
+               << "predictors matrix has " << predictors.n_cols << " points, but "
+               << "responses vector has " << responses.n_elem << " elements (should be"
+               << " " << predictors.n_cols << ")!" << std::endl;
 }
 
 template<typename MatType>
@@ -116,7 +116,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 
   // Calculate sigmoid.
   const double exponent = parameters(0, 0) + arma::dot(predictors.col(i),
-      parameters.col(0).subvec(1, parameters.n_elem - 1));
+                                                       parameters.col(0).subvec(1, parameters.n_elem - 1));
   const double sigmoid = 1.0 / (1.0 + std::exp(-exponent));
 
   if (responses[i] == 1)
@@ -136,7 +136,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
   regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
 
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
-      - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
+                                                        - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
 
   gradient.set_size(parameters.n_elem);
   gradient[0] = -arma::accu(responses - sigmoids);
@@ -161,8 +161,8 @@ void LogisticRegressionFunction<MatType>::Gradient(
       / predictors.n_cols;
 
   const double sigmoid = 1.0 / (1.0 + std::exp(-parameters(0, 0)
-      - arma::dot(predictors.col(i), parameters.col(0).subvec(1,
-      parameters.n_elem - 1))));
+                                                   - arma::dot(predictors.col(i), parameters.col(0).subvec(1,
+                                                                                                           parameters.n_elem - 1))));
 
   gradient.set_size(parameters.n_elem);
   gradient[0] = -(responses[i] - sigmoid);

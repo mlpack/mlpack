@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     model.Add<Linear<> >(4, 10);
     model.Add<LogSoftMax<> >();
 
-    SGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
+    StandardSGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::mat prediction;
