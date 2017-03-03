@@ -33,7 +33,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(const T& s)
 }
 
 template<typename T>
-typename std::enable_if<!arma::is_arma_type<T>::value, void>::type
+typename std::enable_if<!arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
 {
   // We will use this to track whether or not we need to terminate at the end of
@@ -137,7 +137,7 @@ PrefixedOutStream::BaseLogic(const T& val)
 }
 
 template<typename T>
-typename std::enable_if<arma::is_arma_type<T>::value, void>::type
+typename std::enable_if<arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
 {
 
