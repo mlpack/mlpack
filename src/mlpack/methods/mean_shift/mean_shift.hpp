@@ -3,12 +3,17 @@
  * @author Shangtong Zhang
  *
  * Mean Shift clustering
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #ifndef MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 #define MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>

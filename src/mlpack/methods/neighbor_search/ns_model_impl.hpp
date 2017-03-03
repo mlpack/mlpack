@@ -6,6 +6,11 @@
  * that it provides an easy way to serialize a model, abstracts away the
  * different types of trees, and also reflects the NeighborSearch API and
  * automatically directs to the right tree type.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_IMPL_HPP
@@ -81,7 +86,7 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
 {
   if (ns)
   {
-    if (!ns->Naive() && !ns->SingleMode())
+    if (ns->SearchMode() == DUAL_TREE_MODE)
     {
       // For Dual Tree Search on SpillTrees, the queryTree must be built with
       // non overlapping (tau = 0).
@@ -96,12 +101,21 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
     throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Bichromatic neighbor search specialized for octrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return SearchLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Bichromatic neighbor search on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
 void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
 {
-  if (!ns->Naive() && !ns->SingleMode())
+  if (ns->SearchMode() == DUAL_TREE_MODE)
   {
     std::vector<size_t> oldFromNewQueries;
     typename NSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
@@ -150,7 +164,7 @@ void TrainVisitor<SortPolicy>::operator()(NSTypeT<TreeType>* ns) const
 
 //! Train on the given NSType specialized for KDTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::KDTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -159,7 +173,7 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::KDTree>* ns) const
 
 //! Train on the given NSType specialized for BallTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::BallTree>* ns) const
 {
   if (ns)
     return TrainLeaf(ns);
@@ -168,11 +182,11 @@ void TrainVisitor<SortPolicy>::operator ()(NSTypeT<tree::BallTree>* ns) const
 
 //! Train specialized for SPTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
+void TrainVisitor<SortPolicy>::operator()(SpillKNN* ns) const
 {
   if (ns)
   {
-    if (ns->Naive())
+    if (ns->SearchMode() == NAIVE_MODE)
       ns->Train(std::move(referenceSet));
     else
     {
@@ -184,12 +198,21 @@ void TrainVisitor<SortPolicy>::operator ()(SpillKNN* ns) const
     throw std::runtime_error("no neighbor search model initialized");
 }
 
+//! Train specialized for Octrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator()(NSTypeT<tree::Octree>* ns) const
+{
+  if (ns)
+    return TrainLeaf(ns);
+  throw std::runtime_error("no neighbor search model initialized");
+}
+
 //! Train on the given NSType considering the leafSize.
 template<typename SortPolicy>
 template<typename NSType>
 void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
 {
-  if (ns->Naive())
+  if (ns->SearchMode() == NAIVE_MODE)
     ns->Train(std::move(referenceSet));
   else
   {
@@ -202,57 +225,13 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   }
 }
 
-//! Set the search mode.
-template<typename NSType>
-void SetSearchModeVisitor::operator()(NSType* ns) const
-{
-  if (ns)
-  {
-    switch (searchMode)
-    {
-      case NAIVE_MODE:
-        ns->Naive() = true;
-        ns->SingleMode() = false;
-        ns->Greedy() = false;
-        break;
-      case SINGLE_TREE_MODE:
-        ns->Naive() = false;
-        ns->SingleMode() = true;
-        ns->Greedy() = false;
-        break;
-      case DUAL_TREE_MODE:
-        ns->Naive() = false;
-        ns->SingleMode() = false;
-        ns->Greedy() = false;
-        break;
-      case GREEDY_SINGLE_TREE_MODE:
-        ns->Naive() = false;
-        ns->SingleMode() = true;
-        ns->Greedy() = true;
-        break;
-    }
-  }
-  else
-    throw std::runtime_error("no neighbor search model initialized");
-}
-
 //! Return the search mode.
 template<typename NSType>
-NeighborSearchMode SearchModeVisitor::operator()(NSType* ns) const
+NeighborSearchMode& SearchModeVisitor::operator()(NSType* ns) const
 {
   if (ns)
-  {
-    if (ns->Naive())
-      return NAIVE_MODE;
-    else if (ns->SingleMode() && ns->Greedy())
-      return GREEDY_SINGLE_TREE_MODE;
-    else if (ns->SingleMode())
-      return SINGLE_TREE_MODE;
-    else
-      return DUAL_TREE_MODE;
-  }
-  else
-    throw std::runtime_error("no neighbor search model initialized");
+    return ns->SearchMode();
+  throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Expose the Epsilon method of the given NSType.
@@ -294,6 +273,79 @@ NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
     randomBasis(randomBasis)
 {
   // Nothing to do.
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>::NSModel(const NSModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    tau(other.tau),
+    rho(other.rho),
+    randomBasis(other.randomBasis),
+    q(other.q),
+    nSearch(other.nSearch)
+{
+  // Nothing to do.
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>::NSModel(NSModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    tau(other.tau),
+    rho(other.rho),
+    randomBasis(other.randomBasis),
+    q(std::move(other.q)),
+    nSearch(other.nSearch)
+{
+  // Reset parameters of the other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.tau = 0;
+  other.rho = 0.7;
+  other.randomBasis = false;
+  other.nSearch = decltype(other.nSearch)();
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(const NSModel& other)
+{
+  boost::apply_visitor(DeleteVisitor(), nSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  tau = other.tau;
+  rho = other.rho;
+  randomBasis = other.randomBasis;
+  q = other.q;
+  nSearch = other.nSearch;
+
+  return *this;
+}
+
+template<typename SortPolicy>
+NSModel<SortPolicy>& NSModel<SortPolicy>::operator=(NSModel&& other)
+{
+  boost::apply_visitor(DeleteVisitor(), nSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  tau = other.tau;
+  rho = other.rho;
+  randomBasis = other.randomBasis;
+  q = std::move(other.q);
+  // Copy the pointer and type.
+  nSearch = other.nSearch;
+
+  // Reset parameters of the other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.tau = 0;
+  other.rho = 0.7;
+  other.randomBasis = false;
+  other.nSearch = decltype(other.nSearch)();
+
+  return *this;
 }
 
 //! Clean memory, if necessary.
@@ -369,9 +421,9 @@ NeighborSearchMode NSModel<SortPolicy>::SearchMode() const
 
 //! Modify the search mode.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::SetSearchMode(const NeighborSearchMode mode)
+NeighborSearchMode& NSModel<SortPolicy>::SearchMode()
 {
-  return boost::apply_visitor(SetSearchModeVisitor(mode), nSearch);
+  return boost::apply_visitor(SearchModeVisitor(), nSearch);
 }
 
 template<typename SortPolicy>
@@ -484,6 +536,9 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
     case UB_TREE:
       nSearch = new NSType<SortPolicy, tree::UBTree>(searchMode, epsilon);
+      break;
+    case OCTREE:
+      nSearch = new NSType<SortPolicy, tree::Octree>(searchMode, epsilon);
       break;
   }
 
@@ -599,6 +654,8 @@ std::string NSModel<SortPolicy>::TreeName() const
       return "random projection tree (max split)";
     case UB_TREE:
       return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }

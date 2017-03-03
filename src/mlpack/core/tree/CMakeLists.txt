@@ -15,7 +15,6 @@ set(SOURCES
   binary_space_tree/mean_split_impl.hpp
   binary_space_tree/midpoint_split.hpp
   binary_space_tree/midpoint_split_impl.hpp
-  binary_space_tree/perform_split.hpp
   binary_space_tree/rp_tree_max_split.hpp
   binary_space_tree/rp_tree_max_split_impl.hpp
   binary_space_tree/rp_tree_mean_split.hpp
@@ -50,6 +49,15 @@ set(SOURCES
   hollow_ball_bound_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
+  octree.hpp
+  octree/octree.hpp
+  octree/octree_impl.hpp
+  octree/single_tree_traverser.hpp
+  octree/single_tree_traverser_impl.hpp
+  octree/dual_tree_traverser.hpp
+  octree/dual_tree_traverser_impl.hpp
+  octree/traits.hpp
+  perform_split.hpp
   rectangle_tree.hpp
   rectangle_tree/rectangle_tree.hpp
   rectangle_tree/rectangle_tree_impl.hpp

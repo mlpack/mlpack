@@ -3,8 +3,14 @@
  * @file gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include "gmm.hpp"
 #include "no_constraint.hpp"
@@ -40,8 +46,8 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "option.  The model with greatest log-likelihood will be taken.");
 
 // Parameters for training.
-PARAM_STRING_IN_REQ("input_file", "File containing the data on which the model "
-    "will be fit.", "i");
+PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "
+    "fit.", "i");
 PARAM_INT_IN_REQ("gaussians", "Number of Gaussians in the GMM.", "g");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -68,10 +74,9 @@ PARAM_DOUBLE_IN("percentage", "If using --refined_start, specify the percentage"
     "p", 0.02);
 
 // Parameters for model saving/loading.
-PARAM_STRING_IN("input_model_file", "File containing initial input GMM model.",
-    "m", "");
-PARAM_STRING_OUT("output_model_file", "File to save trained GMM model to.",
-    "M");
+PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
+    "with.", "m");
+PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
 int main(int argc, char* argv[])
 {
@@ -90,12 +95,11 @@ int main(int argc, char* argv[])
         "be greater than or equal to 1." << std::endl;
   }
 
-  if (!CLI::HasParam("output_model_file"))
+  if (!CLI::HasParam("output_model"))
     Log::Warn << "--output_model_file is not specified, so no model will be "
         << "saved!" << endl;
 
-  arma::mat dataPoints;
-  data::Load(CLI::GetParam<string>("input_file"), dataPoints, true);
+  arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Do we need to add noise to the dataset?
   if (CLI::HasParam("noise"))
@@ -111,9 +115,9 @@ int main(int argc, char* argv[])
   // Initialize GMM.
   GMM gmm(size_t(gaussians), dataPoints.n_rows);
 
-  if (CLI::HasParam("input_model_file"))
+  if (CLI::HasParam("input_model"))
   {
-    data::Load(CLI::GetParam<string>("input_model_file"), "gmm", gmm, true);
+    gmm = std::move(CLI::GetParam<GMM>("input_model"));
 
     if (gmm.Dimensionality() != dataPoints.n_rows)
       Log::Fatal << "Given input data (with --input_file) has dimensionality "
@@ -195,6 +199,8 @@ int main(int argc, char* argv[])
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << "." << endl;
 
-  if (CLI::HasParam("output_model_file"))
-    data::Save(CLI::GetParam<string>("output_model_file"), "gmm", gmm);
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<GMM>("output_model") = std::move(gmm);
+
+  CLI::Destroy();
 }

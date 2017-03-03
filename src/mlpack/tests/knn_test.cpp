@@ -2,6 +2,11 @@
  * @file knn_test.cpp
  *
  * Test file for KNN class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -281,7 +286,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 /**
  * Test that the rvalue reference move constructor works.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+BOOST_AUTO_TEST_CASE(DatasetMoveConstructorTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
   arma::mat copy(dataset);
@@ -333,7 +338,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
 
   dataset = arma::randu<arma::mat>(3, 300);
-  knn.Naive() = true;
+  knn.SearchMode() = NAIVE_MODE;
   knn.Train(std::move(dataset));
   knn.Search(1, neighbors, distances);
 
@@ -383,15 +388,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        knn.Naive() = false;
-        knn.SingleMode() = false;
+        knn.SearchMode() = DUAL_TREE_MODE;
         break;
       case 1: // Use the single-tree method.
-        knn.Naive() = false;
-        knn.SingleMode() = true;
+        knn.SearchMode() = SINGLE_TREE_MODE;
         break;
       case 2: // Use the naive method.
-        knn.Naive() = true;
+        knn.SearchMode() = NAIVE_MODE;
         break;
     }
 
@@ -917,7 +920,8 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
 
   for (size_t mode = 0; mode < 2; mode++)
   {
-    spTreeSearch.SingleMode() = (mode == 0);
+    if (mode)
+      spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
 
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;
@@ -954,7 +958,8 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
 
     for (size_t mode = 0; mode < 2; mode++)
     {
-      spTreeSearch.SingleMode() = (mode == 0);
+      if (mode)
+        spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
 
       spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
 
@@ -1066,7 +1071,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[26];
+  KNNModel models[28];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -1093,6 +1098,8 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
   models[24] = KNNModel(KNNModel::TreeTypes::UB_TREE, true);
   models[25] = KNNModel(KNNModel::TreeTypes::UB_TREE, false);
+  models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
+  models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1102,7 +1109,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
     arma::mat baselineDistances;
     knn.Search(queryData, 3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 26; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
@@ -1147,7 +1154,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
-  KNNModel models[26];
+  KNNModel models[28];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
@@ -1174,6 +1181,8 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[23] = KNNModel(KNNModel::TreeTypes::MAX_RP_TREE, false);
   models[24] = KNNModel(KNNModel::TreeTypes::UB_TREE, true);
   models[25] = KNNModel(KNNModel::TreeTypes::UB_TREE, false);
+  models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
+  models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
   for (size_t j = 0; j < 2; ++j)
   {
@@ -1183,7 +1192,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
     arma::mat baselineDistances;
     knn.Search(3, baselineNeighbors, baselineDistances);
 
-    for (size_t i = 0; i < 26; ++i)
+    for (size_t i = 0; i < 28; ++i)
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
@@ -1265,6 +1274,166 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
   BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
   BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
   BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+}
+
+/**
+ * Test the copy constructor and copy operator.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  KNN knn(std::move(dataset));
+
+  // Copy constructor and operator.
+  KNN knn2(knn);
+  KNN knn3 = knn;
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  KNN* knn = new KNN(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2;
+  arma::Mat<size_t> neighbors, neighbors2;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  KNN knn2(std::move(*knn));
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
+/**
+ * Test the move operator.
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  KNN* knn = new KNN(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2;
+  arma::Mat<size_t> neighbors, neighbors2;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  KNN knn2 = std::move(*knn);
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
+/**
+ * Test the copy constructor and copy operator in naive mode (so there is no
+ * tree).
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 50);
+  KNN knn(std::move(dataset), NAIVE_MODE);
+
+  // Copy constructor and operator.
+  KNN knn2(knn);
+  KNN knn3 = knn;
+
+  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
+  BOOST_REQUIRE_EQUAL(knn3.SearchMode(), NAIVE_MODE);
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the move constructor in naive mode (so there is no tree).
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 50);
+  KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
+
+  // Get predictions.
+  arma::mat distances, distances2;
+  arma::Mat<size_t> neighbors, neighbors2;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  KNN knn2(std::move(*knn));
+
+  delete knn;
+
+  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
+
+  knn2.Search(3, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
+/**
+ * Test the move operator in naive mode (so there is no tree).
+ */
+BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
+
+  // Get predictions.
+  arma::mat distances, distances2;
+  arma::Mat<size_t> neighbors, neighbors2;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  KNN knn2 = std::move(*knn);
+
+  delete knn;
+
+  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
+
+  knn2.Search(3, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

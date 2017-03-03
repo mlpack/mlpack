@@ -2,6 +2,11 @@
  * @file hmm_test.cpp
  *
  * Test file for HMMs.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
@@ -36,8 +41,8 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.7 0.3; 0.3 0.7");
   std::vector<DiscreteDistribution> emission(2);
-  emission[0] = DiscreteDistribution("0.9 0.1");
-  emission[1] = DiscreteDistribution("0.2 0.8");
+  emission[0] = DiscreteDistribution(std::vector<arma::vec>{"0.9 0.1"});
+  emission[1] = DiscreteDistribution(std::vector<arma::vec>{"0.2 0.8"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -73,9 +78,9 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
                        "0.5 0.5 0.6");
   // Four emission states: A, C, G, T.  Start state doesn't emit...
   std::vector<DiscreteDistribution> emission(3);
-  emission[0] = DiscreteDistribution("0.25 0.25 0.25 0.25");
-  emission[1] = DiscreteDistribution("0.20 0.30 0.30 0.20");
-  emission[2] = DiscreteDistribution("0.30 0.20 0.20 0.30");
+  emission[0] = DiscreteDistribution(std::vector<arma::vec>{"0.25 0.25 0.25 0.25"});
+  emission[1] = DiscreteDistribution(std::vector<arma::vec>{"0.20 0.30 0.30 0.20"});
+  emission[2] = DiscreteDistribution(std::vector<arma::vec>{"0.30 0.20 0.20 0.30"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -113,8 +118,8 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
   arma::vec initial("0.1 0.4");
   arma::mat transition("0.1 0.9; 0.4 0.6");
   std::vector<DiscreteDistribution> emis(2);
-  emis[0] = DiscreteDistribution("0.85 0.15 0.00 0.00");
-  emis[1] = DiscreteDistribution("0.00 0.00 0.50 0.50");
+  emis[0] = DiscreteDistribution(std::vector<arma::vec>{"0.85 0.15 0.00 0.00"});
+  emis[1] = DiscreteDistribution(std::vector<arma::vec>{"0.00 0.00 0.50 0.50"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emis);
 
@@ -407,9 +412,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
 {
   // Very simple HMM.  4 emissions with equal probability and 2 states with
-  // equal probability.  The default transition and emission matrices satisfy
-  // this property.
+  // equal probability.
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
+  hmm.Initial() = arma::ones<arma::vec>(2) / 2.0;
+  hmm.Transition() = arma::ones<arma::mat>(2, 2) / 2.0;
 
   // Now generate a really, really long sequence.
   arma::mat dataSeq;

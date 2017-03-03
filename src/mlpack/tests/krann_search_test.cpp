@@ -3,6 +3,11 @@
  *
  * Unit tests for the 'RASearch' class and consequently the
  * 'RASearchRules' class
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <time.h>
 #include <mlpack/core.hpp>
@@ -625,7 +630,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Build all the possible models.
-  KNNModel models[18];
+  KNNModel models[20];
   models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
   models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
   models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
@@ -644,13 +649,15 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
   models[15] = KNNModel(KNNModel::TreeTypes::R_PLUS_PLUS_TREE, true);
   models[16] = KNNModel(KNNModel::TreeTypes::UB_TREE, false);
   models[17] = KNNModel(KNNModel::TreeTypes::UB_TREE, true);
+  models[18] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
+  models[19] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
 
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
   for (size_t j = 0; j < 3; ++j)
   {
-    for (size_t i = 0; i < 18; ++i)
+    for (size_t i = 0; i < 20; ++i)
     {
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);

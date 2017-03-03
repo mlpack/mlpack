@@ -4,6 +4,11 @@
  *
  * Definition of the Option class, which is used to define parameters which are
  * used by CLI.  The ProgramDoc class also resides here.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_OPTION_HPP
 #define MLPACK_CORE_UTIL_OPTION_HPP
@@ -31,37 +36,28 @@ class Option
    * Construct an Option object.  When constructed, it will register
    * itself with CLI.
    *
-   * @param ignoreTemplate Whether or not the template type matters for this
-   *     option.  Essentially differs options with no value (flags) from those
-   *     that do, and thus require a type.
-   * @param defaultValue Default value this parameter will be initialized to.
+   * @param defaultValue Default value this parameter will be initialized to
+   *      (for flags, this should be false, for instance).
    * @param identifier The name of the option (no dashes in front; for --help,
    *      we would pass "help").
    * @param description A short string describing the option.
-   * @param alias Short name of the parameter.
+   * @param alias Short name of the parameter. "" for no alias.
    * @param required Whether or not the option is required at runtime.
    * @param input Whether or not the option is an input option.
+   * @param noTranspose If the parameter is a matrix and this is true, then the
+   *      matrix will not be transposed on loading.
    */
-  Option(const bool ignoreTemplate,
-         const N defaultValue,
+  Option(const N defaultValue,
          const std::string& identifier,
          const std::string& description,
          const std::string& alias,
          const bool required = false,
-         const bool input = true);
-
-  /**
-   * Constructs an Option object.  When constructed, it will register a flag
-   * with CLI.
-   *
-   * @param identifier The name of the option (no dashes in front); for --help
-   *     we would pass "help".
-   * @param description A short string describing the option.
-   * @param alias Short name of the parameter.
-   */
-  Option(const std::string& identifier,
-         const std::string& description,
-         const std::string& alias);
+         const bool input = true,
+         const bool noTranspose = false)
+  {
+    CLI::Add<N>(defaultValue, identifier, description, alias[0], required,
+        input, noTranspose);
+  }
 };
 
 /**
@@ -95,8 +91,5 @@ class ProgramDoc
 
 } // namespace util
 } // namespace mlpack
-
-// For implementations of templated functions
-#include "option_impl.hpp"
 
 #endif

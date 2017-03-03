@@ -3,6 +3,11 @@
  * @author Udit Saxena
  *
  * Implementation of DecisionStump class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
@@ -64,6 +69,25 @@ void DecisionStump<MatType>::Train(const MatType& data,
   // Pass to unweighted training function.
   arma::rowvec weights;
   Train<false>(data, labels, weights);
+}
+
+/**
+ * Train the decision stump on the given data, with the given weights.  This
+ * completely overwrites any previous training data, so after training the
+ * stump may be completely different.
+ */
+template<typename MatType>
+void DecisionStump<MatType>::Train(const MatType& data,
+                                   const arma::Row<size_t>& labels,
+                                   const arma::rowvec& weights,
+                                   const size_t classes,
+                                   const size_t bucketSize)
+{
+  this->classes = classes;
+  this->bucketSize = bucketSize;
+
+  // Pass to weighted training function.
+  Train<true>(data, labels, weights);
 }
 
 /**
@@ -197,17 +221,14 @@ void DecisionStump<MatType>::Serialize(Archive& ar,
  * @param UseWeights Whether we need to run a weighted Decision Stump.
  */
 template<typename MatType>
-template<bool UseWeights>
+template<bool UseWeights, typename VecType>
 double DecisionStump<MatType>::SetupSplitDimension(
-    const arma::rowvec& dimension,
+    const VecType& dimension,
     const arma::Row<size_t>& labels,
     const arma::rowvec& weights)
 {
   size_t i, count, begin, end;
   double entropy = 0.0;
-
-  // Sort the dimension in order to calculate splitting ranges.
-  arma::rowvec sortedDim = arma::sort(dimension);
 
   // Store the indices of the sorted dimension to build a vector of sorted
   // labels.  This sort is stable.
@@ -296,7 +317,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
 {
   size_t i, count, begin, end;
 
-  arma::rowvec sortedSplitDim = arma::sort(dimension);
+  typename MatType::row_type sortedSplitDim = arma::sort(dimension);
   arma::uvec sortedSplitIndexDim = arma::stable_sort_index(dimension.t());
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   sortedLabels.fill(0);

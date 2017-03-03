@@ -3,6 +3,11 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of HollowBallBound ball bound metric policy class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_IMPL_HPP
@@ -186,7 +191,7 @@ template<typename TMetricType, typename ElemType>
 template<typename VecType>
 ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   if (radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
@@ -245,7 +250,7 @@ template<typename TMetricType, typename ElemType>
 template<typename VecType>
 ElemType HollowBallBound<TMetricType, ElemType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   if (radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
@@ -277,7 +282,7 @@ template<typename TMetricType, typename ElemType>
 template<typename VecType>
 math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   if (radii.Hi() < 0)
     return math::Range(std::numeric_limits<ElemType>::max(),

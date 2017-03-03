@@ -4,11 +4,16 @@
  *
  * Definition of the LocalCoordinateCoding class, which performs the Local
  * Coordinate Coding algorithm.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 #define MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 
 // Include three simple dictionary initializers from sparse coding.
@@ -109,7 +114,8 @@ class LocalCoordinateCoding
   /**
    * Set the parameters to LocalCoordinateCoding.  This constructor will not
    * train the model, and a subsequent call to Train() will be required before
-   * the model can encode points with Encode().
+   * the model can encode points with Encode().  The default values for atoms
+   * and lambda should be changed if you intend to train the model!
    *
    * @param atoms Number of atoms in dictionary.
    * @param lambda Regularization parameter for weighted l1-norm penalty.
@@ -117,8 +123,8 @@ class LocalCoordinateCoding
    *      until convergence).
    * @param tolerance Tolerance for the objective function.
    */
-  LocalCoordinateCoding(const size_t atoms,
-                        const double lambda,
+  LocalCoordinateCoding(const size_t atoms = 0,
+                        const double lambda = 0.0,
                         const size_t maxIterations = 0,
                         const double tolerance = 0.01);
 

@@ -23,8 +23,12 @@ endif ()
 # are set in the root CMakeLists.txt.
 add_library(mlpack ${MLPACK_SRCS})
 
-if (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
-        (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1)))
+# If we are not forcing C++11 support, check that the compiler supports C++11
+# and enable it.
+if ((NOT FORCE_CXX11) AND
+    (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
+         (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))))
+  # Use the newer C++11 checks.
   include(../../CMake/NewCXX11.cmake)
 endif ()
 

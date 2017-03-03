@@ -3,6 +3,11 @@
  * @author Udit Saxena
  *
  * Tests for DecisionStump class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
@@ -341,6 +346,40 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   DecisionStump<> ds(trainingData, labelsIn.row(0), 4, 3);
 
   Row<size_t> predictedLabels(testingData.n_cols);
+  ds.Classify(testingData, predictedLabels);
+
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
+}
+
+/**
+ * Ensure that a matrix holding ints can be trained.  The bigger issue here is
+ * just compilation.
+ */
+BOOST_AUTO_TEST_CASE(IntTest)
+{
+  // Train on a dataset and make sure something kind of makes sense.
+  imat trainingData;
+  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1
+               << 2  << 3  << 4  << 5  << 6  << 7  << 8  << 9 << 10;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
+           << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
+
+  DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 4, 3);
+
+  imat testingData;
+  testingData << -6 << -6 << -2 << -1 << 3 << 5 << 7 << 9;
+
+  arma::Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
   BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);

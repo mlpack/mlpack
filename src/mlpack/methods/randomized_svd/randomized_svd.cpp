@@ -3,6 +3,11 @@
  * @author Marcus Edel
  *
  * Implementation of the randomized SVD method.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include "randomized_svd.hpp"
@@ -97,7 +102,7 @@ void RandomizedSVD::Apply(const arma::mat& data,
     }
 
     // Computing the LU decomposition is more efficient than computing the QR
-    // decomposition, so we only use in the last iteration, a pivoted QR
+    // decomposition, so we only use it in the last iteration, a pivoted QR
     // decomposition which renormalizes Q, ensuring that the columns of Q are
     // orthonormal.
     if (i < (maxIterations - 1))

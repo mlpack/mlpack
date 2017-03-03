@@ -7,7 +7,7 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2016, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2017, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2013, Bill March <march@gatech.edu>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -22,7 +22,7 @@ Copyright:
   Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
   Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
   Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
-  Copyright 2013-2016, Marcus Edel <marcus.edel@fu-berlin.de>
+  Copyright 2013-2017, Marcus Edel <marcus.edel@fu-berlin.de>
   Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
   Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
   Copyright 2014, Michael Fox <michaelfox99@gmail.com>
@@ -60,6 +60,18 @@ Copyright:
   Copyright 2016, Keon Kim <kwk236@gmail.com>
   Copyright 2016, Nilay Jain <nilayjain13@gmail.com>
   Copyright 2016, Peter Lehner <peter.lehner@dlr.de>
+  Copyright 2016, Anuraj Kanodia <akanuraj200@gmail.com>
+  Copyright 2016, Ivan Georgiev <ivan@jonan.info>
+  Copyright 2016, Shikhar Bhardwaj <shikharbhardwaj68@gmail.com>
+  Copyright 2016, Yashu Seth <yashuseth2503@gmail.com>
+  Copyright 2016, Mike Izbicki <mike@izbicki.me>
+  Copyright 2017, Sudhanshu Ranjan <sranjan.sud@gmail.com>
+  Copyright 2017, Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
+  Copyright 2017, Dinesh Raj <dinu.iota@gmail.com>
+  Copyright 2017, Vivek Pal <vivekpal.dtu@gmail.com>
+  Copyright 2017, Prasanna Patil <prasannapatil08@gmail.com>
+  Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+
 License: BSD-3-clause
   All rights reserved.
   .

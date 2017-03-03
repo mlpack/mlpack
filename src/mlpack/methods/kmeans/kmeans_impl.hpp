@@ -4,6 +4,11 @@
  * @author Ryan Curtin
  *
  * Implementation for the K-means method for getting an initial point.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "kmeans.hpp"
 
@@ -47,8 +52,8 @@ bool GetInitialAssignmentsOrCentroids(
     const size_t clusters,
     arma::Row<size_t>& assignments,
     arma::mat& /* centroids */,
-    const typename boost::disable_if_c<
-        GivesCentroids<InitialPartitionPolicy>::value == true>::type* = 0)
+    const typename std::enable_if_t<
+        !GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, assignments);
 
@@ -65,8 +70,8 @@ bool GetInitialAssignmentsOrCentroids(
     const size_t clusters,
     arma::Row<size_t>& /* assignments */,
     arma::mat& centroids,
-    const typename boost::enable_if_c<
-        GivesCentroids<InitialPartitionPolicy>::value == true>::type* = 0)
+    const typename std::enable_if_t<
+        GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, centroids);
 

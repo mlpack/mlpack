@@ -4,6 +4,11 @@
  * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in
  * its own file.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #define BOOST_TEST_MODULE mlpackTest
 

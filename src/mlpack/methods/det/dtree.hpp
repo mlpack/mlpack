@@ -3,12 +3,17 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Density Estimation Tree class
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #ifndef MLPACK_METHODS_DET_DTREE_HPP
 #define MLPACK_METHODS_DET_DTREE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace det /** Density Estimation Trees */ {
@@ -36,13 +41,50 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
+template <typename MatType,
+          typename TagType = int>
 class DTree
 {
  public:
   /**
+   * The actual, underlying type we're working with.
+   */
+  typedef typename MatType::elem_type     ElemType;
+  typedef typename MatType::vec_type      VecType;
+  typedef typename arma::Col<ElemType>    StatType;
+
+  /**
    * Create an empty density estimation tree.
    */
   DTree();
+
+  /**
+   * Create a tree that is the copy of the given tree.
+   *
+   * @param obj Tree to copy.
+   */
+  DTree(const DTree& obj);
+
+  /**
+   * Copy the given tree.
+   *
+   * @param obj Tree to copy.
+   */
+  DTree& operator=(const DTree& obj);
+
+  /**
+   * Create a tree by taking ownership of another tree (move constructor).
+   *
+   * @param obj Tree to take ownership of.
+   */
+  DTree(DTree&& obj);
+
+  /**
+   * Take ownership of the given tree (move operator).
+   *
+   * @param obj Tree to take ownership of.
+   */
+  DTree& operator=(DTree&& obj);
 
   /**
    * Create a density estimation tree with the given bounds and the given number
@@ -52,8 +94,8 @@ class DTree
    * @param minVals Minimum values of the bounding box.
    * @param totalPoints Total number of points in the dataset.
    */
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t totalPoints);
 
   /**
@@ -64,7 +106,7 @@ class DTree
    *
    * @param data Dataset to build tree on.
    */
-  DTree(arma::mat& data);
+  DTree(MatType& data);
 
   /**
    * Create a child node of a density estimation tree given the bounding box
@@ -78,8 +120,8 @@ class DTree
    * @param end End of points represented by this node in the data matrix.
    * @param error log-negative error of this node.
    */
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t start,
         const size_t end,
         const double logNegError);
@@ -95,8 +137,8 @@ class DTree
    * @param start Start of points represented by this node in the data matrix.
    * @param end End of points represented by this node in the data matrix.
    */
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
+  DTree(const StatType& maxVals,
+        const StatType& minVals,
         const size_t totalPoints,
         const size_t start,
         const size_t end);
@@ -114,7 +156,7 @@ class DTree
    * @param maxLeafSize Maximum size of a leaf.
    * @param minLeafSize Minimum size of a leaf.
    */
-  double Grow(arma::mat& data,
+  double Grow(MatType& data,
               arma::Col<size_t>& oldFromNew,
               const bool useVolReg = false,
               const size_t maxLeafSize = 10,
@@ -137,16 +179,7 @@ class DTree
    *
    * @param query Point to estimate density of.
    */
-  double ComputeValue(const arma::vec& query) const;
-
-  /**
-   * Print the tree in a depth-first manner (this function is called
-   * recursively).
-   *
-   * @param fp File to write the tree to.
-   * @param level Level of the tree (should start at 0).
-   */
-  void WriteTree(FILE *fp, const size_t level = 0) const;
+  double ComputeValue(const VecType& query) const;
 
   /**
    * Index the buckets for possible usage later; this results in every leaf in
@@ -155,7 +188,7 @@ class DTree
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
-  int TagTree(const int tag = 0);
+  TagType TagTree(const TagType& tag = 0);
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for
@@ -163,7 +196,7 @@ class DTree
    *
    * @param query Query to search for.
    */
-  int FindBucket(const arma::vec& query) const;
+  TagType FindBucket(const VecType& query) const;
 
   /**
    * Compute the variable importance of each dimension in the learned tree.
@@ -183,7 +216,7 @@ class DTree
   /**
    * Return whether a query point is within the range of this node.
    */
-  bool WithinRange(const arma::vec& query) const;
+  bool WithinRange(const VecType& query) const;
 
  private:
   // The indices in the complete set of points
@@ -200,15 +233,15 @@ class DTree
   size_t end;
 
   //! Upper half of bounding box for this node.
-  arma::vec maxVals;
+  StatType maxVals;
   //! Lower half of bounding box for this node.
-  arma::vec minVals;
+  StatType minVals;
 
   //! The splitting dimension for this node.
   size_t splitDim;
 
   //! The split value on the splitting dimension for this node.
-  double splitValue;
+  ElemType splitValue;
 
   //! log-negative-L2-error of the node.
   double logNegError;
@@ -229,7 +262,7 @@ class DTree
   double logVolume;
 
   //! The tag for the leaf, used for hashing points.
-  int bucketTag;
+  TagType bucketTag;
 
   //! Upper part of alpha sum; used for pruning.
   double alphaUpper;
@@ -247,7 +280,7 @@ class DTree
   //! Return the split dimension of this node.
   size_t SplitDim() const { return splitDim; }
   //! Return the split value of this node.
-  double SplitValue() const { return splitValue; }
+  ElemType SplitValue() const { return splitValue; }
   //! Return the log negative error of this node.
   double LogNegError() const { return logNegError; }
   //! Return the log negative error of all descendants of this node.
@@ -267,51 +300,20 @@ class DTree
   bool Root() const { return root; }
   //! Return the upper part of the alpha sum.
   double AlphaUpper() const { return alphaUpper; }
+  //! Return the current bucket's ID, if leaf, or -1 otherwise
+  TagType BucketTag() const { return subtreeLeaves == 1 ? bucketTag : -1; }
 
   //! Return the maximum values.
-  const arma::vec& MaxVals() const { return maxVals; }
-  //! Modify the maximum values.
-  arma::vec& MaxVals() { return maxVals; }
+  const StatType& MaxVals() const { return maxVals; }
 
   //! Return the minimum values.
-  const arma::vec& MinVals() const { return minVals; }
-  //! Modify the minimum values.
-  arma::vec& MinVals() { return minVals; }
+  const StatType& MinVals() const { return minVals; }
 
   /**
    * Serialize the density estimation tree.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    using data::CreateNVP;
-
-    ar & CreateNVP(start, "start");
-    ar & CreateNVP(end, "end");
-    ar & CreateNVP(maxVals, "maxVals");
-    ar & CreateNVP(minVals, "minVals");
-    ar & CreateNVP(splitDim, "splitDim");
-    ar & CreateNVP(splitValue, "splitValue");
-    ar & CreateNVP(logNegError, "logNegError");
-    ar & CreateNVP(subtreeLeavesLogNegError, "subtreeLeavesLogNegError");
-    ar & CreateNVP(subtreeLeaves, "subtreeLeaves");
-    ar & CreateNVP(root, "root");
-    ar & CreateNVP(ratio, "ratio");
-    ar & CreateNVP(logVolume, "logVolume");
-    ar & CreateNVP(bucketTag, "bucketTag");
-    ar & CreateNVP(alphaUpper, "alphaUpper");
-
-    if (Archive::is_loading::value)
-    {
-      if (left)
-        delete left;
-      if (right)
-        delete right;
-    }
-
-    ar & CreateNVP(left, "left");
-    ar & CreateNVP(right, "right");
-  }
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
 
@@ -320,9 +322,9 @@ class DTree
   /**
    * Find the dimension to split on.
    */
-  bool FindSplit(const arma::mat& data,
+  bool FindSplit(const MatType& data,
                  size_t& splitDim,
-                 double& splitValue,
+                 ElemType& splitValue,
                  double& leftError,
                  double& rightError,
                  const size_t minLeafSize = 5) const;
@@ -330,14 +332,16 @@ class DTree
   /**
    * Split the data, returning the number of points left of the split.
    */
-  size_t SplitData(arma::mat& data,
+  size_t SplitData(MatType& data,
                    const size_t splitDim,
-                   const double splitValue,
+                   const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
 };
 
 } // namespace det
 } // namespace mlpack
+
+#include "dtree_impl.hpp"
 
 #endif // MLPACK_METHODS_DET_DTREE_HPP
