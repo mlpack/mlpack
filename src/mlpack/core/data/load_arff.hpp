@@ -13,6 +13,8 @@
 #define MLPACK_CORE_DATA_LOAD_ARFF_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "dataset_mapper.hpp"
+#include <boost/tokenizer.hpp>
 
 namespace mlpack {
 namespace data {
