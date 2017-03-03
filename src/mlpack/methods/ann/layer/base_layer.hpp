@@ -65,7 +65,7 @@ class BaseLayer
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output)
   {
-    ActivationFunction::Fn(input, output);
+    ActivationFunction::fn(input, output);
   }
 
   /**
@@ -83,7 +83,7 @@ class BaseLayer
                 arma::Mat<eT>&& g)
   {
     arma::Mat<eT> derivative;
-    ActivationFunction::Deriv(input, derivative);
+    ActivationFunction::deriv(input, derivative);
     g = gy % derivative;
   }
 
