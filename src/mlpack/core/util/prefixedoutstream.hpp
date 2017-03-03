@@ -13,13 +13,7 @@
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <streambuf>
-#include <stdexcept>
-
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace util {
