@@ -136,7 +136,6 @@ void NaiveBayesClassifier<MatType>::Train(const MatType& data,
     if (variances[i] == 0.0)
       variances[i] = 1e-50;
 
-
   probabilities /= data.n_cols;
   trainingPoints += data.n_cols;
 }
@@ -169,7 +168,6 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size
   // training data.
   Log::Assert(data.n_rows == means.n_rows);
 
-
   arma::vec probs = arma::log(probabilities);
   arma::mat invVar = 1.0 / variances;
 
@@ -178,6 +176,8 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size
   results.set_size(data.n_cols); // No need to fill with anything yet.
 
 
+  Log::Info << "Running Naive Bayes classifier on " << data.n_cols
+      << " data points with " << data.n_rows << " features each." << std::endl;
   // Calculate the joint probability for each of the data points for each of the
   // means.n_cols.
 
@@ -188,7 +188,6 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size
     // a diagonal matrix.
     arma::mat diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
     arma::mat rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
-
     arma::vec exponents(diffs.n_cols);
     for (size_t j = 0; j < diffs.n_cols; ++j) // log(exp(value)) == value
       exponents(j) = arma::accu(diffs.col(j) % rhs.unsafe_col(j));
