@@ -51,7 +51,7 @@ void CheckActivationCorrect(const arma::colvec input, const arma::colvec target)
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  ActivationFunction::Fn(input, activations);
+  ActivationFunction::fn(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -72,13 +72,13 @@ void CheckDerivativeCorrect(const arma::colvec input, const arma::colvec target)
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),
+    BOOST_REQUIRE_CLOSE(ActivationFunction::deriv(input.at(i)),
         target.at(i), 1e-3);
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
-  ActivationFunction::Deriv(input, derivatives);
+  ActivationFunction::deriv(input, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -99,14 +99,14 @@ void CheckInverseCorrect(const arma::colvec input)
     // Test the calculation of the inverse using a single value as input.
   for (size_t i = 0; i < input.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::Inv(ActivationFunction::Fn(
+    BOOST_REQUIRE_CLOSE(ActivationFunction::inv(ActivationFunction::fn(
         input.at(i))), input.at(i), 1e-3);
   }
 
   // Test the calculation of the inverse using the entire vector as input.
   arma::colvec activations;
-  ActivationFunction::Fn(input, activations);
-  ActivationFunction::Inv(activations, activations);
+  ActivationFunction::fn(input, activations);
+  ActivationFunction::inv(activations, activations);
 
   for (size_t i = 0; i < input.n_elem; i++)
   {
