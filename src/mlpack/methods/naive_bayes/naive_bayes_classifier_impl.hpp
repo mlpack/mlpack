@@ -136,6 +136,7 @@ void NaiveBayesClassifier<MatType>::Train(const MatType& data,
     if (variances[i] == 0.0)
       variances[i] = 1e-50;
 
+
   probabilities /= data.n_cols;
   trainingPoints += data.n_cols;
 }
@@ -162,12 +163,12 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
 }
 
 template<typename MatType>
-void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
-                                             arma::Row<size_t>& results)
+void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size_t>& results, MatType& results_proba)
 {
   // Check that the number of features in the test data is same as in the
   // training data.
   Log::Assert(data.n_rows == means.n_rows);
+
 
   arma::vec probs = arma::log(probabilities);
   arma::mat invVar = 1.0 / variances;
@@ -176,8 +177,6 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
 
   results.set_size(data.n_cols); // No need to fill with anything yet.
 
-  Log::Info << "Running Naive Bayes classifier on " << data.n_cols
-      << " data points with " << data.n_rows << " features each." << std::endl;
 
   // Calculate the joint probability for each of the data points for each of the
   // means.n_cols.
@@ -189,15 +188,24 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
     // a diagonal matrix.
     arma::mat diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
     arma::mat rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
+
     arma::vec exponents(diffs.n_cols);
     for (size_t j = 0; j < diffs.n_cols; ++j) // log(exp(value)) == value
       exponents(j) = arma::accu(diffs.col(j) % rhs.unsafe_col(j));
 
     // Calculate probability as sum of logarithm to decrease floating point
     // errors.
-    testProbs.col(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
+    testProbs.col(i) += (data.n_rows / - 2.0 * log(2 * M_PI) - 0.5 *
         log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
+    
+    arma::vec log_prob_x(data.n_cols); // log(Prob(X))
+    for (size_t j = 0; j < data.n_cols; ++j)
+      log_prob_x(j) = log(arma::accu(exp(testProbs.row(j))));
+
+    testProbs -= arma::repmat(log_prob_x, 1, testProbs.n_cols);
   }
+
+  results_proba = arma::mat(exp(testProbs.t()));
 
   // Now calculate the label.
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -206,7 +214,6 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
     arma::uword maxIndex = 0;
     arma::vec pointProbs = testProbs.row(i).t();
     pointProbs.max(maxIndex);
-
     results[i] = maxIndex;
   }
 
