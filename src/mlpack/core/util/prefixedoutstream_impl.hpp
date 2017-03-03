@@ -170,7 +170,9 @@ PrefixedOutStream::BaseLogic(const T& val)
     convert.precision(destination.precision());
 
     // Set width of the convert stream
-    double maxVal = arma::abs(printVal).max();
+    auto absVal = arma::abs(printVal).P.Q;
+    double maxVal = absVal.max();
+
     if(maxVal == 0.f)
     {
         maxVal = 1;
