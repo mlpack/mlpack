@@ -5,6 +5,11 @@
 
   Tests the working of Kathirvalavakumar Subavathi Initialization for a 
   Feed forward neural network.
+
+  mlpack is free software; you may redistribute it and/or modify it under the
+  terms of the 3-clause BSD license.  You should have received a copy of the
+  3-clause BSD license along with mlpack.  If not, see
+  http://www.opensource.org/licenses/BSD-3-Clause for more information.
 */
 
 
@@ -26,10 +31,13 @@ using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(KSInitialization);
 
-/**
- * Train and evaluate a vanilla network with the specified initialisation 
+/*
+  Train and evaluate a vanilla network with the specified initialisation 
    procedure.
- */
+
+  @param trainError mean squared error of predictions on training data.
+  @param testError  mean squared error of predictions on test data.
+*/
 template<typename MatType = arma::mat>
 void BuildVanillaNetwork(MatType& trainData,
                          MatType& trainLabels,
@@ -42,8 +50,6 @@ void BuildVanillaNetwork(MatType& trainData,
                          double& testError)
 {
   /*
-  @param trainError mean squared error of predictions on training data.
-  @param testError  mean squared error of predictions on test data.
    * Construct a feed forward network with trainData.n_rows input nodes,
    * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
    * network structure looks like:
@@ -103,20 +109,14 @@ struct Error
   double validationError;
 };
 
-/* CrossValidation function runs a k-fold cross validation on the training data
-   by dividing the training data into k equal disjoint subsets. The model is 
-   trained on k-1 of these subsets and 1 subset is used as validation data.
+/* 
+  CrossValidation function runs a k-fold cross validation on the training data
+  by dividing the training data into k equal disjoint subsets. The model is 
+  trained on k-1 of these subsets and 1 subset is used as validation data.
 
-   This process is repeated k times assigning each subset to be the validation
-   data at most once.
+  This process is repeated k times assigning each subset to be the validation
+  data at most once.
 
-*/
-
-Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
-                      const size_t hiddenLayerSize, const size_t maxEpochs)
-{
-
-/*
   @params trainData The data available for training.
   @params trainLabels The labels corresponding to the training data.
   @params k The parameter k in k-fold cross validation.
@@ -135,6 +135,12 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
   @params validationTestLabels The labels corresponding to the validation data.
 
 */
+
+Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
+                      const size_t hiddenLayerSize, const size_t maxEpochs)
+{
+
+
   size_t validationDataSize = (int) trainData.n_cols / k;
 
   double validationErrorAvg;
@@ -194,13 +200,6 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
   number of times and then return the average training and validation error.
   It shuffles the dataset in every iteration.
 
-*/
-
-Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
-                         const size_t hiddenLayerSize, const size_t maxEpochs)
-{
-
-/*
   @params dataset The dataset inclusive of the labels. Assuming the last 
                   "numLabels" number of rows are the labels which the model
                   has to predict. 
@@ -216,6 +215,12 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
                    number of Cross Validation results.
 
 */
+
+Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
+                         const size_t hiddenLayerSize, const size_t maxEpochs)
+{
+
+
   Error avgError = {0.0, 0.0};
 
   for (size_t i = 0; i < iter;)
@@ -251,7 +256,6 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
 
 BOOST_AUTO_TEST_CASE(IrisDataset)
 {
-  arma::arma_rng::set_seed_random();
 
   double trainErrorThreshold = 0.001;
   double validationErrorThreshold = 0.001;
@@ -276,7 +280,6 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
 
 BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
 {
-  arma::arma_rng::set_seed_random();
 
   double trainErrorThreshold = 0.0045;
   double validationErrorThreshold = 0.0045;
