@@ -125,11 +125,11 @@ class PrefixedOutStream
    * @param val The The data to be output.
    */
   template<typename T>
-  typename std::enable_if<!arma::is_arma_type<T>::value, void>::type
+  typename std::enable_if<!arma::is_arma_type<T>::value>::type
   BaseLogic(const T& val);
 
   template<typename T>
-  typename std::enable_if<arma::is_arma_type<T>::value, void>::type
+  typename std::enable_if<arma::is_arma_type<T>::value>::type
   BaseLogic(const T& val);
 
   /**
