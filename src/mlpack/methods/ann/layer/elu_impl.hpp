@@ -31,7 +31,7 @@ template<typename InputType, typename OutputType>
 void ELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  fn(input, output);
+  Fn(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
