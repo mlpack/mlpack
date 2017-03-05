@@ -90,24 +90,14 @@ void BuildVanillaNetwork(MatType& trainData,
  
   // Calculating the mean squared error on the training data.
   model.Predict(trainData, prediction);
-
   trainError = arma::mean(arma::mean(arma::square(prediction - trainLabels)));
+
   // Calculating the mean squared error on the test data
   model.Predict(testData, prediction);
   testError = arma::mean(arma::mean(arma::square(prediction - testLabels)));
   
 }
 
-/* Error is a structure which has the MSE of Training data and MSE of 
-   Validation data respectively. This structure is returned to the parent test 
-   case by CrossValidation function.
-
-*/
-struct Error
-{
-  double trainError;
-  double validationError;
-};
 
 /* 
   CrossValidation function runs a k-fold cross validation on the training data
@@ -136,15 +126,14 @@ struct Error
 
 */
 
-Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
-                      const size_t hiddenLayerSize, const size_t maxEpochs)
+void CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
+                      const size_t hiddenLayerSize, const size_t maxEpochs,
+                      double& trainError, double& validationError)
 {
 
 
   size_t validationDataSize = (int) trainData.n_cols / k;
-
-  double validationErrorAvg;
-  double trainErrorAvg;
+  trainError = validationError = 0.0;
 
   for (size_t i=0; i < trainData.n_cols; i = i + validationDataSize)
   {
@@ -172,26 +161,19 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
     validationTrainLabels = trainLabels;
     validationTrainLabels.shed_cols(i, i + validationDataSize - 1);
     
-    double trainError, validationError;
+    double tError, vError;
 
     BuildVanillaNetwork(validationTrainData, validationTrainLabels, 
          validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs, 
-         validationTrainLabels.n_rows, trainError, validationError);
+         validationTrainLabels.n_rows, tError, vError);
 
-    trainErrorAvg += trainError;
-    validationErrorAvg += validationError;
+    trainError += tError;
+    validationError += vError;
 
   }
 
-  trainErrorAvg /= k;
-  validationErrorAvg  /= k;
-
-  Error e;
-
-  e.trainError = trainErrorAvg;
-  e.validationError = validationErrorAvg;
-
-  return e;
+  trainError /= k;
+  validationError  /= k;
 
 }
 
@@ -211,19 +193,15 @@ Error CrossValidation(arma::mat& trainData, arma::mat& trainLabels, size_t k,
 
   @params maxEpochs The maximum number of epochs for the training.
 
-  @params avgError Returns the train and validation error averaged over "iter"
-                   number of Cross Validation results.
-
 */
 
-Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
-                         const size_t hiddenLayerSize, const size_t maxEpochs)
+void AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
+                        const size_t hiddenLayerSize, const size_t maxEpochs,
+                        double& avgTrainError, double& avgValidationError)
 {
+  avgValidationError = avgTrainError = 0.0;
 
-
-  Error avgError = {0.0, 0.0};
-
-  for (size_t i = 0; i < iter;)
+  for (size_t i = 0; i < iter; ++i)
   {
     dataset = arma::shuffle(dataset, 1);
 
@@ -232,23 +210,17 @@ Error AvgCrossValidation(arma::mat& dataset, size_t numLabels, size_t iter,
     arma::mat trainLabels = dataset.submat(dataset.n_rows - numLabels, 0, 
                                            dataset.n_rows - 1, 
                                            dataset.n_cols - 1); 
-    Error e = CrossValidation(trainData, trainLabels, 10, hiddenLayerSize, 
-                              maxEpochs);
+    double trainError, validationError;
+    CrossValidation(trainData, trainLabels, 10, hiddenLayerSize, 
+                    maxEpochs, trainError, validationError);
 
-    // The check is to prevent nan values from affecting the result.
-    if (arma::is_finite(e.trainError) && arma::is_finite(e.validationError))
-    {
-      avgError.trainError += e.trainError;
-      avgError.validationError += e.validationError;
-      ++i;
-    }
-    
+    avgTrainError += trainError;
+    avgValidationError += validationError;
   }
 
-  avgError.trainError /= iter;
-  avgError.validationError /= iter;
+  avgTrainError /= iter;
+  avgValidationError /= iter;
 
-  return avgError;
 }
 
 
@@ -269,10 +241,13 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
 
   dataset /= 10; // Normalization used in the paper.
 
-  Error avgError = AvgCrossValidation(dataset, 1, 10, 3, 52); //Runs CV 10 times
+  double avgTrainError, avgValidationError;
 
-  BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
-  BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
+  // Run the CV for 10 times.
+  AvgCrossValidation(dataset, 1, 10, 3, 52, avgTrainError, avgValidationError);
+
+  BOOST_REQUIRE_LE(avgTrainError, trainErrorThreshold);
+  BOOST_REQUIRE_LE(avgValidationError, validationErrorThreshold);
 
 }
 
@@ -304,15 +279,16 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
 
   // Eqn 13.3
   dataset.row(10) = arma::sqrt(1 - dataset.row(0));
+
+  double avgTrainError, avgValidationError;
   
   //Run CV 10 times
-  Error avgError = AvgCrossValidation(dataset, 3, 10, 10, 500);
+  AvgCrossValidation(dataset, 3, 10, 10, 500, avgTrainError, avgValidationError);
   
 
-  BOOST_REQUIRE_LE(avgError.trainError, trainErrorThreshold);
-  BOOST_REQUIRE_LE(avgError.validationError, validationErrorThreshold);
+  BOOST_REQUIRE_LE(avgTrainError, trainErrorThreshold);
+  BOOST_REQUIRE_LE(avgValidationError, validationErrorThreshold);
 
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
