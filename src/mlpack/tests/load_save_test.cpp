@@ -1599,4 +1599,22 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   remove("test.arff");
 }
 
+/*
+  A test to check whether the arff loader is case insensitive to declarations:
+  @relation, @attribute, @data.
+*/
+
+BOOST_AUTO_TEST_CASE(CaseTest)
+{
+  arma::mat dataset;
+
+  DatasetMapper<IncrementPolicy> info;
+
+  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info);
+
+  BOOST_CHECK_EQUAL(dataset.n_rows, 2);
+  BOOST_CHECK_EQUAL(dataset.n_cols, 3);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END();
