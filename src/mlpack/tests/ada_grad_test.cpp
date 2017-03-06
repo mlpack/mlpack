@@ -11,7 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/adagrad/ada_grad.hpp>
+#include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
