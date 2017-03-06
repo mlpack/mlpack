@@ -139,7 +139,8 @@ class NaiveBayesClassifier
   const arma::vec& Probabilities() const { return probabilities; }
   //! Modify the prior probabilities for each class.
   arma::vec& Probabilities() { return probabilities; }
-
+ //! To return the confidence scores of each class 
+   arma::mat& ConfidenceScores() { return testProbs;  }
   //! Serialize the classifier.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
