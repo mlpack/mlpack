@@ -1599,11 +1599,10 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   remove("test.arff");
 }
 
-/*
-  A test to check whether the arff loader is case insensitive to declarations:
-  @relation, @attribute, @data.
-*/
-
+/**
+ * A test to check whether the arff loader is case insensitive to declarations:
+ * @relation, @attribute, @data.
+ */
 BOOST_AUTO_TEST_CASE(CaseTest)
 {
   arma::mat dataset;
@@ -1614,7 +1613,6 @@ BOOST_AUTO_TEST_CASE(CaseTest)
 
   BOOST_CHECK_EQUAL(dataset.n_rows, 2);
   BOOST_CHECK_EQUAL(dataset.n_cols, 3);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
