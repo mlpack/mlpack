@@ -320,9 +320,7 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   bool success;
   if (loadType != arma::hdf5_binary)
-  {
-      success = matrix.load(stream, loadType);
-  }
+    success = matrix.load(stream, loadType);
   else
     success = matrix.load(filename, loadType);
 
