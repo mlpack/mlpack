@@ -71,6 +71,7 @@ Copyright:
   Copyright 2017, Vivek Pal <vivekpal.dtu@gmail.com>
   Copyright 2017, Prasanna Patil <prasannapatil08@gmail.com>
   Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+  Copyright 2017, Praveen Ch <chvsp972911@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
