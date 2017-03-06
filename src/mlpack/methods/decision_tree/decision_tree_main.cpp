@@ -122,6 +122,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("training"))
   {
+
     arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
     arma::Mat<size_t> labels;
     if (CLI::HasParam("labels"))
