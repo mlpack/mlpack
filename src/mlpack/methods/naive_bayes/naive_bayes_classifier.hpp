@@ -154,6 +154,8 @@ class NaiveBayesClassifier
   arma::vec probabilities;
   //! Number of training points seen so far.
   size_t trainingPoints;
+ //for confidence scores of each class
+ +  arma::mat testProbs;
 };
 
 } // namespace naive_bayes
