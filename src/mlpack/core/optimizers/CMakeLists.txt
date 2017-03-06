@@ -5,6 +5,7 @@ set(DIRS
   gradient_descent
   lbfgs
   minibatch_sgd
+  nestrov
   rmsprop
   sa
   sdp
