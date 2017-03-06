@@ -248,7 +248,8 @@ void NaiveBayesClassifier<MatType>::Classify(
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
-    jll.row(i).max(maxIndex);
+    arma::vec pointProbs = jll.row(i).t();
+    pointProbs.max(maxIndex);
     predictions[i] = maxIndex;
   }
 }
@@ -272,7 +273,8 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
-    jll.row(i).max(maxIndex);
+    arma::vec pointProbs = jll.row(i).t();
+    pointProbs.max(maxIndex);
     predictions[i] = maxIndex;
   }
 }
