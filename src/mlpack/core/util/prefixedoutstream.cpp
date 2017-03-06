@@ -94,7 +94,6 @@ PrefixedOutStream& PrefixedOutStream::operator<<(const char* str)
   return *this;
 }
 
-
 PrefixedOutStream& PrefixedOutStream::operator<<(std::string& str)
 {
   BaseLogic<std::string>(str);

@@ -170,12 +170,12 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
-  // The vector to be tested
+  // The vector to be tested.
   arma::vec test("1.0 1.5 2.0 2.5 3.0 3.5 4.0");
-  // The matrix to be tested
+  // The matrix to be tested.
   arma::mat test2("1.0 1.5 2.0; 2.5 3.0 3.5; 4.0 4.5 4.99999");
 
-  // Try to print armadillo objects with custom precision
+  // Try to print armadillo objects with custom precision.
   ss << std::fixed;
   ss << std::setprecision(6);
   ss.str("");
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
       "   1.000000   1.500000   2.000000   2.500000"
       "   3.000000   3.500000   4.000000\n");
 
-  // Try printing a matrix, with higher precision
+  // Try printing a matrix, with higher precision.
   ss << std::setprecision(8);
   ss.str("");
 
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "   4.00000000   4.50000000   4.99999000\n");
 
-  // Try alignment with larger values
+  // Try alignment with larger values.
   test2.at(2) = 40;
   ss.str("");
   pss << trans(test2);
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
       BASH_GREEN "[INFO ] " BASH_CLEAR 
       "    2.00000000    3.50000000    4.99999000\n");
 
-  // Test stream after reset
+  // Test stream after reset.
   test2.at(2) = 4;
   ss << std::setprecision(6);
   ss.unsetf(std::ios::floatfield);
