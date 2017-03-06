@@ -180,6 +180,99 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
 }
 
 /**
+ * The test LoadColVecCSVTest, LoadMatinColVec,
+ * LoadRowVecCSVTest need to run in DEBUG mode 
+ * else arma::colvec and arma::rowvec behave
+ * like arma::mat, that is you can also load 
+ * matrices into them if DEBUG mode is not on
+ * So to test whether Colvec and Rowvec load
+ * works, we need to turn on the debug mode
+ */
+
+/**
+ * Make sure ColVec can be loaded
+ */
+#ifdef DEBUG
+BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  for (int i = 0; i < 8; ++i)
+    f << i << endl;
+
+  f.close();
+
+  arma::colvec test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 1);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 8);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i), 1e-5);
+
+  //Remove the file
+  remove("test_file.csv");
+}
+
+/**
+ * Make Sure Load throws Exception when trying
+ * to load a Matrix in ColVec 
+ * and RowVec
+ */
+BOOST_AUTO_TEST_CASE(LoadMatinColVec)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1, 2" << endl;
+  f << "3, 4" << endl;
+
+  f.close();
+
+  arma::colvec coltest;
+  BOOST_REQUIRE_THROW(data::Load("test_file.csv", coltest, false),
+      std::logic_error);
+  Timer::Stop("loading_data");
+
+  arma::rowvec rowtest;
+  BOOST_REQUIRE_THROW(data::Load("test_file.csv", rowtest, false),
+      std::logic_error);
+  Timer::Stop("loading_data");
+
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure RowVec can be loaded
+ */
+BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  for (int i = 0 ; i < 7; ++i)
+    f << i << ",";
+  f << "7";
+  f << endl;
+
+  f.close();
+
+  arma::rowvec test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 8);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 1);
+
+  for (size_t i = 0; i < 8 ; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i) , 1e-5);
+
+  remove("test_file.csv");
+}
+#endif
+
+/**
  * Make sure TSVs can be loaded in transposed form.
  */
 BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
