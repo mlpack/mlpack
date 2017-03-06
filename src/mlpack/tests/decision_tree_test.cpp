@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // should be between 4 and 5.
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 1);
   BOOST_REQUIRE_GT(classProbabilities[0], 0.4);
-  BOOST_REQUIRE_LT(classProbabilities[1], 0.5);
+  BOOST_REQUIRE_LT(classProbabilities[0], 0.5);
 }
 
 /**
