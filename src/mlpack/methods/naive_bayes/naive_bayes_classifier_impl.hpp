@@ -2,6 +2,7 @@
  * @file naive_bayes_classifier_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Vahab Akbarzadeh (v.akbarzadeh@gmail.com)
+ * @author Shihao Jing (shihao.jing810@gmail.com)
  *
  * A Naive Bayes Classifier which parametrically estimates the distribution of
  * the features.  This classifier makes its predictions based on the assumption
@@ -162,23 +163,18 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
 }
 
 template<typename MatType>
-void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size_t>& results, MatType& results_proba)
+template<typename VecType>
+arma::vec NaiveBayesClassifier<MatType>::JointLogLikelihood(
+                                      const VecType& point) const
 {
   // Check that the number of features in the test data is same as in the
   // training data.
-  Log::Assert(data.n_rows == means.n_rows);
+  Log::Assert(point.n_rows == means.n_rows);
 
-  arma::vec probs = arma::log(probabilities);
+  arma::vec jll = arma::log(probabilities);
   arma::mat invVar = 1.0 / variances;
 
-  arma::mat testProbs = arma::repmat(probs.t(), data.n_cols, 1);
-
-  results.set_size(data.n_cols); // No need to fill with anything yet.
-
-  Log::Info << "Running Naive Bayes classifier on " << data.n_cols
-      << " data points with " << data.n_rows << " features each." << std::endl;
-
-  // Calculate the joint probability for each of the data points for each of the
+  // Calculate the joint log likelihood of point for each of the
   // means.n_cols.
 
   // Loop over every class.
@@ -186,37 +182,99 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data, arma::Row<size
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.
-    arma::mat diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
-    arma::mat rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
-    arma::vec exponents(diffs.n_cols);
-    for (size_t j = 0; j < diffs.n_cols; ++j) // log(exp(value)) == value
-      exponents(j) = arma::accu(diffs.col(j) % rhs.unsafe_col(j));
+    arma::vec diffs = point - means.col(i);
+    arma::vec rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
+    double exponent = arma::accu(diffs % rhs); // log(exp(value)) == value
 
-    // Calculate probability as sum of logarithm to decrease floating point
-    // errors.
-    testProbs.col(i) += (data.n_rows / - 2.0 * log(2 * M_PI) - 0.5 *
-        log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
+    // Calculate oint log likelihood as sum of logarithm 
+    // to decrease floating point errors.
+    jll(i) += (point.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
+        log(arma::det(arma::diagmat(variances.col(i)))) + exponent);
   }
 
-  arma::vec log_prob_x(data.n_cols); // log(Prob(X))
-  for (size_t j = 0; j < data.n_cols; ++j)
-    log_prob_x(j) = log(arma::accu(exp(testProbs.row(j))));
+  return jll;
+}
 
-  testProbs -= arma::repmat(log_prob_x, 1, testProbs.n_cols);
-
-  results_proba = arma::mat(exp(testProbs.t()));
-
-  // Now calculate the label.
+template<typename MatType>
+arma::mat NaiveBayesClassifier<MatType>::JointLogLikelihood(
+                                      const MatType& data) const
+{
+  arma::mat jll(data.n_cols, means.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    // Find the index of the class with maximum probability for this point.
-    arma::uword maxIndex = 0;
-    arma::vec pointProbs = testProbs.row(i).t();
-    pointProbs.max(maxIndex);
-    results[i] = maxIndex;
+    jll.row(i) = JointLogLikelihood(data.col(i)).t();
   }
+  return jll;
+}        
 
-  return;
+template<typename MatType>
+template<typename VecType>
+size_t NaiveBayesClassifier<MatType>::Classify(const VecType& point) const
+{
+  // find the label(class) with max joint log likelihood.
+  arma::vec jll = JointLogLikelihood(point);
+  arma::uword maxIndex = 0;
+  jll.max(maxIndex);
+  return maxIndex;
+}
+
+template<typename MatType>
+template<typename VecType>
+void NaiveBayesClassifier<MatType>::Classify(const VecType& point,
+                                             size_t& prediction,
+                                             arma::vec& probabilities) const
+{
+  // log(Prob(Y|X)) = Log(X|Y) + Log(Y) - Log(X);
+  // JointLogLikelihood = Log(X|Y) + Log(Y)
+  arma::vec jll = JointLogLikelihood(point);
+  double logProbX = log(arma::accu(exp(jll))); // Log(X)
+  jll -= logProbX;
+
+  arma::uword maxIndex = 0;
+  jll.max(maxIndex);
+  prediction = maxIndex;
+  probabilities = exp(jll); // log(exp(value)) == value
+}
+
+template<typename MatType>
+void NaiveBayesClassifier<MatType>::Classify(
+                                 const MatType& data,
+                                 arma::Row<size_t>& predictions) const
+{
+  predictions.set_size(data.n_cols);
+
+  arma::mat jll = JointLogLikelihood(data);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    arma::uword maxIndex = 0;
+    jll.row(i).max(maxIndex);
+    predictions[i] = maxIndex;
+  }
+}
+
+template<typename MatType>
+void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
+                arma::Row<size_t>& predictions,
+                arma::mat& predictionProbs) const
+{
+  predictions.set_size(data.n_cols);
+
+  arma::mat jll = JointLogLikelihood(data);
+  arma::vec logProbX(data.n_cols); // log(Prob(X))
+  for (size_t j = 0; j < data.n_cols; ++j)
+    logProbX(j) = log(arma::accu(exp(jll.row(j))));
+
+  jll -= arma::repmat(logProbX, 1, data.n_cols);
+
+  predictionProbs = exp(jll);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    arma::uword maxIndex = 0;
+    jll.row(i).max(maxIndex);
+    predictions[i] = maxIndex;
+  }
 }
 
 template<typename MatType>
