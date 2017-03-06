@@ -118,8 +118,8 @@ class PrefixedOutStream
    * Conducts the base logic required in all the operator << overloads.  Mostly
    * just a good idea to reduce copy-pasta.
    *
-   * Calls 2 different overloads to be able to output arma objects with custom
-   * precision
+   * This overload is for non-Armadillo objects, which need special handling
+   * during printing.
    *
    * @tparam T The type of the data to output.
    * @param val The The data to be output.
@@ -128,6 +128,16 @@ class PrefixedOutStream
   typename std::enable_if<!arma::is_arma_type<T>::value>::type
   BaseLogic(const T& val);
 
+  /**
+   * Conducts the base logic required in all the operator << overloads.  Mostly
+   * just a good idea to reduce copy-pasta.
+   *
+   * This overload is for Armadillo objects, which need special handling during
+   * printing.
+   *
+   * @tparam T The type of the data to output.
+   * @param val The The data to be output.
+   */
   template<typename T>
   typename std::enable_if<arma::is_arma_type<T>::value>::type
   BaseLogic(const T& val);
