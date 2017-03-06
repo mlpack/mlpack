@@ -65,6 +65,70 @@ bool Load(const std::string& filename,
           const bool transpose = true);
 
 /**
+ * Load a column vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& colvec,
+          const bool fatal = false);
+
+/**
+ * Load a row vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& colvec,
+          const bool fatal = false);
+
+/**
  * Loads a matrix from a file, guessing the filetype from the extension and
  * mapping categorical features with a DatasetMapper object.  This will
  * transpose the matrix (unless the transpose parameter is set to false).
