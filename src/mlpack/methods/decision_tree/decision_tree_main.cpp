@@ -18,7 +18,9 @@ PROGRAM_INFO("Decision tree",
     "\n\n"
     "The training file and associated labels are specified with the "
     "--training_file and --labels_file options, respectively.  The labels "
-    "should be in the range [0, num_classes - 1]."
+    "should be in the range [0, num_classes - 1]. Optionally, if --labels_file "
+    "is not specified, the labels are assumed to be the last dimension of the "
+    "training dataset."
     "\n\n"
     "When a model is trained, it may be saved to file with the "
     "--output_model_file (-M) option.  A model may be loaded from file for "
@@ -91,10 +93,6 @@ int main(int argc, char** argv)
     Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
         << endl;
 
-  if (CLI::HasParam("training") && !CLI::HasParam("labels"))
-    Log::Fatal << "Must specify --labels_file when --training_file is "
-        << "specified!" << endl;
-
   if (CLI::HasParam("test_labels") && !CLI::HasParam("test"))
     Log::Warn << "--test_labels_file ignored because --test_file is not passed."
         << endl;
@@ -124,9 +122,28 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("training"))
   {
+
     arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Mat<size_t> labels =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
+    arma::Mat<size_t> labels;
+    if (CLI::HasParam("labels"))
+    {
+      labels = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
+      // Do the labels need to be transposed?
+      if (labels.n_cols == 1)
+        labels = labels.t();
+      if (labels.n_cols == 1)
+        Log::Fatal << "Labels must be one-dimensional!" << endl;
+    }
+    else
+    {
+      // Extract the labels as the last
+      Log::Info << "Using the last dimension of training set as labels."
+          << endl;
+
+      labels = arma::conv_to<arma::Mat<size_t>>::from(
+          dataset.row(dataset.n_rows - 1));
+      dataset.shed_row(dataset.n_rows - 1);
+    }
 
     // Calculate number of classes.
     const size_t numClasses = arma::max(arma::max(labels)) + 1;
