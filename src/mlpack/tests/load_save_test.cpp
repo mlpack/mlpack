@@ -180,17 +180,13 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
 }
 
 /**
- * The test LoadColVecCSVTest, LoadMatinColVec,
- * LoadRowVecCSVTest need to run in DEBUG mode 
- * else arma::colvec and arma::rowvec behave
- * like arma::mat, that is you can also load 
- * matrices into them if DEBUG mode is not on
- * So to test whether Colvec and Rowvec load
- * works, we need to turn on the debug mode
+ * The test LoadColVecCSVTest, LoadMatinColVec, LoadRowVecCSVTest need to run in
+ * debug mode only; without debugging symbols, size checks are not performed and
+ * thus the exception will not be thrown.
  */
 
 /**
- * Make sure ColVec can be loaded
+ * Make sure ColVec can be loaded.
  */
 #ifdef DEBUG
 BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
@@ -212,14 +208,13 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i), 1e-5);
 
-  //Remove the file
+  // Remove the file.
   remove("test_file.csv");
 }
 
 /**
- * Make Sure Load throws Exception when trying
- * to load a Matrix in ColVec 
- * and RowVec
+ * Make sure Load() throws an exception when trying to load a matrix into a
+ * colvec or rowvec.
  */
 BOOST_AUTO_TEST_CASE(LoadMatinColVec)
 {
@@ -245,7 +240,7 @@ BOOST_AUTO_TEST_CASE(LoadMatinColVec)
 }
 
 /**
- * Make sure RowVec can be loaded
+ * Make sure that rowvecs can be loaded successfully.
  */
 BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
 {
