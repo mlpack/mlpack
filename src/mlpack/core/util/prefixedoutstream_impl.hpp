@@ -33,6 +33,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(const T& s)
   return *this;
 }
 
+// For non-Armadillo types.
 template<typename T>
 typename std::enable_if<!arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
@@ -140,13 +141,14 @@ PrefixedOutStream::BaseLogic(const T& val)
   }
 }
 
+// For Armadillo types.
 template<typename T>
 typename std::enable_if<arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
 {
-
-  // Extract printable object from the input
+  // Extract printable object from the input.
   auto printVal = arma::unwrap<T>(val).M;
+
   // We will use this to track whether or not we need to terminate at the end of
   // this call (only for streams which terminate after a newline).
   bool newlined = false;
@@ -157,9 +159,9 @@ PrefixedOutStream::BaseLogic(const T& val)
 
   std::ostringstream convert;
 
-  // Check if the stream is in the default state
-  if(destination.flags() == convert.flags() && 
-     destination.precision() == convert.precision())
+  // Check if the stream is in the default state.
+  if (destination.flags() == convert.flags() &&
+      destination.precision() == convert.precision())
   {
     arma::arma_ostream::print(convert, printVal, true);
   }
@@ -173,10 +175,9 @@ PrefixedOutStream::BaseLogic(const T& val)
     auto absVal = arma::abs(printVal).P.Q;
     double maxVal = absVal.max();
 
-    if(maxVal == 0.f)
-    {
-        maxVal = 1;
-    }
+    if (maxVal == 0.0)
+      maxVal = 1;
+
     int maxLog = log10(maxVal);
     maxLog = (maxLog > 0) ? floor(maxLog) + 1 : 1;
     const int padding = 4;
@@ -289,4 +290,4 @@ void PrefixedOutStream::PrefixIfNeeded()
 } // namespace util
 } // namespace mlpack
 
-#endif // MLPACK_CLI_PREFIXEDOUTSTREAM_IMPL_H
+#endif // MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_IMPL_HPP
