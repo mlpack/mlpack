@@ -209,6 +209,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   *to load a Matrix in ColVec 
   *and RowVec
 **/
+#ifdef DEBUG
 BOOST_AUTO_TEST_CASE(LoadMatinColVec)
 {
   fstream f;
@@ -231,7 +232,7 @@ BOOST_AUTO_TEST_CASE(LoadMatinColVec)
 
   remove("test_file.csv");
 }
-
+#endif
 /**
   *Make sure RowVec can be loaded
 **/
