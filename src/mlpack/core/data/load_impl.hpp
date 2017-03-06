@@ -16,7 +16,7 @@
 #include "load.hpp"
 #include "extension.hpp"
 
-#include<exception>
+#include <exception>
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
@@ -90,22 +90,22 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
+// Load column vector.
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal)
 {
-  Load(filename, vec, fatal, false);
-  return true;
+  return Load(filename, vec, fatal, false);
 }
 
+// Load row vector.
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
           const bool fatal)
 {
-  Load(filename, rowvec, fatal, false);
-  return true;
+  return Load(filename, rowvec, fatal, false);
 }
 
 template<typename eT>
