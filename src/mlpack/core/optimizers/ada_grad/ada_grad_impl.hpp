@@ -20,13 +20,13 @@ namespace optimization {
 template<typename DecomposableFunctionType>
 AdaGrad<DecomposableFunctionType>::AdaGrad(DecomposableFunctionType& function,
                                            const double stepSize,
-                                           const double eps,
+                                           const double epsilon,
                                            const size_t maxIterations,
                                            const double tolerance,
                                            const bool shuffle) :
     function(function),
     stepSize(stepSize),
-    eps(eps),
+    epsilon(epsilon),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle)
@@ -104,7 +104,7 @@ double AdaGrad<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     squaredGradient += (gradient % gradient);
 
     // Apply update.
-    iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + eps);
+    iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + epsilon);
 
     // Now add that to the overall objective function.
     if (shuffle)

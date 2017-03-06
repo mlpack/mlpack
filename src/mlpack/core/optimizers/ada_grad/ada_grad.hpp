@@ -73,7 +73,7 @@ class AdaGrad
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration
-   * @param eps Value used to initialise the squared gradient parameter.
+   * @param epsilon Value used to initialise the squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -82,7 +82,7 @@ class AdaGrad
    */
   AdaGrad(DecomposableFunctionType& function,
       const double stepSize = 0.01,
-      const double eps = 1e-8,
+      const double epsilon = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true);
@@ -108,9 +108,9 @@ class AdaGrad
   double& StepSize() { return stepSize; }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return eps; }
+  double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return eps; }
+  double& Epsilon() { return epsilon; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -135,7 +135,7 @@ class AdaGrad
   double stepSize;
 
   //! The value used to initialise the squared gradient parameter.
-  double eps;
+  double epsilon;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
