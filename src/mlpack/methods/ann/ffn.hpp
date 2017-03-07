@@ -160,6 +160,7 @@ class FFN
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  std::vector<LayerTypes> & Model() { return network; } 
 
   /*
    * Add a new module to the model.
