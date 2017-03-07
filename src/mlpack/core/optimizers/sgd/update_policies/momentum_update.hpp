@@ -2,7 +2,7 @@
  * @file momentum_update.hpp
  * @author Arun Reddy
  *
- * Empty update for SGD
+ * Momentum update for SGD
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
