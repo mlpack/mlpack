@@ -1,5 +1,5 @@
 set(SOURCES
-  empty_update.hpp
+  vanilla_update.hpp
   momentum_update.hpp
 )
 

@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression.hpp
  * @author Sumedh Ghaisas
+ * @author Arun Reddy
  *
  * The LogisticRegression class, which implements logistic regression.  This
  * implements supports L2-regularization.
@@ -98,9 +99,9 @@ class LogisticRegression
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
-  template<template<typename> class OptimizerType>
+  template<template<typename, typename ... PolicyTypeArg> class OptimizerType, typename ... PolicyTypeArg>
   LogisticRegression(
-      OptimizerType<LogisticRegressionFunction<MatType>>& optimizer);
+      OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,
@@ -139,6 +140,19 @@ class LogisticRegression
       template<typename> class OptimizerType = mlpack::optimization::L_BFGS
   >
   void Train(OptimizerType<LogisticRegressionFunction<MatType>>& optimizer);
+
+  /**
+   * Train the LogisticRegression model with optimizer customized through policy type classes.
+   *
+   * @tparam OptimizerType LogisticRegressionFunction optimizer type
+   * @tparam PolicyTypeArg Policy type classes as variadic parameters
+   * @param optimizer Instantiated optimizer with instantiated error function.
+   */
+  template<
+      template<typename,typename... PolicyTypeArg> class OptimizerType = mlpack::optimization::L_BFGS,
+      typename... PolicyTypeArg
+  >
+  void Train(OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }

@@ -245,7 +245,7 @@ int main(int argc, char** argv)
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
-      model.Train(sgdOpt);
+      model.Train<StandardSGD>(sgdOpt);
     }
     else if (optimizerType == "lbfgs")
     {

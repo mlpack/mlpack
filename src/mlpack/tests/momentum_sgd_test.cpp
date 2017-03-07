@@ -1,8 +1,8 @@
 /**
- * @file sgd_test.cpp
+ * @file momentum_sgd_test.cpp
  * @author Ryan Curtin
  *
- * Test file for SGD (stochastic gradient descent).
+ * Test file for MomentumSGD (stochastic gradient descent with momentum updates).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 
@@ -23,12 +24,13 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-BOOST_AUTO_TEST_SUITE(SGDTest);
+BOOST_AUTO_TEST_SUITE(MomentumSGDTest);
 
-BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleMomentumSGDTestFunction)
 {
   SGDTestFunction f;
-  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true);
+  MomentumUpdate momentumUpdate(0.9);
+  MomentumSGD<SGDTestFunction> s(f, momentumUpdate, 0.0003, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
@@ -37,25 +39,6 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
-}
-
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
-{
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
-  {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-
-    StandardSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true);
-
-    arma::mat coordinates = f.GetInitialPoint();
-    double result = s.Optimize(coordinates);
-
-    BOOST_REQUIRE_SMALL(result, 1e-10);
-    for (size_t j = 0; j < i; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
-  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

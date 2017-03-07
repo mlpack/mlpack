@@ -1,5 +1,5 @@
 /**
- * @file empty_update.hpp
+ * @file momentum_update.hpp
  * @author Arun Reddy
  *
  * Empty update for SGD
@@ -16,10 +16,9 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Empty update policy for SGD.
+ * Momentum update policy for SGD.
  *
  */
-template<class UpdatePolicyType>
 class MomentumUpdate {
  public:
 
@@ -28,20 +27,32 @@ class MomentumUpdate {
    *
    * @param momentum The momentum hyperparameter
    */
-  MomentumUpdate(const double momentum = 0.5);
+  MomentumUpdate(const double momentum = 0.5):
+      momentum(momentum)
+  {/* do nothing */};
 
-  void Initialize(const size_t n_rows = 0,
-            const size_t n_cols = 0)
+  /**
+   * Intialize the velocity matrix to the zeros matrix of the given size
+   * @param n_rows number of rows in the gradient matrix.
+   * @param n_cols number of columns in the gradient matrix.
+   */
+  void Initialize(const size_t n_rows,
+                  const size_t n_cols)
   {
     //Initialize am empty velocity matrix.
-    velocity(arma::zeros<arma::mat>(n_rows, n_cols));
+    velocity = arma::zeros<arma::mat>(n_rows, n_cols);
   }
 
-
+  /**
+   * Gradient update step for SGD.
+   * @param stepSize
+   * @param gradient The gradient matrix.
+   * @return Updated gradient matrix.
+   */
   arma::mat Update(const double stepSize,
-              arma::mat& gradient)
+                   arma::mat gradient)
   {
-    velocity = mu*velocity - stepSize * gradient;
+    velocity = momentum*velocity - stepSize * gradient;
     return velocity;
   }
 
@@ -52,8 +63,6 @@ class MomentumUpdate {
 
   // The velocity matrix.
   arma::mat velocity;
-
-
 
 };
 

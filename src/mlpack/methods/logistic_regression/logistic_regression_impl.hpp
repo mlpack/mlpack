@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
+ * @author Arun Reddy
  *
  * Implementation of the LogisticRegression class.  This implementation supports
  * L2-regularization.
@@ -53,9 +54,9 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename ... PolicyTypeArg> class OptimizerType, typename ... PolicyTypeArg>
 LogisticRegression<MatType>::LogisticRegression(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer) :
+    OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
@@ -96,6 +97,24 @@ void LogisticRegression<MatType>::Train(
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
       << "trained model is " << out << "." << std::endl;
 }
+
+template<typename MatType>
+template<template<typename, typename... PolicyTypeArg> class OptimizerType,
+    typename... PolicyTypeArg>
+void LogisticRegression<MatType>::Train(
+    OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer)
+{
+// Everything is good.  Just train the model.
+parameters = optimizer.Function().GetInitialPoint();
+
+Timer::Start("logistic_regression_optimization");
+const double out = optimizer.Optimize(parameters);
+Timer::Stop("logistic_regression_optimization");
+
+Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+<< "trained model is " << out << "." << std::endl;
+}
+
 
 template<typename MatType>
 void LogisticRegression<MatType>::Predict(const MatType& predictors,

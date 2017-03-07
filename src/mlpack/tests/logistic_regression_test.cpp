@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_test.cpp
  * @author Ryan Curtin
+ * @author Arun Reddy
  *
  * Test for LogisticFunction and LogisticRegression.
  *
@@ -642,7 +643,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
 
   // Now train a logistic regression object on it.
   LogisticRegression<> lr(data.n_rows, 0.5);
-  lr.Train<SGD>(data, responses);
+  lr.Train<StandardSGD>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

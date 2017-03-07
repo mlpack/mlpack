@@ -1,5 +1,5 @@
 /**
- * @file empty_update.hpp
+ * @file vanilla_update.hpp
  * @author Arun Reddy
  *
  * Empty update for SGD
@@ -16,16 +16,11 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Empty update policy for SGD.
+ * Vanilla update policy for SGD.
  *
  */
-class EmptyUpdate {
+class VanillaUpdate {
  public:
-
-  /**
-   * Default constructor.
-   */
-  EmptyUpdate(){}
 
   /**
    * Function for runtime initialization.
@@ -33,25 +28,16 @@ class EmptyUpdate {
    * @param n_rows
    * @param n_cols
    */
-  void Initialize(const size_t n_rows = 0,
-            const size_t n_cols = 0)
-  {
-    in_rows = n_rows;
-    in_cols = n_cols;
-  }
+  void Initialize(const size_t n_rows,
+                  const size_t n_cols)
+  {/* Do Nothing */}
 
-  arma::mat Update(double stepSize,
-              arma::mat gradient)
+  arma::mat Update(double stepSize, arma::mat gradient)
   {
-    // performs the vanilla SGD update.
+    // perform the vanilla SGD update.
     return - stepSize * gradient;
   }
 
- private:
-
-  size_t in_rows;
-
-  size_t in_cols;
 };
 
 } // namespace optimization

@@ -1,6 +1,7 @@
 /**
  * @file sgd.hpp
  * @author Ryan Curtin
+ * @author Arun Reddy
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -13,7 +14,8 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/empty_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -73,8 +75,7 @@ namespace optimization {
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
  */
-template<typename DecomposableFunctionType,
-         typename UpdatePolicyType = EmptyUpdate>
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
 class SGD
 {
  public:
@@ -100,6 +101,19 @@ class SGD
       const double tolerance = 1e-5,
       const bool shuffle = true);
 
+  /**
+   * Overloaded SGD optimizer constructor with UpdateType parameter.
+   *
+   * @param function
+   * @param updatePolicyType The  update policy used for the gradient update
+   *     during the iterations.
+   * @param stepSize Step size for each iteration.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *     limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *     function is visited in linear order.
+   */
   SGD(DecomposableFunctionType& function,
       UpdatePolicyType updatePolicyType,
       const double stepSize = 0.01,
@@ -121,14 +135,6 @@ class SGD
   const DecomposableFunctionType& Function() const { return function; }
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return function; }
-
-//  //! Get the instantiated update policy type.
-//  const UpdatePolicyType UpdatePolicyType() const
-//  { return updatePolicyType; }
-//
-//  //! Modify the instantiated update policy type.
-//  UpdatePolicyType& UpdatePolicyType()
-//  { return updatePolicyType; }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -172,7 +178,10 @@ class SGD
 };
 
 template<typename DecomposableFunctionType>
-using StandardSGD = SGD<DecomposableFunctionType, EmptyUpdate>;
+using StandardSGD = SGD<DecomposableFunctionType, VanillaUpdate>;
+
+template<typename DecomposableFunctionType>
+using MomentumSGD = SGD<DecomposableFunctionType, MomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

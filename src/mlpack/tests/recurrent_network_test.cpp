@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     model.Add<LogSoftMax<> >();
 
     StandardSGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
-    model.Train(input, labels, opt);
+    model.Train<StandardSGD>(input, labels, opt);
 
     arma::mat prediction;
     model.Predict(input, prediction);
@@ -371,7 +371,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
   model.Add<Linear<> >(7, outputSize);
   model.Add<SigmoidLayer<> >();
 
-  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 40; i++)
@@ -381,7 +381,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
 
-      model.Train(inputTemp, labelsTemp, opt);
+      model.Train<StandardSGD>(inputTemp, labelsTemp, opt);
     }
   }
 
@@ -552,7 +552,7 @@ void DistractedSequenceRecallTestNetwork()
   model.Add<Linear<> >(7, outputSize);
   model.Add<SigmoidLayer<> >();
 
-  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 40; i++)
@@ -562,7 +562,7 @@ void DistractedSequenceRecallTestNetwork()
       inputTemp = trainInput.at(0, j);
       labelsTemp = trainLabels.at(0, j);
 
-      model.Train(inputTemp, labelsTemp, opt);
+      model.Train<StandardSGD>(inputTemp, labelsTemp, opt);
     }
   }
 
