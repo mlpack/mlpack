@@ -125,7 +125,7 @@ class ELU
    * @param x Input data.
    * @return f(x).
    */
-  double fn(const double x)
+  double Fn(const double x)
   {
     if (x < DBL_MAX)
       return (x > 0) ? x : alpha * (std::exp(x) - 1);
@@ -139,13 +139,13 @@ class ELU
    * @param y The resulting output activation.
    */
   template<typename eT>
-  void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
-      y(i) = fn(x(i));
+      y(i) = Fn(x(i));
     }
   }
 
