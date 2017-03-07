@@ -58,6 +58,7 @@ double NAG<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     overallObjective += function.Evaluate(iterate, i);
 
   // Now iterate!
+  arma::mat iterate_temp = iterate;
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat velocity = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
@@ -91,23 +92,17 @@ double NAG<DecomposableFunctionType>::Optimize(arma::mat& iterate)
         visitationOrder = arma::shuffle(visitationOrder);
     }
 
-    // Take step in the momentum direction in parameter space find gradient
-    iterate -= momentum * velocity;
-
     // Evaluate the gradient at the modified iteration
     if (shuffle)
-      function.Gradient(iterate, visitationOrder[currentFunction], gradient);
+      function.Gradient(iterate + momentum * velocity, visitationOrder[currentFunction], gradient);
     else
-      function.Gradient(iterate, currentFunction, gradient);
+      function.Gradient(iterate + momentum * velocity, currentFunction, gradient);
 
-    // Restore iterate back
-    iterate += momentum * velocity;
+    //iterate += momentum * velocity;
+    velocity = velocity*momentum - stepSize*gradient;
 
-    //Compute velocity update
-    velocity = velocity*momentum + stepSize*gradient;
-    
     // And update the iterate.
-    iterate += velocity;
+    iterate = iterate + velocity;
 
     // Now add that to the overall objective function.
     if (shuffle)
