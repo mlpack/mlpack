@@ -241,13 +241,23 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
 
   dataset /= 10; // Normalization used in the paper.
 
-  double avgTrainError, avgValidationError;
+  size_t numFails = 0; //Counter for the number of failures.
 
-  // Run the CV for 10 times.
-  AvgCrossValidation(dataset, 1, 10, 3, 52, avgTrainError, avgValidationError);
+  while(numFails < 5) // Runs the test for a maximum of 5 times.
+  {
+    double avgTrainError, avgValidationError;
 
-  BOOST_REQUIRE_LE(avgTrainError, trainErrorThreshold);
-  BOOST_REQUIRE_LE(avgValidationError, validationErrorThreshold);
+    // Run the CV for 10 times.
+    AvgCrossValidation(dataset, 1, 10, 3, 52, avgTrainError, avgValidationError);
+
+    if(avgTrainError <= trainErrorThreshold && 
+       avgValidationError <= validationErrorThreshold)
+      break;
+
+    ++numFails;
+  }
+
+  BOOST_REQUIRE_LE(numFails, 4);
 
 }
 
@@ -280,14 +290,24 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
   // Eqn 13.3
   dataset.row(10) = arma::sqrt(1 - dataset.row(0));
 
-  double avgTrainError, avgValidationError;
-  
-  //Run CV 10 times
-  AvgCrossValidation(dataset, 3, 10, 10, 500, avgTrainError, avgValidationError);
-  
+  size_t numFails = 0; //Counter for the number of failures.
 
-  BOOST_REQUIRE_LE(avgTrainError, trainErrorThreshold);
-  BOOST_REQUIRE_LE(avgValidationError, validationErrorThreshold);
+  while(numFails < 5) // Run the test for a maximum of 5 times.
+  {
+    double avgTrainError, avgValidationError;
+  
+    //Run CV 10 times
+    AvgCrossValidation(dataset, 3, 10, 10, 500, avgTrainError,
+        avgValidationError);
+
+    if(avgTrainError <= trainErrorThreshold && 
+       avgValidationError <= validationErrorThreshold)
+      break;
+
+    ++numFails;
+  }
+
+  BOOST_REQUIRE_LE(numFails, 4);
 
 }
 
