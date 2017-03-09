@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
     double avgTrainError, avgValidationError;
 
     // Run CV 10 times.
-    AvgCrossValidation(dataset, 3, 10, 10, 500, avgTrainError,
+    AvgCrossValidation(dataset, 3, 10, 10, 20, avgTrainError,
         avgValidationError);
 
     if (avgTrainError <= trainErrorThreshold &&
