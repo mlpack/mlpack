@@ -27,7 +27,7 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm()
 
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-    const size_t size) : size(size)
+    const size_t size, const double eps = 0.001) : size(size), eps(eps)
 {
   weights.set_size(size + size, 1);
 }
@@ -36,10 +36,12 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
 template<typename InputDataType, typename OutputDataType>
 void BatchNorm<InputDataType, OutputDataType>::Reset()
 {
-  // variance = arma::mat(variance.memptr(), size, 1, false, false);
-  // mean = arma::mat(mean.memptr(), size, 1, false, false);
   gamma = arma::mat(weights.memptr(), size, 1, false, false);
   beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
+  deterministic = false;
+  gamma.fill(1.0);
+  beta.fill(0.0);
+  stats.reset();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -47,14 +49,29 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  if(!deterministic)
+  // if(!deterministic)
+  // {
+  //   mean = arma::mean(input, 1);
+  //   variance = arma::var(input, 1, 1);
+  // }
+
+  // output = beta + (gamma % (input - mean)) / arma::sqrt(variance + eps);
+  output.reshape(input.n_rows, input.n_cols);
+
+  for (size_t i = 0; i < output.n_rows; i++)
   {
-    mean = arma::mean(input, 1);
-    variance = arma::var(input, 1, 1);
+    arma::mat inpRow = input.row(i);
+
+    output.row(i) = (inpRow - arma::as_scalar(arma::mean(inpRow,1)));
+
+    output.row(i) /= (arma::as_scalar(arma::sqrt(arma::var(inpRow,1, 1)) + 
+        arma::as_scalar(eps)));
+
+    output.row(i) *= arma::as_scalar(gamma.row(i));
+
+    output.row(i) += arma::as_scalar(beta.row(i));
+
   }
-
-  output = beta + (gamma % (input - mean)) / arma::sqrt(variance + eps);
-
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -86,8 +103,8 @@ void BatchNorm<InputDataType, OutputDataType>::Serialize(
 {
   ar & data::CreateNVP(gamma, "gamma");
   ar & data::CreateNVP(beta, "beta");
-  ar & data::CreateNVP(trainingMean, "trainingMean");
-  ar & data::CreateNVP(trainingVariance, "trainingVariance");
+  ar & data::CreateNVP(stats.mean(), "trainingMean");
+  ar & data::CreateNVP(stats.var(1), "trainingVariance");
 }
 
 } // namespace ann

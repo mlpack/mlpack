@@ -29,7 +29,7 @@ class BatchNorm
 
   BatchNorm();
 
-  BatchNorm(const size_t size);
+  BatchNorm(const size_t size, const double eps);
 
   void Reset();
 
@@ -71,6 +71,15 @@ class BatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  OutputDataType& Mean() { return mean; }
+
+  OutputDataType& Variance() { return variance; }
+
+  OutputDataType& Gamma() { return gamma; }
+
+  OutputDataType& Beta() { return beta; }
+
+
 
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -91,11 +100,13 @@ class BatchNorm
 
   OutputDataType mean;
 
-  OutputDataType trainingMean;
+  // OutputDataType trainingMean;
 
   OutputDataType variance;
 
-  OutputDataType trainingVariance;
+  // OutputDataType trainingVariance;
+
+  arma::running_stat_vec<arma::colvec> stats;
 
   OutputDataType gradient;
 
