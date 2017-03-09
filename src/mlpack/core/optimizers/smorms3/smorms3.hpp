@@ -99,9 +99,9 @@ class SMORMS3
   DecomposableFunctionType& Function() { return function; }
 
   //! Get the learning rate.
-  double LRate() const { return lRate; }
+  double LearningRate() const { return lRate; }
   //! Modify the learning rate.
-  double& LRate() { return lRate; }
+  double& LearningRate() { return lRate; }
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return eps; }
