@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
-#define __MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
+#define MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
 
 #include <mlpack/prereqs.hpp>
 
