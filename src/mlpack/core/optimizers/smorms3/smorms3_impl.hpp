@@ -60,6 +60,10 @@ double SMORMS3<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   arma::mat g = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
   arma::mat g2 = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
 
+  // Initialise a matrix filled with lRate.
+  arma::mat lRateMat(iterate.n_rows, iterate.n_cols);
+  lRateMat.fill(lRate);
+
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   
@@ -112,9 +116,6 @@ double SMORMS3<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     g2 += r % (gradient % gradient);
 
     arma::mat x = (g % g) / (g2 + eps);
-
-    arma::mat lRateMat(x.n_rows, x.n_cols);
-    lRateMat.fill(lRate);
 
     iterate -= gradient % arma::min(x, lRateMat) / (arma::sqrt(g2) + eps);
 
