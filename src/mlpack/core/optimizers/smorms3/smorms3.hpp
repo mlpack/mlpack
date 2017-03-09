@@ -69,7 +69,7 @@ class SMORMS3
    *
    * @param function Function to be optimized (minimized).
    * @param lRate Learning rate or step size for each iteration.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -78,7 +78,7 @@ class SMORMS3
    */
   SMORMS3(DecomposableFunctionType& function,
       const double lRate = 0.001,
-      const double eps = 1e-16,
+      const double epsilon = 1e-16,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true);
