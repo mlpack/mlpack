@@ -96,8 +96,7 @@ class LogisticRegression
    * configured before the training is run by this constructor.  The update
    * policy of the optimizer can be set through the policy argument.  The
    * predictors and responses and initial point are all taken from the error
-   * function
-contained in the optimizer.
+   * function contained in the optimizer.
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
