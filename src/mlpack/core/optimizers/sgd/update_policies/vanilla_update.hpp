@@ -19,7 +19,6 @@ namespace optimization {
  * Vanilla update policy for Stochastic Gradient Descent (SGD). The following update
  * scheme is used to update SGD in every iteration:
  *
- *
  * \f[
  * A_{j + 1} = A_j + \alpha \nabla f_i(A)
  * \f]
