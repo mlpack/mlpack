@@ -93,9 +93,11 @@ class LogisticRegression
    * data.  This will train the model.  This overload takes an already
    * instantiated optimizer (which holds the LogisticRegressionFunction error
    * function, which must also be instantiated), so that the optimizer can be
-   * configured before the training is run by this constructor.  The predictors
-   * and responses and initial point are all taken from the error function
-   * contained in the optimizer.
+   * configured before the training is run by this constructor.  The update
+   * policy of the optimizer can be set through the policy argument.  The
+   * predictors and responses and initial point are all taken from the error
+   * function
+contained in the optimizer.
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */

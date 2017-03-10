@@ -22,39 +22,24 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(DecomposableFunctionType& function,
+template<typename DecomposableFunctionType, typename UpdatePolicy>
+SGD<DecomposableFunctionType, UpdatePolicy>::SGD(DecomposableFunctionType& function,
                                                      const double stepSize,
                                                      const size_t maxIterations,
                                                      const double tolerance,
-                                                     const bool shuffle) :
+                                                     const bool shuffle,
+                                                     const UpdatePolicy updatePolicy) :
     function(function),
-    updatePolicyType(VanillaUpdate()),
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    updatePolicy(updatePolicy)
 { /* Nothing to do. */ }
-
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(DecomposableFunctionType& function,
-                                                     UpdatePolicyType updatePolicyType,
-                                                     const double stepSize,
-                                                     const size_t maxIterations,
-                                                     const double tolerance,
-                                                     const bool shuffle) :
-    function(function),
-    updatePolicyType(updatePolicyType),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle)
-{ /* Nothing to do. */ }
-
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iterate)
+template<typename DecomposableFunctionType, typename UpdatePolicy>
+double SGD<DecomposableFunctionType, UpdatePolicy>::Optimize(arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -75,7 +60,7 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iter
     overallObjective += function.Evaluate(iterate, i);
 
   // Initialize the update policy.
-  updatePolicyType.Initialize(iterate.n_rows,iterate.n_cols);
+  updatePolicy.Initialize(iterate.n_rows,iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -117,8 +102,8 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iter
     else
       function.Gradient(iterate, currentFunction, gradient);
 
-    // And update the iterate.
-    iterate += updatePolicyType.Update(stepSize, gradient);
+    // Update the iterate.
+    updatePolicy.Update(iterate, stepSize, gradient);
 
     // Now add that to the overall objective function.
     if (shuffle)

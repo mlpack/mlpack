@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(SimpleMomentumSGDTestFunction)
 {
   SGDTestFunction f;
   MomentumUpdate momentumUpdate(0.9);
-  MomentumSGD<SGDTestFunction> s(f, momentumUpdate, 0.0003, 5000000, 1e-9, true);
+  MomentumSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true, momentumUpdate);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
