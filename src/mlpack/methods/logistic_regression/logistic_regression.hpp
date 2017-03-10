@@ -101,9 +101,9 @@ class LogisticRegression
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
   template<template<typename, typename ...> class OptimizerType,
-           typename ... PolicyTypeArg>
+           typename ... OptimizerTypeArgs>
   LogisticRegression(OptimizerType<LogisticRegressionFunction<MatType>,
-      PolicyTypeArg...>& optimizer);
+      OptimizerTypeArgs...>& optimizer);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,

@@ -55,10 +55,10 @@ LogisticRegression<MatType>::LogisticRegression(
 
 template<typename MatType>
 template<template<typename, typename ...> class OptimizerType,
-        typename ... PolicyTypeArg>
+        typename ... OptimizerTypeArgs>
 LogisticRegression<MatType>::LogisticRegression(
     OptimizerType<LogisticRegressionFunction<MatType>,
-                  PolicyTypeArg...>& optimizer) :
+                  OptimizerTypeArgs...>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {

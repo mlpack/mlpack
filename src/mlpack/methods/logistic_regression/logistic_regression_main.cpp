@@ -238,7 +238,7 @@ int main(int argc, char** argv)
     LogisticRegressionFunction<> lrf(regressors, responses, model.Parameters());
     if (optimizerType == "sgd")
     {
-      SGD <LogisticRegressionFunction<>> sgdOpt(lrf);
+      SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
