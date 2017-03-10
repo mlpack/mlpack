@@ -78,8 +78,9 @@ class MomentumUpdate {
   }
 
   /**
-   * Update step for SGD.  Velocity of the gradient is computed in each
-   * iteration and the function is updated in the direction of velocity.
+   * Update step for SGD.  The momentum term makes the convergence faster on the
+   * way as momentum term increases for dimensions pointing in the same and
+   * reduces updates for dimensions whose gradients change directions.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
