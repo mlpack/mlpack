@@ -101,9 +101,10 @@ contained in the optimizer.
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
-  template<template<typename, typename ... PolicyTypeArg> class OptimizerType, typename ... PolicyTypeArg>
-  LogisticRegression(
-      OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer);
+  template<template<typename, typename ...> class OptimizerType,
+           typename ... PolicyTypeArg>
+  LogisticRegression(OptimizerType<LogisticRegressionFunction<MatType>,
+      PolicyTypeArg...>& optimizer);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,
@@ -137,24 +138,16 @@ contained in the optimizer.
    * accessible via Parameters().
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @tparam OptimizerTypeArgs Optimizer arguments to customize the behavior of
+   * the Optimizer
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::L_BFGS
+      template<typename,
+               typename... > class OptimizerType = mlpack::optimization::L_BFGS,
+      typename... OptimizerTypeArgs
   >
-  void Train(OptimizerType<LogisticRegressionFunction<MatType>>& optimizer);
-
-  /**
-   * Train the LogisticRegression model with optimizer customized through policy type classes.
-   *
-   * @tparam OptimizerType LogisticRegressionFunction optimizer type
-   * @tparam PolicyTypeArg Policy type classes as variadic parameters
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   */
-  template<
-      template<typename,typename... PolicyTypeArg> class OptimizerType = mlpack::optimization::L_BFGS,
-      typename... PolicyTypeArg
-  >
-  void Train(OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer);
+  void Train(OptimizerType<LogisticRegressionFunction<MatType>,
+      OptimizerTypeArgs...>& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }

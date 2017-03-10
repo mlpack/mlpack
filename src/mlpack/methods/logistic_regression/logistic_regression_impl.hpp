@@ -54,9 +54,11 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<template<typename, typename ... PolicyTypeArg> class OptimizerType, typename ... PolicyTypeArg>
+template<template<typename, typename ...> class OptimizerType,
+        typename ... PolicyTypeArg>
 LogisticRegression<MatType>::LogisticRegression(
-    OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer) :
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  PolicyTypeArg...>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
@@ -83,26 +85,11 @@ void LogisticRegression<MatType>::Train(const MatType& predictors,
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename... > class OptimizerType,
+         typename... OptimizerTypeArgs>
 void LogisticRegression<MatType>::Train(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer)
-{
-  // Everything is good.  Just train the model.
-  parameters = optimizer.Function().GetInitialPoint();
-
-  Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("logistic_regression_optimization");
-
-  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
-}
-
-template<typename MatType>
-template<template<typename, typename... PolicyTypeArg> class OptimizerType,
-    typename... PolicyTypeArg>
-void LogisticRegression<MatType>::Train(
-    OptimizerType<LogisticRegressionFunction<MatType>, PolicyTypeArg...>& optimizer)
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  OptimizerTypeArgs...>& optimizer)
 {
 // Everything is good.  Just train the model.
 parameters = optimizer.Function().GetInitialPoint();

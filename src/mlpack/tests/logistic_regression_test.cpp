@@ -745,13 +745,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDTrainTest)
     labels[i] = math::RandInt(0, 2);
 
   LogisticRegressionFunction<> lrf(dataset, labels, 0.3);
-  StandardSGD<LogisticRegressionFunction<>> sgd(lrf);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
   sgd.Shuffle() = false;
   LogisticRegression<> lr(sgd);
   LogisticRegression<> lr2(dataset.n_rows, 0.3);
 
   LogisticRegressionFunction<> lrf2(dataset, labels, 0.3);
-  StandardSGD<LogisticRegressionFunction<>> sgd2(lrf2);
+  SGD<LogisticRegressionFunction<>> sgd2(lrf2);
   sgd2.Shuffle() = false;
   lr2.Train(sgd2);
 
@@ -798,13 +798,13 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
 
   LogisticRegression<> lr(10, 0.3);
   LogisticRegressionFunction<> lrf(denseDataset, labels, 0.3);
-  StandardSGD<LogisticRegressionFunction<>> sgd(lrf);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
   sgd.Shuffle() = false;
   lr.Train(sgd);
 
   LogisticRegression<arma::sp_mat> lrSparse(10, 0.3);
   LogisticRegressionFunction<arma::sp_mat> lrfSparse(dataset, labels, 0.3);
-  StandardSGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
+  SGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
   sgdSparse.Shuffle() = false;
   lrSparse.Train(sgdSparse);
 
