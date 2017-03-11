@@ -52,7 +52,7 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
     "of predictors, X).", "t");
-PARAM_UMATRIX_IN("labels", "A matrix containing labels (0 or 1) for the points "
+PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
@@ -63,9 +63,9 @@ PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UMATRIX_OUT("predictions", "Matrix to save predictions for test dataset "
+PARAM_UROW_OUT("predictions", "Matrix to save predictions for test dataset "
     "into.", "p");
-PARAM_UMATRIX_IN("test_labels", "Matrix containing test labels.", "L");
+PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 
 // Softmax configuration options.
 PARAM_INT_IN("max_iterations", "Maximum number of iterations before "
@@ -174,14 +174,13 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
 
   // Save predictions, if desired.
   if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictLabels);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
   {
-    arma::Mat<size_t> tmpTestLabels =
-        CLI::GetParam<arma::Mat<size_t>>("test_labels");
-    arma::Row<size_t> testLabels = tmpTestLabels.row(0);
+    arma::Row<size_t> testLabels = 
+      std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -232,9 +231,8 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
   else
   {
     arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Mat<size_t> tmpTrainLabels =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-    arma::Row<size_t> trainLabels = tmpTrainLabels.row(0);
+    arma::Row<size_t> trainLabels = 
+        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "

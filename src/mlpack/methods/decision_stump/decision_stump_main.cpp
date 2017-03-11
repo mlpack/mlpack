@@ -59,12 +59,12 @@ PROGRAM_INFO("Decision Stump",
 
 // Datasets we might load.
 PARAM_MATRIX_IN("training", "The dataset to train on.", "t");
-PARAM_UMATRIX_IN("labels", "Labels for the training set. If not specified, the "
+PARAM_UROW_IN("labels", "Labels for the training set. If not specified, the "
     "labels are assumed to be the last row of the training data.", "l");
 PARAM_MATRIX_IN("test", "A dataset to calculate predictions for.", "T");
 
 // Output.
-PARAM_UMATRIX_OUT("predictions", "The output matrix that will hold the "
+PARAM_UROW_OUT("predictions", "The output matrix that will hold the "
     "predicted labels for the test set.", "p");
 
 /**
@@ -128,16 +128,10 @@ int main(int argc, char *argv[])
     mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     // Load labels, if necessary.
-    Mat<size_t> labelsIn;
+    Row<size_t> labelsIn;
     if (CLI::HasParam("labels"))
     {
-      labelsIn = std::move(CLI::GetParam<Mat<size_t>>("labels"));
-
-      // Do the labels need to be transposed?
-      if (labelsIn.n_cols == 1)
-        labelsIn = labelsIn.t();
-      if (labelsIn.n_cols == 1)
-        Log::Fatal << "Labels must be one-dimensional!" << endl;
+      labelsIn = std::move(CLI::GetParam<Row<size_t>>("labels"));
     }
     else
     {
@@ -145,14 +139,14 @@ int main(int argc, char *argv[])
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
 
-      labelsIn = arma::conv_to<arma::Mat<size_t>>::from(
-          trainingData.row(trainingData.n_rows - 1).t());
+      labelsIn = arma::conv_to<arma::Row<size_t>>::from(
+          trainingData.row(trainingData.n_rows - 1));
       trainingData.shed_row(trainingData.n_rows - 1);
     }
 
     // Normalize the labels.
     Row<size_t> labels;
-    data::NormalizeLabels(labelsIn.row(0), labels, model.mappings);
+    data::NormalizeLabels(labelsIn, labels, model.mappings);
 
     const size_t bucketSize = CLI::GetParam<int>("bucket_size");
     const size_t classes = labels.max() + 1;
@@ -188,8 +182,8 @@ int main(int argc, char *argv[])
       Row<size_t> actualLabels;
       data::RevertLabels(predictedLabels, model.mappings, actualLabels);
 
-      // Save the predicted labels in a transposed form as output.
-      CLI::GetParam<Mat<size_t>>("predictions") = std::move(actualLabels);
+      // Save the predicted labels as output.
+      CLI::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
     }
   }
 
