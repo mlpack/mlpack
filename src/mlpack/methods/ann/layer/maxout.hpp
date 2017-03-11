@@ -151,7 +151,7 @@ class Maxout
   OutputDataType outputParameter;
 
   //! Locally-stored hidden parameter object.
-  arma::mat hiddenParameter;
+  arma::mat maxoutIndices;
 
 }; // class Maxout
 

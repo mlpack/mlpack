@@ -56,10 +56,21 @@ void Maxout<InputDataType, OutputDataType>::Forward(
   if (output.n_elem == 0)
     output = arma::zeros<arma::mat>(outSize, input.n_cols);
 
-  hiddenParameter = (weight * input) + bias;
+  if (maxoutIndices.n_elem == 0)
+    maxoutIndices = arma::zeros<arma::mat> (outSize, input.n_cols);
 
-  for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
-    output.row(j) = arma::max(hiddenParameter.rows(i, i + hiddenSize - 1), 0);
+  arma::mat hiddenParameter = (weight * input) + bias;
+  arma::mat hiddenParameterSubset;
+
+  for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++) {
+    hiddenParameterSubset = hiddenParameter.submat(i, 0, i + hiddenSize - 1, 0);
+    output.row(j) = arma::max(hiddenParameterSubset, 0);
+
+    for (int k = 0; k < output.n_cols; k++) {
+      maxoutIndices(j, k) = arma::as_scalar(
+          arma::find(hiddenParameterSubset == output(j, k)));
+    }
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -67,18 +78,14 @@ template<typename eT>
 void Maxout<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::mat hiddenGradient = arma::zeros<arma::mat>(hiddenParameter.n_rows,
-      hiddenParameter.n_cols);
-  arma::mat hiddenParameterSubset;
+  arma::mat hiddenGradient = arma::zeros<arma::mat>(outSize * hiddenSize,
+      maxoutIndices.n_cols);
 
   for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
   {
-    hiddenParameterSubset = hiddenParameter.rows(i, i + hiddenSize - 1);
-    
-    for (int k = 0; k < hiddenParameterSubset.n_cols; k++)
+    for (int k = 0; k < maxoutIndices.n_cols; k++)
     {
-      int ind = arma::as_scalar(arma::find(arma::max(
-          hiddenParameterSubset.col(k)) == hiddenParameterSubset.col(k)));
+      int ind = maxoutIndices(j, k);
       hiddenGradient(i + ind, k) = gy(j, k);
     }
   }
@@ -93,18 +100,14 @@ void Maxout<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  arma::mat hiddenGradient = arma::zeros<arma::mat>(hiddenParameter.n_rows,
-      hiddenParameter.n_cols);
-  arma::mat hiddenParameterSubset;
+  arma::mat hiddenGradient = arma::zeros<arma::mat>(outSize * hiddenSize,
+      maxoutIndices.n_cols);
 
   for (int i = 0, j = 0; j < outSize; i += hiddenSize, j++)
-  {
-    hiddenParameterSubset = hiddenParameter.rows(i, i + hiddenSize - 1);
-    
-    for (int k = 0; k < hiddenParameterSubset.n_cols; k++)
+  { 
+    for (int k = 0; k < maxoutIndices.n_cols; k++)
     {
-      int ind = arma::as_scalar(arma::find(arma::max(
-          hiddenParameterSubset.col(k)) == hiddenParameterSubset.col(k)));
+      int ind = maxoutIndices(j, k);
       hiddenGradient(i + ind, k) = error(j, k);
     }
   }
