@@ -98,7 +98,7 @@ class SGD
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const UpdatePolicy updatePolicy = VanillaUpdate());
+      const UpdatePolicy updatePolicy = UpdatePolicy());
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given

@@ -39,6 +39,17 @@ namespace optimization {
  * For more information, please refer to the Section 8.3.2 of the following book
  *
  * @code
+ * @article{rumelhart1988learning,
+ *   title={Learning representations by back-propagating errors},
+ *   author={Rumelhart, David E and Hinton, Geoffrey E and Williams, Ronald J},
+ *   journal={Cognitive modeling},
+ *   volume={5},
+ *   number={3},
+ *   pages={1},
+ *   year={1988}
+ * }
+ *
+ * @code
  * @book{Goodfellow-et-al-2016,
  *  title={Deep Learning},
  *  author={Ian Goodfellow and Yoshua Bengio and Aaron Courville},
@@ -88,7 +99,7 @@ class MomentumUpdate {
    */
   void Update(arma::mat& iterate,
               const double stepSize,
-              arma::mat& gradient)
+              const arma::mat& gradient)
   {
     velocity = momentum*velocity - stepSize * gradient;
     iterate += velocity;
