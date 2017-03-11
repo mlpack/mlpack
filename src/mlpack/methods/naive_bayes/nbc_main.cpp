@@ -68,14 +68,14 @@ PARAM_MODEL_OUT(NBCModel, "output_model", "File to save trained "
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
-PARAM_UMATRIX_IN("labels", "A file containing labels for the training set.",
+PARAM_UROW_IN("labels", "A file containing labels for the training set.",
     "l");
 PARAM_FLAG("incremental_variance", "The variance of each class will be "
     "calculated incrementally.", "I");
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-PARAM_UMATRIX_OUT("output", "The matrix in which the predicted labels for the"
+PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
 int main(int argc, char* argv[])
@@ -122,15 +122,8 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("labels"))
     {
       // Load labels.
-      Mat<size_t> rawLabels = std::move(CLI::GetParam<Mat<size_t>>("labels"));
-
-      // Do the labels need to be transposed?
-      if (rawLabels.n_cols == 1)
-        rawLabels = rawLabels.t();
-      if (rawLabels.n_rows > 1)
-        Log::Fatal << "Labels must be one-dimensional!" << endl;
-
-      data::NormalizeLabels(rawLabels.row(0), labels, model.mappings);
+      Row<size_t> rawLabels = std::move(CLI::GetParam<Row<size_t>>("labels"));
+      data::NormalizeLabels(rawLabels, labels, model.mappings);
     }
     else
     {
@@ -179,7 +172,7 @@ int main(int argc, char* argv[])
       data::RevertLabels(results, model.mappings, rawResults);
 
       // Output results.
-      CLI::GetParam<Mat<size_t>>("output") = std::move(rawResults);
+      CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
   }
 

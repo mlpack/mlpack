@@ -28,6 +28,22 @@ namespace data {
 
 template<typename eT>
 bool Save(const std::string& filename,
+          const arma::Col<eT>& vec,
+          const bool fatal)
+{
+  return Save(filename, vec, fatal, false);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  return Save(filename, rowvec, fatal, false);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
           bool transpose)

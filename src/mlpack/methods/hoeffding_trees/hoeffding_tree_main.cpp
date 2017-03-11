@@ -50,7 +50,7 @@ PROGRAM_INFO("Hoeffding trees",
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
-PARAM_UMATRIX_IN("labels", "Labels for training dataset.", "l");
+PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 
 PARAM_DOUBLE_IN("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
@@ -65,8 +65,8 @@ PARAM_MODEL_OUT(HoeffdingTreeModel, "output_model", "Output for trained "
     "Hoeffding tree model.", "M");
 
 PARAM_MATRIX_AND_INFO_IN("test", "Testing dataset (may be categorical).", "T");
-PARAM_UMATRIX_IN("test_labels", "Labels of test data.", "L");
-PARAM_UMATRIX_OUT("predictions", "Matrix to output label predictions for test "
+PARAM_UROW_IN("test_labels", "Labels of test data.", "L");
+PARAM_UROW_OUT("predictions", "Matrix to output label predictions for test "
     "data into.", "p");
 PARAM_MATRIX_OUT("probabilities", "In addition to predicting labels, provide "
     "rediction probabilities in this matrix.", "P");
@@ -136,7 +136,7 @@ int main(int argc, char** argv)
   HoeffdingTreeModel model;
   DatasetInfo datasetInfo;
   arma::mat trainingSet;
-  arma::Mat<size_t> labels;
+  arma::Row<size_t> labels;
   if (CLI::HasParam("input_model"))
   {
     model = std::move(CLI::GetParam<HoeffdingTreeModel>("input_model"));
@@ -176,12 +176,7 @@ int main(int argc, char** argv)
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    labels = CLI::GetParam<arma::Mat<size_t>>("labels");
-
-    if (labels.n_rows > 1)
-      labels = labels.t();
-    if (labels.n_rows > 1)
-      Log::Fatal << "Labels must be one-dimensional!" << endl;
+    labels = CLI::GetParam<arma::Row<size_t>>("labels");
 
     // Next, create the model with the right type.  Then build the tree with the
     // appropriate type of instantiated numeric split type.  This is a little
@@ -193,8 +188,8 @@ int main(int argc, char** argv)
     if (!CLI::HasParam("input_model"))
     {
       // Build the model.
-      model.BuildModel(trainingSet, datasetInfo, labels.row(0),
-          arma::max(labels.row(0)) + 1, batchTraining, confidence, maxSamples,
+      model.BuildModel(trainingSet, datasetInfo, labels,
+          arma::max(labels) + 1, batchTraining, confidence, maxSamples,
           100, minSamples, bins, observationsBeforeBinning);
       --passes; // This model-building takes one pass.
     }
@@ -205,12 +200,12 @@ int main(int argc, char** argv)
       // We only need to do batch training if we've not already called
       // BuildModel.
       if (CLI::HasParam("input_model"))
-        model.Train(trainingSet, labels.row(0), true);
+        model.Train(trainingSet, labels, true);
     }
     else
     {
       for (size_t p = 0; p < passes; ++p)
-        model.Train(trainingSet, labels.row(0), false);
+        model.Train(trainingSet, labels, false);
     }
 
     Timer::Stop("tree_training");
@@ -253,12 +248,8 @@ int main(int argc, char** argv)
 
     if (CLI::HasParam("test_labels"))
     {
-      arma::Mat<size_t> testLabels =
-          std::move(CLI::GetParam<arma::Mat<size_t>>("test_labels"));
-      if (testLabels.n_rows > 1)
-        testLabels = testLabels.t();
-      if (testLabels.n_rows > 1)
-        Log::Fatal << "Test labels must be one-dimensional!" << endl;
+      arma::Row<size_t> testLabels =
+          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
       size_t correct = 0;
       for (size_t i = 0; i < testLabels.n_elem; ++i)
@@ -272,7 +263,7 @@ int main(int argc, char** argv)
     }
 
     if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictions);
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
 
     if (CLI::HasParam("probabilities"))
       CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);

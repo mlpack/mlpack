@@ -66,6 +66,28 @@ struct ParameterType<arma::Mat<eT>>
 };
 
 /**
+ * For vector types, boost::program_options will accept a std::string, not an
+ * arma::Col<eT> (since it is not clear how to specify a vector on the
+ * command-line).
+ */
+template<typename eT>
+struct ParameterType<arma::Col<eT>>
+{
+  typedef std::string type;
+};
+
+/**
+ * For row vector types, boost::program_options will accept a std::string, not an
+ * arma::Row<eT> (since it is not clear how to specify a vector on the
+ * command-line).
+ */
+template<typename eT>
+struct ParameterType<arma::Row<eT>>
+{
+  typedef std::string type;
+};
+
+/**
  * For matrix+dataset info types, we should accept a std::string.
  */
 template<typename eT, typename PolicyType>
