@@ -11,7 +11,8 @@ COPY . /mlpack
 # Current Directory
 WORKDIR /mlpack
 # Build mlpack
-# Build requires very high spec docker machine with RAM>4GB and CPUs>4
-RUN mkdir build && cd build && cmake ../ && make -j8 && make mlpack_test
+# Build requires very high spec docker machine with RAM>4GB and CPUs>4 if we use multiple jobs
+# Using single job slows down the compilation process but works perfectly
+RUN mkdir build && cd build && cmake ../ && make && make mlpack_test
 # Start Shell
 CMD ["/bin/bash"]
