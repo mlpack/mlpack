@@ -68,7 +68,10 @@ extern template bool Load<int>(const std::string&, arma::Mat<int>&, const bool, 
 extern template bool Load<size_t>(const std::string&, arma::Mat<size_t>&, const bool, const bool);
 extern template bool Load<float>(const std::string&, arma::Mat<float>&, const bool, const bool);
 extern template bool Load<double>(const std::string&, arma::Mat<double>&, const bool, const bool);
+
+#ifndef  _WIN32
 extern template bool Load<unsigned long long>(const std::string&, arma::Mat<unsigned long long>&, const bool, const bool);
+#endif
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and
