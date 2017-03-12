@@ -26,8 +26,10 @@ template bool Load<double, IncrementPolicy>(const std::string&, arma::Mat<double
                                             DatasetMapper<IncrementPolicy>&,
                                             const bool, const bool);
 
+#ifndef  _WIN32
 template bool Load<unsigned long long, IncrementPolicy>(const std::string&, arma::Mat<unsigned long long>&,
                                                         DatasetMapper<IncrementPolicy>&,
                                                         const bool, const bool);
+#endif
 
 }}
