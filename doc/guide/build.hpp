@@ -19,7 +19,7 @@ configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
 to build mlpack on Windows, see <a
-href="http://keon.io/mlpack-on-windows.html">Keon's excellent tutorial</a>.
+href="https://keon.io/mlpack/mlpack-on-windows/">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 Download latest mlpack build from here:
