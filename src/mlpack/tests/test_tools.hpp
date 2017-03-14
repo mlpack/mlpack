@@ -53,8 +53,8 @@ inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
 
   for (size_t i = 0; i < a.n_elem; ++i)
   {
-    if (std::abs(a[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(b[i], 1e-5);
+    if (std::abs(a[i]) < tolerance / 2)
+      BOOST_REQUIRE_SMALL(b[i], tolerance / 2);
     else
       BOOST_REQUIRE_CLOSE(a[i], b[i], tolerance);
   }
