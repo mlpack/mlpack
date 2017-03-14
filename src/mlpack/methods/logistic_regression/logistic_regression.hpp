@@ -138,7 +138,7 @@ class LogisticRegression
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    * @tparam OptimizerTypeArgs Optimizer arguments to customize the behavior of
-   * the Optimizer
+   *     the optimizer.
    */
   template<
       template<typename,
