@@ -147,7 +147,7 @@ typename std::enable_if<arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
 {
   // Extract printable object from the input.
-  const arma::Mat<typename T::elem_type> &printVal(val);
+  const arma::Mat<typename T::elem_type>& printVal(val);
 
   // We will use this to track whether or not we need to terminate at the end of
   // this call (only for streams which terminate after a newline).
@@ -171,8 +171,8 @@ PrefixedOutStream::BaseLogic(const T& val)
     convert.setf(destination.flags());
     convert.precision(destination.precision());
 
-    // Set width of the convert stream
-    const arma::Mat<typename T::elem_type> &absVal(arma::abs(printVal));
+    // Set width of the convert stream.
+    const arma::Mat<typename T::elem_type>& absVal(arma::abs(printVal));
     double maxVal = absVal.max();
 
     if (maxVal == 0.0)
