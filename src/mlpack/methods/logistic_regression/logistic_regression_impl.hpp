@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
+ * @author Arun Reddy
  *
  * Implementation of the LogisticRegression class.  This implementation supports
  * L2-regularization.
@@ -53,9 +54,11 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename ...> class OptimizerType,
+        typename ... OptimizerTypeArgs>
 LogisticRegression<MatType>::LogisticRegression(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer) :
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  OptimizerTypeArgs...>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
@@ -82,20 +85,23 @@ void LogisticRegression<MatType>::Train(const MatType& predictors,
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename... > class OptimizerType,
+         typename... OptimizerTypeArgs>
 void LogisticRegression<MatType>::Train(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer)
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  OptimizerTypeArgs...>& optimizer)
 {
-  // Everything is good.  Just train the model.
-  parameters = optimizer.Function().GetInitialPoint();
+// Everything is good.  Just train the model.
+parameters = optimizer.Function().GetInitialPoint();
 
-  Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("logistic_regression_optimization");
+Timer::Start("logistic_regression_optimization");
+const double out = optimizer.Optimize(parameters);
+Timer::Stop("logistic_regression_optimization");
 
-  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+<< "trained model is " << out << "." << std::endl;
 }
+
 
 template<typename MatType>
 void LogisticRegression<MatType>::Predict(const MatType& predictors,
