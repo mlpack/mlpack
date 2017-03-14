@@ -44,4 +44,30 @@
 #define REQUIRE_RELATIVE_ERR( L, R, E ) \
     BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
 
+// Check the values of two matrices.
+inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
+                          double tolerance = 1e-5)
+{
+  BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
+  BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+  {
+    if (std::abs(a[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(b[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(a[i], b[i], tolerance);
+  }
+}
+
+// Check the values of two unsigned matrices.
+inline void CheckMatrices(const arma::Mat<size_t>& a, const arma::Mat<size_t>& b)
+{
+  BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
+  BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(a[i], b[i]);
+}
+
 #endif
