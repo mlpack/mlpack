@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SGD_MOMENTUM_UPDATE_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGD_MOMENTUM_UPDATE_HPP
 
+#include <mlpack/prereqs.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -41,8 +43,9 @@ namespace optimization {
  * @code
  * @article{rumelhart1988learning,
  *   title={Learning representations by back-propagating errors},
- *   author={Rumelhart, David E and Hinton, Geoffrey E and Williams, Ronald J},
- *   journal={Cognitive modeling},
+ *   author={Rumelhart, David E. and Hinton, Geoffrey E. and
+ *        Williams, Ronald J.},
+ *   journal={Cognitive Modeling},
  *   volume={5},
  *   number={3},
  *   pages={1},
@@ -57,20 +60,17 @@ namespace optimization {
  *  note={\url{http://www.deeplearningbook.org}},
  *  year={2016}
  * }
- *
- *
  */
-class MomentumUpdate {
+class MomentumUpdate
+{
  public:
-
   /**
    * Construct the momentum update policy with given momentum decay parameter.
    *
    * @param momentum The momentum decay hyperparameter
    */
-  MomentumUpdate(const double momentum = 0.5):
-      momentum(momentum)
-  {/* do nothing */};
+  MomentumUpdate(const double momentum = 0.5) : momentum(momentum)
+  { /* Do nothing. */ };
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
@@ -101,18 +101,15 @@ class MomentumUpdate {
               const double stepSize,
               const arma::mat& gradient)
   {
-    velocity = momentum*velocity - stepSize * gradient;
+    velocity = momentum * velocity - stepSize * gradient;
     iterate += velocity;
   }
 
  private:
-
   // The momentum hyperparamter
   double momentum;
-
   // The velocity matrix.
   arma::mat velocity;
-
 };
 
 } // namespace optimization

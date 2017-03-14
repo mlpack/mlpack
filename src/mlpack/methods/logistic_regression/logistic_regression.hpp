@@ -103,7 +103,7 @@ class LogisticRegression
   template<template<typename, typename ...> class OptimizerType,
            typename ... OptimizerTypeArgs>
   LogisticRegression(OptimizerType<LogisticRegressionFunction<MatType>,
-      OptimizerTypeArgs...>& optimizer);
+                                   OptimizerTypeArgs...>& optimizer);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,
@@ -142,11 +142,11 @@ class LogisticRegression
    */
   template<
       template<typename,
-               typename... > class OptimizerType = mlpack::optimization::L_BFGS,
+               typename...> class OptimizerType = mlpack::optimization::L_BFGS,
       typename... OptimizerTypeArgs
   >
   void Train(OptimizerType<LogisticRegressionFunction<MatType>,
-      OptimizerTypeArgs...>& optimizer);
+                           OptimizerTypeArgs...>& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }

@@ -23,12 +23,13 @@ namespace mlpack {
 namespace optimization {
 
 template<typename DecomposableFunctionType, typename UpdatePolicy>
-SGD<DecomposableFunctionType, UpdatePolicy>::SGD(DecomposableFunctionType& function,
-                                                     const double stepSize,
-                                                     const size_t maxIterations,
-                                                     const double tolerance,
-                                                     const bool shuffle,
-                                                     const UpdatePolicy updatePolicy) :
+SGD<DecomposableFunctionType, UpdatePolicy>::SGD(
+    DecomposableFunctionType& function,
+    const double stepSize,
+    const size_t maxIterations,
+    const double tolerance,
+    const bool shuffle,
+    const UpdatePolicy updatePolicy) :
     function(function),
     stepSize(stepSize),
     maxIterations(maxIterations),
@@ -102,7 +103,7 @@ double SGD<DecomposableFunctionType, UpdatePolicy>::Optimize(arma::mat& iterate)
     else
       function.Gradient(iterate, currentFunction, gradient);
 
-    // Update the iterate.
+    // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
 
     // Now add that to the overall objective function.
