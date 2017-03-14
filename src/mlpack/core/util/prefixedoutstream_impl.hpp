@@ -147,7 +147,7 @@ typename std::enable_if<arma::is_arma_type<T>::value>::type
 PrefixedOutStream::BaseLogic(const T& val)
 {
   // Extract printable object from the input.
-  auto printVal = arma::unwrap<T>(val).M;
+  const arma::Mat<typename T::elem_type> &printVal(val);
 
   // We will use this to track whether or not we need to terminate at the end of
   // this call (only for streams which terminate after a newline).
@@ -163,7 +163,7 @@ PrefixedOutStream::BaseLogic(const T& val)
   if (destination.flags() == convert.flags() &&
       destination.precision() == convert.precision())
   {
-    arma::arma_ostream::print(convert, printVal, true);
+    printVal.print(convert);
   }
   else
   {
@@ -172,7 +172,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     convert.precision(destination.precision());
 
     // Set width of the convert stream
-    auto absVal = arma::abs(printVal).P.Q;
+    const arma::Mat<typename T::elem_type> &absVal(arma::abs(printVal));
     double maxVal = absVal.max();
 
     if (maxVal == 0.0)
@@ -182,7 +182,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     maxLog = (maxLog > 0) ? floor(maxLog) + 1 : 1;
     const int padding = 4;
     convert.width(convert.precision() + maxLog + padding);
-    arma::arma_ostream::print(convert, printVal, false);
+    printVal.raw_print(convert);
   }
 
   if (convert.fail())
