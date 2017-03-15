@@ -111,17 +111,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], actualMean(0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], actualMean(1), 1e-5);
-
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
-        actualCovar(0, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
-        actualCovar(0, 1), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
-        actualCovar(1, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
-        actualCovar(1, 1), 1e-5);
+    CheckMatrices(gmm.Component(0).Mean(), actualMean);
+    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
 
     BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
   }
@@ -208,16 +199,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
   for (size_t i = 0; i < gaussians; i++)
   {
     // Check the mean.
-    for (size_t j = 0; j < dims; j++)
-      BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Mean()[j],
-          (means[sortRef[i]])[j], 0.001);
-
+    CheckMatrices(gmm.Component(sortTry[i]).Mean(), means[sortRef[i]], 1e-3);
     // Check the covariance.
-    for (size_t row = 0; row < dims; row++)
-      for (size_t col = 0; col < dims; col++)
-        BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Covariance()(row, col),
-            (covars[sortRef[i]])(row, col), 0.05);
-
+    CheckMatrices(gmm.Component(sortTry[i]).Covariance(), covars[sortRef[i]],
+                  0.05);
     // Check the weight.
     BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
         0.001);
