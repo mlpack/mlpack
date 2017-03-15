@@ -60,7 +60,7 @@ class AdaGradUpdate
                   const size_t n_cols)
   {
     //Initialize an empty matrix for sum of squares of parameter gradient
-    arma::mat squaredGradient = arma::zeros<arma::mat>(n_rows, n_cols);
+    squaredGradient = arma::zeros<arma::mat>(n_rows, n_cols);
   }
 
   /**
