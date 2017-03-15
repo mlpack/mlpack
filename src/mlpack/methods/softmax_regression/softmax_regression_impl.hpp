@@ -121,6 +121,14 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 }
 
 template<template<typename> class OptimizerType>
+void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
+                                                arma::Row<size_t>& labels)
+    const
+{
+  Predict(dataset, labels);
+}
+
+template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
     const arma::Row<size_t>& labels) const
@@ -128,7 +136,7 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
   arma::Row<size_t> predictions;
 
   // Get predictions for the provided data.
-  Predict(testData, predictions);
+  Classify(testData, predictions);
 
   // Increment count for every correctly predicted label.
   size_t count = 0;
