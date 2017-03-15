@@ -113,10 +113,23 @@ class SoftmaxRegression
    * calculates the probabilities for every class, given a data point. It then
    * chooses the class which has the highest probability among all.
    *
+   * This method is deprecated -- you should use Classify() instead.
+   *
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
   void Predict(const arma::mat& testData, arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   */
+  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
