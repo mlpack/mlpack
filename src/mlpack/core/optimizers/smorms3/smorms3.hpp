@@ -69,7 +69,7 @@ class SMORMS3
    * equal one pass over the dataset).
    *
    * @param function Function to be optimized (minimized).
-   * @param lRate Learning rate or step size for each iteration.
+   * @param stepSize Step size for each iteration.
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
@@ -78,7 +78,7 @@ class SMORMS3
    *        function is visited in linear order.
    */
   SMORMS3(DecomposableFunctionType& function,
-      const double lRate = 0.001,
+      const double stepSize = 0.001,
       const double epsilon = 1e-16,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
@@ -102,10 +102,10 @@ class SMORMS3
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return function; }
 
-  //! Get the learning rate.
-  double LearningRate() const { return lRate; }
-  //! Modify the learning rate.
-  double& LearningRate() { return lRate; }
+  //! Get the step size.
+  double StepSize() const { return stepSize; }
+  //! Modify the step size.
+  double& StepSize() { return stepSize; }
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return eps; }
@@ -131,8 +131,8 @@ class SMORMS3
   //! The instantiated function.
   DecomposableFunctionType& function;
 
-  //! The learning rate for each example.
-  double lRate;
+  //! The step size for each example.
+  double stepSize;
 
   //! The value used to initialise the mean squared gradient parameter.
   double eps;
