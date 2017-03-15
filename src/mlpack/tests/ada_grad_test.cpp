@@ -23,6 +23,8 @@ using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
+using namespace mlpack::distribution;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(AdaGradTest);
 
