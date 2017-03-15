@@ -1,0 +1,94 @@
+/**
+ * @file adagrad_update.hpp
+ * @author Abhinav Moudgil
+ *
+ * AdaGrad update for Stochastic Gradient Descent.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_CORE_OPTIMIZERS_SGD_ADA_GRAD_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_SGD_ADA_GRAD_UPDATE_HPP
+
+#include <mlpack/prereqs.hpp>
+
+namespace mlpack {
+namespace optimization {
+
+/**
+ * Implementation of the AdaGrad update policy. AdaGrad update policy chooses 
+ * learning rate dynamically by adapting to the data. Hence Adagrad
+ * eliminates the need to manually tune the learning rate.
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @article{duchi2011adaptive,
+ *   author    = {Duchi, John and Hazan, Elad and Singer, Yoram},
+ *   title     = {Adaptive subgradient methods for online learning and stochastic optimization},
+ *   journal   = {Journal of Machine Learning Research},
+ *   volume    = {12},
+ *   number    = {Jul},
+ *   pages     = {2121--2159},
+ *   year      = {2011}
+ * } 
+ *
+ */
+class AdaGradUpdate
+{
+ public:
+  /**
+   * Construct the AdaGrad update policy with given epsilon parameter.
+   *
+   * @param epsilon The epsilon hyperparameter
+   */
+  AdaGradUpdate(const double epsilon = 1e-8) : epsilon(epsilon)
+  { /* Do nothing. */ };
+
+  /**
+   * The Initialize method is called by SGD Optimizer method before the start of
+   * the iteration update process. In the AdaGrad update policy the squared 
+   * gradient matrix is initialized to the zeros matrix with the same size as the
+   * gradient matrix (see mlpack::optimization::SGD::Optimizer )
+   *
+   * @param n_rows number of rows in the gradient matrix.
+   * @param n_cols number of columns in the gradient matrix.
+   */
+  void Initialize(const size_t n_rows,
+                  const size_t n_cols)
+  {
+    //Initialize an empty matrix for sum of squares of parameter gradient
+    arma::mat squaredGradient = arma::zeros<arma::mat>(iterate.n_rows, 
+        iterate.n_cols);
+  }
+
+  /**
+   * Update step for SGD. The AdaGrad update adapts the learning rate by  
+   * performing larger updates for more sparse parameters and smaller updates 
+   * for less sparse parameters .
+   *
+   * @param iterate Parameters that minimize the function.
+   * @param stepSize Step size to be used for the given iteration.
+   * @param gradient The gradient matrix.
+   */
+  void Update(arma::mat& iterate,
+              const double stepSize,
+              const arma::mat& gradient)
+  {
+    squaredGradient += (gradient % gradient);
+    iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + epsilon);
+  }
+
+ private:
+  // The epsilon hyperparamter
+  double epsilon;
+  // The squared gradient matrix.
+  arma::mat squaredGradient;
+};
+
+} // namespace optimization
+} // namespace mlpack
+
+#endif

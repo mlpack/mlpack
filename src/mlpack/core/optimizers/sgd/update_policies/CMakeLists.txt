@@ -1,6 +1,7 @@
 set(SOURCES
   vanilla_update.hpp
   momentum_update.hpp
+  ada_grad_update.hpp
 )
 
 set(DIR_SRCS)

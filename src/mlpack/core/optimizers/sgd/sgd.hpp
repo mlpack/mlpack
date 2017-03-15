@@ -2,6 +2,7 @@
  * @file sgd.hpp
  * @author Ryan Curtin
  * @author Arun Reddy
+ * @author Abhinav Moudgil
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -16,6 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/ada_grad_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -162,6 +164,8 @@ using StandardSGD = SGD<DecomposableFunctionType, VanillaUpdate>;
 template<typename DecomposableFunctionType>
 using MomentumSGD = SGD<DecomposableFunctionType, MomentumUpdate>;
 
+template<typename DecomposableFunctionType>
+using AdaGrad = SGD<DecomposableFunctionType, AdaGradUpdate>;
 } // namespace optimization
 } // namespace mlpack
 
