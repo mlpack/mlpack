@@ -60,8 +60,8 @@ class SMORMS3Update
     g = arma::zeros<arma::mat>(n_rows, n_cols);
     g2 = arma::zeros<arma::mat>(n_rows, n_cols);
 
-    // Initialise a matrix to be filled with lRate.
-    lRateMat = arma::zeros<arma::mat>(n_rows, n_cols);
+    // Initialise a matrix to be filled with stepSize.
+    stepSizeMat = arma::zeros<arma::mat>(n_rows, n_cols);
   }
 
   /**
@@ -86,9 +86,9 @@ class SMORMS3Update
 
     arma::mat x = (g % g) / (g2 + eps);
 
-    lRateMat.fill(stepSize);
+    stepSizeMat.fill(stepSize);
 
-    iterate -= gradient % arma::min(x, lRateMat) / (arma::sqrt(g2) + eps);
+    iterate -= gradient % arma::min(x, stepSizeMat) / (arma::sqrt(g2) + eps);
 
     mem %= (1 - x);
     mem += 1;
@@ -98,8 +98,8 @@ class SMORMS3Update
    double eps;
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
-   // The matrix to be filled with lRate.
-   arma::mat lRateMat;
+   // The matrix to be filled with stepSize.
+   arma::mat stepSizeMat;
 };
 
 } // namespace optimization
