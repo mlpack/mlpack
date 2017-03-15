@@ -11,12 +11,14 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include <mlpack/methods/ann/init_rules/xavier_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -122,5 +124,26 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
 
   BOOST_REQUIRE_EQUAL(1, 1);
 }
+
+BOOST_AUTO_TEST_CASE(XavierInitTest)
+{
+  arma::mat weights;
+  XavierInit<XavierUniform> xavierInit;
+  xavierInit.Initialize(weights, 100, 100);
+
+  bool b = arma::all(arma::vectorise(weights)>=-(1e-2) || arma::vectorise(weights)<=(1e-2));
+  BOOST_REQUIRE_EQUAL(b, 1);
+}
+
+BOOST_AUTO_TEST_CASE(HeInitTest)
+{
+  arma::mat weights;
+  HeInit<HeUniform> heInit;
+  heInit.Initialize(weights, 100, 100);
+
+  bool b = arma::all(arma::vectorise(weights)>=-(1e-2) || arma::vectorise(weights)<=(1e-2));
+  BOOST_REQUIRE_EQUAL(b, 1);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
