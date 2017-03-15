@@ -1,5 +1,5 @@
 /**
- * @file adagrad_update.hpp
+ * @file ada_grad_update.hpp
  * @author Abhinav Moudgil
  *
  * AdaGrad update for Stochastic Gradient Descent.
