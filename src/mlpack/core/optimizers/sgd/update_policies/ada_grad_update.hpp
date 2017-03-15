@@ -49,8 +49,8 @@ class AdaGradUpdate
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process. In the AdaGrad update policy the squared 
-   * gradient matrix is initialized to the zeros matrix with the same size as the
+   * the iteration update process. In AdaGrad update policy, squared 
+   * gradient matrix is initialized to the zeros matrix with the same size as
    * gradient matrix (see mlpack::optimization::SGD::Optimizer )
    *
    * @param n_rows number of rows in the gradient matrix.
