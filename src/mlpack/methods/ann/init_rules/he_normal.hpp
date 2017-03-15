@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_INIT_RULES_XAVIER_NORMAL_HPP
-#define MLPACK_METHODS_ANN_INIT_RULES_XAVIER_NORMAL_HPP
+#ifndef MLPACK_METHODS_ANN_INIT_RULES_HE_NORMAL_HPP
+#define MLPACK_METHODS_ANN_INIT_RULES_HE_NORMAL_HPP
 
 #include <mlpack/prereqs.hpp>
  

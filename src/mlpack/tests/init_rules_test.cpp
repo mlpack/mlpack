@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/math/shapiro_wilk_test.hpp>
 
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -19,12 +20,14 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 #include <mlpack/methods/ann/init_rules/xavier_init.hpp>
+#include <mlpack/methods/ann/init_rules/xavier_normal.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(InitRulesTest);
 
@@ -128,21 +131,27 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
 BOOST_AUTO_TEST_CASE(XavierInitTest)
 {
   arma::mat weights;
-  XavierInit<XavierUniform> xavierInit;
-  xavierInit.Initialize(weights, 100, 100);
-
+  XavierInit<XavierUniform> xavierUniform;
+  XavierInit<XavierNormal> xavierNormal;
+  xavierUniform.Initialize(weights, 100, 100);
+  xavierNormal.Initialize(weights, 100, 100);
+  auto ret = shapiro(weights, 0.05);
   bool b = arma::all(arma::vectorise(weights)>=-(1e-2) || arma::vectorise(weights)<=(1e-2));
   BOOST_REQUIRE_EQUAL(b, 1);
+  BOOST_REQUIRE_EQUAL(ret.accept, true);
 }
 
 BOOST_AUTO_TEST_CASE(HeInitTest)
 {
   arma::mat weights;
   HeInit<HeUniform> heInit;
+  HeInit<HeNormal> heNormal;
   heInit.Initialize(weights, 100, 100);
-
   bool b = arma::all(arma::vectorise(weights)>=-(1e-2) || arma::vectorise(weights)<=(1e-2));
   BOOST_REQUIRE_EQUAL(b, 1);
+  heNormal.Initialize(weights, 100, 100);
+  auto ret = shapiro(weights, 0.05);
+  BOOST_REQUIRE_EQUAL(ret.accept, true);
 }
 
 

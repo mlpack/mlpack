@@ -177,6 +177,7 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);

@@ -3,7 +3,7 @@
  * @author kris singh
  *
  * Xavier Normal Intilisation Policy
- * performed by assigning a weights from a U(0, 2/fan_in + fan_out)
+ * performed by assigning a weights from a N(0, sqrt(2/fan_in+fan_out)
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,8 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weights according to 
- * the formula U[-2/(fan_in+fan_out), 2/(fan_in+fan_out)]
- * Refrence http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf
+ * the formula N(0, sqrt(2/fanin+fanout))
  */
 class XavierNormal
 {

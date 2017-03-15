@@ -15,8 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "xavier_uniform.hpp"
 #include "xavier_normal.hpp"
+#include "xavier_uniform.hpp"
  
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

@@ -12,6 +12,7 @@
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
+#include <mlpack/core/math/shapiro_wilk_test.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -582,5 +583,21 @@ BOOST_AUTO_TEST_CASE(RangeContainsRange)
   BOOST_REQUIRE_EQUAL(a.Contains(b), true);
   BOOST_REQUIRE_EQUAL(b.Contains(a), true);
 }
+
+/**
+ * Test the shapiro wilk normality test.
+ * The values have been taken from https://tinyurl.com/q9gx9m2
+ */
+BOOST_AUTO_TEST_CASE(ShapiroWilkTest)
+{
+  arma::mat B = {35, 45, 55, 58, 61, 63, 65, 68, 70, 72, 74, 86};
+  auto val = shapiro(B, 0.05);
+  BOOST_REQUIRE_CLOSE(val.pValue, 0.921, 1e-3);
+  BOOST_REQUIRE_CLOSE(val.W, 0.971, 1e-3);
+  BOOST_REQUIRE_CLOSE(val.zscore, -1.416, 1e-3);
+  BOOST_REQUIRE_EQUAL(val.accept, true);
+
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
