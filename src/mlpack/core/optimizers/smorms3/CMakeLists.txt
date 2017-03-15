@@ -1,6 +1,5 @@
 set(SOURCES
   smorms3.hpp
-  smorms3_impl.hpp
 )
 
 set(DIR_SRCS)

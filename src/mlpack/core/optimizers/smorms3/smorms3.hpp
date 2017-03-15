@@ -15,6 +15,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -91,7 +92,10 @@ class SMORMS3
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(const arma::mat& iterate)
+  {
+    return optimizer.Optimize(iterate);
+  }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const { return function; }
@@ -142,12 +146,12 @@ class SMORMS3
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! The Stochastic Gradient Descent object with SMORMS3 update policy.
+  SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
 };
 
 } // namespace optimization
 } // namespace mlpack
-
-// Include implementation.
-#include "smorms3_impl.hpp"
 
 #endif

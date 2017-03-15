@@ -1,6 +1,7 @@
 set(SOURCES
   vanilla_update.hpp
   momentum_update.hpp
+  smorms3_update.hpp
 )
 
 set(DIR_SRCS)
