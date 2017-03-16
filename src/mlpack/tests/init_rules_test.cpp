@@ -11,13 +11,13 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -129,8 +129,8 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
   arma::mat weights;
   arma::cube weights3d;
-  const size_t row = 2;
-  const size_t col = 2;
+  const size_t row = 100;
+  const size_t col = 100;
   const size_t slice = 2;
   GaussianInitialization t(weights, row, col);
   t.Initialize(weights, row, col);
