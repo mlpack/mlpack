@@ -85,7 +85,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 // Test the accuracy of the model.
 template<typename Model>
-void TestPredictAcc(const string& testFile,
+void TestClassifyAcc(const string& testFile,
                     const string& predictionsFile,
                     const string& testLabels,
                     const size_t numClasses,
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
                                             inputModelFile,
                                             maxIterations);
 
-  TestPredictAcc(CLI::GetParam<string>("test_data"),
+  TestClassifyAcc(CLI::GetParam<string>("test_data"),
                  CLI::GetParam<string>("predictions_file"),
                  CLI::GetParam<string>("test_labels"),
                  sm->NumClasses(), *sm);
@@ -167,7 +167,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 }
 
 template<typename Model>
-void TestPredictAcc(const string& testFile,
+void TestClassifyAcc(const string& testFile,
                     const string& predictionsFile,
                     const string& testLabelsFile,
                     size_t numClasses,
