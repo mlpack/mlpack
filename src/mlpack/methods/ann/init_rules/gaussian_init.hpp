@@ -33,23 +33,21 @@ class GaussianInitialization
    * @param variance The variance of the gaussian.
    */
   GaussianInitialization():
-  mean(arma::zeros<arma::vec>(1)), covariance(arma::eye<arma::mat>(1, 1))
+  mean(0), variance(1)
   {}
 
   /**
-   * Initialize the random initialization rule with the given bound.
-   * Using the negative of the bound as lower bound and the positive bound as
-   * upper bound.
+   * Initialize the gaussian with the given mean and variance.
    *
-   * @param bound The number used as lower bound
+   * @param mean Mean of the gaussian
+   * @param variance Variance of the gaussian
    */
-  GaussianInitialization(arma::mat& W, const size_t rows, const size_t cols):
-  mean(arma::zeros<arma::vec>(rows)), covariance(arma::eye<arma::mat>(rows, rows))
+  GaussianInitialization(const double mean=0, const double variance=1):
+  mean(mean), variance(variance)
   {}
 
   /**
-   * Initialize the elements weight matrix using a Gaussian Distribution
-   * of given mean and variance.
+   * Initialize the elements weight matrix using a Gaussian Distribution.
    *
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
@@ -60,16 +58,13 @@ class GaussianInitialization
                   const size_t cols)
   {
     W = arma::mat(rows, cols);
-    distribution::GaussianDistribution dist(mean, covariance);
-    if (mean.n_elem == 1 && covariance.n_elem == 1)
-    {
-      W = arma::randn(rows, cols);
-    }
-    else
-    {
-      for (size_t i = 0; i < W.n_rows; i++)
-        W.col(i) = dist.Random();
-    }
+    arma::vec m(1);
+    arma::mat v(1,1);
+    m = {this->mean};
+    v = {this->variance};
+    distribution::GaussianDistribution dist(m, v);
+    for (size_t i = 0; i < W.n_rows; i++)
+      W.col(i) = dist.Random();
   }
 
   /**
@@ -92,10 +87,10 @@ class GaussianInitialization
 
  private:
   //! Mean of the gaussian.
-  const arma::vec mean;
+  const double mean;
 
   //! Variance of the gaussian.
-  const arma::mat covariance;
+  const double variance;
 }; // class GaussianInitialization
 } // namespace ann
 } // namespace mlpack

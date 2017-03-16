@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -24,6 +25,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(InitRulesTest);
 
@@ -132,11 +134,21 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   const size_t row = 100;
   const size_t col = 100;
   const size_t slice = 2;
-  GaussianInitialization t(weights, row, col);
+  GaussianInitialization t(5, 1);
   t.Initialize(weights, row, col);
   t.Initialize(weights3d, row, col, slice);
-
-  BOOST_REQUIRE_EQUAL(1, 1);
+  distribution::GaussianDistribution Dist;
+  Dist.Train(weights);
+  arma::vec mean = Dist.Mean();
+  arma::mat var = Dist.Covariance();
+  std::cout << Dist.Covariance() << std::endl;
+  BOOST_REQUIRE_EQUAL(arma::as_scalar(mean), 5);
+  BOOST_REQUIRE_EQUAL(arma::as_scalar(var), 1);
+  Dist.Train(weights3d.slice(1));
+  mean = Dist.Mean();
+  var = Dist.Covariance();
+  BOOST_REQUIRE_EQUAL(arma::as_scalar(mean), 5);
+  BOOST_REQUIRE_EQUAL(arma::as_scalar(var), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
