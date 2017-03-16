@@ -16,7 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/ada_grad_update.hpp>
+#include "ada_grad_update.hpp"
 
 namespace mlpack {
 namespace optimization {
