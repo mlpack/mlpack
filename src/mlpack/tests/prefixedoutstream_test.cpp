@@ -83,6 +83,7 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
 
   ss.str("");
   pss << trans(test);
+
   // This should result in there being stuff on the line.
   BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR
       "   1.0000   1.5000   2.0000   2.5000   3.0000   3.5000   4.0000\n");
@@ -104,6 +105,7 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
+
 }
 
 /**
@@ -159,6 +161,83 @@ BOOST_AUTO_TEST_CASE(TestFormattedOutput)
 
   BOOST_REQUIRE_EQUAL(ss.str(),
       BASH_GREEN "[INFO ]" BASH_CLEAR "3.141592654");
+}
+
+/**
+ * Test custom precision output of arma objects.
+ */
+BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
+{
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
+  // The vector to be tested.
+  arma::vec test("1.0 1.5 2.0 2.5 3.0 3.5 4.0");
+  // The matrix to be tested.
+  arma::mat test2("1.0 1.5 2.0; 2.5 3.0 3.5; 4.0 4.5 4.99999");
+
+  // Try to print armadillo objects with custom precision.
+  ss << std::fixed;
+  ss << std::setprecision(6);
+  ss.str("");
+
+  pss << test;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   3.000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   3.500000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.000000\n");
+
+  ss.str("");
+
+  pss << trans(test);
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "   1.000000   1.500000   2.000000   2.500000"
+      "   3.000000   3.500000   4.000000\n");
+
+  // Try printing a matrix, with higher precision.
+  ss << std::setprecision(8);
+  ss.str("");
+
+  pss << test2;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "   1.00000000   1.50000000   2.00000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "   2.50000000   3.00000000   3.50000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "   4.00000000   4.50000000   4.99999000\n");
+
+  // Try alignment with larger values.
+  test2.at(2) = 40;
+  ss.str("");
+  pss << trans(test2);
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      "    1.00000000    2.50000000   40.00000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      "    1.50000000    3.00000000    4.50000000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      "    2.00000000    3.50000000    4.99999000\n");
+
+  // Test stream after reset.
+  test2.at(2) = 4;
+  ss << std::setprecision(6);
+  ss.unsetf(std::ios::floatfield);
+  ss.str("");
+
+  pss << test2;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

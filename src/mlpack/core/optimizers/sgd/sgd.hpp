@@ -1,6 +1,7 @@
 /**
  * @file sgd.hpp
  * @author Ryan Curtin
+ * @author Arun Reddy
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -13,6 +14,8 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -26,19 +29,14 @@ namespace optimization {
  * \f]
  *
  * and our task is to minimize \f$ A \f$.  Stochastic gradient descent iterates
- * over each function \f$ f_i(A) \f$, producing the following update scheme:
- *
- * \f[
- * A_{j + 1} = A_j + \alpha \nabla f_i(A)
- * \f]
- *
- * where \f$ \alpha \f$ is a parameter which specifies the step size.  \f$ i \f$
- * is chosen according to \f$ j \f$ (the iteration number).  The SGD class
- * supports either scanning through each of the \f$ n \f$ functions \f$ f_i(A)
- * \f$ linearly, or in a random sequence.  The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations---or when a full sequence of
- * updates through each of the \f$ n \f$ functions \f$ f_i(A) \f$ produces an
- * improvement within a certain tolerance \f$ \epsilon \f$.  That is,
+ * over each function \f$ f_i(A) \f$, based on the specified update policy. By
+ * default vanilla update policy (see mlpack::optimization::VanillaUpdate) is
+ * used. The SGD class supports either scanning through each of the \f$ n \f$
+ * functions \f$ f_i(A)\f$ linearly, or in a random sequence.  The algorithm
+ * continues until \f$ j\f$ reaches the maximum number of iterations---or when a
+ * full sequence of updates through each of the \f$ n \f$ functions \f$ f_i(A)
+ * \f$ produces an improvement within a certain tolerance \f$ \epsilon \f$.
+ * That is,
  *
  * \f[
  * | f(A_{j + n}) - f(A_j) | < \epsilon.
@@ -71,8 +69,11 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
+ * @tparam UpdatePolicy update policy used by SGD during the iterative update
+ *     process. By default vanilla update policy (see
+ *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<typename DecomposableFunctionType>
+template<typename DecomposableFunctionType, typename UpdatePolicy = VanillaUpdate>
 class SGD
 {
  public:
@@ -96,7 +97,8 @@ class SGD
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true);
+      const bool shuffle = true,
+      const UpdatePolicy updatePolicy = UpdatePolicy());
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -149,7 +151,16 @@ class SGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicy updatePolicy;
 };
+
+template<typename DecomposableFunctionType>
+using StandardSGD = SGD<DecomposableFunctionType, VanillaUpdate>;
+
+template<typename DecomposableFunctionType>
+using MomentumSGD = SGD<DecomposableFunctionType, MomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

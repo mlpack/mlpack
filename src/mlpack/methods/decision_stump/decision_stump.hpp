@@ -87,6 +87,23 @@ class DecisionStump
              const size_t bucketSize);
 
   /**
+   * Train the decision stump on the given data, with the given weights.  This
+   * completely overwrites any previous training data, so after training the
+   * stump may be completely different.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each point in the dataset.
+   * @param weights Weights for each point in the dataset.
+   * @param classes Number of classes in the dataset.
+   * @param bucketSize Minimum size of bucket when splitting.
+   */
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const arma::rowvec& weights,
+             const size_t classes,
+             const size_t bucketSize);
+
+  /**
    * Classification function. After training, classify test, and put the
    * predicted classes in predictedLabels.
    *

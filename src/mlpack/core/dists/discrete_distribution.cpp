@@ -20,22 +20,32 @@ using namespace mlpack::distribution;
  */
 arma::vec DiscreteDistribution::Random() const
 {
-  // Generate a random number.
-  double randObs = math::Random();
-  arma::vec result(1);
+  size_t dimension = probabilities.size();
+  arma::vec result(dimension);
 
-  double sumProb = 0;
-  for (size_t obs = 0; obs < probabilities.n_elem; obs++)
+  for (size_t d = 0; d < dimension; d++)
   {
-    if ((sumProb += probabilities[obs]) >= randObs)
+    // Generate a random number.
+    double randObs = math::Random();
+
+    double sumProb = 0;
+
+    for (size_t obs = 0; obs < probabilities[d].n_elem; obs++)
     {
-      result[0] = obs;
-      return result;
+      if ((sumProb += probabilities[d][obs]) >= randObs)
+      {
+        result[d] = obs;
+        break;
+      }
+    }
+
+    if (sumProb > 1.0)
+    {
+      // This shouldn't happen.
+      result[d] = probabilities[d].n_elem - 1;
     }
   }
 
-  // This shouldn't happen.
-  result[0] = probabilities.n_elem - 1;
   return result;
 }
 
@@ -44,33 +54,52 @@ arma::vec DiscreteDistribution::Random() const
  */
 void DiscreteDistribution::Train(const arma::mat& observations)
 {
-  // Clear old probabilities.
-  probabilities.zeros();
-
-  // Add the probability of each observation.  The addition of 0.5 to the
-  // observation is to turn the default flooring operation of the size_t cast
-  // into a rounding operation.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  // Make sure the observations have same dimension as the probabilities.
+  if (observations.n_rows != probabilities.size())
   {
-    const size_t obs = size_t(observations(0, i) + 0.5);
-
-    // Ensure that the observation is within the bounds.
-    if (obs >= probabilities.n_elem)
-    {
-      Log::Debug << "DiscreteDistribution::Train(): observation " << i
-          << " (" << obs << ") is invalid; observation must be in [0, "
-          << probabilities.n_elem << "] for this distribution." << std::endl;
-    }
-
-    probabilities(obs)++;
+    throw std::invalid_argument("observations must have same dimensionality as "
+        "the DiscreteDistribution object");
   }
 
-  // Now normalize the distribution.
-  double sum = accu(probabilities);
-  if (sum > 0)
-    probabilities /= sum;
-  else
-    probabilities.fill(1 / probabilities.n_elem); // Force normalization.
+  // Get the dimension size of the distribution.
+  const size_t dimensions = probabilities.size();
+
+  // Clear the old probabilities.
+  for (size_t i = 0; i < dimensions; i++)
+    probabilities[i].zeros();
+
+  // Iterate all the probabilities in each dimension
+  for (size_t r = 0; r < observations.n_cols; ++r)
+  {
+    for (size_t i = 0; i < dimensions; ++i)
+    {
+      // Add the probability of each observation.  The addition of 0.5 to the
+      // observation is to turn the default flooring operation of the size_t
+      // cast into a rounding observation.
+      const size_t obs = size_t(observations(i, r) + 0.5);
+
+      // Ensure that the observation is within the bounds.
+      if (obs >= probabilities[i].n_elem)
+      {
+        std::ostringstream oss;
+        oss << "observation " << r << " in dimension " << i << " ("
+            << observations(i, r) << ") is invalid; must be in [0, "
+            << probabilities[i].n_elem << "] for this distribution";
+        throw std::invalid_argument(oss.str());
+      }
+      probabilities[i][obs]++;
+    }
+  }
+
+  // Now normalize the distributions.
+  for (size_t i = 0; i < dimensions; ++i)
+  {
+    double sum = accu(probabilities[i]);
+    if (sum > 0)
+      probabilities[i] /= sum;
+    else // Force normalization.
+      probabilities[i].fill(1.0 / probabilities[i].n_elem);
+  }
 }
 
 /**
@@ -78,33 +107,53 @@ void DiscreteDistribution::Train(const arma::mat& observations)
  * given probabilities that each observation is from this distribution.
  */
 void DiscreteDistribution::Train(const arma::mat& observations,
-                                    const arma::vec& probObs)
+                                 const arma::vec& probObs)
 {
-  // Clear old probabilities.
-  probabilities.zeros();
-
-  // Add the probability of each observation.  The addition of 0.5 to the
-  // observation is to turn the default flooring operation of the size_t cast
-  // into a rounding observation.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  // Make sure the observations have same dimension as the probabilities.
+  if (observations.n_rows != probabilities.size())
   {
-    const size_t obs = size_t(observations(0, i) + 0.5);
-
-    // Ensure that the observation is within the bounds.
-    if (obs >= probabilities.n_elem)
-    {
-      Log::Debug << "DiscreteDistribution::Train(): observation " << i
-          << " (" << obs << ") is invalid; observation must be in [0, "
-          << probabilities.n_elem << "] for this distribution." << std::endl;
-    }
-
-    probabilities(obs) += probObs[i];
+    throw std::invalid_argument("observations must have same dimensionality as "
+        "the DiscreteDistribution object");
   }
 
-  // Now normalize the distribution.
-  double sum = accu(probabilities);
-  if (sum > 0)
-    probabilities /= sum;
-  else
-    probabilities.fill(1 / probabilities.n_elem); // Force normalization.
+  // Get the dimension size of the distribution.
+  size_t dimensions = probabilities.size();
+
+  // Clear the old probabilities.
+  for (size_t i = 0; i < dimensions; i++)
+    probabilities[i].zeros();
+
+  // Ensure that the observation is within the bounds.
+  for (size_t r = 0; r < observations.n_cols; r++)
+  {
+    for (size_t i = 0; i < dimensions; i++)
+    {
+      // Add the probability of each observation.  The addition of 0.5 to the
+      // observation is to turn the default flooring operation of the size_t cast
+      // into a rounding observation.
+      const size_t obs = size_t(observations(i, r) + 0.5);
+
+      // Ensure that the observation is within the bounds.
+      if (obs >= probabilities[i].n_elem)
+      {
+        std::ostringstream oss;
+        oss << "observation " << r << " in dimension " << i << " ("
+            << observations(i, r) << ") is invalid; must be in [0, "
+            << probabilities[i].n_elem << "] for this distribution";
+        throw std::invalid_argument(oss.str());
+      }
+
+      probabilities[i][obs] += probObs[r];
+    }
+  }
+
+  // Now normalize the distributions.
+  for (size_t i = 0; i < dimensions; ++i)
+  {
+    double sum = accu(probabilities[i]);
+    if (sum > 0)
+      probabilities[i] /= sum;
+    else // Force normalization.
+      probabilities[i].fill(1.0 / probabilities[i].n_elem);
+  }
 }

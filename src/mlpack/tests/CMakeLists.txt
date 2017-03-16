@@ -16,7 +16,9 @@ add_executable(mlpack_test
   convolution_test.cpp
   convolutional_network_test.cpp
   cosine_tree_test.cpp
+  dbscan_test.cpp
   decision_stump_test.cpp
+  decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
@@ -38,6 +40,7 @@ add_executable(mlpack_test
   kmeans_test.cpp
   knn_test.cpp
   krann_search_test.cpp
+  ksinit_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
@@ -55,6 +58,7 @@ add_executable(mlpack_test
   metric_test.cpp
   minibatch_sgd_test.cpp
   mlpack_test.cpp
+  momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp

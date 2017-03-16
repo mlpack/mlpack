@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_test.cpp
  * @author Ryan Curtin
+ * @author Arun Reddy
  *
  * Test for LogisticFunction and LogisticRegression.
  *
@@ -508,7 +509,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
   LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
@@ -557,7 +558,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
   // Create a logistic regression object using custom SGD with a much smaller
   // tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
-  SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
+  StandardSGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
   LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
@@ -642,7 +643,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
 
   // Now train a logistic regression object on it.
   LogisticRegression<> lr(data.n_rows, 0.5);
-  lr.Train<SGD>(data, responses);
+  lr.Train<StandardSGD>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -693,7 +694,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 
   // Now do the same with SGD.
-  SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
+  StandardSGD<LogisticRegressionFunction<>> sgdOpt(lrf);
   sgdOpt.StepSize() = 0.15;
   sgdOpt.Tolerance() = 1e-75;
   LogisticRegression<> lr2(sgdOpt);

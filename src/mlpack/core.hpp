@@ -59,6 +59,7 @@
  * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
+ * - mlpack_decision_tree
  * - mlpack_det
  * - mlpack_emst
  * - mlpack_fastmks
@@ -208,6 +209,10 @@
  *   - Sudhanshu Ranjan <sranjan.sud@gmail.com>
  *   - Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
  *   - Dinesh Raj <dinu.iota@gmail.com>
+ *   - Prasanna Patil <prasannapatil08@gmail.com>
+ *   - Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+ *   - Vivek Pal <vivekpal.dtu@gmail.com>
+ *   - Praveen Ch <chvsp972911@gmail.com>
  */
 
 // First, include all of the prerequisites.

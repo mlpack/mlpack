@@ -12,8 +12,6 @@
  */
 #define BOOST_TEST_MODULE mlpackTest
 
-#include <mlpack/core/util/log.hpp>
-
 #include <boost/version.hpp>
 
 // We only need to do this for old Boost versions.

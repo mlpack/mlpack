@@ -54,9 +54,9 @@ PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
     "(and label sequences).", "b");
 PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
-    "model_file is specified.", "n", 0);
+    "model_file is specified).", "n", 0);
 PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
-    " is 'gmm'.", "g", 0);
+    " is 'gmm').", "g", 0);
 PARAM_MODEL_IN(HMMModel, "input_model", "Pre-existing HMM model to initialize "
     "training with.", "m");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
@@ -92,20 +92,18 @@ struct Init
   {
     // Maximum observation is necessary so we know how to train the discrete
     // distribution.
-    size_t maxEmission = 0;
+    arma::Col<size_t> maxEmissions(trainSeq[0].n_rows);
+    maxEmissions.zeros();
     for (vector<mat>::iterator it = trainSeq.begin(); it != trainSeq.end();
          ++it)
     {
-      size_t maxSeq = size_t(as_scalar(max(trainSeq[0], 1))) + 1;
-      if (maxSeq > maxEmission)
-        maxEmission = maxSeq;
+      arma::Col<size_t> maxSeqs =
+          arma::conv_to<arma::Col<size_t>>::from(arma::max(*it, 1)) + 1;
+      maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    Log::Info << maxEmission << " discrete observations in the input data."
-        << endl;
-
     hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmission), tolerance);
+        DiscreteDistribution(maxEmissions), tolerance);
   }
 
   //! Helper function to create Gaussian HMM.

@@ -18,6 +18,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   hard_tanh.hpp
@@ -49,6 +51,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  parametric_relu.hpp
+  parametric_relu_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

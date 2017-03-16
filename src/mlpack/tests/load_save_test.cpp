@@ -28,9 +28,7 @@ BOOST_AUTO_TEST_SUITE(LoadSaveTest);
 BOOST_AUTO_TEST_CASE(NoExtensionLoad)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("noextension", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -39,9 +37,7 @@ BOOST_AUTO_TEST_CASE(NoExtensionLoad)
 BOOST_AUTO_TEST_CASE(NoExtensionSave)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Save("noextension", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -50,9 +46,7 @@ BOOST_AUTO_TEST_CASE(NoExtensionSave)
 BOOST_AUTO_TEST_CASE(NotExistLoad)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -184,6 +178,94 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
   // Remove the file.
   remove("test_file.csv");
 }
+
+/**
+ * The test LoadColVecCSVTest, LoadMatinColVec, LoadRowVecCSVTest need to run in
+ * debug mode only; without debugging symbols, size checks are not performed and
+ * thus the exception will not be thrown.
+ */
+
+/**
+ * Make sure ColVec can be loaded.
+ */
+#ifdef DEBUG
+BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  for (int i = 0; i < 8; ++i)
+    f << i << endl;
+
+  f.close();
+
+  arma::colvec test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 1);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 8);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i), 1e-5);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure Load() throws an exception when trying to load a matrix into a
+ * colvec or rowvec.
+ */
+BOOST_AUTO_TEST_CASE(LoadMatinColVec)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1, 2" << endl;
+  f << "3, 4" << endl;
+
+  f.close();
+
+  arma::colvec coltest;
+  BOOST_REQUIRE_THROW(data::Load("test_file.csv", coltest, false),
+      std::logic_error);
+  Timer::Stop("loading_data");
+
+  arma::rowvec rowtest;
+  BOOST_REQUIRE_THROW(data::Load("test_file.csv", rowtest, false),
+      std::logic_error);
+  Timer::Stop("loading_data");
+
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure that rowvecs can be loaded successfully.
+ */
+BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  for (int i = 0 ; i < 7; ++i)
+    f << i << ",";
+  f << "7";
+  f << endl;
+
+  f.close();
+
+  arma::rowvec test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 8);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 1);
+
+  for (size_t i = 0; i < 8 ; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i) , 1e-5);
+
+  remove("test_file.csv");
+}
+#endif
 
 /**
  * Make sure TSVs can be loaded in transposed form.
@@ -457,9 +539,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
       == true);
 
   // Now reload through our interface.
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
-  Log::Warn.ignoreInput = false;
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 1);
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
@@ -652,12 +732,10 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
   test.randu(5, 5);
 
   // Stop warnings.
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Save("test_file.h5", test) == false);
   BOOST_REQUIRE(data::Save("test_file.hdf5", test) == false);
   BOOST_REQUIRE(data::Save("test_file.hdf", test) == false);
   BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
-  Log::Warn.ignoreInput = false;
 }
 #endif
 
@@ -1607,6 +1685,22 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
       std::invalid_argument);
 
   remove("test.arff");
+}
+
+/**
+ * A test to check whether the arff loader is case insensitive to declarations:
+ * @relation, @attribute, @data.
+ */
+BOOST_AUTO_TEST_CASE(CaseTest)
+{
+  arma::mat dataset;
+
+  DatasetMapper<IncrementPolicy> info;
+
+  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info);
+
+  BOOST_CHECK_EQUAL(dataset.n_rows, 2);
+  BOOST_CHECK_EQUAL(dataset.n_cols, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

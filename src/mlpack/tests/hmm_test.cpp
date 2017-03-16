@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.7 0.3; 0.3 0.7");
   std::vector<DiscreteDistribution> emission(2);
-  emission[0] = DiscreteDistribution("0.9 0.1");
-  emission[1] = DiscreteDistribution("0.2 0.8");
+  emission[0] = DiscreteDistribution(std::vector<arma::vec>{"0.9 0.1"});
+  emission[1] = DiscreteDistribution(std::vector<arma::vec>{"0.2 0.8"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -78,9 +78,9 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
                        "0.5 0.5 0.6");
   // Four emission states: A, C, G, T.  Start state doesn't emit...
   std::vector<DiscreteDistribution> emission(3);
-  emission[0] = DiscreteDistribution("0.25 0.25 0.25 0.25");
-  emission[1] = DiscreteDistribution("0.20 0.30 0.30 0.20");
-  emission[2] = DiscreteDistribution("0.30 0.20 0.20 0.30");
+  emission[0] = DiscreteDistribution(std::vector<arma::vec>{"0.25 0.25 0.25 0.25"});
+  emission[1] = DiscreteDistribution(std::vector<arma::vec>{"0.20 0.30 0.30 0.20"});
+  emission[2] = DiscreteDistribution(std::vector<arma::vec>{"0.30 0.20 0.20 0.30"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -118,8 +118,8 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
   arma::vec initial("0.1 0.4");
   arma::mat transition("0.1 0.9; 0.4 0.6");
   std::vector<DiscreteDistribution> emis(2);
-  emis[0] = DiscreteDistribution("0.85 0.15 0.00 0.00");
-  emis[1] = DiscreteDistribution("0.00 0.00 0.50 0.50");
+  emis[0] = DiscreteDistribution(std::vector<arma::vec>{"0.85 0.15 0.00 0.00"});
+  emis[1] = DiscreteDistribution(std::vector<arma::vec>{"0.00 0.00 0.50 0.50"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emis);
 
