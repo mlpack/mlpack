@@ -85,7 +85,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 // Test the accuracy of the model.
 template<typename Model>
-void TestPredictAcc(const size_t numClasses, const Model& model);
+void TestClassifyAcc(const size_t numClasses, const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
   using SM = SoftmaxRegression<>;
   unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
 
-  TestPredictAcc(sm->NumClasses(), *sm);
+  TestClassifyAcc(sm->NumClasses(), *sm);
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<SM>("output_model") = std::move(*sm);
@@ -143,7 +143,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 }
 
 template<typename Model>
-void TestPredictAcc(size_t numClasses, const Model& model)
+void TestClassifyAcc(size_t numClasses, const Model& model)
 {
   using namespace mlpack;
 
