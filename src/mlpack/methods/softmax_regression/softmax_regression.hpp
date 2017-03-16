@@ -55,8 +55,8 @@ namespace regression {
  * arma::vec predictions1, predictions2; // Vectors to store predictions in.
  *
  * // Obtain predictions from both the learned models.
- * regressor1.Predict(test_data, predictions1);
- * regressor2.Predict(test_data, predictions2);
+ * regressor1.Classify(test_data, predictions1);
+ * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
 template<
@@ -67,8 +67,8 @@ class SoftmaxRegression
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling Predict()
-   * or ComputeAccuracy(), otherwise the results may be meaningless.
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.

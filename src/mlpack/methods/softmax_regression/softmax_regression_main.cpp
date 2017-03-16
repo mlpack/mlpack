@@ -170,7 +170,7 @@ void TestPredictAcc(size_t numClasses, const Model& model)
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
-  model.Predict(testData, predictLabels);
+  model.Classify(testData, predictLabels);
 
   // Save predictions, if desired.
   if (CLI::HasParam("predictions"))
