@@ -11,7 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/smorms3/smorms3.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -35,8 +35,7 @@ BOOST_AUTO_TEST_SUITE(SMORMS3Test);
 BOOST_AUTO_TEST_CASE(SimpleSMORMS3TestFunction)
 {
   SGDTestFunction f;
-  SMORMS3Update smorms3Update(1e-16);
-  SGD<SGDTestFunction, SMORMS3Update> s(f, 1e-3, 5000000, 1e-9, true, smorms3Update);
+  SMORMS3<SGDTestFunction> s(f, 0.001, 1e-16, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   s.Optimize(coordinates);
@@ -96,7 +95,7 @@ BOOST_AUTO_TEST_CASE(SMORMS3LogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  SGD<LogisticRegressionFunction<>, SMORMS3Update > smorms3(lrf);
+  SMORMS3<LogisticRegressionFunction<> > smorms3(lrf);
   lr.Train(smorms3);
 
   // Ensure that the error is close to zero.

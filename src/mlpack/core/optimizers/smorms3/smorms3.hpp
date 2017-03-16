@@ -17,6 +17,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 
+#include "smorms3_update.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -92,10 +94,7 @@ class SMORMS3
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(const arma::mat& iterate)
-  {
-    return optimizer.Optimize(iterate);
-  }
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const { return function; }
@@ -103,29 +102,29 @@ class SMORMS3
   DecomposableFunctionType& Function() { return function; }
 
   //! Get the step size.
-  double StepSize() const { return stepSize; }
+  double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return eps; }
+  double Epsilon() const { return optimizer.Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return eps; }
+  double& Epsilon() { return optimizer.Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
   //! The instantiated function.
@@ -135,7 +134,7 @@ class SMORMS3
   double stepSize;
 
   //! The value used to initialise the mean squared gradient parameter.
-  double eps;
+  double epsilon;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
@@ -148,10 +147,19 @@ class SMORMS3
   bool shuffle;
 
   //! The Stochastic Gradient Descent object with SMORMS3 update policy.
-  SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
+  SGD<DecomposableFunctionType, SMORMS3Update>
+  optimizer(DecomposableFunctionType&,
+            const double,
+            const size_t,
+            const double,
+            const bool,
+            SMORMS3Update);
 };
 
 } // namespace optimization
 } // namespace mlpack
+
+// Include implementation.
+#include "smorms3_impl.hpp"
 
 #endif
