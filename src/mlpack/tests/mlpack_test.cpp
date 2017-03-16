@@ -22,6 +22,60 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+/*
+ * Class for traversing all Boost tests tree and building tree structure for
+ * simple output.
+ */
+struct TestsVisitor : boost::unit_test::test_tree_visitor
+{
+  /*
+   * Enter specified Boost unit test case.
+   *
+   * @param test Boost unit test case.
+   */
+  void visit(boost::unit_test::test_case const& test)
+  {
+    std::cout << hierarchy + std::string(test.p_name) << std::endl;
+  }
+
+  /*
+   * Enter specified Boost unit test suite.
+   *
+   * @param test Boost unit test suite.
+   */
+  bool test_suite_start(boost::unit_test::test_suite const& suite)
+  {
+    // Add new suite to the suits list.
+    suits.push_back(suite.p_name);
+
+    // Generate tests hierarchy.
+    hierarchy = "";
+    for (size_t i = 1; i < suits.size(); ++i)
+    {
+      hierarchy += suits[i] + "/";
+    }
+
+    return true;
+  }
+
+  /*
+   * Leave specified Boost unit test suite.
+   *
+   * @param test Boost unit test case.
+   */
+  void test_suite_finish(boost::unit_test::test_suite const& /* suite */)
+  {
+    // Remove last suite.
+    suits.pop_back();
+  }
+
+  //! Test suite names.
+  std::vector<std::string> suits;
+
+  //! Current Boost test hierarchy.
+  std::string hierarchy;
+};
+
 /**
  * Provide a global fixture for each test.
  *
@@ -47,6 +101,22 @@ struct GlobalFixture
       mlpack::Log::Info.ignoreInput = true;
       mlpack::Log::Warn.ignoreInput = true;
     #endif
+
+    for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
+        i++)
+    {
+      std::string argument(
+          boost::unit_test::framework::master_test_suite().argv[i]);
+
+      // Print Boost test hierarchy.
+      if (argument == "tests")
+      {
+        TestsVisitor testsVisitor;
+        traverse_test_tree(boost::unit_test::framework::master_test_suite(),
+            testsVisitor);
+        exit(0);
+      }
+    }
   }
 };
 
