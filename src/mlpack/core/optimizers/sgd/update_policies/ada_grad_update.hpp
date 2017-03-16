@@ -53,14 +53,14 @@ class AdaGradUpdate
    * gradient matrix is initialized to the zeros matrix with the same size as
    * gradient matrix (see mlpack::optimization::SGD::Optimizer )
    *
-   * @param n_rows number of rows in the gradient matrix.
-   * @param n_cols number of columns in the gradient matrix.
+   * @param rows number of rows in the gradient matrix.
+   * @param cols number of columns in the gradient matrix.
    */
-  void Initialize(const size_t n_rows,
-                  const size_t n_cols)
+  void Initialize(const size_t rows,
+                  const size_t cols)
   {
     //Initialize an empty matrix for sum of squares of parameter gradient
-    squaredGradient = arma::zeros<arma::mat>(n_rows, n_cols);
+    squaredGradient = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
