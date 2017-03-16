@@ -198,7 +198,7 @@ void TestPredictAcc(const string& testFile,
   data::Load(testFile, testData, true);
 
   arma::Row<size_t> predictLabels;
-  model.Predict(testData, predictLabels);
+  model.Classify(testData, predictLabels);
 
   // Save predictions, if desired.
   if (!predictionsFile.empty())
