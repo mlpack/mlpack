@@ -89,7 +89,7 @@ class AdaGrad
       const bool shuffle = true)
   {
     AdaGradUpdate adagradUpdate(epsilon);
-    optimizer = SGD<DecomposableFunctionType, AdaGradUpdate>(function, stepSize, maxIterations, 
+    optimizer = SGD<DecomposableFunctionType, UpdatePolicy>(function, stepSize, maxIterations, 
         tolerance, shuffle, adagradUpdate);  
   }
 
@@ -112,29 +112,29 @@ class AdaGrad
   DecomposableFunctionType& Function() { return function; }
 
   //! Get the step size.
-  double StepSize() const { return stepSize; }
+  double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return epsilon; }
+  double Epsilon() const { return optimizer.UpdatePolicy.Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return epsilon; }
+  double& Epsilon() { return optimizer.UpdatePolicy.Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
   //! The instantiated function.
@@ -157,7 +157,7 @@ class AdaGrad
   bool shuffle;
 
   //! Stochastic Gradient Descent object with AdaGrad policy.
-  SGD<DecomposableFunctionType, AdaGradUpdate> optimizer;  
+  SGD<DecomposableFunctionType, UpdatePolicy> optimizer;
 };
 
 } // namespace optimization

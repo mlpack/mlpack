@@ -80,6 +80,12 @@ class AdaGradUpdate
     iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + epsilon);
   }
 
+  //! Get the value used to initialise the squared gradient parameter.
+  double Epsilon() const { return epsilon; }
+  //! Modify the value used to initialise the squared gradient parameter.
+  double& Epsilon() { return epsilon; }
+
+
  private:
   // The epsilon hyperparamter
   double epsilon;
