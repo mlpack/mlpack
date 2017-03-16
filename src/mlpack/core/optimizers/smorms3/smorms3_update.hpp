@@ -52,16 +52,16 @@ class SMORMS3Update
    * @param n_cols number of columns in the gradient matrix.
    * @param lRate 
    */
-  void Initialize(const size_t n_rows,
-                  const size_t n_cols)
+  void Initialize(const size_t rows,
+                  const size_t cols)
   {
     // Initialise the parameters mem, g and g2.
-    mem = arma::ones<arma::mat>(n_rows, n_cols);
-    g = arma::zeros<arma::mat>(n_rows, n_cols);
-    g2 = arma::zeros<arma::mat>(n_rows, n_cols);
+    mem = arma::ones<arma::mat>(rows, cols);
+    g = arma::zeros<arma::mat>(rows, cols);
+    g2 = arma::zeros<arma::mat>(rows, cols);
 
     // Initialise a matrix to be filled with stepSize.
-    stepSizeMat = arma::zeros<arma::mat>(n_rows, n_cols);
+    stepSizeMat = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
