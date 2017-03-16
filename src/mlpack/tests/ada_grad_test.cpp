@@ -34,8 +34,7 @@ BOOST_AUTO_TEST_SUITE(AdaGradTest);
 BOOST_AUTO_TEST_CASE(SimpleAdaGradTestFunction)
 {
   SGDTestFunction f;
-  AdaGradUpdate adagradUpdate(1e-8);
-  AdaGrad<SGDTestFunction> optimizer(f, 0.99, 5000000, 1e-9, true, adagradUpdate);
+  AdaGrad<SGDTestFunction> optimizer(f, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);
@@ -95,8 +94,7 @@ BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  AdaGradUpdate adagradUpdate(1e-8);
-  AdaGrad<LogisticRegressionFunction<> > adagrad(lrf, 0.99, 5000000, 1e-9, true, adagradUpdate);
+  AdaGrad<LogisticRegressionFunction<> > adagrad(lrf, 0.99, 1e-8, 5000000, 1e-9, true);
   lr.Train(adagrad);
 
   // Ensure that the error is close to zero.
