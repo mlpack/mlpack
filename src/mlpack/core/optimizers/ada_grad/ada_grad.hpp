@@ -15,6 +15,8 @@
 #define MLPACK_CORE_OPTIMIZERS_ADAGRAD_ADA_GRAD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/ada_grad_update.hpp>
 
 namespace mlpack {
 namespace optimization {
