@@ -89,7 +89,7 @@ class AdaGrad
       const bool shuffle = true)
   {
     AdaGradUpdate adagradUpdate(epsilon);
-    optimizer = SGD<DecomposableFunctionType, UpdatePolicy>(function, stepSize, maxIterations, 
+    optimizer = SGD<DecomposableFunctionType, AdaGradUpdate>(function, stepSize, maxIterations,
         tolerance, shuffle, adagradUpdate);  
   }
 
@@ -117,9 +117,9 @@ class AdaGrad
   double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return optimizer.UpdatePolicy.Epsilon(); }
+  double Epsilon() const { return optimizer.AdaGradUpdate.Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return optimizer.UpdatePolicy.Epsilon(); }
+  double& Epsilon() { return optimizer.AdaGradUpdate.Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
@@ -157,7 +157,13 @@ class AdaGrad
   bool shuffle;
 
   //! Stochastic Gradient Descent object with AdaGrad policy.
-  SGD<DecomposableFunctionType, UpdatePolicy> optimizer;
+  SGD<DecomposableFunctionType, AdaGradUpdate>
+  optimizer(DecomposableFunctionType&,
+	const double,
+	const size_t,
+	const double,
+	const bool,
+	AdaGradUpdate);
 };
 
 } // namespace optimization
