@@ -69,10 +69,8 @@ class MissingPolicy
   MappedType MapString(const std::string& string,
                        const size_t dimension,
                        MapType& maps,
-                       std::vector<Datatype>& types)
+                       std::vector<Datatype>& /* types */)
   {
-    // mute the unused parameter warning (does nothing here.)
-    (void)types;
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
