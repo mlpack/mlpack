@@ -485,13 +485,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
 
 
 /**
- * Define vector or row vector input parameter.  From the command line, the user can specify
- * the file that holds the vector, using the name of the vector parameter with
- * "_file" appended (and the same alias).  So for instance, if the name of the
- * vector parameter was "vec", the user could specify that the "vec" vector was
- * held in vec.csv by giving the parameter.
- * PARAM_COL_IN and PARAM_ROW_IN will receive double type,
- * PARAM_UCOL_IN and PARAM_UROW_IN will receive unsigned type.
+ * Define a vector input parameter (type arma::vec).  From the command line, the
+ * user can specify the file that holds the vector, using the name of the vector
+ * parameter with "_file" appended (and the same alias).  So for instance, if
+ * the name of the vector parameter was "vec", the user could specify that the
+ * "vec" vector was held in vec.csv by giving the parameter:
  *
  * @code
  * --vec_file vector.csv
@@ -510,30 +508,95 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_IN(ID, DESC, ALIAS) \
-		PARAM_COL(ID, DESC, ALIAS, false, true, true)
-
-#define PARAM_ROW_IN(ID, DESC, ALIAS) \
-		PARAM_ROW(ID, DESC, ALIAS, false, true, true)
-
-#define PARAM_UCOL_IN(ID, DESC, ALIAS) \
-		PARAM_UCOL(ID, DESC, ALIAS, false, true, true)
-
-#define PARAM_UROW_IN(ID, DESC, ALIAS) \
-		PARAM_UROW(ID, DESC, ALIAS, false, true, true)
-
+    PARAM_COL(ID, DESC, ALIAS, false, true, true)
 
 /**
- * Define vector or row vector output parameter.  When the program terminates, 
- * the vector will be saved to whatever it was set to:
- * CLI::GetParam<arma::vec>(ID),
- * CLI::GetParam<arma::rowvec>(ID),
- * CLI::GetParam<arma::Col<size_t>>(ID),
- * CLI::GetParam<arma::Row<size_t>>(ID)
- * during the program.  From the command-line, the user may specify the file in
- * which to save the output vector using a string option that is the name of the
- * matrix parameter with "_file" appended.  So, for instance, if the name of the
- * output vector parameter was "vec", the user could speicfy that the "vec"
- * vector should be saved in vector.csv by giving the parameter
+ * Define a row vector input parameter (type arma::rowvec).  From the command
+ * line, the user can specify the file that holds the vector, using the name of
+ * the vector parameter with "_file" appended (and the same alias).  So for
+ * instance, if the name of the vector parameter was "vec", the user could
+ * specify that the "vec" vector was held in vec.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_ROW_IN(ID, DESC, ALIAS) \
+    PARAM_ROW(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define an unsigned vector input parameter (type arma::Col<size_t>).  From the
+ * command line, the user can specify the file that holds the vector, using the
+ * name of the vector parameter with "_file" appended (and the same alias).  So
+ * for instance, if the name of the vector parameter was "vec", the user could
+ * specify that the "vec" vector was held in vec.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UCOL_IN(ID, DESC, ALIAS) \
+    PARAM_UCOL(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define an unsigned row vector input parameter (type arma::Row<size_t>).  From
+ * the command line, the user can specify the file that holds the vector, using
+ * the name of the vector parameter with "_file" appended (and the same alias).
+ * So for instance, if the name of the vector parameter was "vec", the user
+ * could specify that the "vec" vector was held in vec.csv by giving the
+ * parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UROW_IN(ID, DESC, ALIAS) \
+    PARAM_UROW(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define a vector output parameter (type arma::vec).  When the program
+ * terminates, the vector will be saved to whatever it was set to during the
+ * program.  From the command-line, the user may specify the file in which to
+ * save the output vector using a string option that is the name of the matrix
+ * parameter with "_file" appended.  So, for instance, if the name of the output
+ * vector parameter was "vec", the user could specify that the "vec" vector
+ * should be saved in vector.csv by giving the parameter:
  *
  * @code
  * --vec_file vector.csv
@@ -555,21 +618,103 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_OUT(ID, DESC, ALIAS) \
-		PARAM_COL(ID, DESC, ALIAS, false, true, false)
-
-#define PARAM_ROW_OUT(ID, DESC, ALIAS) \
-		PARAM_ROW(ID, DESC, ALIAS, false, true, false)
-
-#define PARAM_UCOL_OUT(ID, DESC, ALIAS) \
-		PARAM_UCOL(ID, DESC, ALIAS, false, true, false)
-
-#define PARAM_UROW_OUT(ID, DESC, ALIAS) \
-		PARAM_UROW(ID, DESC, ALIAS, false, true, false)
-
-		
+    PARAM_COL(ID, DESC, ALIAS, false, true, false)
 
 /**
- * Define a vector input parameter.
+ * Define a row vector output parameter (type arma::rowvec).  When the program
+ * terminates, the vector will be saved to whatever it was set to during the
+ * program.  From the command-line, the user may specify the file in which to
+ * save the output vector using a string option that is the name of the matrix
+ * parameter with "_file" appended.  So, for instance, if the name of the output
+ * vector parameter was "vec", the user could specify that the "vec" vector
+ * should be saved in vector.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * The output vector will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_ROW_OUT(ID, DESC, ALIAS) \
+    PARAM_ROW(ID, DESC, ALIAS, false, true, false)
+
+/**
+ * Define an unsigned vector output parameter (type arma::Col<size_t>).  When
+ * the program terminates, the vector will be saved to whatever it was set to
+ * during the program.  From the command-line, the user may specify the file in
+ * which to save the output vector using a string option that is the name of the
+ * matrix parameter with "_file" appended.  So, for instance, if the name of the
+ * output vector parameter was "vec", the user could specify that the "vec"
+ * vector should be saved in vector.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * The output vector will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UCOL_OUT(ID, DESC, ALIAS) \
+    PARAM_UCOL(ID, DESC, ALIAS, false, true, false)
+
+/**
+ * Define an unsigned row vector output parameter (type arma::Row<size_t>).
+ * When the program terminates, the vector will be saved to whatever it was set
+ * to during the program.  From the command-line, the user may specify the file
+ * in which to save the output vector using a string option that is the name of
+ * the matrix parameter with "_file" appended.  So, for instance, if the name of
+ * the output vector parameter was "vec", the user could specify that the "vec"
+ * vector should be saved in vector.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * The output vector will not be printed on stdout, like the other output option
+ * types.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_UROW_OUT(ID, DESC, ALIAS) \
+    PARAM_UROW(ID, DESC, ALIAS, false, true, false)
+
+/**
+ * Define a std::vector input parameter.
  *
  * The parameter can then be specified on the command line with
  * --ID=value1,value2,value3.
