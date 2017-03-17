@@ -1026,22 +1026,22 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
       JOIN(cli_option_dummy_umatrix_, __COUNTER__) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
 
-	#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
       JOIN(cli_option_dummy_col_, __COUNTER__) \
       (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
       JOIN(cli_option_dummy_ucol_, __COUNTER__) \
       (arma::Col<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
       JOIN(cli_option_dummy_row_, __COUNTER__) \
       (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
       JOIN(cli_option_dummy_urow_, __COUNTER__) \
       (arma::Row<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
@@ -1077,23 +1077,23 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
       static mlpack::util::Option<arma::Mat<size_t>> \
       JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
       JOIN(cli_option_dummy_object_col_, __LINE__) \
       (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
       JOIN(cli_option_dummy_object_ucol_, __LINE__) \
       (arma::Col<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
       JOIN(cli_option_dummy_object_row_, __LINE__) \
       (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-	
-	#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+
+  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
       JOIN(cli_option_dummy_object_urow_, __LINE__) \
       (arma::Row<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
