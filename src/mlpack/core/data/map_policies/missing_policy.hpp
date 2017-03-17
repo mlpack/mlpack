@@ -20,6 +20,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * MissingPolicy is used as a helper class for DatasetMapper. It tells how the
  * strings should be mapped. Purpose of this policy is to map all user-defined
@@ -71,28 +72,18 @@ class MissingPolicy
                        MapType& maps,
                        std::vector<Datatype>& /* types */)
   {
-    // If this condition is true, either we have no mapping for the given string
-    // or we have no mappings for the given dimension at all.  In either case,
-    // we create a mapping.
-    const double NaN = std::numeric_limits<double>::quiet_NaN();
-    if (missingSet.count(string) != 0 &&
-        (maps.count(dimension) == 0 ||
-         maps[dimension].first.left.count(string) == 0))
+    // Everything is mapped to NaN.  However we must still keep track of
+    // everything that we have mapped, so we add it to the maps if needed.
+    if (maps.count(dimension) == 0 ||
+        maps[dimension].first.left.count(string) == 0)
     {
       // This string does not exist yet.
       typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, NaN));
+      maps[dimension].second++;
+    }
 
-      size_t& numMappings = maps[dimension].second;
-      ++numMappings;
-      return NaN;
-    }
-    else
-    {
-      // This string already exists in the mapping or not included in
-      // the missingSet.
-      return NaN;
-    }
+    return std::numeric_limits<MappedType>::quiet_NaN();
   }
 
   /**
@@ -141,7 +132,8 @@ class MissingPolicy
 
  private:
   // Note that missingSet and maps are different.
-  // missingSet specifies which value/string should be mapped.
+  // missingSet specifies which value/string should be mapped and may be a
+  // superset of 'maps'.
   std::set<std::string> missingSet;
 }; // class MissingPolicy
 
