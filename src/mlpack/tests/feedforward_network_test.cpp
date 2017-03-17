@@ -65,10 +65,8 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
   model.Add<SigmoidLayer<> >();
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
-  model.AddNamed<LogSoftMax<> >("output");
-
-  std::cout << model.getByName("output") << std::endl;
-
+  model.Add<LogSoftMax<> >();
+  
   RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, -1);
 
@@ -106,7 +104,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   // Load the dataset.
   arma::mat dataset;
   data::Load("thyroid_train.csv", dataset, true);
-  std::cout << "hrere" << std::endl;
   arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
       dataset.n_cols - 1);
 
