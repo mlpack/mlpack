@@ -41,13 +41,17 @@ bool Load(const std::string& filename,
     {
       // Problem: invalid size!
       if (fatal)
+      {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
             << std::endl;
+      }
       else
+      {
         Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
             << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
             << std::endl;
+      }
 
       vec.clear();
       return false;
@@ -99,13 +103,17 @@ bool Load(const std::string& filename,
     {
       // Problem: invalid size!
       if (fatal)
+      {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
             << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
             << std::endl;
+      }
       else
+      {
         Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
             << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
             << std::endl;
+      }
 
       rowvec.clear();
       return false;
