@@ -31,6 +31,7 @@ bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
           const bool fatal)
 {
+  // Don't transpose: one observation per line (for CSVs at least).
   return Save(filename, vec, fatal, false);
 }
 
@@ -39,7 +40,7 @@ bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
           const bool fatal)
 {
-  return Save(filename, rowvec, fatal, false);
+  return Save(filename, rowvec, fatal, true);
 }
 
 template<typename eT>
