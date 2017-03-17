@@ -102,8 +102,11 @@ extern template bool Load<unsigned long long>(const std::string&, arma::Mat<unsi
  */
 template<typename eT>
 bool Load(const std::string& filename,
-          arma::Col<eT>& colvec,
-          const bool fatal = false);
+          arma::Col<eT>& vec,
+          const bool fatal = false)
+{
+  return Load(filename, vec, fatal, false);
+}
 
 /**
  * Load a row vector from a file, guessing the filetype from the extension.
@@ -134,8 +137,11 @@ bool Load(const std::string& filename,
  */
 template<typename eT>
 bool Load(const std::string& filename,
-          arma::Row<eT>& colvec,
-          const bool fatal = false);
+          arma::Row<eT>& rowvec,
+          const bool fatal = false)
+{
+  return Load(filename, rowvec, fatal, false);
+}
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and

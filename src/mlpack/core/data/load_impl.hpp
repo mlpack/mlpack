@@ -86,24 +86,6 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
-// Load column vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
-{
-  return Load(filename, vec, fatal, false);
-}
-
-// Load row vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
-{
-  return Load(filename, rowvec, fatal, false);
-}
-
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -212,13 +194,13 @@ bool Load(const std::string& filename,
         stringType = "CSV data";
       else // Unknown .txt... we will throw an error.
         unknownType = true;
-    }    
+    }
   }
   else if (extension == "bin")
   {
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
-    const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";    
+    const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
     std::string rawHeader(ARMA_MAT_BIN.length(), '\0');
 
     std::streampos pos = stream.tellg();
@@ -236,7 +218,7 @@ bool Load(const std::string& filename,
     {
       stringType = "raw binary formatted data";
       loadType = arma::raw_binary;
-    }    
+    }
   }
   else if (extension == "pgm")
   {
