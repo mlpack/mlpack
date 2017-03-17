@@ -119,7 +119,7 @@ class SoftmaxRegression
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  MLPACK_DEPRECATED void Predict(const arma::mat& testData,
+  mlpack_deprecated void Predict(const arma::mat& testData,
                                  arma::Row<size_t>& predictions) const;
 
   /**

@@ -171,7 +171,7 @@ class LogisticRegression
    * @param responses Vector to put output predictions of responses into.
    * @param decisionBoundary Decision boundary (default 0.5).
    */
-  MLPACK_DEPRECATED void Predict(const MatType& predictors,
+  mlpack_deprecated void Predict(const MatType& predictors,
                                  arma::Row<size_t>& responses,
                                  const double decisionBoundary = 0.5) const;
 
