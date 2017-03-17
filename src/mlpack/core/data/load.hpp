@@ -14,8 +14,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_HPP
 #define MLPACK_CORE_DATA_LOAD_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
 #include "format.hpp"
@@ -63,6 +63,15 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true);
+
+extern template bool Load<int>(const std::string&, arma::Mat<int>&, const bool, const bool);
+extern template bool Load<size_t>(const std::string&, arma::Mat<size_t>&, const bool, const bool);
+extern template bool Load<float>(const std::string&, arma::Mat<float>&, const bool, const bool);
+extern template bool Load<double>(const std::string&, arma::Mat<double>&, const bool, const bool);
+
+#ifndef  _WIN32
+extern template bool Load<unsigned long long>(const std::string&, arma::Mat<unsigned long long>&, const bool, const bool);
+#endif
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -167,6 +176,26 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+extern template bool Load<int, IncrementPolicy>(const std::string&, arma::Mat<int>&,
+                                                DatasetMapper<IncrementPolicy>&,
+                                                const bool, const bool);
+
+extern template bool Load<size_t, IncrementPolicy>(const std::string&, arma::Mat<size_t>&,
+                                                   DatasetMapper<IncrementPolicy>&,
+                                                   const bool, const bool);
+
+extern template bool Load<float, IncrementPolicy>(const std::string&, arma::Mat<float>&,
+                                                  DatasetMapper<IncrementPolicy>&,
+                                                  const bool, const bool);
+
+extern template bool Load<double, IncrementPolicy>(const std::string&, arma::Mat<double>&,
+                                                   DatasetMapper<IncrementPolicy>&,
+                                                   const bool, const bool);
+
+extern template bool Load<unsigned long long, IncrementPolicy>(const std::string&, arma::Mat<unsigned long long>&,
+                                                               DatasetMapper<IncrementPolicy>&,
+                                                               const bool, const bool);
+
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
  * optionally, loading the specified format.  If automatic extension detection
@@ -202,7 +231,7 @@ bool Load(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
-// Include implementation.
-#include "load_impl.hpp"
+// Include implementation of model-loading Load() overload.
+#include "load_model_impl.hpp"
 
 #endif
