@@ -39,7 +39,7 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
-PARAM_MATRIX_IN("training_responses", "Optional matrix containing y "
+PARAM_COL_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
@@ -51,7 +51,7 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
-PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
         << "(-T) is not specified." << endl;
 
   mat regressors;
-  mat responses;
+  vec responses;
 
   LinearRegression lr;
   lr.Lambda() = lambda;
@@ -133,21 +133,15 @@ int main(int argc, char* argv[])
     if (!CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
-      responses = trans(regressors.row(regressors.n_rows - 1));
+      responses = regressors.row(regressors.n_rows - 1);
       regressors.shed_row(regressors.n_rows - 1);
     }
     else
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = std::move(CLI::GetParam<mat>("training_responses"));
+      responses = std::move(CLI::GetParam<vec>("training_responses"));
       Timer::Stop("load_responses");
-
-      if (responses.n_rows == 1)
-        responses = trans(responses); // Probably loaded backwards.
-
-      if (responses.n_cols > 1)
-        Log::Fatal << "The responses must have one column." << endl;
 
       if (responses.n_rows != regressors.n_cols)
         Log::Fatal << "The responses must have the same number of rows as the "
@@ -155,7 +149,7 @@ int main(int argc, char* argv[])
     }
 
     Timer::Start("regression");
-    lr = LinearRegression(regressors, responses.unsafe_col(0));
+    lr = LinearRegression(regressors, responses);
     Timer::Stop("regression");
 
     // Save the parameters.
@@ -196,7 +190,7 @@ int main(int argc, char* argv[])
 
     // Save predictions.
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<mat>("output_predictions") = std::move(predictions);
+      CLI::GetParam<vec>("output_predictions") = std::move(predictions);
   }
 
   CLI::Destroy();
