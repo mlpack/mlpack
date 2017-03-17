@@ -81,9 +81,9 @@ int main(int argc, char** argv)
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
   if (CLI::GetParam<int>("seed") == 0)
-    math::RandomSeed(std::time(NULL));
+    mlpack::math::RandomSeed(std::time(NULL));
   else
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   if (trainingFile == "")
