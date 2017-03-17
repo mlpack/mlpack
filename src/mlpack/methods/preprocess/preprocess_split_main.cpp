@@ -13,6 +13,8 @@
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
 PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
@@ -60,6 +62,8 @@ PARAM_STRING_OUT("test_labels_file", "File name to save test label", "L");
 PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
+PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
+
 using namespace mlpack;
 using namespace arma;
 using namespace std;
@@ -75,6 +79,11 @@ int main(int argc, char** argv)
   const string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
   const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
+
+  if (CLI::GetParam<int>("seed") == 0)
+    math::RandomSeed(std::time(NULL));
+  else
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   if (trainingFile == "")
