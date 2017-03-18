@@ -52,6 +52,19 @@ class MissingPolicy
     // Nothing to initialize here.
   }
 
+  //! This doesn't need a first pass over the data to set up.
+  static const bool NeedsFirstPass = false;
+
+  /**
+   * There is nothing for us to do here, but this is required by the MapPolicy
+   * type.
+   */
+  template<typename T>
+  void MapFirstPass(const std::string& /* string */, const size_t /* dim */)
+  {
+    // Nothing to do.
+  }
+
   /**
    * Given the string and the dimension to which it belongs by the user, and
    * the maps and types given by the DatasetMapper class, returns its numeric
@@ -66,24 +79,45 @@ class MissingPolicy
    * @param maps Unordered map given by the DatasetMapper.
    * @param types Vector containing the type information about each dimensions.
    */
-  template <typename MapType>
-  MappedType MapString(const std::string& string,
-                       const size_t dimension,
-                       MapType& maps,
-                       std::vector<Datatype>& /* types */)
+  template<typename MapType, typename T>
+  T MapString(const std::string& string,
+              const size_t dimension,
+              MapType& maps,
+              std::vector<Datatype>& /* types */)
   {
-    // Everything is mapped to NaN.  However we must still keep track of
-    // everything that we have mapped, so we add it to the maps if needed.
-    if (maps.count(dimension) == 0 ||
-        maps[dimension].first.left.count(string) == 0)
-    {
-      // This string does not exist yet.
-      typedef boost::bimap<std::string, MappedType>::value_type PairType;
-      maps[dimension].first.insert(PairType(string, NaN));
-      maps[dimension].second++;
-    }
+    static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
+        "Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
 
-    return std::numeric_limits<MappedType>::quiet_NaN();
+    // If we can load the string then there is no need for mapping.
+    std::stringstream token;
+    token.str(string);
+    T t;
+    token >> t; // Could be sped up by only doing this if we need to.
+
+    // If extraction of the value fails, or if it is a value that is supposed to
+    // be mapped, then do mapping.
+    if (token.fail() || !token.eof() ||
+        missingSet.find(string) != std::end(missingSet))
+    {
+      // Everything is mapped to NaN.  However we must still keep track of
+      // everything that we have mapped, so we add it to the maps if needed.
+      if (maps.count(dimension) == 0 ||
+          maps[dimension].first.left.count(string) == 0)
+      {
+        // This string does not exist yet.
+        typedef boost::bimap<std::string, MappedType>::value_type PairType;
+        maps[dimension].first.insert(PairType(string,
+            std::numeric_limits<MappedType>::quiet_NaN()));
+        maps[dimension].second++;
+      }
+
+      return std::numeric_limits<T>::quiet_NaN();
+    }
+    else
+    {
+      // We can just return the value that we read.
+      return t;
+    }
   }
 
   /**
