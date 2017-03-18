@@ -30,7 +30,14 @@ SMORMS3<DecomposableFunctionType>::SMORMS3(DecomposableFunctionType& function,
     epsilon(epsilon),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    smorms3Update(epsilon),
+    optimizer(function,
+              stepSize,
+              maxIterations,
+              tolerance,
+              shuffle,
+              smorms3Update)
 { /* Nothing to do. */ }
 
 } // namespace optimization
