@@ -157,13 +157,7 @@ class AdaGrad
   bool shuffle;
 
   //! Stochastic Gradient Descent object with AdaGrad policy.
-  SGD<DecomposableFunctionType, AdaGradUpdate>
-  optimizer(DecomposableFunctionType&,
-	const double,
-	const size_t,
-	const double,
-	const bool,
-	AdaGradUpdate);
+  SGD<DecomposableFunctionType, AdaGradUpdate> optimizer;
 };
 
 } // namespace optimization
