@@ -12,6 +12,7 @@
 
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/cosine_distance.hpp>
