@@ -1,5 +1,6 @@
 set(SOURCES
   ada_grad.hpp
+  ada_grad_update.hpp
 )
 
 set(DIR_SRCS)
