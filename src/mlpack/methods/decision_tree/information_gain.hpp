@@ -31,26 +31,53 @@ class InformationGain
    * @param labels Labels of the dataset.
    * @param numClasses Number of classes in the dataset.
    */
+  template<bool UseWeights>
   static double Evaluate(const arma::Row<size_t>& labels,
-                         const size_t numClasses)
+                         const size_t numClasses,
+                         const arma::Row<double>& weights)
   {
-    // Edge case: if there are no elements, the gain is zero.
-    if (labels.n_elem == 0)
-      return 0.0;
-
-    // Count the number of elements in each class.
-    arma::Col<size_t> counts(numClasses);
-    counts.zeros();
-    for (size_t i = 0; i < labels.n_elem; ++i)
-      counts[labels[i]]++;
-
+     // Edge case: if there are no elements, the gain is zero.
+     if (labels.n_elem == 0)
+       return 0.0;
+ 
     // Calculate the information gain.
     double gain = 0.0;
-    for (size_t i = 0; i < numClasses; ++i)
+
+     // Count the number of elements in each class.
+     arma::Col<double> counts(numClasses);
+     counts.zeros();
+
+    if (UseWeights)
     {
-      const double f = ((double) counts[i] / (double) labels.n_elem);
-      if (f > 0.0)
-        gain += f * std::log2(f);
+      // sum all the weights up
+      double accWeights = 0.0;
+
+      for (size_t i=0; i < labels.n_elem; ++i)
+      {
+        // We just plus one if it's 'no weighted label' and plus 'weight'
+        // if the label had correspond label.
+        counts[labels[i]] += weights[i];
+        accWeights += weights[i];
+      }
+
+      for (size_t i = 0; i < numClasses; ++i)
+      {
+        const double f = ((double) counts[i] / (double) accWeights);
+        if (f > 0.0)
+          gain += f * std::log2(f);
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < labels.n_elem; ++i)
+        counts[labels[i]]++;
+
+      for (size_t i = 0; i < numClasses; ++i)
+      {
+        const double f = ((double) counts[i] / (double) labels.n_elem);
+        if (f > 0.0)
+          gain += f * std::log2(f);
+      }
     }
 
     return gain;

@@ -82,6 +82,47 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
+   * Construct the decision tree on the given data and labels with weight, where the data
+   * can be both numeric and categorical.  Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights The weight list of given label.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t minimumLeafSize = 10);
+
+  /**
+   * Construct the decision tree on the given data and labels with weight, assuming that the
+   * data is all of the numeric type.  Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights The Weight list of given labels.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t minimumLeafSize = 10);
+
+
+  /**
    * Construct a decision tree without training it.  It will be a leaf node with
    * equal probabilities for each class.
    *
@@ -134,13 +175,15 @@ class DecisionTree :
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
-  template<typename MatType>
+  template<bool UseWeights, typename MatType>
   void Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
+             const arma::rowvec& weights,
              const size_t minimumLeafSize = 10);
 
   /**
@@ -152,12 +195,14 @@ class DecisionTree :
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
-  template<typename MatType>
+  template<bool UseWeights, typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
+             const arma::rowvec& weights,
              const size_t minimumLeafSize = 10);
 
   /**

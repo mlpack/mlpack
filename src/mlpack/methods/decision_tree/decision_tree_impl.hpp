@@ -15,7 +15,7 @@
 namespace mlpack {
 namespace tree {
 
-//! Construct and train.
+//! Construct and train without weight.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
@@ -32,11 +32,13 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
+  // Pass to unweighted training function.
+  arma::rowvec weights;
   // Pass off work to the Train() method.
-  Train(data, datasetInfo, labels, numClasses, minimumLeafSize);
+  Train<false>(data, datasetInfo, labels, numClasses, weights, minimumLeafSize);
 }
 
-//! Construct and train.
+//! Construct and train without weight.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
@@ -52,9 +54,54 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
+  // Pass to unweighted training function.
+  arma::rowvec weights;
   // Pass off work to the Train() method.
-  Train(data, labels, numClasses, minimumLeafSize);
+  Train<false>(data, labels, numClasses, weights, minimumLeafSize);
 }
+
+//! Construct and train without weight
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename ElemType,
+         bool NoRecursion>
+template<typename MatType>
+DecisionTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             ElemType,
+             NoRecursion>::DecisionTree(const MatType& data,
+                                        const data::DatasetInfo& datasetInfo,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t numClasses,
+                                        const arma::rowvec& weights,
+                                        const size_t minimumLeafSize)
+{
+  // Pass off work to the weighted Train() method.
+  Train<true>(data, datasetInfo, labels, numClasses, weights, minimumLeafSize);
+}
+
+//! Construct and train without weight
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename ElemType,
+         bool NoRecursion>
+template<typename MatType>
+DecisionTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             ElemType,
+             NoRecursion>::DecisionTree(const MatType& data,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t numClasses,
+                                        const arma::rowvec& weights,
+                                        const size_t minimumLeafSize)
+{
+  // Pass off work to the weighted Train() method.
+  Train<true>(data, labels, numClasses, weights, minimumLeafSize);
+ }
 
 //! Construct, don't train.
 template<typename FitnessFunction,
@@ -216,7 +263,7 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
+template<bool UseWeights, typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
@@ -225,6 +272,7 @@ void DecisionTree<FitnessFunction,
                                       const data::DatasetInfo& datasetInfo,
                                       const arma::Row<size_t>& labels,
                                       const size_t numClasses,
+                                      const arma::rowvec& weights,
                                       const size_t minimumLeafSize)
 {
   // Clear children if needed.
@@ -237,18 +285,18 @@ void DecisionTree<FitnessFunction,
   // numericAux and categoricalAux (and clear them later if we make not split),
   // and use classProbabilities as auxiliary information.  Later we'll overwrite
   // classProbabilities to the empirical class probabilities if we do not split.
-  double bestGain = FitnessFunction::Evaluate(labels, numClasses);
+  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels, numClasses, weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
     double dimGain = -DBL_MAX;
     if (datasetInfo.Type(i) == data::Datatype::categorical)
-      dimGain = CategoricalSplit::SplitIfBetter(bestGain, data.row(i),
-          datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize,
-          classProbabilities, *this);
+      dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i),
+           datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize, weights,
+           classProbabilities, *this);
     else if (datasetInfo.Type(i) == data::Datatype::numeric)
-      dimGain = NumericSplit::SplitIfBetter(bestGain, data.row(i), labels,
-          numClasses, minimumLeafSize, classProbabilities, *this);
+      dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i), labels,
+          numClasses, minimumLeafSize, weights, classProbabilities, *this);
 
     // Was there an improvement?  If so mark that it's the new best dimension.
     if (dimGain > bestGain)
@@ -337,7 +385,7 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
+template<bool UseWeights, typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
@@ -345,6 +393,7 @@ void DecisionTree<FitnessFunction,
                   NoRecursion>::Train(const MatType& data,
                                       const arma::Row<size_t>& labels,
                                       const size_t numClasses,
+                                      const arma::rowvec& weights,
                                       const size_t minimumLeafSize)
 {
   // Clear children if needed.
@@ -360,13 +409,13 @@ void DecisionTree<FitnessFunction,
   // later if we don't make a split), and use classProbabilities as auxiliary
   // information.  Later we'll overwrite classProbabilities to the empirical
   // class probabilities if we do not split.
-  double bestGain = FitnessFunction::Evaluate(labels, numClasses);
+  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels, numClasses, weights);
   size_t bestDim = data.n_rows; // This means "no split".
   for (size_t i = 0; i < data.n_rows; ++i)
   {
-    double dimGain = NumericSplitType<FitnessFunction>::SplitIfBetter(bestGain,
-        data.row(i), labels, numClasses, minimumLeafSize, classProbabilities,
-        *this);
+    double dimGain = NumericSplitType<FitnessFunction>::template SplitIfBetter<UseWeights>(bestGain,
+         data.row(i), labels, numClasses, minimumLeafSize, weights, classProbabilities,
+         *this);
 
     if (dimGain > bestGain)
     {

@@ -16,13 +16,14 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-template<typename VecType>
+template<bool UseWeights, typename VecType, typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
+    const WeightVecType& weights,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
@@ -33,8 +34,16 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
   arma::Row<size_t> sortedLabels(labels.n_elem);
+  arma::Row<size_t> sortedWeights(labels.n_elem);
+  sortedWeights.zeros();
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
     sortedLabels[sortedIndices[i]] = labels[i];
+  if (UseWeights)
+  {
+    // The weights must keep the same order of labels
+    for (size_t i = 0; i < sortedLabels.n_elem; ++i)
+      sortedWeights[sortedIndices[i]] = weights[i];
+  }
 
   // Loop through all possible split points, choosing the best one.  Also, force
   // a minimum leaf size of 1 (empty children don't make sense).
@@ -47,10 +56,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       continue;
 
     // Calculate the gain for the left and right child.
-    const double leftGain = FitnessFunction::Evaluate(sortedLabels.subvec(0,
-        index - 1), numClasses);
-    const double rightGain = FitnessFunction::Evaluate(sortedLabels.subvec(
-        index, sortedLabels.n_elem - 1), numClasses);
+    const double leftGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels.subvec(0,
+        index - 1), numClasses, sortedWeights.subvec(0, index - 1));
+    const double rightGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels.subvec(
+        index, sortedLabels.n_elem - 1), numClasses, 
+        sortedWeights.subvec(index, sortedLabels.n_elem - 1));
 
     // Calculate the fraction of points in the left and right children.
     const double leftRatio = double(index) / double(sortedLabels.n_elem);

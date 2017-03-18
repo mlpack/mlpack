@@ -16,7 +16,7 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-template<typename VecType>
+template<bool UseWeights, typename VecType, typename WeightVecType>
 double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
@@ -24,6 +24,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
+    const WeightVecType& weights,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
@@ -43,14 +44,28 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
   std::vector<arma::Row<size_t>> childLabels(numCategories);
+  std::vector<arma::Row<double>> childWeights(numCategories);
   for (size_t i = 0; i < numCategories; ++i)
+  {
+    // Labels and weights should have same length.
     childLabels[i].zeros(counts[i]);
+    childWeights[i].zeros(counts[i]);
+  }
 
   // Extract labels for each child.
   for (size_t i = 0; i < data.n_elem; ++i)
   {
     const size_t category = (size_t) data[i];
-    childLabels[category][childPositions[category]++] = labels[i];
+
+    if (UseWeights)
+    {
+      childLabels[category][childPositions[category]] = labels[i];
+      childWeights[category][childPositions[category]++] = weights[i] ? weights[i] : 0;
+    }
+    else
+    {
+      childLabels[category][childPositions[category]++] = labels[i];
+    }
   }
 
   double overallGain = 0.0;
@@ -58,8 +73,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
     // Calculate the gain of this child.
     const double childPct = double(counts[i]) / double(data.n_elem);
-    const double childGain = FitnessFunction::Evaluate(childLabels[i],
-        numClasses);
+    const double childGain = FitnessFunction::template Evaluate<UseWeights>(childLabels[i],
+        numClasses, childWeights[i]);
 
     overallGain += childPct * childGain;
   }

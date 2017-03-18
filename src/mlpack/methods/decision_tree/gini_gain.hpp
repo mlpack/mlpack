@@ -33,26 +33,54 @@ class GiniGain
    *
    * @param labels Set of labels to evaluate Gini impurity on.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weight of labels.
    */
-  template<typename RowType>
+  template<bool UseWeights, typename RowType, typename WeightVecType>
   static double Evaluate(const RowType& labels,
-                         const size_t numClasses)
+                         const size_t numClasses,
+                         const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
     if (labels.n_elem == 0)
       return 0.0;
 
-    arma::Col<size_t> counts(numClasses);
-    counts.zeros();
-    for (size_t i = 0; i < labels.n_elem; ++i)
-      counts[labels[i]]++;
+     // Count the number of elements in each class.
+     arma::Col<double> counts(numClasses);
+     counts.zeros();
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;
-    for (size_t i = 0; i < numClasses; ++i)
+
+    if (UseWeights)
     {
-      const double f = ((double) counts[i] / (double) labels.n_elem);
-      impurity += f * (1.0 - f);
+
+      // sum all the weights up
+      double accWeights = 0.0;
+
+      for (size_t i=0; i < labels.n_elem; ++i)
+      {
+        // We just plus one if it's 'no weighted label' and plus 'weight'
+        // if the label had correspond label.
+        counts[labels[i]] += weights[i];
+        accWeights += weights[i];
+      }
+
+      for (size_t i = 0; i < numClasses; ++i)
+      {
+        const double f = ((double) counts[i] / (double) accWeights);
+        impurity += f * (1.0 - f);
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < labels.n_elem; ++i)
+        counts[labels[i]]++;
+
+      for (size_t i = 0; i < numClasses; ++i)
+      {
+        const double f = ((double) counts[i] / (double) labels.n_elem);
+        impurity += f * (1.0 - f);
+      }
     }
 
     return -impurity;
