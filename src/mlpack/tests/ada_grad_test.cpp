@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
