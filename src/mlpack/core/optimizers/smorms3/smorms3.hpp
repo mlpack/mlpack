@@ -147,13 +147,7 @@ class SMORMS3
   bool shuffle;
 
   //! The Stochastic Gradient Descent object with SMORMS3 update policy.
-  SGD<DecomposableFunctionType, SMORMS3Update>
-  optimizer(DecomposableFunctionType&,
-            const double,
-            const size_t,
-            const double,
-            const bool,
-            SMORMS3Update);
+  SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
 };
 
 } // namespace optimization
