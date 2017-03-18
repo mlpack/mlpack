@@ -36,14 +36,47 @@ inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
   // Nothing to initialize here.
 }
 
-// When we want to insert value into the map,
-// we could use the policy to map the string
-template<typename PolicyType>
-inline typename PolicyType::MappedType DatasetMapper<PolicyType>::MapString(
+// Utility helper function to call MapFirstPass.
+template<typename PolicyType, typename T>
+void CallMapFirstPass(
+    PolicyType& policy,
     const std::string& string,
-    const size_t dimension)
+    const size_t dimension,
+    std::vector<Datatype>& types,
+    const typename std::enable_if<PolicyType::NeedsFirstPass>::type* = 0)
 {
-  return policy.template MapString<MapType>(string, dimension, maps, types);
+  policy.template MapFirstPass<T>(string, dimension, types);
+}
+
+// Utility helper function that doesn't call anything.
+template<typename PolicyType, typename T>
+void CallMapFirstPass(
+    PolicyType& /* policy */,
+    const std::string& /* string */,
+    const size_t /* dimension */,
+    std::vector<Datatype>& /* types */,
+    const typename std::enable_if<!PolicyType::NeedsFirstPass>::type* = 0)
+{
+  // Nothing to do here.
+}
+
+template<typename PolicyType>
+template<typename T>
+void DatasetMapper<PolicyType>::MapFirstPass(const std::string& string,
+                                             const size_t dimension)
+{
+  // Call the correct overload (via SFINAE).
+  CallMapFirstPass<PolicyType, T>(policy, string, dimension, types);
+}
+
+// When we want to insert value into the map, we use the policy to map the
+// string.
+template<typename PolicyType>
+template<typename T>
+inline T DatasetMapper<PolicyType>::MapString(const std::string& string,
+                                              const size_t dimension)
+{
+  return policy.template MapString<MapType, T>(string, dimension, maps, types);
 }
 
 // Return the string corresponding to a value in a given dimension.
