@@ -32,6 +32,38 @@ class IncrementPolicy
   // typedef of MappedType
   using MappedType = size_t;
 
+  //! We do need a first pass over the data to set the dimension types right.
+  static const bool NeedsFirstPass = true;
+
+  /**
+   * Determine if the dimension is numeric or categorical.
+   */
+  template<typename T>
+  void MapFirstPass(const std::string& string,
+                    const size_t dim,
+                    std::vector<Datatype>& types)
+  {
+    if (types[dim] == Datatype::categorical)
+    {
+      // No need to check; it's already categorical.
+      return;
+    }
+
+    // Otherwise we need to attempt to read the value.  If the read fails, the
+    // dimension is categorical; otherwise we leave it at the default of
+    // numeric.
+    std::stringstream token;
+    token.str(string);
+    T val;
+    token >> val;
+
+    if (token.fail() || !token.eof())
+    {
+      // Parsing failed; the dimension is categorical.
+      types[dim] = Datatype::categorical;
+    }
+  }
+
   /**
    * Given the string and the dimension to which the it belongs, and the maps
    * and types given by the DatasetMapper class, returns its numeric mapping.
@@ -45,12 +77,32 @@ class IncrementPolicy
    * @param maps Unordered map given by the DatasetMapper.
    * @param types Vector containing the type information about each dimensions.
    */
-  template <typename MapType>
-  MappedType MapString(const std::string& string,
-                       const size_t dimension,
-                       MapType& maps,
-                       std::vector<Datatype>& types)
+  template<typename MapType, typename T>
+  T MapString(const std::string& string,
+              const size_t dimension,
+              MapType& maps,
+              std::vector<Datatype>& types)
   {
+    // If we are in a categorical dimension we already know we need to map.
+    if (types[dimension] == Datatype::numeric)
+    {
+      // Check if this string needs to be mapped or if it can be read
+      // directly as a number.  This will be true if nothing else in this
+      // dimension has yet been mapped, but this can't be read as a number.
+      std::stringstream token;
+      token.str(string);
+      T val;
+      token >> val;
+
+      if (!token.fail() && token.eof())
+      {
+        // We can return what we have.
+        return val;
+      }
+    }
+
+    // The token must be mapped.
+
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
@@ -60,13 +112,13 @@ class IncrementPolicy
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
 
-      // change type of the feature to categorical
+      // Change type of the feature to categorical.
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
       typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
-      return numMappings++;
+      return T(numMappings++);
     }
     else
     {
