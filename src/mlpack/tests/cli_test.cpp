@@ -1079,11 +1079,11 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   DatasetInfo info(3);
   info.Type(0) = Datatype::categorical;
   info.Type(2) = Datatype::categorical;
-  info.MapString("seven", 0); // This will have mapped value 0.
-  info.MapString("cheese", 0); // This will have mapped value 1.
-  info.MapString("hello", 0); // This will have mapped value 2.
-  info.MapString("goodbye", 2); // This will have mapped value 0.
-  info.MapString("moo", 2); // This will have mapped value 1.
+  info.MapString<size_t>("seven", 0); // This will have mapped value 0.
+  info.MapString<size_t>("cheese", 0); // This will have mapped value 1.
+  info.MapString<size_t>("hello", 0); // This will have mapped value 2.
+  info.MapString<size_t>("goodbye", 2); // This will have mapped value 0.
+  info.MapString<size_t>("moo", 2); // This will have mapped value 1.
 
   // Now set the dataset info.
   std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;

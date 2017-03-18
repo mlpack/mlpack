@@ -963,9 +963,9 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   }
 
   // Okay.  Add some mappings for dimension 3.
-  const size_t first = di.MapString("test_mapping_1", 3);
-  const size_t second = di.MapString("test_mapping_2", 3);
-  const size_t third = di.MapString("test_mapping_3", 3);
+  const size_t first = di.MapString<size_t>("test_mapping_1", 3);
+  const size_t second = di.MapString<size_t>("test_mapping_2", 3);
+  const size_t third = di.MapString<size_t>("test_mapping_3", 3);
 
   BOOST_REQUIRE_EQUAL(first, 0);
   BOOST_REQUIRE_EQUAL(second, 1);
@@ -1125,10 +1125,10 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
   BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("hello", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("goodbye", 2), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("coffee", 2), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("confusion", 2), 3);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 2), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("goodbye", 2), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("coffee", 2), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 2), 3);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "hello");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "goodbye");
@@ -1174,8 +1174,8 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("", 0), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
@@ -1218,8 +1218,8 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
   BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("", 0), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
@@ -1262,8 +1262,8 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
   BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
@@ -1306,8 +1306,8 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
   BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("200-DM", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "200-DM");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
@@ -1366,24 +1366,24 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
   BOOST_REQUIRE(info.Type(5) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(6) == Datatype::categorical);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("2", 0), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("hello", 0), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("3", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("4", 1), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("goodbye", 1), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("5", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("6", 2), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("coffee", 2), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("7", 3), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("8", 3), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("confusion", 3), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("9", 4), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("10", 4), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("hello", 4), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString("13", 6), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("14", 6), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString("confusion", 6), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("2", 0), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 0), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("3", 1), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("4", 1), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("goodbye", 1), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("5", 2), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("6", 2), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("coffee", 2), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("7", 3), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("8", 3), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 3), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("9", 4), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("10", 4), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 4), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("13", 6), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("14", 6), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 6), 2);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "2");
@@ -1443,8 +1443,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
   BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
   BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 2), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 2), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 2), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "1");
@@ -1488,8 +1488,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 1), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 1), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
@@ -1533,8 +1533,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString("", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString("1", 1), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 1), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
 
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
@@ -1560,6 +1560,11 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
     BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
 
+    BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+    BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+    BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+    BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+
     BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
     BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
     BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
@@ -1573,13 +1578,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
     BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
 
-    BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-    BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
-
-    BOOST_REQUIRE_EQUAL(info.MapString("200-DM", 1), 0);
-    BOOST_REQUIRE_EQUAL(info.MapString("1", 1), 1);
+    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 1), 0);
+    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
 
     BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
     BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
