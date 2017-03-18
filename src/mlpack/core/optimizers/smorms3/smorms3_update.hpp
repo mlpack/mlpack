@@ -100,7 +100,7 @@ class SMORMS3Update
   }
  private:
    //! The value used to initialise the mean squared gradient parameter.
-   double epsilon, previousStepSize;
+   double epsilon, previousStepSize = 0;
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
    // The matrix to be filled with stepSize.
