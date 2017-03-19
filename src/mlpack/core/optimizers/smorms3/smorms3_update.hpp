@@ -44,6 +44,11 @@ class SMORMS3Update
   SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
   { /* Do nothing. */ };
 
+  //! Get the value used to initialise the mean squared gradient parameter.
+  double Epsilon() const { return epsilon; }
+  //! Modify the value used to initialise the mean squared gradient parameter.
+  double& Epsilon() { return epsilon; }
+
   /**
    * The Initialize method is called by SGD::Optimize method with UpdatePolicy
    * SMORMS3Update before the start of the iteration update process.

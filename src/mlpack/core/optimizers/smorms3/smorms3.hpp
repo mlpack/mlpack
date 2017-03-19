@@ -107,9 +107,9 @@ class SMORMS3
   double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return optimizer.Epsilon(); }
+  double Epsilon() const { return smorms3Update.Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return optimizer.Epsilon(); }
+  double& Epsilon() { return smorms3Update.Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
