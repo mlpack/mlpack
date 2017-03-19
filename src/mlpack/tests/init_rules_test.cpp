@@ -131,8 +131,8 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
   arma::mat weights;
   arma::cube weights3d;
-  const size_t row = 100;
-  const size_t col = 100;
+  const size_t row = 10;
+  const size_t col = 10;
   const size_t slice = 2;
   GaussianInitialization t(5, 1);
   t.Initialize(weights, row, col);
