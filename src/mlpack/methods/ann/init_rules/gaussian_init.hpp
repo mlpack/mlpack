@@ -60,11 +60,10 @@ class GaussianInitialization
     W = arma::mat(rows, cols);
     arma::vec m(1);
     arma::mat v(1,1);
-    m = {this->mean};
-    v = {this->variance};
+    m = mean;
+    v = variance;
     distribution::GaussianDistribution dist(m, v);
-    for (size_t i = 0; i < W.n_rows; i++)
-      W.col(i) = dist.Random();
+    W.imbue( [&]() { return arma::as_scalar(dist.Random()); } );
   }
 
   /**

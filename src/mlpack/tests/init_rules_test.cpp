@@ -131,23 +131,21 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
   arma::mat weights;
   arma::cube weights3d;
-  const size_t row = 10;
-  const size_t col = 10;
+  const size_t row = 100;
+  const size_t col = 100;
   const size_t slice = 2;
-  GaussianInitialization t(5, 1);
+  GaussianInitialization t(0, 1);
   t.Initialize(weights, row, col);
   t.Initialize(weights3d, row, col, slice);
   distribution::GaussianDistribution Dist;
-  Dist.Train(weights);
-  arma::vec mean = Dist.Mean();
-  arma::mat var = Dist.Covariance();
-  BOOST_REQUIRE_SMALL(arma::as_scalar(mean)-5, 0.8);
-  BOOST_REQUIRE_SMALL(arma::as_scalar(var)-1, 0.8);
-  Dist.Train(weights3d.slice(1));
-  mean = Dist.Mean();
-  var = Dist.Covariance();
-  BOOST_REQUIRE_SMALL(arma::as_scalar(mean)-5, 0.8);
-  BOOST_REQUIRE_SMALL(arma::as_scalar(var)-1, 0.8);
+  double mean = arma::mean(arma::mean(weights));;
+  double var = arma::accu(pow((weights - mean), 2)) / weights.n_elem;
+  BOOST_REQUIRE_SMALL(mean-0, 1e-1);
+  BOOST_REQUIRE_SMALL(var - 1, 1e-1);
+  mean = arma::mean(arma::mean(weights3d(0)));;
+  var = arma::accu(pow((weights3d.slice(0) - mean), 2)) / weights3d.slice(0).n_elem;
+  BOOST_REQUIRE_SMALL(mean-0, 1e-0);
+  BOOST_REQUIRE_SMALL(var - 1, 1e-0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
