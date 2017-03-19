@@ -146,10 +146,10 @@ class SMORMS3
   //! iterating.
   bool shuffle;
 
-  //! The SMORMS3 update policy object.
+  //! The SMORMS3Update update policy object.
   SMORMS3Update smorms3Update;
 
-  //! The Stochastic Gradient Descent object with SMORMS3 update policy.
+  //! The Stochastic Gradient Descent object with SMORMS3Update update policy.
   SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
 };
 
