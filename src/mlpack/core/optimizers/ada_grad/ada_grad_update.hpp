@@ -42,7 +42,7 @@ class AdaGradUpdate
   /**
    * Construct the AdaGrad update policy with given epsilon parameter.
    *
-   * @param epsilon The epsilon hyperparameter
+   * @param epsilon The epsilon value used to initialise the squared gradient parameter. 
    */
   AdaGradUpdate(const double epsilon = 1e-8) : epsilon(epsilon)
   { /* Do nothing. */ };
@@ -59,7 +59,7 @@ class AdaGradUpdate
   void Initialize(const size_t rows,
                   const size_t cols)
   {
-    //Initialize an empty matrix for sum of squares of parameter gradient
+    // Initialize an empty matrix for sum of squares of parameter gradient.
     squaredGradient = arma::zeros<arma::mat>(rows, cols);
   }
 
@@ -87,7 +87,7 @@ class AdaGradUpdate
 
 
  private:
-  // The epsilon hyperparamter
+  // The epsilon value used to initialise the squared gradient parameter. 
   double epsilon;
   // The squared gradient matrix.
   arma::mat squaredGradient;
