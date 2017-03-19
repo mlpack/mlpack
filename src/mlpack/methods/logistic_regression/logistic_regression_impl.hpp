@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
+ * @author Arun Reddy
  *
  * Implementation of the LogisticRegression class.  This implementation supports
  * L2-regularization.
@@ -53,9 +54,11 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename...> class OptimizerType,
+         typename... OptimizerTypeArgs>
 LogisticRegression<MatType>::LogisticRegression(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer) :
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  OptimizerTypeArgs...>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
@@ -82,9 +85,11 @@ void LogisticRegression<MatType>::Train(const MatType& predictors,
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename, typename... > class OptimizerType,
+         typename... OptimizerTypeArgs>
 void LogisticRegression<MatType>::Train(
-    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer)
+    OptimizerType<LogisticRegressionFunction<MatType>,
+                  OptimizerTypeArgs...>& optimizer)
 {
   // Everything is good.  Just train the model.
   parameters = optimizer.Function().GetInitialPoint();
@@ -97,17 +102,13 @@ void LogisticRegression<MatType>::Train(
       << "trained model is " << out << "." << std::endl;
 }
 
+
 template<typename MatType>
 void LogisticRegression<MatType>::Predict(const MatType& predictors,
                                           arma::Row<size_t>& responses,
                                           const double decisionBoundary) const
 {
-  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
-  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  responses = arma::conv_to<arma::Row<size_t>>::from((1.0 /
-      (1.0 + arma::exp(-parameters(0) - predictors.t() *
-      parameters.subvec(1, parameters.n_elem - 1)))) +
-      (1.0 - decisionBoundary));
+  Classify(predictors, responses, decisionBoundary);
 }
 
 template<typename MatType>
@@ -126,7 +127,12 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            arma::Row<size_t>& labels,
                                            const double decisionBoundary) const
 {
-  Predict(dataset, labels, decisionBoundary);
+  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
+  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
+  labels = arma::conv_to<arma::Row<size_t>>::from((1.0 /
+      (1.0 + arma::exp(-parameters(0) - dataset.t() *
+      parameters.subvec(1, parameters.n_elem - 1)))) +
+      (1.0 - decisionBoundary));
 }
 
 template<typename MatType>
@@ -161,7 +167,7 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 {
   // Predict responses using the current model.
   arma::Row<size_t> tempResponses;
-  Predict(predictors, tempResponses, decisionBoundary);
+  Classify(predictors, tempResponses, decisionBoundary);
 
   // Count the number of responses that were correct.
   size_t count = 0;

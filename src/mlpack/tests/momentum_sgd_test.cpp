@@ -1,8 +1,8 @@
 /**
- * @file sgd_test.cpp
+ * @file momentum_sgd_test.cpp
  * @author Ryan Curtin
  *
- * Test file for SGD (stochastic gradient descent).
+ * Test file for MomentumSGD (stochastic gradient descent with momentum updates).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 
@@ -23,12 +24,13 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-BOOST_AUTO_TEST_SUITE(SGDTest);
+BOOST_AUTO_TEST_SUITE(MomentumSGDTest);
 
-BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
+BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
 {
   SGDTestFunction f;
-  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true);
+  MomentumUpdate momentumUpdate(0.7);
+  MomentumSGD<SGDTestFunction> s(f, 0.0003, 2500000, 1e-9, true, momentumUpdate);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
@@ -37,6 +39,22 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+
+  // Compare with SGD with vanilla update.
+  SGDTestFunction f1;
+  StandardSGD<SGDTestFunction> s1(f1, 0.0003, 2500000, 1e-9, true);
+
+  arma::mat coordinates1 = f.GetInitialPoint();
+  double result1 = s1.Optimize(coordinates1);
+
+  // Result doesn't converge in 2500000 iterations.
+  BOOST_REQUIRE_GT(result1 + 1.0, 0.05);
+  BOOST_REQUIRE_GE(coordinates1[0], 1e-3);
+  BOOST_REQUIRE_SMALL(coordinates1[1], 1e-7);
+  BOOST_REQUIRE_SMALL(coordinates1[2], 1e-7);
+
+
+  BOOST_REQUIRE_LE(result,result1);
 }
 
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
@@ -46,8 +64,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
-
-    StandardSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true);
+    MomentumUpdate momentumUpdate(0.4);
+    MomentumSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true, momentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(coordinates);

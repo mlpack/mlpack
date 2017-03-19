@@ -56,7 +56,7 @@ namespace svd {
  */
 
 template<
-  template<typename> class OptimizerType = mlpack::optimization::SGD
+  template<typename> class OptimizerType = mlpack::optimization::StandardSGD
 >
 class RegularizedSVD
 {

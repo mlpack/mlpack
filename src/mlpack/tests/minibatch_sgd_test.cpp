@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_SUITE(MiniBatchSGDTest);
 BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
 {
   SGDTestFunction f;
-  SGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, false);
+  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, false);
   MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 5000000, 1e-9, false);
 
   arma::mat sCoord = f.GetInitialPoint();

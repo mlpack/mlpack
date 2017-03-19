@@ -55,8 +55,8 @@ namespace regression {
  * arma::vec predictions1, predictions2; // Vectors to store predictions in.
  *
  * // Obtain predictions from both the learned models.
- * regressor1.Predict(test_data, predictions1);
- * regressor2.Predict(test_data, predictions2);
+ * regressor1.Classify(test_data, predictions1);
+ * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
 template<
@@ -67,8 +67,8 @@ class SoftmaxRegression
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling Predict()
-   * or ComputeAccuracy(), otherwise the results may be meaningless.
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
@@ -113,10 +113,25 @@ class SoftmaxRegression
    * calculates the probabilities for every class, given a data point. It then
    * chooses the class which has the highest probability among all.
    *
+   * This method is deprecated and will be removed in mlpack 3.0.0. You should
+   * use Classify() instead.
+   *
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  void Predict(const arma::mat& testData, arma::Row<size_t>& predictions) const;
+  mlpack_deprecated void Predict(const arma::mat& testData,
+                                 arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   */
+  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the

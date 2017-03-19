@@ -13,22 +13,18 @@
 #define MLPACK_CORE_DATA_LOAD_IMPL_HPP
 
 // In case it hasn't already been included.
-#include "load.hpp"
-#include "extension.hpp"
 
 #include <exception>
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
-#include <boost/serialization/serialization.hpp>
+#include "load_csv.hpp"
+#include "load.hpp"
+#include "extension.hpp"
+
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
-
-#include "serialization_shim.hpp"
 
 #include "load_arff.hpp"
 
@@ -65,7 +61,7 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
   }
 }
 
-}
+} //namespace details
 
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
@@ -88,24 +84,6 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
     return false;
 #endif
   }
-}
-
-// Load column vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
-{
-  return Load(filename, vec, fatal, false);
-}
-
-// Load row vector.
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
-{
-  return Load(filename, rowvec, fatal, false);
 }
 
 template<typename eT>
@@ -193,15 +171,15 @@ bool Load(const std::string& filename,
 
     // This is taken from load_auto_detect() in diskio_meat.hpp
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
-    char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
+    //char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
+    std::string rawHeader(ARMA_MAT_TXT.length(), '\0');
     std::streampos pos = stream.tellg();
 
-    stream.read(rawHeader, std::streamsize(ARMA_MAT_TXT.length()));
-    rawHeader[ARMA_MAT_TXT.length()] = '\0';
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_TXT.length()));
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(rawHeader) == ARMA_MAT_TXT)
+    if (rawHeader == ARMA_MAT_TXT)
     {
       loadType = arma::arma_ascii;
       stringType = "Armadillo ASCII formatted data";
@@ -217,24 +195,21 @@ bool Load(const std::string& filename,
       else // Unknown .txt... we will throw an error.
         unknownType = true;
     }
-
-    delete[] rawHeader;
   }
   else if (extension == "bin")
   {
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
     const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
-    char *rawHeader = new char[ARMA_MAT_BIN.length() + 1];
+    std::string rawHeader(ARMA_MAT_BIN.length(), '\0');
 
     std::streampos pos = stream.tellg();
 
-    stream.read(rawHeader, std::streamsize(ARMA_MAT_BIN.length()));
-    rawHeader[ARMA_MAT_BIN.length()] = '\0';
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_BIN.length()));
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(rawHeader) == ARMA_MAT_BIN)
+    if (rawHeader == ARMA_MAT_BIN)
     {
       stringType = "Armadillo binary formatted data";
       loadType = arma::arma_binary;
@@ -244,8 +219,6 @@ bool Load(const std::string& filename,
       stringType = "raw binary formatted data";
       loadType = arma::raw_binary;
     }
-
-    delete[] rawHeader;
   }
   else if (extension == "pgm")
   {
@@ -388,95 +361,8 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    // True if we're looking for commas; if false, we're looking for spaces.
-    bool commas = (extension == "csv");
-
-    std::string type;
-    if (extension == "csv")
-      type = "CSV data";
-    else
-      type = "raw ASCII-formatted data";
-
-    Log::Info << "Loading '" << filename << "' as " << type << ".  "
-        << std::flush;
-    std::string separators;
-    if (commas)
-      separators = ",";
-    else
-      separators = " \t";
-
-    // We'll load this as CSV (or CSV with spaces or tabs) according to
-    // RFC4180.  So the first thing to do is determine the size of the matrix.
-    std::string buffer;
-    size_t cols = 0;
-
-    std::getline(stream, buffer, '\n');
-    // Count commas and whitespace in the line, ignoring anything inside
-    // quotes.
-    typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-    boost::escaped_list_separator<char> sep("\\", separators, "\"");
-    Tokenizer tok(buffer, sep);
-    for (Tokenizer::iterator i = tok.begin(); i != tok.end(); ++i)
-      ++cols;
-
-    // Now count the number of lines in the file.  We've already counted the
-    // first one.
-    size_t rows = 1;
-    while (!stream.eof() && !stream.bad() && !stream.fail())
-    {
-      std::getline(stream, buffer, '\n');
-      if (!stream.fail())
-        ++rows;
-    }
-
-    // Now we have the size.  So resize our matrix.
-    if (transpose)
-    {
-      matrix.set_size(cols, rows);
-      info = DatasetMapper<PolicyType>(info.Policy(), cols);
-    }
-    else
-    {
-      matrix.set_size(rows, cols);
-      info = DatasetMapper<PolicyType>(info.Policy(), rows);
-    }
-
-    stream.close();
-    stream.open(filename, std::fstream::in);
-
-    if (transpose)
-    {
-      std::vector<std::vector<std::string>> tokensArray;
-      std::vector<std::string> tokens;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        tokens = details::ToTokens(lineTok);
-        if (tokens.size() == cols)
-        {
-          tokensArray.emplace_back(std::move(tokens));
-        }
-      }
-      for(size_t i = 0; i != cols; ++i)
-      {
-        details::TransposeTokens(tokensArray, tokens, i);
-        info.MapTokens(tokens, i, matrix);
-      }
-    }
-    else
-    {
-      size_t row = 0;
-      while (!stream.bad() && !stream.fail() && !stream.eof())
-      {
-        // Extract line by line.
-        std::getline(stream, buffer, '\n');
-        Tokenizer lineTok(buffer, sep);
-        info.MapTokens(details::ToTokens(lineTok), row, matrix);
-        ++row;
-      }
-    }
+    LoadCSV loader(filename, fatal);
+    loader.Load(matrix, info, transpose);
   }
   else if (extension == "arff")
   {
@@ -518,91 +404,6 @@ bool Load(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
-}
-
-// Load a model from file.
-template<typename T>
-bool Load(const std::string& filename,
-          const std::string& name,
-          T& t,
-          const bool fatal,
-          format f)
-{
-  if (f == format::autodetect)
-  {
-    std::string extension = Extension(filename);
-
-    if (extension == "xml")
-      f = format::xml;
-    else if (extension == "bin")
-      f = format::binary;
-    else if (extension == "txt")
-      f = format::text;
-    else
-    {
-      if (fatal)
-        Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed.  Incorrect extension?" << std::endl;
-
-      return false;
-    }
-  }
-
-  // Now load the given format.
-  std::ifstream ifs;
-#ifdef _WIN32 // Open non-text in binary mode on Windows.
-  if (f == format::binary)
-    ifs.open(filename, std::ifstream::in | std::ifstream::binary);
-  else
-    ifs.open(filename, std::ifstream::in);
-#else
-  ifs.open(filename, std::ifstream::in);
-#endif
-
-  if (!ifs.is_open())
-  {
-    if (fatal)
-      Log::Fatal << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
-    else
-      Log::Warn << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
-
-    return false;
-  }
-
-  try
-  {
-    if (f == format::xml)
-    {
-      boost::archive::xml_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
-    }
-    else if (f == format::text)
-    {
-      boost::archive::text_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
-    }
-    else if (f == format::binary)
-    {
-      boost::archive::binary_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
-    }
-
-    return true;
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    if (fatal)
-      Log::Fatal << e.what() << std::endl;
-    else
-      Log::Warn << e.what() << std::endl;
-
-    return false;
-  }
 }
 
 } // namespace data

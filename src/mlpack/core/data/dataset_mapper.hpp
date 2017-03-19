@@ -51,16 +51,28 @@ class DatasetMapper
   explicit DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
 
   /**
+   * Preprocessing: during a first pass of the data, pass the strings on to the
+   * MapPolicy if they are needed.
+   *
+   * @param string String to map.
+   * @param dimension Dimension to map for.
+   */
+  template<typename T>
+  void MapFirstPass(const std::string& string, const size_t dimension);
+
+  /**
    * Given the string and the dimension to which it belongs, return its numeric
    * mapping.  If no mapping yet exists, the string is added to the list of
    * mappings for the given dimension.  The dimension parameter refers to the
    * index of the dimension of the string (i.e. the row in the dataset).
    *
+   * @tparam T Numeric type to map to (int/double/float/etc.).
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
-  typename PolicyType::MappedType MapString(const std::string& string,
-                                            const size_t dimension);
+  template<typename T>
+  T MapString(const std::string& string,
+              const size_t dimension);
 
   /**
    * Return the string that corresponds to a given value in a given dimension.
@@ -134,8 +146,7 @@ class DatasetMapper
 
   //! Modify the policy of the mapper (be careful!).
   PolicyType& Policy();
-
-  //! Modify (Replace) the policy of the mapper with a new policy
+  //! Modify (Replace) the policy of the mapper with a new policy.
   void Policy(PolicyType&& policy);
 
  private:

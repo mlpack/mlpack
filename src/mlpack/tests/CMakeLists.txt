@@ -58,6 +58,7 @@ add_executable(mlpack_test
   metric_test.cpp
   minibatch_sgd_test.cpp
   mlpack_test.cpp
+  momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp
