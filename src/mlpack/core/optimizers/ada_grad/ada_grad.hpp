@@ -86,12 +86,7 @@ class AdaGrad
       const double epsilon = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true)
-  {
-    AdaGradUpdate adagradUpdate(epsilon);
-    optimizer = SGD<DecomposableFunctionType, AdaGradUpdate>(function, stepSize, maxIterations,
-        tolerance, shuffle, adagradUpdate);  
-  }
+      const bool shuffle = true);
 
   /**
    * Optimize the given function using AdaGrad. The given starting point will
@@ -101,15 +96,12 @@ class AdaGrad
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate)
-  {
-    return optimizer.Optimize(iterate);
-  }
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); } 
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
@@ -117,9 +109,9 @@ class AdaGrad
   double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return optimizer.AdaGradUpdate.Epsilon(); }
+  double Epsilon() const { return adagradUpdate.Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return optimizer.AdaGradUpdate.Epsilon(); }
+  double& Epsilon() { return adagradUpdate.Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
@@ -156,11 +148,17 @@ class AdaGrad
   //! iterating.
   bool shuffle;
 
-  //! Stochastic Gradient Descent object with AdaGrad policy.
+  //! The AdaGradUpdate policy object.
+  AdaGradUpdate adagradUpdate;
+
+  //! The Stochastic Gradient Descent object with AdaGrad policy.
   SGD<DecomposableFunctionType, AdaGradUpdate> optimizer;
 };
 
 } // namespace optimization
 } // namespace mlpack
+
+// Include implementation.
+#include "ada_grad_impl.hpp"
 
 #endif
