@@ -89,7 +89,7 @@ class GaussianInitialization
   //! Mean of the gaussian.
   const double mean;
 
-  //! Variance of the gaussian.
+  //! Variance of the gaussian .
   const double variance;
 }; // class GaussianInitialization
 } // namespace ann
