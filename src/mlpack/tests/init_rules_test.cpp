@@ -141,14 +141,13 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   Dist.Train(weights);
   arma::vec mean = Dist.Mean();
   arma::mat var = Dist.Covariance();
-  std::cout << Dist.Covariance() << std::endl;
-  BOOST_REQUIRE_EQUAL(arma::as_scalar(mean), 5);
-  BOOST_REQUIRE_EQUAL(arma::as_scalar(var), 1);
+  BOOST_REQUIRE_SMALL(arma::as_scalar(mean)-5, 0.8);
+  BOOST_REQUIRE_SMALL(arma::as_scalar(var)-1, 0.8);
   Dist.Train(weights3d.slice(1));
   mean = Dist.Mean();
   var = Dist.Covariance();
-  BOOST_REQUIRE_EQUAL(arma::as_scalar(mean), 5);
-  BOOST_REQUIRE_EQUAL(arma::as_scalar(var), 1);
+  BOOST_REQUIRE_SMALL(arma::as_scalar(mean)-5, 0.8);
+  BOOST_REQUIRE_SMALL(arma::as_scalar(var)-1, 0.8);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
