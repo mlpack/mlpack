@@ -131,21 +131,33 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
   arma::mat weights;
   arma::cube weights3d;
-  const size_t row = 100;
-  const size_t col = 100;
+  const size_t row = 5;
+  const size_t col = 5;
   const size_t slice = 2;
+  double mean, mean3d;
+  double var,var3d;
+  mean=mean3d=1;
+  var=var3d=1;
   GaussianInitialization t(0, 1);
-  t.Initialize(weights, row, col);
-  t.Initialize(weights3d, row, col, slice);
-  distribution::GaussianDistribution Dist;
-  double mean = arma::mean(arma::mean(weights));;
-  double var = arma::accu(pow((weights - mean), 2)) / weights.n_elem;
-  BOOST_REQUIRE_SMALL(mean-0, 1e-1);
-  BOOST_REQUIRE_SMALL(var - 1, 1e-1);
-  mean = arma::mean(arma::mean(weights3d(0)));;
-  var = arma::accu(pow((weights3d.slice(0) - mean), 2)) / weights3d.slice(0).n_elem;
-  BOOST_REQUIRE_SMALL(mean-0, 1e-0);
-  BOOST_REQUIRE_SMALL(var - 1, 1e-0);
+
+  for(size_t i =0; i<30; i++)
+  {
+    t.Initialize(weights, row, col);
+    t.Initialize(weights3d, row, col, slice);
+    distribution::GaussianDistribution Dist;
+    mean += arma::accu(weights) / weights.n_elem;
+    var += arma::accu(pow((weights.t() - mean), 2)) / weights.n_elem;
+    mean3d += arma::accu(weights3d.slice(0)) / weights3d.slice(0).n_elem;
+    var3d += arma::accu(pow((weights3d.slice(0) - mean), 2)) / weights3d.slice(0).n_elem;
+  }
+  mean = mean/30;
+  var = var/30;
+  mean3d /= 30;
+  var3d /= 30;
+  BOOST_REQUIRE_SMALL(mean-0, 0.5);
+  BOOST_REQUIRE_SMALL(var - 1, 0.5);
+  BOOST_REQUIRE_SMALL(mean3d-0, 0.5);
+  BOOST_REQUIRE_SMALL(var3d - 1, 0.5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
