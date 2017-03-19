@@ -57,13 +57,17 @@ class GaussianInitialization
                   const size_t rows,
                   const size_t cols)
   {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::srand(std::time(0));
     W = arma::mat(rows, cols);
-    arma::vec m(1);
-    arma::mat v(1,1);
+    double m;
+    double v;
     m = mean;
     v = variance;
-    distribution::GaussianDistribution dist(m, v);
-    W.imbue( [&]() { return arma::as_scalar(dist.Random()); } );
+    std::normal_distribution<> d(m, v);
+    //distribution::GaussianDistribution dist(m, v);
+    W.imbue( [&]() { return arma::as_scalar(d(gen)); } );
   }
 
   /**
