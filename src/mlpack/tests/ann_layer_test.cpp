@@ -361,12 +361,12 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
   const size_t iterations = 10;
 
   double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
-  for (size_t trail = 0; trail < 5; ++trail)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     double nonzeroCount = 0;
     for (size_t i = 0; i < iterations; ++i)
     {
-      Dropout<> module(probability[trail]);
+      Dropout<> module(probability[trial]);
       module.Deterministic() = false;
 
       arma::mat output;
@@ -377,7 +377,7 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
       arma::uvec nonzero = arma::find(output);
       nonzeroCount += nonzero.n_elem;
     }
-    const double expected = input.n_elem * (1 - probability[trail]) *
+    const double expected = input.n_elem * (1 - probability[trial]) *
         iterations;
     const double error = fabs(nonzeroCount - expected) / expected;
 
