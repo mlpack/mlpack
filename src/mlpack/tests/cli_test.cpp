@@ -140,13 +140,11 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
   argv[0] = "programname";
   argv[1] = "--flag_test";
 
-  CLI::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, const_char<char**>(argv));
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
 
-  delete[] argv[0];
-  delete[] argv[1];
 }
 
 /**
