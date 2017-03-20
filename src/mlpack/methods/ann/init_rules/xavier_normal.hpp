@@ -37,11 +37,13 @@ class XavierNormal
    * @param cols Number of columns.
    */ 
   template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols, const size_t seed=21)
   {
-    std::mt19937 engine;  // Mersenne twister random number engine
-    std::normal_distribution<double> distr(0, sqrt(2/(rows+cols)));
     W = arma::zeros(rows, cols);
+    std::mt19937 engine;  // Mersenne twister random number engine
+    std::srand(seed);
+    double var = sqrt(2/ (static_cast<double>(rows)+static_cast<double>(cols)));
+    std::normal_distribution<double> distr(0, var);
     W.imbue( [&]() {return distr(engine); });
   }
 

@@ -38,7 +38,7 @@ class XavierInit: public InitializerType
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
     InitializerType::Initialize(W, rows, cols);
-    W = this->scalingFactor * W;
+    W = scalingFactor * W;
   }
   /**
    * Initialize randomly the elements of the specified weight 3rd order tensor.

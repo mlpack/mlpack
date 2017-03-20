@@ -38,10 +38,11 @@ class XavierUniform
    * @param cols Number of columns.
    */ 
   template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols,const size_t seed=21)
   {
     std::mt19937 engine;  // Mersenne twister random number engine
-    double a = sqrt(12/ rows+cols);
+    std::srand(seed);
+    double a = sqrt(12/ static_cast<double>(rows+cols));
     std::uniform_real_distribution<double> distr(-a, +a);
     W = arma::zeros(rows, cols);
     W.imbue( [&]() {return distr(engine); });
