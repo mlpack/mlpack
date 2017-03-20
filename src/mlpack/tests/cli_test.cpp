@@ -136,9 +136,9 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
-  char* argv[2];
-  argv[0] = strcpy(new char[strlen("programname") + 1], "programname");
-  argv[1] = strcpy(new char[strlen("--flag_test") + 1], "--flag_test");
+  const char* argv[2];
+  argv[0] = "programname";
+  argv[1] = "--flag_test";
 
   CLI::ParseCommandLine(argc, argv);
 
