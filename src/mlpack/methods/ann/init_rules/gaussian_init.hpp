@@ -55,11 +55,12 @@ class GaussianInitialization
    */
   void Initialize(arma::mat& W,
                   const size_t rows,
-                  const size_t cols)
+                  const size_t cols,
+                  const size_t seed =21)
   {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::srand(std::time(0));
+    std::srand(seed);
     W = arma::mat(rows, cols);
     double m;
     double v;
