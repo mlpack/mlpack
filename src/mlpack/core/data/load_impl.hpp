@@ -361,8 +361,22 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    LoadCSV loader(filename, fatal);
-    loader.Load(matrix, info, transpose);
+    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
+    try
+    {
+      LoadCSV loader(filename);
+      loader.Load(matrix, info, transpose);
+    }
+    catch (std::exception& e)
+    {
+      Timer::Stop("loading_data");
+      if (fatal)
+        Log::Fatal << e.what() << std::endl;
+      else
+        Log::Warn << e.what() << std::endl;
+
+      return false;
+    }
   }
   else if (extension == "arff")
   {
@@ -378,10 +392,13 @@ bool Load(const std::string& filename,
     }
     catch (std::exception& e)
     {
+      Timer::Stop("loading_data");
       if (fatal)
         Log::Fatal << e.what() << std::endl;
       else
         Log::Warn << e.what() << std::endl;
+
+      return false;
     }
   }
   else

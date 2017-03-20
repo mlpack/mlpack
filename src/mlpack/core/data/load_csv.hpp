@@ -35,29 +35,34 @@ namespace data {
  */
 class LoadCSV
 {
-public:
-  explicit LoadCSV(std::string file, bool fatal = false);
+ public:
+  /**
+   * Construct the LoadCSV object on the given file.  This will construct the
+   * rules necessary for loading and attempt to open the file.
+   */
+  LoadCSV(const std::string& file);
 
+  /**
+   * Load the file into the given matrix with the given DatasetMapper object.
+   * Throws exceptions on errors.
+   *
+   * @param inout Matrix to load into.
+   * @param infoSet DatasetMapper to use while loading.
+   * @param transpose If true, the matrix should be transposed on loading
+   *     (default).
+   */
   template<typename T, typename PolicyType>
-  void Load(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet, bool transpose = true)
+  void Load(arma::Mat<T> &inout,
+            DatasetMapper<PolicyType> &infoSet,
+            const bool transpose = true)
   {
-    if(!CanOpen())
-    {
-      return;
-    }
+    CheckOpen();
 
-    if(transpose)
-    {
-      TranposeParse(inout, infoSet);
-    }
+    if (transpose)
+      TransposeParse(inout, infoSet);
     else
-    {
-      NonTranposeParse(inout, infoSet);
-    }
+      NonTransposeParse(inout, infoSet);
   }
-
-  size_t ColSize();
-  size_t RowSize();
 
   /**
    * Peek at the file to determine the number of rows and columns in the matrix,
@@ -72,6 +77,8 @@ public:
   template<typename T, typename MapPolicy>
   void GetMatrixSize(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
   {
+    using namespace boost::spirit;
+
     // Take a pass through the file.  If the DatasetMapper policy requires it,
     // we will pass everything string through MapString().  This might be useful
     // if, e.g., the MapPolicy needs to find which dimensions are numeric or
@@ -95,16 +102,19 @@ public:
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
     rows = 0;
+
     while (std::getline(inFile, line))
     {
       ++rows;
+      // Remove whitespace from either side.
+      boost::trim(line);
 
       if (rows == 1)
       {
         // Extract the number of columns.
         auto findColSize = [&cols](iter_type) { ++cols; };
-        boost::spirit::qi::phrase_parse(line.begin(), line.end(),
-            CreateCharRule()[findColSize] % ",", boost::spirit::ascii::space);
+        qi::parse(line.begin(), line.end(),
+            stringRule[findColSize] % delimiterRule);
       }
 
       // I guess this is technically a second pass, but that's ok... still the
@@ -115,23 +125,35 @@ public:
         auto firstPassMap = [&](const iter_type& iter)
         {
           std::string str(iter.begin(), iter.end());
-          if (str == "\t")
-            str.clear();
           boost::trim(str);
 
           info.template MapFirstPass<T>(std::move(str), rows - 1);
         };
 
         // Now parse the line.
-        boost::spirit::qi::phrase_parse(line.begin(), line.end(),
-            CreateCharRule()[firstPassMap] % ",", boost::spirit::ascii::space);
+        qi::parse(line.begin(), line.end(),
+            stringRule[firstPassMap] % delimiterRule);
       }
     }
   }
 
+  /**
+   * Peek at the file to determine the number of rows and columns in the matrix,
+   * assuming a transposed matrix.  This will also take a first pass over the
+   * data for DatasetMapper, if MapPolicy::NeedsFirstPass is true.  The info
+   * object will be re-initialized with the correct dimensionality.
+   *
+   * @param rows Variable to be filled with the number of rows.
+   * @param cols Variable to be filled with the number of columns.
+   * @param info DatasetMapper object to use for first pass.
+   */
   template<typename T, typename MapPolicy>
-  void GetTransposeMatrixSize(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
+  void GetTransposeMatrixSize(size_t& rows,
+                              size_t& cols,
+                              DatasetMapper<MapPolicy>& info)
   {
+    using namespace boost::spirit;
+
     // Take a pass through the file.  If the DatasetMapper policy requires it,
     // we will pass everything string through MapString().  This might be useful
     // if, e.g., the MapPolicy needs to find which dimensions are numeric or
@@ -147,13 +169,15 @@ public:
     while (std::getline(inFile, line))
     {
       ++cols;
+      // Remove whitespace from either side.
+      boost::trim(line);
 
       if (cols == 1)
       {
         // Extract the number of dimensions.
         auto findRowSize = [&rows](iter_type) { ++rows; };
-        boost::spirit::qi::phrase_parse(line.begin(), line.end(),
-            CreateCharRule()[findRowSize] % ",", boost::spirit::ascii::space);
+        qi::parse(line.begin(), line.end(),
+            stringRule[findRowSize] % delimiterRule);
 
         // Now that we know the dimensionality, initialize the DatasetMapper.
         info = DatasetMapper<MapPolicy>(rows);
@@ -168,16 +192,14 @@ public:
         auto firstPassMap = [&](const iter_type& iter)
         {
           std::string str(iter.begin(), iter.end());
-          if (str == "\t")
-            str.clear();
           boost::trim(str);
 
           info.template MapFirstPass<T>(std::move(str), dim++);
         };
 
         // Now parse the line.
-        boost::spirit::qi::phrase_parse(line.begin(), line.end(),
-            CreateCharRule()[firstPassMap] % ",", boost::spirit::ascii::space);
+        qi::parse(line.begin(), line.end(),
+            stringRule[firstPassMap] % delimiterRule);
       }
     }
   }
@@ -185,31 +207,21 @@ public:
 private:
   using iter_type = boost::iterator_range<std::string::iterator>;
 
-  struct ElemParser
-  {
-    //return int_parser if the type of T is_integral
-    template<typename T>
-    static typename std::enable_if<std::is_integral<T>::value,
-    boost::spirit::qi::int_parser<T>>::type
-    Parser()
-    {
-      return boost::spirit::qi::int_parser<T>();
-    }
+  /**
+   * Check whether or not the file has successfully opened; throw an exception
+   * if not.
+   */
+  void CheckOpen();
 
-    //return real_parser if T is floating_point
-    template<typename T>
-    static typename std::enable_if<std::is_floating_point<T>::value,
-    boost::spirit::qi::real_parser<T>>::type
-    Parser()
-    {
-      return boost::spirit::qi::real_parser<T>();
-    }
-  };
-
-  bool CanOpen();
-
+  /**
+   * Parse a non-transposed matrix.
+   *
+   * @param inout Matrix to load into.
+   * @param infoSet DatasetMapper object to load with.
+   */
   template<typename T, typename PolicyType>
-  void NonTranposeParse(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet)
+  void NonTransposeParse(arma::Mat<T>& inout,
+                         DatasetMapper<PolicyType>& infoSet)
   {
     using namespace boost::spirit;
 
@@ -239,118 +251,122 @@ private:
       inout(row, col++) = infoSet.template MapString<T>(std::move(str), row);
     };
 
-    auto charRule = CreateCharRule();
     while (std::getline(inFile, line))
     {
-      //parse the numbers from a line(ex : 1,2,3,4), if the parser find the number
-      //it will execute the setNum function
-      const bool canParse = qi::phrase_parse(line.begin(), line.end(),
-          charRule[setCharClass] % ",", ascii::space);
+      // Remove whitespace from either side.
+      boost::trim(line);
+
+      //parse the numbers from a line(ex : 1,2,3,4), if the parser find the
+      //number it will execute the setNum function
+      const bool canParse = qi::parse(line.begin(), line.end(),
+          stringRule[setCharClass] % delimiterRule);
+
+      // Make sure we got the right number of rows.
+      if (col != cols)
+      {
+        std::ostringstream oss;
+        oss << "LoadCSV::NonTransposeParse(): wrong number of dimensions ("
+            << col << ") on line " << row << "; should be " << cols
+            << " dimensions.";
+        throw std::runtime_error(oss.str());
+      }
 
       if (!canParse)
       {
-        throw std::runtime_error("LoadCSV cannot parse categories");
+        std::ostringstream oss;
+        oss << "LoadCSV::NonTransposeParse(): parsing error on line " << col
+            << "!";
+        throw std::runtime_error(oss.str());
       }
 
       ++row; col = 0;
     }
   }
 
+  /**
+   * Parse a transposed matrix.
+   *
+   * @param inout Matrix to load into.
+   * @param infoSet DatasetMapper to load with.
+   */
   template<typename T, typename PolicyType>
-  void TranposeParse(arma::Mat<T> &inout, DatasetMapper<PolicyType> &infoSet)
+  void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet)
   {
+    using namespace boost::spirit;
+
     // Get matrix size.  This also initializes infoSet correctly.
     size_t rows, cols;
     GetTransposeMatrixSize<T>(rows, cols, infoSet);
 
     // Set the matrix size.
     inout.set_size(rows, cols);
-    TranposeParseImpl(inout, infoSet);
-  }
 
-  template<typename T, typename PolicyType>
-  bool TranposeParseImpl(arma::Mat<T>& inout,
-                         DatasetMapper<PolicyType>& infoSet)
-  {
-    using namespace boost::spirit;
-
+    // Initialize auxiliary variables.
     size_t row = 0;
     size_t col = 0;
     std::string line;
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
 
-    auto setCharClass = [&](iter_type const &iter)
+    /**
+     * This is the parse rule for strings.  When we get a string we have to pass
+     * it to the DatasetMapper.
+     */
+    auto parseString = [&](iter_type const &iter)
     {
       // All parsed values must be mapped.
       std::string str(iter.begin(), iter.end());
-      if (str == "\t")
-        str.clear();
       boost::trim(str);
 
       inout(row, col) = infoSet.template MapString<T>(std::move(str), row);
       ++row;
     };
 
-    auto charRule = CreateCharRule();
     while (std::getline(inFile, line))
     {
-      row = 0;
-      //parse number of characters from a line, it will execute setNum if it is number,
-      //else execute setCharClass, "|" means "if not a, then b"
-      // Assemble the rule
+      // Remove whitespace from either side.
+      boost::trim(line);
 
-      const bool canParse = qi::phrase_parse(line.begin(), line.end(),
-                                             charRule[setCharClass] % ",",
-                                             ascii::space);
-      if(!canParse)
+      // Reset the row we are looking at.  (Remember this is transposed.)
+      row = 0;
+
+      // Now use boost::spirit to parse the characters of the line;
+      // parseString() will be called when a token is detected.
+      const bool canParse = qi::parse(line.begin(), line.end(),
+          stringRule[parseString] % delimiterRule);
+
+      // Make sure we got the right number of rows.
+      if (row != rows)
       {
-        throw std::runtime_error("LoadCSV cannot parse categories");
+        std::ostringstream oss;
+        oss << "LoadCSV::TransposeParse(): wrong number of dimensions (" << row
+            << ") on line " << col << "; should be " << rows << " dimensions.";
+        throw std::runtime_error(oss.str());
       }
+
+      if (!canParse)
+      {
+        std::ostringstream oss;
+        oss << "LoadCSV::TransposeParse(): parsing error on line " << col
+            << "!";
+        throw std::runtime_error(oss.str());
+      }
+
+      // Increment the column index.
       ++col;
     }
-
-    return true;
   }
 
-  template<typename T>
-  boost::spirit::qi::rule<std::string::iterator, T(), boost::spirit::ascii::space_type>
-  CreateNumRule() const
-  {
-    using namespace boost::spirit;
+  //! Spirit rule for parsing.
+  boost::spirit::qi::rule<std::string::iterator, iter_type()> stringRule;
+  //! Spirit rule for delimiters (i.e. ',' for CSVs).
+  boost::spirit::qi::rule<std::string::iterator, iter_type()> delimiterRule;
 
-    //elemParser will generate integer or real parser based on T
-    auto elemParser = ElemParser::Parser<T>();
-    //qi::skip can specify which characters you want to skip,
-    //in this example, elemParser will parse int or double value,
-    //we use qi::skip to skip space
-
-    //qi::omit can omit the attributes of spirit, every parser of spirit
-    //has attribute(the type will pass into actions(functor))
-    //if you do not omit it, the attribute combine with attribute may
-    //change the attribute
-
-    //input like 2-200 or 2DM will make the parser fail,
-    //so we use "look ahead parser--&" to make sure next
-    //character is "," or end of line(eof) or end of file(eoi)
-    //looks ahead parser will not consume any input or generate
-    //any attribute
-    if(extension == "csv" || extension == "txt")
-    {
-      return elemParser >> &(qi::lit(",") | qi::eol | qi::eoi);
-    }
-    else
-    {
-      return elemParser >> &(qi::lit("\t") | qi::eol | qi::eoi);
-    }
-  }
-
-  boost::spirit::qi::rule<std::string::iterator, iter_type(), boost::spirit::ascii::space_type>
-  CreateCharRule() const;
-
+  //! Extension (type) of file.
   std::string extension;
-  bool fatalIfOpenFail;
-  std::string fileName;
+  //! Name of file.
+  std::string filename;
+  //! Opened stream for reading.
   std::ifstream inFile;
 };
 
