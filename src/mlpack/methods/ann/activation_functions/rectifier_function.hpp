@@ -51,7 +51,7 @@ class RectifierFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double fn(const double x)
+  static double Fn(const double x)
   {
     return std::max(0.0, x);
   }
@@ -63,7 +63,7 @@ class RectifierFunction
    * @param y The resulting output activation.
    */
   template<typename eT>
-  static void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
     y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x);
   }
@@ -75,11 +75,11 @@ class RectifierFunction
    * @param y The resulting output activation.
    */
   template<typename eT>
-  static void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
+  static void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
   {
     y = x;
     for (size_t s = 0; s < x.n_slices; s++)
-      fn(x.slice(s), y.slice(s));
+      Fn(x.slice(s), y.slice(s));
   }
 
   /**
@@ -88,7 +88,7 @@ class RectifierFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double deriv(const double y)
+  static double Deriv(const double y)
   {
     return y > 0;
   }
@@ -100,12 +100,12 @@ class RectifierFunction
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
-  static void deriv(const InputType& y, OutputType& x)
+  static void Deriv(const InputType& y, OutputType& x)
   {
     x = y;
 
     for (size_t i = 0; i < y.n_elem; i++)
-      x(i) = deriv(y(i));
+      x(i) = Deriv(y(i));
   }
 }; // class RectifierFunction
 

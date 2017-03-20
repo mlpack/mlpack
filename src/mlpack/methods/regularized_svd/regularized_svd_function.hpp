@@ -111,8 +111,7 @@ namespace optimization {
    * abstraction does not work as fast as we might like it to.
    */
   template<>
-  double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
-      arma::mat& parameters);
+  double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters);
 
 } // namespace optimization
 } // namespace mlpack

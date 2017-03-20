@@ -155,9 +155,10 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionConstructorTest)
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainTest)
 {
-  std::vector<arma::vec> pro{{0.1, 0.3, 0.6},
-                             {0.3, 0.3, 0.3},
-                             {0.25, 0.25, 0.5}};
+  std::vector<arma::vec> pro;
+  pro.push_back(arma::vec("0.1, 0.3, 0.6"));
+  pro.push_back(arma::vec("0.3, 0.3, 0.3"));
+  pro.push_back(arma::vec("0.25, 0.25, 0.5"));
 
   DiscreteDistribution d(pro);
 
@@ -772,7 +773,6 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
  */
 BOOST_AUTO_TEST_CASE(GammaDistributionFittingTest)
 {
-  math::RandomSeed(std::time(NULL));
   // Offset from the actual alpha/beta. 10% is quite a relaxed tolerance since
   // the random points we generate are few (for test speed) and might be fitted
   // better by a similar distribution.

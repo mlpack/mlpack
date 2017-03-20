@@ -10,11 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-#include <iostream>
-#include <streambuf>
-#include <string.h>
-#include <stdlib.h>
+#include <mlpack/prereqs.hpp>
 
 #include "prefixedoutstream.hpp"
 
@@ -97,7 +93,6 @@ PrefixedOutStream& PrefixedOutStream::operator<<(const char* str)
   BaseLogic<const char*>(str);
   return *this;
 }
-
 
 PrefixedOutStream& PrefixedOutStream::operator<<(std::string& str)
 {
