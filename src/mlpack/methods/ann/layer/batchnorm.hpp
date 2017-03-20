@@ -1,6 +1,6 @@
 /**
  * @file batchnorm.hpp
- * @author Marcus Edel
+ * @author Praveen Ch
  *
  * Definition of the Batch Normalisation layer class as proposed by Ioffe et.al
  *
@@ -9,6 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 #define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 
@@ -19,6 +20,36 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/**
+ * Implementation of the Batch Normalisation layer class. The layer tranforms
+ * the input data into zero mean and unit variance and then scales and shifts
+ * the data by parameters, gamma and beta respectively. These parameters are 
+ * learnt by the network.
+ *
+ * If deterministic is false (training), the mean and variance over the batch is
+ * calculated and the data is normalized. If it is set to true (testing) then 
+ * the mean and variance accrued over the training set is used.
+ *
+ * For more information, refer to the following paper,
+ *
+ * @code
+ * @article{DBLP:journals/corr/IoffeS15,
+ *   author    = {Sergey Ioffe and
+ *                Christian Szegedy},
+ *   title     = {Batch Normalization: Accelerating Deep Network Training by 
+ *                Reducing Internal Covariate Shift},
+ *   journal   = {CoRR},
+ *   volume    = {abs/1502.03167}
+ * }
+ *
+ * @endcode
+ * 
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
+
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -26,21 +57,52 @@ template <
 class BatchNorm
 {
  public:
-
+  //! Creating BatchNorm object.
   BatchNorm();
 
+  /**
+   * Create the BatchNorm layer object for a specified number of input units.
+   *
+   * @param size The number of input units.
+   * @param eps The epsilon added to variance to ensure numerical stability.
+   */
   BatchNorm(const size_t size, const double eps);
 
+  /**
+   * Reset the layer parameters
+   */
   void Reset();
 
+  /**
+   * Forward pass of the Batch Normalization layer. Transforms the input data
+   * into zero mean and unit variance, scales the data by a factor gamma and
+   * shifts it by beta.
+   *
+   * @param input Input data for the layer
+   * @param output Resulting output activations.
+   */
   template<typename eT>
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
+  /**
+   * Backward pass through the layer.
+   *
+   * @param input The input activations
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
+  /**
+   * Calculate the gradient using the output delta and the input activations.
+   *
+   * @param input The input activations
+   * @param error The calculated error
+   * @param gradient The calculated gradient.
+   */
   template<typename eT>
   void Gradient(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
@@ -71,57 +133,66 @@ class BatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  OutputDataType& Mean() { return mean; }
-
-  OutputDataType& Variance() { return variance; }
-
-  OutputDataType& Gamma() { return gamma; }
-
-  OutputDataType& Beta() { return beta; }
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
 
 
-
+  /**
+   * Serialize the layer
+   */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
-  OutputDataType gamma;
-
-  OutputDataType beta;
-
-  OutputDataType weights;
-
-  double eps;
-
-  bool deterministic;
-
+  //! Locally-stored number of input units.
   size_t size;
 
+  //! Locally-stored epsilon value.
+  double eps;
+
+  //! Locally-stored scale parameter.
+  OutputDataType gamma;
+
+  //! Locally-stored shift parameter.
+  OutputDataType beta;
+
+  //! Locally-stored weight object.
+  OutputDataType weights;
+
+  /**
+   * If true then mean and variance over the training set will be considered
+   * instead of being calculated over the batch.
+   */
+  bool deterministic;
+
+  //! Locally-stored mean object.
   OutputDataType mean;
 
-  // OutputDataType trainingMean;
-
+  //! Locally-stored variance object.
   OutputDataType variance;
 
-  // OutputDataType trainingVariance;
-
+  //! Locally-stored running statistics object.
   arma::running_stat_vec<arma::colvec> stats;
 
+  //! Locally-stored gradient object.
   OutputDataType gradient;
 
+  //! Locally-stored delta object.
   OutputDataType delta;
 
-   //! Locally-stored input parameter object.
+  //! Locally-stored input parameter object.
   InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-};
+}; // class BatchNorm
 
-}
-}
+} // namespace ann
+} // namespace mlpack
 
+// Include the implementation.
 #include "batchnorm_impl.hpp"
 
 #endif
