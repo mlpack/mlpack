@@ -14,6 +14,7 @@ set(SOURCES
   range.hpp
   range_impl.hpp
   round.hpp
+  shapiro_wilk_test.hpp
 )
 
 # add directory name to sources
