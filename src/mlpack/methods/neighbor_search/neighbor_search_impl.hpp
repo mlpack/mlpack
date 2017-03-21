@@ -398,8 +398,10 @@ template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
-         template<typename> class TraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+    SingleTreeTraversalType>::
 NeighborSearch(const NeighborSearch& other) :
     oldFromNewReferences(other.oldFromNewReferences),
     referenceTree(other.naive ? NULL : new Tree(*other.referenceTree)),
@@ -425,8 +427,10 @@ template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
-         template<typename> class TraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
+    SingleTreeTraversalType>::
 NeighborSearch(NeighborSearch&& other) :
     oldFromNewReferences(std::move(other.oldFromNewReferences)),
     referenceTree(other.referenceTree),
