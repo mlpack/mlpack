@@ -46,7 +46,7 @@ target_link_libraries(mlpack
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 2.1
+  VERSION 2.2
   SOVERSION 2
 )
 
