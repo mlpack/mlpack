@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(XavierInitTest)
   BOOST_REQUIRE_EQUAL(b, 1);
   xavierNormal.Initialize(weights, 100, 100);
   //std::cout << weights << std::endl;
-  auto ret = shapiro(weights, 0.05);
+  auto ret = Shapiro(weights, 0.05);
   BOOST_REQUIRE_EQUAL(ret.accept, true);
 }
 
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(HeInitTest)
   bool b = arma::all(arma::vectorise(weights)>=-(1e-2) || arma::vectorise(weights)<=(1e-2));
   BOOST_REQUIRE_EQUAL(b, 1);
   heNormal.Initialize(weights, 100, 100);
-  auto ret = shapiro(weights, 0.05);
+  auto ret = Shapiro(weights, 0.05);
   BOOST_REQUIRE_EQUAL(ret.accept, true);
 }
 

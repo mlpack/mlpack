@@ -591,8 +591,8 @@ BOOST_AUTO_TEST_CASE(RangeContainsRange)
 BOOST_AUTO_TEST_CASE(ShapiroWilkTest)
 {
   arma::mat B = {35, 45, 55, 58, 61, 63, 65, 68, 70, 72, 74, 86};
-  auto val = shapiro(B, 0.05);
-  BOOST_REQUIRE_CLOSE_FRACTION(val.pValue, 0.921, 1e-2);
+  auto val = Shapiro(B, 0.05);
+  BOOST_REQUIRE_CLOSE_FRACTION(val.pvalue, 0.921, 1e-2);
   BOOST_REQUIRE_CLOSE_FRACTION(val.W, 0.971, 1e-2);
   BOOST_REQUIRE_CLOSE_FRACTION(val.zscore, -1.416, 1e-2);
   BOOST_REQUIRE_EQUAL(val.accept, true);
