@@ -55,18 +55,8 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   // the forward pass when deterministic is set to true.
   if (deterministic)
   {
-    for (size_t i = 0; i < output.n_cols; i++)
-    {
-      output.col(i) = input.col(i) - stats.mean().col(i);
-    }
-
-    for (size_t i = 0; i < output.n_rows; i++)
-    {
-      output.row(i) *= arma::as_scalar(gamma.row(i));
-      output.row(i) /= arma::as_scalar(arma::sqrt(stats.var(1).row(i) + eps));
-      output.row(i) += arma::as_scalar(beta.row(i));
-    }
-    
+    mean = stats.mean();
+    variance = stats.var(1);    
   }
   else
   {
@@ -75,19 +65,18 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     
     for (size_t i = 0; i < output.n_cols; i++)
     {
-      output.col(i) = input.col(i) - mean;
       stats(input.col(i));
     }
+  }
 
     for (size_t i = 0; i < output.n_rows; i++)
     {
-      output.row(i) = (input.row(i) - arma::as_scalar(arma::mean(input.row(i), 1)));
+      output.row(i) = input.row(i) - arma::as_scalar(mean.row(i));
       output.row(i) /= (arma::as_scalar(arma::sqrt(variance.row(i) + eps)));
       output.row(i) *= arma::as_scalar(gamma.row(i));
       output.row(i) += arma::as_scalar(beta.row(i));
     }
   }
-}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>

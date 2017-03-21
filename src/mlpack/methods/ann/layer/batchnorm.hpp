@@ -138,6 +138,12 @@ class BatchNorm
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get the mean over the training data.
+  OutputDataType TrainingMean() { return stats.mean(); }
+
+  //! Get the variance over the training data.
+  OutputDataType TrainingVariance() { return stats.var(1); }
+
 
   /**
    * Serialize the layer
