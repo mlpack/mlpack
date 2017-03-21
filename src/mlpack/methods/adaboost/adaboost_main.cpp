@@ -36,6 +36,8 @@
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include "adaboost.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace std;

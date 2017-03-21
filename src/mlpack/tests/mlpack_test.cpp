@@ -22,6 +22,8 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+#include <mlpack/prereqs.hpp>
+
 /**
  * Provide a global fixture for each test.
  *

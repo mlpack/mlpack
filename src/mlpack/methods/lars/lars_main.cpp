@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 #include "lars.hpp"
 

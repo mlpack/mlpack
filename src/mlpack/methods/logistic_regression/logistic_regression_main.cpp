@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 #include "logistic_regression.hpp"
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>

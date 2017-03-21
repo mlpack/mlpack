@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 #include "naive_bayes_classifier.hpp"
 

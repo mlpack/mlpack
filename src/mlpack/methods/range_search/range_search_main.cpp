@@ -12,6 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 

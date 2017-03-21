@@ -88,10 +88,6 @@
 #include <mlpack/core/util/timers.hpp>
 #include <mlpack/core/util/deprecated.hpp>
 
-// All code needs to be able to load and save. (Not true for 3.x onwards.)
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
-
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
 // it's part of the C++11 standard.

@@ -9,6 +9,8 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace mlpack::range;

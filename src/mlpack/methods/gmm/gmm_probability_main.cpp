@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include "gmm.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace std;
 using namespace mlpack;

@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 #include "mean_shift.hpp"
 
 using namespace mlpack;

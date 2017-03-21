@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 #include "linear_regression.hpp"
 
 PROGRAM_INFO("Simple Linear Regression and Prediction",

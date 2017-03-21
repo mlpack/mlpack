@@ -12,6 +12,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param.hpp>
 #include "dt_utils.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace mlpack::det;

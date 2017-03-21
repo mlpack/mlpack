@@ -6,6 +6,8 @@
  */
 #include <mlpack/core.hpp>
 #include "decision_tree.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace std;
 using namespace mlpack;

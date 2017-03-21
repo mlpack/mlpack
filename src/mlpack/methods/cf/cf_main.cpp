@@ -16,6 +16,8 @@
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
 #include "cf.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace mlpack::cf;

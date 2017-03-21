@@ -11,6 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 #include "ra_search.hpp"
 #include "ra_model.hpp"

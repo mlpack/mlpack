@@ -13,6 +13,8 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include "drusilla_select.hpp"
 #include "qdafn.hpp"
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
