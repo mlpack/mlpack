@@ -127,8 +127,9 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
   
   for (size_t i = 0; i < normalized.n_rows; i++)
   {
-    normalized.row(i) = (input.row(i) - arma::as_scalar(arma::mean(input.row(i), 1)));
-    normalized.row(i) /= (arma::as_scalar(arma::sqrt(variance.row(i) + eps)));
+    normalized.row(i) = input.row(i) - arma::as_scalar(arma::mean(input.row(i), 1));
+    normalized.row(i) /= 
+        arma::as_scalar(arma::sqrt(arma::var(input.row(i), 1, 1) + eps));
   }
 
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
