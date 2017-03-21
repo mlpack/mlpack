@@ -93,8 +93,7 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   }
 
   if (CLI::HasParam("assignments_file"))
-    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false,
-        false); // No transpose.
+    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false);
 }
 
 int main(int argc, char** argv)
