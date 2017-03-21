@@ -18,7 +18,6 @@ endmacro ()
 set(DIRS
   preprocess
   adaboost
-  ann
   approx_kfn
   amf
   cf
@@ -39,7 +38,6 @@ set(DIRS
   local_coordinate_coding
   logistic_regression
   lsh
-#  mvu
   matrix_completion
   naive_bayes
   nca
