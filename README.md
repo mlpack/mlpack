@@ -1,21 +1,3 @@
-<h1 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=280 alt="mlpack: a scalable C++ machine learning library"></a>
-  <br>a scalable C++ machine learning library<br>
-</h1>
-
-<p align="center">
-  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build" alt="Jenkins"></a>
-  <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build" alt="Appveyor"></a>
-  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg" alt="Coveralls"></a>
-</p>
-
-<p align="center">
-  <em>
-    Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.1.1.tar.gz">current stable version (2.1.1)</a>
-  </em>
-</p>
-
 **mlpack** is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
@@ -70,7 +52,8 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo     >= 4.200.0
-      Boost (program_options, math_c99, unit_test_framework, serialization)
+      Boost (program_options, math_c99, unit_test_framework, serialization,
+             spirit)
       CMake         >= 2.8.5
 
 All of those should be available in your distribution's package manager.  If
