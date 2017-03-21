@@ -44,6 +44,8 @@
 #define REQUIRE_RELATIVE_ERR( L, R, E ) \
     BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
 
+#include <mlpack/prereqs.hpp>
+
 // Check the values of two matrices.
 inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
                           double tolerance = 1e-5)
