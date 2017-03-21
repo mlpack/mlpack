@@ -43,7 +43,7 @@ Copyright:
   Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
   Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
   Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
-  Copyright 2015-2016, Tham Ngap Wei <thamngapwei@gmail.com>
+  Copyright 2015-2017, Tham Ngap Wei <thamngapwei@gmail.com>
   Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
   Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
   Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
