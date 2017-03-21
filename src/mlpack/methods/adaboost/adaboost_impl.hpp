@@ -139,7 +139,10 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
 
     // Our goal is to find alphat which mizimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = 0.5 * log((1 + rt) / (1 - rt));
+    if (rt >= 1)
+      alphat = 0.5 * log(DBL_MAX);
+    else
+      alphat = 0.5 * log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
