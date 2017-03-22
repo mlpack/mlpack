@@ -16,6 +16,8 @@
 #define MLPACK_CORE_OPTIMIZERS_MOMENTUM_SGD_MOMENTUM_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include "nestrov_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -96,10 +98,10 @@ class NAG
    *     function is visited in linear order.
    */
   NAG(DecomposableFunctionType& function,
+      const double momentum = 0.5,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const double momentum = 0.5,
       const bool shuffle = true);
 
   /**
@@ -110,57 +112,38 @@ class NAG
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(arma::mat& iterate){return optimizer.Optimize(iterate);};
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
-  double StepSize() const { return stepSize; }
+  double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
-
-  //! Get the momentum parameter.
-  double Momentum() const { return momentum; }
-  //! Modify the momentum paramete.
-  double& Momentum() { return momentum; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
 
-  //! The step size for each example.
-  double stepSize;
+  const NestrovUpdate nestrovupdate;
 
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! The momentum hyperparameter
-  double momentum;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
+  SGD<DecomposableFunctionType, NestrovUpdate>  optimizer;
 };
 
 } // namespace optimization

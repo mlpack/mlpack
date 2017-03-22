@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/nestrov_update.hpp>
 
 namespace mlpack {
 namespace optimization {

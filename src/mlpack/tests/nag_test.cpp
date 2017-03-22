@@ -11,8 +11,10 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/nestrov/nag.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
+#include <mlpack/core/optimizers/nestrov/nestrov_update.hpp>
+#include <mlpack/core/optimizers/nestrov/nag.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -27,27 +29,29 @@ using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
 
-BOOST_AUTO_TEST_SUITE(NAGTest);
+BOOST_AUTO_TEST_SUITE(NAGTEST);
 
 /**
  * Tests the NAG optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleNAGTestFunction)
+BOOST_AUTO_TEST_CASE(NAGTestFunction)
 {
   SGDTestFunction f;
-  NAG<SGDTestFunction> optimizer(f, 1e-3, 5000000, 1e-9, 0.9, true);
+  NestrovUpdate update(0.7);
+  SGD<SGDTestFunction, NestrovUpdate> s(f, 0.0003, 2500000, 1e-9, true, update);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(coordinates);
+  double result = s.Optimize(coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
+  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
+  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
+  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
-
 /**
- * Run Adam on logistic regression and make sure the results are acceptable.
- */
+ * Run NAG on logistic regression and make sure the results are acceptable.
+**/
+
 BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
@@ -105,5 +109,4 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
-
 BOOST_AUTO_TEST_SUITE_END();

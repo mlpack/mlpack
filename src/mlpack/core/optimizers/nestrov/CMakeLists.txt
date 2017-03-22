@@ -1,6 +1,7 @@
 set(SOURCES
   nag.hpp
   nag_impl.hpp
+  nestrov_update.hpp
 )
 
 set(DIR_SRCS)

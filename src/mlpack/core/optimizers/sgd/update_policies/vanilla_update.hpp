@@ -50,9 +50,11 @@ class VanillaUpdate
   * @param stepSize Step size to be used for the given iteration.
   * @param gradient The gradient matrix.
   */
+  template<typename... T>
   void Update(arma::mat& iterate,
               const double stepSize,
-              const arma::mat& gradient)
+              const arma::mat& gradient,
+              T... args)
   {
     // Perform the vanilla SGD update.
     iterate -= stepSize * gradient;
