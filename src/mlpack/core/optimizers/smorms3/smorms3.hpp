@@ -130,21 +130,8 @@ class SMORMS3
   //! The instantiated function.
   DecomposableFunctionType& function;
 
-  //! The step size for each example.
-  double stepSize;
-
   //! The value used to initialise the mean squared gradient parameter.
   double epsilon;
-
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
 
   //! The SMORMS3Update update policy object.
   SMORMS3Update smorms3Update;
