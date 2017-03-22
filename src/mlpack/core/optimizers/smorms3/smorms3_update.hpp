@@ -41,8 +41,10 @@ class SMORMS3Update
    *
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    */
-  SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
-  { /* Do nothing. */ };
+  SMORMS3Update(const double epsilon = 1e-16) :
+              epsilon(epsilon),
+              previousStepSize(0)
+  { /* Do nothing. */ }
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return epsilon; }
@@ -105,7 +107,7 @@ class SMORMS3Update
   }
  private:
    //! The value used to initialise the mean squared gradient parameter.
-   double epsilon, previousStepSize = 0;
+   double epsilon, previousStepSize;
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
    // The matrix to be filled with stepSize.
