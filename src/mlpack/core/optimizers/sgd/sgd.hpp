@@ -70,11 +70,11 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
- * @tparam UpdatePolicy update policy used by SGD during the iterative update
+ * @tparam UpdatePolicyType update policy used by SGD during the iterative update
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<typename DecomposableFunctionType, typename UpdatePolicy = VanillaUpdate>
+template<typename DecomposableFunctionType, typename UpdatePolicyType = VanillaUpdate>
 class SGD
 {
  public:
@@ -99,7 +99,7 @@ class SGD
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const UpdatePolicy updatePolicy = UpdatePolicy());
+      const UpdatePolicyType updatePolicy = UpdatePolicyType());
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -137,7 +137,9 @@ class SGD
   bool& Shuffle() { return shuffle; }
 
   //! Get the update policy. 
-  UpdatePolicy GetUpdatePolicy() const { return updatePolicy; }
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
  private:
   //! The instantiated function.
@@ -157,7 +159,7 @@ class SGD
   bool shuffle;
 
   //! The update policy used to update the parameters in each iteration.
-  UpdatePolicy updatePolicy;
+  UpdatePolicyType updatePolicy;
 };
 
 template<typename DecomposableFunctionType>
