@@ -133,7 +133,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& responses)
+    arma::mat& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -146,23 +146,23 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
     ResetDeterministic();
   }
 
-  arma::mat responsesTemp;
+  arma::mat resultsTemp;
   Forward(std::move(arma::mat(predictors.colptr(0),
       predictors.n_rows, 1, false, true)));
-  responsesTemp = boost::apply_visitor(outputParameterVisitor,
+  resultsTemp = boost::apply_visitor(outputParameterVisitor,
       network.back()).col(0);
 
-  responses = arma::mat(responsesTemp.n_elem, predictors.n_cols);
-  responses.col(0) = responsesTemp.col(0);
+  results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
+  results.col(0) = resultsTemp.col(0);
 
   for (size_t i = 1; i < predictors.n_cols; i++)
   {
     Forward(std::move(arma::mat(predictors.colptr(i),
         predictors.n_rows, 1, false, true)));
 
-    responsesTemp = boost::apply_visitor(outputParameterVisitor,
+    resultsTemp = boost::apply_visitor(outputParameterVisitor,
         network.back());
-    responses.col(i) = responsesTemp.col(0);
+    results.col(i) = resultsTemp.col(0);
   }
 }
 
