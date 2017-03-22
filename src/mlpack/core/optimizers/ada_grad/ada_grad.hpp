@@ -109,9 +109,9 @@ class AdaGrad
   double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return adagradUpdate.Epsilon(); }
+  double Epsilon() const { return optimizer.GetUpdatePolicy().Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return adagradUpdate.Epsilon(); }
+  double& Epsilon() { return optimizer.GetUpdatePolicy().Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }

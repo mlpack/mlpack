@@ -2,6 +2,7 @@
  * @file sgd.hpp
  * @author Ryan Curtin
  * @author Arun Reddy
+ * @author Abhinav Moudgil
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -134,6 +135,9 @@ class SGD
   bool Shuffle() const { return shuffle; }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
+
+  //! Get the update policy. 
+  UpdatePolicy GetUpdatePolicy() const { return updatePolicy; }
 
  private:
   //! The instantiated function.
