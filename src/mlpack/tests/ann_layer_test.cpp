@@ -183,6 +183,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
 {
   arma::mat output, input, delta;
   Add<> module(10);
+  module.Parameters().randu();
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
