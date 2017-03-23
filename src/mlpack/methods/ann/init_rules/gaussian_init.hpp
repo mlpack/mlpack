@@ -15,6 +15,9 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_GAUSSIAN_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
+
+using namespace mlpack::math;
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -55,20 +58,14 @@ class GaussianInitialization
    */
   void Initialize(arma::mat& W,
                   const size_t rows,
-                  const size_t cols,
-                  const size_t seed =21)
+                  const size_t cols)
   {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::srand(seed);
     W = arma::mat(rows, cols);
     double m;
     double v;
     m = mean;
     v = variance;
-    std::normal_distribution<> d(m, v);
-    //distribution::GaussianDistribution dist(m, v);
-    W.imbue( [&]() { return arma::as_scalar(d(gen)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(m, v)); } );
   }
 
   /**

@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -20,12 +21,12 @@
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(InitRulesTest);
 
@@ -139,12 +140,11 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   mean=mean3d=1;
   var=var3d=1;
   GaussianInitialization t(0, 0.2);
-
+  RandomSeed(21);
   for(size_t i =0; i<10; i++)
   {
     t.Initialize(weights, row, col);
     t.Initialize(weights3d, row, col, slice);
-    distribution::GaussianDistribution Dist;
     mean += arma::accu(weights) / weights.n_elem;
     var += arma::accu(pow((weights.t() - mean), 2)) / weights.n_elem -1 ;
     mean3d += arma::accu(weights3d.slice(0)) / weights3d.slice(0).n_elem;
@@ -154,10 +154,10 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   var = var/10;
   mean3d /= 10;
   var3d /= 10;
-  BOOST_REQUIRE_SMALL(mean-0, 0.5);
-  BOOST_REQUIRE_SMALL(var - 0.2, 0.5);
-  BOOST_REQUIRE_SMALL(mean3d-0, 0.5);
-  BOOST_REQUIRE_SMALL(var3d - 0.2, 0.5);
+  BOOST_REQUIRE(mean < 0.2);
+  BOOST_REQUIRE(var < 0.4);
+  BOOST_REQUIRE(mean3d < 0.2);
+  BOOST_REQUIRE(var3d < 0.4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
