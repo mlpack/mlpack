@@ -61,11 +61,7 @@ class GaussianInitialization
                   const size_t cols)
   {
     W = arma::mat(rows, cols);
-    double m;
-    double v;
-    m = mean;
-    v = variance;
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(m, v)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
   /**
