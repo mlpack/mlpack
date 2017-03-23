@@ -145,9 +145,11 @@ class SoftmaxRegression
   size_t Classify(const VecType& point) const;
 
   /**
-   * Classify the given points. The class probabilities for each point is computed.
-   * For each point, the class with the highest probability among all is chosen.
-   * The class labels and class probabilities for each point are returned.
+   * Classify the given points, returning class probabilities and predicted
+   * class label for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
    *
    * @param dataset Matrix of data points to be classified.
    * @param labels Predicted labels for each point.
@@ -157,7 +159,7 @@ class SoftmaxRegression
                  arma::mat& probabilites) const;
 
   /**
-   * Classify the given points. The class probabilities for each point is returned.
+   * Classify the given points, returning class probabilities for each point.
    *
    * @param dataset Matrix of data points to be classified.
    * @param probabilities Class probabilities for each point.
