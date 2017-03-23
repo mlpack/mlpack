@@ -14,6 +14,9 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_HE_NORMAL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
+
+using namespace mlpack::math;
  
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -37,14 +40,11 @@ class HeNormal
    * @param cols Number of columns.
    */ 
   template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols, const size_t seed=21)
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    std::mt19937 engine;  // Mersenne twister random number engine
-    std::srand(seed);
-    double var = sqrt(2/ static_cast<double>(rows));
-    std::normal_distribution<double> distr(0, var);
+    double var = sqrt(2/ (double)(rows));
     W = arma::zeros(rows, cols);
-    W.imbue( [&]() {return distr(engine); });
+    W.imbue( [&]() {return RandNormal(0.0, var);});
   }
 
 }; // class HeNormal

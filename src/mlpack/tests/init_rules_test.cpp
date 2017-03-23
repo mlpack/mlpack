@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/shapiro_wilk_test.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -131,6 +132,7 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
 BOOST_AUTO_TEST_CASE(XavierInitTest)
 {
   arma::mat weights;
+  RandomSeed(21);
   XavierInit<XavierUniform> xavierUniform;
   XavierInit<XavierNormal> xavierNormal;
   xavierUniform.Initialize(weights, 100, 100);
@@ -145,6 +147,7 @@ BOOST_AUTO_TEST_CASE(XavierInitTest)
 BOOST_AUTO_TEST_CASE(HeInitTest)
 {
   arma::mat weights;
+  RandomSeed(21);
   HeInit<HeUniform> heInit;
   HeInit<HeNormal> heNormal;
   heInit.Initialize(weights, 100, 100);
