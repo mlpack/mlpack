@@ -134,23 +134,33 @@ class SoftmaxRegression
   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
 
   /**
-   * Classify the given point. The predicted class label is retured
+   * Classify the given point. The predicted class label is returned.
    * The function calculates the probabilites for every class, given the point.
-   * It then chooses the class which has the highest probability among all
+   * It then chooses the class which has the highest probability among all.
    *
-   * @param point Point to be classified
-   * @return Predicted class label of the point
+   * @param point Point to be classified.
+   * @return Predicted class label of the point.
    */
   template<typename VecType>
   size_t Classify(const VecType& point) const;
 
   /**
-   * Classify the given points. The predicted label is returned
-   * The function calculates the probabilities for every class, given a data point.
-   * It then chooses the class which has the highest probability among all
+   * Classify the given points. The class probabilities for each point is computed.
+   * For each point, the class with the highest probability among all is chosen.
+   * The class labels and class probabilities for each point are returned.
    *
-   * @param dataset Matrix of data points for which are to be classified
-   * @param probabilities Class probabilities for each point
+   * @param dataset Matrix of data points to be classified.
+   * @param labels Predicted labels for each point.
+   * @param probabilities Class probabilities for each point.
+   */
+   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels,
+                 arma::mat& probabilites) const;
+
+  /**
+   * Classify the given points. The class probabilities for each point is returned.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param probabilities Class probabilities for each point.
    */
   void Classify(const arma::mat& dataset,
                 arma::mat& probabilities) const;

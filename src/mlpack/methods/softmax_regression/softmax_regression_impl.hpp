@@ -112,6 +112,24 @@ size_t SoftmaxRegression<OptimizerType>::Classify(const VecType& point) const
 
 template<template<typename> class OptimizerType>
 void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
+                                                arma::Row<size_t>& labels,
+                                                arma::mat& probabilites)
+    const
+{
+  Classify(dataset, probabilites);
+
+  // Initialize each label to 0.
+  labels.zeros(dataset.n_cols);
+
+  // For each column, choose the class with the highest probability
+  for(size_t i = 0; i < dataset.n_cols; i++)
+  {
+    labels(i) = probabilites.col(i).index_max();
+  }
+}
+
+template<template<typename> class OptimizerType>
+void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
                                                 arma::mat& probabilities)
     const
 {
