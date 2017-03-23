@@ -57,10 +57,7 @@ template <
 class BatchNorm
 {
  public:
-  //! Creating BatchNorm object.
-  BatchNorm();
-
-  /**
+   /**
    * Create the BatchNorm layer object for a specified number of input units.
    *
    * @param size The number of input units.
