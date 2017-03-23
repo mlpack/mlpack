@@ -523,7 +523,7 @@ BOOST_AUTO_TEST_CASE(MaxoutNetworkTest)
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   BuildMaxoutNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 5, 8, 70, 0.1);
+      (trainData, trainLabels, testData, testLabels, 3, 5, 8, 7, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -537,7 +537,7 @@ BOOST_AUTO_TEST_CASE(MaxoutNetworkTest)
 
   // Maxout neural net with maxout hidden layer.
   BuildMaxoutNetwork<>
-      (dataset, labels, dataset, labels, 2, 5, 10, 50, 0.2);
+      (dataset, labels, dataset, labels, 2, 5, 10, 5, 0.2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
