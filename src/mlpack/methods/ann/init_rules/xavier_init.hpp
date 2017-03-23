@@ -26,7 +26,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Refrence http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf
  */
 template<typename InitializerType>
-class XavierInit: public InitializerType
+class XavierInit
 {
  public:
   //Empty Constructor
@@ -37,7 +37,8 @@ class XavierInit: public InitializerType
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    InitializerType::Initialize(W, rows, cols);
+    InitializerType inittype;
+    inittype.Initialize(W, rows, cols);
     W = scalingFactor * W;
   }
   /**
