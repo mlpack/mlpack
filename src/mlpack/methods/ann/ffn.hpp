@@ -122,7 +122,7 @@ class FFN
    * output layer function.
    *
    * @param predictors Input predictors.
-   * @param responses Matrix to put output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
   void Predict(arma::mat& predictors, arma::mat& results);
 

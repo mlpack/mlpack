@@ -128,7 +128,7 @@ class RNN
    * output layer function.
    *
    * @param predictors Input predictors.
-   * @param responses Matrix to put output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
   void Predict(arma::mat& predictors, arma::mat& results);
 
@@ -220,7 +220,7 @@ class RNN
    * Predict the response of the given input sequence.
    *
    * @param predictors Input predictors.
-   * @param responses Vector to put output prediction of a response into.
+   * @param results Vector to put output prediction of a response into.
    */
   void SinglePredict(const arma::mat& predictors, arma::mat& results);
 
