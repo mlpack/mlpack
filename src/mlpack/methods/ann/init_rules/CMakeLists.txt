@@ -12,6 +12,7 @@ set(SOURCES
   xavier_uniform.hpp
   xavier_normal.hpp
   zero_init.hpp
+  gaussian_init.hpp
 )
 
 # Add directory name to sources.
