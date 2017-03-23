@@ -96,7 +96,7 @@ class AdaGrad
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); } 
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const { return optimizer.Function(); }

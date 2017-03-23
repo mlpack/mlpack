@@ -136,7 +136,7 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
-  //! Get the update policy. 
+  //! Get the update policy.
   UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }

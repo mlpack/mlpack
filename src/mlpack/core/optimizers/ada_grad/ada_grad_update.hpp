@@ -18,8 +18,8 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Implementation of the AdaGrad update policy. AdaGrad update policy chooses 
- * learning rate dynamically by adapting to the data. Hence Adagrad eliminates 
+ * Implementation of the AdaGrad update policy. AdaGrad update policy chooses
+ * learning rate dynamically by adapting to the data. Hence Adagrad eliminates
  * the need to manually tune the learning rate.
  *
  * For more information, see the following.
@@ -33,7 +33,7 @@ namespace optimization {
  *   number    = {Jul},
  *   pages     = {2121--2159},
  *   year      = {2011}
- * } 
+ * }
  *
  */
 class AdaGradUpdate
@@ -42,14 +42,14 @@ class AdaGradUpdate
   /**
    * Construct the AdaGrad update policy with given epsilon parameter.
    *
-   * @param epsilon The epsilon value used to initialise the squared gradient parameter. 
+   * @param epsilon The epsilon value used to initialise the squared gradient parameter.
    */
   AdaGradUpdate(const double epsilon = 1e-8) : epsilon(epsilon)
   { /* Do nothing. */ };
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process. In AdaGrad update policy, squared 
+   * the iteration update process. In AdaGrad update policy, squared
    * gradient matrix is initialized to the zeros matrix with the same size as
    * gradient matrix (see mlpack::optimization::SGD::Optimizer )
    *
@@ -64,8 +64,8 @@ class AdaGradUpdate
   }
 
   /**
-   * Update step for SGD. The AdaGrad update adapts the learning rate by  
-   * performing larger updates for more sparse parameters and smaller updates 
+   * Update step for SGD. The AdaGrad update adapts the learning rate by
+   * performing larger updates for more sparse parameters and smaller updates
    * for less sparse parameters .
    *
    * @param iterate Parameters that minimize the function.
@@ -87,7 +87,7 @@ class AdaGradUpdate
 
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter. 
+  // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
   // The squared gradient matrix.
   arma::mat squaredGradient;
