@@ -19,12 +19,6 @@
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
-template<typename InputDataType, typename OutputDataType>
-BatchNorm<InputDataType, OutputDataType>::BatchNorm()
-{
-  // Nothing to do here.
-}
-
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size, const double eps = 0.001) : size(size), eps(eps)
