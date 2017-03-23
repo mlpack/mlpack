@@ -242,7 +242,9 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
 
   arma::mat input = dataset.submat(0, 0, dataset.n_rows-1, 2);
 
-  BatchNorm<> model(input.n_rows);
+  size_t numUnits = input.n_rows;
+
+  BatchNorm<> model(numUnits);
   model.Reset();
 
   // Non-Deteministic Forward Pass Test.
