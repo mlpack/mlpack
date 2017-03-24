@@ -171,9 +171,7 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
 
   arma::vec probs = arma::log(probabilities);
   arma::mat invVar = 1.0 / variances;
-
-  arma::mat testProbs = arma::repmat(probs.t(), data.n_cols, 1);
-
+  testProbs = arma::repmat(probs.t(), data.n_cols, 1);
   results.set_size(data.n_cols); // No need to fill with anything yet.
 
   Log::Info << "Running Naive Bayes classifier on " << data.n_cols
