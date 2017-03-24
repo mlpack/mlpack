@@ -53,7 +53,7 @@ class SoftsignFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  static double fn(const double x)
   {
     if (x < DBL_MAX)
       return x > -DBL_MAX ? x / (1.0 + std::abs(x)) : -1.0;
@@ -67,12 +67,12 @@ class SoftsignFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  static void fn(const InputVecType& x, OutputVecType& y)
   {
     y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+      y(i) = fn(x(i));
   }
 
   /**
@@ -81,7 +81,7 @@ class SoftsignFunction
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double deriv(const double y)
   {
     return std::pow(1.0 - std::abs(y), 2);
   }
@@ -93,7 +93,7 @@ class SoftsignFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  static void deriv(const InputVecType& y, OutputVecType& x)
   {
     x = arma::pow(1.0 - arma::abs(y), 2);
   }
@@ -104,7 +104,7 @@ class SoftsignFunction
    * @param y Input data.
    * @return f^{-1}(y)
    */
-  static double Inv(const double y)
+  static double inv(const double y)
   {
     if (y > 0)
       return y < 1 ? -y / (y - 1) : DBL_MAX;
@@ -119,12 +119,12 @@ class SoftsignFunction
    * @param x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y, OutputVecType& x)
+  static void inv(const InputVecType& y, OutputVecType& x)
   {
     x = y;
 
     for (size_t i = 0; i < y.n_elem; i++)
-      x(i) = Inv(y(i));
+      x(i) = inv(y(i));
   }
 }; // class SoftsignFunction
 
