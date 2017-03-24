@@ -2,8 +2,8 @@
  * @file ada_grad.hpp
  * @author Abhinav Moudgil
  *
- * Implementation of the Adagrad optimizer. Adagrad is an optimizer that
- * chooses learning rate dynamically by adapting to the data. Hence Adagrad
+ * Implementation of the AdaGrad optimizer. AdaGrad is an optimizer that
+ * chooses learning rate dynamically by adapting to the data. Hence AdaGrad
  * eliminates the need to manually tune the learning rate.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -22,7 +22,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Adagrad is a modified version of stochastic gradient descent which performs
+ * AdaGrad is a modified version of stochastic gradient descent which performs
  * larger updates for more sparse parameters and smaller updates for less sparse
  * parameters.
  *

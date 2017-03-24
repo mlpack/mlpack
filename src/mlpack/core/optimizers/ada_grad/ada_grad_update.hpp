@@ -19,7 +19,7 @@ namespace optimization {
 
 /**
  * Implementation of the AdaGrad update policy. AdaGrad update policy chooses
- * learning rate dynamically by adapting to the data. Hence Adagrad eliminates
+ * learning rate dynamically by adapting to the data. Hence AdaGrad eliminates
  * the need to manually tune the learning rate.
  *
  * For more information, see the following.
