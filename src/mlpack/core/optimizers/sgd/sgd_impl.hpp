@@ -2,6 +2,7 @@
  * @file sgd_impl.hpp
  * @author Ryan Curtin
  * @author Arun Reddy
+ * @author Abhinav Moudgil
  *
  * Implementation of stochastic gradient descent.
  *
@@ -22,14 +23,14 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdatePolicy>
-SGD<DecomposableFunctionType, UpdatePolicy>::SGD(
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(
     DecomposableFunctionType& function,
     const double stepSize,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicy updatePolicy) :
+    const UpdatePolicyType updatePolicy) :
     function(function),
     stepSize(stepSize),
     maxIterations(maxIterations),
@@ -39,8 +40,8 @@ SGD<DecomposableFunctionType, UpdatePolicy>::SGD(
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType, typename UpdatePolicy>
-double SGD<DecomposableFunctionType, UpdatePolicy>::Optimize(arma::mat& iterate)
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

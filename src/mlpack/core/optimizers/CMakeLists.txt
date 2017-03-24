@@ -1,5 +1,6 @@
 set(DIRS
   adadelta
+  ada_grad
   adam
   aug_lagrangian
   gradient_descent
