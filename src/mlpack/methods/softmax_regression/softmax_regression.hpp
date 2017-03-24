@@ -134,6 +134,40 @@ class SoftmaxRegression
   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
 
   /**
+   * Classify the given point. The predicted class label is returned.
+   * The function calculates the probabilites for every class, given the point.
+   * It then chooses the class which has the highest probability among all.
+   *
+   * @param point Point to be classified.
+   * @return Predicted class label of the point.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
+   * Classify the given points, returning class probabilities and predicted
+   * class label for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param labels Predicted labels for each point.
+   * @param probabilities Class probabilities for each point.
+   */
+   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels,
+                 arma::mat& probabilites) const;
+
+  /**
+   * Classify the given points, returning class probabilities for each point.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param probabilities Class probabilities for each point.
+   */
+  void Classify(const arma::mat& dataset,
+                arma::mat& probabilities) const;
+
+  /**
    * Computes accuracy of the learned model given the feature data and the
    * labels associated with each data point. Predictions are made using the
    * provided data and are compared with the actual labels.
@@ -161,7 +195,7 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @return Objective value of the final point.
    */
-  double Train(const arma::mat &data, const arma::Row<size_t>& labels,
+  double Train(const arma::mat& data, const arma::Row<size_t>& labels,
                const size_t numClasses);
 
   //! Sets the number of classes.
