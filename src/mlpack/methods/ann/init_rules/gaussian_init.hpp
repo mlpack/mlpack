@@ -29,25 +29,16 @@ class GaussianInitialization
 {
  public:
   /**
-   * Initialize the gaussian initialization rule with mean=0 and
-   * variance = 1.
-   *
-   * @param mean The mean of the gaussian.
-   * @param variance The variance of the gaussian.
-   */
-  GaussianInitialization():
-  mean(0), variance(1)
-  {}
-
-  /**
    * Initialize the gaussian with the given mean and variance.
    *
    * @param mean Mean of the gaussian
    * @param variance Variance of the gaussian
    */
-  GaussianInitialization(const double mean=0, const double variance=1):
-  mean(mean), variance(variance)
-  {}
+  GaussianInitialization(const double mean = 0, const double variance = 1) :
+      mean(mean), variance(variance)
+  {
+    // Nothing to do here.
+  }
 
   /**
    * Initialize the elements weight matrix using a Gaussian Distribution.
@@ -78,6 +69,7 @@ class GaussianInitialization
                   const size_t slices)
   {
     W = arma::cube(rows, cols, slices);
+
     for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
   }
@@ -86,9 +78,10 @@ class GaussianInitialization
   //! Mean of the gaussian.
   const double mean;
 
-  //! Variance of the gaussian .
+  //! Variance of the gaussian.
   const double variance;
 }; // class GaussianInitialization
+
 } // namespace ann
 } // namespace mlpack
 
