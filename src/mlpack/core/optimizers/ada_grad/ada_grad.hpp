@@ -129,9 +129,6 @@ class AdaGrad
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The AdaGradUpdate policy object.
-  AdaGradUpdate adagradUpdate;
-
   //! The Stochastic Gradient Descent object with AdaGrad policy.
   SGD<DecomposableFunctionType, AdaGradUpdate> optimizer;
 };

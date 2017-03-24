@@ -30,7 +30,7 @@ AdaGrad<DecomposableFunctionType>::AdaGrad(DecomposableFunctionType& function,
               maxIterations,
               tolerance,
               shuffle,
-              adagradUpdate)
+              AdaGradUpdate(epsilon))
 { /* Nothing to do. */ }
 
 } // namespace optimization
