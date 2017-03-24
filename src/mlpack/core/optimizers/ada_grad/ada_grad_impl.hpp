@@ -24,7 +24,6 @@ AdaGrad<DecomposableFunctionType>::AdaGrad(DecomposableFunctionType& function,
                                            const size_t maxIterations,
                                            const double tolerance,
                                            const bool shuffle) :
-    adagradUpdate(epsilon),
     optimizer(function,
               stepSize,
               maxIterations,
