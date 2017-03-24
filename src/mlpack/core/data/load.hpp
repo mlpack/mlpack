@@ -64,14 +64,36 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
-extern template bool Load<int>(const std::string&, arma::Mat<int>&, const bool, const bool);
-extern template bool Load<size_t>(const std::string&, arma::Mat<size_t>&, const bool, const bool);
-extern template bool Load<float>(const std::string&, arma::Mat<float>&, const bool, const bool);
-extern template bool Load<double>(const std::string&, arma::Mat<double>&, const bool, const bool);
+extern template bool Load<int>(const std::string&,
+                               arma::Mat<int>&,
+                               const bool,
+                               const bool);
 
-#ifndef  _WIN32
-extern template bool Load<unsigned long long>(const std::string&, arma::Mat<unsigned long long>&, const bool, const bool);
-#endif
+// size_t and uword should be one of these three typedefs.
+extern template bool Load<unsigned int>(const std::string&,
+                                        arma::Mat<unsigned int>&,
+                                        const bool,
+                                        const bool);
+
+extern template bool Load<unsigned long>(const std::string&,
+                                         arma::Mat<unsigned long>&,
+                                         const bool,
+                                         const bool);
+
+extern template bool Load<unsigned long long>(const std::string&,
+                                              arma::Mat<unsigned long long>&,
+                                              const bool,
+                                              const bool);
+
+extern template bool Load<float>(const std::string&,
+                                 arma::Mat<float>&,
+                                 const bool,
+                                 const bool);
+
+extern template bool Load<double>(const std::string&,
+                                  arma::Mat<double>&,
+                                  const bool,
+                                  const bool);
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -176,25 +198,40 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
-extern template bool Load<int, IncrementPolicy>(const std::string&, arma::Mat<int>&,
-                                                DatasetMapper<IncrementPolicy>&,
-                                                const bool, const bool);
+extern template bool Load<int, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<int>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
-extern template bool Load<size_t, IncrementPolicy>(const std::string&, arma::Mat<size_t>&,
-                                                   DatasetMapper<IncrementPolicy>&,
-                                                   const bool, const bool);
+extern template bool Load<arma::u32, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u32>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
-extern template bool Load<float, IncrementPolicy>(const std::string&, arma::Mat<float>&,
-                                                  DatasetMapper<IncrementPolicy>&,
-                                                  const bool, const bool);
+extern template bool Load<arma::u64, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u64>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
-extern template bool Load<double, IncrementPolicy>(const std::string&, arma::Mat<double>&,
-                                                   DatasetMapper<IncrementPolicy>&,
-                                                   const bool, const bool);
+extern template bool Load<float, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<float>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
-extern template bool Load<unsigned long long, IncrementPolicy>(const std::string&, arma::Mat<unsigned long long>&,
-                                                               DatasetMapper<IncrementPolicy>&,
-                                                               const bool, const bool);
+extern template bool Load<double, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<double>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,

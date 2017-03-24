@@ -1840,4 +1840,157 @@ BOOST_AUTO_TEST_CASE(CaseTest)
   BOOST_CHECK_EQUAL(dataset.n_cols, 3);
 }
 
+/**
+ * Test that a CSV with the wrong number of columns fails.
+ */
+BOOST_AUTO_TEST_CASE(MalformedCSVTest)
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7" << endl;
+  f << "8, 9, 10, 11" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(!data::Load("test.csv", dataset, di, false));
+
+  remove("test.csv");
+}
+
+/**
+ * Test that a TSV can load with LoadCSV.
+ */
+BOOST_AUTO_TEST_CASE(LoadCSVTSVTest)
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(data::Load("test.tsv", dataset, di, false));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], i + 1);
+
+  remove("test.tsv");
+}
+
+/**
+ * Test that a text file can load with LoadCSV.
+ */
+BOOST_AUTO_TEST_CASE(LoadCSVTXTTest)
+{
+  fstream f;
+  f.open("test.txt", fstream::out);
+  f << "1 2 3 4" << endl;
+  f << "5 6 7 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(data::Load("test.txt", dataset, di, false));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], i + 1);
+
+  remove("test.txt");
+}
+
+/**
+ * Test that a non-transposed CSV with the wrong number of columns fails.
+ */
+BOOST_AUTO_TEST_CASE(MalformedNoTransposeCSVTest)
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7" << endl;
+  f << "8, 9, 10, 11" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(!data::Load("test.csv", dataset, di, false, false));
+
+  remove("test.csv");
+}
+
+/**
+ * Test that a non-transposed TSV can load with LoadCSV.
+ */
+BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTSVTest)
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(data::Load("test.tsv", dataset, di, false, false));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+
+  BOOST_REQUIRE_EQUAL(dataset[0], 1);
+  BOOST_REQUIRE_EQUAL(dataset[1], 5);
+  BOOST_REQUIRE_EQUAL(dataset[2], 2);
+  BOOST_REQUIRE_EQUAL(dataset[3], 6);
+  BOOST_REQUIRE_EQUAL(dataset[4], 3);
+  BOOST_REQUIRE_EQUAL(dataset[5], 7);
+  BOOST_REQUIRE_EQUAL(dataset[6], 4);
+  BOOST_REQUIRE_EQUAL(dataset[7], 8);
+
+  remove("test.tsv");
+}
+
+/**
+ * Test that a non-transposed text file can load with LoadCSV.
+ */
+BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
+{
+  fstream f;
+  f.open("test.txt", fstream::out);
+  f << "1 2 3 4" << endl;
+  f << "5 6 7 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo di;
+
+  BOOST_REQUIRE(data::Load("test.txt", dataset, di, false, false));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+
+  BOOST_REQUIRE_EQUAL(dataset[0], 1);
+  BOOST_REQUIRE_EQUAL(dataset[1], 5);
+  BOOST_REQUIRE_EQUAL(dataset[2], 2);
+  BOOST_REQUIRE_EQUAL(dataset[3], 6);
+  BOOST_REQUIRE_EQUAL(dataset[4], 3);
+  BOOST_REQUIRE_EQUAL(dataset[5], 7);
+  BOOST_REQUIRE_EQUAL(dataset[6], 4);
+  BOOST_REQUIRE_EQUAL(dataset[7], 8);
+
+  remove("test.txt");
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();

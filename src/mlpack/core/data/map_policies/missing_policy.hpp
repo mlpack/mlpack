@@ -120,50 +120,6 @@ class MissingPolicy
     }
   }
 
-  /**
-   * MapTokens turns vector of strings into numeric variables and puts them
-   * into a given matrix. It is used as a helper function when trying to load
-   * files. Each dimension's tokens are given in to this function. If one of the
-   * tokens turns out to be a string or one of the missingSet's variables, only
-   * the token responsible for it should be mapped using the MapString()
-   * funciton.
-   *
-   * @tparam eT Type of armadillo matrix.
-   * @tparam MapType Type of unordered_map that contains mapped value pairs.
-   * @param tokens Vector of variables inside a dimension.
-   * @param row Position of the given tokens.
-   * @param matrix Matrix to save the data into.
-   * @param maps Maps given by the DatasetMapper class.
-   * @param types Types of each dimensions given by the DatasetMapper class.
-   */
-  template <typename eT, typename MapType>
-  void MapTokens(const std::vector<std::string>& tokens,
-                 size_t& row,
-                 arma::Mat<eT>& matrix,
-                 MapType& maps,
-                 std::vector<Datatype>& types)
-  {
-    // MissingPolicy allows double type matrix only, because it uses NaN.
-    static_assert(std::is_same<eT, double>::value, "You must use double type "
-        " matrix in order to apply MissingPolicy");
-
-    std::stringstream token;
-    for (size_t i = 0; i != tokens.size(); ++i)
-    {
-      token.str(tokens[i]);
-      token>>matrix.at(row, i);
-      // if the token is not number, map it.
-      // or if token is a number, but is included in the missingSet, map it.
-      if (token.fail() || missingSet.find(tokens[i]) != std::end(missingSet))
-      {
-        const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
-                                                       types));
-        matrix.at(row, i) = val;
-      }
-      token.clear();
-    }
-  }
-
  private:
   // Note that missingSet and maps are different.
   // missingSet specifies which value/string should be mapped and may be a

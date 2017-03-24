@@ -12,7 +12,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.1.1.tar.gz">current stable version (2.1.1)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.0.tar.gz">current stable version (2.2.0)</a>
   </em>
 </p>
 
@@ -70,7 +70,8 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo     >= 4.200.0
-      Boost (program_options, math_c99, unit_test_framework, serialization)
+      Boost (program_options, math_c99, unit_test_framework, serialization,
+             spirit)
       CMake         >= 2.8.5
 
 All of those should be available in your distribution's package manager.  If

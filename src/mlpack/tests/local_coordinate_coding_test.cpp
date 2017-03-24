@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda1);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda1, 150);
   lcc.Encode(X, Z);
 
   mat D = lcc.Dictionary();
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda, 150);
   lcc.Encode(X, Z);
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(X, Z, adjacencies);
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   mat X = randu<mat>(100, 100);
   size_t nAtoms = 25;
 
-  LocalCoordinateCoding lcc(nAtoms, 0.05);
+  LocalCoordinateCoding lcc(nAtoms, 0.05, 150);
   lcc.Train(X);
 
   mat Y = randu<mat>(100, 200);
