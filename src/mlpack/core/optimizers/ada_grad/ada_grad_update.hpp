@@ -34,6 +34,7 @@ namespace optimization {
  *   pages     = {2121--2159},
  *   year      = {2011}
  * }
+ * @endcode
  *
  */
 class AdaGradUpdate
