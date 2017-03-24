@@ -63,7 +63,7 @@ class BatchNorm
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  BatchNorm(const size_t size, const double eps);
+  explicit BatchNorm(const size_t size, const double eps);
 
   /**
    * Reset the layer parameters
