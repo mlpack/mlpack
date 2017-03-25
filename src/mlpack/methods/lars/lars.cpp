@@ -58,8 +58,7 @@ LARS::LARS(const arma::mat& data,
     lambda2(lambda2),
     tolerance(tolerance)
 {
-  arma::vec beta;
-  Train(data, responses, beta, transposeData);
+  Train(data, responses, transposeData);
 }
 
 LARS::LARS(const arma::mat& data,
@@ -78,8 +77,7 @@ LARS::LARS(const arma::mat& data,
     lambda2(lambda2),
     tolerance(tolerance)
 {
-  arma::vec beta;
-  Train(data, responses, beta, transposeData);
+  Train(data, responses, transposeData);
 }
 
 void LARS::Train(const arma::mat& matX,
