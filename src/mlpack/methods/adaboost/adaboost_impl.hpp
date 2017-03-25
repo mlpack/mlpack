@@ -136,7 +136,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
       break;
 
     // Check if model has converged.
-    if ((rt >= 1))
+    if (rt >= 1.0)
     {
       // Save the weak learner and terminate.
       alpha.push_back(1.0);
