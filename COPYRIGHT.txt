@@ -76,6 +76,7 @@ Copyright:
   Copyright 2017, Abhinav Moudgil <abhinavmoudgil95@gmail.com>
   Copyright 2017, Thyrix Yang <thyrixyang@gmail.com>
   Copyright 2017, Sagar B Hathwar <sagarbhathwar@gmail.com>
+  Copyright 2017, Nishanth Hegde <hegde.nishanth@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
