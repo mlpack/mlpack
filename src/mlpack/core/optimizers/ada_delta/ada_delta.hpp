@@ -2,10 +2,11 @@
  * @file ada_delta.hpp
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
+ * @author Abhinav Moudgil
  *
- * Implementation of the Adadelta optimizer. Adadelta is an optimizer that
+ * Implementation of the AdaDelta optimizer. AdaDelta is an optimizer that
  * dynamically adapts over time using only first order information.
- * Additionally, Adadelta requires no manual tuning of a learning rate.
+ * Additionally, AdaDelta requires no manual tuning of a learning rate.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,12 +17,14 @@
 #define __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include "ada_delta_update.hpp"
 
 namespace mlpack {
 namespace optimization {
 
 /**
- * Adadelta is an optimizer that uses two ideas to improve upon the two main
+ * AdaDelta is an optimizer that uses two ideas to improve upon the two main
  * drawbacks of the Adagrad method:
  *
  *  - Accumulate Over Window
@@ -38,7 +41,6 @@ namespace optimization {
  * }
  * @endcode
  *
-
  * For AdaDelta to work, a DecomposableFunctionType template parameter is
  * required. This class must implement the following function:
  *
@@ -81,6 +83,7 @@ class AdaDelta
    *        function is visited in linear order.
    */
   AdaDelta(DecomposableFunctionType& function,
+      const double stepSize = 1.0,
       const double rho = 0.95,
       const double eps = 1e-6,
       const size_t maxIterations = 100000,
@@ -95,57 +98,46 @@ class AdaDelta
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
+
+  //! Get the step size.
+  double StepSize() const { return optimizer.StepSize(); }
+  //! Modify the step size.
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the smoothing parameter.
-  double Rho() const { return rho; }
+  double Rho() const { return optimizer.UpdatePolicy().Rho(); }
   //! Modify the smoothing parameter.
-  double& Rho() { return rho; }
+  double& Rho() { return optimizer.UpdatePolicy().Rho(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return eps; }
+  double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return eps; }
+  double& Epsilon() { return optimizer.UpdatePolicy().Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
-  //! The smoothing parameter.
-  double rho;
-
-  //! The value used to initialise the mean squared gradient parameter.
-  double eps;
-
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
+  //! The Stochastic Gradient Descent object with AdaDelta policy.
+  SGD<DecomposableFunctionType, AdaDeltaUpdate> optimizer;
 };
 
 } // namespace optimization
@@ -155,4 +147,3 @@ class AdaDelta
 #include "ada_delta_impl.hpp"
 
 #endif
-
