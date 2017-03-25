@@ -63,11 +63,11 @@ class NestrovUpdate
    * @param n_rows number of rows in the gradient matrix.
    * @param n_cols number of columns in the gradient matrix.
    */
-  void Initialize(const size_t n_rows,
-                  const size_t n_cols)
+  void Initialize(const size_t rows,
+                  const size_t cols)
   {
     //Initialize am empty velocity matrix.
-    velocity = arma::zeros<arma::mat>(n_rows, n_cols);
+    velocity = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
@@ -86,7 +86,8 @@ class NestrovUpdate
               T... args)
   {
     velocity = momentum * velocity - stepSize * gradient;
-    iterate += momentumLookAhead(momentum)*momentum*velocity - (1+momentumLookAhead(momentum))*stepSize*gradient;
+    iterate += momentumLookAhead(momentum) * momentum * velocity 
+      - (1 + momentumLookAhead(momentum)) * stepSize * gradient;
   }
 
   double momentumLookAhead(double momentum)
