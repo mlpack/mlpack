@@ -319,9 +319,9 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithDefaultsTest)
 
   LARS lars2(X, y);
 
-  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.BetaPath().back().n_elem);
+  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(beta[i], lars2.BetaPath().back()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
 }
 
 /**
@@ -346,9 +346,9 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
 
   LARS lars2(X, y, transposeData, useCholesky, lambda1, lambda2);
 
-  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.BetaPath().back().n_elem);
+  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(beta[i], lars2.BetaPath().back()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
