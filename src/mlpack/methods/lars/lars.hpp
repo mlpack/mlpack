@@ -190,6 +190,23 @@ class LARS
              const bool transposeData = true);
 
   /**
+   * Run LARS.  The input matrix (like all mlpack matrices) should be
+   * column-major -- each column is an observation and each row is a dimension.
+   * However, because LARS is more efficient on a row-major matrix, this method
+   * will (internally) transpose the matrix.  If this transposition is not
+   * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
+   * the transposeData parameter.
+   *
+   * @param data Input data.
+   * @param responses A vector of targets.
+   * @param transposeData Should be true if the input data is column-major and
+   *     false otherwise.
+   */
+  void Train(const arma::mat& data,
+             const arma::vec& responses,
+             const bool transposeData = true);
+
+  /**
    * Predict y_i for each data point in the given data matrix, using the
    * currently-trained LARS model (so make sure you run Regress() first).  If
    * the data matrix is row-major (as opposed to the usual column-major format
@@ -208,6 +225,9 @@ class LARS
   //! Access the set of coefficients after each iteration; the solution is the
   //! last element.
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
+
+  //! Access the solution coefficients
+  const arma::vec& Beta() const { return betaPath.back(); }
 
   //! Access the set of values for lambda1 after each iteration; the solution is
   //! the last element.

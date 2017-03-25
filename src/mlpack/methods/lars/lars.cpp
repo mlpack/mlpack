@@ -377,6 +377,14 @@ void LARS::Train(const arma::mat& matX,
   Timer::Stop("lars_regression");
 }
 
+void LARS::Train(const arma::mat& data,
+                 const arma::vec& responses,
+                 const bool transposeData)
+{
+  arma::vec beta;
+  Train(data, responses, beta, transposeData);
+}
+
 void LARS::Predict(const arma::mat& points,
                    arma::vec& predictions,
                    const bool rowMajor) const
