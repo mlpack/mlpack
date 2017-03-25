@@ -80,7 +80,7 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
-PARAM_UMATRIX_IN("labels", "Labels for input dataset.", "l");
+PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
     "'lbfgs'.", "O", "sgd");
 
@@ -203,16 +203,10 @@ int main(int argc, char* argv[])
   arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Do we want to load labels separately?
-  arma::Mat<size_t> rawLabels(1, data.n_cols);
+  arma::Row<size_t> rawLabels(data.n_cols);
   if (CLI::HasParam("labels"))
   {
-    rawLabels = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-
-    if (rawLabels.n_cols == 1)
-      rawLabels = trans(rawLabels);
-
-    if (rawLabels.n_rows > 1)
-      Log::Fatal << "Labels must have only one column or row!" << endl;
+    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
   }
   else
   {
@@ -226,7 +220,7 @@ int main(int argc, char* argv[])
   // Now, normalize the labels.
   arma::Col<size_t> mappings;
   arma::Row<size_t> labels;
-  data::NormalizeLabels(rawLabels.row(0), labels, mappings);
+  data::NormalizeLabels(rawLabels, labels, mappings);
 
   arma::mat distance;
 

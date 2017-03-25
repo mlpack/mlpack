@@ -12,7 +12,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.1.1.tar.gz">current stable version (2.1.1)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.0.tar.gz">current stable version (2.2.0)</a>
   </em>
 </p>
 
@@ -21,8 +21,7 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
-0. Contents
------------
+### 0. Contents
 
   1. [Introduction](#1-introduction)
   2. [Citation details](#2-citation-details)
@@ -32,8 +31,7 @@ learning researchers.
   6. [Further documentation](#6-further-documentation)
   7. [Bug reporting](#7-bug-reporting)
 
-1. Introduction
----------------
+###  1. Introduction
 
 The mlpack website can be found at http://www.mlpack.org and contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
@@ -45,8 +43,7 @@ documentation. The website should be consulted for further information:
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
-2. Citation details
--------------------
+### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
@@ -64,13 +61,13 @@ citation below (given in BiBTeX format):
 
 Citations are beneficial for the growth and improvement of mlpack.
 
-3. Dependencies
----------------
+### 3. Dependencies
 
 mlpack has the following dependencies:
 
       Armadillo     >= 4.200.0
-      Boost (program_options, math_c99, unit_test_framework, serialization)
+      Boost (program_options, math_c99, unit_test_framework, serialization,
+             spirit)
       CMake         >= 2.8.5
 
 All of those should be available in your distribution's package manager.  If
@@ -79,8 +76,7 @@ each of those packages for more information.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
-4. Building mlpack from source
-------------------------------
+### 4. Building mlpack from source
 
 This section discusses how to build mlpack from source.  However, mlpack is in
 the repositories of many Linux distributions and so it may be easier to use the
@@ -177,8 +173,7 @@ manually).  One way to do this, on Linux, is to ensure that the
 
 (or whatever directory `libmlpack.so` is installed in.)
 
-5. Running mlpack programs
---------------------------
+### 5. Running mlpack programs
 
 After building mlpack, the executables will reside in `build/bin/`.  You can call
 them from there, or you can install the library and (depending on system
@@ -210,8 +205,7 @@ unique to `mlpack_knn` but is available in all mlpack programs.  Verbose
 output also gives timing output at the end of the program, which can be very
 useful.
 
-6. Further documentation
-------------------------
+### 6. Further documentation
 
 The documentation given here is only a fraction of the available documentation
 for mlpack.  If doxygen is installed, you can type `make doc` to build the
@@ -223,8 +217,8 @@ older versions of mlpack:
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
-7. Bug reporting
-----------------
+### 7. Bug reporting
+
    (see also [mlpack help](http://www.mlpack.org/help.html))
 
 If you find a bug in mlpack or have any problems, numerous routes are available

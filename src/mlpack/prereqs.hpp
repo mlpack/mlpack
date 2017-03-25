@@ -94,7 +94,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 // defines.
 #include <mlpack/core/util/arma_config_check.hpp>
 
-// All code should have access to logging
+// All code should have access to logging.
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
 
@@ -105,5 +105,8 @@ using enable_if_t = typename enable_if<B, T>::type;
   #pragma warning(disable : 4519)
   #define ARMA_USE_CXX11
 #endif
+
+// We need to be able to mark functions deprecated.
+#include <mlpack/core/util/deprecated.hpp>
 
 #endif

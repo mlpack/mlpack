@@ -43,7 +43,7 @@ Copyright:
   Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
   Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
   Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
-  Copyright 2015-2016, Tham Ngap Wei <thamngapwei@gmail.com>
+  Copyright 2015-2017, Tham Ngap Wei <thamngapwei@gmail.com>
   Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
   Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
   Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
@@ -72,6 +72,10 @@ Copyright:
   Copyright 2017, Prasanna Patil <prasannapatil08@gmail.com>
   Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
   Copyright 2017, Praveen Ch <chvsp972911@gmail.com>
+  Copyright 2017, Kirill Mishchenko <ki.mishchenko@gmail.com>
+  Copyright 2017, Abhinav Moudgil <abhinavmoudgil95@gmail.com>
+  Copyright 2017, Thyrix Yang <thyrixyang@gmail.com>
+  Copyright 2017, Sagar B Hathwar <sagarbhathwar@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

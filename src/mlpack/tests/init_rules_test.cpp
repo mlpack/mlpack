@@ -162,36 +162,52 @@ BOOST_AUTO_TEST_CASE(HeInitTest)
 // Test the GaussianInitialization class.
 BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
-  arma::mat weights;
-  arma::cube weights3d;
-  size_t counter = 0;
   const size_t row = 7;
   const size_t col = 7;
   const size_t slice = 2;
-  double mean, mean3d;
-  double var,var3d;
-  mean=mean3d=1;
-  var=var3d=1;
+
+  double mean = 1;
+  double mean3d = 1;
+  double var = 1;
+  double var3d = 1;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
   GaussianInitialization t(0, 0.2);
-  //RandomSeed(21);
-  for(size_t j=0; j<5; j++)
+
+  // It isn't guaranteed that the method will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that.
+  size_t counter = 0;
+  for(size_t trial = 0; trial < 5; trial++)
   {
-    for(size_t i =0; i<10; i++)
+    for(size_t i = 0; i < 10; i++)
     {
       t.Initialize(weights, row, col);
       t.Initialize(weights3d, row, col, slice);
+
+      // Calaculate mean and variance over the dense matrix.
       mean += arma::accu(weights) / weights.n_elem;
-      var += arma::accu(pow((weights.t() - mean), 2)) / weights.n_elem -1 ;
+      var += arma::accu(pow((weights.t() - mean), 2)) / weights.n_elem - 1;
+
+      // Calaculate mean and variance over the 3rd order tensor.
       mean3d += arma::accu(weights3d.slice(0)) / weights3d.slice(0).n_elem;
-      var3d += arma::accu(pow((weights3d.slice(0) - mean), 2)) / weights3d.slice(0).n_elem -1;
+      var3d += arma::accu(pow((weights3d.slice(0) - mean), 2)) /
+          weights3d.slice(0).n_elem - 1;
     }
+
     mean /= 10;
     var /= 10;
     mean3d /= 10;
     var3d /= 10;
-    if((mean > 0 && mean < 0.4) && (var > 0 && var < 0.6) && 
-      (mean3d > 0 && mean3d < 0.4) && (var3d >0 && var3d<0.6))
+
+    if ((mean > 0 && mean < 0.4) && (var > 0 && var < 0.6) &&
+        (mean3d > 0 && mean3d < 0.4) && (var3d > 0 && var3d < 0.6))
+    {
       counter++;
+      break;
+    }
   }
 
   BOOST_REQUIRE(counter >= 1);
