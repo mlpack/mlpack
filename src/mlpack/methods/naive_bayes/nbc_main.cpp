@@ -77,6 +77,8 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability of labels for the"
+    " test set will be written.", "p");
 
 int main(int argc, char* argv[])
 {
@@ -98,9 +100,11 @@ int main(int argc, char* argv[])
     Log::Warn << "--incremental_variance (-I) ignored because --training_file "
         << "(-t) is not specified." << endl;
 
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --output_file (-o) nor --output_model_file (-M) "
-        << "specified; no output will be saved!" << endl;
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model") &&
+      !CLI::HasParam("output_probs"))
+    Log::Warn << "Neither --output_file (-o), nor --output_model_file (-M), nor"
+        << " --output_proba_file (-p) specified; no output will be saved!"
+        << endl;
 
   if (CLI::HasParam("output") && !CLI::HasParam("test"))
     Log::Warn << "--output_file (-o) ignored because no test file specified "
@@ -109,6 +113,11 @@ int main(int argc, char* argv[])
   if (!CLI::HasParam("output") && CLI::HasParam("test"))
     Log::Warn << "--test_file (-T) specified, but classification results will "
         << "not be saved because --output_file (-o) is not specified." << endl;
+
+  if (!CLI::HasParam("output_probs") && CLI::HasParam("test"))
+    Log::Warn << "--test_file (-T) specified, but predicted probability of "
+        << "labels will not be saved because --output_probs_file (-p) is not "
+        << "specified." << endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
@@ -160,20 +169,24 @@ int main(int argc, char* argv[])
           << ")!" << std::endl;
 
     // Time the running of the Naive Bayes Classifier.
-    Row<size_t> results;
+    Row<size_t> predictions;
+    mat probabilities;
     Timer::Start("nbc_testing");
-    model.nbc.Classify(testingData, results);
+    model.nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
     if (CLI::HasParam("output"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
-      data::RevertLabels(results, model.mappings, rawResults);
+      data::RevertLabels(predictions, model.mappings, rawResults);
 
       // Output results.
       CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
+
+    if (CLI::HasParam("output_probs"))
+      CLI::GetParam<mat>("output_probs") = probabilities;
   }
 
   if (CLI::HasParam("output_model"))
