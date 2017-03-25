@@ -45,7 +45,7 @@ class AdaDeltaUpdate
    * @param rho The smoothing parameter.
    * @param epsilon The epsilon value used to initialise the squared gradient parameter.
    */
-  AdaDeltaUpdate(const double rho = 0.95, const double epsilon = 1e-8) :
+  AdaDeltaUpdate(const double rho = 0.95, const double epsilon = 1e-6) :
       rho(rho),
       epsilon(epsilon)
   { /* Do nothing. */ };
@@ -83,8 +83,8 @@ class AdaDeltaUpdate
     // Accumulate gradient.
     meanSquaredGradient *= rho;
     meanSquaredGradient += (1 - rho) * (gradient % gradient);
-    arma::mat dx = arma::sqrt((meanSquaredGradientDx + eps) /
-        (meanSquaredGradient + eps)) % gradient;
+    arma::mat dx = arma::sqrt((meanSquaredGradientDx + epsilon) /
+        (meanSquaredGradient + epsilon)) % gradient;
 
     // Accumulate updates.
     meanSquaredGradientDx *= rho;

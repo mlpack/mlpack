@@ -75,7 +75,7 @@ class AdaDelta
    *
    * @param function Function to be optimized (minimized).
    * @param rho Smoothing constant
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -85,7 +85,7 @@ class AdaDelta
   AdaDelta(DecomposableFunctionType& function,
       const double stepSize = 1.0,
       const double rho = 0.95,
-      const double eps = 1e-6,
+      const double epsilon = 1e-6,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true);
