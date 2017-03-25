@@ -45,7 +45,7 @@ class XavierInit
   typename std::enable_if<std::is_same<InitializerType, XavierNormal>::value, void>::type
   Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    double var = sqrt(2/ ((double)(rows)+(double)(cols)));
+    double var = sqrt (2 / ((double)(rows) + (double)(cols)));
     GaussianInitialization init(0, var);
     init.Initialize(W, rows, cols);
     W = scalingFactor * W;
@@ -55,7 +55,7 @@ class XavierInit
   typename std::enable_if<std::is_same<InitializerType, XavierUniform>::value, void>::type
   Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    double var = sqrt(12/ static_cast<double>(rows+cols));
+    double var = sqrt(12 / static_cast<double>(rows + cols));
     W = arma::zeros(rows, cols);
     W.imbue( [&]() {return Random(-var, var); });
     W = scalingFactor * W;

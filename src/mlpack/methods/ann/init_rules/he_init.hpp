@@ -39,7 +39,7 @@ class HeInit
  public:
   //Empty Constructor
   //Scaling factor should be set according to the activation function
-  HeInit(const size_t scalingFactor=1):
+  HeInit(const size_t scalingFactor = 1):
   scalingFactor(scalingFactor)
   {}
 
@@ -47,7 +47,7 @@ class HeInit
   typename std::enable_if<std::is_same<InitializerType, HeNormal>::value, void>::type
   Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    double var = sqrt(2/ (double)(rows));
+    double var = sqrt(2 / (double)(rows));
     GaussianInitialization init(0, var);
     init.Initialize(W, rows, cols);
     W = scalingFactor * W;
@@ -58,9 +58,9 @@ class HeInit
   typename std::enable_if<std::is_same<InitializerType, HeUniform>::value, void>::type
   Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    double var = sqrt(2/ static_cast<double>(rows));
+    double var = sqrt(2 / static_cast<double>(rows));
     W = arma::zeros(rows, cols);
-    W.imbue( [&]() {return Random(-var, var); });
+    W.imbue( [&]() {return Random(-var, var);});
     W = scalingFactor * W;
   }
   /**
