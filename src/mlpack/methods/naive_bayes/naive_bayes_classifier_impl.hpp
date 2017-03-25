@@ -254,7 +254,7 @@ void NaiveBayesClassifier<MatType>::Classify(
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
-    logLikelihoods.col(i).max(maxIndex);
+    logLikelihoods.unsafe_col(i).max(maxIndex);
     predictions[i] = maxIndex;
   }
 }
@@ -283,7 +283,7 @@ void NaiveBayesClassifier<MatType>::Classify(
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex;
-    logLikelihoods.col(i).max(maxIndex);
+    logLikelihoods.unsafe_col(i).max(maxIndex);
     predictions[i] = maxIndex;
   }
 }
