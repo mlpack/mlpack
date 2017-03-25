@@ -14,12 +14,20 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_XAVIER_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 
-#include "xavier_normal.hpp"
-#include "xavier_uniform.hpp"
+#include "gaussian_init.hpp"
+
+using namespace mlpack::math;
+
  
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
+
+class XavierNormal
+{};
+class XavierUniform
+{};
 
 /**
  * Base class for Xavier Policy
@@ -34,11 +42,23 @@ class XavierInit
   scalingFactor(scalingFactor)
   {}
 
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename eT, typename InitializerType>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols, 
+    const typename std::enable_if_t<std::is_same<InitType, XavierNormal>::value>* junk = 0)
   {
-    InitializerType inittype;
-    inittype.Initialize(W, rows, cols);
+    double var = sqrt(2/ ((double)(rows)+(double)(cols)));
+    GaussianInitialization init(0, var);
+    init.Initialize(W);
+    W = scalingFactor * W;
+  }
+
+  template<typename eT, typename InitializerType>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols, 
+    const typename std::enable_if_t<std::is_same<InitType, XavierUniform>::value>* junk = 0)
+  {
+    double var = sqrt(12/ static_cast<double>(rows+cols));
+    W = arma::zeros(rows, cols);
+    W.imbue( [&]() {return Random(-var, var); });
     W = scalingFactor * W;
   }
   /**
@@ -64,6 +84,12 @@ private:
   const size_t scalingFactor;
 
 }; // class RandomInitialization
+template<typename InitializerType>
+using XavierInitNormal = XavierInit<XavierNormal>;
+template<typename InitializerType>
+using XavierInitUniform = XavierInit<XavierUniform>;
+
+
 } // namespace ann
 } // namespace mlpack
 

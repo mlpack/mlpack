@@ -21,7 +21,6 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 #include <mlpack/methods/ann/init_rules/xavier_init.hpp>
-#include <mlpack/methods/ann/init_rules/xavier_normal.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
