@@ -2,15 +2,11 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   he_init.hpp
-  he_uniform.hpp
-  he_normal.hpp
   random_init.hpp
   oivs_init.hpp
   kathirvalavakumar_subavathi_init.hpp
   nguyen_widrow_init.hpp
   xavier_init.hpp
-  xavier_uniform.hpp
-  xavier_normal.hpp
   zero_init.hpp
   gaussian_init.hpp
 )

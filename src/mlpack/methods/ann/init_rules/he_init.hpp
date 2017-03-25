@@ -14,12 +14,18 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_HE_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 
-#include "he_uniform.hpp"
-#include "he_normal.hpp"
+#include "gaussian_init.hpp"
+
  
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
+
+class HeNormal
+{};
+class HeUniform
+{};
 
 /**
  * Base class for He Intilisation Policy
@@ -28,7 +34,6 @@ namespace ann /** Artificial Neural Network. */ {
  * Delving deep into rectifiers: Surpassing human-level performance on
  * imagenet classification. arXiv preprint arXiv:1502.01852.
  */
-template<typename InitializerType>
 class HeInit
 {
  public:
@@ -38,12 +43,25 @@ class HeInit
   scalingFactor(scalingFactor)
   {}
 
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename InitializerType, typename eT>
+  typename std::enable_if<std::is_same<InitializerType, HeNormal>::value, void>::type
+  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    InitializerType inittype;
-    inittype.Initialize(W, rows, cols);
-    W = this->scalingFactor * W;
+    double var = sqrt(2/ (double)(rows));
+    GaussianInitialization init(0, var);
+    init.Initialize(W, rows, cols);
+    W = scalingFactor * W;
+  }
+
+
+  template<typename InitializerType, typename eT>
+  typename std::enable_if<std::is_same<InitializerType, HeUniform>::value, void>::type
+  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  {
+    double var = sqrt(2/ static_cast<double>(rows));
+    W = arma::zeros(rows, cols);
+    W.imbue( [&]() {return Random(-var, var); });
+    W = scalingFactor * W;
   }
   /**
    * Initialize randomly the elements of the specified weight 3rd order tensor.
