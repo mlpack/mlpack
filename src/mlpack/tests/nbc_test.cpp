@@ -25,6 +25,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   const char* testFilename = "testSet.csv";
   const char* trainResultFilename = "trainRes.csv";
   const char* testResultFilename = "testRes.csv";
+  const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
@@ -60,16 +61,28 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
+  arma::mat testResProbs;
   arma::Row<size_t> calcVec;
+  arma::mat calcProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
+  data::Load(testResultProbsFilename, testResProbs, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec);
+  nbcTest.Classify(testData, calcVec, calcProbs);
+  calcProbs = calcProbs.t();
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+
+  for (size_t i = 0; i < testResProbs.n_cols; ++i)
+  {
+    for (size_t j = 0; j < testResProbs.n_rows; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(testResProbs(i, j) + 0.0001, calcProbs(i, j) + 0.0001, 0.01);
+    }
+  }
 }
 
 // The same test, but this one uses the incremental algorithm to calculate
@@ -80,6 +93,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   const char* testFilename = "testSet.csv";
   const char* trainResultFilename = "trainRes.csv";
   const char* testResultFilename = "testRes.csv";
+  const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
@@ -115,16 +129,24 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
+  arma::mat testResProba;
   arma::Row<size_t> calcVec;
+  arma::mat calcProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
+  data::Load(testResultProbsFilename, testResProba, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec);
+  nbcTest.Classify(testData, calcVec, calcProbs);
+  calcProbs = calcProbs.t();
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+
+  for (size_t i = 0; i < testResProba.n_cols; ++i)
+    for (size_t j = 0; j < testResProba.n_rows; ++j)
+      BOOST_REQUIRE_CLOSE(testResProba(i, j) + .00001, calcProbs(i, j) + .00001, 0.01);
 }
 
 /**
