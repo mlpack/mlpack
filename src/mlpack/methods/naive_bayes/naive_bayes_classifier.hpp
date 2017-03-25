@@ -134,7 +134,7 @@ class NaiveBayesClassifier
                 size_t& prediction,
                 arma::vec& probabilities) const;
 
-   /**
+  /**
    * Classify the given points using the training GaussianNB model.
    * The predicted labels for each point are stored in the given vector.
    *
@@ -146,9 +146,9 @@ class NaiveBayesClassifier
    * @endcode
    *
    * @param data List of data points.
-   * @param predictions that class predictions will be placed into.
+   * @param predictions Vector that class predictions will be placed into.
    */
-  void Classify(const MatType& data, 
+  void Classify(const MatType& data,
                 arma::Row<size_t>& predictions) const;
 
   /**
@@ -193,7 +193,6 @@ class NaiveBayesClassifier
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   //! Sample mean for each class.
   MatType means;
   //! Sample variances for each class.
@@ -204,21 +203,25 @@ class NaiveBayesClassifier
   size_t trainingPoints;
 
   /**
-  * Compute the unnormalized posterior log probability of given point.
-  *
-  * @param point Data point to compute posterior log probability. 
-  */
+   * Compute the unnormalized posterior log probability (log likelihood) of
+   * given point.
+   *
+   * @param point Data point to compute posterior log probability of.
+   * @param logLikelihoods Vector to store log likelihoods in.
+   */
   template<typename VecType>
-  arma::vec JointLogLikelihood(const VecType& point) const;
+  void LogLikelihood(const VecType& point, arma::vec& logLikelihoods) const;
 
   /**
-  * Compute the unnormalized posterior log probability of given points.
-  * Results are returned as arma::mat, and each ling represents a points,
-  * each column represents posterior log probability of a class.
-  *
-  * @param @param data Set of points to compute posterior log probability. 
-  */
-  arma::mat JointLogLikelihood(const MatType& point) const;
+   * Compute the unnormalized posterior log probability of given points (log
+   * likelihood). Results are returned as arma::mat, and each column represents
+   * a point, each row represents log likelihood of a class.
+   *
+   * @param data Set of points to compute posterior log probability for.
+   * @param logLikelihoods Matrix to store log likelihoods in.
+   */
+  void LogLikelihood(const MatType& data,
+                     arma::mat& logLikelihoods) const;
 };
 
 } // namespace naive_bayes

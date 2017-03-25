@@ -71,7 +71,6 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
   nbcTest.Classify(testData, calcVec, calcProbs);
-  calcProbs = calcProbs.t();
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
@@ -80,7 +79,8 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   {
     for (size_t j = 0; j < testResProbs.n_rows; ++j)
     {
-      BOOST_REQUIRE_CLOSE(testResProbs(i, j) + 0.0001, calcProbs(i, j) + 0.0001, 0.01);
+      BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
+          0.01);
     }
   }
 }
@@ -123,9 +123,9 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   for (size_t i = 0; i < classes; i++)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_rows; i++)
+  for (size_t i = 0; i < calcMat.n_cols; i++)
     for (size_t j = 0; j < classes; j++)
-      BOOST_REQUIRE_CLOSE(trainRes(i, j) + .00001, calcMat(i, j), 0.01);
+      BOOST_REQUIRE_CLOSE(trainRes(j, i) + .00001, calcMat(j, i), 0.01);
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
@@ -139,14 +139,13 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
   nbcTest.Classify(testData, calcVec, calcProbs);
-  calcProbs = calcProbs.t();
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
 
   for (size_t i = 0; i < testResProba.n_cols; ++i)
     for (size_t j = 0; j < testResProba.n_rows; ++j)
-      BOOST_REQUIRE_CLOSE(testResProba(i, j) + .00001, calcProbs(i, j) + .00001, 0.01);
+      BOOST_REQUIRE_CLOSE(testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
 }
 
 /**

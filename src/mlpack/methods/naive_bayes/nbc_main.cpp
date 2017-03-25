@@ -100,9 +100,11 @@ int main(int argc, char* argv[])
     Log::Warn << "--incremental_variance (-I) ignored because --training_file "
         << "(-t) is not specified." << endl;
 
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model") && !CLI::HasParam("output_probs"))
-    Log::Warn << "Neither --output_file (-o), nor --output_model_file (-M), nor --output_proba_file (-p)"
-        << "specified; no output will be saved!" << endl;
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model") &&
+      !CLI::HasParam("output_probs"))
+    Log::Warn << "Neither --output_file (-o), nor --output_model_file (-M), nor"
+        << " --output_proba_file (-p) specified; no output will be saved!"
+        << endl;
 
   if (CLI::HasParam("output") && !CLI::HasParam("test"))
     Log::Warn << "--output_file (-o) ignored because no test file specified "
@@ -113,8 +115,9 @@ int main(int argc, char* argv[])
         << "not be saved because --output_file (-o) is not specified." << endl;
 
   if (!CLI::HasParam("output_probs") && CLI::HasParam("test"))
-    Log::Warn << "--test_file (-T) specified, but predicted probability of labels will "
-        << "not be saved because --output_probs_file (-p) is not specified." << endl;
+    Log::Warn << "--test_file (-T) specified, but predicted probability of "
+        << "labels will not be saved because --output_probs_file (-p) is not "
+        << "specified." << endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
@@ -183,7 +186,7 @@ int main(int argc, char* argv[])
     }
 
     if (CLI::HasParam("output_probs"))
-      CLI::GetParam<mat>("output_probs") = probabilities.t();
+      CLI::GetParam<mat>("output_probs") = probabilities;
   }
 
   if (CLI::HasParam("output_model"))
