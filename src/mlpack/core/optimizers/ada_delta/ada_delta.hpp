@@ -74,6 +74,7 @@ class AdaDelta
    * equal one pass over the dataset).
    *
    * @param function Function to be optimized (minimized).
+   * @param stepSize Step size for each iteration
    * @param rho Smoothing constant
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
