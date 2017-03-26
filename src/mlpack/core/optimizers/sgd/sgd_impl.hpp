@@ -41,7 +41,8 @@ SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType, typename UpdatePolicyType>
-double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iterate)
+double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+    arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -49,8 +50,10 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iter
   // This is used only if shuffle is true.
   arma::Col<size_t> visitationOrder;
   if (shuffle)
+  {
     visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         (numFunctions - 1), numFunctions));
+  }
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -109,14 +112,19 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(arma::mat& iter
 
     // Now add that to the overall objective function.
     if (shuffle)
+    {
       overallObjective += function.Evaluate(iterate,
           visitationOrder[currentFunction]);
+    }
     else
+    {
       overallObjective += function.Evaluate(iterate, currentFunction);
+    }
   }
 
   Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
+
   // Calculate final objective.
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; ++i)

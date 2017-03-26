@@ -74,7 +74,10 @@ namespace optimization {
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<typename DecomposableFunctionType, typename UpdatePolicyType = VanillaUpdate>
+template<
+    typename DecomposableFunctionType,
+    typename UpdatePolicyType = VanillaUpdate
+>
 class SGD
 {
  public:
