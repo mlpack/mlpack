@@ -21,7 +21,7 @@ namespace ann { /** Artificial Neural Network. */
 
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-    const size_t size, const double eps = 0.001) : size(size), eps(eps)
+    const size_t size, const double eps) : size(size), eps(eps)
 {
   weights.set_size(size + size, 1);
 }
