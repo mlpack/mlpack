@@ -51,7 +51,7 @@ class AdaDeltaUpdate
   { /* Do nothing. */ };
 
   /**
-   * The Initialize method is called by SGD Optimizer method before the start of the 
+   * The Initialize method is called by SGD Optimizer method before the start of the
    * iteration update process. In AdaDelta update policy, the mean squared and the delta
    * mean squared gradient matrices are initialized to the zeros matrix with the same
    * size as gradient matrix (see mlpack::optimization::SGD::Optimizer )
@@ -69,7 +69,7 @@ class AdaDeltaUpdate
 
   /**
    * Update step for SGD. The AdaDelta update dynamically adapts over time using only
-   * first order information. Additionally, AdaDelta requires no manual tuning 
+   * first order information. Additionally, AdaDelta requires no manual tuning
    * of a learning rate.
    *
    * @param iterate Parameters that minimize the function.
