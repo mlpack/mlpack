@@ -213,6 +213,7 @@
  *   - Lakshya Agrawal <zeeshan.lakshya@gmail.com>
  *   - Vivek Pal <vivekpal.dtu@gmail.com>
  *   - Praveen Ch <chvsp972911@gmail.com>
+ *   - Parminder Singh <parmsingh101@gmail.com>
  */
 
 // First, include all of the prerequisites.
