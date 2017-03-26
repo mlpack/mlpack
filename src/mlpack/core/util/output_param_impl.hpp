@@ -50,7 +50,12 @@ void OutputParamImpl(
   const std::string& filename = *boost::any_cast<std::string>(&data.value);
 
   if (output.n_elem > 0 && filename != "")
-    data::Save(filename, output, false, !data.noTranspose);
+  {
+      if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+        data::Save(filename, output, false);
+      else
+        data::Save(filename, output, false, !data.noTranspose);
+  }
 }
 
 //! Output a model option (this saves it to file).

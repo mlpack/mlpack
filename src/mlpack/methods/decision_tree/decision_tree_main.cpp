@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * A command-line program to build a decision tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include "decision_tree.hpp"
@@ -41,9 +46,9 @@ PROGRAM_INFO("Decision tree",
 
 // Datasets.
 PARAM_MATRIX_IN("training", "Matrix of training points.", "t");
-PARAM_UMATRIX_IN("labels", "Training labels.", "l");
+PARAM_UROW_IN("labels", "Training labels.", "l");
 PARAM_MATRIX_IN("test", "Matrix of test points.", "T");
-PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
+PARAM_UROW_IN("test_labels", "Test point labels, if accuracy calculation "
     "is desired.", "L");
 
 // Training parameters.
@@ -54,7 +59,7 @@ PARAM_FLAG("print_training_error", "Print the training error.", "e");
 // Output parameters.
 PARAM_MATRIX_OUT("probabilities", "Class probabilities for each test point.",
     "P");
-PARAM_UMATRIX_OUT("predictions", "Class predictions for each test point.", "p");
+PARAM_UROW_OUT("predictions", "Class predictions for each test point.", "p");
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
@@ -123,23 +128,17 @@ int main(int argc, char** argv)
   if (CLI::HasParam("training"))
   {
     arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Mat<size_t> labels;
+    arma::Row<size_t> labels;
     if (CLI::HasParam("labels"))
     {
-      labels = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-      // Do the labels need to be transposed?
-      if (labels.n_cols == 1)
-        labels = labels.t();
-      if (labels.n_cols == 1)
-        Log::Fatal << "Labels must be one-dimensional!" << endl;
+      labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     }
     else
     {
       // Extract the labels as the last
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-
-      labels = arma::conv_to<arma::Mat<size_t>>::from(
+      labels = arma::conv_to<arma::Row<size_t>>::from(
           dataset.row(dataset.n_rows - 1));
       dataset.shed_row(dataset.n_rows - 1);
     }
@@ -150,7 +149,7 @@ int main(int argc, char** argv)
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
 
-    model.tree = DecisionTree<>(dataset, labels.row(0), numClasses,
+    model.tree = DecisionTree<>(dataset, labels, numClasses,
         minLeafSize);
 
     // Do we need to print training error?
@@ -190,8 +189,8 @@ int main(int argc, char** argv)
     // Do we need to calculate accuracy?
     if (CLI::HasParam("test_labels"))
     {
-      arma::Mat<size_t> testLabels =
-          std::move(CLI::GetParam<arma::Mat<size_t>>("test_labels"));
+      arma::Row<size_t> testLabels =
+          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
       size_t correct = 0;
       for (size_t i = 0; i < testPoints.n_cols; ++i)
@@ -206,7 +205,7 @@ int main(int argc, char** argv)
 
     // Do we need to save outputs?
     if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictions);
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
     if (CLI::HasParam("probabilities"))
       CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }

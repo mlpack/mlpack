@@ -43,6 +43,45 @@ LARS::LARS(const bool useCholesky,
     tolerance(tolerance)
 { /* Nothing left to do */ }
 
+LARS::LARS(const arma::mat& data,
+           const arma::vec& responses,
+           const bool transposeData,
+           const bool useCholesky,
+           const double lambda1,
+           const double lambda2,
+           const double tolerance) :
+    matGram(&matGramInternal),
+    useCholesky(useCholesky),
+    lasso((lambda1 != 0)),
+    lambda1(lambda1),
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance)
+{
+  arma::vec beta;
+  Train(data, responses, beta, transposeData);
+}
+
+LARS::LARS(const arma::mat& data,
+           const arma::vec& responses,
+           const bool transposeData,
+           const bool useCholesky,
+           const arma::mat& gramMatrix,
+           const double lambda1,
+           const double lambda2,
+           const double tolerance) :
+    matGram(&gramMatrix),
+    useCholesky(useCholesky),
+    lasso((lambda1 != 0)),
+    lambda1(lambda1),
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance)
+{
+  arma::vec beta;
+  Train(data, responses, beta, transposeData);
+}
+
 void LARS::Train(const arma::mat& matX,
                  const arma::vec& y,
                  arma::vec& beta,

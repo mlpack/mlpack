@@ -98,7 +98,7 @@ class RNN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::SGD
+      template<typename> class OptimizerType = mlpack::optimization::StandardSGD
   >
   void Train(const arma::mat& predictors,
              const arma::mat& responses,
@@ -118,7 +118,7 @@ class RNN
    * @param responses Outputs results from input training variables.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::SGD
+      template<typename> class OptimizerType = mlpack::optimization::StandardSGD
   >
   void Train(const arma::mat& predictors, const arma::mat& responses);
 

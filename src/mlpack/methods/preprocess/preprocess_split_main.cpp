@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
@@ -58,6 +59,8 @@ PARAM_UMATRIX_OUT("test_labels", "Matrix to save test labels to.", "L");
 PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
+PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
+
 using namespace mlpack;
 using namespace arma;
 using namespace std;
@@ -67,6 +70,11 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
   const double testRatio = CLI::GetParam<double>("test_ratio");
+
+  if (CLI::GetParam<int>("seed") == 0)
+    mlpack::math::RandomSeed(std::time(NULL));
+  else
+    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   if (!CLI::HasParam("training"))
