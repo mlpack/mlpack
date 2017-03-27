@@ -58,8 +58,7 @@ LARS::LARS(const arma::mat& data,
     lambda2(lambda2),
     tolerance(tolerance)
 {
-  arma::vec beta;
-  Train(data, responses, beta, transposeData);
+  Train(data, responses, transposeData);
 }
 
 LARS::LARS(const arma::mat& data,
@@ -78,8 +77,7 @@ LARS::LARS(const arma::mat& data,
     lambda2(lambda2),
     tolerance(tolerance)
 {
-  arma::vec beta;
-  Train(data, responses, beta, transposeData);
+  Train(data, responses, transposeData);
 }
 
 void LARS::Train(const arma::mat& matX,
@@ -375,6 +373,14 @@ void LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
+}
+
+void LARS::Train(const arma::mat& data,
+                 const arma::vec& responses,
+                 const bool transposeData)
+{
+  arma::vec beta;
+  Train(data, responses, beta, transposeData);
 }
 
 void LARS::Predict(const arma::mat& points,
