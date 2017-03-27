@@ -91,6 +91,7 @@ using LayerTypes = boost::variant<
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
+    ELU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
