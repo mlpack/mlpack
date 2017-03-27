@@ -218,6 +218,7 @@
  *   - Thyrix Yang <thyrixyang@gmail.com>
  *   - Sagar B Hathwar <sagarbhathwar@gmail.com>
  *   - Nishanth Hegde <hegde.nishanth@gmail.com>
+ *   - Parminder Singh <parmsingh101@gmail.com>
  */
 
 // First, include all of the prerequisites.

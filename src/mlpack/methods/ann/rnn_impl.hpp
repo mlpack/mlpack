@@ -149,7 +149,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& responses)
+    arma::mat& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -162,22 +162,22 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
     ResetDeterministic();
   }
 
-  responses = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
-  arma::mat responsesTemp = responses.col(0);
+  results = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
+  arma::mat resultsTemp = results.col(0);
 
   for (size_t i = 0; i < predictors.n_cols; i++)
   {
     SinglePredict(
         arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
-        responsesTemp);
+        resultsTemp);
 
-    responses.col(i) = responsesTemp;
+    results.col(i) = resultsTemp;
   }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
-    const arma::mat& predictors, arma::mat& responses)
+    const arma::mat& predictors, arma::mat& results)
 {
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -185,7 +185,7 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
         (seqNum + 1) * inputSize - 1);
     Forward(std::move(currentInput));
 
-    responses.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
+    results.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
         boost::apply_visitor(outputParameterVisitor, network.back());
   }
 }
