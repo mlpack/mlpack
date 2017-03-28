@@ -123,7 +123,7 @@ class AdaGrad
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return optimizer.MaxIteratisons(); }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
   double Tolerance() const { return optimizer.Tolerance(); }
