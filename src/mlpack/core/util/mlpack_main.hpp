@@ -56,17 +56,29 @@ int main(int argc, char** argv)
 
 #elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
-void mlpackMain(); // This is typically defined after this include.
+#include <mlpack/bindings/tests/test_option.hpp>
 
-// This will be called in the test.
-void runProgram(int argc, char** argv)
-{
-  mlpack::CLI::ParseCommandLine(argc, argv);
+namespace mlpack {
+namespace util {
 
-  mlpackMain();
+template<typename T>
+using Option = mlpack::bindings::tests::TestOption<T>;
 
-  mlpack::CLI::Destroy();
 }
+}
+
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC); \
+    namespace mlpack { \
+    namespace bindings { \
+    namespace tests { \
+    std::string programName = NAME; \
+    } \
+    } \
+    }
 
 #elif (BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
