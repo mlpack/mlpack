@@ -49,7 +49,7 @@ PARAM_STRING_IN("decomposition_method", "Method used for the principal"
 template<typename DecompositionPolicy>
 void RunPCA(arma::mat& dataset,
             const size_t newDimension,
-            const size_t scale,
+            const bool scale,
             const double varToRetain)
 {
   PCAType<DecompositionPolicy> p(scale);
@@ -57,7 +57,7 @@ void RunPCA(arma::mat& dataset,
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
-  if (varToRetain != 0)
+  if (CLI::HasParam("var_to_retain"))
   {
     if (CLI::HasParam("new_dimensionality"))
       Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
@@ -100,7 +100,7 @@ void mlpackMain()
   }
 
   // Get the options for running PCA.
-  const size_t scale = CLI::HasParam("scale");
+  const bool scale = CLI::HasParam("scale");
   const double varToRetain = CLI::GetParam<double>("var_to_retain");
   const string decompositionMethod = CLI::GetParam<string>(
       "decomposition_method");
