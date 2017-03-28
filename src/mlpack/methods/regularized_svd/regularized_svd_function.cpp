@@ -11,6 +11,7 @@
  */
 
 #include "regularized_svd_function.hpp"
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -129,7 +130,8 @@ namespace mlpack {
 namespace optimization {
 
 template<>
-double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
+double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+    arma::mat& parameters)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

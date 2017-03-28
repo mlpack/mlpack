@@ -34,7 +34,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double fn(const double x)
+  static double Fn(const double x)
   {
     return x;
   }
@@ -46,7 +46,7 @@ class IdentityFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void fn(const InputVecType& x, OutputVecType& y)
+  static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = x;
   }
@@ -57,7 +57,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double deriv(const double /* unused */)
+  static double Deriv(const double /* unused */)
   {
     return 1.0;
   }
@@ -69,7 +69,7 @@ class IdentityFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void deriv(const InputVecType& y, OutputVecType& x)
+  static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x.ones(y.n_elem);
   }
@@ -82,7 +82,7 @@ class IdentityFunction
    * @param x The resulting derivatives.
    */
   template<typename eT>
-  static void deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
+  static void Deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }

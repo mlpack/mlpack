@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test the DBSCAN implementation.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/dbscan/dbscan.hpp>
@@ -93,7 +98,7 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
   for (size_t i = 200; i < 300; ++i)
     points.col(i) = g3.Random();
 
-  DBSCAN<> d(1.0, 3);
+  DBSCAN<> d(2.0, 3);
 
   arma::Row<size_t> assignments;
   arma::mat centroids;
@@ -105,19 +110,21 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
   matches.fill(3);
   for (size_t j = 0; j < 3; ++j)
   {
-    if (arma::norm(g1.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 0;
-    else if (arma::norm(g2.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 1;
-    else if (arma::norm(g3.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 2;
-
-    BOOST_REQUIRE_NE(matches(j), 3);
+    if (arma::norm(g1.Mean() - centroids.col(j)) < 3.0)
+      matches(0) = j;
+    else if (arma::norm(g2.Mean() - centroids.col(j)) < 3.0)
+      matches(1) = j;
+    else if (arma::norm(g3.Mean() - centroids.col(j)) < 3.0)
+      matches(2) = j;
   }
 
   BOOST_REQUIRE_NE(matches(0), matches(1));
   BOOST_REQUIRE_NE(matches(1), matches(2));
   BOOST_REQUIRE_NE(matches(2), matches(0));
+
+  BOOST_REQUIRE_NE(matches(0), 3);
+  BOOST_REQUIRE_NE(matches(1), 3);
+  BOOST_REQUIRE_NE(matches(2), 3);
 
   for (size_t i = 0; i < 100; ++i)
   {

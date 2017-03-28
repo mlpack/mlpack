@@ -456,6 +456,7 @@ if (UNIX)
           mlpack_knn
           mlpack_krann
           mlpack_cf
+          mlpack_dbscan
           mlpack_decision_stump
           mlpack_decision_tree
           mlpack_det

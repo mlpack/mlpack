@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -17,6 +18,8 @@
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -96,31 +99,81 @@ BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
   arma::mat data = arma::randu<arma::mat>(100, 1);
 
   arma::mat weights;
+  arma::cube weights3d;
+
   KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
       data, 1.5);
-  kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
+  kathirvalavakumarSubavathiInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
 // Test the NguyenWidrowInitialization class.
 BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
 {
   arma::mat weights;
-  NguyenWidrowInitialization nguyenWidrowInit;
-  nguyenWidrowInit.Initialize(weights, 100, 100);
+  arma::cube weights3d;
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  NguyenWidrowInitialization nguyenWidrowInit;
+
+  nguyenWidrowInit.Initialize(weights, 100, 100);
+  nguyenWidrowInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
 // Test the OivsInitialization class.
 BOOST_AUTO_TEST_CASE(OivsInitTest)
 {
   arma::mat weights;
-  OivsInitialization<> oivsInit;
-  oivsInit.Initialize(weights, 100, 100);
+  arma::cube weights3d;
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  OivsInitialization<> oivsInit;
+
+  oivsInit.Initialize(weights, 100, 100);
+  oivsInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+}
+
+// Test the GaussianInitialization class.
+BOOST_AUTO_TEST_CASE(GaussianInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  GaussianInitialization t(0, 0.2);
+
+  t.Initialize(weights, rows, cols);
+  t.Initialize(weights3d, rows, cols, slices);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

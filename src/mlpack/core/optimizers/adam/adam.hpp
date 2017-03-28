@@ -3,18 +3,20 @@
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
  * @author Marcus Edel
+ * @author Vivek Pal
  *
- * Adam optimizer. Adam is an an algorithm for first-order gradient-based
- * optimization of stochastic objective functions, based on adaptive estimates
- * of lower-order moments.
+ * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
+ * -based optimization of stochastic objective functions, based on adaptive
+ * estimates of lower-order moments. AdaMax is simply a variant of Adam based
+ * on the infinity norm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
-#define __MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -24,7 +26,8 @@ namespace optimization {
 /**
  * Adam is an optimizer that computes individual adaptive learning rates for
  * different parameters from estimates of first and second moments of the
- * gradients.
+ * gradients. AdaMax is a variant of Adam based on the infinity norm as given
+ * in the section 7 of the following paper.
  *
  * For more information, see the following.
  *
@@ -38,8 +41,8 @@ namespace optimization {
  * @endcode
  *
  *
- * For Adam to work, a DecomposableFunctionType template parameter is required.
- * This class must implement the following function:
+ * For Adam and AdaMax to work, a DecomposableFunctionType template parameter
+ * is required. This class must implement the following function:
  *
  *   size_t NumFunctions();
  *   double Evaluate(const arma::mat& coordinates, const size_t i);
@@ -81,6 +84,8 @@ class Adam
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param adaMax If true, then the AdaMax optimizer is used; otherwise, by
+   *        default the Adam optimizer is used.
    */
   Adam(DecomposableFunctionType& function,
       const double stepSize = 0.001,
@@ -89,7 +94,8 @@ class Adam
       const double eps = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true);
+      const bool shuffle = true,
+      const bool adaMax = false);
 
   /**
    * Optimize the given function using Adam. The given starting point will be
@@ -141,6 +147,11 @@ class Adam
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the AdaMax optimizer is specified.
+  bool AdaMax() const { return adaMax; }
+  //! Modify wehther or not the AdaMax optimizer is to be used.
+  bool& AdaMax() { return adaMax; }
+
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
@@ -166,6 +177,9 @@ class Adam
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Specifies whether or not the AdaMax optimizer is to be used.
+  bool adaMax;
 };
 
 } // namespace optimization

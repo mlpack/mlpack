@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
 
   // No training is necessary because we can just call CreateChildren().
   data::DatasetInfo info(3);
-  info.MapString("hello", 0); // Make dimension 0 categorical.
+  info.MapString<size_t>("hello", 0); // Make dimension 0 categorical.
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
   // Create the children.
@@ -347,15 +347,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeNoSplitTest)
 {
   // Make all dimensions categorical.
   data::DatasetInfo info(3);
-  info.MapString("cat1", 0);
-  info.MapString("cat2", 0);
-  info.MapString("cat3", 0);
-  info.MapString("cat4", 0);
-  info.MapString("cat1", 1);
-  info.MapString("cat2", 1);
-  info.MapString("cat3", 1);
-  info.MapString("cat1", 2);
-  info.MapString("cat2", 2);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat2", 0);
+  info.MapString<size_t>("cat3", 0);
+  info.MapString<size_t>("cat4", 0);
+  info.MapString<size_t>("cat1", 1);
+  info.MapString<size_t>("cat2", 1);
+  info.MapString<size_t>("cat3", 1);
+  info.MapString<size_t>("cat1", 2);
+  info.MapString<size_t>("cat2", 2);
 
   HoeffdingTree<> split(info, 2, 0.95, 5000, 1);
 
@@ -384,9 +384,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeEasySplitTest)
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
   data::DatasetInfo info(2);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat0", 1);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat0", 1);
 
   HoeffdingTree<> tree(info, 2, 0.95, 5000, 5000 /* never check for splits */);
 
@@ -412,9 +412,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeProbability1SplitTest)
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
   data::DatasetInfo info(2);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat0", 1);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat0", 1);
 
   HoeffdingTree<> split(info, 2, 1.0, 12000, 1 /* always check for splits */);
 
@@ -439,10 +439,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAlmostPerfectSplit)
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat0", 1);
-  info.MapString("cat1", 1);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat0", 1);
+  info.MapString<size_t>("cat1", 1);
 
   HoeffdingTree<> split(info, 2, 0.95, 5000, 5000 /* never check for splits */);
 
@@ -474,10 +474,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeEqualSplitTest)
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat0", 1);
-  info.MapString("cat1", 1);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat0", 1);
+  info.MapString<size_t>("cat1", 1);
 
   HoeffdingTree<> split(info, 2, 0.95, 5000, 1);
 
@@ -505,18 +505,18 @@ using HoeffdingSizeTNumericSplit = HoeffdingNumericSplit<FitnessFunction,
 BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
 {
   DatasetInfo info(3);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat2", 0);
-  info.MapString("cat3", 0);
-  info.MapString("cat4", 0);
-  info.MapString("cat5", 0);
-  info.MapString("cat6", 0);
-  info.MapString("cat0", 1);
-  info.MapString("cat1", 1);
-  info.MapString("cat2", 1);
-  info.MapString("cat0", 2);
-  info.MapString("cat1", 2);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat2", 0);
+  info.MapString<size_t>("cat3", 0);
+  info.MapString<size_t>("cat4", 0);
+  info.MapString<size_t>("cat5", 0);
+  info.MapString<size_t>("cat6", 0);
+  info.MapString<size_t>("cat0", 1);
+  info.MapString<size_t>("cat1", 1);
+  info.MapString<size_t>("cat2", 1);
+  info.MapString<size_t>("cat0", 2);
+  info.MapString<size_t>("cat1", 2);
 
   // Now generate data.
   arma::Mat<size_t> dataset(3, 9000);
@@ -799,7 +799,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -985,7 +985,7 @@ BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -1042,7 +1042,7 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -1095,7 +1095,7 @@ BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -1153,7 +1153,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelTest)
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -1232,7 +1232,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelBatchTest)
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -1308,7 +1308,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
-  info.MapString("0", 3);
+  info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();

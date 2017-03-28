@@ -32,6 +32,38 @@ class IncrementPolicy
   // typedef of MappedType
   using MappedType = size_t;
 
+  //! We do need a first pass over the data to set the dimension types right.
+  static const bool NeedsFirstPass = true;
+
+  /**
+   * Determine if the dimension is numeric or categorical.
+   */
+  template<typename T>
+  void MapFirstPass(const std::string& string,
+                    const size_t dim,
+                    std::vector<Datatype>& types)
+  {
+    if (types[dim] == Datatype::categorical)
+    {
+      // No need to check; it's already categorical.
+      return;
+    }
+
+    // Otherwise we need to attempt to read the value.  If the read fails, the
+    // dimension is categorical; otherwise we leave it at the default of
+    // numeric.
+    std::stringstream token;
+    token.str(string);
+    T val;
+    token >> val;
+
+    if (token.fail() || !token.eof())
+    {
+      // Parsing failed; the dimension is categorical.
+      types[dim] = Datatype::categorical;
+    }
+  }
+
   /**
    * Given the string and the dimension to which the it belongs, and the maps
    * and types given by the DatasetMapper class, returns its numeric mapping.
@@ -45,12 +77,32 @@ class IncrementPolicy
    * @param maps Unordered map given by the DatasetMapper.
    * @param types Vector containing the type information about each dimensions.
    */
-  template <typename MapType>
-  MappedType MapString(const std::string& string,
-                       const size_t dimension,
-                       MapType& maps,
-                       std::vector<Datatype>& types)
+  template<typename MapType, typename T>
+  T MapString(const std::string& string,
+              const size_t dimension,
+              MapType& maps,
+              std::vector<Datatype>& types)
   {
+    // If we are in a categorical dimension we already know we need to map.
+    if (types[dimension] == Datatype::numeric)
+    {
+      // Check if this string needs to be mapped or if it can be read
+      // directly as a number.  This will be true if nothing else in this
+      // dimension has yet been mapped, but this can't be read as a number.
+      std::stringstream token;
+      token.str(string);
+      T val;
+      token >> val;
+
+      if (!token.fail() && token.eof())
+      {
+        // We can return what we have.
+        return val;
+      }
+    }
+
+    // The token must be mapped.
+
     // If this condition is true, either we have no mapping for the given string
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
@@ -60,72 +112,18 @@ class IncrementPolicy
       // This string does not exist yet.
       size_t& numMappings = maps[dimension].second;
 
-      // change type of the feature to categorical
+      // Change type of the feature to categorical.
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
       typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
-      return numMappings++;
+      return T(numMappings++);
     }
     else
     {
       // This string already exists in the mapping.
       return maps[dimension].first.left.at(string);
-    }
-  }
-
-  /**
-   * MapTokens turns vector of strings into numeric variables and puts them
-   * into a given matrix. It is used as a helper function when trying to load
-   * files. Each dimension's tokens are given in to this function. If one of the
-   * tokens turns out to be a string, all the tokens should be mapped using the
-   * MapString() funciton.
-   *
-   * @tparam eT Type of armadillo matrix.
-   * @tparam MapType Type of unordered_map that contains mapped value pairs.
-   * @param tokens Vector of variables inside a dimension.
-   * @param row Position of the given tokens.
-   * @param matrix Matrix to save the data into.
-   * @param maps Maps given by the DatasetMapper class.
-   * @param types Types of each dimensions given by the DatasetMapper class.
-   */
-  template <typename eT, typename MapType>
-  void MapTokens(const std::vector<std::string>& tokens,
-                 size_t& row,
-                 arma::Mat<eT>& matrix,
-                 MapType& maps,
-                 std::vector<Datatype>& types)
-  {
-    auto notNumber = [](const std::string& str)
-    {
-      eT val(0);
-      std::stringstream token;
-      token.str(str);
-      token >> val;
-      return token.fail();
-    };
-
-    const bool notNumeric = std::any_of(std::begin(tokens),
-                                        std::end(tokens), notNumber);
-    if (notNumeric)
-    {
-       for (size_t i = 0; i != tokens.size(); ++i)
-       {
-         const eT val = static_cast<eT>(this->MapString(tokens[i], row, maps,
-                                                        types));
-         matrix.at(row, i) = val;
-       }
-    }
-    else
-    {
-      std::stringstream token;
-      for (size_t i = 0; i != tokens.size(); ++i)
-      {
-         token.str(tokens[i]);
-         token >> matrix.at(row, i);
-         token.clear();
-      }
     }
   }
 }; // class IncrementPolicy

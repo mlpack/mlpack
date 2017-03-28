@@ -18,18 +18,18 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Gradient Descent is a technique to minimize a function. To find a local 
- * minimum of a function using gradient descent, one takes steps proportional 
- * to the negative of the gradient of the function at the current point, 
+ * Gradient Descent is a technique to minimize a function. To find a local
+ * minimum of a function using gradient descent, one takes steps proportional
+ * to the negative of the gradient of the function at the current point,
  * producing the following update scheme:
  *
  * \f[
  * A_{j + 1} = A_j + \alpha \nabla F(A)
  * \f]
  *
- * where \f$ \alpha \f$ is a parameter which specifies the step size. \f$ F \f$ 
+ * where \f$ \alpha \f$ is a parameter which specifies the step size. \f$ F \f$
  * is the function being optimized. The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations---or when an update produces 
+ * \f$ reaches the maximum number of iterations---or when an update produces
  * an improvement within a certain tolerance \f$ \epsilon \f$.  That is,
  *
  * \f[
@@ -54,9 +54,9 @@ class GradientDescent
 {
  public:
   /**
-   * Construct the Gradient Descent optimizer with the given function and 
-   * parameters.  The defaults here are not necessarily good for the given 
-   * problem, so it is suggested that the values used be tailored to the task 
+   * Construct the Gradient Descent optimizer with the given function and
+   * parameters.  The defaults here are not necessarily good for the given
+   * problem, so it is suggested that the values used be tailored to the task
    * at hand.
    *
    * @param function Function to be optimized (minimized).
@@ -71,8 +71,8 @@ class GradientDescent
       const double tolerance = 1e-5);
 
   /**
-   * Optimize the given function using gradient descent.  The given starting 
-   * point will be modified to store the finishing point of the algorithm, and 
+   * Optimize the given function using gradient descent.  The given starting
+   * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
    * @param iterate Starting point (will be modified).

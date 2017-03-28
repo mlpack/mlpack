@@ -56,13 +56,15 @@ void LoadARFF(const std::string& filename,
 
       // Get the annotation we are looking at.
       std::string annotation(*it);
+      std::transform(annotation.begin(), annotation.end(), annotation.begin(),
+            ::tolower);
 
-      if (*tok.begin() == "@relation")
+      if (annotation == "@relation")
       {
         // We don't actually have anything to do with the name of the dataset.
         continue;
       }
-      else if (*tok.begin() == "@attribute")
+      else if (annotation == "@attribute")
       {
         ++dimensionality;
         // We need to mark this dimension with its according type.
@@ -84,7 +86,7 @@ void LoadARFF(const std::string& filename,
           throw std::logic_error("list of ARFF values not yet supported");
         }
       }
-      else if (*tok.begin() == "@data")
+      else if (annotation == "@data")
       {
         // We are in the data section.  So we can move out of this loop.
         break;
@@ -180,7 +182,7 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
-        matrix(col, row) = info.MapString(token, col); // We load transposed.
+        matrix(col, row) = info.template MapString<eT>(token, col); // We load transposed.
       }
       else if (info.Type(col) == Datatype::numeric)
       {

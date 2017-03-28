@@ -79,7 +79,7 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
     "of predictors, X).", "t");
-PARAM_UMATRIX_IN("labels", "A matrix containing labels (0 or 1) for the points "
+PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
 // Optimizer parameters.
@@ -103,7 +103,7 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UMATRIX_OUT("output", "If --test_file is specified, this matrix is where "
+PARAM_UROW_OUT("output", "If --test_file is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
 PARAM_MATRIX_OUT("output_probabilities", "If --test_file is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
@@ -184,7 +184,6 @@ void mlpackMain()
 
   // These are the matrices we might use.
   arma::mat regressors;
-  arma::Mat<size_t> responsesMat;
   arma::Row<size_t> responses;
   arma::mat testSet;
   arma::Row<size_t> predictions;
@@ -209,12 +208,7 @@ void mlpackMain()
   // Check if the responses are in a separate file.
   if (CLI::HasParam("training") && CLI::HasParam("labels"))
   {
-    responsesMat = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-    if (responsesMat.n_cols == 1)
-      responses = responsesMat.col(0).t();
-    else
-      responses = responsesMat.row(0);
-
+    responses = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
       Log::Fatal << "The labels (--labels_file) must have the same number of "
           << "points as the training dataset (--training_file)." << endl;
@@ -283,7 +277,7 @@ void mlpackMain()
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model.Classify(testSet, predictions, decisionBoundary);
 
-      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(predictions);
+      CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
     if (CLI::HasParam("output_probabilities"))

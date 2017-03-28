@@ -156,17 +156,15 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
-  char* argv[2];
-  argv[0] = strcpy(new char[strlen("programname")], "programname");
-  argv[1] = strcpy(new char[strlen("--flag_test")], "--flag_test");
+  const char* argv[2];
+  argv[0] = "programname";
+  argv[1] = "--flag_test";
 
-  ParseCommandLine(argc, argv);
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
 
-  delete[] argv[0];
-  delete[] argv[1];
 }
 
 /**
@@ -231,6 +229,342 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   BOOST_REQUIRE_EQUAL(v[0], 1);
   BOOST_REQUIRE_EQUAL(v[1], 2);
   BOOST_REQUIRE_EQUAL(v[2], 4);
+}
+
+BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<arma::vec>(arma::vec(), "vector", "Test vector", 'l', false, true, false);
+
+  //fake aruguments
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "iris_test_labels.csv";
+
+  int argc = 3;
+
+   // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+   // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::vec vec1 = CLI::GetParam<arma::vec>("vector");
+  arma::vec vec2 = CLI::GetParam<arma::vec>("vector");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
+  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l', false, true, false);
+
+  //fake aruguments
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "iris_test_labels.csv";
+
+  int argc = 3;
+
+   // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+   // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::Col<size_t> vec1 = CLI::GetParam<arma::Col<size_t>>("vector");
+  arma::Col<size_t> vec2 = CLI::GetParam<arma::Col<size_t>>("vector");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
+  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+}
+
+BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, true, false);
+
+  //fake aruguments
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "testRes.csv";
+
+  int argc = 3;
+
+   // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+   // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::rowvec vec1 = CLI::GetParam<arma::rowvec>("row");
+  arma::rowvec vec2 = CLI::GetParam<arma::rowvec>("row");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
+  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(InputUngignedRowVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, true, false);
+
+  //fake aruguments
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "testRes.csv";
+
+  int argc = 3;
+
+   // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+   // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::Row<size_t> vec1 = CLI::GetParam<arma::Row<size_t>>("row");
+  arma::Row<size_t> vec2 = CLI::GetParam<arma::Row<size_t>>("row");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
+  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+}
+
+BOOST_AUTO_TEST_CASE(OutputColParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --vector is an output parameter.
+  CLI::Add<arma::vec>(arma::vec(), "vector", "Test vector", 'l', false, false,
+      false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::vec dataset = arma::randu<arma::vec>(100);
+  CLI::GetParam<arma::vec>("vector") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the vector back and make sure it was saved correctly.
+  arma::vec dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --vector is an output parameter.
+  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l', false, false,
+      false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::Col<size_t> dataset = arma::randi<arma::Col<size_t>>(100);
+  CLI::GetParam<arma::Col<size_t>>("vector") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the vector back and make sure it was saved correctly.
+  arma::Col<size_t> dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputRowParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --row is an output parameter.
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, false,
+      false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --row parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --row_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::rowvec dataset = arma::randu<arma::rowvec>(100);
+  CLI::GetParam<arma::rowvec>("row") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the row vector back and make sure it was saved correctly.
+  arma::rowvec dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --row is an output parameter.
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, false,
+      false);
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --row parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --row_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::Row<size_t> dataset = arma::randi<arma::Row<size_t>>(100);
+  CLI::GetParam<arma::Row<size_t>>("row") = dataset;
+
+  // Write the file.
+  CLI::Destroy();
+  AddRequiredCLIOptions();
+
+  // Now load the row vector back and make sure it was saved correctly.
+  arma::Row<size_t> dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+
+  // Remove the file.
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
@@ -739,11 +1073,11 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   DatasetInfo info(3);
   info.Type(0) = Datatype::categorical;
   info.Type(2) = Datatype::categorical;
-  info.MapString("seven", 0); // This will have mapped value 0.
-  info.MapString("cheese", 0); // This will have mapped value 1.
-  info.MapString("hello", 0); // This will have mapped value 2.
-  info.MapString("goodbye", 2); // This will have mapped value 0.
-  info.MapString("moo", 2); // This will have mapped value 1.
+  info.MapString<size_t>("seven", 0); // This will have mapped value 0.
+  info.MapString<size_t>("cheese", 0); // This will have mapped value 1.
+  info.MapString<size_t>("hello", 0); // This will have mapped value 2.
+  info.MapString<size_t>("goodbye", 2); // This will have mapped value 0.
+  info.MapString<size_t>("moo", 2); // This will have mapped value 1.
 
   // Now set the dataset info.
   std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;

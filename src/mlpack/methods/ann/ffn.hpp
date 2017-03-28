@@ -24,7 +24,6 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 
 namespace mlpack {
@@ -93,11 +92,13 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::RMSprop
+      template<typename, typename...> class OptimizerType =
+          mlpack::optimization::RMSprop,
+      typename... OptimizerTypeArgs
   >
   void Train(const arma::mat& predictors,
              const arma::mat& responses,
-             OptimizerType<NetworkType>& optimizer);
+             OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -113,7 +114,7 @@ class FFN
    * @param responses Outputs results from input training variables.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::RMSprop
+      template<typename...> class OptimizerType = mlpack::optimization::RMSprop
   >
   void Train(const arma::mat& predictors, const arma::mat& responses);
 
@@ -123,9 +124,9 @@ class FFN
    * output layer function.
    *
    * @param predictors Input predictors.
-   * @param responses Matrix to put output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& responses);
+  void Predict(arma::mat& predictors, arma::mat& results);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function

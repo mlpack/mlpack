@@ -1,0 +1,16 @@
+% @file: casecheck.arff
+% @author: Praveen Ch
+%
+% This file declares the @relation, @attribute, @data tags in non uniform mix 
+% of upper-case and lower-case letters to show that the ARFF loader is case
+% insensitive.
+
+@RELATION dummy
+
+@ATTribute height numeric
+@ATTRIBUTE weight numeric
+
+@DATA
+120,56
+45,85
+99,200

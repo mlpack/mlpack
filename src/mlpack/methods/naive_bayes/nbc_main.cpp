@@ -29,7 +29,7 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."
     "\n\n"
-    "Labels are expected to be the last row of the training set (--train_file),"
+    "Labels are expected to be the last row of the training set (--training_file),"
     " but labels can also be passed in separately as their own file "
     "(--labels_file).  If training is not desired, a pre-existing model can be "
     "loaded with the --input_model_file (-m) option."
@@ -69,15 +69,17 @@ PARAM_MODEL_OUT(NBCModel, "output_model", "File to save trained "
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
-PARAM_UMATRIX_IN("labels", "A file containing labels for the training set.",
+PARAM_UROW_IN("labels", "A file containing labels for the training set.",
     "l");
 PARAM_FLAG("incremental_variance", "The variance of each class will be "
     "calculated incrementally.", "I");
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-PARAM_UMATRIX_OUT("output", "The matrix in which the predicted labels for the"
+PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability of labels for the"
+    " test set will be written.", "p");
 
 void mlpackMain()
 {
@@ -97,9 +99,11 @@ void mlpackMain()
     Log::Warn << "--incremental_variance (-I) ignored because --training_file "
         << "(-t) is not specified." << endl;
 
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --output_file (-o) nor --output_model_file (-M) "
-        << "specified; no output will be saved!" << endl;
+  if (!CLI::HasParam("output") && !CLI::HasParam("output_model") &&
+      !CLI::HasParam("output_probs"))
+    Log::Warn << "Neither --output_file (-o), nor --output_model_file (-M), nor"
+        << " --output_proba_file (-p) specified; no output will be saved!"
+        << endl;
 
   if (CLI::HasParam("output") && !CLI::HasParam("test"))
     Log::Warn << "--output_file (-o) ignored because no test file specified "
@@ -108,6 +112,11 @@ void mlpackMain()
   if (!CLI::HasParam("output") && CLI::HasParam("test"))
     Log::Warn << "--test_file (-T) specified, but classification results will "
         << "not be saved because --output_file (-o) is not specified." << endl;
+
+  if (!CLI::HasParam("output_probs") && CLI::HasParam("test"))
+    Log::Warn << "--test_file (-T) specified, but predicted probability of "
+        << "labels will not be saved because --output_probs_file (-p) is not "
+        << "specified." << endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
@@ -121,15 +130,8 @@ void mlpackMain()
     if (CLI::HasParam("labels"))
     {
       // Load labels.
-      Mat<size_t> rawLabels = std::move(CLI::GetParam<Mat<size_t>>("labels"));
-
-      // Do the labels need to be transposed?
-      if (rawLabels.n_cols == 1)
-        rawLabels = rawLabels.t();
-      if (rawLabels.n_rows > 1)
-        Log::Fatal << "Labels must be one-dimensional!" << endl;
-
-      data::NormalizeLabels(rawLabels.row(0), labels, model.mappings);
+      Row<size_t> rawLabels = std::move(CLI::GetParam<Row<size_t>>("labels"));
+      data::NormalizeLabels(rawLabels, labels, model.mappings);
     }
     else
     {
@@ -166,20 +168,24 @@ void mlpackMain()
           << ")!" << std::endl;
 
     // Time the running of the Naive Bayes Classifier.
-    Row<size_t> results;
+    Row<size_t> predictions;
+    mat probabilities;
     Timer::Start("nbc_testing");
-    model.nbc.Classify(testingData, results);
+    model.nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
     if (CLI::HasParam("output"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
-      data::RevertLabels(results, model.mappings, rawResults);
+      data::RevertLabels(predictions, model.mappings, rawResults);
 
       // Output results.
-      CLI::GetParam<Mat<size_t>>("output") = std::move(rawResults);
+      CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
+
+    if (CLI::HasParam("output_probs"))
+      CLI::GetParam<mat>("output_probs") = probabilities;
   }
 
   if (CLI::HasParam("output_model"))

@@ -73,11 +73,11 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
-PARAM_UMATRIX_IN("labels", "Labels for the training set.", "l");
+PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
-PARAM_UMATRIX_OUT("output", "Predicted labels for the test set.", "o");
+PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -169,25 +169,20 @@ void mlpackMain()
     mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
     // Load labels.
-    arma::Mat<size_t> labelsIn;
+    arma::Row<size_t> labelsIn;
 
     if (CLI::HasParam("labels"))
     {
       // Load labels.
-      labelsIn = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-
-      if (labelsIn.n_rows > 1)
-        labelsIn = labelsIn.t();
-      if (labelsIn.n_rows > 1)
-        Log::Fatal << "Labels must be one-dimensional!" << std::endl;
+      labelsIn = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     }
     else
     {
       // Extract the labels as the last dimension of the training data.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-      labelsIn = conv_to<Mat<size_t>>::from(
-          trainingData.row(trainingData.n_rows - 1)).t();
+      labelsIn = conv_to<Row<size_t>>::from(
+          trainingData.row(trainingData.n_rows - 1));
       trainingData.shed_row(trainingData.n_rows - 1);
     }
 
@@ -195,7 +190,7 @@ void mlpackMain()
     Row<size_t> labels;
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn.row(0), labels, m.Mappings());
+    data::NormalizeLabels(labelsIn, labels, m.Mappings());
 
     // Get other training parameters.
     const double tolerance = CLI::GetParam<double>("tolerance");
@@ -233,9 +228,9 @@ void mlpackMain()
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m.Mappings(), results);
-
+    
     if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(results);
+      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
   }
 
   // Should we save the model, too?

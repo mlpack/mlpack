@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of generic decision tree class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
@@ -222,6 +227,16 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize)
 {
+  // Sanity check on data.
+  if (data.n_cols != labels.n_elem)
+  {
+    std::ostringstream oss;
+    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
+        << "does not match number of labels (" << labels.n_elem << ")!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -342,6 +357,16 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize)
 {
+  // Sanity check on data.
+  if (data.n_cols != labels.n_elem)
+  {
+    std::ostringstream oss;
+    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
+        << "does not match number of labels (" << labels.n_elem << ")!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];

@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 
   // Make the Reg SVD function and the optimizer.
   RegularizedSVDFunction rSVDFunc(data, rank, lambda);
-  mlpack::optimization::SGD<RegularizedSVDFunction> optimizer(rSVDFunc,
+  mlpack::optimization::StandardSGD <RegularizedSVDFunction> optimizer(rSVDFunc,
       alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.

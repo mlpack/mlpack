@@ -21,12 +21,13 @@
 
 #include <boost/any.hpp>
 
+#include <mlpack/prereqs.hpp>
+
 #include "timers.hpp"
 #include "program_doc.hpp"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
-#include <mlpack/prereqs.hpp>
 
 #include "param_data.hpp"
 

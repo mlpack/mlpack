@@ -1,9 +1,22 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 2.2.0
+###### 2017-03-21
   * Bugfix for mlpack_knn program (#816).
 
   * Add decision tree implementation in methods/decision_tree/.  This is very
     similar to a C4.5 tree learner.
+
+  * Add DBSCAN implementation in methods/dbscan/.
+
+  * Add support for multidimensional discrete distributions (#810, #830).
+
+  * Better output for Log::Debug/Log::Info/Log::Warn/Log::Fatal for Armadillo
+    objects (#895, #928).
+
+  * Refactor categorical CSV loading with boost::spirit for faster loading
+    (#681).
 
 ### mlpack 2.1.1
 ###### 2016-12-22

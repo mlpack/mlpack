@@ -228,7 +228,7 @@ void mlpackMain()
       arma::mat exactDistances;
       if (CLI::HasParam("exact_distances"))
       {
-        exactDistances = std::move(CLI::GetParam<string>("exact_distances"));
+        exactDistances = std::move(CLI::GetParam<arma::mat>("exact_distances"));
       }
       else
       {

@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // should be between 4 and 5.
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 1);
   BOOST_REQUIRE_GT(classProbabilities[0], 0.4);
-  BOOST_REQUIRE_LT(classProbabilities[1], 0.5);
+  BOOST_REQUIRE_LT(classProbabilities[0], 0.5);
 }
 
 /**
@@ -461,25 +461,31 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
  */
 BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
 {
-  math::RandomSeed(std::time(NULL));
-
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
   // discrete distributions).
   DiscreteDistribution c1[5];
   // The distribution will be automatically normalized.
   for (size_t i = 0; i < 5; ++i)
-    c1[i] = DiscreteDistribution(arma::vec(4, arma::fill::randu));
+  {
+    std::vector<arma::vec> probs;
+    probs.push_back(arma::vec(4, arma::fill::randu));
+    c1[i] = DiscreteDistribution(probs);
+  }
 
   DiscreteDistribution c2[5];
   for (size_t i = 0; i < 5; ++i)
-    c2[i] = DiscreteDistribution(arma::vec(2, arma::fill::randu));
+  {
+    std::vector<arma::vec> probs;
+    probs.push_back(arma::vec(2, arma::fill::randu));
+    c2[i] = DiscreteDistribution(probs);
+  }
 
   arma::mat spiralDataset(4, 10000);
   arma::Row<size_t> labels(10000);
   for (size_t i = 0; i < 10000; ++i)
   {
-    // One circle every 20000 samples.  Plus some noise. 
+    // One circle every 20000 samples.  Plus some noise.
     const double magnitude = 2.0 + (double(i) / 2000.0) +
         0.5 * mlpack::math::Random();
     const double angle = (i % 2000) * (2 * M_PI) + mlpack::math::Random();
@@ -528,12 +534,12 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
   di.Type(2) = data::Datatype::categorical;
   di.Type(3) = data::Datatype::categorical;
   // Set mappings.
-  di.MapString("0", 2);
-  di.MapString("1", 2);
-  di.MapString("2", 2);
-  di.MapString("3", 2);
-  di.MapString("0", 3);
-  di.MapString("1", 3);
+  di.MapString<double>("0", 2);
+  di.MapString<double>("1", 2);
+  di.MapString<double>("2", 2);
+  di.MapString<double>("3", 2);
+  di.MapString<double>("0", 3);
+  di.MapString<double>("1", 3);
 
   // Now shuffle the dataset.
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 9999,

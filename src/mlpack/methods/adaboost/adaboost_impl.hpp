@@ -135,6 +135,15 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
     if ((i > 0) && (std::abs(rt - crt) < tolerance))
       break;
 
+    // Check if model has converged.
+    if (rt >= 1.0)
+    {
+      // Save the weak learner and terminate.
+      alpha.push_back(1.0);
+      wl.push_back(w);
+      break;
+    }
+
     crt = rt;
 
     // Our goal is to find alphat which mizimizes or approximately minimizes the

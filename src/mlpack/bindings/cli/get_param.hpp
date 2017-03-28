@@ -48,7 +48,11 @@ T& GetParam(
   T& matrix = std::get<0>(tuple);
   if (d.input && !d.loaded)
   {
-    data::Load(value, matrix, true, !d.noTranspose);
+    // Call correct data::Load() function.
+    if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+      data::Load(value, matrix, true);
+    else
+      data::Load(value, matrix, true, !d.noTranspose);
     d.loaded = true;
   }
 

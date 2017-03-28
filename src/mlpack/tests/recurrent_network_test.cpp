@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     model.Add<Linear<> >(4, 10);
     model.Add<LogSoftMax<> >();
 
-    SGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
+    StandardSGD<decltype(model)> opt(model, 0.1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::mat prediction;
@@ -371,7 +371,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
   model.Add<Linear<> >(7, outputSize);
   model.Add<SigmoidLayer<> >();
 
-  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 40; i++)
@@ -552,7 +552,7 @@ void DistractedSequenceRecallTestNetwork()
   model.Add<Linear<> >(7, outputSize);
   model.Add<SigmoidLayer<> >();
 
-  SGD<decltype(model)> opt(model, 0.1, 2, -50000);
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
   arma::mat inputTemp, labelsTemp;
   for (size_t i = 0; i < 40; i++)
