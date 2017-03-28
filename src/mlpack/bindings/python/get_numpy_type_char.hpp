@@ -27,9 +27,33 @@ inline std::string GetNumpyTypeChar<arma::Mat<size_t>>()
   return "s";
 }
 
+template<>
+inline std::string GetNumpyTypeChar<arma::Col<size_t>>()
+{
+  return "s";
+}
+
+template<>
+inline std::string GetNumpyTypeChar<arma::Row<size_t>>()
+{
+  return "s";
+}
+
 // double = d.
 template<>
 inline std::string GetNumpyTypeChar<arma::mat>()
+{
+  return "d";
+}
+
+template<>
+inline std::string GetNumpyTypeChar<arma::vec>()
+{
+  return "d";
+}
+
+template<>
+inline std::string GetNumpyTypeChar<arma::rowvec>()
 {
   return "d";
 }
