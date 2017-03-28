@@ -1,5 +1,6 @@
 /**
  * @file ada_delta_update.hpp
+ * @author Vasanth Kalingeri
  * @author Abhinav Moudgil
  *
  * AdaDelta update for Stochastic Gradient Descent.
