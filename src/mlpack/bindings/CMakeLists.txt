@@ -2,6 +2,7 @@
 set(DIRS
   cli
   python
+  tests
 )
 
 foreach(dir ${DIRS})
