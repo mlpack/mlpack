@@ -29,6 +29,7 @@ namespace optimization {
  *   author    = {Simon Funk},
  *   title     = {RMSprop loses to SMORMS3 - Beware the Epsilon!},
  *   year      = {2015}
+ *   url       = {http://sifter.org/~simon/journal/20150420.html}
  * }
  * @endcode
  */
@@ -42,8 +43,8 @@ class SMORMS3Update
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    */
   SMORMS3Update(const double epsilon = 1e-16) :
-              epsilon(epsilon),
-              previousStepSize(0)
+    epsilon(epsilon),
+    previousStepSize(0)
   { /* Do nothing. */ }
 
   //! Get the value used to initialise the mean squared gradient parameter.
@@ -96,20 +97,24 @@ class SMORMS3Update
     if (stepSize != previousStepSize)
     {
       stepSizeMat.fill(stepSize);
+      previousStepSize = stepSize;
     }
 
     iterate -= gradient % arma::min(x, stepSizeMat) / (arma::sqrt(g2) + epsilon);
 
     mem %= (1 - x);
     mem += 1;
-
-    previousStepSize = stepSize;
   }
  private:
    //! The value used to initialise the mean squared gradient parameter.
-   double epsilon, previousStepSize;
+   double epsilon;
+   
+   //! The previous value of step size in each iteration of update step.
+   double previousStepSize;
+   
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
+   
    // The matrix to be filled with stepSize.
    arma::mat stepSizeMat;
 };

@@ -34,6 +34,7 @@ namespace optimization {
  *   author    = {Simon Funk},
  *   title     = {RMSprop loses to SMORMS3 - Beware the Epsilon!},
  *   year      = {2015}
+ *   url       = {http://sifter.org/~simon/journal/20150420.html}
  * }
  * @endcode
  *
@@ -97,9 +98,9 @@ class SMORMS3
   double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
@@ -107,9 +108,9 @@ class SMORMS3
   double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return smorms3Update.Epsilon(); }
+  double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return smorms3Update.Epsilon(); }
+  double& Epsilon() { return optimizer.UpdatePolicy().Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
@@ -127,15 +128,6 @@ class SMORMS3
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
-  //! The value used to initialise the mean squared gradient parameter.
-  double epsilon;
-
-  //! The SMORMS3Update update policy object.
-  SMORMS3Update smorms3Update;
-
   //! The Stochastic Gradient Descent object with SMORMS3Update update policy.
   SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
 };

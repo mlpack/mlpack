@@ -25,15 +25,12 @@ SMORMS3<DecomposableFunctionType>::SMORMS3(DecomposableFunctionType& function,
                                            const size_t maxIterations,
                                            const double tolerance,
                                            const bool shuffle) :
-    function(function),
-    epsilon(epsilon),
-    smorms3Update(epsilon),
     optimizer(function,
               stepSize,
               maxIterations,
               tolerance,
               shuffle,
-              smorms3Update)
+              SMORMS3Update(epsilon))
 { /* Nothing to do. */ }
 
 } // namespace optimization
