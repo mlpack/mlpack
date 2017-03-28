@@ -74,11 +74,14 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<
+    template<typename, typename...> class OptimizerType,
+    typename... OptimizerTypeArgs
+>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
       const arma::mat& predictors,
       const arma::mat& responses,
-      OptimizerType<NetworkType>& optimizer)
+      OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -103,7 +106,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<template<typename...> class OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors, const arma::mat& responses)
 {

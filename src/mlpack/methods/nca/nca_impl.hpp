@@ -19,7 +19,7 @@ namespace mlpack {
 namespace nca {
 
 // Just set the internal matrix reference.
-template<typename MetricType, template<typename> class OptimizerType>
+template<typename MetricType, template<typename...> class OptimizerType>
 NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
                                     const arma::Row<size_t>& labels,
                                     MetricType metric) :
@@ -30,7 +30,7 @@ NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
     optimizer(OptimizerType<SoftmaxErrorFunction<MetricType> >(errorFunction))
 { /* Nothing to do. */ }
 
-template<typename MetricType, template<typename> class OptimizerType>
+template<typename MetricType, template<typename...> class OptimizerType>
 void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
 {
   // See if we were passed an initialized matrix.
