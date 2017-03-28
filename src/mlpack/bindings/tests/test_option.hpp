@@ -16,19 +16,15 @@
 #include <string>
 
 #include <mlpack/core/util/cli.hpp>
-#include "parameter_type.hpp"
-#include "default_param.hpp"
-#include "output_param.hpp"
 #include "get_printable_param.hpp"
-#include "string_type_param.hpp"
 #include "get_param.hpp"
-#include "get_raw_param.hpp"
-#include "map_parameter_name.hpp"
-#include "set_param.hpp"
 
 namespace mlpack {
 namespace bindings {
 namespace tests {
+
+// Defined in mlpack_main.hpp.
+extern std::string programName;
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.
@@ -58,7 +54,7 @@ class TestOption
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
    */
-  CLIOption(const N defaultValue,
+  TestOption(const N defaultValue,
             const std::string& identifier,
             const std::string& description,
             const std::string& alias,
@@ -80,68 +76,25 @@ class TestOption
     data.input = input;
     data.loaded = false;
     data.cppType = cppName;
-
-    // Apply default value.
-    if (std::is_same<N, typename ParameterType<N>::type>::value)
-    {
-      data.value = boost::any(defaultValue);
-    }
-    else
-    {
-      typename ParameterType<N>::type tmp;
-      data.value = boost::any(std::tuple<N, typename ParameterType<N>::type>(
-          defaultValue, tmp));
-    }
+    data.value = boost::any(defaultValue);
 
     const std::string tname = data.tname;
-    const std::string boostName = MapParameterName<N>(identifier);
-    std::string progOptId = (alias[0] != '\0') ? boostName + ","
-        + std::string(1, alias[0]) : boostName;
 
-    // Do a check to ensure that the boost name isn't already in use.
-    const std::map<std::string, util::ParamData>& parameters =
-        CLI::Parameters();
-    if (parameters.count(boostName) > 0)
-    {
-      // Create a fake Log::Fatal since it may not yet be initialized.
-      // Temporarily define color code escape sequences.
-      #ifndef _WIN32
-        #define BASH_RED "\033[0;31m"
-        #define BASH_CLEAR "\033[0m"
-      #else
-        #define BASH_RED ""
-        #define BASH_CLEAR ""
-      #endif
+    CLI::RestoreSettings(programName, false);
 
-      // Temporary outstream object for detecting duplicate identifiers.
-      util::PrefixedOutStream outstr(std::cerr,
-            BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
-
-      #undef BASH_RED
-      #undef BASH_CLEAR
-
-      outstr << "Parameter --" << boostName << " (" << data.alias << ") "
-             << "is defined multiple times with the same identifiers."
-             << std::endl;
-    }
+    // Set some function pointers that we need.
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+        &GetPrintableParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
 
     CLI::Add(std::move(data));
 
-    // Set some function pointers that we need.
-    CLI::GetSingleton().functionMap[tname]["DefaultParam"] =
-        &DefaultParam<N>;
-    CLI::GetSingleton().functionMap[tname]["OutputParam"] =
-        &OutputParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
-        &GetPrintableParam<N>;
-    CLI::GetSingleton().functionMap[tname]["StringTypeParam"] =
-        &StringTypeParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    CLI::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
-    CLI::GetSingleton().functionMap[tname]["MapParameterName"] =
-        &MapParameterName<N>;
-    CLI::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
+    // If this is an output option, set it as passed.
+    if (!input)
+      CLI::SetPassed(identifier);
+
+    CLI::StoreSettings(programName);
+    CLI::ClearSettings();
   }
 };
 
