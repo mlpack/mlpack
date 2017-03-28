@@ -92,11 +92,12 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::RMSprop
+    template<typename ...Args> class OptimizerType = mlpack::optimization::RMSprop,
+    typename ...Args
   >
   void Train(const arma::mat& predictors,
              const arma::mat& responses,
-             OptimizerType<NetworkType>& optimizer);
+             OptimizerType<NetworkType, Args...>& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
