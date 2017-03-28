@@ -21,12 +21,12 @@ namespace optimization {
 
 template<typename DecomposableFunctionType>
 AdaDelta<DecomposableFunctionType>::AdaDelta(DecomposableFunctionType& function,
-                                           const double stepSize,
-                                           const double rho,
-                                           const double epsilon,
-                                           const size_t maxIterations,
-                                           const double tolerance,
-                                           const bool shuffle) :
+                                             const double stepSize,
+                                             const double rho,
+                                             const double epsilon,
+                                             const size_t maxIterations,
+                                             const double tolerance,
+                                             const bool shuffle) :
     optimizer(function,
               stepSize,
               maxIterations,
