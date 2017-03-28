@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SGD_ADA_DELTA_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGD_ADA_DELTA_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADA_DELTA_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADA_DELTA_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -44,21 +44,25 @@ class AdaDeltaUpdate
    * Construct the AdaDelta update policy with given rho and epsilon parameters.
    *
    * @param rho The smoothing parameter.
-   * @param epsilon The epsilon value used to initialise the squared gradient parameter.
+   * @param epsilon The epsilon value used to initialise the squared gradient
+   *    parameter.
    */
   AdaDeltaUpdate(const double rho = 0.95, const double epsilon = 1e-6) :
       rho(rho),
       epsilon(epsilon)
-  { /* Do nothing. */ };
+  {
+    // Nothing to do.
+  }
 
   /**
-   * The Initialize method is called by SGD Optimizer method before the start of the
-   * iteration update process. In AdaDelta update policy, the mean squared and the delta
-   * mean squared gradient matrices are initialized to the zeros matrix with the same
-   * size as gradient matrix (see mlpack::optimization::SGD::Optimizer )
+   * The Initialize method is called by SGD Optimizer method before the start of
+   * the iteration update process. In AdaDelta update policy, the mean squared
+   * and the delta mean squared gradient matrices are initialized to the zeros
+   * matrix with the same size as gradient matrix
+   * (see mlpack::optimization::SGD::Optimizer).
    *
-   * @param rows number of rows in the gradient matrix.
-   * @param cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t rows,
                   const size_t cols)
@@ -69,9 +73,9 @@ class AdaDeltaUpdate
   }
 
   /**
-   * Update step for SGD. The AdaDelta update dynamically adapts over time using only
-   * first order information. Additionally, AdaDelta requires no manual tuning
-   * of a learning rate.
+   * Update step for SGD. The AdaDelta update dynamically adapts over time using
+   * only first order information. Additionally, AdaDelta requires no manual
+   * tuning of a learning rate.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
@@ -108,10 +112,13 @@ class AdaDeltaUpdate
  private:
   // The smoothing parameter.
   double rho;
+
   // The epsilon value used to initialise the mean squared gradient parameter.
   double epsilon;
+
   // The mean squared gradient matrix.
   arma::mat meanSquaredGradient;
+
   // The delta mean squared gradient matrix.
   arma::mat meanSquaredGradientDx;
 };

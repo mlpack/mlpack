@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SGD_ADA_GRAD_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGD_ADA_GRAD_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -26,13 +26,14 @@ namespace optimization {
  *
  * @code
  * @article{duchi2011adaptive,
- *   author    = {Duchi, John and Hazan, Elad and Singer, Yoram},
- *   title     = {Adaptive subgradient methods for online learning and stochastic optimization},
- *   journal   = {Journal of Machine Learning Research},
- *   volume    = {12},
- *   number    = {Jul},
- *   pages     = {2121--2159},
- *   year      = {2011}
+ *   author  = {Duchi, John and Hazan, Elad and Singer, Yoram},
+ *   title   = {Adaptive subgradient methods for online learning and
+ *              stochastic optimization},
+ *   journal = {Journal of Machine Learning Research},
+ *   volume  = {12},
+ *   number  = {Jul},
+ *   pages   = {2121--2159},
+ *   year    = {2011}
  * }
  * @endcode
  *
@@ -43,16 +44,19 @@ class AdaGradUpdate
   /**
    * Construct the AdaGrad update policy with given epsilon parameter.
    *
-   * @param epsilon The epsilon value used to initialise the squared gradient parameter.
+   * @param epsilon The epsilon value used to initialise the squared gradient
+   *        parameter.
    */
   AdaGradUpdate(const double epsilon = 1e-8) : epsilon(epsilon)
-  { /* Do nothing. */ };
+  {
+    // Nothing to do.
+  }
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
    * the iteration update process. In AdaGrad update policy, squared
    * gradient matrix is initialized to the zeros matrix with the same size as
-   * gradient matrix (see mlpack::optimization::SGD::Optimizer )
+   * gradient matrix (see mlpack::optimization::SGD::Optimizer).
    *
    * @param rows number of rows in the gradient matrix.
    * @param cols number of columns in the gradient matrix.
@@ -86,10 +90,10 @@ class AdaGradUpdate
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
-
  private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
+
   // The squared gradient matrix.
   arma::mat squaredGradient;
 };

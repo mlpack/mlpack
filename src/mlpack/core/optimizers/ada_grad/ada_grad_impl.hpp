@@ -9,8 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADAGRAD_ADA_GRAD_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADAGRAD_ADA_GRAD_IMPL_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_IMPL_HPP
+
 // In case it hasn't been included yet.
 #include "ada_grad.hpp"
 

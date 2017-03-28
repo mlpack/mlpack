@@ -13,8 +13,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_HPP
-#define __MLPACK_CORE_OPTIMIZERS_ADADELTA_ADA_DELTA_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADA_DELTA_ADA_DELTA_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADA_DELTA_ADA_DELTA_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -59,7 +59,7 @@ namespace optimization {
  * is held internally in the DecomposableFunctionType).
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
- *     minimized.
+ *         minimized.
  */
 template<typename DecomposableFunctionType>
 class AdaDelta
@@ -74,9 +74,10 @@ class AdaDelta
    * equal one pass over the dataset).
    *
    * @param function Function to be optimized (minimized).
-   * @param stepSize Step size for each iteration
-   * @param rho Smoothing constant
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param stepSize Step size for each iteration.
+   * @param rho Smoothing constant.
+   * @param epsilon Value used to initialise the mean squared gradient
+   *        parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -84,12 +85,12 @@ class AdaDelta
    *        function is visited in linear order.
    */
   AdaDelta(DecomposableFunctionType& function,
-      const double stepSize = 1.0,
-      const double rho = 0.95,
-      const double epsilon = 1e-6,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+           const double stepSize = 1.0,
+           const double rho = 0.95,
+           const double epsilon = 1e-6,
+           const size_t maxIterations = 100000,
+           const double tolerance = 1e-5,
+           const bool shuffle = true);
 
   /**
    * Optimize the given function using AdaDelta. The given starting point will
@@ -99,10 +100,16 @@ class AdaDelta
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
+  double Optimize(arma::mat& iterate)
+  {
+    return optimizer.Optimize(iterate);
+  }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
+  const DecomposableFunctionType& Function() const
+  {
+    return optimizer.Function();
+  }
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return optimizer.Function(); }
 
