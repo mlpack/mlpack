@@ -136,7 +136,7 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       break;
 
     case BALL_TREE:
-      rSearch = new RSType<tree::BallTree>(naive, singleMode);  
+      rSearch = new RSType<tree::BallTree>(naive, singleMode);
       break;
 
     case X_TREE:

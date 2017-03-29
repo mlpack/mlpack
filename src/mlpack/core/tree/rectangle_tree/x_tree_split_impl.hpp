@@ -316,7 +316,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   std::vector<bool> axes(tree->Bound().Dim());
   std::vector<int> dimensionsLastUsed(tree->NumChildren());
   for (size_t i = 0; i < tree->NumChildren(); i++)
-    dimensionsLastUsed[i] = 
+    dimensionsLastUsed[i] =
                     tree->Child(i).AuxiliaryInfo().SplitHistory().lastDimension;
   std::sort(dimensionsLastUsed.begin(), dimensionsLastUsed.end());
 
@@ -328,7 +328,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   {
     axes[i] = true;
     for (size_t j = 0; j < tree->NumChildren(); j++)
-      axes[i] = axes[i] & 
+      axes[i] = axes[i] &
                 tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
     {
@@ -342,7 +342,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     {
       axes[i] = true;
       for (size_t j = 0; j < tree->NumChildren(); j++)
-        axes[i] = axes[i] & 
+        axes[i] = axes[i] &
                   tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
       if (axes[i] == true)
       {
@@ -688,7 +688,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
           (tree->Parent()->NumChildren() == 1))
       {
         // We make the root a supernode instead.
-        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() + 
+        tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() +
                               tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
         tree->Parent()->children.resize(tree->Parent()->MaxNumChildren() + 1);
         tree->Parent()->NumChildren() = tree->NumChildren();
@@ -706,7 +706,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       }
 
       // If we don't have to worry about the root, we just enlarge this node.
-      tree->MaxNumChildren() += 
+      tree->MaxNumChildren() +=
                               tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
       tree->children.resize(tree->MaxNumChildren() + 1);
       for (size_t i = 0; i < tree->NumChildren(); i++)

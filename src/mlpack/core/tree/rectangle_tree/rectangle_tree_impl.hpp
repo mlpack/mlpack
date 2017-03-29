@@ -113,7 +113,7 @@ RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                   AuxiliaryInformationType>*
         parentNode,const size_t numMaxChildren) :
-    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : 
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren :
                                         parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),

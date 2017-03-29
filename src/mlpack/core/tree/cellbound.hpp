@@ -123,7 +123,7 @@ class CellBound
   arma::Col<AddressElemType>& LoAddress() { return loAddress; }
   //! Modify lower address.
   const arma::Col<AddressElemType>& LoAddress() const {return loAddress; }
-  
+
   //! Get high address.
   arma::Col<AddressElemType>& HiAddress() { return hiAddress; }
   //! Modify high address.
