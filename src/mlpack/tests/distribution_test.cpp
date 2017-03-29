@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProbTest)
   arma::mat obs("0 1 1 1 2 2 2 2 2 2;"
                 "0 0 0 1 1 1 2 2 2 2;"
                 "0 0 0 1 1 2 2 2 2 2;");
- 
+
   d.Train(obs);
   BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.009, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("0 1 2"), 0.015, 1e-5);
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProbTest)
 }
 
 /**
- * Make sure we initialize multidimensional probability distribution 
+ * Make sure we initialize multidimensional probability distribution
  * correctly.
  */
 BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionConstructorTest)

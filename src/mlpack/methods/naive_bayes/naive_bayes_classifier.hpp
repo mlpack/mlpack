@@ -120,7 +120,7 @@ class NaiveBayesClassifier
   size_t Classify(const VecType& point) const;
 
   /**
-   * Classify the given point using the training GaussianNB model 
+   * Classify the given point using the training GaussianNB model
    * and also return estimates of the probability for
    * each class in the given vector.
    *
@@ -152,8 +152,8 @@ class NaiveBayesClassifier
                 arma::Row<size_t>& predictions) const;
 
   /**
-   * Classify the given points using the training GaussianNB model 
-   * and also return estimates of the probabilities for each class in the given matrix.  
+   * Classify the given points using the training GaussianNB model
+   * and also return estimates of the probabilities for each class in the given matrix.
    * The predicted labels for each point are stored in the given vector.
    *
    * @code
