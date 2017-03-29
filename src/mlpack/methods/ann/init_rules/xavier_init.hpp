@@ -33,6 +33,7 @@ class XavierUniform
  * Base class for Xavier Policy
  * Refrence http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf
  */
+template <typename InitializerType>
 class XavierInit
 {
  public:
@@ -41,9 +42,11 @@ class XavierInit
   scalingFactor(scalingFactor)
   {}
 
-  template<typename InitializerType, typename eT>
-  typename std::enable_if<std::is_same<InitializerType, XavierNormal>::value, void>::type
-  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename eT, typename Init = InitializerType>
+  void Initialize(arma::Mat<eT>& W, 
+    const size_t rows, 
+    const size_t cols, 
+    std::enable_if_t<std::is_same<Init, XavierNormal>::value>* = 0)
   {
     double var = sqrt (2 / ((double)(rows) + (double)(cols)));
     GaussianInitialization init(0, var);
@@ -51,9 +54,11 @@ class XavierInit
     W = scalingFactor * W;
   }
 
-  template<typename InitializerType, typename eT>
-  typename std::enable_if<std::is_same<InitializerType, XavierUniform>::value, void>::type
-  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename eT, typename Init = InitializerType>
+  void Initialize(arma::Mat<eT>& W, 
+    const size_t rows, 
+    const size_t cols,
+    std::enable_if_t<std::is_same<Init, XavierUniform>::value>* = 0)
   {
     double var = sqrt(12 / static_cast<double>(rows + cols));
     W = arma::zeros(rows, cols);

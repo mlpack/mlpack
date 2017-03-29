@@ -133,12 +133,12 @@ BOOST_AUTO_TEST_CASE(XavierInitTest)
 {
   arma::mat weights;
   //RandomSeed(21);
-  XavierInit xavierUniform;
-  XavierInit xavierNormal;
-  xavierUniform.Initialize<XavierUniform>(weights, 100, 100);
+  XavierInit<XavierUniform> xavierUniform;
+  XavierInit<XavierNormal> xavierNormal;
+  xavierUniform.Initialize(weights, 100, 100);
   bool b = arma::all(arma::vectorise(weights) >= -(1e-2) || arma::vectorise(weights) <= (1e-2));
   BOOST_REQUIRE_EQUAL(b, 1);
-  xavierNormal.Initialize<XavierNormal>(weights, 100, 100);
+  xavierNormal.Initialize(weights, 100, 100);
   //std::cout << weights << std::endl;
   auto ret = Shapiro(weights, 0.05);
   BOOST_REQUIRE_EQUAL(ret.accept, true);
@@ -148,12 +148,12 @@ BOOST_AUTO_TEST_CASE(HeInitTest)
 {
   arma::mat weights;
   //RandomSeed(21);
-  HeInit Uniform;
-  HeInit Normal;
-  Uniform.Initialize<HeUniform>(weights, 100, 100);
+  HeInit<HeUniform> Uniform;
+  HeInit<HeNormal> Normal;
+  Uniform.Initialize(weights, 100, 100);
   bool b = arma::all(arma::vectorise(weights) >= -(1e-2) || arma::vectorise(weights) <= (1e-2));
   BOOST_REQUIRE_EQUAL(b, 1);
-  Normal.Initialize<HeNormal>(weights, 100, 100);
+  Normal.Initialize(weights, 100, 100);
   auto ret = Shapiro(weights, 0.05);
   BOOST_REQUIRE_EQUAL(ret.accept, true);
 }

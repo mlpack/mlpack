@@ -15,8 +15,10 @@
 
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/math/distributions/normal.hpp>
+
 
 namespace mlpack {
 namespace math {
@@ -38,8 +40,6 @@ template<typename eT>
 Pval Shapiro(arma::Mat<eT>& dist, double alpha=0.05)
 {
   //All the variable are consitent with refrence provided above
-  std::mt19937 engine;  // Mersenne twister random number engine
-  std::normal_distribution<> distr(0, 1.0);
   dist.reshape(dist.n_rows*dist.n_cols, 1);
   arma::vec B = arma::sort(dist);
   arma::vec m(B.n_rows);

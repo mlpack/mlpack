@@ -34,6 +34,7 @@ class HeUniform
  * Delving deep into rectifiers: Surpassing human-level performance on
  * imagenet classification. arXiv preprint arXiv:1502.01852.
  */
+template<typename InitializerType>
 class HeInit
 {
  public:
@@ -43,9 +44,11 @@ class HeInit
   scalingFactor(scalingFactor)
   {}
 
-  template<typename InitializerType, typename eT>
-  typename std::enable_if<std::is_same<InitializerType, HeNormal>::value, void>::type
-  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename eT, typename Init = InitializerType>
+  void Initialize(arma::Mat<eT>& W, 
+    const size_t rows, 
+    const size_t cols,
+    typename std::enable_if_t<std::is_same<Init, HeNormal>::value>* = 0)
   {
     double var = sqrt(2 / (double)(rows));
     GaussianInitialization init(0, var);
@@ -54,9 +57,11 @@ class HeInit
   }
 
 
-  template<typename InitializerType, typename eT>
-  typename std::enable_if<std::is_same<InitializerType, HeUniform>::value, void>::type
-  Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename eT, typename Init = InitializerType>
+  void Initialize(arma::Mat<eT>& W, 
+    const size_t rows, 
+    const size_t cols,
+    typename std::enable_if_t<std::is_same<Init, HeUniform>::value>* = 0)
   {
     double var = sqrt(2 / static_cast<double>(rows));
     W = arma::zeros(rows, cols);
