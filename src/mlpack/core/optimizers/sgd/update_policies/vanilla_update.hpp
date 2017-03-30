@@ -52,7 +52,8 @@ class VanillaUpdate
   */
   void Update(arma::mat& iterate,
               const double stepSize,
-              const arma::mat& gradient)
+              const arma::mat& gradient,
+              const size_t i)
   {
     // Perform the vanilla SGD update.
     iterate -= stepSize * gradient;
