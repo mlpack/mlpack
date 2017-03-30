@@ -55,8 +55,8 @@ class SMORMS3Update
    * The Initialize method is called by SGD::Optimize method with UpdatePolicy
    * SMORMS3Update before the start of the iteration update process.
    *
-   * @param n_rows number of rows in the gradient matrix.
-   * @param n_cols number of columns in the gradient matrix.
+   * @param rows number of rows in the gradient matrix.
+   * @param cols number of columns in the gradient matrix.
    * @param lRate 
    */
   void Initialize(const size_t rows,
