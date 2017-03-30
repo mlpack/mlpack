@@ -90,7 +90,7 @@ class SMORMS3Update
 
     arma::mat x = (g % g) / (g2 + epsilon);
 
-    x.for_each( [stepSize](double &v) { v = std::min(v, stepSize); } );
+    x.transform( [stepSize](double &v) { return std::min(v, stepSize); } );
 
     iterate -= gradient % x / (arma::sqrt(g2) + epsilon);
 
