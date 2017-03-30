@@ -84,7 +84,7 @@ class AdaDeltaUpdate
   void Update(arma::mat& iterate,
               const double stepSize,
               const arma::mat& gradient,
-              const size_t i)
+              const size_t /*i*/)
   {
     // Accumulate gradient.
     meanSquaredGradient *= rho;
