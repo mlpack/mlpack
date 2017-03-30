@@ -20,6 +20,9 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include "adam_update.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -105,81 +108,59 @@ class Adam
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(arma::mat& iterate){ return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const
+  {
+    return optimizer.Function();
+  }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
-  double StepSize() const { return stepSize; }
+  double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the smoothing parameter.
-  double Beta1() const { return beta1; }
+  double Beta1() const { return optimizer.UpdatePolicy().Beta1(); }
   //! Modify the smoothing parameter.
-  double& Beta1() { return beta1; }
+  double& Beta1() { return optimizer.UpdatePolicy().Beta1(); }
 
   //! Get the second moment coefficient.
-  double Beta2() const { return beta2; }
+  double Beta2() const { return optimizer.UpdatePolicy().Beta2(); }
   //! Modify the second moment coefficient.
-  double& Beta2() { return beta2; }
+  double& Beta2() { return optimizer.UpdatePolicy().Beta2(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return eps; }
+  double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return eps; }
+  double& Epsilon() { return optimizer.UpdatePolicy().Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
   //! Get whether or not the AdaMax optimizer is specified.
-  bool AdaMax() const { return adaMax; }
+  bool AdaMax() const { return optimizer.UpdatePolicy().AdaMax(); }
   //! Modify wehther or not the AdaMax optimizer is to be used.
-  bool& AdaMax() { return adaMax; }
+  bool& AdaMax() { return optimizer.UpdatePolicy().AdaMax(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
-  //! The step size for each example.
-  double stepSize;
-
-  //! Exponential decay rate for the first moment estimates.
-  double beta1;
-
-  //! Exponential decay rate for the weighted infinity norm estimates.
-  double beta2;
-
-  //! The value used to initialise the mean squared gradient parameter.
-  double eps;
-
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
-
-  //! Specifies whether or not the AdaMax optimizer is to be used.
-  bool adaMax;
+  //! The Stochastic Gradient Descent object with Adam policy.
+  SGD<DecomposableFunctionType, AdamUpdate> optimizer;
 };
 
 } // namespace optimization

@@ -1,6 +1,7 @@
 set(SOURCES
   adam.hpp
   adam_impl.hpp
+  adam_update.hpp
 )
 
 set(DIR_SRCS)
