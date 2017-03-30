@@ -70,12 +70,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
   this->deterministic = true;
   ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-    reset = true;
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -317,6 +311,8 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
+  ResetDeterministic();
+
   size_t weights = 0;
   for (LayerTypes& layer : network)
   {
