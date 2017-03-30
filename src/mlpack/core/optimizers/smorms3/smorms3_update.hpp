@@ -43,8 +43,7 @@ class SMORMS3Update
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    */
   SMORMS3Update(const double epsilon = 1e-16) :
-    epsilon(epsilon),
-    previousStepSize(0)
+    epsilon(epsilon)
   { /* Do nothing. */ }
 
   //! Get the value used to initialise the mean squared gradient parameter.
@@ -67,9 +66,6 @@ class SMORMS3Update
     mem = arma::ones<arma::mat>(rows, cols);
     g = arma::zeros<arma::mat>(rows, cols);
     g2 = arma::zeros<arma::mat>(rows, cols);
-
-    // Initialise a matrix to be filled with stepSize.
-    stepSizeMat = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
@@ -94,13 +90,9 @@ class SMORMS3Update
 
     arma::mat x = (g % g) / (g2 + epsilon);
 
-    if (stepSize != previousStepSize)
-    {
-      stepSizeMat.fill(stepSize);
-      previousStepSize = stepSize;
-    }
+    x.for_each( [stepSize](double &v) { v = std::min(v, stepSize); } );
 
-    iterate -= gradient % arma::min(x, stepSizeMat) / (arma::sqrt(g2) + epsilon);
+    iterate -= gradient % x / (arma::sqrt(g2) + epsilon);
 
     mem %= (1 - x);
     mem += 1;
@@ -109,14 +101,8 @@ class SMORMS3Update
    //! The value used to initialise the mean squared gradient parameter.
    double epsilon;
    
-   //! The previous value of step size in each iteration of update step.
-   double previousStepSize;
-   
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
-   
-   // The matrix to be filled with stepSize.
-   arma::mat stepSizeMat;
 };
 
 } // namespace optimization
