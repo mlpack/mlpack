@@ -14,6 +14,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_NESTROV_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "vanilla_momentum.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -51,8 +52,8 @@ class NestrovUpdate
    *
    * @param momentum The momentum decay hyperparameter
    */
-  NestrovUpdate(const double momentum = 0.5) : momentum(momentum)
-  { /* Do nothing. */ };
+  NestrovUpdate(const double momentum = 0.5): momentum(momentum)
+  {};
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
@@ -85,15 +86,18 @@ class NestrovUpdate
               const arma::mat& gradient,
               T... args)
   {
+    double momentumLookAhead;
     velocity = momentum * velocity - stepSize * gradient;
-    iterate += momentumLookAhead(momentum) * momentum * velocity 
-      - (1 + momentumLookAhead(momentum)) * stepSize * gradient;
+    UpdateMomentum(momentum, momentumLookAhead);
+    iterate += momentumLookAhead * momentum * velocity 
+      - (1 + momentumLookAhead) * stepSize * gradient;
   }
 
-  double momentumLookAhead(double momentum)
+  template<typename DecayPolicy = VanillaMomentum>
+  void UpdateMomentum(const double& momentum, double& momentumLookAhead)
   {
-    /*Implement a momentum decay scheme*/
-    return momentum;
+    DecayPolicy decay;
+    decay.UpdateMomemntum(momentum, momentumLookAhead);
   }
 
  private:
