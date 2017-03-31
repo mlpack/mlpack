@@ -47,12 +47,12 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   {
     if (i < nPoints / 2)
     {
-      // class 1 - digit = 4
+      // Assign label "1" to all samples with digit = 4
       Y(i) = 1;
     }
     else
     {
-      // class 2 - digit = 9
+      // Assign label "2" to all samples with digit = 9
       Y(i) = 2;
     }
   }
