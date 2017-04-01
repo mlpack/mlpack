@@ -5,7 +5,7 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
+ * AdaMax update rule. Adam is an an algorithm for first-order gradient-
  * -based optimization of stochastic objective functions, based on adaptive
  * estimates of lower-order moments. AdaMax is simply a variant of Adam based
  * on the infinity norm.
@@ -15,8 +15,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_ADAMAX_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADAM_ADAMAX_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -24,10 +24,10 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Adam is an optimizer that computes individual adaptive learning rates for
- * different parameters from estimates of first and second moments of the
- * gradients. AdaMax is a variant of Adam based on the infinity norm as given
- * in the section 7 of the following paper.
+ * AdaMax is a variant of Adam, an optimizer that computes individual adaptive
+ * learning rates for different parameters from estimates of first and second
+ * moments of the gradients.based on the infinity norm as given in the section
+ * 7 of the following paper.
  *
  * For more information, see the following.
  *
@@ -40,18 +40,18 @@ namespace optimization {
  * }
  * @endcode
  */
-class AdamUpdate
+class AdaMaxUpdate
 {
  public:
   /**
-   * Construct the Adam update policy with the given epsilon parameter.
+   * Construct the AdaMax update policy with the given epsilon parameter.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    */
-  AdamUpdate(const double epsilon = 1e-8,
-             const double beta1 = 0.9,
-             const double beta2 = 0.999) :
+  AdaMaxUpdate(const double epsilon = 1e-8,
+               const double beta1 = 0.9,
+               const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),
@@ -71,7 +71,7 @@ class AdamUpdate
                   const size_t cols)
   {
     m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
+    u = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
@@ -92,19 +92,14 @@ class AdamUpdate
     m *= beta1;
     m += (1 - beta1) * gradient;
 
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
+    // Update the exponentially weighted infinity norm.
+    u *= beta2;
+    u = arma::max(u, arma::abs(gradient));
 
     const double biasCorrection1 = 1.0 - std::pow(beta1, (double) iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) iteration);
 
-    /**
-     * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
-     * following expression is an approximation of the following actual term;
-     * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
-     */
-    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                m / (arma::sqrt(v) + epsilon);
+    if (biasCorrection1 != 0)
+      iterate -= (stepSize / biasCorrection1 * m / (u + epsilon));
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -135,8 +130,8 @@ class AdamUpdate
   // The exponential moving average of gradient values.
   arma::mat m;
 
-  // The exponential moving average of squared gradient values.
-  arma::mat v;
+  // The exponentially weighted infinity norm.
+  arma::mat u;
 
   // The number of iterations.
   double iteration;

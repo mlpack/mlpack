@@ -22,6 +22,7 @@
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "adam_update.hpp"
+#include "adamax_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -63,9 +64,13 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
+ * @tparam UpdateRule Adam optimizer update rule to be used.
  */
-template<typename DecomposableFunctionType, bool adaMax = false>
-class Adam
+template<
+    typename DecomposableFunctionType,
+    typename UpdateRule = AdamUpdate
+>
+class AdamType
 {
  public:
   /**
@@ -88,7 +93,7 @@ class Adam
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  Adam(DecomposableFunctionType& function,
+  AdamType(DecomposableFunctionType& function,
       const double stepSize = 0.001,
       const double beta1 = 0.9,
       const double beta2 = 0.999,
@@ -152,8 +157,14 @@ class Adam
 
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<DecomposableFunctionType, AdamUpdate<adaMax> > optimizer;
+  SGD<DecomposableFunctionType, UpdateRule> optimizer;
 };
+
+template<typename DecomposableFunctionType>
+using Adam = AdamType<DecomposableFunctionType, AdamUpdate>;
+
+template<typename DecomposableFunctionType>
+using AdaMax = AdamType<DecomposableFunctionType, AdaMaxUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

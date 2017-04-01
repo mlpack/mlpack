@@ -53,8 +53,8 @@ BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
 BOOST_AUTO_TEST_CASE(SimpleAdaMaxTestFunction)
 {
   SGDTestFunction f;
-  Adam<SGDTestFunction, true> optimizer(f, 2e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
-                                        true);
+  AdaMax<SGDTestFunction> optimizer(f, 2e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
+                                    true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);
@@ -175,8 +175,8 @@ BOOST_AUTO_TEST_CASE(AdaMaxLogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  Adam<LogisticRegressionFunction<>, true> adamax(lrf, 1e-3, 0.9, 0.999, 1e-8,
-                                                  5000000, 1e-9, true);
+  AdaMax<LogisticRegressionFunction<> > adamax(lrf, 1e-3, 0.9, 0.999, 1e-8,
+                                               5000000, 1e-9, true);
 
   lr.Train(adamax);
 
