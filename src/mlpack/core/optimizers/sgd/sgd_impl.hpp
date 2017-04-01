@@ -108,7 +108,7 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
       function.Gradient(iterate, currentFunction, gradient);
 
     // Use the update policy to take a step.
-    updatePolicy.Update(iterate, stepSize, gradient, i);
+    updatePolicy.Update(iterate, stepSize, gradient);
 
     // Now add that to the overall objective function.
     if (shuffle)

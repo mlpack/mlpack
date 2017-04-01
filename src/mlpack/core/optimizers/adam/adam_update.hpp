@@ -39,8 +39,11 @@ namespace optimization {
  *   year      = {2014}
  * }
  * @endcode
- *
+ * 
+ * @param adaMax If true, then the AdaMax optimizer is used; otherwise, by
+ *        default the Adam optimizer is used.
  */
+template<bool adaMax>
 class AdamUpdate
 {
  public:
@@ -52,12 +55,11 @@ class AdamUpdate
    */
   AdamUpdate(const double epsilon = 1e-8,
              const double beta1 = 0.9,
-             const double beta2 = 0.999,
-             const bool adaMax = false) :
+             const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),
-    adaMax(adaMax)
+    iteration(0)
   {
     // Nothing to do.
   }
@@ -92,9 +94,11 @@ class AdamUpdate
    */
   void Update(arma::mat& iterate,
               const double stepSize,
-              const arma::mat& gradient,
-              const size_t i)
+              const arma::mat& gradient)
   {
+    // Increment the iteration counter variable.
+    ++iteration;
+
     // And update the iterate.
     m *= beta1;
     m += (1 - beta1) * gradient;
@@ -111,8 +115,8 @@ class AdamUpdate
       v += (1 - beta2) * (gradient % gradient);
     }
 
-    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
+    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) iteration);
+    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) iteration);
 
     if (adaMax)
     {
@@ -146,11 +150,6 @@ class AdamUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
-  //! Get whether or not the AdaMax optimizer is specified.
-  bool AdaMax() const { return adaMax; }
-  //! Modify wehther or not the AdaMax optimizer is to be used.
-  bool& AdaMax() { return adaMax; }
-
  private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
@@ -161,9 +160,6 @@ class AdamUpdate
   // The second moment coefficient.
   double beta2;
 
-  //! Specifies whether or not the AdaMax optimizer is to be used.
-  bool adaMax;
-
   // The exponential moving average of gradient values.
   arma::mat m;
 
@@ -172,6 +168,9 @@ class AdamUpdate
 
   // The exponential moving average of squared gradient values.
   arma::mat v;
+
+  // The number of iterations.
+  double iteration;
 };
 
 } // namespace optimization

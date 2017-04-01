@@ -99,8 +99,7 @@ class MomentumUpdate
    */
   void Update(arma::mat& iterate,
               const double stepSize,
-              const arma::mat& gradient,
-              const size_t /*i*/)
+              const arma::mat& gradient)
   {
     velocity = momentum * velocity - stepSize * gradient;
     iterate += velocity;

@@ -66,7 +66,7 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
+template<template<typename...> class OptimizerType>
 void LogisticRegression<MatType>::Train(const MatType& predictors,
                                         const arma::Row<size_t>& responses)
 {

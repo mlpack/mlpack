@@ -21,25 +21,23 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType>
-Adam<DecomposableFunctionType>::Adam(DecomposableFunctionType& function,
-                                     const double stepSize,
-                                     const double beta1,
-                                     const double beta2,
-                                     const double epsilon,
-                                     const size_t maxIterations,
-                                     const double tolerance,
-                                     const bool shuffle,
-                                     const bool adaMax) :
+template<typename DecomposableFunctionType, bool adaMax>
+Adam<DecomposableFunctionType, adaMax>::Adam(DecomposableFunctionType& function,
+                                             const double stepSize,
+                                             const double beta1,
+                                             const double beta2,
+                                             const double epsilon,
+                                             const size_t maxIterations,
+                                             const double tolerance,
+                                             const bool shuffle) :
     optimizer(function,
               stepSize,
               maxIterations,
               tolerance,
               shuffle,
-              AdamUpdate(epsilon,
-                         beta1,
-                         beta2,
-                         adaMax))
+              AdamUpdate<adaMax>(epsilon,
+                                 beta1,
+                                 beta2))
 { /* Nothing to do. */ }
 
 } // namespace optimization

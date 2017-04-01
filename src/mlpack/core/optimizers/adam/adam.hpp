@@ -64,7 +64,7 @@ namespace optimization {
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
  */
-template<typename DecomposableFunctionType>
+template<typename DecomposableFunctionType, bool adaMax = false>
 class Adam
 {
  public:
@@ -87,8 +87,6 @@ class Adam
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
-   * @param adaMax If true, then the AdaMax optimizer is used; otherwise, by
-   *        default the Adam optimizer is used.
    */
   Adam(DecomposableFunctionType& function,
       const double stepSize = 0.001,
@@ -97,8 +95,7 @@ class Adam
       const double eps = 1e-8,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true,
-      const bool adaMax = false);
+      const bool shuffle = true);
 
   /**
    * Optimize the given function using Adam. The given starting point will be
@@ -153,14 +150,9 @@ class Adam
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
 
-  //! Get whether or not the AdaMax optimizer is specified.
-  bool AdaMax() const { return optimizer.UpdatePolicy().AdaMax(); }
-  //! Modify wehther or not the AdaMax optimizer is to be used.
-  bool& AdaMax() { return optimizer.UpdatePolicy().AdaMax(); }
-
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<DecomposableFunctionType, AdamUpdate> optimizer;
+  SGD<DecomposableFunctionType, AdamUpdate<adaMax> > optimizer;
 };
 
 } // namespace optimization
