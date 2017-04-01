@@ -179,7 +179,7 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
   {
-    arma::Row<size_t> testLabels = 
+    arma::Row<size_t> testLabels =
       std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
@@ -231,7 +231,7 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
   else
   {
     arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Row<size_t> trainLabels = 
+    arma::Row<size_t> trainLabels =
         std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)

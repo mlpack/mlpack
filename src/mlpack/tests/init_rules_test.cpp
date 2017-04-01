@@ -99,85 +99,81 @@ BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
   arma::mat data = arma::randu<arma::mat>(100, 1);
 
   arma::mat weights;
+  arma::cube weights3d;
+
   KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
       data, 1.5);
-  kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
+  kathirvalavakumarSubavathiInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
 // Test the NguyenWidrowInitialization class.
 BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
 {
   arma::mat weights;
-  NguyenWidrowInitialization nguyenWidrowInit;
-  nguyenWidrowInit.Initialize(weights, 100, 100);
+  arma::cube weights3d;
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  NguyenWidrowInitialization nguyenWidrowInit;
+
+  nguyenWidrowInit.Initialize(weights, 100, 100);
+  nguyenWidrowInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
 // Test the OivsInitialization class.
 BOOST_AUTO_TEST_CASE(OivsInitTest)
 {
   arma::mat weights;
-  OivsInitialization<> oivsInit;
-  oivsInit.Initialize(weights, 100, 100);
+  arma::cube weights3d;
 
-  BOOST_REQUIRE_EQUAL(1, 1);
+  OivsInitialization<> oivsInit;
+
+  oivsInit.Initialize(weights, 100, 100);
+  oivsInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
 // Test the GaussianInitialization class.
 BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
-  const size_t row = 7;
-  const size_t col = 7;
-  const size_t slice = 2;
-
-  double mean = 1;
-  double mean3d = 1;
-  double var = 1;
-  double var3d = 1;
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
 
   arma::mat weights;
   arma::cube weights3d;
 
   GaussianInitialization t(0, 0.2);
 
-  // It isn't guaranteed that the method will converge in the specified number
-  // of iterations using random weights. If this works 1 of 5 times, I'm fine
-  // with that.
-  size_t counter = 0;
-  for(size_t trial = 0; trial < 5; trial++)
-  {
-    for(size_t i = 0; i < 10; i++)
-    {
-      t.Initialize(weights, row, col);
-      t.Initialize(weights3d, row, col, slice);
+  t.Initialize(weights, rows, cols);
+  t.Initialize(weights3d, rows, cols, slices);
 
-      // Calaculate mean and variance over the dense matrix.
-      mean += arma::accu(weights) / weights.n_elem;
-      var += arma::accu(pow((weights.t() - mean), 2)) / weights.n_elem - 1;
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
 
-      // Calaculate mean and variance over the 3rd order tensor.
-      mean3d += arma::accu(weights3d.slice(0)) / weights3d.slice(0).n_elem;
-      var3d += arma::accu(pow((weights3d.slice(0) - mean), 2)) /
-          weights3d.slice(0).n_elem - 1;
-    }
-
-    mean /= 10;
-    var /= 10;
-    mean3d /= 10;
-    var3d /= 10;
-
-    if ((mean > 0 && mean < 0.4) && (var > 0 && var < 0.6) &&
-        (mean3d > 0 && mean3d < 0.4) && (var3d > 0 && var3d < 0.6))
-    {
-      counter++;
-      break;
-    }
-  }
-
-  BOOST_REQUIRE(counter >= 1);
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

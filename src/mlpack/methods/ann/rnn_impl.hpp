@@ -70,12 +70,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
   this->deterministic = true;
   ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-    reset = true;
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -88,11 +82,14 @@ RNN<OutputLayerType, InitializationRuleType>::~RNN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<
+    template<typename, typename...> class OptimizerType,
+    typename... OptimizerTypeArgs
+>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors,
     const arma::mat& responses,
-    OptimizerType<NetworkType>& optimizer)
+    OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -118,7 +115,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<template<typename...> class OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors, const arma::mat& responses)
 {
@@ -314,6 +311,8 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
+  ResetDeterministic();
+
   size_t weights = 0;
   for (LayerTypes& layer : network)
   {

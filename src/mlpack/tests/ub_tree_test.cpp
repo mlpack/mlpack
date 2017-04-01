@@ -203,7 +203,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       BOOST_REQUIRE_LE(maxDist, r.Hi() *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
-      
+
     if (!tree.IsLeaf())
     {
       CheckDistance<TreeType, MetricType>(*tree.Left());

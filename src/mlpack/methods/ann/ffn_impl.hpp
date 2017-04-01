@@ -58,12 +58,6 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
   this->responses = std::move(responses);
 
   this->deterministic = true;
-  ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -74,11 +68,14 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename ...Args> class OptimizerType, typename ...Args>
+template<
+    template<typename, typename...> class OptimizerType,
+    typename... OptimizerTypeArgs
+>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
       const arma::mat& predictors,
       const arma::mat& responses,
-      OptimizerType<NetworkType, Args...>& optimizer)
+      OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -103,7 +100,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<template<typename...> class OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors, const arma::mat& responses)
 {
@@ -222,6 +219,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
+  ResetDeterministic();
+
   size_t weights = 0;
   for (size_t i = 0; i < network.size(); ++i)
   {

@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADAGRAD_ADA_GRAD_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADAGRAD_ADA_GRAD_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADA_GRAD_ADA_GRAD_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -40,7 +40,7 @@ namespace optimization {
  * }
  * @endcode
  *
- * For AdaGrad to work, a DecomposableFunctionType template parameter is
+ * For AdaGrad to work, a DecomposableFunctionTypes template parameter is
  * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -58,7 +58,7 @@ namespace optimization {
  * is held internally in the DecomposableFunctionType).
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
- *     minimized.
+ *         minimized.
  */
 template<typename DecomposableFunctionType>
 class AdaGrad
@@ -82,11 +82,11 @@ class AdaGrad
    *        function is visited in linear order.
    */
   AdaGrad(DecomposableFunctionType& function,
-      const double stepSize = 0.01,
-      const double epsilon = 1e-8,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+          const double stepSize = 0.01,
+          const double epsilon = 1e-8,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
    * Optimize the given function using AdaGrad. The given starting point will
@@ -96,10 +96,17 @@ class AdaGrad
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
+  double Optimize(arma::mat& iterate)
+  {
+    return optimizer.Optimize(iterate);
+  }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
+  const DecomposableFunctionType& Function() const
+  {
+    return optimizer.Function();
+  }
+
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return optimizer.Function(); }
 

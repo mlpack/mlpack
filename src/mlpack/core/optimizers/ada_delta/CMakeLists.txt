@@ -1,6 +1,7 @@
 set(SOURCES
   ada_delta.hpp
   ada_delta_impl.hpp
+  ada_delta_update.hpp
 )
 
 set(DIR_SRCS)
