@@ -4,7 +4,7 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * RMSprop optimizer. RmsProp is an optimizer that utilizes the magnitude of
+ * RMSprop optimizer. RMSprop is an optimizer that utilizes the magnitude of
  * recent gradients to normalize the gradients.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
