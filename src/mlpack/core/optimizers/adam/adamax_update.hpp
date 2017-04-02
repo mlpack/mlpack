@@ -48,6 +48,8 @@ class AdaMaxUpdate
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
+   * @param beta1 The smoothing parameter.
+   * @param beta2 The second moment coefficient.
    */
   AdaMaxUpdate(const double epsilon = 1e-8,
                const double beta1 = 0.9,
