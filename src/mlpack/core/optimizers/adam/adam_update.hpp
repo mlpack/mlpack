@@ -1,5 +1,5 @@
 /**
- * @file adam.hpp
+ * @file adam_update.hpp
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
  * @author Marcus Edel
