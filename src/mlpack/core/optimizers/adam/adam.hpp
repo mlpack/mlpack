@@ -94,13 +94,13 @@ class AdamType
    *        function is visited in linear order.
    */
   AdamType(DecomposableFunctionType& function,
-      const double stepSize = 0.001,
-      const double beta1 = 0.9,
-      const double beta2 = 0.999,
-      const double eps = 1e-8,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+          const double stepSize = 0.001,
+          const double beta1 = 0.9,
+          const double beta2 = 0.999,
+          const double eps = 1e-8,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
    * Optimize the given function using Adam. The given starting point will be
