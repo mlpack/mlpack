@@ -204,7 +204,7 @@ private:
   void Gradient();
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
