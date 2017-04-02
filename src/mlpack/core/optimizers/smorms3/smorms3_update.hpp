@@ -57,7 +57,6 @@ class SMORMS3Update
    *
    * @param rows number of rows in the gradient matrix.
    * @param cols number of columns in the gradient matrix.
-   * @param lRate 
    */
   void Initialize(const size_t rows,
                   const size_t cols)
