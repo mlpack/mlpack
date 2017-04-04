@@ -2,7 +2,7 @@
  * @file randomized_block_krylov_svd.hpp
  * @author Marcus Edel
  *
- * An implementation of the randomized SVD method.
+ * An implementation of the randomized block krylov SVD method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

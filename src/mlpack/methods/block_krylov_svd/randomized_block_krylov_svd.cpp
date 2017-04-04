@@ -2,7 +2,7 @@
  * @file randomized_block_krylov_svd.cpp
  * @author Marcus Edel
  *
- * Implementation of the randomized SVD method.
+ * Implementation of the randomized block krylov SVD method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -49,7 +49,7 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
                                      arma::mat& v,
                                      const size_t rank)
 {
-  arma::mat Q, R, block;
+  arma::mat Q, R, block, blockIteration;
 
   if (blockSize == 0)
   {
@@ -61,16 +61,23 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
 
   // Construct and orthonormalize Krlov subspace.
   arma::mat K(data.n_rows, blockSize * (maxIterations + 1));
+
+  // Create a working matrix using data from writable auxiliary memory
+  // (K matrix). Doing so avoids an uncessary copy in upcoming step.
+  block = arma::mat(K.memptr(), data.n_rows, blockSize, false);
   arma::qr_econ(block, R, data * G);
 
-  // Copy the temporary memory to the right place.
-  K.submat(0, 0, block.n_rows - 1, block.n_cols - 1) = block;
-
-  for (size_t i = 0, b = block.n_cols; i < maxIterations; ++i,
-      b += block.n_cols)
+  for (size_t blockOffset = block.n_elem; blockOffset < K.n_elem;
+      blockOffset += block.n_elem)
   {
-    arma::qr_econ(block, R, data * (data.t() * block));
-    K.submat(0, b, block.n_rows - 1, b + block.n_cols - 1) = block;
+    // Temporary working matrix to store the result in the correct place.
+    blockIteration = arma::mat(K.memptr() + blockOffset, data.n_rows,
+        blockSize, false);
+
+    arma::qr_econ(blockIteration, R, data * (data.t() * block));
+
+    // Update working matrix for the next iteration.
+    block = arma::mat(K.memptr() + blockOffset, data.n_rows, blockSize, false);
   }
 
   arma::qr_econ(Q, R, K);
