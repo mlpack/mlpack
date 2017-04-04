@@ -45,7 +45,7 @@ class RMSpropUpdate
 {
  public:
   /**
-   * Construct the RMSprop update policy with the given epsilon parameter.
+   * Construct the RMSprop update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
