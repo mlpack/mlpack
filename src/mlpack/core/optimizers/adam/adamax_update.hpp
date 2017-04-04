@@ -1,5 +1,5 @@
 /**
- * @file adam.hpp
+ * @file adamax_update.hpp
  * @author Ryan Curtin
  * @author Vasanth Kalingeri
  * @author Marcus Edel
@@ -44,7 +44,7 @@ class AdaMaxUpdate
 {
  public:
   /**
-   * Construct the AdaMax update policy with the given epsilon parameter.
+   * Construct the AdaMax update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.

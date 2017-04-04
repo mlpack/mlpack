@@ -42,7 +42,7 @@ class AdamUpdate
 {
  public:
   /**
-   * Construct the Adam update policy with the given epsilon parameter.
+   * Construct the Adam update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
