@@ -10,6 +10,7 @@ set(DIRS
   sa
   sdp
   sgd
+  smorms3
 )
 
 foreach(dir ${DIRS})
