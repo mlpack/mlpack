@@ -59,7 +59,7 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
   // Random block initialization.
   arma::mat G = arma::randn(data.n_rows, blockSize);
 
-  // Construct and orthonormalize Krlov subspace.
+  // Construct and orthonormalize Krylov subspace.
   arma::mat K(data.n_rows, blockSize * (maxIterations + 1));
 
   // Create a working matrix using data from writable auxiliary memory

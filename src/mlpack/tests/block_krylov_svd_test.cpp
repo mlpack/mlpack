@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDReconstructionError)
 /*
  * Check if the method can handle noisy matrices.
  */
-BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNosiyLowRankTest)
+BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
 {
   arma::mat data;
   CreateNoisyLowRankMatrix(data, 100, 1000, 5, 1.0);
