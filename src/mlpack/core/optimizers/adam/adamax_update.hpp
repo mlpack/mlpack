@@ -98,7 +98,7 @@ class AdaMaxUpdate
     u *= beta2;
     u = arma::max(u, arma::abs(gradient));
 
-    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) iteration);
+    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
 
     if (biasCorrection1 != 0)
       iterate -= (stepSize / biasCorrection1 * m / (u + epsilon));
