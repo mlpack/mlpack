@@ -88,12 +88,12 @@ class RMSprop
    *        function is visited in linear order.
    */
   RMSprop(DecomposableFunctionType& function,
-      const double stepSize = 0.01,
-      const double alpha = 0.99,
-      const double epsilon = 1e-8,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+          const double stepSize = 0.01,
+          const double alpha = 0.99,
+          const double epsilon = 1e-8,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
    * Optimize the given function using RMSprop. The given starting point will be

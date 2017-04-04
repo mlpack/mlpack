@@ -52,7 +52,7 @@ class RMSpropUpdate
    * @param beta1 The smoothing parameter.
    */
   RMSpropUpdate(const double epsilon = 1e-8,
-             const double alpha = 0.99) :
+                const double alpha = 0.99) :
     epsilon(epsilon),
     alpha(alpha)
   {
