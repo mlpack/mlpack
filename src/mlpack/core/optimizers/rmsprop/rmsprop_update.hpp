@@ -49,7 +49,7 @@ class RMSpropUpdate
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
-   * @param beta1 The smoothing parameter.
+   * @param alpha The smoothing parameter.
    */
   RMSpropUpdate(const double epsilon = 1e-8,
                 const double alpha = 0.99) :
