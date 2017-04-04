@@ -5,10 +5,9 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
- * -based optimization of stochastic objective functions, based on adaptive
- * estimates of lower-order moments. AdaMax is simply a variant of Adam based
- * on the infinity norm.
+ * Adam optimizer. Adam is an an algorithm for first-order gradient-based
+ * optimization of stochastic objective functions, based on adaptive estimates
+ * of lower-order moments.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,8 +25,7 @@ namespace optimization {
 /**
  * Adam is an optimizer that computes individual adaptive learning rates for
  * different parameters from estimates of first and second moments of the
- * gradients. AdaMax is a variant of Adam based on the infinity norm as given
- * in the section 7 of the following paper.
+ * gradients as given in the section 7 of the following paper.
  *
  * For more information, see the following.
  *
