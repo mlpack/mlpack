@@ -1088,24 +1088,29 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
   }
 }
 
+// This is used in the next test.
+template<typename FitnessFunction>
+using HoeffdingSizeTNumericSplit = HoeffdingNumericSplit<FitnessFunction,
+    size_t>;
+
 /**
  * Creating 3 children.
  */
 BOOST_AUTO_TEST_CASE(HoeffdingTreeNumDescendantsTest)
 {
   data::DatasetInfo info(3);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat2", 0);
-  info.MapString("cat3", 0);
-  info.MapString("cat4", 0);
-  info.MapString("cat5", 0);
-  info.MapString("cat6", 0);
-  info.MapString("cat0", 1);
-  info.MapString("cat1", 1);
-  info.MapString("cat2", 1);
-  info.MapString("cat0", 2);
-  info.MapString("cat1", 2);
+  info.MapString("cat0", (size_t)0);
+  info.MapString("cat1", (size_t)0);
+  info.MapString("cat2", (size_t)0);
+  info.MapString("cat3", (size_t)0);
+  info.MapString("cat4", (size_t)0);
+  info.MapString("cat5", (size_t)0);
+  info.MapString("cat6", (size_t)0);
+  info.MapString("cat0", (size_t)1);
+  info.MapString("cat1", (size_t)1);
+  info.MapString("cat2", (size_t)1);
+  info.MapString("cat0", (size_t)2);
+  info.MapString("cat1", (size_t)2);
 
   // Now generate data.
   arma::Mat<size_t> dataset(3, 300);
