@@ -1093,7 +1093,7 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
  */
 BOOST_AUTO_TEST_CASE(HoeffdingTreeNumDescendantsTest)
 {
-  DatasetInfo info(3);
+  data::DatasetInfo info(3);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat2", 0);
