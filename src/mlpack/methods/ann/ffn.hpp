@@ -162,12 +162,38 @@ class FFN
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
+  template <class LayerType, class... Args>
+  void AddNamed(std::string name, Args... args)
+  { 
+    network.push_back(new LayerType(args...));
+    // should raise error if duplicate
+    dictionary.insert(std::make_pair(name, new LayerType(args...)));
+  }
+
   /*
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes layer, std::string name="")
+  { 
+    network.push_back(layer);
+    if(std::is_empty<std::string>(name))
+      dictionary["Layer" + network.size()] = layer;
+    else
+    {
+      // should raise error if duplicate
+      dictionary.insert(std::make_pair(name, layer));
+    }
+
+  }
+
+  std::vector<LayerTypes> Model(){return network;}
+
+  LayerTypes& getByName(std::string name)
+  {
+      return dictionary[name];
+  }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -294,6 +320,9 @@ private:
 
   //! Locally-stored gradient parameter.
   arma::mat gradient;
+
+  //! Locally-stored dictionary.
+  std::map<std::string, LayerTypes> dictionary;
 }; // class FFN
 
 } // namespace ann
