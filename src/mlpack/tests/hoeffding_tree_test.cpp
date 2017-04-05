@@ -1088,6 +1088,54 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
   }
 }
 
+/**
+ * Creating 3 children.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingTreeNumDescendantsTest)
+{
+  DatasetInfo info(3);
+  info.MapString("cat0", 0);
+  info.MapString("cat1", 0);
+  info.MapString("cat2", 0);
+  info.MapString("cat3", 0);
+  info.MapString("cat4", 0);
+  info.MapString("cat5", 0);
+  info.MapString("cat6", 0);
+  info.MapString("cat0", 1);
+  info.MapString("cat1", 1);
+  info.MapString("cat2", 1);
+  info.MapString("cat0", 2);
+  info.MapString("cat1", 2);
+
+  // Now generate data.
+  arma::Mat<size_t> dataset(3, 300);
+  arma::Row<size_t> labels(300);
+  for (size_t i = 0; i < 300; i += 3)
+  {
+    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(1, i) = 0;
+    dataset(2, i) = mlpack::math::RandInt(2);
+    labels(i) = 0;
+
+    dataset(0, i + 1) = mlpack::math::RandInt(7);
+    dataset(1, i + 1) = 2;
+    dataset(2, i + 1) = mlpack::math::RandInt(2);
+    labels(i + 1) = 1;
+
+    dataset(0, i + 2) = mlpack::math::RandInt(7);
+    dataset(1, i + 2) = 1;
+    dataset(2, i + 2) = mlpack::math::RandInt(2);
+    labels(i + 2) = 2;
+  }
+
+  // Now train the hoeffding tree
+  HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit> batchTree(dataset, info, labels, 3, false);
+
+  // Each tree should have a single split.
+  BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
+}
+
 BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
 {
   // Generate data.
