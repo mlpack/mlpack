@@ -1132,7 +1132,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeNumDescendantsTest)
   HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
       HoeffdingCategoricalSplit> batchTree(dataset, info, labels, 3, false);
 
-  // Each tree should have a single split.
+  // The tree should have a single split.
   BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
 }
 
