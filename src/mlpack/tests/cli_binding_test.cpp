@@ -230,6 +230,67 @@ BOOST_AUTO_TEST_CASE(GetParamModelTest)
   data::Save("kernel.bin", "model", gk);
 
   // Create tuple.
+  gk.Bandwidth(2.0);
+  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  d.value = boost::any(t);
+  // Make sure it is not loaded yet.
+  d.input = true;
+  d.loaded = false;
+
+  GaussianKernel* output = NULL;
+  GetParam<GaussianKernel>((const util::ParamData&) d, (void*) NULL,
+      (void*) &output);
+
+  BOOST_REQUIRE_EQUAL(output->Bandwidth(), 5.0);
+
+  remove("kernel.bin");
+}
+
+BOOST_AUTO_TEST_CASE(RawParamDoubleTest)
+{
+  // This should function the same as GetParam for doubles.
+  util::ParamData d;
+  double x = 5.0;
+  d.value = boost::any(x);
+
+  double* output = NULL;
+  GetParam<double>((const util::ParamData&) d, (const void*) NULL,
+      (void*) &output);
+
+  BOOST_REQUIRE_EQUAL(*output, 5.0);
+}
+
+BOOST_AUTO_TEST_CASE(RawParamMatTest)
+{
+  // This should return the matrix as-is without loading.
+  util::ParamData d;
+  // Create value.
+  string filename = "hello.csv";
+  arma::mat m(5, 5, arma::fill::ones);
+  tuple<arma::mat, string> tuple = make_tuple(m, filename);
+  d.value = boost::any(tuple);
+  d.input = true;
+  d.loaded = false;
+
+  arma::mat* output = NULL;
+  GetRawParam<arma::mat>((const util::ParamData&) d, (void*) NULL,
+      (void*) &output);
+
+  BOOST_REQUIRE_EQUAL(output->n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output->n_cols, 5);
+  for (size_t i = 0; i < 25; ++i)
+    BOOST_REQUIRE_EQUAL((*output)[i], 1.0);
+}
+
+BOOST_AUTO_TEST_CASE(GetRawParamModelTest)
+{
+  util::ParamData d;
+
+  // Create value.
+  string filename = "kernel.bin";
+  kernel::GaussianKernel gk(5.0);
+
+  // Create tuple.
   tuple<GaussianKernel, string> t = make_tuple(gk, filename);
   d.value = boost::any(t);
   // Make sure it is not loaded yet.
@@ -237,12 +298,39 @@ BOOST_AUTO_TEST_CASE(GetParamModelTest)
   d.loaded = false;
 
   tuple<GaussianKernel, string>* output = NULL;
-  GetParam<tuple<GaussianKernel, string>>((const util::ParamData&) d,
+  GetRawParam<tuple<GaussianKernel, string>>((const util::ParamData&) d,
       (void*) NULL, (void*) &output);
 
   BOOST_REQUIRE_EQUAL(get<0>(*output).Bandwidth(), 5.0);
+}
 
-  remove("kernel.bin");
+BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
+{
+  util::ParamData d;
+
+  // Create value.
+  string filename = "test.csv";
+
+  // Create tuples.
+  data::DatasetInfo dd(3);
+  arma::mat m(3, 3, arma::fill::randu);
+
+  tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
+  tuple<decltype(tuple1), string> tuple2 = make_tuple(tuple1, filename);
+
+  d.value = boost::any(tuple2);
+  // Make sure it is not loaded yet.
+  d.input = true;
+  d.loaded = false;
+
+  // Set up object to load into.
+  tuple<data::DatasetInfo, arma::mat>* output = NULL;
+  GetRawParam<tuple<data::DatasetInfo, arma::mat>>((const util::ParamData&) d,
+      (void*) NULL, (void*) &output);
+
+  BOOST_REQUIRE_EQUAL(get<0>(*output).Dimensionality(), 3);
+  BOOST_REQUIRE_EQUAL(get<1>(*output).n_rows, 3);
+  BOOST_REQUIRE_EQUAL(get<1>(*output).n_cols, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
