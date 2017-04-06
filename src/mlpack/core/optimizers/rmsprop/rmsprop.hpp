@@ -4,7 +4,7 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * RMSprop optimizer. RMSprop is an optimizer that utilizes the magnitude of
+ * RMSProp optimizer. RMSProp is an optimizer that utilizes the magnitude of
  * recent gradients to normalize the gradients.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -24,7 +24,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * RMSprop is an optimizer that utilizes the magnitude of recent gradients to
+ * RMSProp is an optimizer that utilizes the magnitude of recent gradients to
  * normalize the gradients. In its basic form, given a step rate \f$ \gamma \f$
  * and a decay term \f$ \alpha \f$ we perform the following updates:
  *
@@ -44,7 +44,7 @@ namespace optimization {
  * }
  * @endcode
  *
- * For RMSprop to work, a DecomposableFunctionType template parameter is
+ * For RMSProp to work, a DecomposableFunctionType template parameter is
  * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -65,11 +65,11 @@ namespace optimization {
  *     minimized.
  */
 template<typename DecomposableFunctionType>
-class RMSprop
+class RMSProp
 {
  public:
   /**
-   * Construct the RMSprop optimizer with the given function and parameters. The
+   * Construct the RMSProp optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -87,7 +87,7 @@ class RMSprop
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  RMSprop(DecomposableFunctionType& function,
+  RMSProp(DecomposableFunctionType& function,
           const double stepSize = 0.01,
           const double alpha = 0.99,
           const double epsilon = 1e-8,
@@ -96,7 +96,7 @@ class RMSprop
           const bool shuffle = true);
 
   /**
-   * Optimize the given function using RMSprop. The given starting point will be
+   * Optimize the given function using RMSProp. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
@@ -144,8 +144,8 @@ class RMSprop
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The Stochastic Gradient Descent object with RMSpropUpdate policy.
-  SGD<DecomposableFunctionType, RMSpropUpdate> optimizer;
+  //! The Stochastic Gradient Descent object with RMSPropUpdate policy.
+  SGD<DecomposableFunctionType, RMSPropUpdate> optimizer;
 };
 
 } // namespace optimization

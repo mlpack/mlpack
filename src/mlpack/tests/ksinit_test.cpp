@@ -85,7 +85,7 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<LeakyReLU<> >();
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
 
-  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
+  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, 1e-18);
 
   model.Train(std::move(trainData), std::move(trainLabels), opt);

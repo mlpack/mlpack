@@ -4,7 +4,7 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * Implementation of the RMSprop constructor.
+ * Implementation of the RMSProp constructor.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +21,7 @@ namespace mlpack {
 namespace optimization {
 
 template<typename DecomposableFunctionType>
-RMSprop<DecomposableFunctionType>::RMSprop(DecomposableFunctionType& function,
+RMSProp<DecomposableFunctionType>::RMSProp(DecomposableFunctionType& function,
                                            const double stepSize,
                                            const double alpha,
                                            const double epsilon,
@@ -33,7 +33,7 @@ RMSprop<DecomposableFunctionType>::RMSprop(DecomposableFunctionType& function,
               maxIterations,
               tolerance,
               shuffle,
-              RMSpropUpdate(epsilon,
+              RMSPropUpdate(epsilon,
                             alpha))
 { /* Nothing to do. */ }
 

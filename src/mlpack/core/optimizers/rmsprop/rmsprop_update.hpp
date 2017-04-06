@@ -4,7 +4,7 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * RMSprop optimizer. RMSprop is an optimizer that utilizes the magnitude of
+ * RMSProp optimizer. RMSProp is an optimizer that utilizes the magnitude of
  * recent gradients to normalize the gradients.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,7 +21,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * RMSprop is an optimizer that utilizes the magnitude of recent gradients to
+ * RMS{rop is an optimizer that utilizes the magnitude of recent gradients to
  * normalize the gradients. In its basic form, given a step rate \f$ \gamma \f$
  * and a decay term \f$ \alpha \f$ we perform the following updates:
  *
@@ -41,17 +41,17 @@ namespace optimization {
  * }
  * @endcode
  */
-class RMSpropUpdate
+class RMSPropUpdate
 {
  public:
   /**
-   * Construct the RMSprop update policy with the given parameters.
+   * Construct the RMSProp update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    * @param alpha The smoothing parameter.
    */
-  RMSpropUpdate(const double epsilon = 1e-8,
+  RMSPropUpdate(const double epsilon = 1e-8,
                 const double alpha = 0.99) :
     epsilon(epsilon),
     alpha(alpha)
@@ -74,7 +74,7 @@ class RMSpropUpdate
   }
 
   /**
-   * Update step for RMSprop.
+   * Update step for RMSProp.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
