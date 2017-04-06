@@ -2,8 +2,9 @@
  * @file rmsprop.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
+ * @author Vivek Pal
  *
- * RMSprop optimizer. RmsProp is an optimizer that utilizes the magnitude of
+ * RMSProp optimizer. RMSProp is an optimizer that utilizes the magnitude of
  * recent gradients to normalize the gradients.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -16,11 +17,14 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include "rmsprop_update.hpp"
+
 namespace mlpack {
 namespace optimization {
 
 /**
- * RMSprop is an optimizer that utilizes the magnitude of recent gradients to
+ * RMSProp is an optimizer that utilizes the magnitude of recent gradients to
  * normalize the gradients. In its basic form, given a step rate \f$ \gamma \f$
  * and a decay term \f$ \alpha \f$ we perform the following updates:
  *
@@ -40,7 +44,7 @@ namespace optimization {
  * }
  * @endcode
  *
- * For RMSprop to work, a DecomposableFunctionType template parameter is
+ * For RMSProp to work, a DecomposableFunctionType template parameter is
  * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -61,11 +65,11 @@ namespace optimization {
  *     minimized.
  */
 template<typename DecomposableFunctionType>
-class RMSprop
+class RMSProp
 {
  public:
   /**
-   * Construct the RMSprop optimizer with the given function and parameters. The
+   * Construct the RMSProp optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -76,88 +80,72 @@ class RMSprop
    * @param stepSize Step size for each iteration.
    * @param alpha Smoothing constant, similar to that used in AdaDelta and
    *        momentum methods.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  RMSprop(DecomposableFunctionType& function,
-      const double stepSize = 0.01,
-      const double alpha = 0.99,
-      const double eps = 1e-8,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+  RMSProp(DecomposableFunctionType& function,
+          const double stepSize = 0.01,
+          const double alpha = 0.99,
+          const double epsilon = 1e-8,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
-   * Optimize the given function using RMSprop. The given starting point will be
+   * Optimize the given function using RMSProp. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
+  const DecomposableFunctionType& Function() const
+  {
+    return optimizer.Function();
+  }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  DecomposableFunctionType& Function() { return  optimizer.Function(); }
 
   //! Get the step size.
-  double StepSize() const { return stepSize; }
+  double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  double& StepSize() { return optimizer.StepSize(); }
 
   //! Get the smoothing parameter.
-  double Alpha() const { return alpha; }
+  double Alpha() const { return optimizer.UpdatePolicy().Alpha(); }
   //! Modify the smoothing parameter.
-  double& Alpha() { return alpha; }
+  double& Alpha() { return optimizer.UpdatePolicy().Alpha(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return eps; }
+  double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
   //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return eps; }
+  double& Epsilon() { return optimizer.UpdatePolicy().Epsilon(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return maxIterations; }
+  size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return maxIterations; }
+  size_t& MaxIterations() { return optimizer.MaxIterations(); }
 
   //! Get the tolerance for termination.
-  double Tolerance() const { return tolerance; }
+  double Tolerance() const { return optimizer.Tolerance(); }
   //! Modify the tolerance for termination.
-  double& Tolerance() { return tolerance; }
+  double& Tolerance() { return optimizer.Tolerance(); }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
+  bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
+  bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
-  //! The step size for each example.
-  double stepSize;
-
-  //! The smoothing parameter.
-  double alpha;
-
-  //! The value used to initialise the mean squared gradient parameter.
-  double eps;
-
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
+  //! The Stochastic Gradient Descent object with RMSPropUpdate policy.
+  SGD<DecomposableFunctionType, RMSPropUpdate> optimizer;
 };
 
 } // namespace optimization

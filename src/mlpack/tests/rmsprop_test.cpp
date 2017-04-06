@@ -27,15 +27,15 @@ using namespace mlpack::optimization::test;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(RMSpropTest);
+BOOST_AUTO_TEST_SUITE(RMSPropTest);
 
 /**
- * Tests the RMSprop optimizer using a simple test function.
+ * Tests the RMSProp optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleRMSpropTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 {
   SGDTestFunction f;
-  RMSprop<SGDTestFunction> optimizer(f, 1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
+  RMSProp<SGDTestFunction> optimizer(f, 1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(SimpleRMSpropTestFunction)
 }
 
 /**
- * Run RMSprop on logistic regression and make sure the results are acceptable.
+ * Run RMSProp on logistic regression and make sure the results are acceptable.
  */
 BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 {
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  RMSprop<LogisticRegressionFunction<> > rmsprop(lrf);
+  RMSProp<LogisticRegressionFunction<> > rmsprop(lrf);
   lr.Train(rmsprop);
 
   // Ensure that the error is close to zero.
