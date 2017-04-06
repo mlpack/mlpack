@@ -1133,12 +1133,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeNumDescendantsTest)
     labels(i + 2) = 2;
   }
 
-  // Now train the streaming decision trees;
-  HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> 
-      batchTree(dataset, info, labels, 3, false);
+  // Now train the streaming decision tree; 
+  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit> TreeType;
+  TreeType batchTree(dataset, info, labels, 3, false);
 
-  // The tree should has 3 descendants in total.
   BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
 }
 
