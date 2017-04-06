@@ -21,7 +21,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * RMS{rop is an optimizer that utilizes the magnitude of recent gradients to
+ * RMSProp is an optimizer that utilizes the magnitude of recent gradients to
  * normalize the gradients. In its basic form, given a step rate \f$ \gamma \f$
  * and a decay term \f$ \alpha \f$ we perform the following updates:
  *
