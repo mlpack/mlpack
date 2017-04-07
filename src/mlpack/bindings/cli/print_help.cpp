@@ -112,7 +112,8 @@ void PrintHelp(const std::string& param)
           std::cout << "Optional output options: " << std::endl << std::endl;
       }
 
-      if (pass >= 1) // Append default value to description.
+      // Append default value to description.
+      if (pass >= 1 && data.cppType != "bool")
       {
         std::string defaultValue;
         CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
