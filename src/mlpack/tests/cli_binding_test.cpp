@@ -333,4 +333,195 @@ BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_cols, 3);
 }
 
+// Check that we can successfully write a matrix to file.
+BOOST_AUTO_TEST_CASE(OutputParamMatTest)
+{
+  util::ParamData d;
+
+  // Create value.
+  string filename = "test.csv";
+  arma::mat m(3, 3, arma::fill::randu);
+  tuple<arma::mat, string> t = make_tuple(m, filename);
+
+  d.value = boost::any(t);
+  d.input = false;
+
+  // Now save it.
+  OutputParam<arma::mat>((const util::ParamData&) d, (const void*) NULL,
+      (void*) NULL);
+
+  arma::mat m2;
+  BOOST_REQUIRE(data::Load("test.csv", m2));
+
+  CheckMatrices(m, m2);
+
+  remove("test.csv");
+}
+
+// Check that we can successfully write an unsigned matrix to file.
+BOOST_AUTO_TEST_CASE(OutputParamUmatTest)
+{
+  util::ParamData d;
+
+  // Create value.
+  string filename = "test.csv";
+  arma::Mat<size_t> m(3, 3, arma::fill::randu);
+  tuple<arma::Mat<size_t>, string> t = make_tuple(m, filename);
+
+  d.value = boost::any(t);
+  d.input = false;
+
+  // Now save it.
+  OutputParam<arma::Mat<size_t>>((const util::ParamData&) d, (const void*) NULL,
+      (void*) NULL);
+
+  arma::Mat<size_t> m2;
+  BOOST_REQUIRE(data::Load("test.csv", m2));
+
+  CheckMatrices(m, m2);
+
+  remove("test.csv");
+}
+
+// Check that we can successfully write a model to file.
+BOOST_AUTO_TEST_CASE(OutputParamModelTest)
+{
+  util::ParamData d;
+
+  // Create value.
+  string filename = "kernel.bin";
+  GaussianKernel gk(5.0);
+  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+
+  d.value = boost::any(t);
+  d.input = false;
+
+  // Now save it.
+  OutputParam<GaussianKernel>((const util::ParamData&) d, (const void*) NULL,
+      (void*) NULL);
+
+  GaussianKernel gk2(1.0);
+  BOOST_REQUIRE(data::Load("kernel.bin", "model", gk2));
+
+  BOOST_REQUIRE_EQUAL(gk.Bandwidth(), gk2.Bandwidth());
+
+  remove("kernel.bin");
+}
+
+// Test setting a primitive type parameter.
+BOOST_AUTO_TEST_CASE(SetParamDoubleTest)
+{
+  util::ParamData d;
+
+  // Create initial value.
+  double dd = 5.0;
+  d.value = boost::any(dd);
+
+  // Now create second value.
+  double dd2 = 1.0;
+  boost::any a(dd2);
+  SetParam<double>((const util::ParamData&) d, (const void*) &a, (void*) NULL);
+
+  // Make sure it's the right thing.
+  double* dd3 = NULL;
+  GetParam<double>((const util::ParamData&) d, (const void*) NULL,
+      (void*) &dd3);
+
+  BOOST_REQUIRE_EQUAL((*dd3), dd2);
+}
+
+// Test that setting a flag works.
+BOOST_AUTO_TEST_CASE(SetParamBoolTest)
+{
+  util::ParamData d;
+
+  // Create initial value.
+  bool b = false;
+  d.value = boost::any(b);
+  d.wasPassed = true;
+
+  // Now create second value.
+  bool b2 = true;
+  boost::any a(b2);
+  SetParam<bool>((const util::ParamData&) d, (const void*) &a, (void*) NULL);
+
+  BOOST_REQUIRE_EQUAL(boost::any_cast<bool>(d.value), true);
+}
+
+// Test that calling SetParam on a matrix sets the string correctly.
+BOOST_AUTO_TEST_CASE(SetParamMatrixTest)
+{
+  util::ParamData d;
+
+  // Create initial value.
+  string filename = "hello.csv";
+  arma::mat m(5, 5, arma::fill::randu);
+  d.value = boost::any(make_tuple(m, filename));
+
+  // Get a new string.
+  string newFilename = "new.csv";
+  boost::any a2(newFilename);
+
+  SetParam<arma::mat>((const util::ParamData&) d, (const void*) &a2,
+      (void*) NULL);
+
+  // Make sure the change went through.
+  tuple<arma::mat, string>& t =
+      *boost::any_cast<tuple<arma::mat, string>>(&d.value);
+  BOOST_REQUIRE_EQUAL(get<1>(t), "new.csv");
+}
+
+// Test that calling SetParam on a model sets the string correctly.
+BOOST_AUTO_TEST_CASE(SetParamModelTest)
+{
+  util::ParamData d;
+
+  // Create initial value.
+  string filename = "kernel.bin";
+  GaussianKernel gk(2.0);
+  d.value = boost::any(make_tuple(gk, filename));
+
+  // Get a new string.
+  string newFilename = "new_kernel.bin";
+  boost::any a2(newFilename);
+
+  SetParam<GaussianKernel>((const util::ParamData&) d, (const void*) &a2,
+      (void*) NULL);
+
+  // Make sure the change went through.
+  tuple<GaussianKernel, string>& t =
+      *boost::any_cast<tuple<GaussianKernel, string>>(&d.value);
+
+  BOOST_REQUIRE_EQUAL(get<1>(t), "new_kernel.bin");
+}
+
+// Test that calling SetParam on a mat/DatasetInfo successfully sets the
+// filename.
+BOOST_AUTO_TEST_CASE(SetParamDatasetInfoMatTest)
+{
+  util::ParamData d;
+
+  // Create initial value.
+  using namespace data;
+  string filename = "test.csv";
+  arma::mat m(3, 3, arma::fill::randu);
+  DatasetInfo di(3);
+  tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
+  tuple<tuple<DatasetInfo, arma::mat>, string> t2 = make_tuple(t1, filename);
+  d.value = boost::any(t2);
+
+  // Now get new filename.
+  string newFilename = "new_filename.csv";
+  boost::any a2(newFilename);
+
+  SetParam<tuple<DatasetInfo, arma::mat>>((const util::ParamData&) d,
+      (const void*) &a2, (void*) NULL);
+
+  // Check that the name is right.
+  tuple<tuple<DatasetInfo, arma::mat>, string>& t3 =
+      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, string>>(&d.value);
+
+  BOOST_REQUIRE_EQUAL(get<1>(t3), "new_filename.csv");
+}
+
 BOOST_AUTO_TEST_SUITE_END();
