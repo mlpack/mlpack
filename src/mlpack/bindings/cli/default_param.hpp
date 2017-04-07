@@ -37,6 +37,14 @@ std::string DefaultParamImpl(
     const typename boost::enable_if<IsStdVector<T>>::type* = 0);
 
 /**
+ * Return the default value of a string option.
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const util::ParamData& data,
+    const typename boost::enable_if<std::is_same<T, std::string>>::type* = 0);
+
+/**
  * Return the default value of a matrix option, a tuple option, a
  * serializable option, or a string option (this returns the default filename,
  * or '' if the default is no file).
@@ -48,15 +56,16 @@ std::string DefaultParamImpl(
         arma::is_arma_type<T>::value ||
         data::HasSerialize<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        std::is_same<T, std::string>::value>::type* /* junk */ = 0);
+                                   arma::mat>>::value>::type* /* junk */ = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be
  * placed into the CLI functionMap.
  */
 template<typename T>
-void DefaultParam(const util::ParamData& data, const void* /* input */, void* output)
+void DefaultParam(const util::ParamData& data,
+                  const void* /* input */,
+                  void* output)
 {
   std::string* outstr = (std::string*) output;
   *outstr = DefaultParamImpl<T>(data);

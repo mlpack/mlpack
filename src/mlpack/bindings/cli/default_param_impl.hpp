@@ -50,6 +50,18 @@ std::string DefaultParamImpl(
 }
 
 /**
+ * Return the default value of a string option.
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const util::ParamData& data,
+    const typename boost::enable_if<std::is_same<T, std::string>>::type*)
+{
+  const std::string& s = *boost::any_cast<std::string>(&data.value);
+  return "'" + s + "'";
+}
+
+/**
  * Return the default value of a matrix option (this returns the default
  * filename, or '' if the default is no file).
  */
@@ -60,8 +72,7 @@ std::string DefaultParamImpl(
         arma::is_arma_type<T>::value ||
         data::HasSerialize<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        std::is_same<T, std::string>::value>::type* /* junk */)
+                                   arma::mat>>::value>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
   typedef std::tuple<T, std::string> TupleType;
