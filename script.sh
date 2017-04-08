@@ -3,16 +3,21 @@
 numFailures=0
 fail=0
 if [ "$TRAVIS_EVENT_TYPE" = "pull_request" ]; then
+
   # Get list of modified source code files in the pull request
   COMMIT_FILES="$(git diff --name-only --diff-filter=ACMRTUXB $TRAVIS_COMMIT_RANGE | grep '^src/[^.]*[.]\(hpp\|cpp\)$' | true)"
+
   # Get list of files on which style check is not applied
   EXCLUDED_FILES=$(find ./src/mlpack/core/arma_extend/* ./src/mlpack/core/boost_backport/* -name '*.hpp' -o -name '*.cpp')
   for f in ${COMMIT_FILES}; do
+
     # Check difference between clang-format output and commit file
     checkDiff=$(diff -u "$f" <(clang-format "$f") || true)
     if ! [ -z "$checkDiff" ]; then
+
       # Check if file is excluded from clang-format style check or not
       checkExcluded=$(awk '$1 == "'$f'" { print 1 }' "$EXCLUDED_FILES")
+
       # If not, mark as failure
       if [ -z ${checkExcluded} ]; then  
         numFailures=$((numFailures + 1))
@@ -26,6 +31,7 @@ if [ "$TRAVIS_EVENT_TYPE" = "pull_request" ]; then
       fi
     fi
   done
+
 fi
 if [ "$fail" = 1 ]; then
   echo "Style check failed."

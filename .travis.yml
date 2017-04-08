@@ -27,5 +27,3 @@ notifications:
     - mlpack-git@lists.mlpack.org
   irc:
     - "chat.freenode.net#mlpack"
-
-
