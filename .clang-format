@@ -1,4 +1,3 @@
----
 Language:        Cpp
 # BasedOnStyle:  Google
 AccessModifierOffset: -1
@@ -92,5 +91,3 @@ SpacesInSquareBrackets: false
 Standard:        Auto
 TabWidth:        8
 UseTab:          Never
-...
-
