@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 numFailures=0
 fail=0
