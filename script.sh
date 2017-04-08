@@ -32,4 +32,3 @@ if [ "$fail" = 1 ]; then
   exit 1
 fi
 echo "Style check passed."
-travis_wait 30 ./bin/mlpack_test -p
