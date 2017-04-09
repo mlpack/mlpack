@@ -9,9 +9,8 @@ else
    # Get list of all source code files
   COMMIT_FILES="$(find ./src/mlpack/ -type f ! -path "./src/mlpack/core/arma_extend/*" ! -path "./src/mlpack/core/boost_backport/*")"
 fi
-
 # Get list of files on which style check is not applied
-EXCLUDED_FILES=$(find ./src/mlpack/core/arma_extend/* ./src/mlpack/core/boost_backport/* -name '*.hpp' -o -name '*.cpp')
+EXCLUDED_FILES="$(find ./src/mlpack/core/arma_extend/* ./src/mlpack/core/boost_backport/* -name '*.hpp' -o -name '*.cpp')"
 
 for f in ${COMMIT_FILES}; do
   # Check difference between clang-format output and commit file
@@ -19,7 +18,7 @@ for f in ${COMMIT_FILES}; do
   if ! [ -z "$checkDiff" ]; then
 
     # Check if file is excluded from clang-format style check or not
-    checkExcluded=$(awk '$1 == "'$f'" { print 1 }' "$EXCLUDED_FILES")
+    checkExcluded=$(awk '$1 == "'$f'" { print 1 }' $EXCLUDED_FILES)
 
     # If not, mark as failure
     if [ -z ${checkExcluded} ]; then  
@@ -35,7 +34,6 @@ for f in ${COMMIT_FILES}; do
   fi
 done
 
-fi
 if [ "$fail" = 1 ]; then
   echo "Style check failed."
   exit 1
