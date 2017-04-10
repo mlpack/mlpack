@@ -21,32 +21,27 @@ namespace mlpack {
 namespace tree {
 
 // Create the cover tree.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    const MatType& dataset,
-    const ElemType base,
-    MetricType* metric) :
-    dataset(&dataset),
-    point(RootPointPolicy::ChooseRoot(dataset)),
-    scale(INT_MAX),
-    base(base),
-    numDescendants(0),
-    parent(NULL),
-    parentDistance(0),
-    furthestDescendantDistance(0),
-    localMetric(metric == NULL),
-    localDataset(false),
-    metric(metric),
-    distanceComps(0)
+    const MatType& dataset, const ElemType base, MetricType* metric)
+    : dataset(&dataset),
+      point(RootPointPolicy::ChooseRoot(dataset)),
+      scale(INT_MAX),
+      base(base),
+      numDescendants(0),
+      parent(NULL),
+      parentDistance(0),
+      furthestDescendantDistance(0),
+      localMetric(metric == NULL),
+      localDataset(false),
+      metric(metric),
+      distanceComps(0)
 {
   // If we need to create a metric, do that.  We'll just do it on the heap.
-  if (localMetric)
-    this->metric = new MetricType();
+  if (localMetric) this->metric = new MetricType();
 
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
@@ -57,8 +52,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Kick off the building.  Create the indices array and the distances array.
-  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
-      dataset.n_cols - 1, dataset.n_cols - 1);
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(
+      1, dataset.n_cols - 1, dataset.n_cols - 1);
   // This is now [1 2 3 4 ... n].  We must be sure that our point does not
   // occur.
   if (point != 0)
@@ -73,7 +68,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   size_t farSetSize = 0;
   size_t usedSetSize = 0;
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
-      usedSetSize);
+                 usedSetSize);
 
   // If we ended up creating only one child, remove the implicit node.
   while (children.size() == 1)
@@ -107,37 +102,33 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   if (furthestDescendantDistance == 0.0)
     scale = INT_MIN;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int)ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
 
   Log::Info << distanceComps << " distance computations during tree "
-      << "construction." << std::endl;
+            << "construction." << std::endl;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    const MatType& dataset,
-    MetricType& metric,
-    const ElemType base) :
-    dataset(&dataset),
-    point(RootPointPolicy::ChooseRoot(dataset)),
-    scale(INT_MAX),
-    base(base),
-    numDescendants(0),
-    parent(NULL),
-    parentDistance(0),
-    furthestDescendantDistance(0),
-    localMetric(false),
-    localDataset(false),
-    metric(&metric),
-    distanceComps(0)
+    const MatType& dataset, MetricType& metric, const ElemType base)
+    : dataset(&dataset),
+      point(RootPointPolicy::ChooseRoot(dataset)),
+      scale(INT_MAX),
+      base(base),
+      numDescendants(0),
+      parent(NULL),
+      parentDistance(0),
+      furthestDescendantDistance(0),
+      localMetric(false),
+      localDataset(false),
+      metric(&metric),
+      distanceComps(0)
 {
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
@@ -148,8 +139,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Kick off the building.  Create the indices array and the distances array.
-  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
-      dataset.n_cols - 1, dataset.n_cols - 1);
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(
+      1, dataset.n_cols - 1, dataset.n_cols - 1);
   // This is now [1 2 3 4 ... n].  We must be sure that our point does not
   // occur.
   if (point != 0)
@@ -164,7 +155,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   size_t farSetSize = 0;
   size_t usedSetSize = 0;
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
-      usedSetSize);
+                 usedSetSize);
 
   // If we ended up creating only one child, remove the implicit node.
   while (children.size() == 1)
@@ -199,35 +190,32 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   if (furthestDescendantDistance == 0.0)
     scale = INT_MIN;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int)ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
 
   Log::Info << distanceComps << " distance computations during tree "
-      << "construction." << std::endl;
+            << "construction." << std::endl;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    MatType&& data,
-    const ElemType base) :
-    dataset(new MatType(std::move(data))),
-    point(RootPointPolicy::ChooseRoot(dataset)),
-    scale(INT_MAX),
-    base(base),
-    numDescendants(0),
-    parent(NULL),
-    parentDistance(0),
-    furthestDescendantDistance(0),
-    localMetric(true),
-    localDataset(true),
-    distanceComps(0)
+    MatType&& data, const ElemType base)
+    : dataset(new MatType(std::move(data))),
+      point(RootPointPolicy::ChooseRoot(dataset)),
+      scale(INT_MAX),
+      base(base),
+      numDescendants(0),
+      parent(NULL),
+      parentDistance(0),
+      furthestDescendantDistance(0),
+      localMetric(true),
+      localDataset(true),
+      distanceComps(0)
 {
   // We need to create a metric.  We'll just do it on the heap.
   this->metric = new MetricType();
@@ -241,8 +229,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Kick off the building.  Create the indices array and the distances array.
-  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
-      dataset->n_cols - 1, dataset->n_cols - 1);
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(
+      1, dataset->n_cols - 1, dataset->n_cols - 1);
   // This is now [1 2 3 4 ... n].  We must be sure that our point does not
   // occur.
   if (point != 0)
@@ -257,7 +245,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   size_t farSetSize = 0;
   size_t usedSetSize = 0;
   CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
-      usedSetSize);
+                 usedSetSize);
 
   // If we ended up creating only one child, remove the implicit node.
   while (children.size() == 1)
@@ -291,37 +279,33 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   if (furthestDescendantDistance == 0.0)
     scale = INT_MIN;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int)ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
 
   Log::Info << distanceComps << " distance computations during tree "
-      << "construction." << std::endl;
+            << "construction." << std::endl;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    MatType&& data,
-    MetricType& metric,
-    const ElemType base) :
-    dataset(new MatType(std::move(data))),
-    point(RootPointPolicy::ChooseRoot(dataset)),
-    scale(INT_MAX),
-    base(base),
-    numDescendants(0),
-    parent(NULL),
-    parentDistance(0),
-    furthestDescendantDistance(0),
-    localMetric(false),
-    localDataset(true),
-    metric(&metric),
-    distanceComps(0)
+    MatType&& data, MetricType& metric, const ElemType base)
+    : dataset(new MatType(std::move(data))),
+      point(RootPointPolicy::ChooseRoot(dataset)),
+      scale(INT_MAX),
+      base(base),
+      numDescendants(0),
+      parent(NULL),
+      parentDistance(0),
+      furthestDescendantDistance(0),
+      localMetric(false),
+      localDataset(true),
+      metric(&metric),
+      distanceComps(0)
 {
   // If there is only one point or zero points in the dataset... uh, we're done.
   // Technically, if the dataset has zero points, our node is not correct...
@@ -332,8 +316,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Kick off the building.  Create the indices array and the distances array.
-  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
-      dataset->n_cols - 1, dataset->n_cols - 1);
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(
+      1, dataset->n_cols - 1, dataset->n_cols - 1);
   // This is now [1 2 3 4 ... n].  We must be sure that our point does not
   // occur.
   if (point != 0)
@@ -348,7 +332,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   size_t farSetSize = 0;
   size_t usedSetSize = 0;
   CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
-      usedSetSize);
+                 usedSetSize);
 
   // If we ended up creating only one child, remove the implicit node.
   while (children.size() == 1)
@@ -382,21 +366,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   if (furthestDescendantDistance == 0.0)
     scale = INT_MIN;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int)ceil(log(furthestDescendantDistance) / log(base));
 
   // Initialize statistic.
   stat = StatisticType(*this);
 
   Log::Info << distanceComps << " distance computations during tree "
-      << "construction." << std::endl;
+            << "construction." << std::endl;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const ElemType base,
@@ -409,19 +391,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     size_t nearSetSize,
     size_t& farSetSize,
     size_t& usedSetSize,
-    MetricType& metric) :
-    dataset(&dataset),
-    point(pointIndex),
-    scale(scale),
-    base(base),
-    numDescendants(0),
-    parent(parent),
-    parentDistance(parentDistance),
-    furthestDescendantDistance(0),
-    localMetric(false),
-    localDataset(false),
-    metric(&metric),
-    distanceComps(0)
+    MetricType& metric)
+    : dataset(&dataset),
+      point(pointIndex),
+      scale(scale),
+      base(base),
+      numDescendants(0),
+      parent(parent),
+      parentDistance(parentDistance),
+      furthestDescendantDistance(0),
+      localMetric(false),
+      localDataset(false),
+      metric(&metric),
+      distanceComps(0)
 {
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
@@ -440,12 +422,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 }
 
 // Manually create a cover tree node.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const ElemType base,
@@ -454,50 +434,48 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     CoverTree* parent,
     const ElemType parentDistance,
     const ElemType furthestDescendantDistance,
-    MetricType* metric) :
-    dataset(&dataset),
-    point(pointIndex),
-    scale(scale),
-    base(base),
-    numDescendants(0),
-    parent(parent),
-    parentDistance(parentDistance),
-    furthestDescendantDistance(furthestDescendantDistance),
-    localMetric(metric == NULL),
-    localDataset(false),
-    metric(metric),
-    distanceComps(0)
+    MetricType* metric)
+    : dataset(&dataset),
+      point(pointIndex),
+      scale(scale),
+      base(base),
+      numDescendants(0),
+      parent(parent),
+      parentDistance(parentDistance),
+      furthestDescendantDistance(furthestDescendantDistance),
+      localMetric(metric == NULL),
+      localDataset(false),
+      metric(metric),
+      distanceComps(0)
 {
   // If necessary, create a local metric.
-  if (localMetric)
-    this->metric = new MetricType();
+  if (localMetric) this->metric = new MetricType();
 
   // Initialize the statistic.
   stat = StatisticType(*this);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    const CoverTree& other) :
-    dataset((other.parent == NULL && other.localDataset) ?
-        new MatType(*other.dataset) : other.dataset),
-    point(other.point),
-    scale(other.scale),
-    base(other.base),
-    stat(other.stat),
-    numDescendants(other.numDescendants),
-    parent(other.parent),
-    parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance),
-    localMetric(false),
-    localDataset(other.parent == NULL && other.localDataset),
-    metric(other.metric),
-    distanceComps(0)
+    const CoverTree& other)
+    : dataset((other.parent == NULL && other.localDataset)
+                  ? new MatType(*other.dataset)
+                  : other.dataset),
+      point(other.point),
+      scale(other.scale),
+      base(other.base),
+      stat(other.stat),
+      numDescendants(other.numDescendants),
+      parent(other.parent),
+      parentDistance(other.parentDistance),
+      furthestDescendantDistance(other.furthestDescendantDistance),
+      localMetric(false),
+      localDataset(other.parent == NULL && other.localDataset),
+      metric(other.metric),
+      distanceComps(0)
 {
   // Copy each child by hand.
   for (size_t i = 0; i < other.NumChildren(); ++i)
@@ -511,8 +489,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   {
     std::queue<CoverTree*> queue;
 
-    for (size_t i = 0; i < NumChildren(); ++i)
-      queue.push(children[i]);
+    for (size_t i = 0; i < NumChildren(); ++i) queue.push(children[i]);
 
     while (!queue.empty())
     {
@@ -526,32 +503,29 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    CoverTree&& other) :
-    dataset(other.dataset),
-    point(other.point),
-    children(std::move(other.children)),
-    scale(other.scale),
-    base(other.base),
-    stat(std::move(other.stat)),
-    numDescendants(other.numDescendants),
-    parent(other.parent),
-    parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance),
-    localMetric(other.localMetric),
-    localDataset(other.localDataset),
-    metric(other.metric),
-    distanceComps(other.distanceComps)
+    CoverTree&& other)
+    : dataset(other.dataset),
+      point(other.point),
+      children(std::move(other.children)),
+      scale(other.scale),
+      base(other.base),
+      stat(std::move(other.stat)),
+      numDescendants(other.numDescendants),
+      parent(other.parent),
+      parentDistance(other.parentDistance),
+      furthestDescendantDistance(other.furthestDescendantDistance),
+      localMetric(other.localMetric),
+      localDataset(other.localDataset),
+      metric(other.metric),
+      distanceComps(other.distanceComps)
 {
   // Set proper parent pointer.
-  for (size_t i = 0; i < children.size(); ++i)
-    children[i]->Parent() = this;
+  for (size_t i = 0; i < children.size(); ++i) children[i]->Parent() = this;
 
   other.dataset = NULL;
   other.point = 0;
@@ -567,72 +541,59 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 }
 
 // Construct from a boost::serialization archive.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 template<typename Archive>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
-    CoverTree() // Create an empty CoverTree.
+    const typename std::enable_if_t<Archive::is_loading::value>*)
+    : CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
   ar >> data::CreateNVP(*this, "tree");
 }
 
-
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::~CoverTree()
 {
   // Delete each child.
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
+  for (size_t i = 0; i < children.size(); ++i) delete children[i];
 
   // Delete the local metric, if necessary.
-  if (localMetric)
-    delete metric;
+  if (localMetric) delete metric;
 
   // Delete the local dataset, if necessary.
-  if (localDataset)
-    delete dataset;
+  if (localDataset) delete dataset;
 }
 
 //! Return the number of descendant points.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 inline size_t
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    NumDescendants() const
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::NumDescendants()
+    const
 {
   return numDescendants;
 }
 
 //! Return the index of a particular descendant point.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 inline size_t
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Descendant(
     const size_t index) const
 {
   // The first descendant is the point contained within this node.
-  if (index == 0)
-    return point;
+  if (index == 0) return point;
 
   // Is it in the self-child?
   if (index < children[0]->NumDescendants())
@@ -660,12 +621,11 @@ template<typename MetricType,
          typename MatType,
          typename RootPointPolicy>
 template<typename VecType>
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    GetNearestChild(const VecType& point,
-                    typename std::enable_if_t<IsVector<VecType>::value>*)
+size_t
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
+    const VecType& point, typename std::enable_if_t<IsVector<VecType>::value>*)
 {
-  if (IsLeaf())
-    return 0;
+  if (IsLeaf()) return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -694,8 +654,7 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetFurthestChild(const VecType& point,
                      typename std::enable_if_t<IsVector<VecType>::value>*)
 {
-  if (IsLeaf())
-    return 0;
+  if (IsLeaf()) return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -719,11 +678,11 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    GetNearestChild(const CoverTree& queryNode)
+size_t
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::GetNearestChild(
+    const CoverTree& queryNode)
 {
-  if (IsLeaf())
-    return 0;
+  if (IsLeaf()) return 0;
 
   ElemType bestDistance = std::numeric_limits<ElemType>::max();
   size_t bestIndex = 0;
@@ -750,8 +709,7 @@ template<typename MetricType,
 size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     GetFurthestChild(const CoverTree& queryNode)
 {
-  if (IsLeaf())
-    return 0;
+  if (IsLeaf()) return 0;
 
   ElemType bestDistance = 0;
   size_t bestIndex = 0;
@@ -767,219 +725,199 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   return bestIndex;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const CoverTree& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+        const CoverTree& other) const
 {
   // Every cover tree node will contain points up to base^(scale + 1) away.
   return std::max(metric->Evaluate(dataset->col(point),
-      other.Dataset().col(other.Point())) -
-      furthestDescendantDistance - other.FurthestDescendantDistance(), 0.0);
+                                   other.Dataset().col(other.Point())) -
+                      furthestDescendantDistance -
+                      other.FurthestDescendantDistance(),
+                  0.0);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const CoverTree& other, const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+        const CoverTree& other, const ElemType distance) const
 {
   // We already have the distance as evaluated by the metric.
   return std::max(distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance(), 0.0);
+                      other.FurthestDescendantDistance(),
+                  0.0);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+        const arma::vec& other) const
 {
-  return std::max(metric->Evaluate(dataset->col(point), other) -
-      furthestDescendantDistance, 0.0);
+  return std::max(
+      metric->Evaluate(dataset->col(point), other) - furthestDescendantDistance,
+      0.0);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& /* other */, const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+        const arma::vec& /* other */, const ElemType distance) const
 {
   return std::max(distance - furthestDescendantDistance, 0.0);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const CoverTree& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+        const CoverTree& other) const
 {
   return metric->Evaluate(dataset->col(point),
-      other.Dataset().col(other.Point())) +
-      furthestDescendantDistance + other.FurthestDescendantDistance();
+                          other.Dataset().col(other.Point())) +
+         furthestDescendantDistance + other.FurthestDescendantDistance();
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const CoverTree& other, const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+        const CoverTree& other, const ElemType distance) const
 {
   // We already have the distance as evaluated by the metric.
   return distance + furthestDescendantDistance +
-      other.FurthestDescendantDistance();
+         other.FurthestDescendantDistance();
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+        const arma::vec& other) const
 {
   return metric->Evaluate(dataset->col(point), other) +
-      furthestDescendantDistance;
+         furthestDescendantDistance;
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-typename CoverTree<MetricType, StatisticType, MatType,
-    RootPointPolicy>::ElemType
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& /* other */, const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+    ElemType
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+        const arma::vec& /* other */, const ElemType distance) const
 {
   return distance + furthestDescendantDistance;
 }
 
 //! Return the minimum and maximum distance to another node.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-math::RangeType<typename
-    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const CoverTree& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+math::RangeType<
+    typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+        ElemType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const CoverTree& other) const
 {
-  const ElemType distance = metric->Evaluate(dataset->col(point),
-      other.Dataset().col(other.Point()));
+  const ElemType distance =
+      metric->Evaluate(dataset->col(point), other.Dataset().col(other.Point()));
 
   math::RangeType<ElemType> result;
   result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+                other.FurthestDescendantDistance();
   result.Hi() = distance + furthestDescendantDistance +
-      other.FurthestDescendantDistance();
+                other.FurthestDescendantDistance();
 
   return result;
 }
 
 //! Return the minimum and maximum distance to another node given that the
 //! point-to-point distance has already been calculated.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-math::RangeType<typename
-    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const CoverTree& other,
-                  const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+math::RangeType<
+    typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+        ElemType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const CoverTree& other, const ElemType distance) const
 {
   math::RangeType<ElemType> result;
   result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+                other.FurthestDescendantDistance();
   result.Hi() = distance + furthestDescendantDistance +
-      other.FurthestDescendantDistance();
+                other.FurthestDescendantDistance();
 
   return result;
 }
 
 //! Return the minimum and maximum distance to another point.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-math::RangeType<typename
-    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& other) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+math::RangeType<
+    typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+        ElemType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const arma::vec& other) const
 {
   const ElemType distance = metric->Evaluate(dataset->col(point), other);
 
   return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+                                   distance + furthestDescendantDistance);
 }
 
 //! Return the minimum and maximum distance to another point given that the
 //! point-to-point distance has already been calculated.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-math::RangeType<typename
-    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& /* other */,
-                  const ElemType distance) const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+math::RangeType<
+    typename CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+        ElemType>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const arma::vec& /* other */, const ElemType distance) const
 {
   return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+                                   distance + furthestDescendantDistance);
 }
 
 //! For a newly initialized node, create children using the near and far set.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 inline void
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     arma::Col<size_t>& indices,
@@ -996,24 +934,25 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // implicit node.  If the maximum distance is 0, every point in the near set
   // will be created as a leaf, and a child to this node.  We also do not need
   // to change the furthestChildDistance or furthestDescendantDistance.
-  const ElemType maxDistance = max(distances.rows(0,
-      nearSetSize + farSetSize - 1));
+  const ElemType maxDistance =
+      max(distances.rows(0, nearSetSize + farSetSize - 1));
   if (maxDistance == 0)
   {
     // Make the self child at the lowest possible level.
     // This should not modify farSetSize or usedSetSize.
     size_t tempSize = 0;
     children.push_back(new CoverTree(*dataset, base, point, INT_MIN, this, 0,
-        indices, distances, 0, tempSize, usedSetSize, *metric));
+                                     indices, distances, 0, tempSize,
+                                     usedSetSize, *metric));
     distanceComps += children.back()->DistanceComps();
 
     // Every point in the near set should be a leaf.
     for (size_t i = 0; i < nearSetSize; ++i)
     {
       // farSetSize and usedSetSize will not be modified.
-      children.push_back(new CoverTree(*dataset, base, indices[i],
-          INT_MIN, this, distances[i], indices, distances, 0, tempSize,
-          usedSetSize, *metric));
+      children.push_back(new CoverTree(*dataset, base, indices[i], INT_MIN,
+                                       this, distances[i], indices, distances,
+                                       0, tempSize, usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
       usedSetSize++;
     }
@@ -1031,8 +970,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     return;
   }
 
-  const int nextScale = std::min(scale,
-      (int) ceil(log(maxDistance) / log(base))) - 1;
+  const int nextScale =
+      std::min(scale, (int)ceil(log(maxDistance) / log(base))) - 1;
   const ElemType bound = pow(base, nextScale);
 
   // First, make the self child.  We must split the given near set into the near
@@ -1044,8 +983,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   size_t childFarSetSize = nearSetSize - childNearSetSize;
   size_t childUsedSetSize = 0;
   children.push_back(new CoverTree(*dataset, base, point, nextScale, this, 0,
-      indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize,
-      *metric));
+                                   indices, distances, childNearSetSize,
+                                   childFarSetSize, childUsedSetSize, *metric));
   // Don't double-count the self-child (so, subtract one).
   numDescendants += children[0]->NumDescendants();
 
@@ -1066,7 +1005,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // [ near | far | childUsed + used ]
   // is what we are trying to make.
   SortPointSet(indices, distances, childFarSetSize, childUsedSetSize,
-      farSetSize);
+               farSetSize);
 
   // Update size of near set and used set.
   nearSetSize -= childUsedSetSize;
@@ -1101,9 +1040,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     if ((nearSetSize == 1) && (farSetSize == 0))
     {
       size_t childNearSetSize = 0;
-      children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
-          this, distances[0], indices, distances, childNearSetSize, farSetSize,
-          usedSetSize, *metric));
+      children.push_back(new CoverTree(
+          *dataset, base, indices[0], nextScale, this, distances[0], indices,
+          distances, childNearSetSize, farSetSize, usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
       numDescendants += children.back()->NumDescendants();
 
@@ -1119,20 +1058,20 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     // Create the near and far set indices and distance vectors.  We don't fill
     // in the self-point, yet.
     arma::Col<size_t> childIndices(nearSetSize + farSetSize);
-    childIndices.rows(0, (nearSetSize + farSetSize - 2)) = indices.rows(1,
-        nearSetSize + farSetSize - 1);
+    childIndices.rows(0, (nearSetSize + farSetSize - 2)) =
+        indices.rows(1, nearSetSize + farSetSize - 1);
     arma::vec childDistances(nearSetSize + farSetSize);
 
     // Build distances for the child.
-    ComputeDistances(indices[0], childIndices, childDistances, nearSetSize
-        + farSetSize - 1);
+    ComputeDistances(indices[0], childIndices, childDistances,
+                     nearSetSize + farSetSize - 1);
 
     // Split into near and far sets for this point.
     childNearSetSize = SplitNearFar(childIndices, childDistances, bound,
-        nearSetSize + farSetSize - 1);
-    childFarSetSize = PruneFarSet(childIndices, childDistances,
-        base * bound, childNearSetSize,
-        (nearSetSize + farSetSize - 1));
+                                    nearSetSize + farSetSize - 1);
+    childFarSetSize =
+        PruneFarSet(childIndices, childDistances, base * bound,
+                    childNearSetSize, (nearSetSize + farSetSize - 1));
 
     // Now that we know the near and far set sizes, we can put the used point
     // (the self point) in the correct place; now, when we call
@@ -1143,9 +1082,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
 
     // Build this child (recursively).
     childUsedSetSize = 1; // Mark self point as used.
-    children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
-        this, distances[0], childIndices, childDistances, childNearSetSize,
-        childFarSetSize, childUsedSetSize, *metric));
+    children.push_back(
+        new CoverTree(*dataset, base, indices[0], nextScale, this, distances[0],
+                      childIndices, childDistances, childNearSetSize,
+                      childFarSetSize, childUsedSetSize, *metric));
     numDescendants += children.back()->NumDescendants();
 
     // Remove any implicit nodes.
@@ -1159,32 +1099,30 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     // For each point in the childUsed set, we must move that point to the used
     // set in our own vector.
     MoveToUsedSet(indices, distances, nearSetSize, farSetSize, usedSetSize,
-        childIndices, childFarSetSize, childUsedSetSize);
+                  childIndices, childFarSetSize, childUsedSetSize);
   }
 
   // Calculate furthest descendant.
-  for (size_t i = (nearSetSize + farSetSize); i < (nearSetSize + farSetSize +
-      usedSetSize); ++i)
+  for (size_t i = (nearSetSize + farSetSize);
+       i < (nearSetSize + farSetSize + usedSetSize); ++i)
     if (distances[i] > furthestDescendantDistance)
       furthestDescendantDistance = distances[i];
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    SplitNearFar(arma::Col<size_t>& indices,
-                 arma::vec& distances,
-                 const ElemType bound,
-                 const size_t pointSetSize)
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+size_t
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::SplitNearFar(
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const ElemType bound,
+    const size_t pointSetSize)
 {
   // Sanity check; there is no guarantee that this condition will not be true.
   // ...or is there?
-  if (pointSetSize <= 1)
-    return 0;
+  if (pointSetSize <= 1) return 0;
 
   // We'll traverse from both left and right.
   size_t left = 0;
@@ -1193,10 +1131,8 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   // A modification of quicksort, with the pivot value set to the bound.
   // Everything on the left of the pivot will be less than or equal to the
   // bound; everything on the right will be greater than the bound.
-  while ((distances[left] <= bound) && (left != right))
-    ++left;
-  while ((distances[right] > bound) && (left != right))
-    --right;
+  while ((distances[left] <= bound) && (left != right)) ++left;
+  while ((distances[right] > bound) && (left != right)) --right;
 
   while (left != right)
   {
@@ -1212,14 +1148,12 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
     // Traverse the left, seeing how many points are correctly on that side.
     // When we encounter an incorrect point, stop.  We will switch it later.
-    while ((distances[left] <= bound) && (left != right))
-      ++left;
+    while ((distances[left] <= bound) && (left != right)) ++left;
 
     // Traverse the right, seeing how many points are correctly on that side.
     // When we encounter an incorrect point, stop.  We will switch it with the
     // wrong point from the left side.
-    while ((distances[right] > bound) && (left != right))
-      --right;
+    while ((distances[right] > bound) && (left != right)) --right;
   }
 
   // The final left value is the index of the first far value.
@@ -1227,12 +1161,10 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 }
 
 // Returns the maximum distance between points.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     ComputeDistances(const size_t pointIndex,
                      const arma::Col<size_t>& indices,
@@ -1244,23 +1176,22 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   distanceComps += pointSetSize;
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = metric->Evaluate(dataset->col(pointIndex),
-        dataset->col(indices[i]));
+    distances[i] =
+        metric->Evaluate(dataset->col(pointIndex), dataset->col(indices[i]));
   }
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    SortPointSet(arma::Col<size_t>& indices,
-                 arma::vec& distances,
-                 const size_t childFarSetSize,
-                 const size_t childUsedSetSize,
-                 const size_t farSetSize)
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+size_t
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::SortPointSet(
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const size_t childFarSetSize,
+    const size_t childUsedSetSize,
+    const size_t farSetSize)
 {
   // We'll use low-level memcpy calls ourselves, just to ensure it's done
   // quickly and the way we want it to be.  Unfortunately this takes up more
@@ -1270,42 +1201,46 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
   // Sanity check: there is no need to sort if the buffer size is going to be
   // zero.
-  if (bufferSize == 0)
-    return (childFarSetSize + farSetSize);
+  if (bufferSize == 0) return (childFarSetSize + farSetSize);
 
   size_t* indicesBuffer = new size_t[bufferSize];
   ElemType* distancesBuffer = new ElemType[bufferSize];
 
   // The start of the memory region to copy to the buffer.
-  const size_t bufferFromLocation = ((bufferSize == farSetSize) ?
-      (childFarSetSize + childUsedSetSize) : childFarSetSize);
+  const size_t bufferFromLocation =
+      ((bufferSize == farSetSize) ? (childFarSetSize + childUsedSetSize)
+                                  : childFarSetSize);
   // The start of the memory region to move directly to the new place.
-  const size_t directFromLocation = ((bufferSize == farSetSize) ?
-      childFarSetSize : (childFarSetSize + childUsedSetSize));
+  const size_t directFromLocation =
+      ((bufferSize == farSetSize) ? childFarSetSize
+                                  : (childFarSetSize + childUsedSetSize));
   // The destination to copy the buffer back to.
-  const size_t bufferToLocation = ((bufferSize == farSetSize) ?
-      childFarSetSize : (childFarSetSize + farSetSize));
+  const size_t bufferToLocation =
+      ((bufferSize == farSetSize) ? childFarSetSize
+                                  : (childFarSetSize + farSetSize));
   // The destination of the directly moved memory region.
-  const size_t directToLocation = ((bufferSize == farSetSize) ?
-      (childFarSetSize + farSetSize) : childFarSetSize);
+  const size_t directToLocation =
+      ((bufferSize == farSetSize) ? (childFarSetSize + farSetSize)
+                                  : childFarSetSize);
 
   // Copy the smaller piece to the buffer.
   memcpy(indicesBuffer, indices.memptr() + bufferFromLocation,
-      sizeof(size_t) * bufferSize);
+         sizeof(size_t) * bufferSize);
   memcpy(distancesBuffer, distances.memptr() + bufferFromLocation,
-      sizeof(ElemType) * bufferSize);
+         sizeof(ElemType) * bufferSize);
 
   // Now move the other memory.
   memmove(indices.memptr() + directToLocation,
-      indices.memptr() + directFromLocation, sizeof(size_t) * bigCopySize);
+          indices.memptr() + directFromLocation, sizeof(size_t) * bigCopySize);
   memmove(distances.memptr() + directToLocation,
-      distances.memptr() + directFromLocation, sizeof(ElemType) * bigCopySize);
+          distances.memptr() + directFromLocation,
+          sizeof(ElemType) * bigCopySize);
 
   // Now copy the temporary memory to the right place.
   memcpy(indices.memptr() + bufferToLocation, indicesBuffer,
-      sizeof(size_t) * bufferSize);
+         sizeof(size_t) * bufferSize);
   memcpy(distances.memptr() + bufferToLocation, distancesBuffer,
-      sizeof(ElemType) * bufferSize);
+         sizeof(ElemType) * bufferSize);
 
   delete[] indicesBuffer;
   delete[] distancesBuffer;
@@ -1314,12 +1249,10 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   return (childFarSetSize + farSetSize);
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MoveToUsedSet(arma::Col<size_t>& indices,
                   arma::vec& distances,
@@ -1402,8 +1335,8 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
         // So increment the child counter by 1 and move a point if we need.
         if (j != startChildUsedSet)
         {
-          childIndices[childFarSetSize + j] = childIndices[childFarSetSize +
-              startChildUsedSet];
+          childIndices[childFarSetSize + j] =
+              childIndices[childFarSetSize + startChildUsedSet];
         }
 
         // Update all counters from the swaps we have done.
@@ -1440,8 +1373,8 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
         if (j != startChildUsedSet)
         {
-          childIndices[childFarSetSize + j] = childIndices[childFarSetSize +
-              startChildUsedSet];
+          childIndices[childFarSetSize + j] =
+              childIndices[childFarSetSize + startChildUsedSet];
         }
 
         // Update all counters from the swaps we have done.
@@ -1460,28 +1393,25 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   Log::Assert(originalSum == (nearSetSize + farSetSize + usedSetSize));
 }
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-    PruneFarSet(arma::Col<size_t>& indices,
-                arma::vec& distances,
-                const ElemType bound,
-                const size_t nearSetSize,
-                const size_t pointSetSize)
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+size_t
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::PruneFarSet(
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const ElemType bound,
+    const size_t nearSetSize,
+    const size_t pointSetSize)
 {
   // What we are trying to do is remove any points greater than the bound from
   // the far set.  We don't care what happens to those indices and distances...
   // so, we don't need to properly swap points -- just drop new ones in place.
   size_t left = nearSetSize;
   size_t right = pointSetSize - 1;
-  while ((distances[left] <= bound) && (left != right))
-    ++left;
-  while ((distances[right] > bound) && (left != right))
-    --right;
+  while ((distances[left] <= bound) && (left != right)) ++left;
+  while ((distances[right] > bound) && (left != right)) --right;
 
   while (left != right)
   {
@@ -1491,10 +1421,8 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     --right; // Since we aren't changing the right.
 
     // Advance to next location which needs to switch.
-    while ((distances[left] <= bound) && (left != right))
-      ++left;
-    while ((distances[right] > bound) && (left != right))
-      --right;
+    while ((distances[left] <= bound) && (left != right)) ++left;
+    while ((distances[right] > bound) && (left != right)) --right;
   }
 
   // The far set size is the left pointer, with the near set size subtracted
@@ -1506,12 +1434,10 @@ size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
  * Take a look at the last child (the most recently created one) and remove any
  * implicit nodes that have been created.
  */
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RemoveNewImplicitNodes()
 {
@@ -1542,24 +1468,22 @@ inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 /**
  * Default constructor, only for use with boost::serialization.
  */
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
-    dataset(NULL),
-    point(0),
-    scale(INT_MIN),
-    base(0.0),
-    numDescendants(0),
-    parent(NULL),
-    parentDistance(0.0),
-    furthestDescendantDistance(0.0),
-    localMetric(false),
-    localDataset(false),
-    metric(NULL)
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree()
+    : dataset(NULL),
+      point(0),
+      scale(INT_MIN),
+      base(0.0),
+      numDescendants(0),
+      parent(NULL),
+      parentDistance(0.0),
+      furthestDescendantDistance(0.0),
+      localMetric(false),
+      localDataset(false),
+      metric(NULL)
 {
   // Nothing to do.
 }
@@ -1567,16 +1491,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
 /**
  * Serialize to/from a boost::serialization archive.
  */
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 template<typename Archive>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
 
@@ -1584,21 +1505,18 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
   // also need to delete the local metric and dataset.
   if (Archive::is_loading::value)
   {
-    for (size_t i = 0; i < children.size(); ++i)
-      delete children[i];
+    for (size_t i = 0; i < children.size(); ++i) delete children[i];
 
-    if (localMetric && metric)
-      delete metric;
-    if (localDataset && dataset)
-      delete dataset;
+    if (localMetric && metric) delete metric;
+    if (localDataset && dataset) delete dataset;
   }
 
-  ar & CreateNVP(dataset, "dataset");
-  ar & CreateNVP(point, "point");
-  ar & CreateNVP(scale, "scale");
-  ar & CreateNVP(base, "base");
-  ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(numDescendants, "numDescendants");
+  ar& CreateNVP(dataset, "dataset");
+  ar& CreateNVP(point, "point");
+  ar& CreateNVP(scale, "scale");
+  ar& CreateNVP(base, "base");
+  ar& CreateNVP(stat, "stat");
+  ar& CreateNVP(numDescendants, "numDescendants");
 
   // Due to quirks of boost::serialization, depending on how the user
   // serializes the tree, it's possible that the root of the tree will
@@ -1608,16 +1526,16 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
   if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
   {
     CoverTree* fakeParent = NULL;
-    ar & CreateNVP(fakeParent, "parent");
+    ar& CreateNVP(fakeParent, "parent");
   }
   else
   {
-    ar & CreateNVP(parent, "parent");
+    ar& CreateNVP(parent, "parent");
   }
 
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(metric, "metric");
+  ar& CreateNVP(parentDistance, "parentDistance");
+  ar& CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar& CreateNVP(metric, "metric");
 
   if (Archive::is_loading::value && parent == NULL)
   {
@@ -1627,14 +1545,13 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
 
   // Lastly, serialize the children.
   size_t numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
-  if (Archive::is_loading::value)
-    children.resize(numChildren);
+  ar& CreateNVP(numChildren, "numChildren");
+  if (Archive::is_loading::value) children.resize(numChildren);
   for (size_t i = 0; i < numChildren; ++i)
   {
     std::ostringstream oss;
     oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
+    ar& CreateNVP(children[i], oss.str());
   }
 
   if (Archive::is_loading::value && parent == NULL)

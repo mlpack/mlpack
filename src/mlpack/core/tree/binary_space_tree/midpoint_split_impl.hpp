@@ -58,10 +58,8 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
       for (size_t d = 0; d < data.n_rows; ++d)
       {
         const double val = data(d, i);
-        if (val < ranges[d].Lo())
-          ranges[d].Lo() = val;
-        if (val > ranges[d].Hi())
-          ranges[d].Hi() = val;
+        if (val < ranges[d].Lo()) ranges[d].Lo() = val;
+        if (val > ranges[d].Hi()) ranges[d].Hi() = val;
       }
     }
 

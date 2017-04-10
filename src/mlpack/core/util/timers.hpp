@@ -18,14 +18,14 @@
 #include <chrono> // chrono library for cross platform timer calculation
 
 #if defined(_WIN32)
- // uint64_t isn't defined on every windows.
-  #if !defined(HAVE_UINT64_T)
-    #if SIZEOF_UNSIGNED_LONG == 8
-      typedef unsigned long uint64_t;
-    #else
-      typedef unsigned long long  uint64_t;
-    #endif  // SIZEOF_UNSIGNED_LONG
-  #endif  // HAVE_UINT64_T
+// uint64_t isn't defined on every windows.
+#if !defined(HAVE_UINT64_T)
+#if SIZEOF_UNSIGNED_LONG == 8
+typedef unsigned long uint64_t;
+#else
+typedef unsigned long long uint64_t;
+#endif // SIZEOF_UNSIGNED_LONG
+#endif // HAVE_UINT64_T
 #endif
 
 namespace mlpack {
@@ -73,7 +73,7 @@ class Timers
 {
  public:
   //! Nothing to do for the constructor.
-  Timers() { }
+  Timers() {}
 
   /**
    * Returns a copy of all the timers used via this interface.

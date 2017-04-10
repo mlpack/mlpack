@@ -26,7 +26,7 @@ namespace optimization {
  * semidefinite programs (LR-SDP).  This solver uses the augmented Lagrangian
  * optimizer to solve low-rank semidefinite programs.
  */
-template <typename SDPType>
+template<typename SDPType>
 class LRSDP
 {
  public:
@@ -51,8 +51,7 @@ class LRSDP
    * @param sdp SDP to be solved.
    * @param initialPoint Initial point of the optimization.
    */
-  LRSDP(const SDPType& sdp,
-        const arma::mat& initialPoint);
+  LRSDP(const SDPType& sdp, const arma::mat& initialPoint);
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given

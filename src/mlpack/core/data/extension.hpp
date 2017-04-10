@@ -22,12 +22,11 @@ inline std::string Extension(const std::string& filename)
 {
   const size_t ext = filename.rfind('.');
   std::string extension;
-  if (ext == std::string::npos)
-    return extension;
+  if (ext == std::string::npos) return extension;
 
   extension = filename.substr(ext + 1);
   std::transform(extension.begin(), extension.end(), extension.begin(),
-      ::tolower);
+                 ::tolower);
 
   return extension;
 }

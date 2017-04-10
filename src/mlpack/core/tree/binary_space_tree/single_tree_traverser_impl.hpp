@@ -27,26 +27,29 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
-    rule(rule),
-    numPrunes(0)
-{ /* Nothing to do. */ }
+    SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule)
+    : rule(rule), numPrunes(0)
+{ /* Nothing to do. */
+}
 
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-SingleTreeTraverser<RuleType>::Traverse(
-    const size_t queryIndex,
-    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
-        referenceNode)
+    SingleTreeTraverser<RuleType>::Traverse(
+        const size_t queryIndex,
+        BinarySpaceTree<MetricType,
+                        StatisticType,
+                        MatType,
+                        BoundType,
+                        SplitType>& referenceNode)
 {
   // If we are a leaf, run the base case as necessary.
   if (referenceNode.IsLeaf())
@@ -99,8 +102,8 @@ SingleTreeTraverser<RuleType>::Traverse(
         Traverse(queryIndex, *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
-            rightScore);
+        rightScore =
+            rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
 
         if (rightScore != DBL_MAX)
           Traverse(queryIndex, *referenceNode.Right());

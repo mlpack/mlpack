@@ -25,8 +25,8 @@ AugLagrangianTestFunction::AugLagrangianTestFunction()
 }
 
 AugLagrangianTestFunction::AugLagrangianTestFunction(
-      const arma::mat& initialPoint) :
-    initialPoint(initialPoint)
+    const arma::mat& initialPoint)
+    : initialPoint(initialPoint)
 {
   // Nothing to do.
 }
@@ -50,20 +50,18 @@ void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
   gradient[1] = 4 * coordinates[0] + 6 * coordinates[1];
 }
 
-double AugLagrangianTestFunction::EvaluateConstraint(const size_t index,
-    const arma::mat& coordinates)
+double AugLagrangianTestFunction::EvaluateConstraint(
+    const size_t index, const arma::mat& coordinates)
 {
   // We return 0 if the index is wrong (not 0).
-  if (index != 0)
-    return 0;
+  if (index != 0) return 0;
 
   // c(x) = x_1 + x_2 - 5
   return (coordinates[0] + coordinates[1] - 5);
 }
 
-void AugLagrangianTestFunction::GradientConstraint(const size_t index,
-    const arma::mat& /* coordinates */,
-    arma::mat& gradient)
+void AugLagrangianTestFunction::GradientConstraint(
+    const size_t index, const arma::mat& /* coordinates */, arma::mat& gradient)
 {
   // If the user passed an invalid index (not 0), we will return a zero
   // gradient.
@@ -87,8 +85,8 @@ GockenbachFunction::GockenbachFunction()
   initialPoint[2] = 1;
 }
 
-GockenbachFunction::GockenbachFunction(const arma::mat& initialPoint) :
-    initialPoint(initialPoint)
+GockenbachFunction::GockenbachFunction(const arma::mat& initialPoint)
+    : initialPoint(initialPoint)
 {
   // Nothing to do.
 }
@@ -128,8 +126,8 @@ double GockenbachFunction::EvaluateConstraint(const size_t index,
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(0.0,
-          (coordinates[2] - std::pow(coordinates[0], 2)));
+      constraint =
+          std::min(0.0, (coordinates[2] - std::pow(coordinates[0], 2)));
       break;
   }
 
@@ -167,11 +165,10 @@ void GockenbachFunction::GradientConstraint(const size_t index,
 //
 // LovaszThetaSDP
 //
-LovaszThetaSDP::LovaszThetaSDP() : edges(0), vertices(0), initialPoint(0, 0)
-{ }
+LovaszThetaSDP::LovaszThetaSDP() : edges(0), vertices(0), initialPoint(0, 0) {}
 
-LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges(edges),
-    initialPoint(0, 0)
+LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges)
+    : edges(edges), initialPoint(0, 0)
 {
   // Calculate V by finding the maximum index in the edges matrix.
   vertices = max(max(edges)) + 1;
@@ -187,8 +184,7 @@ double LovaszThetaSDP::Evaluate(const arma::mat& coordinates)
   return obj;
 }
 
-void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
-                              arma::mat& gradient)
+void LovaszThetaSDP::Gradient(const arma::mat& coordinates, arma::mat& gradient)
 {
   // The gradient is equal to (2 S' R^T)^T, with R being coordinates.
   // S' = C - sum_{i = 1}^{m} [ y_i - sigma (Tr(A_i * (R^T R)) - b_i)] * A_i
@@ -207,8 +203,8 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
     if (i == 0)
     {
       // A_0 = I_n.  Hooray!  That's easy!  b_0 = 1.
-      double inner = -1 * double(n) - 0.5 *
-          (accu(trans(coordinates) % coordinates) - 1);
+      double inner =
+          -1 * double(n) - 0.5 * (accu(trans(coordinates) % coordinates) - 1);
 
       arma::mat zz = (inner * arma::eye<arma::mat>(n, n));
       s -= zz;
@@ -225,8 +221,8 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
       a(edge[0], edge[1]) = 1;
       a(edge[1], edge[0]) = 1;
 
-      double inner = (-1) - 0.5 *
-          (accu(a % (trans(coordinates) * coordinates)));
+      double inner =
+          (-1) - 0.5 * (accu(a % (trans(coordinates) * coordinates)));
 
       arma::mat zz = (inner * a);
       s -= zz;
@@ -310,8 +306,7 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
   //   r = 0.5 + sqrt(0.25 + 2m)
   float m = NumConstraints();
   float r = 0.5 + sqrt(0.25 + 2 * m);
-  if (ceil(r) > vertices)
-    r = vertices; // An upper bound on the dimension.
+  if (ceil(r) > vertices) r = vertices; // An upper bound on the dimension.
 
   initialPoint.set_size(ceil(r), vertices);
 
@@ -319,7 +314,7 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
   // in Section 4 of Monteiro and Burer.
   for (size_t i = 0; i < r; i++)
   {
-    for (size_t j = 0; j < (size_t) vertices; j++)
+    for (size_t j = 0; j < (size_t)vertices; j++)
     {
       if (i == j)
         initialPoint(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices * m));

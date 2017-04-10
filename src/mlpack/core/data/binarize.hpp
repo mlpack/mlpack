@@ -45,10 +45,10 @@ void Binarize(const arma::Mat<T>& input,
   output.copy_size(input);
 
   const int totalElems = static_cast<int>(input.n_elem);
-  const T *inPtr = input.memptr();
-  T *outPtr = output.memptr();
+  const T* inPtr = input.memptr();
+  T* outPtr = output.memptr();
 
-  #pragma omp parallel for
+#pragma omp parallel for
   for (int i = 0; i < totalElems; ++i)
   {
     if (inPtr[i] > threshold)
@@ -88,7 +88,7 @@ void Binarize(const arma::Mat<T>& input,
   output = input;
   const int totalCols = static_cast<int>(input.n_cols);
 
-  #pragma omp parallel for
+#pragma omp parallel for
   for (int i = 0; i < totalCols; ++i)
   {
     if (input(dimension, i) > threshold)

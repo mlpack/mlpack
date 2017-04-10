@@ -33,17 +33,14 @@ class LaplacianKernel
   /**
    * Default constructor; sets bandwidth to 1.0.
    */
-  LaplacianKernel() : bandwidth(1.0)
-  { }
+  LaplacianKernel() : bandwidth(1.0) {}
 
   /**
    * Construct the Laplacian kernel with a custom bandwidth.
    *
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
-  LaplacianKernel(double bandwidth) :
-      bandwidth(bandwidth)
-  { }
+  LaplacianKernel(double bandwidth) : bandwidth(bandwidth) {}
 
   /**
    * Evaluation of the Laplacian kernel.  This could be generalized to use any
@@ -87,7 +84,8 @@ class LaplacianKernel
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
-  double Gradient(const double t) const  {
+  double Gradient(const double t) const
+  {
     return exp(-t / bandwidth) / -bandwidth;
   }
 
@@ -100,7 +98,7 @@ class LaplacianKernel
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar& data::CreateNVP(bandwidth, "bandwidth");
   }
 
  private:

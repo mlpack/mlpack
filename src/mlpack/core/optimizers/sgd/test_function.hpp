@@ -26,7 +26,7 @@ class SGDTestFunction
 {
  public:
   //! Nothing to do for the constructor.
-  SGDTestFunction() { }
+  SGDTestFunction() {}
 
   //! Return 3 (the number of functions).
   size_t NumFunctions() const { return 3; }

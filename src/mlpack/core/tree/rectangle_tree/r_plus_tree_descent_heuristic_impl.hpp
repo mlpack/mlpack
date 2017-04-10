@@ -2,7 +2,8 @@
  * @file hilbert_r_tree_descent_heuristic_impl.hpp
  * @author Mikhail Lozhnikov
  *
- * Implementation of HilbertRTreeDescentHeuristic, a class that chooses the best child
+ * Implementation of HilbertRTreeDescentHeuristic, a class that chooses the best
+ * child
  * of a node in an R tree when inserting a new point.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -30,8 +31,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
   // Try to find a node that contains the point.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    if (node->Child(bestIndex).Bound().Contains(
-        node->Dataset().col(point)))
+    if (node->Child(bestIndex).Bound().Contains(node->Dataset().col(point)))
       return bestIndex;
   }
 
@@ -47,8 +47,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
 
     for (size_t j = 0; j < node->NumChildren(); j++)
     {
-      if (j == bestIndex)
-        continue;
+      if (j == bestIndex) continue;
       success = false;
       // Two nodes overlap if and only if there are no dimension in which
       // they do not overlap each other.

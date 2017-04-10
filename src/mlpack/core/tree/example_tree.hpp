@@ -76,8 +76,7 @@ class ExampleTree
    * @param dataset The dataset that the tree will be built on.
    * @param metric The instantiated metric to use to build the dataset.
    */
-  ExampleTree(const MatType& dataset,
-              MetricType& metric);
+  ExampleTree(const MatType& dataset, MetricType& metric);
 
   //! Return the number of children of this node.
   size_t NumChildren() const;

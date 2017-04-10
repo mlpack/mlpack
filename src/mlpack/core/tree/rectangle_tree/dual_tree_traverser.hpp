@@ -28,8 +28,12 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-class RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                    DescentType, AuxiliaryInformationType>::DualTreeTraverser
+class RectangleTree<MetricType,
+                    StatisticType,
+                    MatType,
+                    SplitType,
+                    DescentType,
+                    AuxiliaryInformationType>::DualTreeTraverser
 {
  public:
   /**
@@ -67,7 +71,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
   size_t& NumBaseCases() { return numBaseCases; }
 
  private:
-
   // We use this struct and this function to make the sorting and scoring easy
   // and efficient:
   struct NodeAndScore
@@ -77,8 +80,7 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
     typename RuleType::TraversalInfoType travInfo;
   };
 
-  static bool nodeComparator(const NodeAndScore& obj1,
-                             const NodeAndScore& obj2)
+  static bool nodeComparator(const NodeAndScore& obj1, const NodeAndScore& obj2)
   {
     return obj1.score < obj2.score;
   }

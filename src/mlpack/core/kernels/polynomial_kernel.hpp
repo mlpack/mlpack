@@ -35,10 +35,10 @@ class PolynomialKernel
    * @param offset Offset of the dot product of the arguments.
    * @param degree Degree of the polynomial.
    */
-  PolynomialKernel(const double degree = 2.0, const double offset = 0.0) :
-      degree(degree),
-      offset(offset)
-  { }
+  PolynomialKernel(const double degree = 2.0, const double offset = 0.0)
+      : degree(degree), offset(offset)
+  {
+  }
 
   /**
    * Simple evaluation of the dot product.  This evaluation uses Armadillo's
@@ -71,8 +71,8 @@ class PolynomialKernel
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(degree, "degree");
-    ar & data::CreateNVP(offset, "offset");
+    ar& data::CreateNVP(degree, "degree");
+    ar& data::CreateNVP(offset, "offset");
   }
 
  private:

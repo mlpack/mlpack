@@ -35,11 +35,13 @@ struct HasSerializeFunction
 {
   static const bool value =
       // Non-static version.
-      HasSerializeCheck<T, void(T::*)(boost::archive::xml_oarchive&,
-                                      const unsigned int)>::value ||
+      HasSerializeCheck<T,
+                        void (T::*)(boost::archive::xml_oarchive&,
+                                    const unsigned int)>::value ||
       // Static version.
-      HasSerializeCheck<T, void(*)(boost::archive::xml_oarchive&,
-                                   const unsigned int)>::value;
+      HasSerializeCheck<T,
+                        void (*)(boost::archive::xml_oarchive&,
+                                 const unsigned int)>::value;
 };
 
 template<typename T>
@@ -47,25 +49,35 @@ struct HasSerialize
 {
   // We have to handle the case where T isn't a class...
   typedef char yes[1];
-  typedef char no [2];
-  template<typename U, typename V, typename W> struct check;
-  template<typename U> static yes& chk( // This matches classes.
+  typedef char no[2];
+  template<typename U, typename V, typename W>
+  struct check;
+  template<typename U>
+  static yes& chk( // This matches classes.
       check<U,
             typename std::enable_if_t<std::is_class<U>::value>*,
             typename std::enable_if_t<HasSerializeFunction<U>::value>*>*);
-  template<typename  > static no&  chk(...); // This matches non-classes.
+  template<typename>
+  static no& chk(...); // This matches non-classes.
 
   static const bool value = (sizeof(chk<T>(0)) == sizeof(yes));
 };
 
 // Declare the shims we need.
-template<typename T> struct FirstShim;
-template<typename T> struct FirstArrayShim;
-template<typename T> struct FirstNormalArrayShim;
-template<typename T> struct SecondShim;
-template<typename T> struct SecondArrayShim;
-template<typename T> struct SecondNormalArrayShim;
-template<typename T> struct PointerShim;
+template<typename T>
+struct FirstShim;
+template<typename T>
+struct FirstArrayShim;
+template<typename T>
+struct FirstNormalArrayShim;
+template<typename T>
+struct SecondShim;
+template<typename T>
+struct SecondArrayShim;
+template<typename T>
+struct SecondNormalArrayShim;
+template<typename T>
+struct PointerShim;
 
 /**
  * Call this function to produce a name-value pair; this is similar to
@@ -123,13 +135,13 @@ inline FirstShim<T> CreateNVP(
 template<typename T>
 inline
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-const // Imitate the boost::serialization make_nvp() function.
+    const // Imitate the boost::serialization make_nvp() function.
 #endif
-boost::serialization::nvp<T> CreateNVP(
-    T& t,
-    const std::string& name,
-    typename std::enable_if_t<!HasSerialize<T>::value>* = 0,
-    typename std::enable_if_t<!std::is_pointer<T>::value>* = 0)
+    boost::serialization::nvp<T>
+    CreateNVP(T& t,
+              const std::string& name,
+              typename std::enable_if_t<!HasSerialize<T>::value>* = 0,
+              typename std::enable_if_t<!std::is_pointer<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(), t);
 }
@@ -158,15 +170,15 @@ boost::serialization::nvp<T> CreateNVP(
 template<typename T>
 inline
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-const
+    const
 #endif
-boost::serialization::nvp<PointerShim<T>*> CreateNVP(
-    T*& t,
-    const std::string& name,
-    typename std::enable_if_t<HasSerialize<T>::value>* = 0)
+    boost::serialization::nvp<PointerShim<T>*>
+    CreateNVP(T*& t,
+              const std::string& name,
+              typename std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(),
-      reinterpret_cast<PointerShim<T>*&>(t));
+                                        reinterpret_cast<PointerShim<T>*&>(t));
 }
 
 /**
@@ -193,12 +205,12 @@ boost::serialization::nvp<PointerShim<T>*> CreateNVP(
 template<typename T>
 inline
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-const
+    const
 #endif
-boost::serialization::nvp<T*> CreateNVP(
-    T*& t,
-    const std::string& name,
-    typename std::enable_if_t<!HasSerialize<T>::value>* = 0)
+    boost::serialization::nvp<T*>
+    CreateNVP(T*& t,
+              const std::string& name,
+              typename std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   return boost::serialization::make_nvp(name.c_str(), t);
 }
@@ -246,7 +258,7 @@ template<typename T>
 struct FirstShim
 {
   //! Construct the first shim with the given object and name.
-  FirstShim(T& t, const std::string& name) : t(t), name(name) { }
+  FirstShim(T& t, const std::string& name) : t(t), name(name) {}
 
   T& t;
   const std::string& name;
@@ -261,8 +273,10 @@ template<typename T>
 struct FirstArrayShim
 {
   //! Construct the first shim with the given objects, length, and name.
-  FirstArrayShim(T* t, const size_t len, const std::string& name) :
-      t(t), len(len), name(name) { }
+  FirstArrayShim(T* t, const size_t len, const std::string& name)
+      : t(t), len(len), name(name)
+  {
+  }
 
   T* t;
   const size_t len;
@@ -278,8 +292,10 @@ template<typename T>
 struct FirstNormalArrayShim
 {
   //! Construct the first shim with the given objects, length, and name.
-  FirstNormalArrayShim(T* t, const size_t len, const std::string& name) :
-      t(t), len(len), name(name) { }
+  FirstNormalArrayShim(T* t, const size_t len, const std::string& name)
+      : t(t), len(len), name(name)
+  {
+  }
 
   T* t;
   const size_t len;
@@ -295,7 +311,7 @@ template<typename T>
 struct SecondShim
 {
   //! Construct the second shim.  The name isn't necessary for this shim.
-  SecondShim(T& t) : t(t) { }
+  SecondShim(T& t) : t(t) {}
 
   //! A wrapper for t.Serialize().
   template<typename Archive>
@@ -316,15 +332,14 @@ template<typename T>
 struct SecondArrayShim
 {
   //! Construct the shim.
-  SecondArrayShim(T* t, const size_t len) : t(t), len(len) { }
+  SecondArrayShim(T* t, const size_t len) : t(t), len(len) {}
 
   //! A wrapper for Serialize() for each element.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     // Serialize each element, using the shims we already have.
-    for (size_t i = 0; i < len; ++i)
-      ar & CreateNVP(t[i], "item");
+    for (size_t i = 0; i < len; ++i) ar& CreateNVP(t[i], "item");
   }
 
   T* t;
@@ -339,13 +354,13 @@ template<typename T>
 struct SecondNormalArrayShim
 {
   //! Construct the shim.
-  SecondNormalArrayShim(T* t, const size_t len) : t(t), len(len) { }
+  SecondNormalArrayShim(T* t, const size_t len) : t(t), len(len) {}
 
   //! A wrapper for make_array().
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & boost::serialization::make_array(t, len);
+    ar& boost::serialization::make_array(t, len);
   }
 
   T* t;
@@ -358,7 +373,9 @@ struct SecondNormalArrayShim
  * type.
  */
 template<typename T>
-struct PointerShim : public T { };
+struct PointerShim : public T
+{
+};
 
 /**
  * Catch when we call operator<< with a FirstShim object.  In this case, we make

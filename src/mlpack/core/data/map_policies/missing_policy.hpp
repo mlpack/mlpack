@@ -46,8 +46,8 @@ class MissingPolicy
    *
    * @param missingSet Set of strings that should be mapped.
    */
-  explicit MissingPolicy(std::set<std::string> missingSet) :
-      missingSet(std::move(missingSet))
+  explicit MissingPolicy(std::set<std::string> missingSet)
+      : missingSet(std::move(missingSet))
   {
     // Nothing to initialize here.
   }
@@ -85,7 +85,8 @@ class MissingPolicy
               MapType& maps,
               std::vector<Datatype>& /* types */)
   {
-    static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
+    static_assert(
+        std::numeric_limits<T>::has_quiet_NaN == true,
         "Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
 
     // If we can load the string then there is no need for mapping.
@@ -106,8 +107,8 @@ class MissingPolicy
       {
         // This string does not exist yet.
         typedef boost::bimap<std::string, MappedType>::value_type PairType;
-        maps[dimension].first.insert(PairType(string,
-            std::numeric_limits<MappedType>::quiet_NaN()));
+        maps[dimension].first.insert(
+            PairType(string, std::numeric_limits<MappedType>::quiet_NaN()));
         maps[dimension].second++;
       }
 

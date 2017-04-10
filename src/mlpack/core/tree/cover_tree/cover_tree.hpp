@@ -138,8 +138,7 @@ class CoverTree
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
    */
-  CoverTree(MatType&& dataset,
-            const ElemType base = 2.0);
+  CoverTree(MatType&& dataset, const ElemType base = 2.0);
 
   /**
    * Create the cover tree with the given dataset and the given instantiated
@@ -149,9 +148,7 @@ class CoverTree
    * @param metric Instantiated metric to use during tree building.
    * @param base Base to use during tree building (default 2.0).
    */
-  CoverTree(MatType&& dataset,
-            MetricType& metric,
-            const ElemType base = 2.0);
+  CoverTree(MatType&& dataset, MetricType& metric, const ElemType base = 2.0);
 
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
@@ -242,9 +239,8 @@ class CoverTree
    * Create a cover tree from a boost::serialization archive.
    */
   template<typename Archive>
-  CoverTree(
-      Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+  CoverTree(Archive& ar,
+            const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Delete this cover tree node and its children.
@@ -399,7 +395,9 @@ class CoverTree
 
   //! Get the distance from the center of the node to the furthest descendant.
   ElemType FurthestDescendantDistance() const
-  { return furthestDescendantDistance; }
+  {
+    return furthestDescendantDistance;
+  }
   //! Modify the distance from the center of the node to the furthest
   //! descendant.
   ElemType& FurthestDescendantDistance() { return furthestDescendantDistance; }

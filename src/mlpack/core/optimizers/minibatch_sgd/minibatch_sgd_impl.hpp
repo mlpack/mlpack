@@ -25,14 +25,15 @@ MiniBatchSGD<DecomposableFunctionType>::MiniBatchSGD(
     const double stepSize,
     const size_t maxIterations,
     const double tolerance,
-    const bool shuffle) :
-    function(function),
-    batchSize(batchSize),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle)
-{ /* Nothing to do. */ }
+    const bool shuffle)
+    : function(function),
+      batchSize(batchSize),
+      stepSize(stepSize),
+      maxIterations(maxIterations),
+      tolerance(tolerance),
+      shuffle(shuffle)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType>
@@ -41,14 +42,13 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
   size_t numBatches = numFunctions / batchSize;
-  if (numFunctions % batchSize != 0)
-    ++numBatches; // Capture last few.
+  if (numFunctions % batchSize != 0) ++numBatches; // Capture last few.
 
   // This is only used if shuffle is true.
   arma::Col<size_t> visitationOrder;
   if (shuffle)
-    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numBatches - 1), numBatches));
+    visitationOrder = arma::shuffle(
+        arma::linspace<arma::Col<size_t>>(0, (numBatches - 1), numBatches));
 
   // To keep track of where we are and how things are going.
   size_t currentBatch = 0;
@@ -68,20 +68,20 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     {
       // Output current objective function.
       Log::Info << "Mini-batch SGD: iteration " << i << ", objective "
-          << overallObjective << "." << std::endl;
+                << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "Mini-batch SGD: converged to " << overallObjective
-            << "; terminating with failure.  Try a smaller step size?"
-            << std::endl;
+                  << "; terminating with failure.  Try a smaller step size?"
+                  << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "Mini-batch SGD: minimized within tolerance " << tolerance
-            << "; terminating optimization." << std::endl;
+                  << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -90,13 +90,12 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       overallObjective = 0;
       currentBatch = 0;
 
-      if (shuffle)
-        visitationOrder = arma::shuffle(visitationOrder);
+      if (shuffle) visitationOrder = arma::shuffle(visitationOrder);
     }
 
     // Evaluate the gradient for this mini-batch.
     const size_t offset = (shuffle) ? batchSize * visitationOrder[currentBatch]
-        : batchSize * currentBatch;
+                                    : batchSize * currentBatch;
     function.Gradient(iterate, offset, gradient);
     if (visitationOrder[currentBatch] != numBatches - 1)
     {
@@ -145,7 +144,7 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   }
 
   Log::Info << "Mini-batch SGD: maximum iterations (" << maxIterations << ") "
-      << "reached; terminating optimization." << std::endl;
+            << "reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

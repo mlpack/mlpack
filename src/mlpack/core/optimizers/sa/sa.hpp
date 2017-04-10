@@ -58,10 +58,8 @@ namespace optimization {
  * @tparam FunctionType objective function type to be minimized.
  * @tparam CoolingScheduleType type for cooling schedule
  */
-template<
-    typename FunctionType,
-    typename CoolingScheduleType = ExponentialSchedule
->
+template<typename FunctionType,
+         typename CoolingScheduleType = ExponentialSchedule>
 class SA
 {
  public:
@@ -70,7 +68,8 @@ class SA
    *
    * @param function Function to be minimized.
    * @param coolingSchedule Instantiated cooling schedule.
-   * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
+   * @param maxIterations Maximum number of iterations allowed (0 indicates no
+   * limit).
    * @param initT Initial temperature.
    * @param initMoves Number of initial iterations without changing temperature.
    * @param moveCtrlSweep Sweeps per feedback move control.

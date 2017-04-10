@@ -22,12 +22,10 @@ namespace mlpack {
 namespace tree {
 
 //! This is the structure the cover tree map will use for traversal.
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 struct CoverTreeMapEntry
 {
   //! The node this entry refers to.
@@ -46,30 +44,25 @@ struct CoverTreeMapEntry
   }
 };
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 template<typename RuleType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
-    rule(rule),
-    numPrunes(0)
-{ /* Nothing to do. */ }
+    SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule)
+    : rule(rule), numPrunes(0)
+{ /* Nothing to do. */
+}
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 template<typename RuleType>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
-SingleTreeTraverser<RuleType>::Traverse(
-    const size_t queryIndex,
-    CoverTree& referenceNode)
+    SingleTreeTraverser<RuleType>::Traverse(const size_t queryIndex,
+                                            CoverTree& referenceNode)
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
@@ -121,8 +114,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 
   // Now begin the iteration through the map, but only if it has anything in it.
-  if (mapQueue.empty())
-    return;
+  if (mapQueue.empty()) return;
   typename std::map<int, std::vector<MapEntryType> >::reverse_iterator rit =
       mapQueue.rbegin();
 
@@ -169,8 +161,7 @@ SingleTreeTraverser<RuleType>::Traverse(
       // Often, a ruleset will return without doing any computation on cover
       // trees using TreeTraits::FirstPointIsCentroid; this is an optimization
       // that (theoretically) the compiler should get right.
-      if (point != parent)
-        baseCase = rule.BaseCase(queryIndex, point);
+      if (point != parent) baseCase = rule.BaseCase(queryIndex, point);
 
       // Don't add the self-leaf.
       size_t j = 0;

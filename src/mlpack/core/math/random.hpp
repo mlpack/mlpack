@@ -39,8 +39,8 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
-  randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
+  randGen.seed((uint32_t)seed);
+  srand((unsigned int)seed);
 #if ARMA_VERSION_MAJOR > 3 || \
     (ARMA_VERSION_MAJOR == 3 && ARMA_VERSION_MINOR >= 930)
   // Armadillo >= 3.930 has its own random number generator internally that we
@@ -52,10 +52,7 @@ inline void RandomSeed(const size_t seed)
 /**
  * Generates a uniform random number between 0 and 1.
  */
-inline double Random()
-{
-  return randUniformDist(randGen);
-}
+inline double Random() { return randUniformDist(randGen); }
 
 /**
  * Generates a uniform random number in the specified range.
@@ -70,7 +67,7 @@ inline double Random(const double lo, const double hi)
  */
 inline int RandInt(const int hiExclusive)
 {
-  return (int) std::floor((double) hiExclusive * randUniformDist(randGen));
+  return (int)std::floor((double)hiExclusive * randUniformDist(randGen));
 }
 
 /**
@@ -78,17 +75,14 @@ inline int RandInt(const int hiExclusive)
  */
 inline int RandInt(const int lo, const int hiExclusive)
 {
-  return lo + (int) std::floor((double) (hiExclusive - lo)
-                               * randUniformDist(randGen));
+  return lo +
+         (int)std::floor((double)(hiExclusive - lo) * randUniformDist(randGen));
 }
 
 /**
  * Generates a normally distributed random number with mean 0 and variance 1.
  */
-inline double RandNormal()
-{
-  return randNormalDist(randGen);
-}
+inline double RandNormal() { return randNormalDist(randGen); }
 
 /**
  * Generates a normally distributed random number with specified mean and
@@ -125,12 +119,11 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
     samples.zeros(samplesRangeSize);
 
     for (size_t i = 0; i < maxNumSamples; i++)
-      samples [ (size_t) math::RandInt(samplesRangeSize) ]++;
+      samples[(size_t)math::RandInt(samplesRangeSize)]++;
 
     distinctSamples = arma::find(samples > 0);
 
-    if (loInclusive > 0)
-      distinctSamples += loInclusive;
+    if (loInclusive > 0) distinctSamples += loInclusive;
   }
   else
   {

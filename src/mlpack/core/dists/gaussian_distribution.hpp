@@ -42,19 +42,20 @@ class GaussianDistribution
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
    */
-  GaussianDistribution() { /* nothing to do */ }
+  GaussianDistribution() { /* nothing to do */}
 
   /**
    * Create a Gaussian distribution with zero mean and identity covariance with
    * the given dimensionality.
    */
-  GaussianDistribution(const size_t dimension) :
-      mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::eye<arma::mat>(dimension, dimension)),
-      covLower(arma::eye<arma::mat>(dimension, dimension)),
-      invCov(arma::eye<arma::mat>(dimension, dimension)),
-      logDetCov(0)
-  { /* Nothing to do. */ }
+  GaussianDistribution(const size_t dimension)
+      : mean(arma::zeros<arma::vec>(dimension)),
+        covariance(arma::eye<arma::mat>(dimension, dimension)),
+        covLower(arma::eye<arma::mat>(dimension, dimension)),
+        invCov(arma::eye<arma::mat>(dimension, dimension)),
+        logDetCov(0)
+  { /* Nothing to do. */
+  }
 
   /**
    * Create a Gaussian distribution with the given mean and covariance.
@@ -117,8 +118,7 @@ class GaussianDistribution
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const arma::mat& observations, const arma::vec& probabilities);
 
   /**
    * Return the mean.
@@ -151,11 +151,11 @@ class GaussianDistribution
     using data::CreateNVP;
 
     // We just need to serialize each of the members.
-    ar & CreateNVP(mean, "mean");
-    ar & CreateNVP(covariance, "covariance");
-    ar & CreateNVP(covLower, "covLower");
-    ar & CreateNVP(invCov, "invCov");
-    ar & CreateNVP(logDetCov, "logDetCov");
+    ar& CreateNVP(mean, "mean");
+    ar& CreateNVP(covariance, "covariance");
+    ar& CreateNVP(covLower, "covLower");
+    ar& CreateNVP(invCov, "invCov");
+    ar& CreateNVP(logDetCov, "logDetCov");
   }
 
  private:
@@ -174,8 +174,8 @@ class GaussianDistribution
 * @param x List of observations.
 * @param probabilities Output log probabilities for each input observation.
 */
-inline void GaussianDistribution::LogProbability(const arma::mat& x,
-                                                 arma::vec& logProbabilities) const
+inline void GaussianDistribution::LogProbability(
+    const arma::mat& x, arma::vec& logProbabilities) const
 {
   // Column i of 'diffs' is the difference between x.col(i) and the mean.
   arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
@@ -193,7 +193,6 @@ inline void GaussianDistribution::LogProbability(const arma::mat& x,
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
-
 
 } // namespace distribution
 } // namespace mlpack

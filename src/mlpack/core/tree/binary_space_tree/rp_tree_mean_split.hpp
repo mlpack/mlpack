@@ -86,7 +86,7 @@ class RPTreeMeanSplit
                              const SplitInfo& splitInfo)
   {
     return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
-        splitInfo);
+                                                         splitInfo);
   }
 
   /**
@@ -112,7 +112,7 @@ class RPTreeMeanSplit
                              std::vector<size_t>& oldFromNew)
   {
     return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+                                                         splitInfo, oldFromNew);
   }
 
   /**
@@ -126,13 +126,12 @@ class RPTreeMeanSplit
   {
     if (splitInfo.meanSplit)
       return arma::dot(point - splitInfo.mean, point - splitInfo.mean) <=
-          splitInfo.splitVal;
+             splitInfo.splitVal;
 
     return (arma::dot(point, splitInfo.direction) <= splitInfo.splitVal);
   }
 
  private:
-
   /**
    * Get the average distance between points in the dataset.
    *

@@ -55,7 +55,7 @@ class L_BFGS
    * @param maxStep The maximum step of the line search.
    */
   L_BFGS(FunctionType& function,
-         const size_t numBasis = 10, /* same default as scipy */
+         const size_t numBasis = 10,         /* same default as scipy */
          const size_t maxIterations = 10000, /* many but not infinite */
          const double armijoConstant = 1e-4,
          const double wolfe = 0.9,
@@ -264,4 +264,3 @@ class L_BFGS
 #include "lbfgs_impl.hpp"
 
 #endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
-

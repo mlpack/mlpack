@@ -29,8 +29,12 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
-class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                               DescentType, AuxiliaryInformationType>>
+class TreeTraits<RectangleTree<MetricType,
+                               StatisticType,
+                               MatType,
+                               SplitType,
+                               DescentType,
+                               AuxiliaryInformationType>>
 {
  public:
   /**
@@ -84,12 +88,11 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 class TreeTraits<RectangleTree<MetricType,
-    StatisticType,
-    MatType,
-    RPlusTreeSplit<SplitPolicyType,
-                   SweepType>,
-    DescentType,
-    AuxiliaryInformationType>>
+                               StatisticType,
+                               MatType,
+                               RPlusTreeSplit<SplitPolicyType, SweepType>,
+                               DescentType,
+                               AuxiliaryInformationType>>
 {
  public:
   /**

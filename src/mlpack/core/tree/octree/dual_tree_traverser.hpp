@@ -18,9 +18,7 @@
 namespace mlpack {
 namespace tree {
 
-template<typename MetricType,
-         typename StatisticType,
-         typename MatType>
+template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
 class Octree<MetricType, StatisticType, MatType>::DualTreeTraverser
 {

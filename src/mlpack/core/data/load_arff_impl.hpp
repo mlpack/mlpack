@@ -41,8 +41,7 @@ void LoadARFF(const std::string& filename,
     ++headerLines;
 
     // Is the first character a comment, or is the line empty?
-    if (line[0] == '%' || line.empty())
-      continue; // Ignore this line.
+    if (line[0] == '%' || line.empty()) continue; // Ignore this line.
 
     // If the first character is @, we are looking at @relation, @attribute, or
     // @data.
@@ -57,7 +56,7 @@ void LoadARFF(const std::string& filename,
       // Get the annotation we are looking at.
       std::string annotation(*it);
       std::transform(annotation.begin(), annotation.end(), annotation.begin(),
-            ::tolower);
+                     ::tolower);
 
       if (annotation == "@relation")
       {
@@ -71,7 +70,7 @@ void LoadARFF(const std::string& filename,
         ++it; // Ignore the dimension name.
         std::string dimType = *(++it);
         std::transform(dimType.begin(), dimType.end(), dimType.begin(),
-            ::tolower);
+                       ::tolower);
 
         if (dimType == "numeric" || dimType == "integer" || dimType == "real")
         {
@@ -94,13 +93,12 @@ void LoadARFF(const std::string& filename,
       else
       {
         throw std::runtime_error("unknown ARFF annotation '" + (*tok.begin()) +
-            "'");
+                                 "'");
       }
     }
   }
 
-  if (ifs.eof())
-    throw std::runtime_error("no @data section found");
+  if (ifs.eof()) throw std::runtime_error("no @data section found");
 
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
@@ -182,7 +180,8 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
-        matrix(col, row) = info.template MapString<eT>(token, col); // We load transposed.
+        matrix(col, row) =
+            info.template MapString<eT>(token, col); // We load transposed.
       }
       else if (info.Type(col) == Datatype::numeric)
       {
@@ -208,7 +207,7 @@ void LoadARFF(const std::string& filename,
             else
               error << "Parse error ";
             error << "at line " << (headerLines + row) << " token " << col
-                << ": \"" << tokenStr << "\".";
+                  << ": \"" << tokenStr << "\".";
             throw std::runtime_error(error.str());
           }
         }

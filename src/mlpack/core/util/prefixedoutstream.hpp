@@ -58,15 +58,16 @@ class PrefixedOutStream
   PrefixedOutStream(std::ostream& destination,
                     const char* prefix,
                     bool ignoreInput = false,
-                    bool fatal = false) :
-      destination(destination),
-      ignoreInput(ignoreInput),
-      prefix(prefix),
-      // We want the first call to operator<< to prefix the prefix so we set
-      // carriageReturned to true.
-      carriageReturned(true),
-      fatal(fatal)
-    { /* nothing to do */ }
+                    bool fatal = false)
+      : destination(destination),
+        ignoreInput(ignoreInput),
+        prefix(prefix),
+        // We want the first call to operator<< to prefix the prefix so we set
+        // carriageReturned to true.
+        carriageReturned(true),
+        fatal(fatal)
+  { /* nothing to do */
+  }
 
   //! Write a bool to the stream.
   PrefixedOutStream& operator<<(bool val);
@@ -125,8 +126,8 @@ class PrefixedOutStream
    * @param val The The data to be output.
    */
   template<typename T>
-  typename std::enable_if<!arma::is_arma_type<T>::value>::type
-  BaseLogic(const T& val);
+  typename std::enable_if<!arma::is_arma_type<T>::value>::type BaseLogic(
+      const T& val);
 
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
@@ -139,8 +140,8 @@ class PrefixedOutStream
    * @param val The The data to be output.
    */
   template<typename T>
-  typename std::enable_if<arma::is_arma_type<T>::value>::type
-  BaseLogic(const T& val);
+  typename std::enable_if<arma::is_arma_type<T>::value>::type BaseLogic(
+      const T& val);
 
   /**
    * Output the prefix, but only if we need to and if we are allowed to.

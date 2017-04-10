@@ -30,12 +30,12 @@ class NullOutStream
   /**
    * Does nothing.
    */
-  NullOutStream() { }
+  NullOutStream() {}
 
   /**
    * Does nothing.
    */
-  NullOutStream(const NullOutStream& /* other */) { }
+  NullOutStream(const NullOutStream& /* other */) {}
 
   //! Does nothing.
   NullOutStream& operator<<(bool) { return *this; }
@@ -66,16 +66,21 @@ class NullOutStream
   //! Does nothing.
   NullOutStream& operator<<(std::streambuf*) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ostream& (*) (std::ostream&)) { return *this; }
+  NullOutStream& operator<<(std::ostream& (*)(std::ostream&)) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ios& (*) (std::ios&)) { return *this; }
+  NullOutStream& operator<<(std::ios& (*)(std::ios&)) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ios_base& (*) (std::ios_base&))
-  { return *this; }
+  NullOutStream& operator<<(std::ios_base& (*)(std::ios_base&))
+  {
+    return *this;
+  }
 
   //! Does nothing.
   template<typename T>
-  NullOutStream& operator<<(const T&) { return *this; }
+  NullOutStream& operator<<(const T&)
+  {
+    return *this;
+  }
 };
 
 } // namespace util

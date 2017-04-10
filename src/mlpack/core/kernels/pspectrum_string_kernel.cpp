@@ -27,15 +27,13 @@ using namespace mlpack::kernel;
  * search.
  */
 mlpack::kernel::PSpectrumStringKernel::PSpectrumStringKernel(
-    const std::vector<std::vector<std::string> >& datasets,
-    const size_t p) :
-    datasets(datasets),
-    p(p)
+    const std::vector<std::vector<std::string> >& datasets, const size_t p)
+    : datasets(datasets), p(p)
 {
   // We have to assemble the counts of substrings.  This is not a particularly
   // fast operation, unfortunately, but it only needs to be done once.
   Log::Info << "Assembling counts of substrings of length " << p << "."
-      << std::endl;
+            << std::endl;
 
   // Resize for number of datasets.
   counts.resize(datasets.size());

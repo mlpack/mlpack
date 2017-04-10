@@ -83,8 +83,7 @@ void RevertLabels(const arma::Row<size_t>& labels,
   // We already have the mapping, so we just need to loop over each element.
   labelsOut.set_size(labels.n_elem);
 
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    labelsOut[i] = mapping[labels[i]];
+  for (size_t i = 0; i < labels.n_elem; ++i) labelsOut[i] = mapping[labels[i]];
 }
 
 } // namespace data

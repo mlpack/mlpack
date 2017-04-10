@@ -40,11 +40,11 @@ class SMORMS3Update
   /**
    * Construct the SMORMS3 update policy with given epsilon parameter.
    *
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   * parameter.
    */
-  SMORMS3Update(const double epsilon = 1e-16) :
-    epsilon(epsilon)
-  { /* Do nothing. */ }
+  SMORMS3Update(const double epsilon = 1e-16)
+      : epsilon(epsilon) { /* Do nothing. */}
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return epsilon; }
@@ -58,8 +58,7 @@ class SMORMS3Update
    * @param rows number of rows in the gradient matrix.
    * @param cols number of columns in the gradient matrix.
    */
-  void Initialize(const size_t rows,
-                  const size_t cols)
+  void Initialize(const size_t rows, const size_t cols)
   {
     // Initialise the parameters mem, g and g2.
     mem = arma::ones<arma::mat>(rows, cols);
@@ -89,19 +88,20 @@ class SMORMS3Update
 
     arma::mat x = (g % g) / (g2 + epsilon);
 
-    x.transform( [stepSize](double &v) { return std::min(v, stepSize); } );
+    x.transform([stepSize](double& v) { return std::min(v, stepSize); });
 
     iterate -= gradient % x / (arma::sqrt(g2) + epsilon);
 
     mem %= (1 - x);
     mem += 1;
   }
+
  private:
-   //! The value used to initialise the mean squared gradient parameter.
-   double epsilon;
-   
-   // The parameters mem, g and g2.
-   arma::mat mem, g, g2;
+  //! The value used to initialise the mean squared gradient parameter.
+  double epsilon;
+
+  // The parameters mem, g and g2.
+  arma::mat mem, g, g2;
 };
 
 } // namespace optimization

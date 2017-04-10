@@ -29,7 +29,6 @@
 #include "version.hpp"
 #include "param.hpp"
 
-
 #include "param_data.hpp"
 #include "print_param.hpp"
 #include "output_param.hpp"
@@ -330,7 +329,7 @@ class CLI
 
  public:
   //! Pointer to the ProgramDoc object.
-  util::ProgramDoc *doc;
+  util::ProgramDoc* doc;
 
  private:
   /**
@@ -367,11 +366,11 @@ class CLI
    * @param descr Description.
    */
   template<typename T>
-  void AddOption(
-      const char* optId,
-      const char* descr,
-      const typename std::enable_if_t<!util::IsStdVector<T>::value>*
-          /* junk */ = 0);
+  void AddOption(const char* optId,
+                 const char* descr,
+                 const typename std::enable_if_t<!util::IsStdVector<T>::value>*
+                 /* junk */
+                 = 0);
 
   /**
    * Add an option if it is a vector type.  This is a utility function used by
@@ -382,11 +381,11 @@ class CLI
    * @param descr Description.
    */
   template<typename T>
-  void AddOption(
-      const char* optId,
-      const char* descr,
-      const typename std::enable_if_t<util::IsStdVector<T>::value>*
-          /* junk */ = 0);
+  void AddOption(const char* optId,
+                 const char* descr,
+                 const typename std::enable_if_t<util::IsStdVector<T>::value>*
+                 /* junk */
+                 = 0);
 };
 
 } // namespace mlpack

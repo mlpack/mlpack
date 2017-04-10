@@ -36,11 +36,14 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
     for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
       v1 *= node->Child(i).Bound()[j].Width();
-      v2 *= node->Child(i).Bound()[j].Contains(node->Dataset().col(point)[j]) ?
-          node->Child(i).Bound()[j].Width() :
-          (node->Child(i).Bound()[j].Hi() < node->Dataset().col(point)[j] ?
-              (node->Dataset().col(point)[j] - node->Child(i).Bound()[j].Lo()) :
-              (node->Child(i).Bound()[j].Hi() - node->Dataset().col(point)[j]));
+      v2 *=
+          node->Child(i).Bound()[j].Contains(node->Dataset().col(point)[j])
+              ? node->Child(i).Bound()[j].Width()
+              : (node->Child(i).Bound()[j].Hi() < node->Dataset().col(point)[j]
+                     ? (node->Dataset().col(point)[j] -
+                        node->Child(i).Bound()[j].Lo())
+                     : (node->Child(i).Bound()[j].Hi() -
+                        node->Dataset().col(point)[j]));
     }
 
     assert(v2 - v1 >= 0);
@@ -63,8 +66,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
 
 template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(
-    const TreeType* node,
-    const TreeType* insertedNode)
+    const TreeType* node, const TreeType* insertedNode)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -80,14 +82,16 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
     for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
       v1 *= node->Child(i).Bound()[j].Width();
-      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?
-          node->Child(i).Bound()[j].Width() :
-          (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j]) ?
-          insertedNode->Bound()[j].Width() :
-          (insertedNode->Bound()[j].Lo() < node->Child(i).Bound()[j].Lo()
-          ? (node->Child(i).Bound()[j].Hi() -
-          insertedNode->Bound()[j].Lo()) : (insertedNode->Bound()[j].Hi() -
-          node->Child(i).Bound()[j].Lo())));
+      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j])
+                ? node->Child(i).Bound()[j].Width()
+                : (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j])
+                       ? insertedNode->Bound()[j].Width()
+                       : (insertedNode->Bound()[j].Lo() <
+                                  node->Child(i).Bound()[j].Lo()
+                              ? (node->Child(i).Bound()[j].Hi() -
+                                 insertedNode->Bound()[j].Lo())
+                              : (insertedNode->Bound()[j].Hi() -
+                                 node->Child(i).Bound()[j].Lo())));
     }
 
     assert(v2 - v1 >= 0);

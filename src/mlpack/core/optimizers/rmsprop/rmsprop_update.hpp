@@ -51,10 +51,8 @@ class RMSPropUpdate
    *        parameter.
    * @param alpha The smoothing parameter.
    */
-  RMSPropUpdate(const double epsilon = 1e-8,
-                const double alpha = 0.99) :
-    epsilon(epsilon),
-    alpha(alpha)
+  RMSPropUpdate(const double epsilon = 1e-8, const double alpha = 0.99)
+      : epsilon(epsilon), alpha(alpha)
   {
     // Nothing to do.
   }
@@ -66,8 +64,7 @@ class RMSPropUpdate
    * @param rows number of rows in the gradient matrix.
    * @param cols number of columns in the gradient matrix.
    */
-  void Initialize(const size_t rows,
-                  const size_t cols)
+  void Initialize(const size_t rows, const size_t cols)
   {
     // Leaky sum of squares of parameter gradient.
     meanSquaredGradient = arma::zeros<arma::mat>(rows, cols);
@@ -86,7 +83,8 @@ class RMSPropUpdate
   {
     meanSquaredGradient *= alpha;
     meanSquaredGradient += (1 - alpha) * (gradient % gradient);
-    iterate -= stepSize * gradient / (arma::sqrt(meanSquaredGradient) + epsilon);
+    iterate -=
+        stepSize * gradient / (arma::sqrt(meanSquaredGradient) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.

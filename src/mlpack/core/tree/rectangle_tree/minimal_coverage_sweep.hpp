@@ -98,5 +98,4 @@ class MinimalCoverageSweep
 // Include implementation
 #include "minimal_coverage_sweep_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_HPP
-
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_HPP

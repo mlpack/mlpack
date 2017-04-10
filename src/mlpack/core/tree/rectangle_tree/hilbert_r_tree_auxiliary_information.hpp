@@ -17,8 +17,7 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 class HilbertRTreeAuxiliaryInformation
 {
  public:
@@ -122,7 +121,9 @@ class HilbertRTreeAuxiliaryInformation
 
   //! Return the children vector of the tree.
   static const std::vector<TreeType*> Children(const TreeType* tree)
-  { return tree->children; }
+  {
+    return tree->children;
+  }
 
  private:
   //! The largest Hilbert value of a point enclosed by the node.
@@ -131,7 +132,9 @@ class HilbertRTreeAuxiliaryInformation
  public:
   //! Return the largest Hilbert value of a point covered by the node.
   const HilbertValueType<ElemType>& HilbertValue() const
-  { return hilbertValue; }
+  {
+    return hilbertValue;
+  }
   //! Modify the largest Hilbert value of a point covered by the node.
   HilbertValueType<ElemType>& HilbertValue() { return hilbertValue; }
 
@@ -147,4 +150,4 @@ class HilbertRTreeAuxiliaryInformation
 
 #include "hilbert_r_tree_auxiliary_information_impl.hpp"
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP

@@ -16,8 +16,8 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
-    const
+double SGDTestFunction::Evaluate(const arma::mat& coordinates,
+                                 const size_t i) const
 {
   switch (i)
   {

@@ -20,10 +20,10 @@ namespace tree {
 
 template<typename SplitPolicy>
 template<typename TreeType>
-typename TreeType::ElemType MinimalCoverageSweep<SplitPolicy>::
-SweepNonLeafNode(const size_t axis,
-                 const TreeType* node,
-                 typename TreeType::ElemType& axisCut)
+typename TreeType::ElemType MinimalCoverageSweep<SplitPolicy>::SweepNonLeafNode(
+    const size_t axis,
+    const TreeType* node,
+    typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
   typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
@@ -37,11 +37,10 @@ SweepNonLeafNode(const size_t axis,
   }
   // Sort high bounds of children.
   std::sort(sorted.begin(), sorted.end(),
-      [] (const std::pair<ElemType, size_t>& s1,
-          const std::pair<ElemType, size_t>& s2)
-      {
-        return s1.first < s2.first;
-      });
+            [](const std::pair<ElemType, size_t>& s1,
+               const std::pair<ElemType, size_t>& s2) {
+              return s1.first < s2.first;
+            });
 
   size_t splitPointer = node->NumChildren() / 2;
 
@@ -54,8 +53,7 @@ SweepNonLeafNode(const size_t axis,
     for (splitPointer = 1; splitPointer < sorted.size(); splitPointer++)
     {
       axisCut = sorted[splitPointer - 1].first;
-      if (CheckNonLeafSweep(node, axis, axisCut))
-        break;
+      if (CheckNonLeafSweep(node, axis, axisCut)) break;
     }
 
     if (splitPointer == node->NumChildren())
@@ -72,7 +70,6 @@ SweepNonLeafNode(const size_t axis,
   for (size_t i = splitPointer; i < node->NumChildren(); i++)
     bound2 |= node->Child(sorted[i].second).Bound();
 
-
   // Evaluate the cost of the split i.e. calculate the total coverage
   // of two resulting nodes.
 
@@ -84,10 +81,10 @@ SweepNonLeafNode(const size_t axis,
 
 template<typename SplitPolicy>
 template<typename TreeType>
-typename TreeType::ElemType MinimalCoverageSweep<SplitPolicy>::
-SweepLeafNode(const size_t axis,
-              const TreeType* node,
-              typename TreeType::ElemType& axisCut)
+typename TreeType::ElemType MinimalCoverageSweep<SplitPolicy>::SweepLeafNode(
+    const size_t axis,
+    const TreeType* node,
+    typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
   typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
@@ -104,11 +101,10 @@ SweepLeafNode(const size_t axis,
 
   // Sort high bounds of children.
   std::sort(sorted.begin(), sorted.end(),
-      [] (const std::pair<ElemType, size_t>& s1,
-          const std::pair<ElemType, size_t>& s2)
-      {
-        return s1.first < s2.first;
-      });
+            [](const std::pair<ElemType, size_t>& s1,
+               const std::pair<ElemType, size_t>& s2) {
+              return s1.first < s2.first;
+            });
 
   size_t splitPointer = node->Count() / 2;
 
@@ -136,10 +132,9 @@ SweepLeafNode(const size_t axis,
 
 template<typename SplitPolicy>
 template<typename TreeType, typename ElemType>
-bool MinimalCoverageSweep<SplitPolicy>::
-CheckNonLeafSweep(const TreeType* node,
-                  const size_t cutAxis,
-                  const ElemType cut)
+bool MinimalCoverageSweep<SplitPolicy>::CheckNonLeafSweep(const TreeType* node,
+                                                          const size_t cutAxis,
+                                                          const ElemType cut)
 {
   size_t numTreeOneChildren = 0;
   size_t numTreeTwoChildren = 0;
@@ -169,10 +164,9 @@ CheckNonLeafSweep(const TreeType* node,
 
 template<typename SplitPolicy>
 template<typename TreeType, typename ElemType>
-bool MinimalCoverageSweep<SplitPolicy>::
-CheckLeafSweep(const TreeType* node,
-               const size_t cutAxis,
-               const ElemType cut)
+bool MinimalCoverageSweep<SplitPolicy>::CheckLeafSweep(const TreeType* node,
+                                                       const size_t cutAxis,
+                                                       const ElemType cut)
 {
   size_t numTreeOnePoints = 0;
   size_t numTreeTwoPoints = 0;
@@ -195,5 +189,4 @@ CheckLeafSweep(const TreeType* node,
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_IMPL_HPP
-
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_IMPL_HPP

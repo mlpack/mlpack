@@ -52,8 +52,8 @@ class LoadCSV
    *     (default).
    */
   template<typename T, typename PolicyType>
-  void Load(arma::Mat<T> &inout,
-            DatasetMapper<PolicyType> &infoSet,
+  void Load(arma::Mat<T>& inout,
+            DatasetMapper<PolicyType>& infoSet,
             const bool transpose = true)
   {
     CheckOpen();
@@ -114,7 +114,7 @@ class LoadCSV
         // Extract the number of columns.
         auto findColSize = [&cols](iter_type) { ++cols; };
         qi::parse(line.begin(), line.end(),
-            stringRule[findColSize] % delimiterRule);
+                  stringRule[findColSize] % delimiterRule);
       }
 
       // I guess this is technically a second pass, but that's ok... still the
@@ -122,8 +122,7 @@ class LoadCSV
       if (MapPolicy::NeedsFirstPass)
       {
         // In this case we must pass everything we parse to the MapPolicy.
-        auto firstPassMap = [&](const iter_type& iter)
-        {
+        auto firstPassMap = [&](const iter_type& iter) {
           std::string str(iter.begin(), iter.end());
           boost::trim(str);
 
@@ -132,7 +131,7 @@ class LoadCSV
 
         // Now parse the line.
         qi::parse(line.begin(), line.end(),
-            stringRule[firstPassMap] % delimiterRule);
+                  stringRule[firstPassMap] % delimiterRule);
       }
     }
   }
@@ -177,7 +176,7 @@ class LoadCSV
         // Extract the number of dimensions.
         auto findRowSize = [&rows](iter_type) { ++rows; };
         qi::parse(line.begin(), line.end(),
-            stringRule[findRowSize] % delimiterRule);
+                  stringRule[findRowSize] % delimiterRule);
 
         // Now that we know the dimensionality, initialize the DatasetMapper.
         info = DatasetMapper<MapPolicy>(rows);
@@ -189,8 +188,7 @@ class LoadCSV
         size_t dim = 0;
 
         // In this case we must pass everything we parse to the MapPolicy.
-        auto firstPassMap = [&](const iter_type& iter)
-        {
+        auto firstPassMap = [&](const iter_type& iter) {
           std::string str(iter.begin(), iter.end());
           boost::trim(str);
 
@@ -199,12 +197,12 @@ class LoadCSV
 
         // Now parse the line.
         qi::parse(line.begin(), line.end(),
-            stringRule[firstPassMap] % delimiterRule);
+                  stringRule[firstPassMap] % delimiterRule);
       }
     }
   }
 
-private:
+ private:
   using iter_type = boost::iterator_range<std::string::iterator>;
 
   /**
@@ -239,8 +237,7 @@ private:
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
 
-    auto setCharClass = [&](iter_type const &iter)
-    {
+    auto setCharClass = [&](iter_type const& iter) {
       std::string str(iter.begin(), iter.end());
       if (str == "\t")
       {
@@ -256,10 +253,10 @@ private:
       // Remove whitespace from either side.
       boost::trim(line);
 
-      //parse the numbers from a line(ex : 1,2,3,4), if the parser find the
-      //number it will execute the setNum function
+      // parse the numbers from a line(ex : 1,2,3,4), if the parser find the
+      // number it will execute the setNum function
       const bool canParse = qi::parse(line.begin(), line.end(),
-          stringRule[setCharClass] % delimiterRule);
+                                      stringRule[setCharClass] % delimiterRule);
 
       // Make sure we got the right number of rows.
       if (col != cols)
@@ -279,7 +276,8 @@ private:
         throw std::runtime_error(oss.str());
       }
 
-      ++row; col = 0;
+      ++row;
+      col = 0;
     }
   }
 
@@ -312,8 +310,7 @@ private:
      * This is the parse rule for strings.  When we get a string we have to pass
      * it to the DatasetMapper.
      */
-    auto parseString = [&](iter_type const &iter)
-    {
+    auto parseString = [&](iter_type const& iter) {
       // All parsed values must be mapped.
       std::string str(iter.begin(), iter.end());
       boost::trim(str);
@@ -333,7 +330,7 @@ private:
       // Now use boost::spirit to parse the characters of the line;
       // parseString() will be called when a token is detected.
       const bool canParse = qi::parse(line.begin(), line.end(),
-          stringRule[parseString] % delimiterRule);
+                                      stringRule[parseString] % delimiterRule);
 
       // Make sure we got the right number of rows.
       if (row != rows)

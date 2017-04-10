@@ -20,7 +20,7 @@ namespace data {
  * A simple mean imputation class
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class MeanImputation
 {
  public:
@@ -45,7 +45,6 @@ class MeanImputation
     using PairType = std::pair<size_t, size_t>;
     // dimensions and indexes are saved as pairs inside this vector.
     std::vector<PairType> targets;
-
 
     // calculate number of elements and sum of them excluding mapped value or
     // nan. while doing that, remember where mappedValue or NaN exists.
@@ -84,7 +83,7 @@ class MeanImputation
 
     if (elems == 0)
       Log::Fatal << "it is impossible to calculate mean; no valid elements in "
-          << "the dimension" << std::endl;
+                 << "the dimension" << std::endl;
 
     // calculate mean;
     const double mean = sum / elems;

@@ -20,11 +20,12 @@ void OutputParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   std::cout << data.name << ": " << *boost::any_cast<T>(&data.value)
-      << std::endl;
+            << std::endl;
 }
 
 //! Output a vector option.
@@ -35,8 +36,7 @@ void OutputParamImpl(
 {
   std::cout << data.name << ": ";
   const T& t = *boost::any_cast<T>(&data.value);
-  for (size_t i = 0; i < t.size(); ++i)
-    std::cout << t[i] << " ";
+  for (size_t i = 0; i < t.size(); ++i) std::cout << t[i] << " ";
   std::cout << std::endl;
 }
 
@@ -51,10 +51,10 @@ void OutputParamImpl(
 
   if (output.n_elem > 0 && filename != "")
   {
-      if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-        data::Save(filename, output, false);
-      else
-        data::Save(filename, output, false, !data.noTranspose);
+    if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+      data::Save(filename, output, false);
+    else
+      data::Save(filename, output, false, !data.noTranspose);
   }
 }
 
@@ -70,16 +70,16 @@ void OutputParamImpl(
   T& output = const_cast<T&>(*boost::any_cast<T>(&data.mappedValue));
   const std::string& filename = *boost::any_cast<std::string>(&data.value);
 
-  if (filename != "")
-    data::Save(filename, "model", output);
+  if (filename != "") data::Save(filename, "model", output);
 }
 
 //! Output a mapped dataset.
 template<typename T>
 void OutputParamImpl(
     const ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::enable_if<
+        std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   // Output the matrix with the mappings.
   const arma::mat& matrix = std::get<1>(*boost::any_cast<T>(&data.mappedValue));
@@ -87,8 +87,7 @@ void OutputParamImpl(
 
   // The mapping isn't taken into account.  We should write a data::Save()
   // overload for this.
-  if (filename != "")
-    data::Save(filename, matrix, false, !data.noTranspose);
+  if (filename != "") data::Save(filename, matrix, false, !data.noTranspose);
 }
 
 } // namespace util

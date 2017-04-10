@@ -25,17 +25,14 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-BreadthFirstDualTreeTraverser<RuleType>::BreadthFirstDualTreeTraverser(
-    RuleType& rule) :
-    rule(rule),
-    numPrunes(0),
-    numVisited(0),
-    numScores(0),
-    numBaseCases(0)
-{ /* Nothing to do. */ }
+    BreadthFirstDualTreeTraverser<RuleType>::BreadthFirstDualTreeTraverser(
+        RuleType& rule)
+    : rule(rule), numPrunes(0), numVisited(0), numScores(0), numBaseCases(0)
+{ /* Nothing to do. */
+}
 
 template<typename TreeType, typename TraversalInfoType>
 bool operator<(const QueueFrame<TreeType, TraversalInfoType>& a,
@@ -53,14 +50,20 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-BreadthFirstDualTreeTraverser<RuleType>::Traverse(
-    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
-        queryRoot,
-    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
-        referenceRoot)
+    BreadthFirstDualTreeTraverser<RuleType>::Traverse(
+        BinarySpaceTree<MetricType,
+                        StatisticType,
+                        MatType,
+                        BoundType,
+                        SplitType>& queryRoot,
+        BinarySpaceTree<MetricType,
+                        StatisticType,
+                        MatType,
+                        BoundType,
+                        SplitType>& referenceRoot)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -70,8 +73,7 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
 
   // Must score the root combination.
   const double rootScore = rule.Score(queryRoot, referenceRoot);
-  if (rootScore == DBL_MAX)
-    return; // This probably means something is wrong.
+  if (rootScore == DBL_MAX) return; // This probably means something is wrong.
 
   std::priority_queue<QueueFrameType> queue;
 
@@ -93,13 +95,16 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-BreadthFirstDualTreeTraverser<RuleType>::Traverse(
-    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
-        queryNode,
-    std::priority_queue<QueueFrameType>& referenceQueue)
+    BreadthFirstDualTreeTraverser<RuleType>::Traverse(
+        BinarySpaceTree<MetricType,
+                        StatisticType,
+                        MatType,
+                        BoundType,
+                        SplitType>& queryNode,
+        std::priority_queue<QueueFrameType>& referenceQueue)
 {
   // Store queues for the children.  We will recurse into the children once our
   // queue is empty.
@@ -137,10 +142,10 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
         // See if we need to investigate this point (this function should be
         // implemented for the single-tree recursion too).  Restore the
         // traversal information first.
-//        const double childScore = rule.Score(query, referenceNode);
+        //        const double childScore = rule.Score(query, referenceNode);
 
-//        if (childScore == DBL_MAX)
-//          continue; // We can't improve this particular point.
+        //        if (childScore == DBL_MAX)
+        //          continue; // We can't improve this particular point.
 
         for (size_t ref = referenceNode.Begin(); ref < refEnd; ++ref)
           rule.BaseCase(query, ref);
@@ -151,12 +156,12 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
     else if ((!queryNode.IsLeaf()) && referenceNode.IsLeaf())
     {
       // We have to recurse down the query node.
-      QueueFrameType fl = { queryNode.Left(), &referenceNode, queryDepth + 1,
-          score, rule.TraversalInfo() };
+      QueueFrameType fl = {queryNode.Left(), &referenceNode, queryDepth + 1,
+                           score, rule.TraversalInfo()};
       leftChildQueue.push(fl);
 
-      QueueFrameType fr = { queryNode.Right(), &referenceNode, queryDepth + 1,
-          score, ti };
+      QueueFrameType fr = {queryNode.Right(), &referenceNode, queryDepth + 1,
+                           score, ti};
       rightChildQueue.push(fr);
     }
     else if (queryNode.IsLeaf() && (!referenceNode.IsLeaf()))
@@ -164,12 +169,12 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
       // We have to recurse down the reference node.  In this case the recursion
       // order does matter.  Before recursing, though, we have to set the
       // traversal information correctly.
-      QueueFrameType fl = { &queryNode, referenceNode.Left(), queryDepth,
-          score, rule.TraversalInfo() };
+      QueueFrameType fl = {&queryNode, referenceNode.Left(), queryDepth, score,
+                           rule.TraversalInfo()};
       referenceQueue.push(fl);
 
-      QueueFrameType fr = { &queryNode, referenceNode.Right(), queryDepth,
-          score, ti };
+      QueueFrameType fr = {&queryNode, referenceNode.Right(), queryDepth, score,
+                           ti};
       referenceQueue.push(fr);
     }
     else
@@ -178,30 +183,28 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
       // query descent order does not matter, we will go to the left query child
       // first.  Before recursing, we have to set the traversal information
       // correctly.
-      QueueFrameType fll = { queryNode.Left(), referenceNode.Left(),
-          queryDepth + 1, score, rule.TraversalInfo() };
+      QueueFrameType fll = {queryNode.Left(), referenceNode.Left(),
+                            queryDepth + 1, score, rule.TraversalInfo()};
       leftChildQueue.push(fll);
 
-      QueueFrameType flr = { queryNode.Left(), referenceNode.Right(),
-          queryDepth + 1, score, rule.TraversalInfo() };
+      QueueFrameType flr = {queryNode.Left(), referenceNode.Right(),
+                            queryDepth + 1, score, rule.TraversalInfo()};
       leftChildQueue.push(flr);
 
-      QueueFrameType frl = { queryNode.Right(), referenceNode.Left(),
-          queryDepth + 1, score, rule.TraversalInfo() };
+      QueueFrameType frl = {queryNode.Right(), referenceNode.Left(),
+                            queryDepth + 1, score, rule.TraversalInfo()};
       rightChildQueue.push(frl);
 
-      QueueFrameType frr = { queryNode.Right(), referenceNode.Right(),
-          queryDepth + 1, score, rule.TraversalInfo() };
+      QueueFrameType frr = {queryNode.Right(), referenceNode.Right(),
+                            queryDepth + 1, score, rule.TraversalInfo()};
       rightChildQueue.push(frr);
     }
   }
 
   // Now, recurse into the left and right children queues.  The order doesn't
   // matter.
-  if (leftChildQueue.size() > 0)
-    Traverse(*queryNode.Left(), leftChildQueue);
-  if (rightChildQueue.size() > 0)
-    Traverse(*queryNode.Right(), rightChildQueue);
+  if (leftChildQueue.size() > 0) Traverse(*queryNode.Left(), leftChildQueue);
+  if (rightChildQueue.size() > 0) Traverse(*queryNode.Right(), rightChildQueue);
 }
 
 } // namespace tree

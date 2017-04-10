@@ -59,19 +59,20 @@ void PointToAddress(AddressType& address, const VecType& point)
   typedef typename VecType::elem_type VecElemType;
   // Check that the arguments are compatible.
   typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+                                    uint32_t, uint64_t>::type AddressElemType;
 
-  static_assert(std::is_same<typename AddressType::elem_type,
-      AddressElemType>::value == true, "The vector element type does not "
+  static_assert(
+      std::is_same<typename AddressType::elem_type, AddressElemType>::value ==
+          true,
+      "The vector element type does not "
       "correspond to the address element type.");
   arma::Col<AddressElemType> result(point.n_elem);
 
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
   // Calculate the number of bits for the exponent.
-  const int numExpBits = std::ceil(std::log2(
-      std::numeric_limits<VecElemType>::max_exponent -
-      std::numeric_limits<VecElemType>::min_exponent + 1.0));
+  const int numExpBits = std::ceil(
+      std::log2(std::numeric_limits<VecElemType>::max_exponent -
+                std::numeric_limits<VecElemType>::min_exponent + 1.0));
 
   // Calculate the number of bits for the mantissa.
   const int numMantBits = order - numExpBits - 1;
@@ -82,44 +83,44 @@ void PointToAddress(AddressType& address, const VecType& point)
   for (size_t i = 0; i < point.n_elem; i++)
   {
     int e;
-    VecElemType normalizedVal = std::frexp(point(i),&e);
+    VecElemType normalizedVal = std::frexp(point(i), &e);
     bool sgn = std::signbit(normalizedVal);
 
-    if (point(i) == 0)
-      e = std::numeric_limits<VecElemType>::min_exponent;
+    if (point(i) == 0) e = std::numeric_limits<VecElemType>::min_exponent;
 
-    if (sgn)
-      normalizedVal = -normalizedVal;
+    if (sgn) normalizedVal = -normalizedVal;
 
     if (e < std::numeric_limits<VecElemType>::min_exponent)
     {
-      AddressElemType tmp = (AddressElemType) 1 <<
-          (std::numeric_limits<VecElemType>::min_exponent - e);
+      AddressElemType tmp =
+          (AddressElemType)1
+          << (std::numeric_limits<VecElemType>::min_exponent - e);
 
       e = std::numeric_limits<VecElemType>::min_exponent;
       normalizedVal /= tmp;
     }
 
     // Extract the mantissa.
-    AddressElemType tmp = (AddressElemType) 1 << numMantBits;
+    AddressElemType tmp = (AddressElemType)1 << numMantBits;
     result(i) = std::floor(normalizedVal * tmp);
 
     // Add the exponent.
-    assert(result(i) < ((AddressElemType) 1 << numMantBits));
-    result(i) |= ((AddressElemType)
-        (e - std::numeric_limits<VecElemType>::min_exponent)) << numMantBits;
+    assert(result(i) < ((AddressElemType)1 << numMantBits));
+    result(i) |=
+        ((AddressElemType)(e - std::numeric_limits<VecElemType>::min_exponent))
+        << numMantBits;
 
-    assert(result(i) < ((AddressElemType) 1 << (order - 1)) - 1);
+    assert(result(i) < ((AddressElemType)1 << (order - 1)) - 1);
 
     // Negative values should be inverted.
     if (sgn)
     {
-      result(i) = ((AddressElemType) 1 << (order - 1)) - 1 - result(i);
+      result(i) = ((AddressElemType)1 << (order - 1)) - 1 - result(i);
       assert((result(i) >> (order - 1)) == 0);
     }
     else
     {
-      result(i) |= (AddressElemType) 1 << (order - 1);
+      result(i) |= (AddressElemType)1 << (order - 1);
       assert((result(i) >> (order - 1)) == 1);
     }
   }
@@ -134,8 +135,8 @@ void PointToAddress(AddressType& address, const VecType& point)
       size_t bit = (i * point.n_elem + j) % order;
       size_t row = (i * point.n_elem + j) / order;
 
-      address(row) |= (((result(j) >> (order - 1 - i)) & 1) <<
-          (order - 1 - bit));
+      address(row) |=
+          (((result(j) >> (order - 1 - i)) & 1) << (order - 1 - bit));
     }
 }
 
@@ -155,24 +156,25 @@ void AddressToPoint(VecType& point, const AddressType& address)
   typedef typename VecType::elem_type VecElemType;
   // Check that the arguments are compatible.
   typedef typename std::conditional<sizeof(VecElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+                                    uint32_t, uint64_t>::type AddressElemType;
 
-  static_assert(std::is_same<typename AddressType::elem_type,
-      AddressElemType>::value == true, "The vector element type does not "
+  static_assert(
+      std::is_same<typename AddressType::elem_type, AddressElemType>::value ==
+          true,
+      "The vector element type does not "
       "correspond to the address element type.");
 
   constexpr size_t order = sizeof(AddressElemType) * CHAR_BIT;
   // Calculate the number of bits for the exponent.
-  const int numExpBits = std::ceil(std::log2(
-      std::numeric_limits<VecElemType>::max_exponent -
-      std::numeric_limits<VecElemType>::min_exponent + 1.0));
+  const int numExpBits = std::ceil(
+      std::log2(std::numeric_limits<VecElemType>::max_exponent -
+                std::numeric_limits<VecElemType>::min_exponent + 1.0));
 
   assert(point.n_elem == address.n_elem);
   assert(address.n_elem > 0);
 
   arma::Col<AddressElemType> rearrangedAddress(address.n_elem,
-      arma::fill::zeros);
+                                               arma::fill::zeros);
   // Calculate the number of bits for the mantissa.
   const int numMantBits = order - numExpBits - 1;
 
@@ -182,33 +184,31 @@ void AddressToPoint(VecType& point, const AddressType& address)
       size_t bit = (i * address.n_elem + j) % order;
       size_t row = (i * address.n_elem + j) / order;
 
-      rearrangedAddress(j) |= (((address(row) >> (order - 1 - bit)) & 1) <<
-          (order - 1 - i));
+      rearrangedAddress(j) |=
+          (((address(row) >> (order - 1 - bit)) & 1) << (order - 1 - i));
     }
 
   for (size_t i = 0; i < rearrangedAddress.n_elem; i++)
   {
-    bool sgn = rearrangedAddress(i) & ((AddressElemType) 1 << (order - 1));
+    bool sgn = rearrangedAddress(i) & ((AddressElemType)1 << (order - 1));
 
     if (!sgn)
     {
-      rearrangedAddress(i) = ((AddressElemType) 1 << (order - 1)) - 1 -
-          rearrangedAddress(i);
+      rearrangedAddress(i) =
+          ((AddressElemType)1 << (order - 1)) - 1 - rearrangedAddress(i);
     }
 
     // Extract the mantissa.
-    AddressElemType tmp = (AddressElemType) 1 << numMantBits;
+    AddressElemType tmp = (AddressElemType)1 << numMantBits;
     AddressElemType mantissa = rearrangedAddress(i) & (tmp - 1);
-    if (mantissa == 0)
-      mantissa = 1;
+    if (mantissa == 0) mantissa = 1;
 
-    VecElemType normalizedVal = (VecElemType) mantissa / tmp;
+    VecElemType normalizedVal = (VecElemType)mantissa / tmp;
 
-    if (!sgn)
-      normalizedVal = -normalizedVal;
+    if (!sgn) normalizedVal = -normalizedVal;
 
     // Extract the exponent
-    tmp = (AddressElemType) 1 << numExpBits;
+    tmp = (AddressElemType)1 << numExpBits;
     AddressElemType e = (rearrangedAddress(i) >> numMantBits) & (tmp - 1);
 
     e += std::numeric_limits<VecElemType>::min_exponent;
@@ -233,8 +233,9 @@ template<typename AddressType1, typename AddressType2>
 int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 {
   static_assert(std::is_same<typename AddressType1::elem_type,
-      typename AddressType2::elem_type>::value == true, "Can't compare "
-      "addresses of distinct types");
+                             typename AddressType2::elem_type>::value == true,
+                "Can't compare "
+                "addresses of distinct types");
 
   assert(addr1.n_elem == addr2.n_elem);
 
@@ -253,8 +254,9 @@ int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
  * Returns true if an address is contained between two other addresses.
  */
 template<typename AddressType1, typename AddressType2, typename AddressType3>
-bool Contains(const AddressType1& address, const AddressType2& loBound,
-                     const AddressType3& hiBound)
+bool Contains(const AddressType1& address,
+              const AddressType2& loBound,
+              const AddressType3& hiBound)
 {
   return ((CompareAddresses(loBound, address) <= 0) &&
           (CompareAddresses(hiBound, address) >= 0));

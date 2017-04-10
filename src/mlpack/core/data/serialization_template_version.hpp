@@ -20,23 +20,19 @@
  *
  * BOOST_TEMPLATE_CLASS_VERSION(template<typename eT>, math::Range<eT>, 1);
  */
-#define BOOST_TEMPLATE_CLASS_VERSION(SIGNATURE, T, N) \
-namespace boost { \
-namespace serialization { \
-SIGNATURE \
-struct version<mlpack::data::SecondShim<T>> \
-{ \
-  typedef mpl::int_<N> type; \
-  typedef mpl::integral_c_tag tag; \
-  BOOST_STATIC_CONSTANT(int, value = version::type::value); \
-  BOOST_MPL_ASSERT(( \
-      boost::mpl::less< \
-          boost::mpl::int_<N>, \
-          boost::mpl::int_<256> \
-      > \
-  )); \
-}; \
-} \
-}
+#define BOOST_TEMPLATE_CLASS_VERSION(SIGNATURE, T, N)                    \
+  namespace boost {                                                      \
+  namespace serialization {                                              \
+  SIGNATURE                                                              \
+  struct version<mlpack::data::SecondShim<T>>                            \
+  {                                                                      \
+    typedef mpl::int_<N> type;                                           \
+    typedef mpl::integral_c_tag tag;                                     \
+    BOOST_STATIC_CONSTANT(int, value = version::type::value);            \
+    BOOST_MPL_ASSERT(                                                    \
+        (boost::mpl::less<boost::mpl::int_<N>, boost::mpl::int_<256>>)); \
+  };                                                                     \
+  }                                                                      \
+  }
 
 #endif

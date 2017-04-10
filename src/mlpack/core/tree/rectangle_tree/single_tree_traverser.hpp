@@ -28,8 +28,12 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-class RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                    DescentType, AuxiliaryInformationType>::SingleTreeTraverser
+class RectangleTree<MetricType,
+                    StatisticType,
+                    MatType,
+                    SplitType,
+                    DescentType,
+                    AuxiliaryInformationType>::SingleTreeTraverser
 {
  public:
   /**
@@ -52,7 +56,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
   size_t& NumPrunes() { return numPrunes; }
 
  private:
-
   // We use this class and this function to make the sorting and scoring easy
   // and efficient:
   struct NodeAndScore

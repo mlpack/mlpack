@@ -30,14 +30,15 @@ SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType updatePolicy) :
-    function(function),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle),
-    updatePolicy(updatePolicy)
-{ /* Nothing to do. */ }
+    const UpdatePolicyType updatePolicy)
+    : function(function),
+      stepSize(stepSize),
+      maxIterations(maxIterations),
+      tolerance(tolerance),
+      shuffle(shuffle),
+      updatePolicy(updatePolicy)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType, typename UpdatePolicyType>
@@ -51,8 +52,8 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
   arma::Col<size_t> visitationOrder;
   if (shuffle)
   {
-    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numFunctions - 1), numFunctions));
+    visitationOrder = arma::shuffle(
+        arma::linspace<arma::Col<size_t>>(0, (numFunctions - 1), numFunctions));
   }
 
   // To keep track of where we are and how things are going.
@@ -65,7 +66,7 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
     overallObjective += function.Evaluate(iterate, i);
 
   // Initialize the update policy.
-  updatePolicy.Initialize(iterate.n_rows,iterate.n_cols);
+  updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -76,19 +77,19 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
     {
       // Output current objective function.
       Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+                << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
+                  << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+                  << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -113,8 +114,8 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
     // Now add that to the overall objective function.
     if (shuffle)
     {
-      overallObjective += function.Evaluate(iterate,
-          visitationOrder[currentFunction]);
+      overallObjective +=
+          function.Evaluate(iterate, visitationOrder[currentFunction]);
     }
     else
     {
@@ -123,7 +124,7 @@ double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
   }
 
   Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+            << "terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

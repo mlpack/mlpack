@@ -32,7 +32,7 @@ namespace data {
  *
  * @tparam PolicyType Mapping policy used to specify MapString();
  */
-template <typename PolicyType>
+template<typename PolicyType>
 class DatasetMapper
 {
  public:
@@ -71,8 +71,7 @@ class DatasetMapper
    * @param dimension Index of the dimension of the string.
    */
   template<typename T>
-  T MapString(const std::string& string,
-              const size_t dimension);
+  T MapString(const std::string& string, const size_t dimension);
 
   /**
    * Return the string that corresponds to a given value in a given dimension.
@@ -84,7 +83,6 @@ class DatasetMapper
    */
   const std::string& UnmapString(const size_t value, const size_t dimension);
 
-
   /**
    * Return the value that corresponds to a given string in a given dimension.
    * If the value is not a valid mapping in the given dimension, a
@@ -94,7 +92,7 @@ class DatasetMapper
    * @param dimension Dimension to unmap string from.
    */
   typename PolicyType::MappedType UnmapValue(const std::string& string,
-                                            const size_t dimension);
+                                             const size_t dimension);
 
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
@@ -121,8 +119,8 @@ class DatasetMapper
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(types, "types");
-    ar & data::CreateNVP(maps, "maps");
+    ar& data::CreateNVP(types, "types");
+    ar& data::CreateNVP(maps, "maps");
   }
 
   //! Return the policy of the mapper.

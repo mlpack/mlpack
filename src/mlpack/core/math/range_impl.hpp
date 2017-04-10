@@ -22,23 +22,26 @@ namespace math {
  * Initialize the range to 0.
  */
 template<typename T>
-inline RangeType<T>::RangeType() :
-    lo(std::numeric_limits<T>::max()),
-    hi(-std::numeric_limits<T>::max()) { /* nothing else to do */ }
+inline RangeType<T>::RangeType()
+    : lo(std::numeric_limits<T>::max()), hi(-std::numeric_limits<T>::max())
+{ /* nothing else to do */
+}
 
 /**
  * Initialize a range to enclose only the given point.
  */
 template<typename T>
-inline RangeType<T>::RangeType(const T point) :
-    lo(point), hi(point) { /* nothing else to do */ }
+inline RangeType<T>::RangeType(const T point) : lo(point), hi(point)
+{ /* nothing else to do */
+}
 
 /**
  * Initializes the range to the specified values.
  */
 template<typename T>
-inline RangeType<T>::RangeType(const T lo, const T hi) :
-    lo(lo), hi(hi) { /* nothing else to do */ }
+inline RangeType<T>::RangeType(const T lo, const T hi) : lo(lo), hi(hi)
+{ /* nothing else to do */
+}
 
 /**
  * Gets the span of the range, hi - lo.  Returns 0 if the range is negative.
@@ -67,10 +70,8 @@ inline T RangeType<T>::Mid() const
 template<typename T>
 inline RangeType<T>& RangeType<T>::operator|=(const RangeType<T>& rhs)
 {
-  if (rhs.lo < lo)
-    lo = rhs.lo;
-  if (rhs.hi > hi)
-    hi = rhs.hi;
+  if (rhs.lo < lo) lo = rhs.lo;
+  if (rhs.hi > hi) hi = rhs.hi;
 
   return *this;
 }
@@ -78,8 +79,7 @@ inline RangeType<T>& RangeType<T>::operator|=(const RangeType<T>& rhs)
 template<typename T>
 inline RangeType<T> RangeType<T>::operator|(const RangeType<T>& rhs) const
 {
-  return RangeType<T>((rhs.lo < lo) ? rhs.lo : lo,
-                      (rhs.hi > hi) ? rhs.hi : hi);
+  return RangeType<T>((rhs.lo < lo) ? rhs.lo : lo, (rhs.hi > hi) ? rhs.hi : hi);
 }
 
 /**
@@ -89,10 +89,8 @@ inline RangeType<T> RangeType<T>::operator|(const RangeType<T>& rhs) const
 template<typename T>
 inline RangeType<T>& RangeType<T>::operator&=(const RangeType<T>& rhs)
 {
-  if (rhs.lo > lo)
-    lo = rhs.lo;
-  if (rhs.hi < hi)
-    hi = rhs.hi;
+  if (rhs.lo > lo) lo = rhs.lo;
+  if (rhs.hi < hi) hi = rhs.hi;
 
   return *this;
 }
@@ -100,8 +98,7 @@ inline RangeType<T>& RangeType<T>::operator&=(const RangeType<T>& rhs)
 template<typename T>
 inline RangeType<T> RangeType<T>::operator&(const RangeType<T>& rhs) const
 {
-  return RangeType<T>((rhs.lo > lo) ? rhs.lo : lo,
-                      (rhs.hi < hi) ? rhs.hi : hi);
+  return RangeType<T>((rhs.lo > lo) ? rhs.lo : lo, (rhs.hi < hi) ? rhs.hi : hi);
 }
 
 /**
@@ -203,8 +200,8 @@ template<typename T>
 template<typename Archive>
 void RangeType<T>::Serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(hi, "hi");
-  ar & data::CreateNVP(lo, "lo");
+  ar& data::CreateNVP(hi, "hi");
+  ar& data::CreateNVP(lo, "lo");
 }
 
 } // namespace math

@@ -58,14 +58,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     const arma::Col<AddressElemType>& hi = addresses[begin + count].first;
 
     for (; row < data.n_rows; row++)
-      if (lo[row] != hi[row])
-        break;
+      if (lo[row] != hi[row]) break;
 
     size_t bit = 0;
 
     for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
+      if ((lo[row] & ((AddressElemType)1 << (order - 1 - bit))) !=
+          (hi[row] & ((AddressElemType)1 << (order - 1 - bit))))
         break;
 
     bit++;
@@ -79,13 +78,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     else
     {
       for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
+        lo[row] |= ((AddressElemType)1 << (order - 1 - bit));
       row++;
     }
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
+        lo[row] |= ((AddressElemType)1 << (order - 1 - bit));
   }
 
   // The bound shouldn't contain too many subrectangles.
@@ -101,14 +100,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     arma::Col<AddressElemType>& hi = addresses[begin].first;
 
     for (; row < data.n_rows; row++)
-      if (lo[row] != hi[row])
-        break;
+      if (lo[row] != hi[row]) break;
 
     size_t bit = 0;
 
     for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
+      if ((lo[row] & ((AddressElemType)1 << (order - 1 - bit))) !=
+          (hi[row] & ((AddressElemType)1 << (order - 1 - bit))))
         break;
 
     bit++;
@@ -122,13 +120,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     else
     {
       for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
+        hi[row] &= ~((AddressElemType)1 << (order - 1 - bit));
       row++;
     }
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
+        hi[row] &= ~((AddressElemType)1 << (order - 1 - bit));
   }
 
   // Set the minimum and the maximum addresses.
@@ -157,11 +155,10 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
 }
 
 template<typename BoundType, typename MatType>
-size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    const SplitInfo& splitInfo)
+size_t UBTreeSplit<BoundType, MatType>::PerformSplit(MatType& data,
+                                                     const size_t begin,
+                                                     const size_t count,
+                                                     const SplitInfo& splitInfo)
 {
   // For the first time we have to rearrange the dataset.
   if (splitInfo.addresses)
@@ -210,8 +207,7 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
   {
     std::vector<size_t> newFromOld(data.n_cols);
 
-    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
-      newFromOld[i] = i;
+    for (size_t i = 0; i < splitInfo.addresses->size(); i++) newFromOld[i] = i;
 
     for (size_t i = 0; i < splitInfo.addresses->size(); i++)
     {

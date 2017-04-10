@@ -50,8 +50,7 @@ class AugLagrangian
 {
  public:
   //! Shorthand for the type of the L-BFGS optimizer we'll be using.
-  typedef L_BFGS<AugLagrangianFunction<LagrangianFunction> >
-      L_BFGSType;
+  typedef L_BFGS<AugLagrangianFunction<LagrangianFunction> > L_BFGSType;
 
   /**
    * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.  We
@@ -83,8 +82,7 @@ class AugLagrangian
    *     Lagrangian algorithm.  0 indicates no maximum.
    * @param sigma Initial penalty parameter.
    */
-  bool Optimize(arma::mat& coordinates,
-                const size_t maxIterations = 1000);
+  bool Optimize(arma::mat& coordinates, const size_t maxIterations = 1000);
 
   /**
    * Optimize the function, giving initial estimates for the Lagrange
@@ -145,4 +143,3 @@ class AugLagrangian
 #include "aug_lagrangian_impl.hpp"
 
 #endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
-

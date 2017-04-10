@@ -25,10 +25,7 @@ namespace math /** Miscellaneous math routines. */ {
  * @param d Double to clamp.
  * @return 0 if d < 0, d otherwise.
  */
-inline double ClampNonNegative(const double d)
-{
-  return (d + fabs(d)) / 2;
-}
+inline double ClampNonNegative(const double d) { return (d + fabs(d)) / 2; }
 
 /**
  * Forces a number to be non-positive, turning positive numbers into zero.
@@ -37,10 +34,7 @@ inline double ClampNonNegative(const double d)
  * @param d Double to clamp.
  * @param 0 if d > 0, d otherwise.
  */
-inline double ClampNonPositive(const double d)
-{
-  return (d - fabs(d)) / 2;
-}
+inline double ClampNonPositive(const double d) { return (d - fabs(d)) / 2; }
 
 /**
  * Clamp a number between a particular range.

@@ -21,9 +21,7 @@ namespace data {
 
 // Load column vector.
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
-          const bool fatal)
+bool Load(const std::string& filename, arma::Col<eT>& vec, const bool fatal)
 {
   // First load into auxiliary matrix.
   arma::Mat<eT> tmp;
@@ -43,14 +41,14 @@ bool Load(const std::string& filename,
       if (fatal)
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
-            << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
+                   << " instead has size " << tmp.n_rows << "x" << tmp.n_cols
+                   << "!" << std::endl;
       }
       else
       {
         Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
-            << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
+                  << "instead has size " << tmp.n_rows << "x" << tmp.n_cols
+                  << "!" << std::endl;
       }
 
       vec.clear();
@@ -70,7 +68,7 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &vec) = std::move(tmp);
+      *((arma::Mat<eT>*)&vec) = std::move(tmp);
       return true;
     }
   }
@@ -78,16 +76,14 @@ bool Load(const std::string& filename,
   {
     // It's loaded as a column vector.  We can call the move constructor
     // directly.
-    *((arma::Mat<eT>*) &vec) = std::move(tmp);
+    *((arma::Mat<eT>*)&vec) = std::move(tmp);
     return true;
   }
 }
 
 // Load row vector.
 template<typename eT>
-bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
-          const bool fatal)
+bool Load(const std::string& filename, arma::Row<eT>& rowvec, const bool fatal)
 {
   arma::Mat<eT> tmp;
   bool success = Load(filename, tmp, fatal, false);
@@ -105,14 +101,14 @@ bool Load(const std::string& filename,
       if (fatal)
       {
         Log::Fatal << "Matrix in file '" << filename << "' is not a vector, but"
-            << " instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
+                   << " instead has size " << tmp.n_rows << "x" << tmp.n_cols
+                   << "!" << std::endl;
       }
       else
       {
         Log::Warn << "Matrix in file '" << filename << "' is not a vector, but "
-            << "instead has size " << tmp.n_rows << "x" << tmp.n_cols << "!"
-            << std::endl;
+                  << "instead has size " << tmp.n_rows << "x" << tmp.n_cols
+                  << "!" << std::endl;
       }
 
       rowvec.clear();
@@ -132,14 +128,14 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+      *((arma::Mat<eT>*)&rowvec) = std::move(tmp);
       return true;
     }
   }
   else
   {
     // It's loaded as a row vector.  We can call the move constructor directly.
-    *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+    *((arma::Mat<eT>*)&rowvec) = std::move(tmp);
     return true;
   }
 }

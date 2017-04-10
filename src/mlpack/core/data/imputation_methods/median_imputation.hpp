@@ -21,7 +21,7 @@ namespace data {
  * replace missing value with middle or average of middle values
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class MedianImputation
 {
  public:
@@ -72,7 +72,7 @@ class MedianImputation
         }
         else
         {
-           elemsToKeep.push_back(input(i, dimension));
+          elemsToKeep.push_back(input(i, dimension));
         }
       }
     }
@@ -82,7 +82,7 @@ class MedianImputation
 
     for (const PairType& target : targets)
     {
-       input(target.first, target.second) = median;
+      input(target.first, target.second) = median;
     }
   }
 }; // class MedianImputation

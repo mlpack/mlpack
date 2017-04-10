@@ -31,8 +31,7 @@ class HyperbolicTangentKernel
   /**
    * This constructor sets the default scale to 1.0 and offset to 0.0.
    */
-  HyperbolicTangentKernel() : scale(1.0), offset(0.0)
-  { }
+  HyperbolicTangentKernel() : scale(1.0), offset(0.0) {}
 
   /**
    * Construct the hyperbolic tangent kernel with custom scale factor and
@@ -41,9 +40,10 @@ class HyperbolicTangentKernel
    * @param scale Scaling factor for <x, y>.
    * @param offset Kernel offset.
    */
-  HyperbolicTangentKernel(double scale, double offset) :
-      scale(scale), offset(offset)
-  { }
+  HyperbolicTangentKernel(double scale, double offset)
+      : scale(scale), offset(offset)
+  {
+  }
 
   /**
    * Evaluate the hyperbolic tangent kernel.  This evaluation uses Armadillo's
@@ -76,8 +76,8 @@ class HyperbolicTangentKernel
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(scale, "scale");
-    ar & data::CreateNVP(offset, "offset");
+    ar& data::CreateNVP(scale, "scale");
+    ar& data::CreateNVP(offset, "offset");
   }
 
  private:

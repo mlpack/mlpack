@@ -23,11 +23,12 @@ namespace bound {
 
 //! Empty Constructor.
 template<typename MetricType, typename VecType>
-BallBound<MetricType, VecType>::BallBound() :
-    radius(std::numeric_limits<ElemType>::lowest()),
-    metric(new MetricType()),
-    ownsMetric(true)
-{ /* Nothing to do. */ }
+BallBound<MetricType, VecType>::BallBound()
+    : radius(std::numeric_limits<ElemType>::lowest()),
+      metric(new MetricType()),
+      ownsMetric(true)
+{ /* Nothing to do. */
+}
 
 /**
  * Create the ball bound with the specified dimensionality.
@@ -35,12 +36,13 @@ BallBound<MetricType, VecType>::BallBound() :
  * @param dimension Dimensionality of ball bound.
  */
 template<typename MetricType, typename VecType>
-BallBound<MetricType, VecType>::BallBound(const size_t dimension) :
-    radius(std::numeric_limits<ElemType>::lowest()),
-    center(dimension),
-    metric(new MetricType()),
-    ownsMetric(true)
-{ /* Nothing to do. */ }
+BallBound<MetricType, VecType>::BallBound(const size_t dimension)
+    : radius(std::numeric_limits<ElemType>::lowest()),
+      center(dimension),
+      metric(new MetricType()),
+      ownsMetric(true)
+{ /* Nothing to do. */
+}
 
 /**
  * Create the ball bound with the specified radius and center.
@@ -50,21 +52,20 @@ BallBound<MetricType, VecType>::BallBound(const size_t dimension) :
  */
 template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>::BallBound(const ElemType radius,
-                                           const VecType& center) :
-    radius(radius),
-    center(center),
-    metric(new MetricType()),
-    ownsMetric(true)
-{ /* Nothing to do. */ }
+                                          const VecType& center)
+    : radius(radius), center(center), metric(new MetricType()), ownsMetric(true)
+{ /* Nothing to do. */
+}
 
 //! Copy Constructor. To prevent memory leaks.
 template<typename MetricType, typename VecType>
-BallBound<MetricType, VecType>::BallBound(const BallBound& other) :
-    radius(other.radius),
-    center(other.center),
-    metric(other.metric),
-    ownsMetric(false)
-{ /* Nothing to do. */ }
+BallBound<MetricType, VecType>::BallBound(const BallBound& other)
+    : radius(other.radius),
+      center(other.center),
+      metric(other.metric),
+      ownsMetric(false)
+{ /* Nothing to do. */
+}
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename MetricType, typename VecType>
@@ -79,11 +80,11 @@ BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
 
 //! Move constructor.
 template<typename MetricType, typename VecType>
-BallBound<MetricType, VecType>::BallBound(BallBound&& other) :
-    radius(other.radius),
-    center(other.center),
-    metric(other.metric),
-    ownsMetric(other.ownsMetric)
+BallBound<MetricType, VecType>::BallBound(BallBound&& other)
+    : radius(other.radius),
+      center(other.center),
+      metric(other.metric),
+      ownsMetric(other.ownsMetric)
 {
   // Fix the other bound.
   other.radius = 0.0;
@@ -96,14 +97,13 @@ BallBound<MetricType, VecType>::BallBound(BallBound&& other) :
 template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>::~BallBound()
 {
-  if (ownsMetric)
-    delete metric;
+  if (ownsMetric) delete metric;
 }
 
 //! Get the range in a certain dimension.
 template<typename MetricType, typename VecType>
 math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
-BallBound<MetricType, VecType>::operator[](const size_t i) const
+    BallBound<MetricType, VecType>::operator[](const size_t i) const
 {
   if (radius < 0)
     return math::Range();
@@ -144,15 +144,14 @@ BallBound<MetricType, VecType>::MinDistance(
  */
 template<typename MetricType, typename VecType>
 typename BallBound<MetricType, VecType>::ElemType
-BallBound<MetricType, VecType>::MinDistance(const BallBound& other)
-    const
+BallBound<MetricType, VecType>::MinDistance(const BallBound& other) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
   else
   {
-    const ElemType delta = metric->Evaluate(center, other.center) - radius -
-        other.radius;
+    const ElemType delta =
+        metric->Evaluate(center, other.center) - radius - other.radius;
     return math::ClampNonNegative(delta);
   }
 }
@@ -178,8 +177,7 @@ BallBound<MetricType, VecType>::MaxDistance(
  */
 template<typename MetricType, typename VecType>
 typename BallBound<MetricType, VecType>::ElemType
-BallBound<MetricType, VecType>::MaxDistance(const BallBound& other)
-    const
+BallBound<MetricType, VecType>::MaxDistance(const BallBound& other) const
 {
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
@@ -205,15 +203,13 @@ BallBound<MetricType, VecType>::RangeDistance(
   else
   {
     const ElemType dist = metric->Evaluate(center, point);
-    return math::Range(math::ClampNonNegative(dist - radius),
-                                              dist + radius);
+    return math::Range(math::ClampNonNegative(dist - radius), dist + radius);
   }
 }
 
 template<typename MetricType, typename VecType>
 math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
-BallBound<MetricType, VecType>::RangeDistance(
-    const BallBound& other) const
+BallBound<MetricType, VecType>::RangeDistance(const BallBound& other) const
 {
   if (radius < 0)
     return math::Range(std::numeric_limits<ElemType>::max(),
@@ -223,7 +219,7 @@ BallBound<MetricType, VecType>::RangeDistance(
     const ElemType dist = metric->Evaluate(center, other.center);
     const ElemType sumradius = radius + other.radius;
     return math::Range(math::ClampNonNegative(dist - sumradius),
-                                              dist + sumradius);
+                       dist + sumradius);
   }
 }
 
@@ -252,8 +248,8 @@ BallBound<MetricType, VecType>::operator|=(
  */
 template<typename MetricType, typename VecType>
 template<typename MatType>
-const BallBound<MetricType, VecType>&
-BallBound<MetricType, VecType>::operator|=(const MatType& data)
+const BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::
+operator|=(const MatType& data)
 {
   if (radius < 0)
   {
@@ -264,7 +260,7 @@ BallBound<MetricType, VecType>::operator|=(const MatType& data)
   // Now iteratively add points.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    const ElemType dist = metric->Evaluate(center, (VecType) data.col(i));
+    const ElemType dist = metric->Evaluate(center, (VecType)data.col(i));
 
     // See if the new point lies outside the bound.
     if (dist > radius)
@@ -283,22 +279,20 @@ BallBound<MetricType, VecType>::operator|=(const MatType& data)
 //! Serialize the BallBound.
 template<typename MetricType, typename VecType>
 template<typename Archive>
-void BallBound<MetricType, VecType>::Serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void BallBound<MetricType, VecType>::Serialize(Archive& ar,
+                                               const unsigned int /* version */)
 {
-  ar & data::CreateNVP(radius, "radius");
-  ar & data::CreateNVP(center, "center");
+  ar& data::CreateNVP(radius, "radius");
+  ar& data::CreateNVP(center, "center");
 
   if (Archive::is_loading::value)
   {
     // If we're loading, delete the local metric since we'll have a new one.
-    if (ownsMetric)
-      delete metric;
+    if (ownsMetric) delete metric;
   }
 
-  ar & data::CreateNVP(metric, "metric");
-  ar & data::CreateNVP(ownsMetric, "ownsMetric");
+  ar& data::CreateNVP(metric, "metric");
+  ar& data::CreateNVP(ownsMetric, "ownsMetric");
 }
 
 } // namespace bound

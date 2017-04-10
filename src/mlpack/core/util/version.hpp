@@ -31,7 +31,8 @@ namespace mlpack {
 namespace util {
 
 /**
- * This will return either "mlpack x.y.z" or "mlpack master-XXXXXXX" depending on
+ * This will return either "mlpack x.y.z" or "mlpack master-XXXXXXX" depending
+ * on
  * whether or not this is a stable version of mlpack or a git repository.
  */
 std::string GetVersion();

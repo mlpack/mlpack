@@ -34,11 +34,10 @@ class MidpointSpaceSplit
    * @return Flag to determine if split is possible.
    */
   template<typename HyperplaneType>
-  static bool SplitSpace(
-      const typename HyperplaneType::BoundType& bound,
-      const MatType& data,
-      const arma::Col<size_t>& points,
-      HyperplaneType& hyp);
+  static bool SplitSpace(const typename HyperplaneType::BoundType& bound,
+                         const MatType& data,
+                         const arma::Col<size_t>& points,
+                         HyperplaneType& hyp);
 };
 
 } // namespace tree
