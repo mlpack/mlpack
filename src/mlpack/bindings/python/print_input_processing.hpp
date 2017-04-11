@@ -97,7 +97,8 @@ void PrintInputProcessing(
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
 
     std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_"
-        << GetNumpyTypeChar<T>() << "(" << d.name << ")" << std::endl;
+        << GetNumpyTypeChar<T>() << "(to_matrix(" << d.name << "))"
+        << std::endl;
     std::cout << prefix << "  SetParam[" << GetPythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;
@@ -107,7 +108,8 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_"
-        << GetNumpyTypeChar<T>() << "(" << d.name << ")" << std::endl;
+        << GetNumpyTypeChar<T>() << "(to_matrix(" << d.name << "))"
+        << std::endl;
     std::cout << prefix << "SetParam[" << GetPythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;

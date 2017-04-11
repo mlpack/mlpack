@@ -74,6 +74,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "from cli cimport SetParam" << endl;
   cout << "from cli cimport EnableVerbose" << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
+  cout << "from matrix_utils import to_matrix" << endl;
   cout << endl;
   cout << "from libcpp.string cimport string" << endl;
   cout << "from libcpp cimport bool" << endl;
